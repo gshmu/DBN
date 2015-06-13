@@ -21,7 +21,7 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
 
     private DatasetBasicFilter filter;
     private String columnName = "";
-    private String operator = "";
+    private ConditionOperator operator;
     private String value = "";
     private boolean active = true;
 
@@ -32,7 +32,7 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
     public DatasetBasicFilterCondition(DatasetBasicFilter filter, String columnName, Object value, ConditionOperator operator, boolean active) {
         this.filter = filter;
         this.columnName = columnName;
-        this.operator = operator.getText();
+        this.operator = operator;
         this.value = value == null ? "" : value.toString();
         this.active = active;
     }
@@ -40,8 +40,9 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
     public DatasetBasicFilterCondition(DatasetBasicFilter filter, String columnName, Object value, ConditionOperator operator) {
         this.filter = filter;
         this.columnName = columnName;
-        this.operator = operator == null ? (value == null || value.toString().trim().length() == 0 ? ConditionOperator.IS_NULL.getText() : ConditionOperator.EQUAL.getText()) : operator.getText();
         this.value = value == null ? "" : value.toString();
+        this.operator = operator == null ? StringUtil.isEmpty(this.value) ? ConditionOperator.IS_NULL : ConditionOperator.EQUAL : operator;
+
         this.active = true;
     }
 
@@ -61,11 +62,11 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
         this.columnName = columnName;
     }
 
-    public String getOperator() {
+    public ConditionOperator getOperator() {
         return operator;
     }
 
-    public void setOperator(String operator) {
+    public void setOperator(ConditionOperator operator) {
         this.operator = operator;
     }
 
@@ -88,27 +89,25 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
     public void appendConditionString(StringBuilder buffer, DBDataset dataset) {
         DatasetBasicFilterConditionForm editorForm = getSettingsEditor();
 
-        ConditionOperator conditionOperator = null;
         String columnName = this.columnName;
-        String operator = this.operator;
+        ConditionOperator operator = this.operator;
         String value = this.value;
 
         if (editorForm != null && !editorForm.isDisposed()) {
-            conditionOperator = editorForm.getSelectedOperator();
+            operator = editorForm.getSelectedOperator();
             DBColumn selectedColumn = editorForm.getSelectedColumn();
             if (selectedColumn != null) {
                 columnName = selectedColumn.getName();
-                operator = conditionOperator == null ? " " : conditionOperator.getText();
                 value = editorForm.getValue();
             }
         }
 
         DBColumn column = dataset.getColumn(columnName);
 
-        if (conditionOperator != null &&
-                conditionOperator.getValuePrefix() != null &&
-                conditionOperator.getValuePostfix() != null) {
-            value = conditionOperator.getValuePrefix() + value + conditionOperator.getValuePostfix();
+        if (operator != null &&
+                operator.getValuePrefix() != null &&
+                operator.getValuePostfix() != null) {
+            value = operator.getValuePrefix() + value + operator.getValuePostfix();
         }
         else if (StringUtil.isNotEmptyOrSpaces(value)) {
             DBDataType dataType = column == null ? null : column.getDataType();
@@ -145,7 +144,7 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
         }
         buffer.append(column == null ? columnName : column.getQuotedName(false));
         buffer.append(" ");
-        buffer.append(operator);
+        buffer.append(operator == null ? " " : operator.getText());
         buffer.append(" ");
         buffer.append(value);
     }
@@ -161,14 +160,14 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
 
     public void readConfiguration(Element element) {
        columnName = element.getAttributeValue("column");
-       operator = element.getAttributeValue("operator");
+       operator = ConditionOperator.get(element.getAttributeValue("operator"));
        value = element.getAttributeValue("value");
        active = Boolean.parseBoolean(element.getAttributeValue("active"));
     }
 
     public void writeConfiguration(Element element) {
         element.setAttribute("column", columnName);
-        element.setAttribute("operator", operator);
+        element.setAttribute("operator", operator.getText());
         element.setAttribute("value", value);
         element.setAttribute("active", Boolean.toString(active));
     }

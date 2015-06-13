@@ -258,7 +258,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
         DatasetBasicFilter filter = getConfiguration();
         DatasetBasicFilterCondition condition = new DatasetBasicFilterCondition(filter);
         condition.setColumnName(column == null ? null : column.getName());
-        condition.setOperator(ConditionOperator.EQUAL.getName());
+        condition.setOperator(ConditionOperator.EQUAL);
         addConditionPanel(condition);
         updateNameAndPreview();
     }

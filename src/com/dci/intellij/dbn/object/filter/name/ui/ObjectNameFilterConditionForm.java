@@ -10,12 +10,12 @@ import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.filter.ConditionJoinType;
+import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
-import com.dci.intellij.dbn.object.filter.name.ConditionJoinType;
-import com.dci.intellij.dbn.object.filter.name.ConditionOperator;
-import com.dci.intellij.dbn.object.filter.name.SimpleFilterCondition;
+import com.dci.intellij.dbn.object.filter.name.SimpleNameFilterCondition;
 
-public class EditFilterConditionForm extends DBNFormImpl<EditFilterConditionDialog> {
+public class ObjectNameFilterConditionForm extends DBNFormImpl<ObjectNameFilterConditionDialog> {
     private JPanel mainPanel;
     private JTextField textPatternTextField;
     private JLabel objectNameLabel;
@@ -23,12 +23,12 @@ public class EditFilterConditionForm extends DBNFormImpl<EditFilterConditionDial
     private JLabel wildcardsHintLabel;
     private DBNComboBox<ConditionJoinType> joinTypeComboBox;
 
-    private SimpleFilterCondition condition;
+    private SimpleNameFilterCondition condition;
     public enum Operation {CREATE, EDIT, JOIN}
 
-    public EditFilterConditionForm(EditFilterConditionDialog parentComponent, CompoundFilterCondition parentCondition, SimpleFilterCondition condition, DBObjectType objectType, Operation operation) {
+    public ObjectNameFilterConditionForm(ObjectNameFilterConditionDialog parentComponent, CompoundFilterCondition parentCondition, SimpleNameFilterCondition condition, DBObjectType objectType, Operation operation) {
         super(parentComponent);
-        this.condition = condition == null ? new SimpleFilterCondition(ConditionOperator.EQUAL, "") : condition;
+        this.condition = condition == null ? new SimpleNameFilterCondition(ConditionOperator.EQUAL, "") : condition;
         joinTypeComboBox.setValues(ConditionJoinType.values());
         joinTypeComboBox.setVisible(false);
         if (operation == Operation.JOIN) {
@@ -50,7 +50,7 @@ public class EditFilterConditionForm extends DBNFormImpl<EditFilterConditionDial
 
         operatorComboBox.setValues(ConditionOperator.values());;
         if (operation == Operation.EDIT) {
-            textPatternTextField.setText(condition == null ? "" : condition.getText());
+            textPatternTextField.setText(condition == null ? "" : condition.getPattern());
             operatorComboBox.setSelectedValue(condition == null ? null : condition.getOperator());
 
         }
@@ -76,13 +76,13 @@ public class EditFilterConditionForm extends DBNFormImpl<EditFilterConditionDial
         wildcardsHintLabel.setEnabled(operator != null && operator.allowsWildcards());
     }
 
-    public JComponent getFocusComponent() {
+    public JComponent getPreferredFocusedComponent() {
         return textPatternTextField;
     }
 
-    public SimpleFilterCondition getCondition() {
+    public SimpleNameFilterCondition getCondition() {
         condition.setOperator(operatorComboBox.getSelectedValue());
-        condition.setText(textPatternTextField.getText().trim());
+        condition.setPattern(textPatternTextField.getText().trim());
         return condition;
     }
 

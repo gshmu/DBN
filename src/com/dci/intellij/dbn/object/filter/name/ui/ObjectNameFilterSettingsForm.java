@@ -19,7 +19,7 @@ import com.dci.intellij.dbn.object.filter.name.FilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
-import com.dci.intellij.dbn.object.filter.name.SimpleFilterCondition;
+import com.dci.intellij.dbn.object.filter.name.SimpleNameFilterCondition;
 import com.dci.intellij.dbn.object.filter.name.action.AddConditionAction;
 import com.dci.intellij.dbn.object.filter.name.action.CreateFilterAction;
 import com.dci.intellij.dbn.object.filter.name.action.MoveConditionDownAction;
@@ -78,8 +78,8 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
                     Object selection = getSelection();
-                    if (selection instanceof SimpleFilterCondition) {
-                        SimpleFilterCondition condition = (SimpleFilterCondition) selection;
+                    if (selection instanceof SimpleNameFilterCondition) {
+                        SimpleNameFilterCondition condition = (SimpleNameFilterCondition) selection;
                         getManager().editFilterCondition(condition, ObjectNameFilterSettingsForm.this);
                     }
                 }
@@ -91,8 +91,8 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == 10) {  // ENTER
                     Object selection = getSelection();
-                    if (selection instanceof SimpleFilterCondition) {
-                        SimpleFilterCondition condition = (SimpleFilterCondition) selection;
+                    if (selection instanceof SimpleNameFilterCondition) {
+                        SimpleNameFilterCondition condition = (SimpleNameFilterCondition) selection;
                         getManager().editFilterCondition(condition, ObjectNameFilterSettingsForm.this);
                     }
                 } else if (e.getKeyChar() == 127) { //DEL

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
-import com.dci.intellij.dbn.object.filter.name.SimpleFilterCondition;
+import com.dci.intellij.dbn.object.filter.name.SimpleNameFilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -25,8 +25,8 @@ public class AddConditionAction extends ObjectNameFilterAction{
             if (selection instanceof CompoundFilterCondition) {
                 CompoundFilterCondition condition = (CompoundFilterCondition) selection;
                 filterManager.createFilterCondition(condition, settingsForm);
-            } else if (selection instanceof SimpleFilterCondition) {
-                SimpleFilterCondition condition = (SimpleFilterCondition) selection;
+            } else if (selection instanceof SimpleNameFilterCondition) {
+                SimpleNameFilterCondition condition = (SimpleNameFilterCondition) selection;
                 filterManager.joinFilterCondition(condition, settingsForm);
             }
         }
@@ -40,7 +40,7 @@ public class AddConditionAction extends ObjectNameFilterAction{
             presentation.setText("Add Condition");
             presentation.setEnabled(true);
             presentation.setIcon(Icons.ACTION_ADD);
-        } else if (selection instanceof SimpleFilterCondition) {
+        } else if (selection instanceof SimpleNameFilterCondition) {
             presentation.setText("Join Condition");
             presentation.setEnabled(true);
             presentation.setIcon(Icons.ACTION_ADD_SPECIAL);

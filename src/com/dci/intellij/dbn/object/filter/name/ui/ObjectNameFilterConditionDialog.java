@@ -6,18 +6,18 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
-import com.dci.intellij.dbn.object.filter.name.ConditionJoinType;
-import com.dci.intellij.dbn.object.filter.name.SimpleFilterCondition;
+import com.dci.intellij.dbn.object.filter.name.SimpleNameFilterCondition;
 import com.intellij.openapi.project.Project;
 
-public class EditFilterConditionDialog extends DBNDialog<EditFilterConditionForm> {
-    private SimpleFilterCondition condition;
+public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterConditionForm> {
+    private SimpleNameFilterCondition condition;
     private ConditionJoinType joinType;
 
-    public EditFilterConditionDialog(Project project, CompoundFilterCondition parentCondition, SimpleFilterCondition condition, DBObjectType objectType, EditFilterConditionForm.Operation operation) {
+    public ObjectNameFilterConditionDialog(Project project, CompoundFilterCondition parentCondition, SimpleNameFilterCondition condition, DBObjectType objectType, ObjectNameFilterConditionForm.Operation operation) {
         super(project, getTitle(operation), true);
-        component = new EditFilterConditionForm(this, parentCondition, condition,  objectType, operation);
+        component = new ObjectNameFilterConditionForm(this, parentCondition, condition,  objectType, operation);
         setModal(true);
         setResizable(false);
         switch (operation) {
@@ -30,15 +30,15 @@ public class EditFilterConditionDialog extends DBNDialog<EditFilterConditionForm
     }
 
     @Nullable
-    private static String getTitle(EditFilterConditionForm.Operation operation) {
-        return operation == EditFilterConditionForm.Operation.CREATE ? "Create filter" :
-        operation == EditFilterConditionForm.Operation.EDIT ? "Edit filter condition" :
-        operation == EditFilterConditionForm.Operation.JOIN ? "Join filter condition" : null;
+    private static String getTitle(ObjectNameFilterConditionForm.Operation operation) {
+        return operation == ObjectNameFilterConditionForm.Operation.CREATE ? "Create filter" :
+        operation == ObjectNameFilterConditionForm.Operation.EDIT ? "Edit filter condition" :
+        operation == ObjectNameFilterConditionForm.Operation.JOIN ? "Join filter condition" : null;
     }
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return component == null ? null : component.getFocusComponent();
+        return component == null ? null : component.getPreferredFocusedComponent();
     }
 
     public void doOKAction() {
@@ -51,7 +51,7 @@ public class EditFilterConditionDialog extends DBNDialog<EditFilterConditionForm
         super.doCancelAction();
     }
 
-    public SimpleFilterCondition getCondition() {
+    public SimpleNameFilterCondition getCondition() {
         return condition;
     }
 
