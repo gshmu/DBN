@@ -190,7 +190,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
     }
 
     public boolean isLeaf(Object node) {
-        return node instanceof SimpleFilterCondition;
+        return node instanceof SimpleNameFilterCondition;
     }
 
     public int getIndexOfChild(Object parent, Object child) {

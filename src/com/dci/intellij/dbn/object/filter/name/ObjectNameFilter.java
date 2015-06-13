@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.object.filter.name;
 
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import org.jdom.Element;
+
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.filter.ConditionOperator;
 
 public class ObjectNameFilter extends CompoundFilterCondition {
     private ObjectNameFilterSettings settings;
@@ -23,7 +25,7 @@ public class ObjectNameFilter extends CompoundFilterCondition {
         addCondition(operator, text);
     }
 
-    public ObjectNameFilter(ObjectNameFilterSettings settings, DBObjectType objectType, SimpleFilterCondition condition) {
+    public ObjectNameFilter(ObjectNameFilterSettings settings, DBObjectType objectType, SimpleNameFilterCondition condition) {
         this.settings = settings;
         this.objectType = objectType;
         addCondition(condition);

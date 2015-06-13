@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.object.filter.name;
+package com.dci.intellij.dbn.object.filter.quick;
 
 import javax.swing.JTree;
 import javax.swing.tree.TreePath;
@@ -12,6 +12,11 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
+import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
+import com.dci.intellij.dbn.object.filter.name.FilterCondition;
+import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
+import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
+import com.dci.intellij.dbn.object.filter.name.SimpleNameFilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterConditionDialog;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterConditionForm;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
@@ -24,14 +29,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 
 @State(
-        name = "DBNavigator.Project.ObjectNameFilterManager",
+        name = "DBNavigator.Project.ObjectQuickFilterManager",
         storages = {
                 @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
                 @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
-public class ObjectNameFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class ObjectQuickFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
 
-    private ObjectNameFilterManager(Project project) {
+    private ObjectQuickFilterManager(Project project) {
         super(project);
     }
 
@@ -206,14 +211,14 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
     /***************************************
      *            ProjectComponent         *
      ***************************************/
-    public static ObjectNameFilterManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, ObjectNameFilterManager.class);
+    public static ObjectQuickFilterManager getInstance(@NotNull Project project) {
+        return FailsafeUtil.getComponent(project, ObjectQuickFilterManager.class);
     }
 
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.ObjectNameFilterManager";
+        return "DBNavigator.Project.ObjectQuickFilterManager";
     }
 
     /*********************************************

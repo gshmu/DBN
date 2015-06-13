@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.object.filter.name;
+package com.dci.intellij.dbn.object.filter;
 
 import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
