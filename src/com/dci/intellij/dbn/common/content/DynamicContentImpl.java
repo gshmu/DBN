@@ -54,7 +54,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         return filter == null || filter.accepts(element);
     }
 
-    public abstract Filter<T> getFilter();
+    @Nullable
+    protected abstract Filter<T> getFilter();
 
     @NotNull
     public GenericDatabaseElement getParentElement() {

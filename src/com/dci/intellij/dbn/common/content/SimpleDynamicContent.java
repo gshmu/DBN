@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.content;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.content.dependency.BasicDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
@@ -16,8 +17,9 @@ public class SimpleDynamicContent<T extends DynamicContentElement> extends Dynam
         super(parent, loader, DEPENDENCY_ADAPTER, indexed);
     }
 
+    @Nullable
     @Override
-    public Filter getFilter() {
+    protected Filter<T> getFilter() {
         return null;
     }
 

@@ -9,12 +9,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 
-public class FiltrableList<T> implements List<T> {
+public abstract class FiltrableList<T> implements List<T> {
     private List<T> list;
-    private Filter<T> filter = Filter.NO_FILTER;
 
     public FiltrableList() {
         list = new ArrayList<T>();
@@ -24,40 +24,33 @@ public class FiltrableList<T> implements List<T> {
         this.list = list;
     }
 
-    public FiltrableList(List<T> list, Filter<T> filter) {
-        this.list = list;
-        this.filter = filter;
-    }
-
-    public FiltrableList(Filter<T> filter) {
-        this();
-        this.filter = filter;
-    }
-
-    public void setFilter(Filter<T> filter) {
-        this.filter = filter;
-    }
-
     public List<T> getFullList() {return list;}
 
-
     // update methods should not be affected by filtering
-    public void sort(Comparator<T> comparator)          {Collections.sort(list, comparator);}
+    public void sort(Comparator<T> comparator)          {
+        Collections.sort(list, comparator);}
+
     public boolean add(T o)                             {return list.add(o);}
+
     public boolean addAll(@NotNull Collection<? extends T> c)    {return list.addAll(c);}
+
     public boolean remove(Object o)                     {return list.remove(o);}
+
     public boolean removeAll(@NotNull Collection c)              {return list.removeAll(c);}
+
     public boolean retainAll(@NotNull Collection c)              {return list.retainAll(c);}
+
     public void clear()                                 {list.clear();}
+
     public boolean isEmpty()                            {return size() == 0;}
 
-
     private boolean isFiltered() {
-        return filter != Filter.NO_FILTER;
+        return getFilter() != null;
     }
 
     public int size() {
-        if (isFiltered()) {
+        Filter<T> filter = getFilter();
+        if (filter != null) {
             int count = 0;
             for (T object : list) if (filter.accepts(object)) count++;
             return count;
@@ -69,7 +62,8 @@ public class FiltrableList<T> implements List<T> {
 
     @NotNull
     public Iterator<T> iterator(){
-        if (isFiltered()) {
+        final Filter<T> filter = getFilter();
+        if (filter != null) {
             return new Iterator<T>() {
                 private Iterator<T> iterator = list.iterator();
                 private T next = findNext();
@@ -99,7 +93,8 @@ public class FiltrableList<T> implements List<T> {
 
     @NotNull
     public Object[] toArray() {
-        if (isFiltered()) {
+        Filter<T> filter = getFilter();
+        if (filter != null) {
             List<T> result = new ArrayList<T>();
             for (T object : list) if (filter.accepts(object)) result.add(object);
             return result.toArray();
@@ -110,7 +105,8 @@ public class FiltrableList<T> implements List<T> {
 
     @NotNull
     public <E> E[] toArray(@NotNull E[] e) {
-        if (isFiltered()) {
+        Filter<T> filter = getFilter();
+        if (filter != null) {
             List<T> result = new ArrayList<T>();
             for (T object : list) if (filter.accepts(object)) result.add(object);
             return result.toArray(e);
@@ -130,7 +126,8 @@ public class FiltrableList<T> implements List<T> {
     }
 
     public int indexOf(Object o) {
-        if (isFiltered()) {
+        Filter<T> filter = getFilter();
+        if (filter != null) {
             if (!filter.accepts((T) o)) return -1;
 
             int index = 0;
@@ -145,7 +142,8 @@ public class FiltrableList<T> implements List<T> {
     }
 
     public int lastIndexOf(Object o) {
-        if (isFiltered()) {
+        Filter<T> filter = getFilter();
+        if (filter != null) {
             if (!filter.accepts((T) o)) return -1;
 
             int index = size()-1;
@@ -180,12 +178,12 @@ public class FiltrableList<T> implements List<T> {
 
     }
 
-
     private int findIndex(int index) {
         int count = -1;
+        Filter<T> filter = getFilter();
         for (int i = 0; i < list.size(); i++) {
             T object = list.get(i);
-            if (filter.accepts(object)) count++;
+            if (filter == null || filter.accepts(object)) count++;
             if (count == index) return i;
         }
         return -1;
@@ -239,12 +237,13 @@ public class FiltrableList<T> implements List<T> {
 
     @NotNull
     public ListIterator<T> listIterator()               {throw new UnsupportedOperationException("List iterator not implemented in filtrable list");}
+
     @NotNull
     public ListIterator<T> listIterator(int index)      {throw new UnsupportedOperationException("List iterator not implemented in filtrable list");}
+
     @NotNull
     public List<T> subList(int fromIndex, int toIndex)  {throw new UnsupportedOperationException("Sublist not implemented in filtrable list");}
 
-    public Filter<T> getFilter() {
-        return filter;
-    }
+    @Nullable
+    public abstract Filter<T> getFilter();
 }

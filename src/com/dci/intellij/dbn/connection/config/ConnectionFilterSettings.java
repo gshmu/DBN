@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.config;
 
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
@@ -103,6 +104,7 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
         cachedSchemaFilter = null;
     }
 
+    @Nullable
     public Filter<? extends DBObject> getNameFilter(DBObjectType objectType) {
         final Filter<DBObject> filter = objectNameFilterSettings.getFilter(objectType);
         if (objectType == DBObjectType.SCHEMA) {

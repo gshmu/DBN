@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContent;
+import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -13,6 +14,11 @@ public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, Dynam
     @NotNull String getName();
     DBObjectType getObjectType();
     void addObject(T object);
+
+    boolean isFiltered();
+
+    void setQuickFilter(Filter<T> quickFilter);
+
     List<T> getObjects();
     List<T> getObjects(String name);
     T getObject(String name);

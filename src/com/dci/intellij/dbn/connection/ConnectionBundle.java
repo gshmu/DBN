@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
@@ -37,7 +38,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
 
     private ProjectRef projectRef;
-    private FiltrableList<ConnectionHandler> connectionHandlers = new FiltrableList<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
+    private FiltrableList<ConnectionHandler> connectionHandlers = new FiltrableListImpl<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
     private List<ConnectionHandler> virtualConnections = new ArrayList<ConnectionHandler>();
 
     public ConnectionBundle(Project project) {
@@ -85,7 +86,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
     }
 
     public void applySettings(ConnectionBundleSettings settings) {
-        FiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableList<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
+        FiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableListImpl<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
         final List<ConnectionHandler> oldConnectionHandlers = new ArrayList<ConnectionHandler>(this.connectionHandlers.getFullList());
         List<ConnectionSettings> connections = settings.getConnections();
         boolean listChanged = false;
@@ -163,7 +164,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
     }
 
     public void setConnectionHandlers(List<ConnectionHandler> connectionHandlers) {
-        this.connectionHandlers = new FiltrableList<ConnectionHandler>(connectionHandlers, ACTIVE_CONNECTIONS_FILTER);
+        this.connectionHandlers = new FiltrableListImpl<ConnectionHandler>(connectionHandlers, ACTIVE_CONNECTIONS_FILTER);
     }
 
     public boolean containsConnection(ConnectionHandler connectionHandler) {
