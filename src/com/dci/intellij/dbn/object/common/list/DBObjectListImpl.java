@@ -31,6 +31,7 @@ import com.intellij.openapi.project.Project;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private DBObjectType objectType = DBObjectType.UNKNOWN;
+    private Filter<T> filter;
 
     public DBObjectListImpl(@NotNull DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
         super(treeParent, loader, dependencyAdapter, indexed);
@@ -38,10 +39,42 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
-    public Filter<T> getFilter() {
+    public boolean isFiltered() {
+        return getFilter() != null;
+    }
+
+    @Nullable
+    @Override
+    protected Filter<T> getFilter() {
+        if (filter == null) {
+            return getConfigFilter();
+        } else {
+            return filter;
+        }
+    }
+
+    @Override
+    public void setQuickFilter(final Filter<T> quickFilter) {
+        if (quickFilter == null) {
+            filter = null;
+        } else {
+            filter = new Filter<T>() {
+                @Override
+                public boolean accepts(T object) {
+                    if (quickFilter.accepts(object)) {
+                        Filter<T> filter = getConfigFilter();
+                        return filter == null || filter.accepts(object);
+                    }
+                    return false;
+                }
+            };
+        }
+    }
+
+    @Nullable
+    private Filter<T> getConfigFilter() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler.isDisposed() || connectionHandler.isVirtual() ? null :
-                (Filter<T>) connectionHandler.getSettings().getFilterSettings().getNameFilter(objectType);
+        return connectionHandler.isVirtual() ? null : (Filter<T>) connectionHandler.getSettings().getFilterSettings().getNameFilter(objectType);
     }
 
     @NotNull
@@ -233,7 +266,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     public String getPresentableTextDetails() {
         int elementCount = getTreeChildCount();
-        return elementCount > 0 ? "(" + elementCount + ")" : null;
+        return elementCount > 0 ? "(" + elementCount + (isFiltered() ? "/"+ size() : "") + ")" : null;
     }
 
     public String getPresentableTextConditionalDetails() {
