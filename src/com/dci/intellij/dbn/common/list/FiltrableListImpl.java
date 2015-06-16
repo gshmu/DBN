@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 
-public class FiltrableListImpl<T> extends FiltrableList<T> {
+public class FiltrableListImpl<T> extends AbstractFiltrableList<T> {
     private Filter<T> filter;
 
     public FiltrableListImpl() {

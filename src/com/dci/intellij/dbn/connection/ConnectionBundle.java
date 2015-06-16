@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
@@ -38,7 +39,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
 
     private ProjectRef projectRef;
-    private FiltrableList<ConnectionHandler> connectionHandlers = new FiltrableListImpl<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
+    private AbstractFiltrableList<ConnectionHandler> connectionHandlers = new FiltrableListImpl<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
     private List<ConnectionHandler> virtualConnections = new ArrayList<ConnectionHandler>();
 
     public ConnectionBundle(Project project) {
@@ -86,7 +87,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
     }
 
     public void applySettings(ConnectionBundleSettings settings) {
-        FiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableListImpl<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
+        AbstractFiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableListImpl<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
         final List<ConnectionHandler> oldConnectionHandlers = new ArrayList<ConnectionHandler>(this.connectionHandlers.getFullList());
         List<ConnectionSettings> connections = settings.getConnections();
         boolean listChanged = false;
