@@ -24,21 +24,18 @@ public class DBObjectTimestampLoader{
     public Timestamp load(final DBSchemaObject object) throws SQLException{
         ProgressMonitor.setTaskDescription("Loading timestamp for " + object.getQualifiedNameWithType());
         ConnectionHandler connectionHandler = object.getConnectionHandler();
-        if (connectionHandler != null) {
-            Connection connection = null;
-            ResultSet resultSet = null;
-            try {
-                connection = connectionHandler.getPoolConnection();
-                resultSet = connectionHandler.getInterfaceProvider().getMetadataInterface().loadObjectChangeTimestamp(
-                        object.getSchema().getName(),
-                        object.getName(), objectType, connection);
+        Connection connection = null;
+        ResultSet resultSet = null;
+        try {
+            connection = connectionHandler.getPoolConnection();
+            resultSet = connectionHandler.getInterfaceProvider().getMetadataInterface().loadObjectChangeTimestamp(
+                    object.getSchema().getName(),
+                    object.getName(), objectType, connection);
 
-                return resultSet.next() ? resultSet.getTimestamp(1) : null;
-            }  finally {
-                ConnectionUtil.closeResultSet(resultSet);
-                connectionHandler.freePoolConnection(connection);
-            }
+            return resultSet.next() ? resultSet.getTimestamp(1) : null;
+        }  finally {
+            ConnectionUtil.closeResultSet(resultSet);
+            connectionHandler.freePoolConnection(connection);
         }
-        return null;
     }
 }

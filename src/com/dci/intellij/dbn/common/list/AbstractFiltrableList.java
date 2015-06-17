@@ -41,7 +41,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
 
     public boolean retainAll(@NotNull Collection c)              {return list.retainAll(c);}
 
-    public void clear()                                 {list.clear();}
+    public void clear()                                 {if (!list.isEmpty()) list.clear();}
 
     public boolean isEmpty()                            {return size() == 0;}
 

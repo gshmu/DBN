@@ -12,6 +12,12 @@ import com.intellij.navigation.NavigationItem;
 
 public interface BrowserTreeNode extends NavigationItem, ItemPresentation, ToolTipProvider, GenericDatabaseElement {
 
+    enum LoadStatus {
+        NEW,
+        LOADING,
+        LOADED
+    }
+
     void initTreeElement();
 
     boolean canExpand();
