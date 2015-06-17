@@ -8,6 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
@@ -18,6 +19,7 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 
@@ -87,11 +89,33 @@ public class ConnectionPool implements Disposable {
         return getConnectionHandler().getProject();
     }
 
-    public synchronized Connection allocateConnection() throws SQLException {
-        lastAccessTimestamp = System.currentTimeMillis();
+    @NotNull
+    public Connection allocateConnection() throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
+        lastAccessTimestamp = System.currentTimeMillis();
 
+        Connection connectionWrapper = lookupConnection();
+        if (connectionWrapper == null)  {
+            ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
+            if (poolConnections.size() >= detailSettings.getMaxConnectionPoolSize() && !ApplicationManager.getApplication().isDispatchThread()) {
+                try {
+                    Thread.sleep(TimeUtil.ONE_SECOND);
+                    return allocateConnection();
+                } catch (InterruptedException e) {
+                    throw new SQLException("Could not allocate connection for '" + connectionHandler.getName() + "'. ");
+                }
+            }
+            connectionWrapper = createConnection();
+        }
+
+        return connectionWrapper;
+    }
+
+    @Nullable
+    private synchronized Connection lookupConnection() throws SQLException {
+        ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
+
         for (ConnectionWrapper connectionWrapper : poolConnections) {
             if (!connectionWrapper.isBusy()) {
                 connectionWrapper.setBusy(true);
@@ -105,18 +129,14 @@ public class ConnectionPool implements Disposable {
                 }
             }
         }
+        return null;
+    }
 
+    @NotNull
+    private synchronized Connection createConnection() throws SQLException {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         String connectionName = connectionHandler.getName();
-        ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
-        if (poolConnections.size() >= detailSettings.getMaxConnectionPoolSize()) {
-            try {
-                Thread.sleep(TimeUtil.ONE_SECOND);
-                return allocateConnection();
-            } catch (InterruptedException e) {
-                throw new SQLException("Could not allocate connection for '" + connectionName + "'. ");
-            }
-        }
-
         LOGGER.debug("[DBN-INFO] Attempt to create new pool connection for '" + connectionName + "'");
         Connection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.POOL);
         connection.setAutoCommit(true);

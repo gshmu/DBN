@@ -171,10 +171,6 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         EventUtil.subscribe(project, this, ObjectFilterChangeListener.TOPIC, filterChangeListener);
     }
 
-    /**
-     *
-     * @deprecated
-     */
     public static void scrollToSelectedElement(final ConnectionHandler connectionHandler) {
         if (connectionHandler != null && !connectionHandler.isDisposed()) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(connectionHandler.getProject());

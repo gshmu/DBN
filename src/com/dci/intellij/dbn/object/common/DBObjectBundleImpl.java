@@ -30,7 +30,6 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -364,13 +363,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         Project project = getProject();
         if (project != null) {
             EventUtil.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
-            new ConditionalLaterInvocator() {
-                @Override
-                protected void execute() {
-                    DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
-
-                }
-            }.start();
+            DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
         }
     }
 

@@ -30,7 +30,6 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -73,8 +72,6 @@ import com.intellij.psi.PsiInvalidElementAccessException;
 public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBObject, ToolTipProvider {
     public static final List<DBObject> EMPTY_OBJECT_LIST = Collections.unmodifiableList(new ArrayList<DBObject>(0));
     public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<BrowserTreeNode>(0));
-
-    private List<BrowserTreeNode> treeChildren;
 
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
@@ -277,17 +274,17 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         ConnectionHandler connectionHandler = getConnectionHandler();
         ttb.append(true, getQualifiedName(), false);
         ttb.append(true, "Connection: ", "-2", null, false );
-        ttb.append(false, connectionHandler == null ? "" : connectionHandler.getPresentableText(), false);
+        ttb.append(false, connectionHandler.getPresentableText(), false);
     }
 
     public DBObjectAttribute[] getObjectAttributes(){return null;}
     public DBObjectAttribute getNameAttribute(){return null;}
 
-    @Nullable
+    @NotNull
     @Override
     public DBObjectBundle getObjectBundle() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ? null : connectionHandler.getObjectBundle();
+        return connectionHandler.getObjectBundle();
     }
 
     @NotNull
@@ -298,12 +295,12 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     @Override
     public EnvironmentType getEnvironmentType() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ? EnvironmentType.DEFAULT : connectionHandler.getEnvironmentType();
+        return connectionHandler.getEnvironmentType();
     }
 
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ? SQLLanguage.INSTANCE.getMainLanguageDialect() : connectionHandler.getLanguageDialect(language);
+        return connectionHandler.getLanguageDialect(language);
     }
 
     public DBObjectListContainer getChildObjects() {
@@ -579,7 +576,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     public int getTreeDepth() {
         BrowserTreeNode treeParent = getTreeParent();
-        return treeParent == null ? 0 : treeParent.getTreeDepth() + 1;
+        return treeParent.getTreeDepth() + 1;
     }
 
 
@@ -650,14 +647,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             Project project = getProject();
             if (!isDisposed && !project.isDisposed()) {
                 EventUtil.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
-                new ConditionalLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        if (!isDisposed()) {
-                            DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
-                        }
-                    }
-                }.start();
+                DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
             }
         }
     }
