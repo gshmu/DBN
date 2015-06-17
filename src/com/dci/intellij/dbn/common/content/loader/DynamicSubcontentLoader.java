@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.common.content.loader;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This loader is to be used from building the elements of a dynamic content, based on a source content.
@@ -35,11 +35,11 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> i
             //load from sub-content
             boolean matchedOnce = false;
             List<T> list = null;
-            for (Object object : sourceContent.getElements()) {
+            for (Object object : sourceContent.getAllElements()) {
                 dynamicContent.checkDisposed();
 
                 T element = (T) object;
-                if (match(element, dynamicContent) && dynamicContent.accepts(element)) {
+                if (match(element, dynamicContent)) {
                     matchedOnce = true;
                     if (list == null) list = new ArrayList<T>();
                     list.add(element);

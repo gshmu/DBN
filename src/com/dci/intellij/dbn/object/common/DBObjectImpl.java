@@ -74,6 +74,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     public static final List<DBObject> EMPTY_OBJECT_LIST = Collections.unmodifiableList(new ArrayList<DBObject>(0));
     public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<BrowserTreeNode>(0));
 
+    private List<BrowserTreeNode> treeChildren;
+
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
     private boolean treeChildrenLoaded;
