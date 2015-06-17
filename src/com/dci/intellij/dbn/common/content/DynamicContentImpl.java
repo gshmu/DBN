@@ -14,6 +14,8 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
+import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -38,7 +40,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     protected ContentDependencyAdapter dependencyAdapter;
     private boolean indexed;
     private Map<String, T> index;
-    private int filterHashCode = 0;
 
     protected List<T> elements = EMPTY_UNTOUCHED_CONTENT;
 
@@ -47,11 +48,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         this.loader = loader;
         this.dependencyAdapter = dependencyAdapter;
         this.indexed = indexed;
-    }
-
-    public boolean accepts(T element) {
-        Filter<T> filter = getFilter();
-        return filter == null || filter.accepts(element);
     }
 
     @Nullable
@@ -100,16 +96,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     public boolean isDirty() {
-        if (isDirty || dependencyAdapter.isDirty()) {
-            return true;
-        }
-
-        Filter filter = getFilter();
-        return filter == null ?
-                filterHashCode != 0 :
-                filterHashCode != filter.hashCode();
-
-        //return isDirty /*|| (elements.size() > 0 && elements.get(0).isDisposed())*/;
+        return isDirty || dependencyAdapter.isDirty();
     }
 
     public boolean isDisposed() {
@@ -233,7 +220,13 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
             sortElements(elements);
         }
         List<T> oldElements = this.elements;
-        this.elements = elements;
+        this.elements = new AbstractFiltrableList<T>(elements) {
+            @Nullable
+            @Override
+            public Filter<T> getFilter() {
+                return DynamicContentImpl.this.getFilter();
+            }
+        };
         updateIndex();
         if (oldElements.size() != 0 || elements.size() != 0 ){
             notifyChangeListeners();
@@ -241,8 +234,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         if (!dependencyAdapter.isSubContent() && oldElements.size() > 0 ) {
             DisposerUtil.dispose(oldElements);
         }
-        Filter filter = getFilter();
-        filterHashCode = filter == null ? 0 : filter.hashCode();
     }
 
     public void sortElements(List<T> elements) {
@@ -258,6 +249,17 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         }
         return elements;
     }
+
+    @Override
+    public List<T> getAllElements() {
+        List<T> elements = getElements();
+        if (elements instanceof FiltrableList) {
+            FiltrableList<T> filteredElements = (FiltrableList<T>) elements;
+            return filteredElements.getFullList();
+        }
+        return elements;
+    }
+
 
     protected void updateIndex() {
         if (indexed) {
@@ -278,7 +280,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     public T getElement(String name, int overload) {
         if (name != null) {
-            List<T> elements = getElements();
+            List<T> elements = getAllElements();
             if (indexed && index != null) {
                 return index.get(name.toUpperCase());
             } else {
@@ -298,7 +300,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     @Nullable
     public List<T> getElements(String name) {
         List<T> elements = null;
-        for (T element : getElements()) {
+        for (T element : getAllElements()) {
             if (element.getName().equalsIgnoreCase(name)) {
                 if (elements == null) {
                     elements = new ArrayList<T>();

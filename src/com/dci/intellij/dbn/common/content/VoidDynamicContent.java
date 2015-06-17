@@ -105,6 +105,11 @@ public class VoidDynamicContent implements DynamicContent{
     }
 
     @Override
+    public List getAllElements() {
+        return getElements();
+    }
+
+    @Override
     public DynamicContentElement getElement(String name, int overload) {
         return null;
     }
@@ -148,11 +153,6 @@ public class VoidDynamicContent implements DynamicContent{
     @Override
     public String getName() {
         return "Empty Content";
-    }
-
-    @Override
-    public boolean accepts(DynamicContentElement element) {
-        return false;
     }
 
     @Override

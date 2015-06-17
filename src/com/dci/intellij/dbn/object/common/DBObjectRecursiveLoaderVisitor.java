@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.object.common;
 
+import java.util.List;
+
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectListVisitor;
-
-import java.util.List;
 
 public class DBObjectRecursiveLoaderVisitor implements DBObjectListVisitor{
     public static final DBObjectRecursiveLoaderVisitor INSTANCE = new DBObjectRecursiveLoaderVisitor();
@@ -14,9 +14,8 @@ public class DBObjectRecursiveLoaderVisitor implements DBObjectListVisitor{
 
     @Override
     public void visitObjectList(DBObjectList<DBObject> objectList) {
-        List<DBObject> objects = objectList.getObjects();
-
         if (!objectList.getDependencyAdapter().isSubContent()) {
+            List<DBObject> objects = objectList.getObjects();
             for (DBObject object : objects) {
                 DBObjectListContainer childObjects = object.getChildObjects();
                 if (childObjects != null) {
