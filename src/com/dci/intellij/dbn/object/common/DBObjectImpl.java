@@ -563,11 +563,9 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             }
         } else {
             DBObjectBundle objectBundle = getObjectBundle();
-            if (objectBundle != null) {
-                DBObjectListContainer objectListContainer = objectBundle.getObjectListContainer();
-                DBObjectList parentObjectList = objectListContainer.getObjectList(objectType);
-                return FailsafeUtil.get(parentObjectList);
-            }
+            DBObjectListContainer objectListContainer = objectBundle.getObjectListContainer();
+            DBObjectList parentObjectList = objectListContainer.getObjectList(objectType);
+            return FailsafeUtil.get(parentObjectList);
         }
         throw AlreadyDisposedException.INSTANCE;
     }
@@ -598,8 +596,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         if (visibleTreeChildren == null) {
             synchronized (this) {
                 if (visibleTreeChildren == null) {
-                    visibleTreeChildren = new ArrayList<BrowserTreeNode>();
-                    visibleTreeChildren.add(new LoadInProgressTreeNode(this));
+                    visibleTreeChildren = new LoadInProgressTreeNode(this).asList();
 
                     new SimpleBackgroundTask("load database objects") {
                         @Override
@@ -636,8 +633,9 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
                     objectList.initTreeElement();
                 }
 
-                if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
-                    visibleTreeChildren.get(0).dispose();
+                if (visibleTreeChildren instanceof LoadInProgressTreeNode.List) {
+                    LoadInProgressTreeNode.List list = (LoadInProgressTreeNode.List) visibleTreeChildren;
+                    list.dispose();
                 }
             }
             visibleTreeChildren = newTreeChildren;

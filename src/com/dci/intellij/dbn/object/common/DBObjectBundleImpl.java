@@ -30,6 +30,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -318,14 +319,11 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         if (visibleTreeChildren == null) {
             synchronized (this) {
                 if (visibleTreeChildren == null) {
-                    visibleTreeChildren = new ArrayList<BrowserTreeNode>();
-                    visibleTreeChildren.add(new LoadInProgressTreeNode(this));
-                    ConnectionHandler connectionHandler = getConnectionHandler();
-                    String connectionString = " (" + connectionHandler.getName() + ")";
+                    visibleTreeChildren = new LoadInProgressTreeNode(this).asList();
 
-                    new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
+                    new SimpleBackgroundTask("load database objects") {
                         @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                        protected void execute() {
                             buildTreeChildren();
                         }
                     }.start();
@@ -336,6 +334,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     }
 
     private void buildTreeChildren() {
+        FailsafeUtil.check(this);
         List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
         Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
         if (!filter.acceptsAll(allPossibleTreeChildren)) {
@@ -351,20 +350,20 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         for (BrowserTreeNode treeNode : newTreeChildren) {
             DBObjectList objectList = (DBObjectList) treeNode;
             objectList.initTreeElement();
+            FailsafeUtil.check(this);
         }
 
-        if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
-            visibleTreeChildren.get(0).dispose();
+        if (visibleTreeChildren instanceof LoadInProgressTreeNode.List) {
+            LoadInProgressTreeNode.List list = (LoadInProgressTreeNode.List) visibleTreeChildren;
+            list.dispose();
         }
 
         visibleTreeChildren = newTreeChildren;
         treeChildrenLoaded = true;
 
-        Project project = getProject();
-        if (project != null) {
-            EventUtil.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
-            DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
-        }
+        Project project = FailsafeUtil.get(getProject());
+        EventUtil.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
+        DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
     }
 
     @Override

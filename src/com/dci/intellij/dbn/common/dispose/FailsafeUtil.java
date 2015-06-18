@@ -45,4 +45,9 @@ public class FailsafeUtil {
         return virtualFile == null ? DUMMY_VIRTUAL_FILE : virtualFile;
     }
 
+    public static void check(Disposable disposable) {
+        if (disposable == null || disposable.isDisposed()) {
+            throw AlreadyDisposedException.INSTANCE;
+        }
+    }
 }
