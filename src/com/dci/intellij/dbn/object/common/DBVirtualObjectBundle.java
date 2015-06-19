@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.object.common;
 
+import javax.swing.Icon;
+import java.util.Collections;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -20,12 +26,6 @@ import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.Collections;
-import java.util.List;
 
 public class DBVirtualObjectBundle implements DBObjectBundle{
     private VirtualConnectionHandler connectionHandler;
@@ -210,7 +210,7 @@ public class DBVirtualObjectBundle implements DBObjectBundle{
     }
 
     @Override
-    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+    public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
 
     }
 

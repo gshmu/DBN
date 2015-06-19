@@ -367,10 +367,10 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     }
 
     @Override
-    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+    public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
         if (visibleTreeChildren != null) {
             for (BrowserTreeNode treeNode : visibleTreeChildren) {
-                treeNode.refreshTreeChildren(objectType);
+                treeNode.refreshTreeChildren(objectTypes);
             }
         }
     }

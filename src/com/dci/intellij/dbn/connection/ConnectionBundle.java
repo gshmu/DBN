@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
@@ -256,9 +257,9 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         return null;  //should never be used
     }
 
-    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+    public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
         for (ConnectionHandler connectionHandler : connectionHandlers) {
-            connectionHandler.getObjectBundle().refreshTreeChildren(objectType);
+            connectionHandler.getObjectBundle().refreshTreeChildren(objectTypes);
         }
     }
 

@@ -8,6 +8,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Set;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
@@ -15,6 +17,7 @@ import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.FilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
@@ -125,12 +128,19 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
     }
 
     public void applyFormChanges() throws ConfigurationException {
+        final Set<DBObjectType> filterObjectTypes = new HashSet<DBObjectType>();
         final ObjectNameFilterSettings filterSettings = getConfiguration();
         final boolean notifyFilterListeners = filterSettings.isModified();
+
+        // collect before after applying the changes
+        filterObjectTypes.addAll(filterSettings.getFilteredObjectTypes());
+
         Element element = new Element("Temp");
         ObjectNameFilterSettings tempSettings = (ObjectNameFilterSettings) filtersTree.getModel();
         tempSettings.writeConfiguration(element);
         filterSettings.readConfiguration(element);
+        // after applying the changes
+        filterObjectTypes.addAll(filterSettings.getFilteredObjectTypes());
 
         new SettingsChangeNotifier() {
             @Override
@@ -138,7 +148,8 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
                 if (notifyFilterListeners) {
                     Project project = filterSettings.getProject();
                     ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
-                    listener.nameFiltersChanged(null, filterSettings.getConnectionId());
+                    DBObjectType[] refreshObjectTypes = filterObjectTypes.toArray(new DBObjectType[filterObjectTypes.size()]);
+                    listener.nameFiltersChanged(filterSettings.getConnectionId(), refreshObjectTypes);
                 }
             }
         };

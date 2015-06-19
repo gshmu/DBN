@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.browser.model;
 import javax.swing.Icon;
 import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
@@ -68,7 +67,7 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
     }
 
     @Override
-    public void refreshTreeChildren(@Nullable DBObjectType objectType) {}
+    public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {}
 
     public void rebuildTreeChildren() {}
 
