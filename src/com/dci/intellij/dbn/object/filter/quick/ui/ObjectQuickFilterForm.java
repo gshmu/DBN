@@ -9,16 +9,12 @@ import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
-import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
-import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterCondition;
 import com.intellij.openapi.util.Disposer;
@@ -50,7 +46,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
                 addConditionPanel(condition);
             }
         } else {
-            ObjectQuickFilterCondition condition = filter.addCondition(ConditionOperator.EQUAL, "");
+            ObjectQuickFilterCondition condition = filter.addNewCondition();
             addConditionPanel(condition);
         }
         actionsPanel.add(new NewFilterSelector(filter), BorderLayout.CENTER);
@@ -87,7 +83,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
             addListener(new ValueSelectorListener<ConditionJoinType>() {
                 @Override
                 public void selectionChanged(ConditionJoinType oldValue, ConditionJoinType newValue) {
-                    ObjectQuickFilterCondition condition = filter.addCondition(ConditionOperator.EQUAL, "");
+                    ObjectQuickFilterCondition condition = filter.addNewCondition();
                     addConditionPanel(condition);
                 }
             });
@@ -99,13 +95,12 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
         }
     }
 
-    public void applyFilter() {
-        objectList.setQuickFilter(filter);
-        EventUtil.notify(getProject(), BrowserTreeChangeListener.TOPIC).nodeChanged(objectList, TreeEventType.STRUCTURE_CHANGED);
-    }
-
     public ObjectQuickFilter getFilter() {
         return filter;
+    }
+
+    public DBObjectList getObjectList() {
+        return objectList;
     }
 
     @Override

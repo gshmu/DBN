@@ -28,8 +28,11 @@ public class ObjectQuickFilter<T extends DBObject> extends Filter<T> implements 
         return objectType;
     }
 
-    public ObjectQuickFilterCondition addCondition(ConditionOperator operator, String pattern) {
-        ObjectQuickFilterCondition condition = new ObjectQuickFilterCondition(this, operator, pattern);
+    public ObjectQuickFilterCondition addNewCondition() {
+        return addCondition(ConditionOperator.EQUAL, "", true);
+    }
+    public ObjectQuickFilterCondition addCondition(ConditionOperator operator, String pattern, boolean active) {
+        ObjectQuickFilterCondition condition = new ObjectQuickFilterCondition(this, operator, pattern, active);
         conditions.add(condition);
         return condition;
     }
@@ -44,6 +47,10 @@ public class ObjectQuickFilter<T extends DBObject> extends Filter<T> implements 
 
     public void setJoinType(ConditionJoinType joinType) {
         this.joinType = joinType;
+    }
+
+    public boolean isEmpty() {
+        return conditions.isEmpty();
     }
 
     @Override
@@ -68,7 +75,10 @@ public class ObjectQuickFilter<T extends DBObject> extends Filter<T> implements 
     public ObjectQuickFilter clone() {
         ObjectQuickFilter filterClone = new ObjectQuickFilter(objectType, joinType);
         for (ObjectQuickFilterCondition condition : conditions) {
-            filterClone.addCondition(condition.getOperator(), condition.getPattern());
+            filterClone.addCondition(
+                    condition.getOperator(),
+                    condition.getPattern(),
+                    condition.isActive());
         }
         return filterClone;
     }
