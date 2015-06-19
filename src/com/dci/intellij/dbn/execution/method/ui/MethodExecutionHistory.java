@@ -105,13 +105,14 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
 
     /*****************************************
      *         PersistentStateElement        *
-     *****************************************/
-    public void readState(Element parent) {
-        Element element = parent.getChild("execution-history");
-        if (element != null) {
-            groupEntries = SettingsUtil.getBoolean(element, "group-entries", groupEntries);
+     ****************************************
+     * @param element*/
+    public void readState(Element element) {
+        Element historyElement = element.getChild("execution-history");
+        if (historyElement != null) {
+            groupEntries = SettingsUtil.getBoolean(historyElement, "group-entries", groupEntries);
 
-            Element executionInputsElement = element.getChild("execution-inputs");
+            Element executionInputsElement = historyElement.getChild("execution-inputs");
             for (Object object : executionInputsElement.getChildren()) {
                 Element configElement = (Element) object;
                 MethodExecutionInput executionInput = new MethodExecutionInput();
@@ -120,7 +121,7 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
             }
             Collections.sort(executionInputs);
 
-            Element selectionElement = element.getChild("selection");
+            Element selectionElement = historyElement.getChild("selection");
             if (selectionElement != null) {
                 selection = new DBObjectRef<DBMethod>();
                 selection.readState(selectionElement);
@@ -128,14 +129,14 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
         }
     }
 
-    public void writeState(Element parent) {
-        Element element = new Element("execution-history");
-        parent.addContent(element);
+    public void writeState(Element element) {
+        Element historyElement = new Element("execution-history");
+        element.addContent(historyElement);
 
-        SettingsUtil.setBoolean(element, "group-entries", groupEntries);
+        SettingsUtil.setBoolean(historyElement, "group-entries", groupEntries);
 
         Element configsElement = new Element("execution-inputs");
-        element.addContent(configsElement);
+        historyElement.addContent(configsElement);
         for (MethodExecutionInput executionInput : this.executionInputs) {
             if (!executionInput.isObsolete()) {
                 Element configElement = new Element("execution-input");
@@ -146,7 +147,7 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
 
         if (selection != null) {
             Element selectionElement = new Element("selection");
-            element.addContent(selectionElement);
+            historyElement.addContent(selectionElement);
             selection.writeState(selectionElement);
         }
 

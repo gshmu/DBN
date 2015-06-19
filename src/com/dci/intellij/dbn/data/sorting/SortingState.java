@@ -5,8 +5,9 @@ import java.util.List;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 
-public class SortingState{
+public class SortingState implements PersistentStateElement<Element>{
     private List<SortingInstruction> sortingInstructions = new ArrayList<SortingInstruction>();
 
     public boolean applySorting(String columnName, SortDirection direction, boolean keepExisting, int maxColumns) {

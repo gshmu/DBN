@@ -17,8 +17,8 @@ public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, Dynam
 
     boolean isFiltered();
 
-    ObjectQuickFilter<T> getQuickFilter();
-    void setQuickFilter(ObjectQuickFilter<T> quickFilter);
+    ObjectQuickFilter getQuickFilter();
+    void setQuickFilter(ObjectQuickFilter quickFilter);
 
     List<T> getObjects();
     List<T> getObjects(String name);
