@@ -1,6 +1,10 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -13,6 +17,7 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
         component = new ObjectQuickFilterForm(this, objectList);
         setModal(true);
         setResizable(false);
+        getOKAction().putValue(Action.NAME, "Apply");
         init();
     }
 
@@ -24,6 +29,22 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
     @Override
     protected String getDimensionServiceKey() {
         return null;
+    }
+
+    @NotNull
+    @Override
+    protected Action[] createActions() {
+        return new Action[]{
+                getOKAction(),
+                new AbstractAction("Clear Filters") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        component.getFilter().clear();
+                        doOKAction();
+                    }
+                },
+                getCancelAction()
+        };
     }
 
     public void doOKAction() {

@@ -110,4 +110,8 @@ public class ObjectQuickFilter extends Filter<DBObject> implements Cloneable<Obj
 
 
     }
+
+    public void clear() {
+        conditions.clear();
+    }
 }
