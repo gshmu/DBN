@@ -39,7 +39,7 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
     }
 
     public void notifyListeners(final BrowserTreeNode treeNode, final TreeEventType eventType) {
-        if (!isDisposed && !treeNode.isDisposed()) {
+        if (FailsafeUtil.softCheck(this) && FailsafeUtil.softCheck(treeNode)) {
             TreePath treePath = DatabaseBrowserUtils.createTreePath(treeNode);
             TreeUtil.notifyTreeModelListeners(this, treeModelListeners, treePath, eventType);
         }

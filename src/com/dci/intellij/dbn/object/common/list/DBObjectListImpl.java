@@ -31,11 +31,13 @@ import com.intellij.openapi.project.Project;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private DBObjectType objectType = DBObjectType.UNKNOWN;
+    private boolean hidden;
     private Filter<T> filter;
 
-    public DBObjectListImpl(@NotNull DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
+    public DBObjectListImpl(@NotNull DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed, boolean hidden) {
         super(treeParent, loader, dependencyAdapter, indexed);
         this.objectType = objectType;
+        this.hidden = hidden;
     }
 
     @Override
@@ -151,7 +153,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     public void notifyChangeListeners() {
         Project project = getProject();
-        if (isTouched() && project != null && !project.isDisposed()) {
+        BrowserTreeNode treeParent = getTreeParent();
+        if (!hidden && isTouched() && FailsafeUtil.softCheck(project) && treeParent != null && treeParent.isTreeStructureLoaded()) {
             EventUtil.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
         }
     }

@@ -125,11 +125,11 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         clusters = ol.createObjectList(DBObjectType.CLUSTER, this, CLUSTERS_LOADER, true, false);
         databaseLinks = ol.createObjectList(DBObjectType.DBLINK, this, DATABASE_LINKS_LOADER, true, false);
 
-        DBObjectList constraints = ol.createObjectList(DBObjectType.CONSTRAINT, this, CONSTRAINTS_LOADER, true, false);
-        DBObjectList indexes = ol.createObjectList(DBObjectType.INDEX, this, INDEXES_LOADER, true, false);
+        DBObjectList constraints = ol.createObjectList(DBObjectType.CONSTRAINT, this, CONSTRAINTS_LOADER, true, true);
+        DBObjectList indexes = ol.createObjectList(DBObjectType.INDEX, this, INDEXES_LOADER, true, true);
         DBObjectList columns = ol.createObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, false, true);
-        ol.createObjectList(DBObjectType.DATASET_TRIGGER, this, DATASET_TRIGGERS_LOADER, true, false);
-        ol.createObjectList(DBObjectType.NESTED_TABLE, this, ALL_NESTED_TABLES_LOADER, true, false);
+        ol.createObjectList(DBObjectType.DATASET_TRIGGER, this, DATASET_TRIGGERS_LOADER, true, true);
+        ol.createObjectList(DBObjectType.NESTED_TABLE, this, ALL_NESTED_TABLES_LOADER, true, true);
         ol.createObjectList(DBObjectType.PACKAGE_FUNCTION, this, ALL_PACKAGE_FUNCTIONS_LOADER, false, true);
         ol.createObjectList(DBObjectType.PACKAGE_PROCEDURE, this, ALL_PACKAGE_PROCEDURES_LOADER, false, true);
         ol.createObjectList(DBObjectType.PACKAGE_TYPE, this, ALL_PACKAGE_TYPES_LOADER, false, true);
