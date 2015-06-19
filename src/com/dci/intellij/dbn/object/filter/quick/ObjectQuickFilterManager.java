@@ -9,12 +9,15 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.quick.ui.ObjectQuickFilterDialog;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -32,6 +35,7 @@ import gnu.trove.THashMap;
 )
 public class ObjectQuickFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private Map<CacheKey, ObjectQuickFilter> cachedFilters = new THashMap<CacheKey, ObjectQuickFilter>();
+    private ConditionOperator lastUsedOperator = ConditionOperator.EQUAL;
 
     private ObjectQuickFilterManager(Project project) {
         super(project);
@@ -60,6 +64,14 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
         if (filter != null) {
             objectList.setQuickFilter(filter);
         }
+    }
+
+    public ConditionOperator getLastUsedOperator() {
+        return lastUsedOperator;
+    }
+
+    public void setLastUsedOperator(ConditionOperator lastUsedOperator) {
+        this.lastUsedOperator = lastUsedOperator;
     }
 
     private class CacheKey implements PersistentStateElement<Element>{
@@ -145,15 +157,21 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
     @Override
     public Element getState() {
         Element element = new Element("state");
+        SettingsUtil.setEnum(element, "last-used-operator", lastUsedOperator);
         Element filtersElement = new Element("filters");
         element.addContent(filtersElement);
-        for (CacheKey cacheKey : cachedFilters.keySet()) {
-            ObjectQuickFilter filter = cachedFilters.get(cacheKey);
-            Element filterElement = new Element("filter");
-            filtersElement.addContent(filterElement);
 
-            cacheKey.writeState(filterElement);
-            filter.writeState(filterElement);
+        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        for (CacheKey cacheKey : cachedFilters.keySet()) {
+
+            if (connectionManager.isValidConnectionId(cacheKey.getConnectionId())) {
+                ObjectQuickFilter filter = cachedFilters.get(cacheKey);
+                Element filterElement = new Element("filter");
+                filtersElement.addContent(filterElement);
+
+                cacheKey.writeState(filterElement);
+                filter.writeState(filterElement);
+            }
         }
 
         return element;
@@ -162,6 +180,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
     @Override
     public void loadState(Element element) {
         Element filtersElement = element.getChild("filters");
+        lastUsedOperator = SettingsUtil.getEnum(element, "last-used-operator", lastUsedOperator);
         if (filtersElement != null) {
             for (Element filterElement : filtersElement.getChildren()) {
                 CacheKey cacheKey = new CacheKey();

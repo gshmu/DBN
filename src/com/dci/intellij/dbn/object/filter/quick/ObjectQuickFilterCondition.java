@@ -54,4 +54,5 @@ public class ObjectQuickFilterCondition extends NameFilterCondition implements P
         super.writeState(element);
         setBooleanAttribute(element, "active", active);
     }
+
 }

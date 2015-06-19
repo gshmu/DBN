@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterCondition;
+import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.dci.intellij.dbn.object.filter.quick.action.DeleteQuickFilterConditionAction;
 import com.dci.intellij.dbn.object.filter.quick.action.EnableDisableQuickFilterConditionAction;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -44,6 +45,8 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
         operatorComboBox.addListener(new ValueSelectorListener<ConditionOperator>() {
             @Override
             public void selectionChanged(ConditionOperator oldValue, ConditionOperator newValue) {
+                ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
+                quickFilterManager.setLastUsedOperator(newValue);
                 condition.setOperator(newValue);
             }
         });
