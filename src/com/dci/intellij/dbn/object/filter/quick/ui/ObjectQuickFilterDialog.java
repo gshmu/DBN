@@ -4,6 +4,7 @@ import javax.swing.JComponent;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.intellij.openapi.project.Project;
 
 public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
@@ -21,7 +22,8 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
     }
 
     public void doOKAction() {
-        component.applyFilter();
+        ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
+        quickFilterManager.applyFilter(component.getObjectList(), component.getFilter());
         super.doOKAction();
     }
 

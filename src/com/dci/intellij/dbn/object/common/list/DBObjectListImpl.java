@@ -23,10 +23,12 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
+import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 
@@ -39,6 +41,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         super(treeParent, loader, dependencyAdapter, indexed);
         this.objectType = objectType;
         this.hidden = hidden;
+        if (treeParent instanceof DBSchema && !hidden) {
+            ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
+            ObjectQuickFilter quickFilter = quickFilterManager.lookupFilter(this);
+            setQuickFilter(quickFilter);
+        }
     }
 
     @Override

@@ -8,9 +8,10 @@ public class ObjectQuickFilterCondition extends NameFilterCondition {
     private ObjectQuickFilter filter;
     private boolean active = true;
 
-    public ObjectQuickFilterCondition(ObjectQuickFilter filter, ConditionOperator operator, String pattern) {
+    public ObjectQuickFilterCondition(ObjectQuickFilter filter, ConditionOperator operator, String pattern, boolean active) {
         super(operator, pattern);
         this.filter = filter;
+        this.active = active;
     }
 
     public ObjectQuickFilter getFilter() {
