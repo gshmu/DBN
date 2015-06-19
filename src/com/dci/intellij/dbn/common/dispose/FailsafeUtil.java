@@ -45,9 +45,26 @@ public class FailsafeUtil {
         return virtualFile == null ? DUMMY_VIRTUAL_FILE : virtualFile;
     }
 
-    public static void check(Disposable disposable) {
-        if (disposable == null || disposable.isDisposed()) {
+    public static void check(Object object) {
+        if (!softCheck(object)) {
             throw AlreadyDisposedException.INSTANCE;
         }
+    }
+
+    public static boolean softCheck(Object object) {
+        if (object == null) {
+            return false;
+        } else if (object instanceof Disposable) {
+            Disposable disposable = (Disposable) object;
+            if (disposable.isDisposed()) {
+                return false;
+            }
+        } else if (object instanceof Project) {
+            Project project = (Project) object;
+            if (project.isDisposed()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

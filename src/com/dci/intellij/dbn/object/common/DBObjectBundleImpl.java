@@ -319,7 +319,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         if (visibleTreeChildren == null) {
             synchronized (this) {
                 if (visibleTreeChildren == null) {
-                    visibleTreeChildren = new LoadInProgressTreeNode(this).asList();
+                    visibleTreeChildren = new ArrayList<BrowserTreeNode>();
+                    visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
                     new SimpleBackgroundTask("load database objects") {
                         @Override
@@ -353,9 +354,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
             FailsafeUtil.check(this);
         }
 
-        if (visibleTreeChildren instanceof LoadInProgressTreeNode.List) {
-            LoadInProgressTreeNode.List list = (LoadInProgressTreeNode.List) visibleTreeChildren;
-            list.dispose();
+        if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
+            visibleTreeChildren.get(0).dispose();
         }
 
         visibleTreeChildren = newTreeChildren;

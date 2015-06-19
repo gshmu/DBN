@@ -97,18 +97,18 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         }
     };
 
-    public DBObjectImpl(@NotNull DBObject parentObject, ResultSet resultSet) throws SQLException {
+    protected DBObjectImpl(@NotNull DBObject parentObject, ResultSet resultSet) throws SQLException {
         this.connectionHandlerRef = ConnectionHandlerRef.from(parentObject.getConnectionHandler());
         this.parentObjectRef = DBObjectRef.from(parentObject);
         init(resultSet);
     }
 
-    public DBObjectImpl(@NotNull ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
+    protected DBObjectImpl(@NotNull ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
         init(resultSet);
     }
 
-    public DBObjectImpl(@Nullable ConnectionHandler connectionHandler, String name) {
+    protected DBObjectImpl(@Nullable ConnectionHandler connectionHandler, String name) {
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
         this.name = name;
     }
@@ -596,7 +596,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         if (visibleTreeChildren == null) {
             synchronized (this) {
                 if (visibleTreeChildren == null) {
-                    visibleTreeChildren = new LoadInProgressTreeNode(this).asList();
+                    visibleTreeChildren = new ArrayList<BrowserTreeNode>();
+                    visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
                     new SimpleBackgroundTask("load database objects") {
                         @Override
@@ -611,43 +612,41 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     private void buildTreeChildren() {
+        FailsafeUtil.check(this);
         ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
-        if (!isDisposed) {
-            Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
-            List<BrowserTreeNode> allPossibleTreeChildren = getAllPossibleTreeChildren();
-            List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
-            if (allPossibleTreeChildren.size() > 0) {
-                if (!filter.acceptsAll(allPossibleTreeChildren)) {
-                    newTreeChildren = new ArrayList<BrowserTreeNode>();
-                    for (BrowserTreeNode treeNode : allPossibleTreeChildren) {
-                        if (treeNode != null && filter.accepts(treeNode)) {
-                            DBObjectList objectList = (DBObjectList) treeNode;
-                            newTreeChildren.add(objectList);
-                        }
+
+        Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
+        List<BrowserTreeNode> allPossibleTreeChildren = getAllPossibleTreeChildren();
+        List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
+        if (allPossibleTreeChildren.size() > 0) {
+            if (!filter.acceptsAll(allPossibleTreeChildren)) {
+                newTreeChildren = new ArrayList<BrowserTreeNode>();
+                for (BrowserTreeNode treeNode : allPossibleTreeChildren) {
+                    if (treeNode != null && filter.accepts(treeNode)) {
+                        DBObjectList objectList = (DBObjectList) treeNode;
+                        newTreeChildren.add(objectList);
                     }
                 }
-                newTreeChildren = new ArrayList<BrowserTreeNode>(newTreeChildren);
-
-                for (BrowserTreeNode treeNode : newTreeChildren) {
-                    DBObjectList objectList = (DBObjectList) treeNode;
-                    objectList.initTreeElement();
-                }
-
-                if (visibleTreeChildren instanceof LoadInProgressTreeNode.List) {
-                    LoadInProgressTreeNode.List list = (LoadInProgressTreeNode.List) visibleTreeChildren;
-                    list.dispose();
-                }
             }
-            visibleTreeChildren = newTreeChildren;
-            treeChildrenLoaded = true;
+            newTreeChildren = new ArrayList<BrowserTreeNode>(newTreeChildren);
 
+            for (BrowserTreeNode treeNode : newTreeChildren) {
+                DBObjectList objectList = (DBObjectList) treeNode;
+                objectList.initTreeElement();
+                FailsafeUtil.check(this);
+            }
 
-            Project project = getProject();
-            if (!isDisposed && !project.isDisposed()) {
-                EventUtil.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
-                DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
+            if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
+                visibleTreeChildren.get(0).dispose();
             }
         }
+        visibleTreeChildren = newTreeChildren;
+        treeChildrenLoaded = true;
+
+
+        Project project = FailsafeUtil.get(getProject());
+        EventUtil.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
+        DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
     }
 
     @Override
@@ -676,14 +675,18 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     public abstract List<BrowserTreeNode> buildAllPossibleTreeChildren();
 
     public boolean isLeafTreeElement() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
-        for (BrowserTreeNode treeNode : getAllPossibleTreeChildren() ) {
-            if (treeNode != null && filter.accepts(treeNode)) {
-                return false;
+        if (visibleTreeChildren == null) {
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
+            for (BrowserTreeNode treeNode : getAllPossibleTreeChildren() ) {
+                if (treeNode != null && filter.accepts(treeNode)) {
+                    return false;
+                }
             }
+            return true;
+        } else {
+            return visibleTreeChildren.size() == 0;
         }
-        return true;
     }
 
     public BrowserTreeNode getTreeChild(int index) {
