@@ -222,14 +222,14 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
-    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+    public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
         if (isLoaded()) {
-            if (objectType == null || this.objectType == objectType) {
-                getElements();
+            if (objectType.isOneOf(objectTypes)) {
+                notifyChangeListeners();
             }
 
             for (DBObject object : getObjects()) {
-                object.refreshTreeChildren(objectType);
+                object.refreshTreeChildren(objectTypes);
             }
         }
     }

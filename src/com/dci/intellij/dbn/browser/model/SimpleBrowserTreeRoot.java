@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.browser.model;
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
@@ -69,9 +70,9 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
     }
 
     @Override
-    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+    public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
         for (ConnectionBundle connectionBundle : getTreeChildren()) {
-            connectionBundle.refreshTreeChildren(objectType);
+            connectionBundle.refreshTreeChildren(objectTypes);
         }
     }
 
