@@ -1,14 +1,14 @@
-package com.dci.intellij.dbn.editor.data.filter.action;
+package com.dci.intellij.dbn.object.filter.quick.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterConditionForm;
+import com.dci.intellij.dbn.object.filter.quick.ui.ObjectQuickFilterConditionForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 
-public class EnableDisableBasicFilterConditionAction extends DumbAwareAction {
-    private DatasetBasicFilterConditionForm conditionForm;
+public class EnableDisableQuickFilterConditionAction extends DumbAwareAction {
+    private ObjectQuickFilterConditionForm conditionForm;
 
-    public EnableDisableBasicFilterConditionAction(DatasetBasicFilterConditionForm conditionForm) {
+    public EnableDisableQuickFilterConditionAction(ObjectQuickFilterConditionForm conditionForm) {
         this.conditionForm = conditionForm;
     }
 

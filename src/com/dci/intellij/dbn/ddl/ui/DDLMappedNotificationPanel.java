@@ -36,7 +36,7 @@ public class DDLMappedNotificationPanel extends JPanel{
         setPreferredSize(new Dimension(-1, 24));
 
         add(label, BorderLayout.CENTER);
-        label.setIcon(Icons.DATASET_FILTER_CONDITION_ACTIVE);
+        label.setIcon(Icons.COMMON_FILTER_ACTIVE);
 
         linksPanel = new JPanel(new FlowLayout());
         linksPanel.setBackground(getBackground());

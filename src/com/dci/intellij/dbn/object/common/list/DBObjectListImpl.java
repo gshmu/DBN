@@ -26,13 +26,14 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
+import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private DBObjectType objectType = DBObjectType.UNKNOWN;
     private boolean hidden;
-    private Filter<T> filter;
+    private InternalFilter filter;
 
     public DBObjectListImpl(@NotNull DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed, boolean hidden) {
         super(treeParent, loader, dependencyAdapter, indexed);
@@ -56,20 +57,34 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
-    public void setQuickFilter(final Filter<T> quickFilter) {
+    public void setQuickFilter(final ObjectQuickFilter<T> quickFilter) {
         if (quickFilter == null) {
             filter = null;
         } else {
-            filter = new Filter<T>() {
-                @Override
-                public boolean accepts(T object) {
-                    if (quickFilter.accepts(object)) {
-                        Filter<T> filter = getConfigFilter();
-                        return filter == null || filter.accepts(object);
-                    }
-                    return false;
-                }
-            };
+            filter = new InternalFilter(quickFilter);
+        }
+    }
+
+    @Override
+    public ObjectQuickFilter<T> getQuickFilter() {
+        return filter == null ? null : filter.quickFilter;
+
+    }
+
+    private class InternalFilter extends Filter<T> {
+        private ObjectQuickFilter<T> quickFilter;
+
+        public InternalFilter(ObjectQuickFilter<T> quickFilter) {
+            this.quickFilter = quickFilter;
+        }
+
+        @Override
+        public boolean accepts(T object) {
+            if (quickFilter.accepts(object)) {
+                Filter<T> filter = getConfigFilter();
+                return filter == null || filter.accepts(object);
+            }
+            return false;
         }
     }
 
