@@ -46,7 +46,7 @@ public class ObjectNameFilterConditionForm extends DBNFormImpl<ObjectNameFilterC
         }
 
         objectNameLabel.setIcon(objectType.getIcon());
-        objectNameLabel.setText(objectType.getName().toUpperCase() + "_NAME");
+        objectNameLabel.setText(objectType.getName().toUpperCase() + " NAME");
 
         operatorComboBox.setValues(ConditionOperator.values());;
         if (operation == Operation.EDIT) {

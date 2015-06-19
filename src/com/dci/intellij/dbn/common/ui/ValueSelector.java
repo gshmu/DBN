@@ -329,12 +329,15 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         values.clear();
     }
 
+    public String getOptionDisplayName(T value) {
+        return NamingUtil.enhanceUnderscoresForDisplay(getName(value));
+    }
 
     public class SelectValueAction extends DumbAwareAction {
         private T value;
 
         public SelectValueAction(T value) {
-            super(NamingUtil.enhanceUnderscoresForDisplay(getName(value)), null, options.is(ValueSelectorOption.HIDE_ICON) ? null : value.getIcon());
+            super(getOptionDisplayName(value), null, options.is(ValueSelectorOption.HIDE_ICON) ? null : value.getIcon());
             this.value = value;
         }
 

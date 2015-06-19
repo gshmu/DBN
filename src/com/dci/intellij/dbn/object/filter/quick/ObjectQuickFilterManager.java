@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
+import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -84,8 +85,12 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
 
         public CacheKey(DBObjectList objectList) {
             connectionId = objectList.getConnectionHandler().getId();
-            DBSchema treeParent = FailsafeUtil.get((DBSchema) objectList.getTreeParent());
-            schemaName = treeParent.getName();
+            BrowserTreeNode treeParent = objectList.getTreeParent();
+            if (treeParent instanceof DBSchema) {
+                schemaName = treeParent.getName();
+            } else {
+                schemaName = "";
+            }
             objectType = objectList.getObjectType();
         }
 

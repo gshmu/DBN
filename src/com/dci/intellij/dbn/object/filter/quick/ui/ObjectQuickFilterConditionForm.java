@@ -37,7 +37,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
 
         DBObjectType objectType = condition.getFilter().getObjectType();
         objectNameLabel.setIcon(objectType.getIcon());
-        objectNameLabel.setText(objectType.getName().toUpperCase() + "_NAME");
+        objectNameLabel.setText(objectType.getName().toUpperCase() + " NAME");
 
         operatorComboBox.setValues(ConditionOperator.values());;
         patternTextField.setText(condition.getPattern());

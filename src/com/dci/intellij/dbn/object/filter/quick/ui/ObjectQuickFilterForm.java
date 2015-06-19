@@ -1,18 +1,26 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
@@ -47,11 +55,21 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
                 addConditionPanel(condition);
             }
         } else {
-            ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
+/*            ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
             ObjectQuickFilterCondition condition = filter.addNewCondition(quickFilterManager.getLastUsedOperator());
-            addConditionPanel(condition);
+            addConditionPanel(condition);*/
         }
         actionsPanel.add(new NewFilterSelector(filter), BorderLayout.CENTER);
+
+        Icon headerIcon = Icons.DATASET_FILTER;
+        ConnectionHandler connectionHandler = objectList.getConnectionHandler();
+        GenericDatabaseElement parentElement = objectList.getParentElement();
+        String headerText = "[" + connectionHandler.getName() + "] " +
+                (parentElement instanceof DBSchema ? (parentElement.getName() + " - ") : "") +
+                NamingUtil.capitalizeWords(objectList.getObjectType().getListName()) + " filter";
+        Color headerBackground = connectionHandler.getEnvironmentType().getColor();
+        DBNHeaderForm headerForm = new DBNHeaderForm(headerText, headerIcon, headerBackground);
+        headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 
     private void addConditionPanel(ObjectQuickFilterCondition condition) {
@@ -81,8 +99,13 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
     }
 
     private class NewFilterSelector extends ValueSelector<ConditionOperator> {
+        @Override
+        public String getOptionDisplayName(ConditionOperator value) {
+            return super.getOptionDisplayName(value);
+        }
+
         public NewFilterSelector(final ObjectQuickFilter filter) {
-            super(PlatformIcons.ADD_ICON, "Add Condition", null, false, ValueSelectorOption.HIDE_DESCRIPTION);
+            super(PlatformIcons.ADD_ICON, "Add Name Condition", null, false, ValueSelectorOption.HIDE_DESCRIPTION);
             addListener(new ValueSelectorListener<ConditionOperator>() {
                 @Override
                 public void selectionChanged(ConditionOperator oldValue, ConditionOperator newValue) {
@@ -92,6 +115,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
                     addConditionPanel(condition);
                 }
             });
+
         }
 
         @Override
