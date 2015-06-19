@@ -30,8 +30,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
     }
 
     public void openFilterDialog(DBObjectList objectList) {
-        ObjectQuickFilterDialog dialog =
-                new ObjectQuickFilterDialog(getProject());
+        ObjectQuickFilterDialog dialog = new ObjectQuickFilterDialog(getProject(), objectList);
         dialog.show();
         if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
 
