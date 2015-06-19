@@ -2,15 +2,17 @@ package com.dci.intellij.dbn.object.filter.quick;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 
-public class ObjectQuickFilter<T extends DBObject> extends Filter<T> implements Cloneable<ObjectQuickFilter> {
+public class ObjectQuickFilter extends Filter<DBObject> implements Cloneable<ObjectQuickFilter>, PersistentStateElement<Element> {
     private DBObjectType objectType;
     private ConditionJoinType joinType = ConditionJoinType.AND;
     private List<ObjectQuickFilterCondition> conditions = new ArrayList<ObjectQuickFilterCondition>();
@@ -54,7 +56,7 @@ public class ObjectQuickFilter<T extends DBObject> extends Filter<T> implements 
     }
 
     @Override
-    public boolean accepts(T object) {
+    public boolean accepts(DBObject object) {
         if (conditions.size() > 0) {
             if (joinType == ConditionJoinType.AND) {
                 for (ObjectQuickFilterCondition condition : conditions) {
@@ -81,5 +83,27 @@ public class ObjectQuickFilter<T extends DBObject> extends Filter<T> implements 
                     condition.isActive());
         }
         return filterClone;
+    }
+
+    @Override
+    public void readState(Element element) {
+        joinType = ConditionJoinType.valueOf(element.getAttributeValue("join-type"));
+        for (Element conditionElement : element.getChildren()) {
+            ObjectQuickFilterCondition condition = new ObjectQuickFilterCondition(this);
+            condition.readState(conditionElement);
+            conditions.add(condition);
+        }
+    }
+
+    @Override
+    public void writeState(Element element) {
+        element.setAttribute("join-type", joinType.name());
+        for (ObjectQuickFilterCondition condition : conditions) {
+            Element conditionElement = new Element("condition");
+            element.addContent(conditionElement);
+            condition.writeState(conditionElement);
+        }
+
+
     }
 }

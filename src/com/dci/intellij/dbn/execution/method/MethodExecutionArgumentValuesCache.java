@@ -48,8 +48,8 @@ public class MethodExecutionArgumentValuesCache implements PersistentStateElemen
     /*********************************************
      *            PersistentStateElement         *
      *********************************************/
-    public void readState(Element parent) {
-        Element argumentValuesElement = parent.getChild("argument-values-cache");
+    public void readState(Element element) {
+        Element argumentValuesElement = element.getChild("argument-values-cache");
         if (argumentValuesElement != null) {
             this.variablesMap.clear();
             List<Element> connectionElements = argumentValuesElement.getChildren();
@@ -65,9 +65,9 @@ public class MethodExecutionArgumentValuesCache implements PersistentStateElemen
         }
     }
 
-    public void writeState(Element parent) {
+    public void writeState(Element element) {
         Element argumentValuesElement = new Element("argument-values-cache");
-        parent.addContent(argumentValuesElement);
+        element.addContent(argumentValuesElement);
 
         for (String connectionId : variablesMap.keySet()) {
             Set<MethodExecutionArgumentValue> argumentValues = variablesMap.get(connectionId);

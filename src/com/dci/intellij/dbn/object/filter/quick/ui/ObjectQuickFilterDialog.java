@@ -21,6 +21,11 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
         return component == null ? null : component.getPreferredFocusedComponent();
     }
 
+    @Override
+    protected String getDimensionServiceKey() {
+        return null;
+    }
+
     public void doOKAction() {
         ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
         quickFilterManager.applyFilter(component.getObjectList(), component.getFilter());

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -19,7 +20,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
 
-public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T> {
+public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement<Element> {
     protected DBObjectRef parent;
     protected DBObjectType objectType;
     protected String objectName;

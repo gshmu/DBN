@@ -43,8 +43,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         this.hidden = hidden;
         if (treeParent instanceof DBSchema && !hidden) {
             ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
-            ObjectQuickFilter quickFilter = quickFilterManager.lookupFilter(this);
-            setQuickFilter(quickFilter);
+            quickFilterManager.applyCachedFilter(this);
         }
     }
 
@@ -64,7 +63,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
-    public void setQuickFilter(final ObjectQuickFilter<T> quickFilter) {
+    public void setQuickFilter(final ObjectQuickFilter quickFilter) {
         if (quickFilter == null) {
             filter = null;
         } else {
@@ -73,15 +72,15 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
-    public ObjectQuickFilter<T> getQuickFilter() {
+    public ObjectQuickFilter getQuickFilter() {
         return filter == null ? null : filter.quickFilter;
 
     }
 
     private class InternalFilter extends Filter<T> {
-        private ObjectQuickFilter<T> quickFilter;
+        private ObjectQuickFilter quickFilter;
 
-        public InternalFilter(ObjectQuickFilter<T> quickFilter) {
+        public InternalFilter(ObjectQuickFilter quickFilter) {
             this.quickFilter = quickFilter;
         }
 

@@ -1,10 +1,14 @@
 package com.dci.intellij.dbn.object.filter;
 
 import java.util.StringTokenizer;
+import org.jdom.Element;
 
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.intellij.openapi.util.text.StringUtil;
+import static com.dci.intellij.dbn.common.options.setting.SettingsUtil.getEnumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsUtil.setEnumAttribute;
 
-public abstract class NameFilterCondition {
+public abstract class NameFilterCondition implements PersistentStateElement<Element> {
     private ConditionOperator operator = ConditionOperator.EQUAL;
     private String pattern;
 
@@ -61,5 +65,17 @@ public abstract class NameFilterCondition {
 
     private static boolean startsWithWildcard(String pattern) {
         return pattern.indexOf('*') == 0 || pattern.indexOf('%') == 0;
+    }
+
+    @Override
+    public void readState(Element element) {
+        operator = getEnumAttribute(element, "operator", ConditionOperator.class);
+        pattern = element.getAttributeValue("pattern");
+    }
+
+    @Override
+    public void writeState(Element element) {
+        setEnumAttribute(element, "operator", operator);
+        element.setAttribute("pattern", pattern);
     }
 }

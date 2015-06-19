@@ -9,8 +9,11 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.filter.quick.ui.ObjectQuickFilterDialog;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -28,7 +31,7 @@ import gnu.trove.THashMap;
                 @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class ObjectQuickFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
-    private Map<String, ObjectQuickFilter> cachedFilters = new THashMap<String, ObjectQuickFilter>();
+    private Map<CacheKey, ObjectQuickFilter> cachedFilters = new THashMap<CacheKey, ObjectQuickFilter>();
 
     private ObjectQuickFilterManager(Project project) {
         super(project);
@@ -43,7 +46,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
         objectList.setQuickFilter(filter);
         BrowserTreeChangeListener treeChangeListener = EventUtil.notify(getProject(), BrowserTreeChangeListener.TOPIC);
         treeChangeListener.nodeChanged(objectList, TreeEventType.STRUCTURE_CHANGED);
-        String cacheKey = getCacheKey(objectList);
+        CacheKey cacheKey = new CacheKey(objectList);
         if (filter == null || filter.isEmpty()) {
             cachedFilters.remove(cacheKey);
         } else {
@@ -51,14 +54,75 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
         }
     }
 
-    @Nullable
-    public ObjectQuickFilter lookupFilter(DBObjectList objectList) {
-        String cacheKey = getCacheKey(objectList);
-        return cachedFilters.get(cacheKey);
+    public void applyCachedFilter(DBObjectList objectList) {
+        CacheKey cacheKey = new CacheKey(objectList);
+        ObjectQuickFilter filter = cachedFilters.get(cacheKey);
+        if (filter != null) {
+            objectList.setQuickFilter(filter);
+        }
     }
 
-    private String getCacheKey(DBObjectList objectList) {
-        return objectList.getConnectionHandler().getId() + "." + objectList.getTreeParent().getName() + "." + objectList.getObjectType().getName();
+    private class CacheKey implements PersistentStateElement<Element>{
+        private String connectionId;
+        private String schemaName;
+        private DBObjectType objectType;
+
+        public CacheKey() {
+        }
+
+        public CacheKey(DBObjectList objectList) {
+            connectionId = objectList.getConnectionHandler().getId();
+            DBSchema treeParent = FailsafeUtil.get((DBSchema) objectList.getTreeParent());
+            schemaName = treeParent.getName();
+            objectType = objectList.getObjectType();
+        }
+
+        public String getConnectionId() {
+            return connectionId;
+        }
+
+        public String getSchemaName() {
+            return schemaName;
+        }
+
+        public DBObjectType getObjectType() {
+            return objectType;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            CacheKey cacheKey = (CacheKey) o;
+
+            if (!connectionId.equals(cacheKey.connectionId)) return false;
+            if (!schemaName.equals(cacheKey.schemaName)) return false;
+            return objectType == cacheKey.objectType;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = connectionId.hashCode();
+            result = 31 * result + schemaName.hashCode();
+            result = 31 * result + objectType.hashCode();
+            return result;
+        }
+
+        @Override
+        public void readState(Element element) {
+            connectionId = element.getAttributeValue("connection-id");
+            schemaName = element.getAttributeValue("schema");
+            objectType = DBObjectType.getObjectType(element.getAttributeValue("object-type"));
+        }
+
+        @Override
+        public void writeState(Element element) {
+            element.setAttribute("connection-id", connectionId);
+            element.setAttribute("schema", schemaName);
+            element.setAttribute("object-type", objectType.getName());
+        }
     }
 
     /***************************************
@@ -80,11 +144,34 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
     @Nullable
     @Override
     public Element getState() {
-        return null;
+        Element element = new Element("state");
+        Element filtersElement = new Element("filters");
+        element.addContent(filtersElement);
+        for (CacheKey cacheKey : cachedFilters.keySet()) {
+            ObjectQuickFilter filter = cachedFilters.get(cacheKey);
+            Element filterElement = new Element("filter");
+            filtersElement.addContent(filterElement);
+
+            cacheKey.writeState(filterElement);
+            filter.writeState(filterElement);
+        }
+
+        return element;
     }
 
     @Override
     public void loadState(Element element) {
+        Element filtersElement = element.getChild("filters");
+        if (filtersElement != null) {
+            for (Element filterElement : filtersElement.getChildren()) {
+                CacheKey cacheKey = new CacheKey();
+                cacheKey.readState(filterElement);
 
+                ObjectQuickFilter filter = new ObjectQuickFilter(cacheKey.getObjectType());
+                filter.readState(filterElement);
+
+                cachedFilters.put(cacheKey, filter);
+            }
+        }
     }
 }

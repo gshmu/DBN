@@ -1,10 +1,15 @@
 package com.dci.intellij.dbn.object.filter.quick;
 
+import org.jdom.Element;
+
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.NameFilterCondition;
+import static com.dci.intellij.dbn.common.options.setting.SettingsUtil.getBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsUtil.setBooleanAttribute;
 
-public class ObjectQuickFilterCondition extends NameFilterCondition {
+public class ObjectQuickFilterCondition extends NameFilterCondition implements PersistentStateElement<Element>{
     private ObjectQuickFilter filter;
     private boolean active = true;
 
@@ -12,6 +17,10 @@ public class ObjectQuickFilterCondition extends NameFilterCondition {
         super(operator, pattern);
         this.filter = filter;
         this.active = active;
+    }
+
+    public ObjectQuickFilterCondition(ObjectQuickFilter filter) {
+        this.filter = filter;
     }
 
     public ObjectQuickFilter getFilter() {
@@ -32,5 +41,17 @@ public class ObjectQuickFilterCondition extends NameFilterCondition {
 
     public boolean accepts(DBObject object) {
         return !active || accepts(object.getName());
+    }
+
+    @Override
+    public void readState(Element element) {
+        super.readState(element);
+        active = getBooleanAttribute(element, "active", true);
+    }
+
+    @Override
+    public void writeState(Element element) {
+        super.writeState(element);
+        setBooleanAttribute(element, "active", active);
     }
 }
