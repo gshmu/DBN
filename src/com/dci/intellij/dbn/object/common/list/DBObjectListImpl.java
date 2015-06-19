@@ -291,7 +291,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     public String getPresentableTextDetails() {
         int elementCount = getTreeChildCount();
         int unfilteredElementCount = getAllElements().size();
-        return elementCount > 0 ? "(" + elementCount + (elementCount != unfilteredElementCount ? "/"+ unfilteredElementCount : "") + ")" : null;
+        return unfilteredElementCount > 0 ? "(" + elementCount + (elementCount != unfilteredElementCount ? "/"+ unfilteredElementCount : "") + ")" : null;
     }
 
     public String getPresentableTextConditionalDetails() {

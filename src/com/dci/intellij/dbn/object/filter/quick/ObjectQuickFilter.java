@@ -30,13 +30,17 @@ public class ObjectQuickFilter extends Filter<DBObject> implements Cloneable<Obj
         return objectType;
     }
 
-    public ObjectQuickFilterCondition addNewCondition() {
-        return addCondition(ConditionOperator.EQUAL, "", true);
+    public ObjectQuickFilterCondition addNewCondition(ConditionOperator operator) {
+        return addCondition(operator, "", true);
     }
     public ObjectQuickFilterCondition addCondition(ConditionOperator operator, String pattern, boolean active) {
         ObjectQuickFilterCondition condition = new ObjectQuickFilterCondition(this, operator, pattern, active);
         conditions.add(condition);
         return condition;
+    }
+
+    public void removeCondition(ObjectQuickFilterCondition condition) {
+        conditions.remove(condition);
     }
 
     public List<ObjectQuickFilterCondition> getConditions() {
