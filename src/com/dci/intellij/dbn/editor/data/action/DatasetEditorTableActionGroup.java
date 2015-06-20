@@ -1,18 +1,14 @@
 package com.dci.intellij.dbn.editor.data.action;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
+import com.dci.intellij.dbn.editor.data.filter.ConditionJoinType;
 import com.dci.intellij.dbn.editor.data.filter.ConditionOperator;
 import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
@@ -28,6 +24,12 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 
 public class DatasetEditorTableActionGroup extends DefaultActionGroup {
     private ColumnInfo columnInfo;
@@ -73,7 +75,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         DatasetFilter activeFilter = filterManager.getActiveFilter(table.getDataset());
         if (activeFilter instanceof DatasetBasicFilter) {
             DatasetBasicFilter basicFilter = (DatasetBasicFilter) activeFilter;
-            if (basicFilter.getJoinType() == DatasetBasicFilter.JOIN_TYPE_AND &&
+            if (basicFilter.getJoinType() == ConditionJoinType.AND &&
                     !basicFilter.containsConditionForColumn(columnInfo.getName())) {
                 filterActionGroup.addSeparator();
                 filterActionGroup.add(new CreateAdditionalConditionAction());
@@ -90,7 +92,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         }
 
         DBDataset dataset = table.getDataset();
-        DBColumn column = dataset.getColumn(columnInfo.getName());
+        DBColumn column = FailsafeUtil.get(dataset.getColumn(columnInfo.getName()));
         if (columnValue != null) {
             if (column.isForeignKey()) {
                 DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
