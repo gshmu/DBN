@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.menu.action;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -29,6 +24,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class OpenSQLConsoleAction extends DumbAwareAction {
     private ConnectionHandler latestSelection; // todo move to data context
@@ -142,7 +142,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
 
 
         public SelectConsoleAction(ConnectionHandler connectionHandler) {
-            super("Create SQL console...");
+            super("Create SQL Console...");
             this.connectionHandler = connectionHandler;
         }
 
