@@ -4,6 +4,7 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfigurationFactory;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
@@ -22,7 +23,7 @@ public class DBMethodRunConfigurationFactory extends DBProgramRunConfigurationFa
     public Icon getIcon(@NotNull RunConfiguration configuration) {
         DBMethodRunConfiguration runConfiguration = (DBMethodRunConfiguration) configuration;
         MethodExecutionInput executionInput = runConfiguration.getExecutionInput();
-        if (executionInput == null) {
+        if (runConfiguration.isGeneric() || executionInput == null) {
             return super.getIcon();
         } else {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
@@ -33,12 +34,17 @@ public class DBMethodRunConfigurationFactory extends DBProgramRunConfigurationFa
 
     @Override
     public RunConfiguration createTemplateConfiguration(Project project) {
-        return new DBMethodRunConfiguration(project, this, "");
+        return new DBMethodRunConfiguration(project, this, "", false);
+    }
+
+    @Override
+    public DBProgramRunConfiguration createConfiguration(Project project, String name, boolean generic) {
+        return new DBMethodRunConfiguration(project, this, name, generic);
     }
 
     public DBMethodRunConfiguration createConfiguration(DBMethod method) {
-        String name = DatabaseDebuggerManager.createConfigurationName(method);
-        DBMethodRunConfiguration runConfiguration = new DBMethodRunConfiguration(method.getProject(), this, name);
+        String name = DatabaseDebuggerManager.createMethodConfigurationName(method);
+        DBMethodRunConfiguration runConfiguration = new DBMethodRunConfiguration(method.getProject(), this, name, false);
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(method.getProject());
         MethodExecutionInput executionInput = executionManager.getExecutionInput(method);
         runConfiguration.setExecutionInput(executionInput);

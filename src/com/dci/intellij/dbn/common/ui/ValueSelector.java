@@ -261,9 +261,13 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
         @Override
         public void mousePressed(MouseEvent e) {
-            if (isEnabled && !isShowingPopup) {
-                innerPanel.requestFocus();
-                showPopup();
+            if (getValues().size() == 0) {
+                selectValue(null);
+            } else {
+                if (isEnabled && !isShowingPopup) {
+                    innerPanel.requestFocus();
+                    showPopup();
+                }
             }
         }
 
@@ -325,12 +329,15 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         values.clear();
     }
 
+    public String getOptionDisplayName(T value) {
+        return NamingUtil.enhanceUnderscoresForDisplay(getName(value));
+    }
 
     public class SelectValueAction extends DumbAwareAction {
         private T value;
 
         public SelectValueAction(T value) {
-            super(NamingUtil.enhanceUnderscoresForDisplay(getName(value)), null, options.is(ValueSelectorOption.HIDE_ICON) ? null : value.getIcon());
+            super(getOptionDisplayName(value), null, options.is(ValueSelectorOption.HIDE_ICON) ? null : value.getIcon());
             this.value = value;
         }
 
@@ -437,7 +444,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         if (value != null) {
             value = values.contains(value) ? value : values.isEmpty() ? null : values.get(0);
         }
-        if (!CommonUtil.safeEqual(oldValue, value)) {
+        if (!CommonUtil.safeEqual(oldValue, value) || (values.isEmpty() && value == null)) {
             if (isComboBox) {
                 selectedValue = value;
                 if (selectedValue == null) {

@@ -3,16 +3,15 @@ package com.dci.intellij.dbn.object.common.list;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.content.DynamicContentImpl;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
-import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.intellij.openapi.project.Project;
 
 public class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicContentImpl<T> implements DBObjectRelationList<T>{
@@ -27,13 +26,12 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
 
     @NotNull
     public List<T> getObjectRelations() {
-        return getElements();
+        return getAllElements();
     }
 
-    public Filter getFilter() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        ObjectNameFilterSettings nameFilterSettings = connectionHandler.getSettings().getFilterSettings().getObjectNameFilterSettings();
-        return nameFilterSettings.getFilter(objectRelationType);
+    @Nullable
+    protected Filter getFilter() {
+        return null;
     }
 
     public DBObjectRelationType getObjectRelationType() {
@@ -50,7 +48,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
 
     public List<DBObjectRelation> getRelationBySourceName(String sourceName) {
         List<DBObjectRelation> objectRelations = new ArrayList<DBObjectRelation>();
-        for (DBObjectRelation objectRelation : getElements()) {
+        for (DBObjectRelation objectRelation : getAllElements()) {
             if (objectRelation.getSourceObject().getName().equals(sourceName)) {
                 objectRelations.add(objectRelation);
             }
@@ -60,7 +58,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
 
     public List<DBObjectRelation> getRelationByTargetName(String targetName) {
         List<DBObjectRelation> objectRelations = new ArrayList<DBObjectRelation>();
-        for (DBObjectRelation objectRelation : getElements()) {
+        for (DBObjectRelation objectRelation : getAllElements()) {
             if (objectRelation.getTargetObject().getName().equals(targetName)) {
                 objectRelations.add(objectRelation);
             }

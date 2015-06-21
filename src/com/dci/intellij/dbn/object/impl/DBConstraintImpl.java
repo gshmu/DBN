@@ -201,8 +201,10 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
             case PRIMARY_KEY: properties.add(0, new SimplePresentableProperty("Constraint type", "Primary Key")); break;
             case FOREIGN_KEY:
                 DBConstraint foreignKeyConstraint = getForeignKeyConstraint();
-                properties.add(0, new DBObjectPresentableProperty(foreignKeyConstraint));
-                properties.add(0, new SimplePresentableProperty("Constraint type", "Foreign Key"));
+                if (foreignKeyConstraint != null) {
+                    properties.add(0, new DBObjectPresentableProperty(foreignKeyConstraint));
+                    properties.add(0, new SimplePresentableProperty("Constraint type", "Foreign Key"));
+                }
                 break;
             case UNIQUE_KEY: properties.add(0, new SimplePresentableProperty("Constraint type", "Unique")); break;
         }

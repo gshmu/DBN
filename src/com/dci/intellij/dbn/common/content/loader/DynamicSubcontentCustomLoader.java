@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.content.loader;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class DynamicSubcontentCustomLoader<T extends DynamicContentElement> implements DynamicContentLoader<T> {
     public abstract T resolveElement(DynamicContent<T> dynamicContent, DynamicContentElement sourceElement);
@@ -13,11 +13,11 @@ public abstract class DynamicSubcontentCustomLoader<T extends DynamicContentElem
     public void loadContent(DynamicContent<T> dynamicContent, boolean forceReload) throws DynamicContentLoadException, InterruptedException {
         List<T> list = null;
         SubcontentDependencyAdapter dependencyAdapter = (SubcontentDependencyAdapter) dynamicContent.getDependencyAdapter();
-        for (Object object : dependencyAdapter.getSourceContent().getElements()) {
+        for (Object object : dependencyAdapter.getSourceContent().getAllElements()) {
             dynamicContent.checkDisposed();
             DynamicContentElement sourceElement = (DynamicContentElement) object;
             T element = resolveElement(dynamicContent, sourceElement);
-            if (element != null && dynamicContent.accepts(element)) {
+            if (element != null) {
                 dynamicContent.checkDisposed();
                 if (list == null) list = new ArrayList<T>();
                 list.add(element);

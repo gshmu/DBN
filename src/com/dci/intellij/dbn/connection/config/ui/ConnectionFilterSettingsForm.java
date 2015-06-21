@@ -37,13 +37,12 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
         final ConnectionFilterSettings configuration = getConfiguration();
         final boolean notifyFilterListeners = configuration.isHideEmptySchemas() != hideEmptySchemasCheckBox.isSelected();
         applyFormChanges(configuration);
-
         new SettingsChangeNotifier() {
             @Override
             public void notifyChanges() {
                 if (notifyFilterListeners) {
                     ObjectFilterChangeListener listener = EventUtil.notify(getConfiguration().getProject(), ObjectFilterChangeListener.TOPIC);
-                    listener.nameFiltersChanged(DBObjectType.SCHEMA, configuration.getConnectionId());
+                    listener.nameFiltersChanged(configuration.getConnectionId(), DBObjectType.SCHEMA);
                 }
             }
         };

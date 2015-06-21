@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.statement;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -208,6 +209,15 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     /*********************************************************
      *                       Execution                       *
      *********************************************************/
+    public void debugExecute(@NotNull StatementExecutionProcessor executionProcessor, @NotNull Connection connection) {
+        try {
+            executionProcessor.execute(connection);
+        } finally {
+            DBLanguagePsiFile file = executionProcessor.getPsiFile();
+            DocumentUtil.refreshEditorAnnotations(file);
+        }
+    }
+
     public void executeStatement(final @NotNull StatementExecutionProcessor executionProcessor) {
         executeStatements(executionProcessor.asList(), executionProcessor.getVirtualFile());
     }
@@ -240,7 +250,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                         if (!progressIndicator.isIndeterminate()) {
                                             progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, size));
                                         }
-                                        executionProcessor.execute(progressIndicator);
+                                        executionProcessor.execute();
                                     } finally {
                                         if (TimeUtil.isOlderThan(lastRefresh, 2, TimeUnit.SECONDS)) {
                                             lastRefresh = System.currentTimeMillis();

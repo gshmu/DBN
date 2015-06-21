@@ -4,12 +4,13 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import gnu.trove.THashMap;
 
-public class SessionBrowserState extends SortableDataModelState implements FileEditorState {
+public class SessionBrowserState extends SortableDataModelState implements FileEditorState, PersistentStateElement<Element> {
     public static final SessionBrowserState VOID = new SessionBrowserState();
     private SessionBrowserFilterState filterState = new SessionBrowserFilterState();
     private int refreshInterval = 0;

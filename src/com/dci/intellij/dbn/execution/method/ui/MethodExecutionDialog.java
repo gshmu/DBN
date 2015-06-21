@@ -35,7 +35,7 @@ public class MethodExecutionDialog extends DBNDialog<MethodExecutionForm> {
     @Nullable
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return component.getComponent();
+        return component == null ? null : component.getComponent();
     }
 
     @Override

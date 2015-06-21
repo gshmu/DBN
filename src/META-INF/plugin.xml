@@ -2,11 +2,12 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.4560.2</version>
+    <version>3.0.4560.3</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
     <idea-version since-build="138.0001" until-build="139.9999"/>
+    <idea-version since-build="142.0001" until-build="142.9999"/>
     <description><![CDATA[
             <b>Database development, scripting and navigation tool</b><br>
             This product adds extensive database development and maintenance capabilities to the IntelliJ IDEA development environment and related products.
@@ -27,6 +28,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Support Oracle materialized view indexes<br>
+                - Fixed external driver setup issues<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.4560</b>
             <ul>
                 - Restored URL-based connection setup<br>
@@ -331,6 +338,7 @@
         <component><implementation-class>com.dci.intellij.dbn.object.common.loader.DatabaseLoaderManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.object.factory.DatabaseObjectFactory</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.object.dependency.ObjectDependencyManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.options.ProjectSettingsManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileManager</implementation-class></component>
@@ -611,6 +619,7 @@
         <xdebugger.breakpointType implementation="com.dci.intellij.dbn.debugger.breakpoint.DBProgramBreakpointType"/>
         <programRunner implementation="com.dci.intellij.dbn.debugger.execution.method.DBMethodRunner"/>
         <programRunner implementation="com.dci.intellij.dbn.debugger.execution.statement.DBStatementRunner"/>
+        <!--<executionTargetProvider implementation="com.dci.intellij.dbn.debugger.execution.common.DBExecutionTargetProvider"/>-->
         <configurationType implementation="com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfigurationType"/>
         <configurationType implementation="com.dci.intellij.dbn.debugger.execution.statement.DBStatementRunConfigurationType"/>
         <navbar order="last" implementation="com.dci.intellij.dbn.navigation.NavigationBarExtension"/>

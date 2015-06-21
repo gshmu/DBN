@@ -43,7 +43,8 @@ public class FileConnectionMapping implements PersistentStateElement<Element> {
 
     /*********************************************
      *            PersistentStateElement         *
-     *********************************************/
+     ********************************************
+     * @param element*/
     public void readState(Element element) {
         fileUrl = element.getAttributeValue("file-url");
         // fixme remove this backward compatibility 

@@ -6,9 +6,11 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.debugger.evaluation.DBProgramDebuggerEditorsProvider;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.language.common.DBLanguageFileType;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
-import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
@@ -28,36 +30,53 @@ public class DBProgramBreakpointType extends XLineBreakpointType<DBProgramBreakp
 
     @Override
     public boolean canPutAt(@NotNull VirtualFile file, int line, @NotNull Project project) {
-        if (file.getFileType().equals(PSQLFileType.INSTANCE)) {
-            if (file instanceof DBSourceCodeVirtualFile) {
-                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) file;
-                DBContentType contentType = sourceCodeFile.getContentType();
-                if (contentType == DBContentType.CODE || contentType == DBContentType.CODE_BODY) {
-                    Document document = DocumentUtil.getDocument(file);
-                    int lineOffset = document.getLineStartOffset(line);
-                    PsiFile psiFile = PsiUtil.getPsiFile(project, file);
-                    PsiElement element = psiFile.findElementAt(lineOffset);
-                    while (element != null && !(element instanceof BasePsiElement)) {
-                        element = element.getNextSibling();
+        if (file.getFileType() instanceof DBLanguageFileType) {
+            PsiFile psiFile = PsiUtil.getPsiFile(project, file);
+            if (psiFile instanceof DBLanguagePsiFile) {
+                if (file instanceof DBSourceCodeVirtualFile) {
+                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) file;
+                    DBContentType contentType = sourceCodeFile.getContentType();
+                    if (contentType == DBContentType.CODE || contentType == DBContentType.CODE_BODY) {
+                        BasePsiElement basePsiElement = findPsiElement(psiFile, line);
+                        return basePsiElement != null;
                     }
-                    if (element != null) {
-                        BasePsiElement basePsiElement = (BasePsiElement) element;
-                        int elementLine = document.getLineNumber(basePsiElement.getTextOffset());
-                        return elementLine == line;
+                } else {
+                    BasePsiElement basePsiElement = findPsiElement(psiFile, line);
+                    if (basePsiElement != null) {
+                        BasePsiElement debuggablePsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.DEBUGGABLE);
+                        return debuggablePsiElement != null;
                     }
-
-                    /*if (element != null) {
-                        BasePsiElement basePsiElement = (BasePsiElement) element;
-                        BasePsiElement executableCodePsiElement = basePsiElement.lookupPsiElementByAttribute(ElementTypeAttribute.EXECUTABLE_CODE);
-                        if (executableCodePsiElement != null){
-                            int executableLine = document.getLineNumber(executableCodePsiElement.getTextOffset());
-                            return executableLine == line;
-                        }
-                    }*/
                 }
             }
         }
         return false;
+    }
+
+    @Nullable
+    private BasePsiElement findPsiElement(PsiFile psiFile, int line) {
+        Document document = DocumentUtil.getDocument(psiFile);
+        if (document != null) {
+            int lineOffset = document.getLineStartOffset(line);
+            PsiElement element = psiFile.findElementAt(lineOffset);
+            while (element != null && !(element instanceof BasePsiElement)) {
+                PsiElement nextSibling = element.getNextSibling();
+                if (nextSibling == null) {
+                    element = element.getParent();
+                    break;
+                } else {
+                    element = nextSibling;
+                }
+            }
+
+            if (element instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) element;
+                int elementLine = document.getLineNumber(basePsiElement.getTextOffset());
+                if (elementLine == line) {
+                    return basePsiElement;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

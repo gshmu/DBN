@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.browser.model;
 
 import javax.swing.Icon;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.ui.ToolTipProvider;
@@ -11,6 +12,12 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 
 public interface BrowserTreeNode extends NavigationItem, ItemPresentation, ToolTipProvider, GenericDatabaseElement {
+
+    enum LoadStatus {
+        NEW,
+        LOADING,
+        LOADED
+    }
 
     void initTreeElement();
 
@@ -27,7 +34,7 @@ public interface BrowserTreeNode extends NavigationItem, ItemPresentation, ToolT
 
     List<? extends BrowserTreeNode> getTreeChildren();
 
-    void refreshTreeChildren(@Nullable DBObjectType objectType);
+    void refreshTreeChildren(@NotNull DBObjectType... objectTypes);
 
     void rebuildTreeChildren();
 

@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
@@ -32,19 +40,12 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectBundleImpl;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.List;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -295,7 +296,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     public boolean isValid() {
         if (connectionBundle.containsConnection(this)) {
             long currentTimestamp = System.currentTimeMillis();
-            if (validityCheckTimestamp < currentTimestamp - 30000) {
+            if (validityCheckTimestamp < currentTimestamp - 30000 && !ApplicationManager.getApplication().isDispatchThread()) {
                 validityCheckTimestamp = currentTimestamp;
                 try {
                     getStandaloneConnection();

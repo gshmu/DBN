@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.debugger.execution.method;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -28,14 +20,22 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import gnu.trove.THashSet;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class DBMethodRunConfiguration extends DBProgramRunConfiguration<DBMethod, MethodExecutionInput> {
     private Set<MethodExecutionInput> methodSelectionHistory = new THashSet<MethodExecutionInput>();
     private DBMethodRunConfigurationEditor configurationEditor;
     private boolean isGeneratedName = true;
 
-    public DBMethodRunConfiguration(Project project, ConfigurationFactory factory, String name) {
-        super(project, factory, name);
+    public DBMethodRunConfiguration(Project project, ConfigurationFactory factory, String name, boolean generic) {
+        super(project, factory, name, generic);
     }
 
     @NotNull
@@ -54,21 +54,23 @@ public class DBMethodRunConfiguration extends DBProgramRunConfiguration<DBMethod
     }
 
     public void checkConfiguration() throws RuntimeConfigurationException {
-        MethodExecutionInput executionInput = getExecutionInput();
-        if (executionInput == null) {
-            throw new RuntimeConfigurationError("No or invalid method selected. The database connection is down, obsolete or method has been dropped.");
-        }
+        if (!isGeneric()) {
+            MethodExecutionInput executionInput = getExecutionInput();
+            if (executionInput == null) {
+                throw new RuntimeConfigurationError("No or invalid method selected. The database connection is down, obsolete or method has been dropped.");
+            }
 
-        if (executionInput.isObsolete()) {
-            throw new RuntimeConfigurationError(
-                    "Method " + executionInput.getMethodRef().getQualifiedName() + " could not be resolved. " +
-                    "The database connection is down or method has been dropped.");
-        }
+            if (executionInput.isObsolete()) {
+                throw new RuntimeConfigurationError(
+                        "Method " + executionInput.getMethodRef().getQualifiedName() + " could not be resolved. " +
+                                "The database connection is down or method has been dropped.");
+            }
 
-        ConnectionHandler connectionHandler = getMethod().getConnectionHandler();
-        if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
-            throw new RuntimeConfigurationError(
-                    "Debugging is not supported for " + connectionHandler.getDatabaseType().getDisplayName() +" databases.");
+            ConnectionHandler connectionHandler = getMethod().getConnectionHandler();
+            if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
+                throw new RuntimeConfigurationError(
+                        "Debugging is not supported for " + connectionHandler.getDatabaseType().getDisplayName() +" databases.");
+            }
         }
     }
 
@@ -86,7 +88,7 @@ public class DBMethodRunConfiguration extends DBProgramRunConfiguration<DBMethod
 
     @Override
     public List<DBMethod> getMethods() {
-        ArrayList<DBMethod> methods = new ArrayList<>();
+        ArrayList<DBMethod> methods = new ArrayList<DBMethod>();
         DBMethod method = getMethod();
         if (method != null) {
             methods.add(method);

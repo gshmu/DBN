@@ -14,13 +14,9 @@ public class DBMethodRunConfigurationEditor extends DBProgramRunConfigurationEdi
         return new DBMethodRunConfigurationEditorForm(getConfiguration());
     }
 
-    @Override
-    protected void disposeEditor() {
-        //configurationEditorComponent.dispose();
-    }
 
     public void setExecutionInput(MethodExecutionInput executionInput) {
-        DBMethodRunConfigurationEditorForm configurationEditorForm = getConfigurationEditorForm();
+        DBMethodRunConfigurationEditorForm configurationEditorForm = getConfigurationEditorForm(false);
         if (configurationEditorForm != null) {
             configurationEditorForm.setExecutionInput(executionInput, true);
         }

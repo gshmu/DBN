@@ -1,15 +1,22 @@
 package com.dci.intellij.dbn.debugger.execution.statement;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -24,10 +31,9 @@ import com.intellij.openapi.util.WriteExternalException;
 public class DBStatementRunConfiguration extends DBProgramRunConfiguration<DBLanguagePsiFile, StatementExecutionInput> {
     private StatementExecutionInput executionInput;
     private DBStatementRunConfigurationEditor configurationEditor;
-    private boolean isGeneratedName = true;
 
-    public DBStatementRunConfiguration(Project project, ConfigurationFactory factory, String name) {
-        super(project, factory, name);
+    public DBStatementRunConfiguration(Project project, ConfigurationFactory factory, String name, boolean generic) {
+        super(project, factory, name, generic);
     }
 
     @NotNull
@@ -52,7 +58,30 @@ public class DBStatementRunConfiguration extends DBProgramRunConfiguration<DBLan
 
     @Override
     public List<DBMethod> getMethods() {
-        return null;
+        if (executionInput != null) {
+            final ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+            if (executablePsiElement != null) {
+                return new ReadActionRunner<List<DBMethod>>() {
+                    @Override
+                    protected List<DBMethod> run() {
+                        Set<DBObject> objects = executablePsiElement.collectObjectReferences(DBObjectType.METHOD);
+                        if (objects != null) {
+                            List<DBMethod> methods = new ArrayList<DBMethod>();
+                            for (DBObject object : objects) {
+                                if (object instanceof DBMethod && !methods.contains(object)) {
+                                    DBMethod method = (DBMethod) object;
+                                    methods.add(method);
+                                }
+                            }
+                            return methods;
+                        }
+                        return Collections.emptyList();
+                    }
+                }.start();
+            }
+
+        }
+        return Collections.emptyList();
     }
 
     public void checkConfiguration() throws RuntimeConfigurationException {
@@ -74,11 +103,11 @@ public class DBStatementRunConfiguration extends DBProgramRunConfiguration<DBLan
     }
 
     public boolean isGeneratedName() {
-        return isGeneratedName;
+        return false;
     }
 
     public String suggestedName() {
-        return "DBN Script Runner";
+        return "DBN - Statement Runner";
     }
 
     public StatementExecutionInput getExecutionInput() {

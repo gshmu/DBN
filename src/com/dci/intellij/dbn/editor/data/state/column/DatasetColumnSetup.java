@@ -7,10 +7,11 @@ import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 
-public class DatasetColumnSetup {
+public class DatasetColumnSetup implements PersistentStateElement<Element>{
     private List<DatasetColumnState> columnStates = new ArrayList<DatasetColumnState>();
 
     @NotNull

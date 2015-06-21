@@ -148,8 +148,9 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
             if (iterationPsiElement != null) {
                 BasePsiElement argumentPsiElement = ARGUMENT_LOOKUP_ADAPTER.findInElement(parameter);
                 if (argumentPsiElement != null) {
-                    DBArgument argument = (DBArgument) argumentPsiElement.resolveUnderlyingObject();
-                    if (argument != null) {
+                    DBObject object = argumentPsiElement.resolveUnderlyingObject();
+                    if (object instanceof DBArgument) {
+                        DBArgument argument = (DBArgument) object;
                         context.setCurrentParameter(argument.getPosition() -1);
                         return;
                     }

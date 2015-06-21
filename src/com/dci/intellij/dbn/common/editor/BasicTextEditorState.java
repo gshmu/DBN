@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.common.editor;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -12,7 +9,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
@@ -22,6 +18,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class BasicTextEditorState implements FileEditorState {
     private int line;
@@ -119,7 +117,6 @@ public class BasicTextEditorState implements FileEditorState {
             int selectionEnd = Math.min(this.selectionEnd, document.getTextLength());
             selectionModel.setSelection(selectionStart, selectionEnd);
         }
-        ((EditorEx) editor).stopOptimizedScrolling();
         editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
 
         final Project project = editor.getProject();

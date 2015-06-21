@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.database.oracle;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseDebuggerInterfaceImpl;
@@ -11,9 +14,6 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerSessionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl implements DatabaseDebuggerInterface {
     public OracleDebuggerInterface(DatabaseInterfaceProvider provider) {
@@ -46,8 +46,13 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
         return executeCall(connection, new DebuggerRuntimeInfo(), "synchronize-session");
     }
 
-    public BreakpointInfo addBreakpoint(String programOwner, String programName, String programType, int line, Connection connection) throws SQLException {
-        return executeCall(connection, new BreakpointInfo(), "add-breakpoint", programOwner, programName, programType, line + 1);
+    public BreakpointInfo addProgramBreakpoint(String programOwner, String programName, String programType, int line, Connection connection) throws SQLException {
+        return executeCall(connection, new BreakpointInfo(), "add-program-breakpoint", programOwner, programName, programType, line + 1);
+    }
+
+    @Override
+    public BreakpointInfo addSourceBreakpoint(int line, Connection connection) throws SQLException {
+        return executeCall(connection, new BreakpointInfo(), "add-source-breakpoint", line + 1);
     }
 
     public BreakpointOperationInfo removeBreakpoint(int breakpointId, Connection connection) throws SQLException {
@@ -75,7 +80,7 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
     }
 
     public DebuggerRuntimeInfo runToPosition(String programOwner, String programName, String programType, int line, Connection connection) throws SQLException {
-        BreakpointInfo breakpointInfo = addBreakpoint(programOwner, programName, programType, line, connection);
+        BreakpointInfo breakpointInfo = addProgramBreakpoint(programOwner, programName, programType, line, connection);
         DebuggerRuntimeInfo runtimeInfo = stepOut(connection);
         removeBreakpoint(breakpointInfo.getBreakpointId(), connection);
         return runtimeInfo;

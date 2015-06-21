@@ -12,6 +12,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.impl.breakpoints.XBreakpointManagerImpl;
 import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointImpl;
+import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointManager;
 
 /**
  * WORKAROUND: Breakpoints do not seem to be registered properly in the XLineBreakpointManager.
@@ -26,9 +27,10 @@ public class BreakpointUpdaterFileEditorListener implements FileEditorManagerLis
                 if (breakpoint instanceof XLineBreakpoint) {
                     XLineBreakpoint lineBreakpoint = (XLineBreakpoint) breakpoint;
                     lineBreakpoint.putUserData(DBProgramBreakpointHandler.BREAKPOINT_ID_KEY, null);
-                    DBEditableObjectVirtualFile breakpointDatabaseFile = DBProgramBreakpointHandler.getDatabaseFile(lineBreakpoint);
-                    if (databaseFile.equals(breakpointDatabaseFile)) {
-                        breakpointManager.getLineBreakpointManager().registerBreakpoint((XLineBreakpointImpl) lineBreakpoint, true);
+                    VirtualFile virtualFile = DBProgramBreakpointHandler.getVirtualFile(lineBreakpoint);
+                    if (databaseFile.equals(virtualFile)) {
+                        XLineBreakpointManager lineBreakpointManager = breakpointManager.getLineBreakpointManager();
+                        lineBreakpointManager.registerBreakpoint((XLineBreakpointImpl) lineBreakpoint, true);
                     }
                 }
             }

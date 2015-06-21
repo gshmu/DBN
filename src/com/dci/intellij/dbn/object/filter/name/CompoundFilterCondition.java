@@ -8,6 +8,8 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.filter.ConditionJoinType;
+import com.dci.intellij.dbn.object.filter.ConditionOperator;
 
 public class CompoundFilterCondition extends Filter<DBObject> implements FilterCondition {
     private List<FilterCondition> conditions = new ArrayList<FilterCondition>();
@@ -22,7 +24,7 @@ public class CompoundFilterCondition extends Filter<DBObject> implements FilterC
     }
 
     public void addCondition(ConditionOperator operator, String text) {
-        SimpleFilterCondition condition = new SimpleFilterCondition(operator, text);
+        SimpleNameFilterCondition condition = new SimpleNameFilterCondition(operator, text);
         addCondition(condition);
     }
 
@@ -164,7 +166,7 @@ public class CompoundFilterCondition extends Filter<DBObject> implements FilterC
         for (Object o : element.getChildren()) {
             Element childElement = (Element) o;
             FilterCondition condition =
-                    childElement.getName().equals("simple-condition") ? new SimpleFilterCondition() :
+                    childElement.getName().equals("simple-condition") ? new SimpleNameFilterCondition() :
                     childElement.getName().equals("compound-condition") ? new CompoundFilterCondition() : null;
             if (condition != null) {
                 condition.readConfiguration(childElement);
@@ -178,7 +180,7 @@ public class CompoundFilterCondition extends Filter<DBObject> implements FilterC
         element.setAttribute("join-type", joinType.toString());
         for (FilterCondition condition : conditions) {
             Element childElement =
-                    condition instanceof SimpleFilterCondition ? new Element("simple-condition") :
+                    condition instanceof SimpleNameFilterCondition ? new Element("simple-condition") :
                     condition instanceof CompoundFilterCondition ? new Element("compound-condition") : null;
 
             if (childElement != null) {

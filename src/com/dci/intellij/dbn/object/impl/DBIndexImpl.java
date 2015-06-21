@@ -9,8 +9,8 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.object.DBColumn;
+import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBIndex;
-import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
@@ -25,8 +25,8 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     private DBObjectList<DBColumn> columns;
     private boolean isUnique;
 
-    public DBIndexImpl(DBTable table, ResultSet resultSet) throws SQLException {
-        super(table, resultSet);
+    public DBIndexImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
+        super(dataset, resultSet);
     }
 
     @Override
@@ -48,9 +48,9 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     @Override
     protected void initLists() {
         super.initLists();
-        DBTable table = getTable();
-        if (table != null) {
-            columns = initChildObjects().createSubcontentObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, table, DBObjectRelationType.INDEX_COLUMN, false);
+        DBDataset dataset = getDataset();
+        if (dataset != null) {
+            columns = initChildObjects().createSubcontentObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, dataset, DBObjectRelationType.INDEX_COLUMN, false);
         }
     }
 
@@ -58,8 +58,8 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
         return DBObjectType.INDEX;
     }
 
-    public DBTable getTable() {
-        return (DBTable) getParentObject();
+    public DBDataset getDataset() {
+        return (DBDataset) getParentObject();
     }
 
     public List<DBColumn> getColumns() {
@@ -73,10 +73,10 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     protected List<DBObjectNavigationList> createNavigationLists() {
         List<DBObjectNavigationList> objectNavigationLists = super.createNavigationLists();
 
-        if (columns.size() > 0) {
+        if (columns != null && columns.size() > 0) {
             objectNavigationLists.add(new DBObjectNavigationListImpl<DBColumn>("Columns", columns.getObjects()));
         }
-        objectNavigationLists.add(new DBObjectNavigationListImpl<DBTable>("Table", getTable()));
+        objectNavigationLists.add(new DBObjectNavigationListImpl<DBDataset>("Dataset", getDataset()));
 
         return objectNavigationLists;
     }

@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.execution.statement.variables;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class StatementExecutionVariablesCache implements PersistentStateElement<Element> {
     private Map<String, Set<StatementExecutionVariable>> fileVariablesMap = new THashMap<String, Set<StatementExecutionVariable>>();
@@ -48,9 +48,10 @@ public class StatementExecutionVariablesCache implements PersistentStateElement<
 
     /*********************************************
      *            PersistentStateElement         *
-     *********************************************/
-    public void readState(Element parent) {
-        Element variablesElement = parent.getChild("execution-variables");
+     ********************************************
+     * @param element*/
+    public void readState(Element element) {
+        Element variablesElement = element.getChild("execution-variables");
         if (variablesElement != null) {
             this.fileVariablesMap.clear();
             List<Element> fileElements = variablesElement.getChildren();
@@ -69,9 +70,9 @@ public class StatementExecutionVariablesCache implements PersistentStateElement<
         }
     }
 
-    public void writeState(Element parent) {
+    public void writeState(Element element) {
         Element variablesElement = new Element("execution-variables");
-        parent.addContent(variablesElement);
+        element.addContent(variablesElement);
 
         for (String fileUrl : fileVariablesMap.keySet()) {
             Element fileElement = new Element("file");

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
@@ -20,6 +21,7 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBDatasetTrigger;
+import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -51,28 +53,46 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
                 schema);
     }
 
+    @Nullable
     public List<DBColumn> getColumns() {
         return columns.getObjects();
     }
 
+    @Nullable
     public List<DBConstraint> getConstraints() {
         return constraints.getObjects();
     }
 
+    @Nullable
     public List<DBDatasetTrigger> getTriggers() {
         return triggers.getObjects();
     }
 
+    @Nullable
     public DBColumn getColumn(String name) {
         return columns.getObject(name);
     }
 
+    @Nullable
     public DBConstraint getConstraint(String name) {
         return constraints.getObject(name);
     }
 
+    @Nullable
     public DBDatasetTrigger getTrigger(String name) {
         return triggers.getObject(name);
+    }
+
+    @Nullable
+    @Override
+    public List<DBIndex> getIndexes() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public DBIndex getIndex(String name) {
+        return null;
     }
 
     public boolean hasLobColumns() {
@@ -127,6 +147,40 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
                 return new DBConstraintColumnRelation(constraint, column, position);
             }
             return null;
+        }
+    };
+
+
+    private static final DynamicContentLoader INDEX_COLUMN_RELATION_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader() {
+        public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
+            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+            return metadataInterface.loadIndexRelations(dataset.getSchema().getName(), dataset.getName(), connection);
+        }
+
+        public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+            String columnName = resultSet.getString("COLUMN_NAME");
+            String indexName = resultSet.getString("INDEX_NAME");
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+            DBIndex index = dataset.getIndex(indexName);
+            DBColumn column = dataset.getColumn(columnName);
+
+            if (column != null && index != null) {
+                return new DBIndexColumnRelation(index, column);
+            }
+            return null;
+        }
+    };
+
+    protected static final DynamicSubcontentLoader INDEX_COLUMN_RELATION_LOADER = new DynamicSubcontentLoader(true) {
+        public DynamicContentLoader getAlternativeLoader() {
+            return INDEX_COLUMN_RELATION_ALTERNATIVE_LOADER;
+        }
+
+        public boolean match(DynamicContentElement sourceElement, DynamicContent dynamicContent) {
+            DBIndexColumnRelation indexColumnRelation = (DBIndexColumnRelation) sourceElement;
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+            return indexColumnRelation.getColumn().getDataset().equals(dataset);
         }
     };
 
@@ -197,8 +251,33 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
         }
 
         public DBDatasetTrigger createElement(DynamicContent<DBDatasetTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParentElement();
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
             return new DBDatasetTriggerImpl(dataset, resultSet);
+        }
+    };
+
+    protected static final DynamicSubcontentLoader INDEXES_LOADER = new DynamicSubcontentLoader<DBIndex>(true) {
+        public boolean match(DBIndex index, DynamicContent dynamicContent) {
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+            DBDataset indexDataset = index.getDataset();
+            return indexDataset != null && indexDataset.equals(dataset);
+        }
+
+        public DynamicContentLoader<DBIndex> getAlternativeLoader() {
+            return INDEXES_ALTERNATIVE_LOADER;
+        }
+    };
+
+    private static final DynamicContentLoader<DBIndex> INDEXES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBIndex>() {
+        public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
+            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+            return metadataInterface.loadIndexes(dataset.getSchema().getName(), dataset.getName(), connection);
+        }
+
+        public DBIndex createElement(DynamicContent<DBIndex> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+            return new DBIndexImpl(dataset, resultSet);
         }
     };
 

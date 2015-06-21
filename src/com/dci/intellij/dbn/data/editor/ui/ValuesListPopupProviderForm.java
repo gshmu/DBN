@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.actionSystem.IdeActions;
@@ -255,7 +256,7 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
         List<String> elements;
 
         ListModel(Filter<String> filter, Collection<String> elements) {
-            this.elements = new FiltrableList<String>(filter);
+            this.elements = new FiltrableListImpl<String>(filter);
             this.elements.addAll(elements);
         }
 

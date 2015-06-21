@@ -26,7 +26,9 @@ public interface DatabaseDebuggerInterface extends DatabaseInterface{
 
     DebuggerRuntimeInfo synchronizeSession(Connection connection) throws SQLException;
 
-    BreakpointInfo addBreakpoint(String programOwner, String programName, String programType, int line, Connection connection) throws SQLException;
+    BreakpointInfo addProgramBreakpoint(String programOwner, String programName, String programType, int line, Connection connection) throws SQLException;
+
+    BreakpointInfo addSourceBreakpoint(int line, Connection connection) throws SQLException;
 
     BreakpointOperationInfo removeBreakpoint(int breakpointId, Connection connection) throws SQLException;
 
