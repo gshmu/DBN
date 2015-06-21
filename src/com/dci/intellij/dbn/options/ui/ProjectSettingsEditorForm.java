@@ -31,6 +31,7 @@ import com.intellij.ide.plugins.PluginNode;
 import com.intellij.ide.plugins.RepositoryHelper;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -118,15 +119,16 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                             try {
                                 final List<PluginNode> updateDescriptors = new ArrayList<PluginNode>();
                                 final List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadCachedPlugins();
+                                final List<PluginId> pluginIds = new ArrayList<PluginId>();
                                 if (descriptors != null) {
                                     for (IdeaPluginDescriptor descriptor : descriptors) {
+                                        pluginIds.add(descriptor.getPluginId());
                                         if (descriptor.getPluginId().toString().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {
                                             PluginNode pluginNode = new PluginNode(descriptor.getPluginId());
                                             pluginNode.setName(descriptor.getName());
                                             pluginNode.setSize("-1");
                                             pluginNode.setRepositoryName(PluginInstaller.UNKNOWN_HOST_MARKER);
                                             updateDescriptors.add(pluginNode);
-                                            break;
                                         }
                                     }
                                 }
@@ -135,7 +137,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                                     @Override
                                     protected void execute() {
                                         try {
-                                            PluginManagerMain.downloadPlugins(updateDescriptors, descriptors, new Runnable() {
+                                            PluginManagerMain.downloadPlugins(updateDescriptors, pluginIds, new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     PluginManagerMain.notifyPluginsUpdated(project);
