@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.ui.SimpleColoredComponent;
+import com.intellij.ui.speedSearch.SpeedSearchUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
@@ -11,16 +21,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.ui.SimpleColoredComponent;
-import com.intellij.ui.speedSearch.SpeedSearchUtil;
 
 public class TreeUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -33,7 +33,7 @@ public class TreeUtil {
         try {
             SpeedSearchUtil.applySpeedSearchHighlighting(tree, coloredComponent, true, selected);
         } catch (Throwable e) {
-            LOGGER.error("Error applying speed search highlighting");
+            LOGGER.warn("Error applying speed search highlighting");
         }
     }
 
