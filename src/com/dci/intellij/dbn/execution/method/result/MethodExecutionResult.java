@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
@@ -53,7 +54,7 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     }
 
     public void calculateExecDuration() {
-        this.executionDuration = (int) (System.currentTimeMillis() - executionInput.getExecutionTimestamp());
+        this.executionDuration = (int) (System.currentTimeMillis() - executionInput.getExecutionContext().getExecutionTimestamp());
     }
 
     public void addArgumentValue(DBArgument argument, Object value) throws SQLException {
@@ -115,6 +116,10 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     @NotNull
     public MethodExecutionInput getExecutionInput() {
         return FailsafeUtil.get(executionInput);
+    }
+
+    public ExecutionContext getExecutionContext() {
+        return getExecutionInput().getExecutionContext();
     }
 
     @NotNull

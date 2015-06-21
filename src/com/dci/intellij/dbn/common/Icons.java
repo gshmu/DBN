@@ -25,6 +25,10 @@ public class Icons {
     public static final Icon COMMON_ARROW_DOWN = load("/img/ComboBoxArrow.png");
     public static final Icon COMMON_TIMER = load("/img/Timer.png");
 
+    public static final Icon COMMON_FILTER_ACTIVE =    load("/img/ActiveFilterCondition.png");
+    public static final Icon COMMON_FILTER_INACTIVE =    load("/img/InactiveFilterCondition.png");
+
+
 
     public static final Icon ACTION_COPY = load("/img/action/Copy.png");
     public static final Icon ACTION_SORT_ALPHA = load("/img/action/SortAlphabetically.png");
@@ -101,6 +105,7 @@ public class Icons {
 
     public static final Icon STMT_EXECUTION_EXPLAIN       = load("/img/action/ExplainStatement.png");
     public static final Icon STMT_EXECUTION_RUN           = load("/img/action/ExecuteStatement.png");
+    public static final Icon STMT_EXECUTION_DEBUG         = load("/img/action/DebugStatement.png");
     public static final Icon STMT_EXECUTION_RERUN         = load("/img/action/Rerun.png");
     public static final Icon STMT_EXECUTION_RESUME        = load("/img/action/ResumeExecution.png");
     public static final Icon STMT_EXECUTION_REFRESH       = load("/img/action/Refresh.png");
@@ -191,8 +196,6 @@ public class Icons {
     public static final Icon DATASET_FILTER_GLOBAL_ERR =    load("/img/filter/DatasetFilterGlobalErr.png");
     public static final Icon DATASET_FILTER_EMPTY =    load("/img/filter/DatasetFilterEmpty.png");
 
-    public static final Icon DATASET_FILTER_CONDITION_ACTIVE =    load("/img/ActiveFilterCondition.png");
-    public static final Icon DATASET_FILTER_CONDITION_INACTIVE =    load("/img/InactiveFilterCondition.png");
     public static final Icon DATASET_FILTER_CONDITION_REMOVE =    load("/img/RemoveFilterCondition.png");
     public static final Icon DATASET_FILTER_CONDITION_NEW =    load("/img/NewFilterCondition.png");
 

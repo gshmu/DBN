@@ -76,8 +76,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         columnSelector = new ColumnSelector(column);
         columnPanel.add(columnSelector, BorderLayout.CENTER);
 
-        ConditionOperator selectedOperator = ConditionOperator.get(condition.getOperator());
-        operatorSelector = new OperatorSelector(selectedOperator);
+        operatorSelector = new OperatorSelector(condition.getOperator());
         operatorPanel.add(operatorSelector, BorderLayout.CENTER);
 
         editorComponent = new TextFieldWithPopup(dataset.getProject());
@@ -248,7 +247,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         String value = editorComponent.getText();
 
         condition.setColumnName(column == null ? "" : column.getName());
-        condition.setOperator(operator == null ? "" : operator.toString());
+        condition.setOperator(operator);
         condition.setValue(value == null ? "" : value);
         condition.setActive(active);
     }

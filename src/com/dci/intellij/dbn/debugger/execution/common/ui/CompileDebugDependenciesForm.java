@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDependenciesDialog> {
@@ -56,11 +57,17 @@ public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDepend
         int[] selectedIndicesArray = computeSelection(compileList, selectedObjects);
 
         objectList.setSelectedIndices(selectedIndicesArray);
+        if (selectedIndicesArray.length > 0) {
+            objectList.ensureIndexIsVisible(selectedIndicesArray.length - 1);
+        }
+
         hintTextArea.setBackground(mainPanel.getBackground());
         hintTextArea.setFont(mainPanel.getFont());
 
         Presentable source = runConfiguration.getSource();
-        DBNHeaderForm headerForm = new DBNHeaderForm(CommonUtil.nvl(source, Presentable.UNKNOWN));
+        DBNHeaderForm headerForm = source instanceof DBObject ?
+                new DBNHeaderForm((DBObject) source) :
+                new DBNHeaderForm(CommonUtil.nvl(source, Presentable.UNKNOWN));
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         parentComponent.registerRememberSelectionCheckBox(rememberSelectionCheckBox);
     }

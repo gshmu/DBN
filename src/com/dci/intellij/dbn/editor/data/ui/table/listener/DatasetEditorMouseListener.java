@@ -45,15 +45,17 @@ public class DatasetEditorMouseListener extends MouseAdapter implements Disposab
     public void mouseClicked(MouseEvent event) {
         if (MouseUtil.isNavigationEvent(event)) {
             DatasetEditorModelCell cell = (DatasetEditorModelCell) table.getCellAtLocation(event.getPoint());
-            DBColumn column = cell.getColumnInfo().getColumn();
+            if (cell != null){
+                DBColumn column = cell.getColumnInfo().getColumn();
 
-            if (column.isForeignKey() && cell.getUserValue() != null) {
-                table.clearSelection();
-                DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
-                if (filterInput != null && filterInput.getColumns().size() > 0) {
-                    DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(column.getProject());
-                    datasetEditorManager.navigateToRecord(filterInput, event);
-                    event.consume();
+                if (column.isForeignKey() && cell.getUserValue() != null) {
+                    table.clearSelection();
+                    DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
+                    if (filterInput != null && filterInput.getColumns().size() > 0) {
+                        DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(column.getProject());
+                        datasetEditorManager.navigateToRecord(filterInput, event);
+                        event.consume();
+                    }
                 }
             }
         }

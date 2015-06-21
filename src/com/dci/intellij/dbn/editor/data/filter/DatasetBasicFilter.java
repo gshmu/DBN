@@ -1,24 +1,22 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterForm;
 import com.dci.intellij.dbn.object.DBDataset;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatasetBasicFilter extends DatasetFilterImpl {
-    public static final int JOIN_TYPE_AND = 0;
-    public static final int JOIN_TYPE_OR = 1;
-
     private List<DatasetBasicFilterCondition> conditions = new ArrayList<DatasetBasicFilterCondition>();
-    private int joinType;
+    private ConditionJoinType joinType = ConditionJoinType.AND;
 
 
     public DatasetBasicFilter(DatasetFilterGroup parent, String name) {
@@ -31,7 +29,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
             StringBuilder buffer = new StringBuilder();
             for (DatasetBasicFilterCondition condition : conditions) {
                 if (condition.isActive() && condition.getValue().trim().length() > 0) {
-                    if (addSeparator) buffer.append(joinType == JOIN_TYPE_AND ? " & " : " | ");
+                    if (addSeparator) buffer.append(joinType == ConditionJoinType.AND ? " & " : " | ");
                     addSeparator = true;
                     buffer.append(condition.getValue());
                     if (buffer.length() > 40) {
@@ -60,11 +58,11 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
         return conditions;
     }
 
-    public void setJoinType(int joinType) {
+    public void setJoinType(ConditionJoinType joinType) {
         this.joinType = joinType;
     }
 
-    public int getJoinType() {
+    public ConditionJoinType getJoinType() {
         return joinType;
     }
 
@@ -112,8 +110,8 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
                     initialized = true;
                 } else {
                     switch (joinType) {
-                        case JOIN_TYPE_AND: buffer.append(" and "); break;
-                        case JOIN_TYPE_OR: buffer.append(" or "); break;
+                        case AND: buffer.append(" and "); break;
+                        case OR: buffer.append(" or "); break;
                     }
                 }
                 condition.appendConditionString(buffer, dataset);
@@ -136,8 +134,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
 
    public void readConfiguration(Element element) {
        super.readConfiguration(element);
-       String joinTypeValue = element.getAttributeValue("join-type");
-       joinType = joinTypeValue.equals("AND") ? JOIN_TYPE_AND : JOIN_TYPE_OR;
+       joinType = SettingsUtil.getEnumAttribute(element, "join-type", ConditionJoinType.class);
        for (Object object : element.getChildren()) {
            DatasetBasicFilterCondition condition = new DatasetBasicFilterCondition(this);
            Element conditionElement = (Element) object;
@@ -149,8 +146,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         element.setAttribute("type", "basic");
-        String joinTypeValue = joinType == JOIN_TYPE_AND ? "AND" : "OR";
-        element.setAttribute("join-type", joinTypeValue);
+        element.setAttribute("join-type", joinType.name());
         for (DatasetBasicFilterCondition condition: conditions) {
             Element conditionElement = new Element("condition");
             element.addContent(conditionElement);

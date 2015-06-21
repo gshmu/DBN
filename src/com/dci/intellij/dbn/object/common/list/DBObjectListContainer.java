@@ -248,7 +248,7 @@ public class DBObjectListContainer implements Disposable {
             ContentDependencyAdapter dependencyAdapter,
             boolean indexed,
             boolean hidden) {
-        DBObjectList<T> objectList = new DBObjectListImpl<T>(objectType, treeParent, loader, dependencyAdapter, indexed);
+        DBObjectList<T> objectList = new DBObjectListImpl<T>(objectType, treeParent, loader, dependencyAdapter, indexed, hidden);
         addObjectList(objectList, hidden);
 
         return objectList;

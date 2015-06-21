@@ -216,7 +216,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
         DBNComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
 
-        DatabaseType databaseType = CommonUtil.nvl(databaseTypeComboBox.getSelectedValue(), DatabaseType.UNKNOWN);
+        DatabaseType databaseType = CommonUtil.nvl(databaseTypeComboBox.getSelectedValue(), configuration.getDatabaseType());
         DriverOption driverOption = driverComboBox.getSelectedValue();
         DatabaseUrlType urlType = CommonUtil.nvl(urlTypeComboBox.getSelectedValue(), DatabaseUrlType.DATABASE);
 
@@ -247,7 +247,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
         DBNComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
 
-        DatabaseType selectedDatabaseType = configuration.getDatabaseType();
+        DatabaseType selectedDatabaseType = CommonUtil.nvl(databaseTypeComboBox.getSelectedValue(), configuration.getDatabaseType());
         DriverOption selectedDriver = driverComboBox.getSelectedValue();
         DatabaseType driverDatabaseType = selectedDriver == null ? null : DatabaseType.resolve(selectedDriver.getName());
         if (driverDatabaseType != null && driverDatabaseType != selectedDatabaseType) {

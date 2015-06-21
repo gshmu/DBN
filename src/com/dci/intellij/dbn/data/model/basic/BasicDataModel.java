@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -122,11 +123,11 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
             }
         }
         else {
-            FiltrableList<T> filtrableList;
+            FiltrableListImpl<T> filtrableList;
             if (rows instanceof FiltrableList) {
-                filtrableList = (FiltrableList<T>) rows;
+                filtrableList = (FiltrableListImpl<T>) rows;
             } else {
-                filtrableList = new FiltrableList<T>(rows);
+                filtrableList = new FiltrableListImpl<T>(rows);
                 this.rows = filtrableList;
             }
             filtrableList.setFilter(filter);
@@ -152,7 +153,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
 
     public void setRows(List<T> rows) {
         if (filter != null) {
-            this.rows = new FiltrableList<T>(rows, filter);
+            this.rows = new FiltrableListImpl<T>(rows, filter);
         } else {
             this.rows = rows;
         }

@@ -149,7 +149,7 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
                 if (isLookupEnabled(objectType)) {
                     boolean isLookupEnabled = objectsLookupSettings.isEnabled(objectType);
                     DBObject originalParentObject = parentObject;
-                    for (DBObject object : objectList.getObjects()) {
+                    for (DBObject object : objectList.getElements()) {
                         if (breakLoad()) break;
                         if (isLookupEnabled) {
                             if (bucket == null) bucket = new THashSet<String>();

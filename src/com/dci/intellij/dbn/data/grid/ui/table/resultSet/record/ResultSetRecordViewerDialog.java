@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Action;
+import javax.swing.JComponent;
 
 public class ResultSetRecordViewerDialog extends DBNDialog<ResultSetRecordViewerForm> {
     public ResultSetRecordViewerDialog(ResultSetTable table, boolean showDataTypes) {
@@ -20,7 +20,7 @@ public class ResultSetRecordViewerDialog extends DBNDialog<ResultSetRecordViewer
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return component.getPreferredFocusedComponent();
+        return component == null ? null : component.getPreferredFocusedComponent();
     }
 
     @NotNull

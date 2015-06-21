@@ -23,25 +23,81 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
+import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
+import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private DBObjectType objectType = DBObjectType.UNKNOWN;
+    private boolean hidden;
+    private InternalFilter filter;
 
-    public DBObjectListImpl(@NotNull DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
+    public DBObjectListImpl(@NotNull DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed, boolean hidden) {
         super(treeParent, loader, dependencyAdapter, indexed);
         this.objectType = objectType;
+        this.hidden = hidden;
+        if (treeParent instanceof DBSchema && !hidden) {
+            ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
+            quickFilterManager.applyCachedFilter(this);
+        }
     }
 
     @Override
-    public Filter<T> getFilter() {
+    public boolean isFiltered() {
+        return getFilter() != null;
+    }
+
+    @Nullable
+    @Override
+    protected Filter<T> getFilter() {
+        if (filter == null) {
+            return getConfigFilter();
+        } else {
+            return filter;
+        }
+    }
+
+    @Override
+    public void setQuickFilter(final ObjectQuickFilter quickFilter) {
+        if (quickFilter == null) {
+            filter = null;
+        } else {
+            filter = new InternalFilter(quickFilter);
+        }
+    }
+
+    @Override
+    public ObjectQuickFilter getQuickFilter() {
+        return filter == null ? null : filter.quickFilter;
+
+    }
+
+    private class InternalFilter extends Filter<T> {
+        private ObjectQuickFilter quickFilter;
+
+        public InternalFilter(ObjectQuickFilter quickFilter) {
+            this.quickFilter = quickFilter;
+        }
+
+        @Override
+        public boolean accepts(T object) {
+            if (quickFilter.accepts(object)) {
+                Filter<T> filter = getConfigFilter();
+                return filter == null || filter.accepts(object);
+            }
+            return false;
+        }
+    }
+
+    @Nullable
+    private Filter<T> getConfigFilter() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler.isDisposed() || connectionHandler.isVirtual() ? null :
-                (Filter<T>) connectionHandler.getSettings().getFilterSettings().getNameFilter(objectType);
+        return connectionHandler.isVirtual() ? null : (Filter<T>) connectionHandler.getSettings().getFilterSettings().getNameFilter(objectType);
     }
 
     @NotNull
@@ -94,6 +150,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
+    @NotNull
     public String getName() {
         return objectType.getListName();
     }
@@ -117,7 +174,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     public void notifyChangeListeners() {
         Project project = getProject();
-        if (isTouched() && project != null && !project.isDisposed()) {
+        BrowserTreeNode treeParent = getTreeParent();
+        if (!hidden && isTouched() && FailsafeUtil.softCheck(project) && treeParent != null && treeParent.isTreeStructureLoaded()) {
             EventUtil.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
         }
     }
@@ -185,14 +243,14 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
-    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+    public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
         if (isLoaded()) {
-            if (objectType == null || this.objectType == objectType) {
-                getElements();
+            if (objectType.isOneOf(objectTypes)) {
+                notifyChangeListeners();
             }
 
             for (DBObject object : getObjects()) {
-                object.refreshTreeChildren(objectType);
+                object.refreshTreeChildren(objectTypes);
             }
         }
     }
@@ -232,7 +290,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     public String getPresentableTextDetails() {
         int elementCount = getTreeChildCount();
-        return elementCount > 0 ? "(" + elementCount + ")" : null;
+        int unfilteredElementCount = getAllElements().size();
+        return unfilteredElementCount > 0 ? "(" + elementCount + (elementCount != unfilteredElementCount ? "/"+ unfilteredElementCount : "") + ")" : null;
     }
 
     public String getPresentableTextConditionalDetails() {

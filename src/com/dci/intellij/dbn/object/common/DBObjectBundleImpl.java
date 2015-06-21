@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.object.common;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
@@ -17,7 +30,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -62,19 +75,6 @@ import com.dci.intellij.dbn.object.impl.DBUserRoleRelation;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DBObjectBundleImpl implements DBObjectBundle {
     private ConnectionHandler connectionHandler;
@@ -188,7 +188,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     }
 
     public List<DBSchema> getSchemas() {
-        return schemas.getObjects();
+        return schemas.getAllElements();
     }
 
     public List<DBUser> getUsers() {
@@ -321,12 +321,10 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                 if (visibleTreeChildren == null) {
                     visibleTreeChildren = new ArrayList<BrowserTreeNode>();
                     visibleTreeChildren.add(new LoadInProgressTreeNode(this));
-                    ConnectionHandler connectionHandler = getConnectionHandler();
-                    String connectionString = " (" + connectionHandler.getName() + ")";
 
-                    new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
+                    new SimpleBackgroundTask("load database objects") {
                         @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                        protected void execute() {
                             buildTreeChildren();
                         }
                     }.start();
@@ -337,6 +335,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     }
 
     private void buildTreeChildren() {
+        FailsafeUtil.check(this);
         List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
         Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
         if (!filter.acceptsAll(allPossibleTreeChildren)) {
@@ -352,6 +351,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         for (BrowserTreeNode treeNode : newTreeChildren) {
             DBObjectList objectList = (DBObjectList) treeNode;
             objectList.initTreeElement();
+            FailsafeUtil.check(this);
         }
 
         if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
@@ -361,24 +361,16 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         visibleTreeChildren = newTreeChildren;
         treeChildrenLoaded = true;
 
-        Project project = getProject();
-        if (project != null) {
-            EventUtil.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
-            new ConditionalLaterInvocator() {
-                @Override
-                protected void execute() {
-                    DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
-
-                }
-            }.start();
-        }
+        Project project = FailsafeUtil.get(getProject());
+        EventUtil.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
+        DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
     }
 
     @Override
-    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+    public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
         if (visibleTreeChildren != null) {
             for (BrowserTreeNode treeNode : visibleTreeChildren) {
-                treeNode.refreshTreeChildren(objectType);
+                treeNode.refreshTreeChildren(objectTypes);
             }
         }
     }

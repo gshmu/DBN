@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.browser.model;
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
@@ -10,6 +11,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -25,8 +27,8 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
 
     public SimpleBrowserTreeRoot(Project project, ConnectionBundle connectionBundle) {
         this.projectRef = new ProjectRef(project);
+        this.rootChildren = new ArrayList<ConnectionBundle>();
         if (connectionBundle != null) {
-            this.rootChildren = new ArrayList<ConnectionBundle>();
             this.rootChildren.add(connectionBundle);
         }
     }
@@ -63,29 +65,29 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
         return null;
     }
 
-    public List<? extends BrowserTreeNode> getTreeChildren() {
-        return rootChildren;
+    public List<ConnectionBundle> getTreeChildren() {
+        return FailsafeUtil.get(rootChildren);
     }
 
     @Override
-    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
-        for (ConnectionBundle connectionBundle : rootChildren) {
-            connectionBundle.refreshTreeChildren(objectType);
+    public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
+        for (ConnectionBundle connectionBundle : getTreeChildren()) {
+            connectionBundle.refreshTreeChildren(objectTypes);
         }
     }
 
     public void rebuildTreeChildren() {
-        for (ConnectionBundle connectionBundle : rootChildren) {
+        for (ConnectionBundle connectionBundle : getTreeChildren()) {
             connectionBundle.rebuildTreeChildren();
         }
     }
 
     public BrowserTreeNode getTreeChild(int index) {
-        return rootChildren.get(index);
+        return getTreeChildren().get(index);
     }
 
     public int getTreeChildCount() {
-        return rootChildren.size();
+        return getTreeChildren().size();
     }
 
     public boolean isLeafTreeElement() {
@@ -93,7 +95,7 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
     }
 
     public int getIndexOfTreeChild(BrowserTreeNode child) {
-        return rootChildren.indexOf(child);
+        return getTreeChildren().indexOf(child);
     }
 
     public Icon getIcon(int flags) {
@@ -183,6 +185,9 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
      *                       Disposable                      *
      *********************************************************/
     public void dispose() {
-        rootChildren = null;
+        if (rootChildren != null) {
+            rootChildren.clear();
+            rootChildren = null;
+        }
     }
 }

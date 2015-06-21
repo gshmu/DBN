@@ -1,5 +1,23 @@
 package com.dci.intellij.dbn.editor.data.ui.table;
 
+import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.util.EventObject;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -42,24 +60,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.awt.RelativePoint;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JPopupMenu;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import java.util.EventObject;
 
 public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     public static final DatasetLoadInstructions SORT_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, false);
@@ -401,8 +401,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         if (e.isControlDown() && e.getID() != MouseEvent.MOUSE_DRAGGED && isNavigableCellAtMousePosition()) {
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             DatasetEditorModelCell cell = (DatasetEditorModelCell) getCellAtMouseLocation();
-            DBColumn column = cell.getColumnInfo().getColumn();
-            if (column != null) {
+            if (cell != null) {
+                DBColumn column = cell.getColumnInfo().getColumn();
                 boolean ensureDataLoaded = DatabaseLoadMonitor.isEnsureDataLoaded();
                 DatabaseLoadMonitor.setEnsureDataLoaded(false);
                 try {

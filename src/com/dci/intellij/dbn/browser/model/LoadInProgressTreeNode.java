@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.browser.model;
 
 import javax.swing.Icon;
-import java.util.List;
+import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
@@ -14,15 +13,30 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
 
 public class LoadInProgressTreeNode implements BrowserTreeNode {
     private BrowserTreeNode parent;
+    private List list;
 
     public LoadInProgressTreeNode(@NotNull BrowserTreeNode parent) {
         this.parent = parent;
+    }
+
+    public List asList() {
+        if (list == null) {
+            synchronized (this) {
+                if (list == null) {
+                    list = new List();
+                    list.add(this);
+                }
+            }
+        }
+
+        return list;
     }
 
     public boolean isTreeStructureLoaded() {
@@ -48,12 +62,12 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
         return FailsafeUtil.get(parent);
     }
 
-    public List<? extends BrowserTreeNode> getTreeChildren() {
+    public List getTreeChildren() {
         return null;
     }
 
     @Override
-    public void refreshTreeChildren(@Nullable DBObjectType objectType) {}
+    public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {}
 
     public void rebuildTreeChildren() {}
 
@@ -157,5 +171,16 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
     public void dispose() {
         disposed = true;
         parent = null;
+    }
+
+    public class List extends ArrayList<BrowserTreeNode> implements Disposable {
+        @Override
+        public void dispose() {
+            if (size() > 0) {
+                BrowserTreeNode browserTreeNode = get(0);
+                browserTreeNode.dispose();
+                clear();
+            }
+        }
     }
 }

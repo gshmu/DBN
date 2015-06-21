@@ -223,7 +223,7 @@
             end;
         </statement>
     </statement-execution-processor>
-    <statement-execution-processor id="add-breakpoint">
+    <statement-execution-processor id="add-program-breakpoint">
         <statement>
             declare
                 v_program_info SYS.DBMS_DEBUG.program_info;
@@ -258,6 +258,36 @@
                     case v_result
                         when dbms_debug.success then null
                         when SYS.DBMS_DEBUG.error_illegal_line then 'No executable code at line '||{3}||'.'
+                        when SYS.DBMS_DEBUG.error_bad_handle then 'No such program unit.'
+                        else 'Could not register breakpoint. Unknown reason.'
+                    end;
+                ? := v_message;
+            end;
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="add-source-breakpoint">
+        <statement>
+            declare
+                v_program_info SYS.DBMS_DEBUG.program_info;
+                v_result BINARY_INTEGER;
+                v_message VARCHAR2(100);
+            begin
+                v_program_info.namespace := null;
+                v_program_info.owner := null;
+                v_program_info.name := null;
+                v_program_info.line# := {0};
+
+                v_result := SYS.DBMS_DEBUG.set_breakpoint(
+                                v_program_info,
+                                {0},
+                                ?,
+                                null,
+                                null);
+
+                v_message :=
+                    case v_result
+                        when dbms_debug.success then null
+                        when SYS.DBMS_DEBUG.error_illegal_line then 'No executable code at line '||{0}||'.'
                         when SYS.DBMS_DEBUG.error_bad_handle then 'No such program unit.'
                         else 'Could not register breakpoint. Unknown reason.'
                     end;

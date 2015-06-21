@@ -21,7 +21,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
@@ -171,17 +171,13 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         EventUtil.subscribe(project, this, ObjectFilterChangeListener.TOPIC, filterChangeListener);
     }
 
-    /**
-     *
-     * @deprecated
-     */
     public static void scrollToSelectedElement(final ConnectionHandler connectionHandler) {
         if (connectionHandler != null && !connectionHandler.isDisposed()) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(connectionHandler.getProject());
             BrowserToolWindowForm toolWindowForm = browserManager.getToolWindowForm();
             final DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionHandler);
             if (browserTree != null && browserTree.getTargetSelection() != null) {
-                new ConditionalLaterInvocator() {
+                new SimpleLaterInvocator() {
                     @Override
                     protected void execute() {
                         browserTree.scrollToSelectedElement();
@@ -212,10 +208,10 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         }
 
         @Override
-        public void nameFiltersChanged(@Nullable DBObjectType objectType, String connectionId) {
+        public void nameFiltersChanged(String connectionId, @NotNull DBObjectType... objectTypes) {
             ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
-            if (toolWindowForm.isLoaded() && connectionHandler != null) {
-                connectionHandler.getObjectBundle().refreshTreeChildren(objectType);
+            if (toolWindowForm.isLoaded() && connectionHandler != null && objectTypes.length > 0) {
+                connectionHandler.getObjectBundle().refreshTreeChildren(objectTypes);
             }
         }
     };

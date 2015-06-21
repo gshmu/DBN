@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -74,6 +75,12 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         return getExecutionProcessor().getExecutionInput();
     }
 
+    @NotNull
+    @Override
+    public ExecutionContext getExecutionContext() {
+        return getExecutionInput().getExecutionContext();
+    }
+
     public void navigateToEditor(boolean requestFocus) {
           getExecutionProcessor().navigateToEditor(requestFocus);
     }
@@ -83,7 +90,7 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     }
 
     public void calculateExecDuration() {
-        this.executionDuration = (int) (System.currentTimeMillis() - getExecutionInput().getExecutionTimestamp());
+        this.executionDuration = (int) (System.currentTimeMillis() - getExecutionContext().getExecutionTimestamp());
     }
 
     public StatementExecutionStatus getExecutionStatus() {

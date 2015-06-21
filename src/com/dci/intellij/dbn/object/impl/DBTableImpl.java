@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
@@ -24,7 +23,6 @@ import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.DBNestedTable;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBTable;
-import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -84,6 +82,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
         return isTemporary;
     }
 
+    @Nullable
     public List<DBIndex> getIndexes() {
         return indexes.getObjects();
     }
@@ -92,6 +91,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
         return nestedTables.getObjects();
     }
 
+    @Nullable
     public DBIndex getIndex(String name) {
         return indexes.getObject(name);
     }
@@ -155,43 +155,6 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     }
 
     /*********************************************************
-     *                      Relation builders                *
-     *********************************************************/
-
-    private static final DynamicContentLoader INDEX_COLUMN_RELATION_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBTable table = (DBTable) dynamicContent.getParentElement();
-            return metadataInterface.loadIndexRelations(table.getSchema().getName(), table.getName(), connection);
-        }
-
-        public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String columnName = resultSet.getString("COLUMN_NAME");
-            String indexName = resultSet.getString("INDEX_NAME");
-            DBTable table = (DBTable) dynamicContent.getParentElement();
-            DBIndex index = table.getIndex(indexName);
-            DBColumn column = table.getColumn(columnName);
-
-            if (column != null && index != null) {
-                return new DBIndexColumnRelation(index, column);
-            }
-            return null;
-        }
-    };
-
-    private static final DynamicSubcontentLoader INDEX_COLUMN_RELATION_LOADER = new DynamicSubcontentLoader(true) {
-        public DynamicContentLoader getAlternativeLoader() {
-            return INDEX_COLUMN_RELATION_ALTERNATIVE_LOADER;
-        }
-
-        public boolean match(DynamicContentElement sourceElement, DynamicContent dynamicContent) {
-            DBIndexColumnRelation indexColumnRelation = (DBIndexColumnRelation) sourceElement;
-            DBTable table = (DBTable) dynamicContent.getParentElement();
-            return indexColumnRelation.getColumn().getDataset().equals(table);
-        }
-    };
-
-    /*********************************************************
      *                     TreeElement                       *
      *********************************************************/
     @NotNull
@@ -238,31 +201,6 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
         public DBNestedTable createElement(DynamicContent<DBNestedTable> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
             DBTable table = (DBTable) dynamicContent.getParentElement();
             return new DBNestedTableImpl(table, resultSet);
-        }
-    };
-
-    private static final DynamicSubcontentLoader INDEXES_LOADER = new DynamicSubcontentLoader<DBIndex>(true) {
-        public boolean match(DBIndex index, DynamicContent dynamicContent) {
-            DBTable table = (DBTable) dynamicContent.getParentElement();
-            DBObject indexTable = index.getTable();
-            return indexTable != null && indexTable.equals(table);
-        }
-
-        public DynamicContentLoader<DBIndex> getAlternativeLoader() {
-            return INDEXES_ALTERNATIVE_LOADER;
-        }
-    };
-
-    private static final DynamicContentLoader<DBIndex> INDEXES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBIndex>() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBTable table = (DBTable) dynamicContent.getParentElement();
-            return metadataInterface.loadIndexes(table.getSchema().getName(), table.getName(), connection);
-}
-
-        public DBIndex createElement(DynamicContent<DBIndex> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBTable table = (DBTable) dynamicContent.getParentElement();
-            return new DBIndexImpl(table, resultSet);
         }
     };
 }

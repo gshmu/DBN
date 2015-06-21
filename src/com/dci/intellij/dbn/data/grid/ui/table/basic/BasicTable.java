@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
@@ -196,12 +197,14 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         }
     }
 
+    @Nullable
     public DataModelCell getCellAtLocation(Point point) {
         int columnIndex = columnAtPoint(point);
         int rowIndex = rowAtPoint(point);
         return columnIndex > -1 && rowIndex > -1 ? getCellAtPosition(rowIndex, columnIndex) : null;
     }
 
+    @Nullable
     public DataModelCell getCellAtMouseLocation() {
         Point location = MouseInfo.getPointerInfo().getLocation();
         location.setLocation(location.getX() - getLocationOnScreen().getX(), location.getY() - getLocationOnScreen().getY());

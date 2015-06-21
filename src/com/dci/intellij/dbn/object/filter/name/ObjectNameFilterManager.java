@@ -1,10 +1,19 @@
 package com.dci.intellij.dbn.object.filter.name;
 
+import javax.swing.JTree;
+import javax.swing.tree.TreePath;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.filter.name.ui.EditFilterConditionDialog;
-import com.dci.intellij.dbn.object.filter.name.ui.EditFilterConditionForm;
+import com.dci.intellij.dbn.object.filter.ConditionJoinType;
+import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterConditionDialog;
+import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterConditionForm;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -13,14 +22,6 @@ import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JTree;
-import javax.swing.tree.TreePath;
-import java.util.List;
 
 @State(
         name = "DBNavigator.Project.ObjectNameFilterManager",
@@ -35,8 +36,8 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
     }
 
     public void createFilter(DBObjectType objectType, ObjectNameFilterSettingsForm settingsForm) {
-        EditFilterConditionDialog dialog =
-                new EditFilterConditionDialog(getProject(), null, null, objectType, EditFilterConditionForm.Operation.CREATE);
+        ObjectNameFilterConditionDialog dialog =
+                new ObjectNameFilterConditionDialog(getProject(), null, null, objectType, ObjectNameFilterConditionForm.Operation.CREATE);
         dialog.show();
         if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             settingsForm.getConfiguration().setModified(true);
@@ -52,12 +53,12 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
     }
 
     public void createFilterCondition(CompoundFilterCondition parentCondition, ObjectNameFilterSettingsForm settingsForm) {
-        EditFilterConditionDialog dialog =
-                new EditFilterConditionDialog(getProject(), parentCondition, null, parentCondition.getObjectType(), EditFilterConditionForm.Operation.CREATE);
+        ObjectNameFilterConditionDialog dialog =
+                new ObjectNameFilterConditionDialog(getProject(), parentCondition, null, parentCondition.getObjectType(), ObjectNameFilterConditionForm.Operation.CREATE);
         dialog.show();
         if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             settingsForm.getConfiguration().setModified(true);
-            SimpleFilterCondition newCondition = dialog.getCondition();
+            SimpleNameFilterCondition newCondition = dialog.getCondition();
             parentCondition.addCondition(newCondition);
             ConditionJoinType joinType = dialog.getJoinType();
             if (joinType != null) {
@@ -81,16 +82,16 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
     }
 
 
-    public void joinFilterCondition(SimpleFilterCondition condition, ObjectNameFilterSettingsForm settingsForm) {
-        EditFilterConditionDialog dialog =
-                new EditFilterConditionDialog(getProject(), condition.getParent(), null, condition.getObjectType(), EditFilterConditionForm.Operation.JOIN);
+    public void joinFilterCondition(SimpleNameFilterCondition condition, ObjectNameFilterSettingsForm settingsForm) {
+        ObjectNameFilterConditionDialog dialog =
+                new ObjectNameFilterConditionDialog(getProject(), condition.getParent(), null, condition.getObjectType(), ObjectNameFilterConditionForm.Operation.JOIN);
         dialog.show();
         if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             settingsForm.getConfiguration().setModified(true);
-            SimpleFilterCondition newCondition = dialog.getCondition();
+            SimpleNameFilterCondition newCondition = dialog.getCondition();
             ConditionJoinType joinType = dialog.getJoinType();
             CompoundFilterCondition parent = condition.getParent();
-            if (parent.getConditions().size() == 1) {
+            if (parent.getConditions().size() == 1 || parent.getJoinType() == joinType) {
                 parent.setJoinType(joinType);
                 parent.addCondition(newCondition);
             } else {
@@ -104,15 +105,15 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
         }
     }
 
-    public void editFilterCondition(SimpleFilterCondition condition, ObjectNameFilterSettingsForm settingsForm) {
-        EditFilterConditionDialog dialog =
-                new EditFilterConditionDialog(getProject(), condition.getParent(), condition, condition.getObjectType(), EditFilterConditionForm.Operation.EDIT);
+    public void editFilterCondition(SimpleNameFilterCondition condition, ObjectNameFilterSettingsForm settingsForm) {
+        ObjectNameFilterConditionDialog dialog =
+                new ObjectNameFilterConditionDialog(getProject(), condition.getParent(), condition, condition.getObjectType(), ObjectNameFilterConditionForm.Operation.EDIT);
         dialog.show();
         if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             settingsForm.getConfiguration().setModified(true);
-            SimpleFilterCondition newCondition = dialog.getCondition();
+            SimpleNameFilterCondition newCondition = dialog.getCondition();
             condition.setOperator(newCondition.getOperator());
-            condition.setText(newCondition.getText());
+            condition.setPattern(newCondition.getPattern());
             condition.getSettings().notifyNodeChanged(condition);
         }
     }

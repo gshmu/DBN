@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
@@ -15,7 +16,9 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
@@ -37,7 +40,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
 
     private ProjectRef projectRef;
-    private FiltrableList<ConnectionHandler> connectionHandlers = new FiltrableList<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
+    private AbstractFiltrableList<ConnectionHandler> connectionHandlers = new FiltrableListImpl<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
     private List<ConnectionHandler> virtualConnections = new ArrayList<ConnectionHandler>();
 
     public ConnectionBundle(Project project) {
@@ -85,7 +88,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
     }
 
     public void applySettings(ConnectionBundleSettings settings) {
-        FiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableList<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
+        AbstractFiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableListImpl<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
         final List<ConnectionHandler> oldConnectionHandlers = new ArrayList<ConnectionHandler>(this.connectionHandlers.getFullList());
         List<ConnectionSettings> connections = settings.getConnections();
         boolean listChanged = false;
@@ -163,7 +166,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
     }
 
     public void setConnectionHandlers(List<ConnectionHandler> connectionHandlers) {
-        this.connectionHandlers = new FiltrableList<ConnectionHandler>(connectionHandlers, ACTIVE_CONNECTIONS_FILTER);
+        this.connectionHandlers = new FiltrableListImpl<ConnectionHandler>(connectionHandlers, ACTIVE_CONNECTIONS_FILTER);
     }
 
     public boolean containsConnection(ConnectionHandler connectionHandler) {
@@ -254,9 +257,9 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         return null;  //should never be used
     }
 
-    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+    public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
         for (ConnectionHandler connectionHandler : connectionHandlers) {
-            connectionHandler.getObjectBundle().refreshTreeChildren(objectType);
+            connectionHandler.getObjectBundle().refreshTreeChildren(objectTypes);
         }
     }
 

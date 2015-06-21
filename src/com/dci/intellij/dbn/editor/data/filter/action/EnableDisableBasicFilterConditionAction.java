@@ -15,8 +15,8 @@ public class EnableDisableBasicFilterConditionAction extends DumbAwareAction {
     public void update(AnActionEvent e) {
         e.getPresentation().setIcon(
                 conditionForm.isActive() ?
-                        Icons.DATASET_FILTER_CONDITION_ACTIVE :
-                        Icons.DATASET_FILTER_CONDITION_INACTIVE);
+                        Icons.COMMON_FILTER_ACTIVE :
+                        Icons.COMMON_FILTER_INACTIVE);
         e.getPresentation().setText(
                 conditionForm.isActive() ?
                         "Deactivate Condition" :

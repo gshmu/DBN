@@ -1,32 +1,16 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.editor.data.filter.ConditionJoinType;
 import com.dci.intellij.dbn.editor.data.filter.ConditionOperator;
 import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilterCondition;
@@ -51,9 +35,24 @@ import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasicFilter> {
-    private JRadioButton joinAndRadioButton;
-    private JRadioButton joinOrRadioButton;
     private JPanel conditionsPanel;
     private JPanel mainPanel;
     private JPanel actionsPanel;
@@ -62,6 +61,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     private JPanel previewPanel;
     private JPanel addConditionsPanel;
     private JPanel filterNamePanel;
+    private DBNComboBox<ConditionJoinType> joinTypeComboBox;
 
     private DBObjectRef<DBDataset> datasetRef;
     private List<DatasetBasicFilterConditionForm> conditionForms = new ArrayList<DatasetBasicFilterConditionForm>();
@@ -84,8 +84,8 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
             addConditionPanel(condition);
         }
 
-        joinAndRadioButton.setSelected(filter.getJoinType() == DatasetBasicFilter.JOIN_TYPE_AND);
-        joinOrRadioButton.setSelected(filter.getJoinType() == DatasetBasicFilter.JOIN_TYPE_OR);
+        joinTypeComboBox.setValues(ConditionJoinType.values());
+        joinTypeComboBox.setSelectedValue(filter.getJoinType());
 
         nameTextField.addKeyListener(createKeyListener());
         registerComponent(mainPanel);
@@ -151,7 +151,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
             StringBuilder buffer = new StringBuilder();
             for (DatasetBasicFilterConditionForm conditionForm : conditionForms) {
                 if (conditionForm.isActive()) {
-                    if (addSeparator) buffer.append(joinAndRadioButton.isSelected() ? " & " : " | ");
+                    if (addSeparator) buffer.append(joinTypeComboBox.getSelectedValue() == ConditionJoinType.AND ? " & " : " | ");
                     addSeparator = true;
                     buffer.append(conditionForm.getValue());
                     if (buffer.length() > 40) {
@@ -182,7 +182,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
                 DatasetBasicFilterCondition condition = conditionForm.getCondition();
                 if (conditionForm.isActive()) {
                     if (addJoin) {
-                        selectStatement.append(joinAndRadioButton.isSelected() ? " and\n    " : " or\n    ");
+                        selectStatement.append(joinTypeComboBox.getSelectedValue() == ConditionJoinType.AND ? " and\n    " : " or\n    ");
                     }
                     addJoin = true;
                     condition.appendConditionString(selectStatement, dataset);
@@ -258,7 +258,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
         DatasetBasicFilter filter = getConfiguration();
         DatasetBasicFilterCondition condition = new DatasetBasicFilterCondition(filter);
         condition.setColumnName(column == null ? null : column.getName());
-        condition.setOperator(ConditionOperator.EQUAL.getName());
+        condition.setOperator(ConditionOperator.EQUAL);
         addConditionPanel(condition);
         updateNameAndPreview();
     }
@@ -283,9 +283,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     public void applyFormChanges() throws ConfigurationException {
         updateGeneratedName();
         DatasetBasicFilter filter = getConfiguration();
-        filter.setJoinType(joinAndRadioButton.isSelected() ?
-                DatasetBasicFilter.JOIN_TYPE_AND :
-                DatasetBasicFilter.JOIN_TYPE_OR);
+        filter.setJoinType(joinTypeComboBox.getSelectedValue());
         filter.setCustomNamed(isCustomNamed);
         filter.getConditions().clear();
         for (DatasetBasicFilterConditionForm conditionForm : conditionForms) {

@@ -18,16 +18,13 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.connection.config.ConnectionRef;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.list.DBObjectRelation;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.intellij.openapi.project.Project;
 
 public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFilterSettingsForm> implements TreeModel {
     private List<ObjectNameFilter> filters = new ArrayList<ObjectNameFilter>();
     private Map<DBObjectType, Filter<DBObject>> objectFilterMap = new EnumMap<DBObjectType, Filter<DBObject>>(DBObjectType.class);
-    private Map<DBObjectRelationType, Filter<DBObjectRelation>> objectRelationFilterMap = new EnumMap<DBObjectRelationType, Filter<DBObjectRelation>>(DBObjectRelationType.class);
     private ConnectionRef connectionRef;
     public ObjectNameFilterSettings(Project project, ConnectionRef connectionRef) {
         super(project);
@@ -65,36 +62,6 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
 
     public boolean containsFilter(DBObjectType objectType) {
         return objectFilterMap.containsKey(objectType);
-    }
-
-
-    public Filter<DBObjectRelation> getFilter(DBObjectRelationType objectRelationType) {
-        if (!objectRelationFilterMap.containsKey(objectRelationType)) {
-            final Filter<DBObject> sourceFilter = getFilter(objectRelationType.getSourceType());
-            final Filter<DBObject> targetFilter = getFilter(objectRelationType.getTargetType());
-            final int hashCode =
-                    (sourceFilter == null ? 0 : sourceFilter.hashCode()) +
-                    (targetFilter == null ? 0 : targetFilter.hashCode());
-
-            Filter<DBObjectRelation> filter = null;
-            if (sourceFilter != null || targetFilter != null) {
-                 filter = new Filter<DBObjectRelation>() {
-                    public boolean accepts(DBObjectRelation objectRelation) {
-                        return
-                            (sourceFilter == null || sourceFilter.accepts(objectRelation.getSourceObject())) &&
-                            (targetFilter == null || targetFilter.accepts(objectRelation.getTargetObject()));
-                    }
-
-                    @Override
-                    public int hashCode() {
-                        return hashCode;
-                    }
-                };
-            }
-            objectRelationFilterMap.put(objectRelationType, filter);
-        }
-
-        return objectRelationFilterMap.get(objectRelationType);
     }
 
     public Filter<DBObject> getFilter(DBObjectType objectType) {
@@ -139,7 +106,6 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
     public void readConfiguration(Element element) {
         filters.clear();
         objectFilterMap.clear();
-        objectRelationFilterMap.clear();
         for (Object o : element.getChildren()) {
             Element filterElement = (Element) o;
             ObjectNameFilter filter = new ObjectNameFilter(this);
@@ -190,7 +156,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
     }
 
     public boolean isLeaf(Object node) {
-        return node instanceof SimpleFilterCondition;
+        return node instanceof SimpleNameFilterCondition;
     }
 
     public int getIndexOfChild(Object parent, Object child) {
@@ -283,6 +249,10 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
         path.add(0, this);
 
         return new TreePath(path.toArray());
+    }
+
+    public Set<DBObjectType> getFilteredObjectTypes() {
+        return objectFilterMap.keySet();
     }
 
 

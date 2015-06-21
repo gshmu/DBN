@@ -442,4 +442,14 @@ public enum DBObjectType implements DynamicContentType {
         INCOMING_DEPENDENCY.setGenericType(ANY);
         OUTGOING_DEPENDENCY.setGenericType(ANY);
     }
+
+    public boolean isOneOf(DBObjectType[] objectTypes) {
+        for (DBObjectType objectType : objectTypes) {
+            if (objectType.matches(this)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

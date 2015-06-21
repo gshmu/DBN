@@ -7,6 +7,7 @@ public enum ElementTypeAttribute {
     
     ROOT("ROOT", "Executable statement"),
     EXECUTABLE("EXECUTABLE", "Executable statement"),
+    DEBUGGABLE("DEBUGGABLE", "Debuggable"),
     TRANSACTIONAL("TRANSACTIONAL", "Transactional statement"),
     QUERY("QUERY", "Query statement", true),
     DATA_DEFINITION("DATA_DEFINITION", "Data definition statement", true),
