@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.common.environment;
 
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
@@ -17,10 +11,13 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.impl.EditorsSplitters;
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @State(
         name = "DBNavigator.Project.EnvironmentManager",
@@ -50,11 +47,8 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         public void configurationChanged() {
             FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(getProject());
             VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
-            Set<EditorsSplitters> splitters = fileEditorManager.getAllSplitters();
             for (VirtualFile virtualFile : openFiles) {
-                for (EditorsSplitters splitter : splitters) {
-                    splitter.updateFileBackgroundColor(virtualFile);
-                }
+                fileEditorManager.updateFilePresentation(virtualFile);
             }
         }
     };

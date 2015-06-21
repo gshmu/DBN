@@ -1,22 +1,22 @@
 package com.dci.intellij.dbn.language.common;
 
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.parser.TokenPairRangeMonitor;
-import com.intellij.lang.LanguageDialect;
+import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IFileElementType;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class DBLanguageDialect extends LanguageDialect implements DBFileElementTypeProvider {
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+public abstract class DBLanguageDialect extends Language implements DBFileElementTypeProvider {
     private DBLanguageDialectIdentifier identifier;
     private LazyValue<DBLanguageSyntaxHighlighter> syntaxHighlighter = new SimpleLazyValue<DBLanguageSyntaxHighlighter>() {
         @Override
@@ -43,7 +43,7 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
     private static Map<DBLanguageDialectIdentifier, DBLanguageDialect> register = new EnumMap<DBLanguageDialectIdentifier, DBLanguageDialect>(DBLanguageDialectIdentifier.class);
 
     public DBLanguageDialect(@NonNls @NotNull DBLanguageDialectIdentifier identifier, @NotNull DBLanguage baseLanguage) {
-        super(identifier.getValue(), baseLanguage);
+        super(baseLanguage, identifier.getValue());
         this.identifier = identifier;
         register.put(identifier, this);
     }

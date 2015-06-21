@@ -1,13 +1,9 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import java.util.Iterator;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierLookupAdapter;
@@ -15,7 +11,6 @@ import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.Language;
-import com.intellij.lang.LanguageDialect;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -28,6 +23,11 @@ import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Iterator;
+import java.util.Set;
 
 public class PsiUtil {
 
@@ -294,8 +294,8 @@ public class PsiUtil {
 
     public static Language getLanguage(PsiElement element) {
         Language language = element.getLanguage();
-        if (language instanceof LanguageDialect) {
-            LanguageDialect languageDialect = (LanguageDialect) language;
+        if (language instanceof DBLanguageDialect) {
+            DBLanguageDialect languageDialect = (DBLanguageDialect) language;
             language = languageDialect.getBaseLanguage();
         }
         return language;
