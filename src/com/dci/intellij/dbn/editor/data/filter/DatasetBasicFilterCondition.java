@@ -119,14 +119,11 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
                         String quotedValue = quoteValue(tokenizer.nextToken().trim());
                         valueBuilder.append(quotedValue);
                     }
-                    value = "(" + valueBuilder.toString() + ")";
-                } else {
-                    value = "(" + value + ")";
+                    value = valueBuilder.toString();
                 }
+                value = "(" + value + ")";
             }
             else if (StringUtil.isNotEmptyOrSpaces(value)) {
-
-
                 ConnectionHandler connectionHandler = FailsafeUtil.get(dataset.getConnectionHandler());
                 if (genericDataType == GenericDataType.LITERAL) {
                     value = quoteValue(value);
