@@ -45,6 +45,9 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
                     Color background = enabled ? UIUtil.getListBackground() : UIUtil.getComboBoxDisabledBackground();
                     visibleObjectsList.setBackground(background);
                     visibleObjectsList.clearSelection();
+                    visibleObjectsScrollPane.setVisible(enabled);
+                    mainPanel.revalidate();
+                    mainPanel.repaint();
                 }
             });
         } else {
@@ -54,6 +57,7 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
         boolean enabled = !masterSettingsAvailable || !useMasterSettingsCheckBox.isSelected();
         visibleObjectsList.setEnabled(enabled);
         visibleObjectsList.setBackground(enabled ? UIUtil.getListBackground() : UIUtil.getComboBoxDisabledBackground());
+        visibleObjectsScrollPane.setVisible(enabled);
 
         registerComponents(visibleObjectsList, useMasterSettingsCheckBox);
     }

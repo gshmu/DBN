@@ -120,8 +120,8 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
         SshAuthType authType = authTypeComboBox.getSelectedValue();
 
         boolean isKeyPair = authType == SshAuthType.KEY_PAIR;
-        ConfigurationEditorUtil.validateStringInputValue(keyFileField.getTextField(), "Private key file", isKeyPair);
-        ConfigurationEditorUtil.validateStringInputValue(keyPassphraseField, "Private key passphrase", isKeyPair);
+        ConfigurationEditorUtil.validateStringInputValue(keyFileField.getTextField(), "Key file", enabled && isKeyPair);
+        ConfigurationEditorUtil.validateStringInputValue(keyPassphraseField, "Key passphrase", enabled && isKeyPair);
 
         configuration.setAuthType(authType);
         configuration.setPassword(String.valueOf(passwordField.getPassword()));
