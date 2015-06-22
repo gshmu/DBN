@@ -43,6 +43,10 @@ public class ObjectQuickFilterCondition extends NameFilterCondition implements P
         return !active || accepts(object.getName());
     }
 
+    public int index() {
+        return filter.getConditions().indexOf(this);
+    }
+
     @Override
     public void readState(Element element) {
         super.readState(element);
