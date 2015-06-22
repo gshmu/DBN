@@ -2,9 +2,11 @@ package com.dci.intellij.dbn.object.common.list;
 
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContent;
+import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -17,8 +19,13 @@ public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, Dynam
 
     boolean isFiltered();
 
+    @Nullable
+    Filter<T> getConfigFilter();
+
+    @Nullable
     ObjectQuickFilter getQuickFilter();
-    void setQuickFilter(ObjectQuickFilter quickFilter);
+
+    void setQuickFilter(@Nullable ObjectQuickFilter quickFilter);
 
     List<T> getObjects();
     List<T> getObjects(String name);

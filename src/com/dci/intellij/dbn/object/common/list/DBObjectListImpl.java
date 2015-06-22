@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.object.common.list;
 
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -24,13 +31,6 @@ import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private DBObjectType objectType = DBObjectType.UNKNOWN;
@@ -54,7 +54,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Nullable
     @Override
-    protected Filter<T> getFilter() {
+    public Filter<T> getFilter() {
         if (filter == null) {
             return getConfigFilter();
         } else {
@@ -63,7 +63,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
-    public void setQuickFilter(final ObjectQuickFilter quickFilter) {
+    public void setQuickFilter(ObjectQuickFilter quickFilter) {
         if (quickFilter == null) {
             filter = null;
         } else {
@@ -71,6 +71,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
+    @Nullable
     @Override
     public ObjectQuickFilter getQuickFilter() {
         return filter == null ? null : filter.quickFilter;
@@ -94,8 +95,9 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
+    @Override
     @Nullable
-    private Filter<T> getConfigFilter() {
+    public Filter<T> getConfigFilter() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         return connectionHandler.isVirtual() ? null : (Filter<T>) connectionHandler.getSettings().getFilterSettings().getNameFilter(objectType);
     }
