@@ -36,7 +36,16 @@ public class SshTunnelManager implements ApplicationComponent{
             String key = createKey(proxyHost, proxyPort, proxyUser, remoteHost, remotePort);
             SshTunnelConnector connector = sshTunnelConnectors.get(key);
             if (connector == null) {
-                connector = new SshTunnelConnector(proxyHost, proxyPort, proxyUser, sshSettings.getPassword(), remoteHost, remotePort);
+                connector = new SshTunnelConnector(
+                        proxyHost,
+                        proxyPort,
+                        proxyUser,
+                        sshSettings.getAuthType(),
+                        sshSettings.getKeyFile(),
+                        sshSettings.getKeyPassphrase(),
+                        sshSettings.getPassword(),
+                        remoteHost,
+                        remotePort);
                 sshTunnelConnectors.put(key, connector);
             }
             if (!connector.isConnected()) {
