@@ -128,6 +128,7 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
     "*" {return tt.getCharacterTokenType(20);}
     "|" {return tt.getCharacterTokenType(21);}
     "&" {return tt.getCharacterTokenType(22);}
+    "~" {return tt.getCharacterTokenType(23);}
 
 
 
