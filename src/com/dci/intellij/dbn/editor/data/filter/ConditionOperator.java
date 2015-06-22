@@ -17,8 +17,8 @@ public enum ConditionOperator implements Presentable {
     LIKE("like", false),
     NOT_LIKE("not like", false),
     BETWEEN("between", false),
-    IN("in", false, "(", ")"),
-    NOT_IN("not in", false, "(", ")"),
+    IN("in", false),
+    NOT_IN("not in", false),
     IS_NULL("is null", true),
     IS_NOT_NULL("is not null", true);
 
@@ -94,20 +94,10 @@ public enum ConditionOperator implements Presentable {
 
     private String text;
     private boolean isFinal;
-    private String valuePrefix;
-    private String valuePostfix;
 
     ConditionOperator(String text, boolean isFinal) {
         this.text = text;
         this.isFinal = isFinal;
-    }
-
-    ConditionOperator(String text, boolean isFinal, String valuePrefix, String valuePostfix) {
-        this.text = text;
-        this.isFinal = isFinal;
-        this.valuePrefix = valuePrefix;
-        this.valuePostfix = valuePostfix;
-
     }
 
     public String getText() {
@@ -116,14 +106,6 @@ public enum ConditionOperator implements Presentable {
 
     public boolean isFinal() {
         return isFinal;
-    }
-
-    public String getValuePostfix() {
-        return valuePostfix;
-    }
-
-    public String getValuePrefix() {
-        return valuePrefix;
     }
 
     public String toString() {
