@@ -543,8 +543,10 @@
             <separator/>
             <action id="DBNavigator.Actions.Browser.NavigateBack" class="com.dci.intellij.dbn.browser.action.NavigateBackAction" text="Browser - Back"/>
             <action id="DBNavigator.Actions.Browser.NavigateForward" class="com.dci.intellij.dbn.browser.action.NavigateForwardAction" text="Browser - Forward"/>
+<!--
             <action id="DBNavigator.Actions.Browser.AutoscrollToEditor" class="com.dci.intellij.dbn.browser.action.AutoscrollToEditorAction" text="Browser - Autoscroll to editor"/>
             <action id="DBNavigator.Actions.Browser.AutoscrollFromEditor" class="com.dci.intellij.dbn.browser.action.AutoscrollFromEditorAction" text="Browser - Autoscroll from editor"/>
+-->
             <action id="DBNavigator.Actions.Browser.ExpandTree" class="com.dci.intellij.dbn.browser.action.ExpandTreeAction" text="Browser - Expand all"/>
             <action id="DBNavigator.Actions.Browser.CollapseTree" class="com.dci.intellij.dbn.browser.action.CollapseTreeAction" text="Browser - Collapse all"/>
             <action id="DBNavigator.Actions.Browser.ShowObjectProperties" class="com.dci.intellij.dbn.browser.action.ShowObjectPropertiesAction" text="Browser - Show object properties"/>
@@ -552,7 +554,7 @@
             <action id="DBNavigator.Actions.Browser.OpenSQLConsole" class="com.dci.intellij.dbn.browser.action.OpenSQLConsoleAction" text="Browser - SQL Console" icon="/img/file/SQLConsole.png"/>
             <action id="DBNavigator.Actions.Browser.OpenSessionBrowser" class="com.dci.intellij.dbn.browser.action.OpenSessionBrowserAction" text="Browser - Session Browser" icon="/img/file/SessionBrowser.png"/>
             <separator/>
-            <action id="DBNavigator.Actions.Browser.OpenSettings" class="com.dci.intellij.dbn.browser.action.OpenSettingsAction" text="Browser - Settings"/>
+            <action id="DBNavigator.Actions.Browser.OpenSettings" class="com.dci.intellij.dbn.browser.action.BrowserOptionsAction" text="Browser - Options"/>
         </group>
     </actions>
     <extensions defaultExtensionNs="com.intellij">

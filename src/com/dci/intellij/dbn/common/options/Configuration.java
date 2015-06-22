@@ -107,7 +107,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
         onApply();
     }
 
-    protected void notifyChanges() {
+    public void notifyChanges() {
         List<SettingsChangeNotifier> changeNotifiers = SETTINGS_CHANGE_NOTIFIERS.get();
         if (changeNotifiers != null) {
             SETTINGS_CHANGE_NOTIFIERS.set(null);
