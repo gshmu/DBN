@@ -1,13 +1,16 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
+import javax.swing.tree.TreeNode;
+import java.util.Enumeration;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
-import javax.swing.tree.TreeNode;
-import java.util.Enumeration;
-
-public class StatementExecutionMessageNode implements MessagesTreeNode {
+public class StatementExecutionMessageNode implements MessageTreeNode {
     private StatementExecutionMessage executionMessage;
     private StatementExecutionMessagesFileNode parent;
 
@@ -18,21 +21,17 @@ public class StatementExecutionMessageNode implements MessagesTreeNode {
         Disposer.register(this, executionMessage);
     }
 
+    @NotNull
     public StatementExecutionMessage getExecutionMessage() {
-        return executionMessage;
+        return FailsafeUtil.get(executionMessage);
     }
 
     public VirtualFile getVirtualFile() {
         return parent.getVirtualFile();
     }
 
-    public void dispose() {
-        executionMessage = null;
-        parent = null;
-    }
-
     public MessagesTreeModel getTreeModel() {
-        return parent.getTreeModel();
+        return getParent().getTreeModel();
     }
 
     /*********************************************************
@@ -46,8 +45,8 @@ public class StatementExecutionMessageNode implements MessagesTreeNode {
         return 0;
     }
 
-    public TreeNode getParent() {
-        return parent;
+    public StatementExecutionMessagesFileNode getParent() {
+        return FailsafeUtil.get(parent);
     }
 
     public int getIndex(TreeNode node) {
@@ -68,10 +67,22 @@ public class StatementExecutionMessageNode implements MessagesTreeNode {
 
     @Override
     public String toString() {
+        StatementExecutionMessage executionMessage = getExecutionMessage();
         return
             executionMessage.getText() + " " +
             executionMessage.getCauseMessage() + " - Connection: " +
             executionMessage.getExecutionResult().getConnectionHandler().getName() + ": " +
             executionMessage.getExecutionResult().getExecutionDuration() + "ms";
+    }
+
+    @NotNull
+    @Override
+    public ConsoleMessage getMessage() {
+        return getExecutionMessage();
+    }
+
+    public void dispose() {
+        executionMessage = null;
+        parent = null;
     }
 }

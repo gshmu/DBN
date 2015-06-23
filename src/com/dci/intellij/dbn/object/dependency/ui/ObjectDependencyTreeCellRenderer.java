@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
+import javax.swing.Icon;
+import javax.swing.JTree;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.load.LoadIcon;
 import com.dci.intellij.dbn.common.ui.MergedIcon;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
@@ -9,12 +13,10 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import javax.swing.JTree;
 
 public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
+
+    public static final JBColor HIGHLIGHT_BACKGROUND = new JBColor(0xCCCCFF, 0x155221);
 
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
@@ -27,7 +29,7 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
             boolean highlight = !isLoading && selectedNode != null && selectedNode != node && CommonUtil.safeEqual(object, selectedNode.getObject());
 
             SimpleTextAttributes regularAttributes = highlight ?
-                    SimpleTextAttributes.REGULAR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, new JBColor(0xCCCCFF, 0x155221), null) :
+                    SimpleTextAttributes.REGULAR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, HIGHLIGHT_BACKGROUND, null) :
                     isLoading ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES;
             SimpleTextAttributes grayAttributes = highlight ?
                     SimpleTextAttributes.GRAY_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, new JBColor(0xCCCCFF, 0x155221), null) :

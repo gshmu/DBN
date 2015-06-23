@@ -2,12 +2,15 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
+import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class ExplainPlanMessageNode implements MessagesTreeNode {
+public class ExplainPlanMessageNode implements MessageTreeNode {
     private ExplainPlanMessage explainPlanMessage;
     private ExplainPlanMessagesFileNode parent;
 
@@ -19,20 +22,15 @@ public class ExplainPlanMessageNode implements MessagesTreeNode {
     }
 
     public ExplainPlanMessage getExplainPlanMessage() {
-        return explainPlanMessage;
+        return FailsafeUtil.get(explainPlanMessage);
     }
 
     public VirtualFile getVirtualFile() {
-        return parent.getVirtualFile();
-    }
-
-    public void dispose() {
-        explainPlanMessage = null;
-        parent = null;
+        return getParent().getVirtualFile();
     }
 
     public MessagesTreeModel getTreeModel() {
-        return parent.getTreeModel();
+        return getParent().getTreeModel();
     }
 
     /*********************************************************
@@ -46,8 +44,8 @@ public class ExplainPlanMessageNode implements MessagesTreeNode {
         return 0;
     }
 
-    public TreeNode getParent() {
-        return parent;
+    public ExplainPlanMessagesFileNode getParent() {
+        return FailsafeUtil.get(parent);
     }
 
     public int getIndex(TreeNode node) {
@@ -68,8 +66,20 @@ public class ExplainPlanMessageNode implements MessagesTreeNode {
 
     @Override
     public String toString() {
+        ExplainPlanMessage explainPlanMessage = getExplainPlanMessage();
         return
             explainPlanMessage.getText() + " - Connection: " +
             explainPlanMessage.getConnectionHandler().getName();
+    }
+
+    @NotNull
+    @Override
+    public ConsoleMessage getMessage() {
+        return getExplainPlanMessage();
+    }
+
+    public void dispose() {
+        explainPlanMessage = null;
+        parent = null;
     }
 }
