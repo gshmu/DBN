@@ -2,13 +2,15 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.intellij.openapi.util.Disposer;
 
-public class CompilerMessageNode implements MessagesTreeNode {
+public class CompilerMessageNode implements MessageTreeNode {
     private CompilerMessage compilerMessage;
     private CompilerMessagesObjectNode parent;
 
@@ -24,16 +26,11 @@ public class CompilerMessageNode implements MessagesTreeNode {
     }
 
     public DBContentVirtualFile getVirtualFile() {
-        return compilerMessage.getContentFile();
-    }
-
-    public void dispose() {
-        compilerMessage = null;
-        parent = null;
+        return getCompilerMessage().getContentFile();
     }
 
     public MessagesTreeModel getTreeModel() {
-        return ((CompilerMessagesObjectNode)getParent()).getTreeModel();
+        return getParent().getTreeModel();
     }
 
     /*********************************************************
@@ -47,7 +44,7 @@ public class CompilerMessageNode implements MessagesTreeNode {
         return 0;
     }
 
-    public TreeNode getParent() {
+    public CompilerMessagesObjectNode getParent() {
         return FailsafeUtil.get(parent);
     }
 
@@ -69,6 +66,18 @@ public class CompilerMessageNode implements MessagesTreeNode {
 
     @Override
     public String toString() {
+        CompilerMessage compilerMessage = getCompilerMessage();
         return "[" + compilerMessage.getType() + "] " + compilerMessage.getText();
+    }
+
+    @NotNull
+    @Override
+    public ConsoleMessage getMessage() {
+        return getCompilerMessage();
+    }
+
+    public void dispose() {
+        compilerMessage = null;
+        parent = null;
     }
 }

@@ -4,6 +4,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -57,17 +59,53 @@ public class MessagesTree extends DBNTree implements Disposable {
         addKeyListener(keyListener);
         setRootVisible(false);
         setShowsRootHandles(true);
+        setOpaque(false);
         Color bgColor = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
+    }
+
+    @Override public void paintComponent(Graphics g) {
+        g.setColor(getBackground());
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        for (int i=0; i<getRowCount();i++){
+            TreePath treePath = getPathForRow(i);
+            if (!isRowSelected(i)) {
+                Object lastPathComponent = treePath.getLastPathComponent();
+                if (lastPathComponent instanceof MessageTreeNode) {
+                    MessageTreeNode node = (MessageTreeNode) lastPathComponent;
+                    if (node.getMessage().isNew()) {
+                        Rectangle r = getRowBounds(i);
+                        g.setColor(MessagesTreeCellRenderer.HIGHLIGHT_BACKGROUND);
+                        g.fillRect(0, r.y, getWidth(), r.height);
+                    }
+                }
+            }
+        }
+        //super.paintComponent(g);
+        if (ui != null) {
+            Graphics scratchGraphics = g.create();
+            try {
+                ui.update(scratchGraphics, this);
+            }
+            finally {
+                scratchGraphics.dispose();
+            }
+        }
     }
 
     public MessagesTreeModel getModel() {
         return (MessagesTreeModel) super.getModel();
     }
 
+    public void resetMessagesStatus() {
+        getModel().resetMessagesStatus();
+    }
+
     public void reset() {
-        Disposer.dispose(getModel());
+        MessagesTreeModel oldModel = getModel();
         setModel(new MessagesTreeModel());
+        Disposer.dispose(oldModel);
     }
 
     public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, boolean select, boolean focus) {
@@ -292,7 +330,7 @@ public class MessagesTree extends DBNTree implements Disposable {
         public void valueChanged(TreeSelectionEvent event) {
             if (event.isAddedPath()) {
                 Object object = event.getPath().getLastPathComponent();
-                navigateToCode(object, object instanceof CompilerMessageNode);
+                navigateToCode(object, false/*object instanceof CompilerMessageNode*/);
                 //grabFocus();
             }
         }
