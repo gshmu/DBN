@@ -244,7 +244,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     public List<DBIndex> getIndexes() {
-        return initChildObjects().getObjectList(DBObjectType.INDEX).getObjects();
+        return (List<DBIndex>) initChildObjects().getObjects(DBObjectType.INDEX, true);
     }
 
     public List<DBSynonym> getSynonyms() {
@@ -268,11 +268,11 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     public List<DBDatasetTrigger> getDatasetTriggers() {
-        return initChildObjects().getObjectList(DBObjectType.DATASET_TRIGGER).getObjects();
+        return (List<DBDatasetTrigger>) initChildObjects().getObjects(DBObjectType.DATASET_TRIGGER, true);
     }
 
     public List<DBDatabaseTrigger> getDatabaseTriggers() {
-        return initChildObjects().getObjectList(DBObjectType.DATABASE_TRIGGER).getObjects();
+        return (List<DBDatabaseTrigger>) initChildObjects().getObjects(DBObjectType.DATABASE_TRIGGER, false);
     }
 
     public List<DBType> getTypes() {

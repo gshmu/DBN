@@ -311,16 +311,26 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return childObjectRelations;
     }
 
+    @NotNull
     public DBObjectListContainer initChildObjects() {
         if (childObjects == null) {
-            childObjects = new DBObjectListContainer(this);
+            synchronized (this) {
+                if (childObjects == null) {
+                    childObjects = new DBObjectListContainer(this);
+                }
+            }
         }
         return childObjects;
     }
 
+    @NotNull
     public DBObjectRelationListContainer initChildObjectRelations() {
         if (childObjectRelations == null) {
-            childObjectRelations = new DBObjectRelationListContainer(this);
+            synchronized (this) {
+                if (childObjectRelations == null) {
+                    childObjectRelations = new DBObjectRelationListContainer(this);
+                }
+            }
         }
         return childObjectRelations;
 

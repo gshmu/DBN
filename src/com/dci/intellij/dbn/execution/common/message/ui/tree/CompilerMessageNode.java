@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.intellij.openapi.util.Disposer;
@@ -19,7 +20,7 @@ public class CompilerMessageNode implements MessagesTreeNode {
     }
 
     public CompilerMessage getCompilerMessage() {
-        return compilerMessage;
+        return FailsafeUtil.get(compilerMessage);
     }
 
     public DBContentVirtualFile getVirtualFile() {
@@ -32,7 +33,7 @@ public class CompilerMessageNode implements MessagesTreeNode {
     }
 
     public MessagesTreeModel getTreeModel() {
-        return parent.getTreeModel();
+        return ((CompilerMessagesObjectNode)getParent()).getTreeModel();
     }
 
     /*********************************************************
@@ -47,7 +48,7 @@ public class CompilerMessageNode implements MessagesTreeNode {
     }
 
     public TreeNode getParent() {
-        return parent;
+        return FailsafeUtil.get(parent);
     }
 
     public int getIndex(TreeNode node) {
