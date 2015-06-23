@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -71,46 +72,46 @@ public class MessagesTree extends DBNTree implements Disposable {
 
     public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, boolean select, boolean focus) {
         TreePath treePath = getModel().addExecutionMessage(executionMessage);
-        scrollPathToVisible(treePath);
-        if (select) {
-            getSelectionModel().setSelectionPath(treePath);
-        }
-        if (focus) requestFocus();
+        scrollToPath(treePath, select, focus);
         return treePath;
     }
 
     public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean select) {
         TreePath treePath = getModel().addCompilerMessage(compilerMessage);
-        scrollPathToVisible(treePath);
-        if (select) {
-            getSelectionModel().setSelectionPath(treePath);
-        }
+        scrollToPath(treePath, select, false);
         return treePath;
     }
 
     public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage, boolean select) {
         TreePath treePath = getModel().addExplainPlanMessage(explainPlanMessage);
-        scrollPathToVisible(treePath);
-        if (select) {
-            getSelectionModel().setSelectionPath(treePath);
-        }
+        scrollToPath(treePath, select, false);
         return treePath;
     }
 
     public void selectCompilerMessage(CompilerMessage compilerMessage) {
         TreePath treePath = getModel().getTreePath(compilerMessage);
-        if (treePath != null) {
-            getSelectionModel().setSelectionPath(treePath);
-            scrollPathToVisible(treePath);
-        }
+        scrollToPath(treePath, true, false);
     }
 
     public void selectExecutionMessage(StatementExecutionMessage statementExecutionMessage, boolean focus) {
         TreePath treePath = getModel().getTreePath(statementExecutionMessage);
+        scrollToPath(treePath, true, focus);
+    }
+
+    private void scrollToPath(final TreePath treePath, final boolean select, final boolean focus) {
         if (treePath != null) {
-            getSelectionModel().setSelectionPath(treePath);
-            scrollPathToVisible(treePath);
-            if (focus) requestFocus();
+            new SimpleLaterInvocator() {
+                @Override
+                protected void execute() {
+                    scrollPathToVisible(treePath);
+                    if (select) {
+                        getSelectionModel().setSelectionPath(treePath);
+                    }
+                    if (focus) {
+                        requestFocus();
+                    }
+                }
+            }.start();
         }
     }
 
