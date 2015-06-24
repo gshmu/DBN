@@ -75,6 +75,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     private DataEditorSettings settings;
     private Project project;
     private boolean isLoading;
+    private boolean isLoaded;
 
     private String dataLoadError;
     private DatasetEditorState editorState = new DatasetEditorState();
@@ -270,6 +271,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                 @Override
                 protected void execute() {
                     setLoading(true);
+                    EventUtil.notify(project, DatasetLoadListener.TOPIC).datasetLoading(databaseFile);
                     new SimpleBackgroundTask("load table data") {
                         @Override
                         protected void execute() {
@@ -297,6 +299,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                     LOGGER.error("Error loading table data", e);
                                 }
                             } finally {
+                                isLoaded = true;
                                 editorForm.hideLoadingHint();
                                 setLoading(false);
                                 EventUtil.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
@@ -449,6 +452,10 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     public boolean isLoading() {
         return isLoading;
+    }
+
+    public boolean isLoaded() {
+        return isLoaded;
     }
 
     /**
