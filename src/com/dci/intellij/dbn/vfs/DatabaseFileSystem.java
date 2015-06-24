@@ -375,6 +375,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
 
     private void openSchemaObject(final DBSchemaObject object, final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
         final DBEditableObjectVirtualFile databaseFile = findDatabaseFile(object);
+        databaseFile.setSelectedEditorProviderId(editorProviderId);
         if (!BackgroundTask.isProcessCancelled()) {
             new SimpleLaterInvocator() {
                 @Override

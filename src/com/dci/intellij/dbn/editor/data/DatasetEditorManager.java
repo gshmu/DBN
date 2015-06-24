@@ -164,8 +164,10 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
                     FileEditor[] fileEditors = source.getEditors(file);
                     for (FileEditor fileEditor : fileEditors) {
                         if (fileEditor instanceof DatasetEditor) {
-                            DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
-                            datasetEditor.loadData(INITIAL_LOAD_INSTRUCTIONS);
+                            if (editableObjectFile.getSelectedEditorProviderId() == EditorProviderId.DATA) {
+                                DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
+                                datasetEditor.loadData(INITIAL_LOAD_INSTRUCTIONS);
+                            }
                         }
                     }
                 }
