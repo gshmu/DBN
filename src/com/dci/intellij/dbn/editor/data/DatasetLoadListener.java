@@ -9,4 +9,5 @@ public interface DatasetLoadListener extends EventListener {
     Topic<DatasetLoadListener> TOPIC = Topic.create("Dataset loaded", DatasetLoadListener.class);
 
     void datasetLoaded(VirtualFile virtualFile);
+    void datasetLoading(VirtualFile virtualFile);
 }
