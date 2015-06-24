@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.code.common.style.presets;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.intellij.formatting.Spacing;
@@ -26,6 +28,10 @@ public interface CodeStylePreset extends Presentable{
 
     String getId();
     boolean accepts(BasePsiElement psiElement);
+
+    @Nullable
     Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings);
+
+    @Nullable
     Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings);
 }

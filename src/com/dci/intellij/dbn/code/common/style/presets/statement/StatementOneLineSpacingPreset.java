@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.code.common.style.presets.statement;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.intellij.formatting.Spacing;
 import com.intellij.formatting.Wrap;
@@ -10,10 +12,12 @@ public class StatementOneLineSpacingPreset extends StatementAbstractPreset {
         super("one_line", "One line");
     }
 
+    @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         return null;
     }
 
+    @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         return SPACING_ONE_LINE;
     }

@@ -17,7 +17,7 @@ public class OpenSettingsAction extends DumbAwareAction {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
             ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-            settingsManager.openProjectSettings(ConfigId.CODE_COMPLETION);
+            settingsManager.openProjectSettings(ConfigId.CODE_EDITOR);
         }
     }
 
