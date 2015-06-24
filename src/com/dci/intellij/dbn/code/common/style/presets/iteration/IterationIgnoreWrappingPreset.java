@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.code.common.style.presets.iteration;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
@@ -13,10 +15,12 @@ public class IterationIgnoreWrappingPreset extends IterationAbstractPreset {
         super("ignore_wrapping", "Ignore");
     }
 
+    @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         return null;
     }
 
+    @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
         IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
