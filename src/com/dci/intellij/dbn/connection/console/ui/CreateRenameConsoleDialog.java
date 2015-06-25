@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.connection.console.ui;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -43,12 +41,5 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
     @NotNull
     public Action getOKAction() {
         return super.getOKAction();
-    }
-
-
-    @Nullable
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return component == null ? null : component.getConsoleNameTextField();
     }
 }

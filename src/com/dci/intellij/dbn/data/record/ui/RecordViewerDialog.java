@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.data.record.ui;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,11 +22,6 @@ public class RecordViewerDialog extends DBNDialog<RecordViewerForm> {
         component = new RecordViewerForm(this, record);
         getCancelAction().putValue(Action.NAME, "Close");
         init();
-    }
-
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return component.getPreferredFocusedComponent();
     }
 
     @NotNull

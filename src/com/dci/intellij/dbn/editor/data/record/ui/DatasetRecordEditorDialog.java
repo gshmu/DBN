@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -16,11 +15,6 @@ public class DatasetRecordEditorDialog extends DBNDialog<DatasetRecordEditorForm
         component = new DatasetRecordEditorForm(this, row);
         getCancelAction().putValue(Action.NAME, "Close");
         init();
-    }
-
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return component.getPreferredFocusedComponent();
     }
 
     @NotNull

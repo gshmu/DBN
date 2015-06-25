@@ -73,6 +73,12 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         return mainPanel;
     }
 
+    @Nullable
+    @Override
+    public JComponent getPreferredFocusedComponent() {
+        return editorTextArea;
+    }
+
     public JBPopup createPopup() {
         JTextField textField = getTextField();
         String text = "";

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.execution.statement.variables.ui;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,11 +28,6 @@ public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecut
     @Override
     protected String getDimensionServiceKey() {
         return null;
-    }
-
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return component == null ? null : component.getPreferredFocusedComponent();
     }
 
     @NotNull

@@ -1,17 +1,16 @@
 package com.dci.intellij.dbn.connection.config.tns.ui;
 
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.connection.config.tns.TnsName;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.connection.config.tns.TnsName;
+import com.intellij.openapi.project.Project;
 
 public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
     private List<TnsName> tnsNames;
@@ -35,11 +34,6 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
 
     public List<TnsName> getTnsNames() {
         return tnsNames;
-    }
-
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return component == null ? null : component.getPreferredFocusedComponent();
     }
 
     @NotNull
