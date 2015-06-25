@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -164,10 +165,11 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
                     FileEditor[] fileEditors = source.getEditors(file);
                     for (FileEditor fileEditor : fileEditors) {
                         if (fileEditor instanceof DatasetEditor) {
+                            DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
                             DataEditorSettings dataEditorSettings = DataEditorSettings.getInstance(getProject());
-
-                            if (editableObjectFile.getSelectedEditorProviderId() == EditorProviderId.DATA || dataEditorSettings.getGeneralSettings().getLoadViewDataActive().getValue()) {
-                                DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
+                            if (object instanceof DBTable ||
+                                    editableObjectFile.getSelectedEditorProviderId() == EditorProviderId.DATA ||
+                                    dataEditorSettings.getGeneralSettings().getLoadViewDataActive().getValue()) {
                                 datasetEditor.loadData(INITIAL_LOAD_INSTRUCTIONS);
                             }
                         }
