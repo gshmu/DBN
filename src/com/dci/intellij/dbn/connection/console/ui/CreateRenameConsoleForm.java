@@ -79,7 +79,9 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
         });
     }
 
-    public JTextField getConsoleNameTextField() {
+    @Nullable
+    @Override
+    public JComponent getPreferredFocusedComponent() {
         return consoleNameTextField;
     }
 

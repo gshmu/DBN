@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,11 +33,6 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
         String dataTypeName = dataType == null ? "OBJECT" : dataType.getName();
         DBObjectType objectType = userValueHolder.getObjectType();
         return "Edit " + dataTypeName.toUpperCase() + " content (" +objectType.getName().toLowerCase() + " " + userValueHolder.getName().toUpperCase() + ")";
-    }
-
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return component.getEditorComponent();
     }
 
     public static void show(Project project, TextEditorAdapter textEditorAdapter) {

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -24,11 +23,6 @@ public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputFo
     @Override
     protected String getDimensionServiceKey() {
         return null;
-    }
-
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return component == null ? null : component.getPreferredFocusedComponent();
     }
 
     @NotNull

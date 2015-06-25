@@ -83,6 +83,12 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         return mainPanel;
     }
 
+    @Nullable
+    @Override
+    public JComponent getPreferredFocusedComponent() {
+        return list;
+    }
+
     private class ArrayEditorList extends EditableStringList {
         public ArrayEditorList() {
             super(false, true);

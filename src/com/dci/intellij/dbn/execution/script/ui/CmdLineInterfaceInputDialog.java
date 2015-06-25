@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,11 +23,6 @@ public class CmdLineInterfaceInputDialog extends DBNDialog<CmdLineInterfaceInput
     @Override
     protected String getDimensionServiceKey() {
         return null;
-    }
-
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return component == null ? null : component.getPreferredFocusedComponent();
     }
 
     @NotNull

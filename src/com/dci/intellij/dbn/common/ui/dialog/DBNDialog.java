@@ -40,6 +40,11 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
         return "DBNavigator." + getClass().getSimpleName();
     }
 
+    @Override
+    public JComponent getPreferredFocusedComponent() {
+        JComponent focusComponent = component == null ? null : component.getPreferredFocusedComponent();
+        return focusComponent == null ? super.getPreferredFocusedComponent() : focusComponent;
+    }
 
     @NotNull
     public Project getProject() {

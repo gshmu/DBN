@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.DBNContentWithHeaderForm;
@@ -36,12 +35,6 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
         setModal(true);
         setResizable(true);
         init();
-    }
-
-
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return component == null ? null : component.getPreferredFocusedComponent();
     }
 
     @NotNull
