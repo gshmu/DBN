@@ -25,7 +25,12 @@ public class DatabaseConsoleBundle implements Disposable{
 
     public List<DBConsoleVirtualFile> getConsoles() {
         if (consoles.size() == 0) {
-            createConsole(getConnectionHandler().getName());
+            synchronized (this) {
+                if (consoles.size() == 0) {
+                    createConsole(getConnectionHandler().getName());
+                }
+            }
+
         }
         return consoles;
     }
@@ -50,16 +55,25 @@ public class DatabaseConsoleBundle implements Disposable{
 
     @Nullable
     public DBConsoleVirtualFile getConsole(String name) {
-        return getConsole(name, false);
-    }
-
-    public DBConsoleVirtualFile getConsole(String name, boolean create) {
         for (DBConsoleVirtualFile console : consoles) {
             if (console.getName().equals(name)) {
                 return console;
             }
         }
-        return create ? createConsole(name) : null;
+        return null;
+    }
+
+    public DBConsoleVirtualFile getConsole(String name, boolean create) {
+        DBConsoleVirtualFile console = getConsole(name);
+        if (console == null && create) {
+            synchronized (this) {
+                console = getConsole(name);
+                if (console == null) {
+                    return createConsole(name);
+                }
+            }
+        }
+        return console;
     }
 
     public DBConsoleVirtualFile createConsole(String name) {
