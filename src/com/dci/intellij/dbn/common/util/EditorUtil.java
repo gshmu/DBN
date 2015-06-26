@@ -182,11 +182,13 @@ public class EditorUtil {
 
     public static FileEditor getFileEditor(Editor editor) {
         Project project = editor.getProject();
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-        FileEditor[] allEditors = fileEditorManager.getAllEditors();
-        for (FileEditor fileEditor : allEditors) {
-            if (editor == getEditor(fileEditor)) {
-                return fileEditor;
+        if (project != null) {
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            FileEditor[] allEditors = fileEditorManager.getAllEditors();
+            for (FileEditor fileEditor : allEditors) {
+                if (editor == getEditor(fileEditor)) {
+                    return fileEditor;
+                }
             }
         }
         return null;
@@ -236,7 +238,7 @@ public class EditorUtil {
                     DDLFileEditor ddlFileEditor = (DDLFileEditor) fileEditor;
                     Editor editor = ddlFileEditor.getEditor();
                     PsiFile psiFile = PsiUtil.getPsiFile(project, editor.getDocument());
-                    if (psiFile.getVirtualFile().equals(virtualFile)) {
+                    if (psiFile != null && psiFile.getVirtualFile().equals(virtualFile)) {
                         scriptFileEditors.add(ddlFileEditor);
                     }
                 }
