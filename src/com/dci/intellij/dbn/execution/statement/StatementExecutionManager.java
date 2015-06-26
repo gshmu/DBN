@@ -41,6 +41,7 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionVariablesDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement.MatchType;
+import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -385,19 +386,29 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
         if (editor != null) {
             DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
-            PsiElement child = file.getFirstChild();
-            while (child != null) {
-                if (child instanceof RootPsiElement) {
-                    RootPsiElement root = (RootPsiElement) child;
-
-                    for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
-                        if (executable.getTextOffset() > offset) {
+            if (file != null) {
+                PsiElement child = file.getFirstChild();
+                while (child != null) {
+                    if (child instanceof ChameleonPsiElement) {
+                        ChameleonPsiElement chameleonPsiElement = (ChameleonPsiElement) child;
+                        for (ExecutablePsiElement executable : chameleonPsiElement.getExecutablePsiElements()) {
                             StatementExecutionProcessor executionProcessor = getExecutionProcessor(fileEditor, executable, true);
                             executionProcessors.add(executionProcessor);
                         }
+
                     }
+                    if (child instanceof RootPsiElement) {
+                        RootPsiElement root = (RootPsiElement) child;
+
+                        for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
+                            if (executable.getTextOffset() > offset) {
+                                StatementExecutionProcessor executionProcessor = getExecutionProcessor(fileEditor, executable, true);
+                                executionProcessors.add(executionProcessor);
+                            }
+                        }
+                    }
+                    child = child.getNextSibling();
                 }
-                child = child.getNextSibling();
             }
         }
         return executionProcessors;

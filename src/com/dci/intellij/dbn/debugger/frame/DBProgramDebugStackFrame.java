@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcess;
@@ -98,17 +97,17 @@ public class DBProgramDebugStackFrame extends XStackFrame {
     public void customizePresentation(@NotNull ColoredTextContainer component) {
 
         DBSchemaObject object = DBProgramDebugUtil.getObject(sourcePosition);
-        String frameName = "";
-        Icon frameIcon = Icons.DBO_METHOD;
+        String frameName;
+        Icon frameIcon;
         if (object != null) {
             frameName = object.getName();
             frameIcon = object.getIcon();
             DBSourceCodeVirtualFile sourceCodeFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
             Project project = sourceCodeFile.getProject();
             if (project != null) {
+                Document document = DocumentUtil.getDocument(sourceCodeFile);
                 PSQLFile psiFile = (PSQLFile) PsiUtil.getPsiFile(project, sourceCodeFile);
-                if (psiFile != null) {
-                    Document document = DocumentUtil.getDocument(sourceCodeFile);
+                if (psiFile != null && document != null) {
                     int offset = document.getLineEndOffset(sourcePosition.getLine());
                     PsiElement elementAtOffset = psiFile.findElementAt(offset);
                     while (elementAtOffset instanceof PsiWhiteSpace || elementAtOffset instanceof PsiComment) {
@@ -147,9 +146,9 @@ public class DBProgramDebugStackFrame extends XStackFrame {
         DBSourceCodeVirtualFile sourceCodeFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
         Project project = sourceCodeFile.getProject();
         if (project != null) {
+            Document document = DocumentUtil.getDocument(sourceCodeFile);
             PSQLFile psiFile = (PSQLFile) PsiUtil.getPsiFile(project, sourceCodeFile);
-            if (psiFile != null) {
-                Document document = DocumentUtil.getDocument(sourceCodeFile);
+            if (document != null && psiFile != null) {
                 int offset = document.getLineStartOffset(sourcePosition.getLine());
                 Set<BasePsiElement> variables = psiFile.lookupVariableDefinition(offset);
                 CodeStyleCaseSettings codeStyleCaseSettings = DBLCodeStyleManager.getInstance(psiFile.getProject()).getCodeStyleCaseSettings(PSQLLanguage.INSTANCE);
