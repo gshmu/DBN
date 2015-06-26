@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
@@ -65,14 +64,14 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
                 if (modelFilter != null) {
                     String filterValue = modelFilter.getFilterValue(filterType);
                     if (StringUtil.isNotEmpty(filterValue)) {
-                        text = NamingUtil.enhanceUnderscoresForDisplay(filterValue);
+                        text = filterValue;
                         icon = filterType.getIcon();
                     }
                 }
             }
         }
 
-        presentation.setText(text);
+        presentation.setText(text, false);
         presentation.setIcon(icon);
     }
 
@@ -105,7 +104,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
         private String filterValue;
 
         public SelectFilterValueAction(String filterValue) {
-            super(filterValue == null ? "No Filter" : NamingUtil.enhanceUnderscoresForDisplay(filterValue), null, filterValue == null ? null : filterType.getIcon());
+            super(filterValue == null ? "No Filter" : filterValue, null, filterValue == null ? null : filterType.getIcon());
             this.filterValue = filterValue;
         }
 
@@ -126,6 +125,13 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
                         }
                     }
                 }
+            }
+        }
+
+        @Override
+        public void update(AnActionEvent e) {
+            if (filterValue != null) {
+                e.getPresentation().setText(filterValue, false);
             }
         }
     }

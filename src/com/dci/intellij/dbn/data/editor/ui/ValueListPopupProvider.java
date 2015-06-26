@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -231,9 +230,8 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
         @Override
         public void update(AnActionEvent e) {
-            String text = NamingUtil.enhanceUnderscoresForDisplay(value);
             Presentation presentation = e.getPresentation();
-            presentation.setText(text);
+            presentation.setText(value, false);
         }
     }
 }

@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.editor.data.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.action.ObjectListShowAction;
@@ -45,7 +44,7 @@ public class ShowReferencingRecordsAction extends ObjectListShowAction{
         DBColumn column = (DBColumn) object;
         DatasetFilterInput filterInput = new DatasetFilterInput(column.getDataset());
         filterInput.setColumnValue(column, columnValue);
-        String actionText = NamingUtil.enhanceNameForDisplay(column.getDataset().getName() + " - " + column.getName());
+        String actionText = column.getDataset().getName() + " - " + column.getName();
         return new ShowRecordsAction(actionText, filterInput) {};
     }
 }
