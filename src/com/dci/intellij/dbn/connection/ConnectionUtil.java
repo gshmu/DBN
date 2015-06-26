@@ -5,6 +5,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.Properties;
@@ -259,6 +260,8 @@ public class ConnectionUtil {
     public static void commit(Connection connection) {
         try {
             if (connection != null) connection.commit();
+        } catch (SQLRecoverableException e){
+            // ignore
         } catch (SQLException e) {
             LOGGER.warn("Error committing connection", e);
         }
@@ -267,15 +270,19 @@ public class ConnectionUtil {
     public static void rollback(Connection connection) {
         try {
             if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) connection.rollback();
+        } catch (SQLRecoverableException e){
+            // ignore
         } catch (SQLException e) {
-            LOGGER.warn("Error rolling connection back", e);
+            LOGGER.warn("Error committing connection", e);
         }
     }
     public static void setAutocommit(Connection connection, boolean autoCommit) {
         try {
             if (connection != null && !connection.isClosed()) connection.setAutoCommit(autoCommit);
+        } catch (SQLRecoverableException e){
+            // ignore
         } catch (SQLException e) {
-            LOGGER.warn("Error setting autocommit to connection", e);
+            LOGGER.warn("Error committing connection", e);
         }
     }
 }

@@ -170,25 +170,27 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     private void bindExecutionProcessors(FileEditor fileEditor, MatchType matchType) {
         Editor editor = EditorUtil.getEditor(fileEditor);
         PsiFile psiFile = DocumentUtil.getFile(editor);
-        PsiElement child = psiFile.getFirstChild();
-        while (child != null) {
-            if (child instanceof RootPsiElement) {
-                RootPsiElement root = (RootPsiElement) child;
-                for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
-                    if (matchType == MatchType.CACHED) {
-                        StatementExecutionProcessor executionProcessor = executable.getExecutionProcessor();
-                        if (executionProcessor != null && !executionProcessor.isBound() && executionProcessor.isQuery() == executable.isQuery()) {
-                            executionProcessor.bind(executable);
-                        }
-                    } else {
-                        StatementExecutionProcessor executionProcessor = findExecutionProcessor(executable, fileEditor, matchType);
-                        if (executionProcessor != null) {
-                            executionProcessor.bind(executable);
+        if (psiFile != null) {
+            PsiElement child = psiFile.getFirstChild();
+            while (child != null) {
+                if (child instanceof RootPsiElement) {
+                    RootPsiElement root = (RootPsiElement) child;
+                    for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
+                        if (matchType == MatchType.CACHED) {
+                            StatementExecutionProcessor executionProcessor = executable.getExecutionProcessor();
+                            if (executionProcessor != null && !executionProcessor.isBound() && executionProcessor.isQuery() == executable.isQuery()) {
+                                executionProcessor.bind(executable);
+                            }
+                        } else {
+                            StatementExecutionProcessor executionProcessor = findExecutionProcessor(executable, fileEditor, matchType);
+                            if (executionProcessor != null) {
+                                executionProcessor.bind(executable);
+                            }
                         }
                     }
                 }
+                child = child.getNextSibling();
             }
-            child = child.getNextSibling();
         }
     }
 
@@ -211,7 +213,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
      *********************************************************/
     public void debugExecute(@NotNull StatementExecutionProcessor executionProcessor, @NotNull Connection connection) {
         try {
-            executionProcessor.execute(connection);
+            executionProcessor.execute(connection, true);
         } finally {
             DBLanguagePsiFile file = executionProcessor.getPsiFile();
             DocumentUtil.refreshEditorAnnotations(file);

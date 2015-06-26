@@ -49,7 +49,7 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     void execute();
 
-    void execute(@Nullable Connection connection);
+    void execute(@Nullable Connection connection, boolean debug);
 
     StatementExecutionVariablesBundle getExecutionVariables();
 
