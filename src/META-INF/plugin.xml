@@ -373,7 +373,7 @@
             <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementEditorAction" text="Script Editor - Execute Statement" icon="/img/action/ExecuteStatement.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl ENTER"/>
             </action>
-            <action id="DBNavigator.Actions.DebugStatement" class="com.dci.intellij.dbn.execution.statement.action.DebugStatementEditorAction" text="Script Editor - Debug Statement" icon="/img/action/DebugStatement.png"/>
+            <action id="DBNavigator.Actions.DebugStatement" class="com.dci.intellij.dbn.debugger.execution.statement.action.DebugStatementEditorAction" text="Script Editor - Debug Statement" icon="/img/action/DebugStatement.png"/>
             <action id="DBNavigator.Actions.ExplainPlan" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanAction" text="Script Editor - Explain plan" icon="/img/action/ExplainStatement.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift ENTER"/>
             </action>
