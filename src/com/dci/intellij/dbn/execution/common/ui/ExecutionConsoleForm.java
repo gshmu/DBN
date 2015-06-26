@@ -273,7 +273,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             }
         }
 
-        if (firstMessage != null/* && firstMessage.isError()*/) {
+        if (firstMessage != null && firstMessage.isError()) {
             messagesPanel.selectMessage(firstMessage);
         }
     }

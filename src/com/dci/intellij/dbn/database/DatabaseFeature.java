@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.database;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
 
 public enum DatabaseFeature {
@@ -32,6 +33,10 @@ public enum DatabaseFeature {
 
     public String getDescription() {
         return description;
+    }
+
+    public boolean isSupported(@Nullable ConnectionProvider connectionProvider) {
+        return connectionProvider != null && isSupported(connectionProvider.getConnectionHandler());
     }
 
     public boolean isSupported(@Nullable DBObject object) {
