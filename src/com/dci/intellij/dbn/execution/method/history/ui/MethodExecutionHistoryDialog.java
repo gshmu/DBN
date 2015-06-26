@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
@@ -15,6 +17,7 @@ import com.intellij.openapi.project.Project;
 public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHistoryForm> {
     private SelectAction selectAction;
     private ExecuteAction executeAction;
+    private DebugAction debugAction;
     private SaveAction saveAction;
     private CloseAction closeAction;
     private boolean editable;
@@ -36,7 +39,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
             component.setSelectedInput(selectedExecutionInput);
         }
         init();
-        setMainButtonEnabled(selectedExecutionInput != null);
+        updateMainButtons(selectedExecutionInput);
     }
 
     @NotNull
@@ -44,10 +47,12 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         if (editable) {
             executeAction = new ExecuteAction();
             executeAction.setEnabled(false);
+            debugAction = new DebugAction();
+            debugAction.setEnabled(false);
             saveAction = new SaveAction();
             saveAction.setEnabled(false);
             closeAction = new CloseAction();
-            return new Action[]{executeAction, saveAction, closeAction};
+            return new Action[]{executeAction, debugAction, saveAction, closeAction};
         } else {
             selectAction = new SelectAction();
             selectAction.setEnabled(false);
@@ -109,6 +114,22 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         }
     }
 
+    private class DebugAction extends AbstractAction {
+        public DebugAction() {
+            super("Debug", Icons.METHOD_EXECUTION_DEBUG);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            saveChanges();
+            MethodExecutionInput executionInput = component.getTree().getSelectedExecutionInput();
+            if (executionInput != null) {
+                DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
+                close(OK_EXIT_CODE);
+                debuggerManager.startMethodDebugger(executionInput.getMethod());
+            }
+        }
+    }
+
     private class SaveAction extends AbstractAction {
         public SaveAction() {
             super("Save");
@@ -131,9 +152,16 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         }
     }
 
-    public void setMainButtonEnabled(boolean enabled){
-        if (executeAction != null) executeAction.setEnabled(enabled);
-        if (selectAction != null) selectAction.setEnabled(enabled);
+    public void updateMainButtons(MethodExecutionInput selection){
+        if (selection == null) {
+            if (executeAction != null) executeAction.setEnabled(false);
+            if (debugAction != null) debugAction.setEnabled(false);
+            if (selectAction != null) selectAction.setEnabled(false);
+        } else {
+            if (executeAction != null) executeAction.setEnabled(true);
+            if (debugAction != null) debugAction.setEnabled(DatabaseFeature.DEBUGGING.isSupported(selection));
+            if (selectAction != null) selectAction.setEnabled(true);
+        }
     }
 
     public void setSaveButtonEnabled(boolean enabled){

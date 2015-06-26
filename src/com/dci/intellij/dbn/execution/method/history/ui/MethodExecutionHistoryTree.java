@@ -135,7 +135,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
                                 if (dialog != null && !dialog.isDisposed()) {
                                     dialog.showMethodExecutionPanel(executionInput);
                                     dialog.setSelectedExecutionInput(executionInput);
-                                    dialog.setMainButtonEnabled(method != null);
+                                    dialog.updateMainButtons(executionInput);
                                     if (method != null) {
                                         executionHistory.setSelection(executionInput.getMethodRef());
                                     }
