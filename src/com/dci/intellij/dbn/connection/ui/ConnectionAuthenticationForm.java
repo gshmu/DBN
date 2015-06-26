@@ -4,7 +4,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import java.awt.BorderLayout;
@@ -16,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.ui.DocumentAdapter;
@@ -25,18 +25,16 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPasswordField passwordField;
-    private JTextArea hintTextArea;
     private JTextField userTextField;
     private JCheckBox emptyPasswordCheckBox;
     private JCheckBox osAuthenticationCheckBox;
+    private JPanel hintPanel;
 
     private String cachedUser = "";
     private String cachedPassword = "";
 
     public ConnectionAuthenticationForm(@NotNull final ConnectionAuthenticationDialog parentComponent, final @Nullable ConnectionHandler connectionHandler) {
         super(parentComponent);
-        hintTextArea.setBackground(mainPanel.getBackground());
-        hintTextArea.setFont(mainPanel.getFont());
 
         final AuthenticationInfo authenticationInfo = parentComponent.getAuthenticationInfo();
 
@@ -51,6 +49,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
         passwordField.setEnabled(!isEmptyPassword);
         passwordField.setBackground(isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
 
+        String hintText;
         if (connectionHandler != null) {
             DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
@@ -59,14 +58,15 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
             String expiryTimeText = passwordExpiryTime == 0 ? "0 - no expiry" :
                     passwordExpiryTime == 1 ? "1 minute" : passwordExpiryTime + " minutes";
 
-            hintTextArea.setText(
-                    StringUtil.wrap("The system needs your credentials to connect to this database. " +
+            hintText = "The system needs your credentials to connect to this database. " +
                             "\nYou can configure how long the credentials stay active on idle connectivity " +
-                            "in \nDBN Settings > Connection > Details (currently set to " + expiryTimeText + ")", 90, ": ,."));
+                            "in DBN Settings > Connection > Details (currently set to " + expiryTimeText + ")";
 
         } else {
-            hintTextArea.setText("The system needs your credentials to connect to this database.");
+            hintText = "The system needs your credentials to connect to this database.";
         }
+        DBNHintForm hintForm = new DBNHintForm(hintText, null, true);
+        hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
         updateAuthenticationFields();
 
