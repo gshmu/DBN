@@ -155,6 +155,8 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public Connection getStandaloneConnection() throws SQLException {return null;}
     @Override public Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException {return null;}
     @Override public void freePoolConnection(Connection connection) {}
+    @Override public void dropPoolConnection(Connection connection) {}
+
     @Override public ConnectionSettings getSettings() {return null;}
     @Override public void setSettings(ConnectionSettings connectionSettings) {}
     @NotNull
