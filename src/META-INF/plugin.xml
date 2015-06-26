@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.NEXT</b>
             <ul>
+                - Oracle statement debugging (early preview)<br>
                 - Compatibility with latest IntelliJ EAP (15.0)<br>
                 - Quick object filters in database browser<br>
                 - Connection SSH tunnel with key-pair support<br>
