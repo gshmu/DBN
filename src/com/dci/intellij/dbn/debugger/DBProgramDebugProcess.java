@@ -220,7 +220,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
 
                 } finally {
                     status.TARGET_EXECUTION_TERMINATED = true;
-                    connectionHandler.freePoolConnection(targetConnection);
+                    connectionHandler.dropPoolConnection(targetConnection);
                     targetConnection = null;
                 }
             }
@@ -347,7 +347,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
                 } catch (final SQLException e) {
                     showErrorDialog(e);
                 } finally {
-                    connectionHandler.freePoolConnection(debugConnection);
+                    connectionHandler.dropPoolConnection(debugConnection);
                     debugConnection = null;
 
                     DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);

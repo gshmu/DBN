@@ -418,6 +418,11 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         getConnectionPool().releaseConnection(connection);
     }
 
+    @Override
+    public void dropPoolConnection(Connection connection) {
+        getConnectionPool().dropConnection(connection);
+    }
+
     @NotNull
     public ConnectionPool getConnectionPool() {
         return FailsafeUtil.get(connectionPool);

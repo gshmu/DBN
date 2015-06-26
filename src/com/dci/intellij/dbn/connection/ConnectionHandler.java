@@ -34,6 +34,7 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider, Prese
     Connection getStandaloneConnection() throws SQLException;
     Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException;
     void freePoolConnection(Connection connection);
+    void dropPoolConnection(Connection connection);
     ConnectionSettings getSettings();
 
     void setSettings(ConnectionSettings connectionSettings);
