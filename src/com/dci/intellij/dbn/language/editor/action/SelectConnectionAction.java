@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
@@ -21,8 +20,10 @@ public class SelectConnectionAction extends DumbAwareAction {
     private final ConnectionHandler connectionHandler;
 
     public SelectConnectionAction(ConnectionHandler connectionHandler) {
-        super(connectionHandler == null ? "No Connection" : NamingUtil.enhanceUnderscoresForDisplay(connectionHandler.getQualifiedName()), null,
-                connectionHandler == null ? Icons.SPACE : connectionHandler.getIcon());
+        super();
+        Presentation presentation = getTemplatePresentation();
+        presentation.setText(connectionHandler == null ? "No Connection" : connectionHandler.getQualifiedName(), false);
+        presentation.setIcon(connectionHandler == null ? Icons.SPACE : connectionHandler.getIcon());
         this.connectionHandler = connectionHandler;
     }
 

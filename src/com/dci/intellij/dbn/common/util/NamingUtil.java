@@ -105,10 +105,6 @@ public class NamingUtil {
         return vowels.indexOf(chr) > -1;
     }
 
-    public static void main(String[] args) {
-        System.out.println(enhanceUnderscoresForDisplay("_abc_def_xyz_"));
-    }
-
     public static String createFriendlyName(String name) {
         StringBuilder friendlyName = new StringBuilder(name.replace('_', ' '));
         for (int i=0; i<friendlyName.length(); i++) {
@@ -119,18 +115,6 @@ public class NamingUtil {
             }
         }
         return friendlyName.toString();
-    }
-
-    public static String enhanceUnderscoresForDisplay(String name) {
-        return duplicateCharacter(name, '_');
-    }
-
-    public static String enhanceAndsForDisplay(String name) {
-        return duplicateCharacter(name, '&');
-    }
-
-    public static String enhanceNameForDisplay(String name) {
-        return enhanceAndsForDisplay(enhanceUnderscoresForDisplay(name));
     }
 
     private static String duplicateCharacter(String name, char chr) {

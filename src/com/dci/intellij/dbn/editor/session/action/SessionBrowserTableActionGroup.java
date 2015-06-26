@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -126,7 +125,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         private SessionBrowserFilterType filterType;
         private String name;
         private FilterByAction(SessionBrowserFilterType filterType, String name) {
-            super("Filter by " + filterType.name().toLowerCase() + " \"" + NamingUtil.enhanceUnderscoresForDisplay(name) + "\"", null, Icons.DATASET_FILTER);
+            super("Filter by " + filterType.name().toLowerCase() + " \"" + name + "\"", null, Icons.DATASET_FILTER);
             this.filterType = filterType;
             this.name = name;
         }
@@ -146,7 +145,11 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
                     }
                 }
             }
+        }
 
+        @Override
+        public void update(AnActionEvent e) {
+            e.getPresentation().setText("Filter by " + filterType.name().toLowerCase() + " \"" + name + "\"", false);
         }
     }
 }

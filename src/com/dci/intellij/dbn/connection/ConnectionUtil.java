@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 
 public class ConnectionUtil {
@@ -31,11 +32,20 @@ public class ConnectionUtil {
 
     public static void closeResultSet(final ResultSet resultSet) {
         if (resultSet != null) {
-            try {
-                closeStatement(resultSet.getStatement());
-                resultSet.close();
-            } catch (Throwable e) {
-                LOGGER.warn("Error closing result set: " + e.getMessage());
+            if (ApplicationManager.getApplication().isDispatchThread()) {
+                new SimpleBackgroundTask("close result set") {
+                    @Override
+                    protected void execute() {
+                        closeResultSet(resultSet);
+                    }
+                }.start();
+            } else {
+                try {
+                    closeStatement(resultSet.getStatement());
+                    resultSet.close();
+                } catch (Throwable e) {
+                    LOGGER.warn("Error closing result set: " + e.getMessage());
+                }
             }
         }
     }

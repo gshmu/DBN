@@ -41,7 +41,6 @@ import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
@@ -330,7 +329,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     }
 
     public String getOptionDisplayName(T value) {
-        return NamingUtil.enhanceUnderscoresForDisplay(getName(value));
+        return getName(value);
     }
 
     public class SelectValueAction extends DumbAwareAction {
@@ -349,6 +348,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         @Override
         public void update(AnActionEvent e) {
             e.getPresentation().setVisible(isVisible(value));
+            e.getPresentation().setText(getOptionDisplayName(value), false);
         }
     }
 
