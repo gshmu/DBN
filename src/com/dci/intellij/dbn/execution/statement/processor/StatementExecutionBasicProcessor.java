@@ -210,10 +210,10 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public void execute() {
-        execute(null);
+        execute(null, false);
     }
 
-    public void execute(@Nullable Connection connection) {
+    public void execute(@Nullable Connection connection, boolean debug) {
         executionInput.initExecution();
         ProgressMonitor.setTaskDescription("Executing " + getStatementName());
         resultName = null;
@@ -246,7 +246,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     connection = activeConnection.getStandaloneConnection(currentSchema);
                 }
 
-                if (activeConnection.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
+                if (!debug && activeConnection.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
                     loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
                 }
                 PreparedStatement statement = connection.prepareStatement(executableStatementText);
