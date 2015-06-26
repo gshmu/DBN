@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -150,8 +151,9 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
 
 
+    @NotNull
     public ConnectionBundle getConnectionBundle() {
-        return connectionBundle;
+        return FailsafeUtil.get(connectionBundle);
     }
 
     public ConnectionSettings getSettings() {
@@ -259,7 +261,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     @NotNull
     public Project getProject() {
-        return connectionBundle.getProject();
+        return getConnectionBundle().getProject();
     }
 
     public boolean isValid(boolean check) {
@@ -294,7 +296,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public boolean isValid() {
-        if (connectionBundle.containsConnection(this)) {
+        if (getConnectionBundle().containsConnection(this)) {
             long currentTimestamp = System.currentTimeMillis();
             if (validityCheckTimestamp < currentTimestamp - 30000 && !ApplicationManager.getApplication().isDispatchThread()) {
                 validityCheckTimestamp = currentTimestamp;
@@ -413,12 +415,12 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public void freePoolConnection(Connection connection) {
-        if (!isDisposed)
-            connectionPool.releaseConnection(connection);
+        getConnectionPool().releaseConnection(connection);
     }
 
+    @NotNull
     public ConnectionPool getConnectionPool() {
-        return connectionPool;
+        return FailsafeUtil.get(connectionPool);
     }
 
     public DatabaseInterfaceProvider getInterfaceProvider() {
@@ -520,7 +522,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public boolean isDisposed() {
-        return isDisposed || connectionBundle.isDisposed();
+        return isDisposed || connectionBundle == null || connectionBundle.isDisposed();
     }
 
     public void setConnectionConfig(final ConnectionSettings connectionSettings) {

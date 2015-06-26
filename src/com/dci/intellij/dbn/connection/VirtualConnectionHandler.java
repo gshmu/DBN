@@ -178,7 +178,9 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return false;
     }
 
+    @NotNull
     public ConnectionBundle getConnectionBundle() {return null;}
+    @NotNull
     public ConnectionPool getConnectionPool() {return null;}
 
     @Override
