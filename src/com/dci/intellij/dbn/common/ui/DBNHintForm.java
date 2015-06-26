@@ -20,7 +20,7 @@ public class DBNHintForm extends DBNFormImpl{
     private JLabel hintLabel;
     private JTextPane hintTextPane;
 
-    public DBNHintForm(String hintText, MessageType messageType, boolean withBorder) {
+    public DBNHintForm(String hintText, MessageType messageType, boolean boxed) {
         hintLabel.setText("");
         if (messageType != null) {
             Icon icon = Icons.COMMON_INFO;
@@ -35,15 +35,15 @@ public class DBNHintForm extends DBNFormImpl{
             hintLabel.setVisible(false);
         }
 
-        Color background = withBorder ? brighten(UIUtil.getPanelBackground(), 0.08) : UIUtil.getPanelBackground();
+        Color background = boxed ? adjust(UIUtil.getPanelBackground(), 0.04) : UIUtil.getPanelBackground();
 
         mainPanel.setBackground(background);
         hintTextPane.setBackground(background);
         hintTextPane.setText(hintText);
         hintTextPane.setFont(UIUtil.getLabelFont());
-        hintTextPane.setForeground(Colors.HINT_COLOR);
-        if (withBorder) {
-            mainPanel.setBorder(new RoundedLineBorder(UIUtil.getBoundsColor(), 6));
+        hintTextPane.setForeground(boxed ? adjust(UIUtil.getLabelForeground(), 0.18) : Colors.HINT_COLOR);
+        if (boxed) {
+            mainPanel.setBorder(new RoundedLineBorder(UIUtil.getBoundsColor(), 4));
         } else {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) mainPanel.getLayout();
             gridLayoutManager.setMargin(new Insets(0,0,0,0));
@@ -51,11 +51,13 @@ public class DBNHintForm extends DBNFormImpl{
 
     }
 
-    public static Color brighten(Color color, double fraction) {
-
-        int red = (int) Math.round(Math.min(255, color.getRed() + 255 * fraction));
-        int green = (int) Math.round(Math.min(255, color.getGreen() + 255 * fraction));
-        int blue = (int) Math.round(Math.min(255, color.getBlue() + 255 * fraction));
+    public static Color adjust(Color color, double shift) {
+        if (isDarkLookAndFeel()) {
+            shift = -shift;
+        }
+        int red = (int) Math.round(Math.min(255, color.getRed() + 255 * shift));
+        int green = (int) Math.round(Math.min(255, color.getGreen() + 255 * shift));
+        int blue = (int) Math.round(Math.min(255, color.getBlue() + 255 * shift));
 
         int alpha = color.getAlpha();
 
