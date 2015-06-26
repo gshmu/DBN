@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerSessionInfo;
+import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
@@ -15,6 +16,8 @@ import com.dci.intellij.dbn.database.common.debug.VariableInfo;
 public interface DatabaseDebuggerInterface extends DatabaseInterface{
 
     DebuggerSessionInfo initializeSession(Connection connection) throws SQLException;
+
+    DebuggerVersionInfo getDebuggerVersion(Connection connection) throws SQLException;
 
     void enableDebugging(Connection connection) throws SQLException;
 

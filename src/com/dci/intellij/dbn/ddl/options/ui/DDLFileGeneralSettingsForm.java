@@ -6,6 +6,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
@@ -28,7 +29,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         updateBorderTitleForeground(mainPanel);
 
         String hintText = "NOTE: When \"Synchronize\" option is enabled, the DDL file content gets overwritten with the source from the underlying database object whenever this gets saved to database.";
-        DBNHintForm hintForm = new DBNHintForm(hintText);
+        DBNHintForm hintForm = new DBNHintForm(hintText, MessageType.INFO, false);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
         resetFormChanges();

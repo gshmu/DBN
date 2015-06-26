@@ -24,11 +24,21 @@
                 v_session_id VARCHAR2(100);
             begin
                 v_session_id := SYS.DBMS_DEBUG.initialize(
-                                        null,
-                                        SYS.DBMS_DEBUG.diagnostic_level,
-                                        null,
-                                        null);
+                        null, SYS.DBMS_DEBUG.diagnostic_level,
+                        null,
+                        null);
                 ? := v_session_id;
+            end;
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="get-debugger-version" timeout="20">
+        <statement>
+            declare
+                v_major_version BINARY_INTEGER;
+                v_minor_version BINARY_INTEGER;
+            begin
+                SYS.DBMS_DEBUG.probe_version(v_major_version, v_minor_version);
+                ? := v_major_version||'.'||v_minor_version;
             end;
         </statement>
     </statement-execution-processor>
