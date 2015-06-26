@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerSessionInfo;
+import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
@@ -24,6 +25,11 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
         executeCall(connection, null, "initialize-session-debugging");
         executeCall(connection, null, "initialize-session-compiler-flags");
         return executeCall(connection, new DebuggerSessionInfo(), "initialize-session");
+    }
+
+    @Override
+    public DebuggerVersionInfo getDebuggerVersion(Connection connection) throws SQLException {
+        return executeCall(connection, new DebuggerVersionInfo(), "get-debugger-version");
     }
 
     public void enableDebugging(Connection connection) throws SQLException {
