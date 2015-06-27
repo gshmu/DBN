@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.debugger;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +16,8 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.debugger.breakpoint.BreakpointUpdaterFileEditorListener;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfigurationFactory;
@@ -320,6 +323,23 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         }
     };
 
+    public String getDebuggerVersion(ConnectionHandler connectionHandler) {
+
+        if (connectionHandler != null) {
+            DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
+            Connection connection = null;
+            try {
+                connection = connectionHandler.getPoolConnection();
+                DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(connection);
+                return debuggerVersion.getVersion();
+            } catch (Exception e) {
+
+            } finally {
+                connectionHandler.freePoolConnection(connection);
+            }
+        }
+        return "Unknown";
+    }
 
 
     /***************************************
