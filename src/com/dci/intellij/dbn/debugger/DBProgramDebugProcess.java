@@ -3,10 +3,12 @@ package com.dci.intellij.dbn.debugger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -34,6 +36,7 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -419,6 +422,10 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
         } else {
             try {
                 backtraceInfo = getDebuggerInterface().getExecutionBacktraceInfo(debugConnection);
+                List<DebuggerRuntimeInfo> frames = backtraceInfo.getFrames();
+                if (frames.size() > 0) {
+                    runtimeInfo = frames.get(0);
+                }
             } catch (SQLException e) {
                 showErrorDialog(e);
             }
@@ -478,6 +485,7 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
             @Override
             protected void execute() {
                 Project project = getProject();
+                LogicalPosition position = new LogicalPosition(line, 0);
                 if (virtualFile instanceof DBEditableObjectVirtualFile) {
                     DBEditableObjectVirtualFile objectVirtualFile = (DBEditableObjectVirtualFile) virtualFile;
                     // todo review this
@@ -502,17 +510,20 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
                             sourceCodeEditor = (SourceCodeEditor) fileEditor;
                         }
                     }
-                    LogicalPosition position = new LogicalPosition(line, 0);
                     if (sourceCodeEditor != null) {
                         EditorUtil.selectEditor(project, sourceCodeEditor, objectVirtualFile, sourceCodeEditor.getEditorProviderId(), true);
                         sourceCodeEditor.getEditor().getScrollingModel().scrollTo(position, ScrollType.CENTER);
                     }
                 }
-                else {
+                else if (virtualFile instanceof DBVirtualFile){
                     FileEditorManager editorManager = FileEditorManager.getInstance(project);
                     FileEditor[] fileEditors = editorManager.openFile(virtualFile, true);
                     for (FileEditor fileEditor : fileEditors) {
-
+                        if (fileEditor instanceof BasicTextEditor) {
+                            BasicTextEditor textEditor = (BasicTextEditor) fileEditor;
+                            textEditor.getEditor().getScrollingModel().scrollTo(position, ScrollType.CENTER);
+                            break;
+                        }
                     }
                 }
 
