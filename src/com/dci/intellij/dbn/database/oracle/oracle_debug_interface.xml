@@ -447,7 +447,11 @@
                 SYS.DBMS_DEBUG.print_backtrace(v_execution_stack);
                 for i in v_execution_stack.first .. v_execution_stack.last loop
                     v_program_info := v_execution_stack(i);
-                    v_listing := v_listing||v_program_info.owner||'.'||v_program_info.name||' '||v_program_info.line#||' '||v_program_info.namespace||chr(13);
+                    if v_program_info.owner IS NULL and v_program_info.name IS NULL THEN
+                        v_listing := v_listing||v_program_info.line#||' '||v_program_info.namespace||chr(13);
+                    ELSE
+                        v_listing := v_listing||v_program_info.owner||'.'||v_program_info.name||' '||v_program_info.line#||' '||v_program_info.namespace||chr(13);
+                    END IF;
                 end loop;
 
                 ? := v_listing;

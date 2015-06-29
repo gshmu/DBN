@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
@@ -49,6 +50,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
@@ -301,22 +303,17 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
             }
         }.start();
 
-        new WriteActionRunner() {
-            @Override
-            public void run() {
-                for (XLineBreakpoint breakpoint : breakpoints) {
-                    breakpointHandler.unregisterBreakpoint(breakpoint, false);
-                }
+        for (XLineBreakpoint breakpoint : breakpoints) {
+            breakpointHandler.unregisterBreakpoint(breakpoint, false);
+        }
 
-                try {
-                    if (defaultBreakpointInfo != null && debugConnection != null) {
-                        getDebuggerInterface().removeBreakpoint(defaultBreakpointInfo.getBreakpointId(), debugConnection);
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+        try {
+            if (defaultBreakpointInfo != null && debugConnection != null) {
+                getDebuggerInterface().removeBreakpoint(defaultBreakpointInfo.getBreakpointId(), debugConnection);
             }
-        }.start();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -445,7 +442,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
     private void suspendSession() {
         if (status.PROCESS_IS_TERMINATING) return;
 
-        if (runtimeInfo.getOwnerName() == null) {
+        if (runtimeInfo.isTerminated()) {
             status.PROCESS_STOPPED_NORMALLY = true;
             getSession().stop();
         } else {
@@ -454,24 +451,40 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
             } catch (SQLException e) {
                 showErrorDialog(e);
             }
-            DBEditableObjectVirtualFile databaseFile = getDatabaseFile(runtimeInfo);
+            VirtualFile virtualFile = getRuntimeInfoFile(runtimeInfo);
             DBProgramDebugSuspendContext suspendContext = new DBProgramDebugSuspendContext(this);
             getSession().positionReached(suspendContext);
-            navigateInEditor(databaseFile, runtimeInfo.getLineNumber());
+            navigateInEditor(virtualFile, runtimeInfo.getLineNumber());
         }
     }
 
-    public DBEditableObjectVirtualFile getDatabaseFile(DebuggerRuntimeInfo runtimeInfo) {
+    @Nullable
+    public VirtualFile getRuntimeInfoFile(DebuggerRuntimeInfo runtimeInfo) {
         DBSchemaObject schemaObject = getDatabaseObject(runtimeInfo);
-        return schemaObject.getVirtualFile();
+        if (schemaObject == null) {
+            if (executionInput instanceof StatementExecutionInput) {
+                StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
+                return statementExecutionInput.getExecutionProcessor().getVirtualFile();
+            }
+        } else {
+            return schemaObject.getVirtualFile();
+        }
+        return null;
     }
 
+    @Nullable
     public DBSchemaObject getDatabaseObject(DebuggerRuntimeInfo runtimeInfo) {
-        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-        DBSchema schema = FailsafeUtil.get(objectBundle.getSchema(runtimeInfo.getOwnerName()));
-        DBSchemaObject schemaObject = schema.getProgram(runtimeInfo.getProgramName());
-        if (schemaObject == null) schemaObject = schema.getMethod(runtimeInfo.getProgramName(), 0); // overload 0 is assuming debug is only supported in oracle (no schema method overloading)
-        return schemaObject;
+        String ownerName = runtimeInfo.getOwnerName();
+        String programName = runtimeInfo.getProgramName();
+
+        if (StringUtil.isNotEmpty(ownerName) && StringUtil.isNotEmpty(programName)) {
+            DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+            DBSchema schema = FailsafeUtil.get(objectBundle.getSchema(ownerName));
+            DBSchemaObject schemaObject = schema.getProgram(programName);
+            if (schemaObject == null) schemaObject = schema.getMethod(programName, 0); // overload 0 is assuming debug is only supported in oracle (no schema method overloading)
+            return schemaObject;
+        }
+        return null;
     }
 
     @Nullable
@@ -493,7 +506,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
     private void rollOutDebugger() {
         try {
             long millis = System.currentTimeMillis();
-            while (!status.TARGET_EXECUTION_THREW_EXCEPTION && runtimeInfo!= null && !runtimeInfo.isTerminated()) {
+            while (!status.TARGET_EXECUTION_THREW_EXCEPTION && runtimeInfo != null && !runtimeInfo.isTerminated()) {
                 runtimeInfo = getDebuggerInterface().stepOut(debugConnection);
                 // force closing the target connection
                 if (System.currentTimeMillis() - millis > 20000) {
@@ -505,38 +518,49 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
         }
     }
 
-    private void navigateInEditor(final DBEditableObjectVirtualFile databaseFile, final int line) {
+    private void navigateInEditor(final VirtualFile virtualFile, final int line) {
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
-                // todo review this
-                SourceCodeEditor sourceCodeEditor = null;
-                DBSourceCodeVirtualFile mainContentFile = (DBSourceCodeVirtualFile) databaseFile.getMainContentFile();
-                if (databaseFile.getContentFiles().size() > 1) {
-                    FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
-                    FileEditor[] fileEditors = editorManager.getEditors(databaseFile);
-                    if (fileEditors.length >= runtimeInfo.getNamespace()) {
-                        FileEditor fileEditor = fileEditors[runtimeInfo.getNamespace() -1];
-                        sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                        databaseFile.FAKE_DOCUMENT.set(sourceCodeEditor.getEditor().getDocument());
+                if (virtualFile instanceof DBEditableObjectVirtualFile) {
+                    DBEditableObjectVirtualFile objectVirtualFile = (DBEditableObjectVirtualFile) virtualFile;
+                    // todo review this
+                    SourceCodeEditor sourceCodeEditor = null;
+                    DBSourceCodeVirtualFile mainContentFile = (DBSourceCodeVirtualFile) objectVirtualFile.getMainContentFile();
+                    if (objectVirtualFile.getContentFiles().size() > 1) {
+                        FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+                        FileEditor[] fileEditors = editorManager.getEditors(objectVirtualFile);
+                        if (fileEditors.length >= runtimeInfo.getNamespace()) {
+                            FileEditor fileEditor = fileEditors[runtimeInfo.getNamespace() -1];
+                            sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                            objectVirtualFile.FAKE_DOCUMENT.set(sourceCodeEditor.getEditor().getDocument());
+                        } else {
+                            FileEditor fileEditor = EditorUtil.getTextEditor(objectVirtualFile, mainContentFile);
+                            if (fileEditor != null && fileEditor instanceof SourceCodeEditor) {
+                                sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                            }
+                        }
                     } else {
-                        FileEditor fileEditor = EditorUtil.getTextEditor(databaseFile, mainContentFile);
+                        FileEditor fileEditor = EditorUtil.getTextEditor(objectVirtualFile, mainContentFile);
                         if (fileEditor != null && fileEditor instanceof SourceCodeEditor) {
                             sourceCodeEditor = (SourceCodeEditor) fileEditor;
                         }
                     }
-                } else {
-                    FileEditor fileEditor = EditorUtil.getTextEditor(databaseFile, mainContentFile);
-                    if (fileEditor != null && fileEditor instanceof SourceCodeEditor) {
-                        sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                    LogicalPosition position = new LogicalPosition(line, 0);
+                    Project project = connectionHandler.getProject();
+                    if (sourceCodeEditor != null) {
+                        EditorUtil.selectEditor(project, sourceCodeEditor, objectVirtualFile, sourceCodeEditor.getEditorProviderId(), true);
+                        sourceCodeEditor.getEditor().getScrollingModel().scrollTo(position, ScrollType.CENTER);
                     }
                 }
-                LogicalPosition position = new LogicalPosition(line, 0);
-                Project project = connectionHandler.getProject();
-                if (sourceCodeEditor != null) {
-                    EditorUtil.selectEditor(project, sourceCodeEditor, databaseFile, sourceCodeEditor.getEditorProviderId(), true);
-                    sourceCodeEditor.getEditor().getScrollingModel().scrollTo(position, ScrollType.CENTER);
+                else {
+                    FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+                    FileEditor[] fileEditors = editorManager.openFile(virtualFile, true);
+                    for (FileEditor fileEditor : fileEditors) {
+
+                    }
                 }
+
             }
         }.start();
     }

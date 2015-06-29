@@ -26,17 +26,15 @@ public class DBProgramDebugUtil {
         return null;
     }
 
-    public static DBSourceCodeVirtualFile getSourceCodeFile(XSourcePosition sourcePosition) {
+    public static VirtualFile getSourceCodeFile(XSourcePosition sourcePosition) {
         if (sourcePosition != null) {
             VirtualFile virtualFile = sourcePosition.getFile();
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
                 DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
-                return (DBSourceCodeVirtualFile) databaseFile.getMainContentFile();
+                return databaseFile.getMainContentFile();
             }
 
-            if (virtualFile instanceof DBSourceCodeVirtualFile) {
-                return (DBSourceCodeVirtualFile) virtualFile;
-            }
+            return virtualFile;
         }
         return null;
     }
