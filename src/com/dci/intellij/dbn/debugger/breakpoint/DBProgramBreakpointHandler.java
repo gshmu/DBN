@@ -125,28 +125,31 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
         if (!debugProcess.getStatus().CAN_SET_BREAKPOINTS) return;
         
         VirtualFile virtualFile = getVirtualFile(breakpoint);
+        FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(session.getProject());
+        ConnectionHandler connectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
+        if (connectionHandler != null && connectionHandler == debugProcess.getConnectionHandler()) {
+            DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
+            Integer breakpointId = breakpoint.getUserData(BREAKPOINT_ID_KEY);
+
+            if (breakpointId != null) {
+                try {
+                    Connection debugConnection = debugProcess.getDebugConnection();
+                    if (temporary) {
+                        debuggerInterface.disableBreakpoint(breakpointId, debugConnection);
+                    } else {
+                        debuggerInterface.removeBreakpoint(breakpointId, debugConnection);
+                        breakpoint.putUserData(BREAKPOINT_ID_KEY, null);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
             DBSchemaObject object = databaseFile.getObject();
-            if (object.getConnectionHandler() == debugProcess.getConnectionHandler()) {
-                ConnectionHandler connectionHandler = object.getConnectionHandler();
-                DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
-                Integer breakpointId = breakpoint.getUserData(BREAKPOINT_ID_KEY);
-
-                if (breakpointId != null) {
-                    try {
-                        Connection debugConnection = debugProcess.getDebugConnection();
-                        if (temporary) {
-                            debuggerInterface.disableBreakpoint(breakpointId, debugConnection);
-                        } else {
-                            debuggerInterface.removeBreakpoint(breakpointId, debugConnection);
-                            breakpoint.putUserData(BREAKPOINT_ID_KEY, null);
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
         }
     }
 

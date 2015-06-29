@@ -9,6 +9,7 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
     private String programName;
     private Integer namespace;
     private Integer lineNumber;
+    private Integer frameIndex;
     private int breakpointId;
     private int reason;
     private boolean terminated;
@@ -48,6 +49,14 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
 
     public int getReason() {
         return reason;
+    }
+
+    public Integer getFrameIndex() {
+        return frameIndex;
+    }
+
+    public void setFrameIndex(Integer frameIndex) {
+        this.frameIndex = frameIndex;
     }
 
     public void registerParameters(CallableStatement statement) throws SQLException {
