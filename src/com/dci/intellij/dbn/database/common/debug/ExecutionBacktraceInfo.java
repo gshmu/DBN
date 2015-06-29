@@ -41,7 +41,7 @@ public class ExecutionBacktraceInfo implements CallableStatementOutput {
                 runtimeInfo.setFrameIndex(frameNumber);
                 frames.add(0, runtimeInfo);
 
-            } else if (frames.size() == 0){
+            } else if (true || frames.size() == 0){
                 int lineNumberEndIndex = backtraceEntry.indexOf(' ');
                 Integer lineNumber = new Integer(backtraceEntry.substring(0, lineNumberEndIndex));
                 Integer namespace = new Integer(backtraceEntry.substring(lineNumberEndIndex + 1));
