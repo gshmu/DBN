@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import java.util.ArrayList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
@@ -124,7 +125,7 @@ public class DocumentUtil {
     }
 
     @Nullable
-    public static Document getDocument(final VirtualFile virtualFile) {
+    public static Document getDocument(final @NotNull VirtualFile virtualFile) {
         return new ConditionalReadActionRunner<Document>() {
             @Override
             protected Document run() {

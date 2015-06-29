@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger;
 
-import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -14,11 +13,11 @@ import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.Presentable;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
@@ -30,20 +29,11 @@ import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.frame.DBProgramDebugSuspendContext;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.execution.ExecutionInput;
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
-import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
-import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.language.psql.PSQLFile;
-import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -63,14 +53,14 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
 
-public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
+public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XDebugProcess implements Presentable{
     private Connection targetConnection;
     private Connection debugConnection;
-    private ConnectionHandler connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
     private DBProgramBreakpointHandler breakpointHandler;
     private DBProgramBreakpointHandler[] breakpointHandlers;
-    private ExecutionInput executionInput;
-    private BreakpointInfo defaultBreakpointInfo;
+    private T executionInput;
+    protected BreakpointInfo defaultBreakpointInfo;
     private DBProgramDebugProcessStatus status = new DBProgramDebugProcessStatus();
 
     private transient DebuggerRuntimeInfo runtimeInfo;
@@ -79,11 +69,12 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
 
     public DBProgramDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
         super(session);
-        this.connectionHandler = connectionHandler;
+        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
         Project project = session.getProject();
         DatabaseDebuggerManager.getInstance(project).registerDebugSession(connectionHandler);
 
-        DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) session.getRunProfile();
+        DBProgramRunConfiguration<T> runProfile = (DBProgramRunConfiguration) session.getRunProfile();
+
         executionInput = runProfile.getExecutionInput();
 
         breakpointHandler = new DBProgramBreakpointHandler(session, this);
@@ -103,7 +94,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandler;
+        return connectionHandlerRef.get();
     }
 
     @NotNull
@@ -123,13 +114,18 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
         return DBProgramDebuggerEditorsProvider.INSTANCE;
     }
 
+    public T getExecutionInput() {
+        return executionInput;
+    }
+
     @Override
     public void sessionInitialized() {
-        final Project project = getSession().getProject();
+        final Project project = getProject();
         new BackgroundTask(project, "Initialize debug environment", true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 try {
+                    ConnectionHandler connectionHandler = getConnectionHandler();
                     targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionContext().getTargetSchema());
                     targetConnection.setAutoCommit(false);
                     debugConnection = connectionHandler.getPoolConnection();
@@ -151,7 +147,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
 
     private void synchronizeSession() {
         final XDebugSession session = getSession();
-        final Project project = session.getProject();
+        final Project project = getProject();
         new BackgroundTask(project, "Initialize debug environment", true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
@@ -160,7 +156,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
                 if (status.PROCESS_IS_TERMINATING || status.TARGET_EXECUTION_TERMINATED) {
                     session.stop();
                 } else {
-                    BackgroundTask sessionSynchronizeTask = new BackgroundTask(getProject(), "Synchronizing debug session", false) {
+                    BackgroundTask sessionSynchronizeTask = new BackgroundTask(project, "Synchronizing debug session", false) {
                         @Override
                         protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                             try {
@@ -176,7 +172,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
                                 }
                             } catch (SQLException e) {
                                 status.SESSION_SYNCHRONIZING_THREW_EXCEPTION = true;
-                                MessageUtil.showErrorDialog(project, "Could not initialize debug environment on connection \"" + connectionHandler.getName() + "\". ", e);
+                                MessageUtil.showErrorDialog(project, "Could not initialize debug environment on connection \"" + getConnectionHandler().getName() + "\". ", e);
                                 session.stop();
                             }
 
@@ -198,19 +194,10 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
 
                 if (status.PROCESS_IS_TERMINATING) return;
                 if (status.SESSION_SYNCHRONIZING_THREW_EXCEPTION) return;
-
+                ConnectionHandler connectionHandler = getConnectionHandler();
                 try {
                     status.TARGET_EXECUTION_STARTED = true;
-
-                    if (executionInput instanceof MethodExecutionInput) {
-                        MethodExecutionInput methodExecutionInput = (MethodExecutionInput) executionInput;
-                        MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                        methodExecutionManager.debugExecute(methodExecutionInput, targetConnection);
-                    } else if (executionInput instanceof StatementExecutionInput) {
-                        StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
-                        StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
-                        statementExecutionManager.debugExecute(statementExecutionInput.getExecutionProcessor(), targetConnection);
-                    }
+                    doExecuteTarget();
 
                 } catch (SQLException e){
                     // if the method execution threw exception, the debugger-off statement is not reached,
@@ -228,6 +215,9 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
             }
         }.start();
     }
+
+    protected abstract void doExecuteTarget() throws SQLException;
+
     /**
      * breakpoints need to be registered after the database session is started,
      * otherwise they do not get valid ids
@@ -237,7 +227,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
             @Override
             protected Collection<XLineBreakpoint> run() {
                 XBreakpointType localXBreakpointType = XDebuggerUtil.getInstance().findBreakpointType(breakpointHandler.getBreakpointTypeClass());
-                Project project = getSession().getProject();
+                Project project = getProject();
                 XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
                 return breakpointManager.getBreakpoints(localXBreakpointType);
             }
@@ -256,38 +246,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
         }.start();
     }
 
-    private void registerDefaultBreakpoint() {
-        if (executionInput instanceof MethodExecutionInput) {
-            MethodExecutionInput methodExecutionInput = (MethodExecutionInput) executionInput;
-            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) getMainDatabaseFile().getMainContentFile();
-            PSQLFile psqlFile = (PSQLFile) sourceCodeFile.getPsiFile();
-            if (psqlFile != null) {
-                DBMethod method = methodExecutionInput.getMethod();
-                if (method != null) {
-                    BasePsiElement basePsiElement = psqlFile.lookupObjectDeclaration(method.getObjectType().getGenericType(), method.getName());
-                    if (basePsiElement != null) {
-                        BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
-                        int offset = subject.getTextOffset();
-                        Document document = DocumentUtil.getDocument(psqlFile);
-                        int line = document.getLineNumber(offset);
-
-                        DBSchemaObject schemaObject = getMainDatabaseObject();
-                        try {
-                            defaultBreakpointInfo = getDebuggerInterface().addProgramBreakpoint(
-                                    method.getSchema().getName(),
-                                    schemaObject.getName(),
-                                    schemaObject.getObjectType().getName().toUpperCase(),
-                                    line,
-                                    debugConnection);
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-        }
-    }
+    protected void registerDefaultBreakpoint() {}
 
     /**
      * breakpoints need to be unregistered before closing the database session, otherwise they remain resident.
@@ -297,7 +256,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
             @Override
             protected Collection<XLineBreakpoint> run() {
                 XBreakpointType localXBreakpointType = XDebuggerUtil.getInstance().findBreakpointType(breakpointHandler.getBreakpointTypeClass());
-                Project project = getSession().getProject();
+                Project project = getProject();
                 XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
                 return breakpointManager.getBreakpoints(localXBreakpointType);
             }
@@ -319,7 +278,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
     @Override
     public void stop() {
         executionInput.getExecutionContext().setExecutionCancelled(!status.PROCESS_STOPPED_NORMALLY);
-        final Project project = getSession().getProject();
+        final Project project = getProject();
 
         if (status.PROCESS_IS_TERMINATING) return;
         status.PROCESS_IS_TERMINATING = true;
@@ -328,6 +287,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setText("Cancelling / resuming method execution.");
+                ConnectionHandler connectionHandler = getConnectionHandler();
                 try {
                     unregisterBreakpoints();
                     rollOutDebugger();
@@ -442,7 +402,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
     private void suspendSession() {
         if (status.PROCESS_IS_TERMINATING) return;
 
-        if (runtimeInfo.isTerminated()) {
+        if (isTerminated()) {
             status.PROCESS_STOPPED_NORMALLY = true;
             getSession().stop();
         } else {
@@ -458,15 +418,14 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
         }
     }
 
+    protected boolean isTerminated() {
+        return runtimeInfo.isTerminated();
+    }
+
     @Nullable
     public VirtualFile getRuntimeInfoFile(DebuggerRuntimeInfo runtimeInfo) {
         DBSchemaObject schemaObject = getDatabaseObject(runtimeInfo);
-        if (schemaObject == null) {
-            if (executionInput instanceof StatementExecutionInput) {
-                StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
-                return statementExecutionInput.getExecutionProcessor().getVirtualFile();
-            }
-        } else {
+        if (schemaObject != null) {
             return schemaObject.getVirtualFile();
         }
         return null;
@@ -478,27 +437,12 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
         String programName = runtimeInfo.getProgramName();
 
         if (StringUtil.isNotEmpty(ownerName) && StringUtil.isNotEmpty(programName)) {
+            ConnectionHandler connectionHandler = getConnectionHandler();
             DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
             DBSchema schema = FailsafeUtil.get(objectBundle.getSchema(ownerName));
             DBSchemaObject schemaObject = schema.getProgram(programName);
             if (schemaObject == null) schemaObject = schema.getMethod(programName, 0); // overload 0 is assuming debug is only supported in oracle (no schema method overloading)
             return schemaObject;
-        }
-        return null;
-    }
-
-    @Nullable
-    private DBEditableObjectVirtualFile getMainDatabaseFile() {
-        DBSchemaObject schemaObject = getMainDatabaseObject();
-        return schemaObject == null ? null : schemaObject.getVirtualFile();
-    }
-
-    @Nullable
-    public DBSchemaObject getMainDatabaseObject() {
-        if (executionInput instanceof MethodExecutionInput) {
-            MethodExecutionInput methodExecutionInput = (MethodExecutionInput) executionInput;
-            DBMethod method = methodExecutionInput.getMethod();
-            return method != null && method.isProgramMethod() ? method.getProgram() : method;
         }
         return null;
     }
@@ -522,13 +466,14 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
+                Project project = getProject();
                 if (virtualFile instanceof DBEditableObjectVirtualFile) {
                     DBEditableObjectVirtualFile objectVirtualFile = (DBEditableObjectVirtualFile) virtualFile;
                     // todo review this
                     SourceCodeEditor sourceCodeEditor = null;
                     DBSourceCodeVirtualFile mainContentFile = (DBSourceCodeVirtualFile) objectVirtualFile.getMainContentFile();
                     if (objectVirtualFile.getContentFiles().size() > 1) {
-                        FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+                        FileEditorManager editorManager = FileEditorManager.getInstance(project);
                         FileEditor[] fileEditors = editorManager.getEditors(objectVirtualFile);
                         if (fileEditors.length >= runtimeInfo.getNamespace()) {
                             FileEditor fileEditor = fileEditors[runtimeInfo.getNamespace() -1];
@@ -547,14 +492,13 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
                         }
                     }
                     LogicalPosition position = new LogicalPosition(line, 0);
-                    Project project = connectionHandler.getProject();
                     if (sourceCodeEditor != null) {
                         EditorUtil.selectEditor(project, sourceCodeEditor, objectVirtualFile, sourceCodeEditor.getEditorProviderId(), true);
                         sourceCodeEditor.getEditor().getScrollingModel().scrollTo(position, ScrollType.CENTER);
                     }
                 }
                 else {
-                    FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+                    FileEditorManager editorManager = FileEditorManager.getInstance(project);
                     FileEditor[] fileEditors = editorManager.openFile(virtualFile, true);
                     for (FileEditor fileEditor : fileEditors) {
 
@@ -566,7 +510,7 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
     }
 
     public DatabaseDebuggerInterface getDebuggerInterface() {
-        return connectionHandler.getInterfaceProvider().getDebuggerInterface();
+        return getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
     }
 
     public DebuggerRuntimeInfo getRuntimeInfo() {
@@ -577,41 +521,10 @@ public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
         return backtraceInfo;
     }
 
-    @NotNull
-    @Override
-    public String getName() {
-        if (executionInput instanceof MethodExecutionInput) {
-            DBSchemaObject object = getMainDatabaseObject();
-            if (object != null) {
-                return object.getQualifiedName();
-            }
-        } else if (executionInput instanceof StatementExecutionInput) {
-            StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
-            return statementExecutionInput.getExecutionProcessor().getPsiFile().getName();
-        }
-
-        return "Debug Process";
-    }
-
     @Nullable
     @Override
     public String getDescription() {
         return "Database Debug Process";
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon() {
-        if (executionInput instanceof MethodExecutionInput) {
-            DBSchemaObject object = getMainDatabaseObject();
-            if (object != null) {
-                return object.getIcon();
-            }
-        } else if (executionInput instanceof StatementExecutionInput) {
-            StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
-            return statementExecutionInput.getExecutionProcessor().getPsiFile().getIcon();
-        }
-        return null;
     }
 
     abstract class DebugOperationThread extends Thread {

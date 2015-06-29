@@ -33,6 +33,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.xdebugger.XDebuggerBundle;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XCompositeNode;
@@ -131,7 +132,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
             component.append(" (line " + (sourcePosition.getLine() + 1) + ") ", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
             component.setIcon(frameIcon);
 
-        } else {
+        } else if (virtualFile != null){
             Icon frameIcon;
             if (virtualFile instanceof DBVirtualFile) {
                 frameIcon = ((DBVirtualFile) virtualFile).getIcon();
@@ -141,6 +142,8 @@ public class DBProgramDebugStackFrame extends XStackFrame {
             component.setIcon(frameIcon);
             component.append(virtualFile.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
             component.append(" (line " + (sourcePosition.getLine() + 1) + ") ", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
+        } else {
+            component.append(XDebuggerBundle.message("invalid.frame"), SimpleTextAttributes.ERROR_ATTRIBUTES);
         }
     }
 

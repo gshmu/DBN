@@ -58,7 +58,9 @@ public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implem
             DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
             fileViewProvider.forceCachedPsi(file);
             Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-            PsiDocumentManagerImpl.cachePsi(document, file);
+            if (document != null) {
+                PsiDocumentManagerImpl.cachePsi(document, file);
+            }
             return file;
         }
         return null;

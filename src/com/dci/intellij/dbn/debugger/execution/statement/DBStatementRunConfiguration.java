@@ -28,7 +28,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 
-public class DBStatementRunConfiguration extends DBProgramRunConfiguration<DBLanguagePsiFile, StatementExecutionInput> {
+public class DBStatementRunConfiguration extends DBProgramRunConfiguration<StatementExecutionInput> {
     private StatementExecutionInput executionInput;
     private DBStatementRunConfigurationEditor configurationEditor;
 
