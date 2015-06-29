@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.breakpoints.XBreakpoint;
@@ -191,6 +192,8 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
                     breakpointFile = virtualFile;
                     breakpoint.putUserData(BREAKPOINT_FILE_KEY, breakpointFile);
                 }
+            } else {
+                return VirtualFileManager.getInstance().findFileByUrl(fileUrl);
             }
         }
         return breakpointFile;

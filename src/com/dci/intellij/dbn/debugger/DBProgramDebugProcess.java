@@ -194,7 +194,6 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
 
                 if (status.PROCESS_IS_TERMINATING) return;
                 if (status.SESSION_SYNCHRONIZING_THREW_EXCEPTION) return;
-                ConnectionHandler connectionHandler = getConnectionHandler();
                 try {
                     status.TARGET_EXECUTION_STARTED = true;
                     doExecuteTarget();
@@ -205,12 +204,9 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
                     // to explicitly be called here
                     status.TARGET_EXECUTION_THREW_EXCEPTION = true;
                     MessageUtil.showErrorDialog(project, "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
-                    getDebuggerInterface().disableDebugging(targetConnection);
-
                 } finally {
                     status.TARGET_EXECUTION_TERMINATED = true;
-                    connectionHandler.dropPoolConnection(targetConnection);
-                    targetConnection = null;
+                    getSession().stop();
                 }
             }
         }.start();
@@ -276,42 +272,57 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
     }
 
     @Override
-    public void stop() {
-        executionInput.getExecutionContext().setExecutionCancelled(!status.PROCESS_STOPPED_NORMALLY);
+    public synchronized void stop() {
+        if (!status.PROCESS_IS_TERMINATED && !status.PROCESS_IS_TERMINATING) {
+            status.PROCESS_IS_TERMINATING = true;
+            executionInput.getExecutionContext().setExecutionCancelled(!status.PROCESS_STOPPED_NORMALLY);
+            stopDebugger();
+        }
+    }
+
+    private void stopDebugger() {
         final Project project = getProject();
-
-        if (status.PROCESS_IS_TERMINATING) return;
-        status.PROCESS_IS_TERMINATING = true;
-
         new BackgroundTask(project, "Stopping debugger", true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                progressIndicator.setText("Cancelling / resuming method execution.");
+                progressIndicator.setText("Stopping debug environment.");
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 try {
                     unregisterBreakpoints();
-                    rollOutDebugger();
                     status.CAN_SET_BREAKPOINTS = false;
+                    rollOutDebugger();
 
-                    if (debugConnection != null) {
-                        DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                        if (!getStatus().TARGET_EXECUTION_THREW_EXCEPTION) {
-                            runtimeInfo = debuggerInterface.stopExecution(debugConnection);
-                        }
-                        debuggerInterface.detachSession(debugConnection);
+                    DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                    if (!status.TARGET_EXECUTION_TERMINATED) {
+                        runtimeInfo = debuggerInterface.stopExecution(debugConnection);
                     }
-                    status.PROCESS_IS_TERMINATED = true;
+                    debuggerInterface.detachSession(debugConnection);
                 } catch (final SQLException e) {
                     showErrorDialog(e);
                 } finally {
+                    status.PROCESS_IS_TERMINATED = true;
+                    releaseTargetConnection();
                     connectionHandler.dropPoolConnection(debugConnection);
                     debugConnection = null;
-
                     DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
                 }
             }
         }.start();
     }
+
+    private void releaseTargetConnection() {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+        try {
+            debuggerInterface.disableDebugging(targetConnection);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connectionHandler.dropPoolConnection(targetConnection);
+            targetConnection = null;
+        }
+    }
+
 
     @Override
     public void startStepOver() {
