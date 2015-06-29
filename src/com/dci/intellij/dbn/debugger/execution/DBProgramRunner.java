@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.debugger.execution;
 
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -32,10 +36,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericProgramRunner {
     @Nullable
@@ -234,7 +234,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
 
                 if (continueExecution) {
                     RunContentDescriptor reuseContent = environment.getContentToReuse();
-                    DBProgramDebugProcessStarter debugProcessStarter = new DBProgramDebugProcessStarter(connectionHandler);
+                    DBProgramDebugProcessStarter debugProcessStarter = createProcessStarter(connectionHandler);
                     XDebugSession session = null;
                     try {
                         session = XDebuggerManager.getInstance(project).startSession(
@@ -261,6 +261,8 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             }
         }.start();
     }
+
+    protected abstract DBProgramDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler);
 
     protected abstract boolean promptExecutionDialog(T executionInput);
 }

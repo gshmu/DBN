@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -20,9 +23,6 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 
 public class SaveToFileEditorAction extends DumbAwareAction {
     public SaveToFileEditorAction() {
@@ -40,9 +40,9 @@ public class SaveToFileEditorAction extends DumbAwareAction {
                     "Save content of the console \"" + consoleVirtualFile.getName() + "\" to file", "sql");
 
             FileSaverDialog fileSaverDialog = FileChooserFactory.getInstance().createSaveFileDialog(fileSaverDescriptor, project);
+            final Document document = DocumentUtil.getDocument(virtualFile);
             final VirtualFileWrapper virtualFileWrapper = fileSaverDialog.save(null, consoleVirtualFile.getName());
-            if (virtualFileWrapper != null) {
-                final Document document = DocumentUtil.getDocument(virtualFile);
+            if (document != null && virtualFileWrapper != null) {
                 new WriteActionRunner() {
                     @Override
                     public void run() {

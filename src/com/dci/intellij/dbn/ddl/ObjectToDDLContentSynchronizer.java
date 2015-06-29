@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.ddl;
 
+import java.util.List;
+
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
@@ -7,8 +9,6 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-
-import java.util.List;
 
 public class ObjectToDDLContentSynchronizer implements Runnable {
     DBEditableObjectVirtualFile databaseFile;
@@ -54,7 +54,9 @@ public class ObjectToDDLContentSynchronizer implements Runnable {
                         }
                     }
                     Document document = DocumentUtil.getDocument(ddlFile);
-                    document.setText(buffer.toString());
+                    if (document != null) {
+                        document.setText(buffer.toString());
+                    }
                 }
             }
         }
