@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -212,7 +214,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     /*********************************************************
      *                       Execution                       *
      *********************************************************/
-    public void debugExecute(@NotNull StatementExecutionProcessor executionProcessor, @NotNull Connection connection) {
+    public void debugExecute(@NotNull StatementExecutionProcessor executionProcessor, @NotNull Connection connection) throws SQLException {
         try {
             executionProcessor.execute(connection, true);
         } finally {
@@ -254,6 +256,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                             progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, size));
                                         }
                                         executionProcessor.execute();
+                                    } catch (SQLException e) {
+                                        NotificationUtil.sendErrorNotification(getProject(), "Error executing statement", e.getMessage());
                                     } finally {
                                         if (TimeUtil.isOlderThan(lastRefresh, 2, TimeUnit.SECONDS)) {
                                             lastRefresh = System.currentTimeMillis();

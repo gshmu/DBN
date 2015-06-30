@@ -37,7 +37,7 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
     }
 
     public void disableDebugging(Connection connection) throws SQLException {
-        //executeCall(connection, null, "disable-debugging");
+        executeCall(connection, null, "disable-debugging");
     }
 
     public void attachSession(String sessionId, Connection connection) throws SQLException {

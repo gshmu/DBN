@@ -238,6 +238,7 @@
             declare
                 v_program_info SYS.DBMS_DEBUG.program_info;
                 v_program_type VARCHAR(10);
+                v_breakpoint_id BINARY_INTEGER;
                 v_result BINARY_INTEGER;
                 v_message VARCHAR2(100);
             begin
@@ -260,9 +261,9 @@
                 v_result := SYS.DBMS_DEBUG.set_breakpoint(
                                 v_program_info,
                                 {3},
-                                ?,
-                                null,
-                                null);
+                                v_breakpoint_id,
+                                0,
+                                0);
 
                 v_message :=
                     case v_result
@@ -271,6 +272,7 @@
                         when SYS.DBMS_DEBUG.error_bad_handle then 'No such program unit.'
                         else 'Could not register breakpoint. Unknown reason.'
                     end;
+                ? := v_breakpoint_id;
                 ? := v_message;
             end;
         </statement>
@@ -280,6 +282,7 @@
             declare
                 v_program_info SYS.DBMS_DEBUG.program_info;
                 v_result BINARY_INTEGER;
+                v_breakpoint_id BINARY_INTEGER;
                 v_message VARCHAR2(100);
             begin
                 v_program_info.namespace := null;
@@ -290,9 +293,9 @@
                 v_result := SYS.DBMS_DEBUG.set_breakpoint(
                                 v_program_info,
                                 {0},
-                                ?,
-                                null,
-                                null);
+                                v_breakpoint_id,
+                                0,
+                                0);
 
                 v_message :=
                     case v_result
@@ -301,6 +304,8 @@
                         when SYS.DBMS_DEBUG.error_bad_handle then 'No such program unit.'
                         else 'Could not register breakpoint. Unknown reason.'
                     end;
+
+                ? := v_breakpoint_id;
                 ? := v_message;
             end;
         </statement>
