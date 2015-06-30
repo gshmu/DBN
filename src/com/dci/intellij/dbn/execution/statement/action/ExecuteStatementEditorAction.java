@@ -8,6 +8,8 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -15,6 +17,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
 public class ExecuteStatementEditorAction extends AnAction {
@@ -34,6 +37,7 @@ public class ExecuteStatementEditorAction extends AnAction {
         presentation.setEnabled(isEnabled(e));
         presentation.setIcon(Icons.STMT_EXECUTION_RUN);
         presentation.setText("Execute Statement");
+        presentation.setVisible(isVisible(e));
     }
 
     private static boolean isEnabled(AnActionEvent e) {
@@ -45,5 +49,14 @@ public class ExecuteStatementEditorAction extends AnAction {
             PsiFile psiFile = PsiUtil.getPsiFile(project, editor.getDocument());
             return psiFile instanceof DBLanguagePsiFile;
         }
+    }
+
+    public static boolean isVisible(AnActionEvent e) {
+        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        if (virtualFile instanceof DBConsoleVirtualFile) {
+            DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+            return consoleVirtualFile.getType() != DBConsoleType.DEBUG;
+        }
+        return true;
     }
 }

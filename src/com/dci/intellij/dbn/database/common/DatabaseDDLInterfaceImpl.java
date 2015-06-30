@@ -103,7 +103,7 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
         String sourceCode = content.getSourceCode();
         int gbEndOffset = sourceCode.indexOf(SourceCodeOffsets.GUARDED_BLOCK_END_OFFSET_MARKER);
         if (gbEndOffset > -1) {
-            content.getOffsets().setGuardedBlockEndOffset(gbEndOffset);
+            content.getOffsets().addGuardedBlock(0, gbEndOffset);
             sourceCode =
                     sourceCode.substring(0, gbEndOffset) +
                     sourceCode.substring(gbEndOffset + SourceCodeOffsets.GUARDED_BLOCK_END_OFFSET_MARKER.length());

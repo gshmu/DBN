@@ -1,16 +1,22 @@
 package com.dci.intellij.dbn.editor.code;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.intellij.util.Range;
+
 public class SourceCodeOffsets {
+    public static final String GUARDED_BLOCK_START_OFFSET_MARKER = "$$DBN_GUARDED_BLOCK_START_OFFSET$$";
     public static final String GUARDED_BLOCK_END_OFFSET_MARKER = "$$DBN_GUARDED_BLOCK_END_OFFSET$$";
-    int guardedBlockEndOffset = 0;
+    private Set<Range<Integer>> guardedBlocks = new HashSet<Range<Integer>>();
     int headerEndOffset = 0;
 
-    public int getGuardedBlockEndOffset() {
-        return guardedBlockEndOffset;
+    public void addGuardedBlock(int startOffset, int endOffset) {
+        guardedBlocks.add(new Range<Integer>(startOffset, endOffset));
     }
 
-    public void setGuardedBlockEndOffset(int guardedBlockEndOffset) {
-        this.guardedBlockEndOffset = guardedBlockEndOffset;
+    public Set<Range<Integer>> getGuardedBlocks() {
+        return guardedBlocks;
     }
 
     public int getHeaderEndOffset() {
