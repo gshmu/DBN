@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -48,6 +49,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
@@ -516,6 +518,19 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         List<StatementExecutionProcessor> list = new ArrayList<StatementExecutionProcessor>();
         list.add(this);
         return list;
+    }
+
+    @Override
+    public int getExecutableLineNumber() {
+        if (cachedExecutable != null) {
+            Document document = DocumentUtil.getDocument(cachedExecutable.getFile());
+            if (document != null) {
+                int textOffset = cachedExecutable.getTextOffset();
+                return document.getLineNumber(textOffset);
+            }
+        }
+
+        return 0;
     }
 
     /********************************************************

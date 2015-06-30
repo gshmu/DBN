@@ -17,6 +17,8 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcess;
 import com.dci.intellij.dbn.debugger.DBProgramDebugUtil;
 import com.dci.intellij.dbn.debugger.evaluation.DBProgramDebuggerEvaluator;
+import com.dci.intellij.dbn.execution.ExecutionInput;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -45,7 +47,6 @@ import gnu.trove.THashMap;
 public class DBProgramDebugStackFrame extends XStackFrame {
     private DBProgramDebugProcess debugProcess;
     private XSourcePosition sourcePosition;
-    private boolean inhibitSourcePosition = false;
     private int index;
     private DBProgramDebuggerEvaluator evaluator;
     private Map<String, DBProgramDebugValue> valuesMap;
@@ -55,11 +56,15 @@ public class DBProgramDebugStackFrame extends XStackFrame {
         VirtualFile virtualFile = debugProcess.getRuntimeInfoFile(runtimeInfo);
 
         this.debugProcess = debugProcess;
-        sourcePosition = XSourcePositionImpl.create(virtualFile, runtimeInfo.getLineNumber());
-    }
-
-    public void setInhibitSourcePosition(boolean inhibitSourcePosition) {
-        this.inhibitSourcePosition = inhibitSourcePosition;
+        int lineNumber = runtimeInfo.getLineNumber();
+        if (runtimeInfo.getOwnerName() == null) {
+            ExecutionInput executionInput = debugProcess.getExecutionInput();
+            if (executionInput instanceof StatementExecutionInput) {
+                StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
+                lineNumber += statementExecutionInput.getExecutableLineNumber();
+            }
+        }
+        sourcePosition = XSourcePositionImpl.create(virtualFile, lineNumber);
     }
 
     public DBProgramDebugProcess getDebugProcess() {
@@ -91,7 +96,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
 
     @Override
     public XSourcePosition getSourcePosition() {
-        return inhibitSourcePosition ? null : sourcePosition;
+        return sourcePosition;
     }
 
     public void customizePresentation(@NotNull ColoredTextContainer component) {
