@@ -78,4 +78,6 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     boolean isQuery();
 
     List<StatementExecutionProcessor> asList();
+
+    int getExecutableLineNumber();
 }
