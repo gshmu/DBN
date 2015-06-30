@@ -12,6 +12,8 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -19,6 +21,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
 public class ExplainPlanAction extends AnAction {
@@ -51,7 +54,7 @@ public class ExplainPlanAction extends AnAction {
                 DBLanguagePsiFile languagePsiFile = (DBLanguagePsiFile) psiFile;
 
                 ConnectionHandler activeConnection = languagePsiFile.getActiveConnection();
-                visible = DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
+                visible = isVisible(e) && DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
 
                 ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
                 if (executable != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
@@ -61,6 +64,15 @@ public class ExplainPlanAction extends AnAction {
         }
         presentation.setEnabled(enabled);
         presentation.setVisible(visible);
+    }
+
+    public static boolean isVisible(AnActionEvent e) {
+        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        if (virtualFile instanceof DBConsoleVirtualFile) {
+            DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+            return consoleVirtualFile.getType() != DBConsoleType.DEBUG;
+        }
+        return true;
     }
 
     private boolean isEnabled(AnActionEvent e) {

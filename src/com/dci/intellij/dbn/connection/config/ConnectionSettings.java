@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
 
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> implements ConnectionRef{
     private ConnectionBundleSettings parent;
@@ -23,7 +24,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private ConnectionSshTunnelSettings sshTunnelSettings;
     private ConnectionDetailSettings detailSettings;
     private ConnectionFilterSettings filterSettings;
-    private List<String> consoleNames = new ArrayList<String>();
+    private Map<String, DBConsoleType> consoles = new HashMap<String, DBConsoleType>();
 
     public ConnectionSettings(ConnectionBundleSettings parent) {
         this(parent, DatabaseType.UNKNOWN, ConnectionConfigType.BASIC);
@@ -90,8 +91,8 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         return connectionId;
     }
 
-    public List<String> getConsoleNames() {
-        return consoleNames;
+    public Map<String, DBConsoleType> getConsoles() {
+        return consoles;
     }
 
     @Override
