@@ -209,11 +209,11 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     }
 
-    public void execute() {
+    public void execute() throws SQLException {
         execute(null, false);
     }
 
-    public void execute(@Nullable Connection connection, boolean debug) {
+    public void execute(@Nullable Connection connection, boolean debug) throws SQLException {
         executionInput.initExecution();
         ProgressMonitor.setTaskDescription("Executing " + getStatementName());
         resultName = null;
@@ -234,6 +234,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
             }
         }
 
+        SQLException executionException = null;
         Project project = getProject();
         boolean loggingEnabled = false;
         if (continueExecution) {
@@ -251,7 +252,10 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                 }
                 PreparedStatement statement = connection.prepareStatement(executableStatementText);
 
-                int timeout = getStatementExecutionSettings().getExecutionTimeout();
+                StatementExecutionSettings executionSettings = getStatementExecutionSettings();
+                int timeout = debug ?
+                        executionSettings.getDebugExecutionTimeout() :
+                        executionSettings.getExecutionTimeout();
                 statement.setQueryTimeout(timeout);
                 statement.execute();
                 executionResult = createExecutionResult(statement, executionInput);
@@ -287,6 +291,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                 }
             } catch (SQLException e) {
                 executionResult = createErrorExecutionResult(e.getMessage());
+                executionException = e;
             } finally {
                 runningStatements.decrement();
                 if (loggingEnabled) {
@@ -298,6 +303,9 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         executionResult.calculateExecDuration();
         ExecutionManager executionManager = ExecutionManager.getInstance(project);
         executionManager.addExecutionResult(executionResult);
+        if (executionException != null && debug) {
+            throw executionException;
+        }
     }
 
     public StatementExecutionVariablesBundle getExecutionVariables() {
