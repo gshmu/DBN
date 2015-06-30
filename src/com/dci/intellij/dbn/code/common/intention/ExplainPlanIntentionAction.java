@@ -12,6 +12,8 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -39,6 +41,14 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile != null) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
+
+            if (virtualFile instanceof DBConsoleVirtualFile) {
+                DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+                if (consoleVirtualFile.getType() == DBConsoleType.DEBUG) {
+                    return false;
+                }
+            }
+
             if (virtualFile != null && virtualFile.getFileType() instanceof DBLanguageFileType) {
                 ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
                 FileEditor fileEditor = EditorUtil.getFileEditor(editor);

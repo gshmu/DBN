@@ -168,15 +168,14 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
                         protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                             try {
                                 executeTarget();
-                                runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
-
-                                if (status.TARGET_EXECUTION_TERMINATED) {
-                                    session.stop();
-                                } else {
+                                Thread.sleep(1000);
+                                if (!status.TARGET_EXECUTION_THREW_EXCEPTION && !status.TARGET_EXECUTION_TERMINATED) {
+                                    runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
                                     runtimeInfo = debuggerInterface.stepOver(debugConnection);
                                     progressIndicator.setText("Suspending session");
                                     suspendSession();
                                 }
+
                             } catch (SQLException e) {
                                 status.SESSION_SYNCHRONIZING_THREW_EXCEPTION = true;
                                 MessageUtil.showErrorDialog(project, "Could not initialize debug environment on connection \"" + getConnectionHandler().getName() + "\". ", e);
@@ -185,6 +184,7 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
 
                         }
                     };
+
 
                     status.CAN_SET_BREAKPOINTS = true;
                     progressIndicator.setText("Registering breakpoints");
@@ -441,7 +441,12 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
                 backtraceInfo = getDebuggerInterface().getExecutionBacktraceInfo(debugConnection);
                 List<DebuggerRuntimeInfo> frames = backtraceInfo.getFrames();
                 if (frames.size() > 0) {
-                    runtimeInfo = frames.get(0);
+                    DebuggerRuntimeInfo topRuntimeInfo = frames.get(0);
+                    if (!runtimeInfo.equals(topRuntimeInfo)) {
+                        runtimeInfo = topRuntimeInfo;
+                        resume();
+                        return;
+                    }
                 }
             } catch (SQLException e) {
                 NotificationUtil.sendErrorNotification(getProject(), "Error suspending debugger session.", e.getMessage());
