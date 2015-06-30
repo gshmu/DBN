@@ -60,8 +60,8 @@ import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
 
 public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XDebugProcess implements Presentable{
-    private Connection targetConnection;
-    private Connection debugConnection;
+    protected Connection targetConnection;
+    protected Connection debugConnection;
     private ConnectionHandlerRef connectionHandlerRef;
     private DBProgramBreakpointHandler breakpointHandler;
     private DBProgramBreakpointHandler[] breakpointHandlers;
@@ -337,7 +337,7 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
         debugConnection = null;
     }
 
-    private void releaseTargetConnection() {
+    protected void releaseTargetConnection() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         connectionHandler.dropPoolConnection(targetConnection);
         targetConnection = null;

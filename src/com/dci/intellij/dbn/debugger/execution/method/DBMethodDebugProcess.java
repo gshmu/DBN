@@ -84,6 +84,12 @@ public class DBMethodDebugProcess extends DBProgramDebugProcess<MethodExecutionI
         return method != null && method.isProgramMethod() ? method.getProgram() : method;
     }
 
+    @Override
+    protected void releaseTargetConnection() {
+        // method execution processor is responsible for closing
+        // the connection after the result is read
+        targetConnection = null;
+    }
 
     @NotNull
     @Override
