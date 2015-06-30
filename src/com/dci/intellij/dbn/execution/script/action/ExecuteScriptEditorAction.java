@@ -8,6 +8,8 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -35,6 +37,16 @@ public class ExecuteScriptEditorAction extends AnAction {
         presentation.setEnabled(isEnabled(e));
         presentation.setIcon(Icons.EXECUTE_SQL_SCRIPT);
         presentation.setText("Execute SQL Script");
+        presentation.setVisible(isVisible(e));
+    }
+
+    private static boolean isVisible(AnActionEvent e) {
+        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        if (virtualFile instanceof DBConsoleVirtualFile) {
+            DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+            return consoleVirtualFile.getType() != DBConsoleType.DEBUG;
+        }
+        return true;
     }
 
     private static boolean isEnabled(AnActionEvent e) {

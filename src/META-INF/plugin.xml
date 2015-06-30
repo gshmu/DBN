@@ -29,8 +29,9 @@
         <ul>
             <li><b>3.0.NEXT</b>
             <ul>
-                - Oracle statement debugging (early preview)<br>
                 - Compatibility with latest IntelliJ EAP (15.0)<br>
+                - Statement debugging (early preview - Oracle)<br>
+                - Debugger console (Oracle)<br>
                 - Quick object filters in database browser<br>
                 - Connection SSH tunnel with key-pair support<br>
                 - Support Oracle materialized view indexes<br>

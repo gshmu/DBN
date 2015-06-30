@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.connection.console;
 
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -7,6 +10,7 @@ import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.console.ui.CreateRenameConsoleDialog;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
@@ -15,8 +19,6 @@ import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.util.EventDispatcher;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 public class DatabaseConsoleManager extends AbstractProjectComponent {
     private final EventDispatcher<VirtualFileListener> eventDispatcher = EventDispatcher.create(VirtualFileListener.class);
@@ -29,28 +31,31 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
         return FailsafeUtil.getComponent(project, DatabaseConsoleManager.class);
     }
 
-    public void showCreateConsoleDialog(ConnectionHandler connectionHandler) {
-        showCreateRenameConsoleDialog(connectionHandler, null);
+    public void showCreateConsoleDialog(ConnectionHandler connectionHandler, DBConsoleType consoleType) {
+        showCreateRenameConsoleDialog(connectionHandler, null, consoleType);
     }
 
     public void showRenameConsoleDialog(@NotNull DBConsoleVirtualFile consoleVirtualFile) {
-        showCreateRenameConsoleDialog(consoleVirtualFile.getConnectionHandler(), consoleVirtualFile);
+        showCreateRenameConsoleDialog(
+                consoleVirtualFile.getConnectionHandler(), consoleVirtualFile, consoleVirtualFile.getType());
     }
 
 
-    private void showCreateRenameConsoleDialog(final ConnectionHandler connectionHandler, final DBConsoleVirtualFile consoleVirtualFile) {
+    private void showCreateRenameConsoleDialog(final ConnectionHandler connectionHandler, final DBConsoleVirtualFile consoleVirtualFile, final DBConsoleType consoleType) {
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
-                CreateRenameConsoleDialog createConsoleDialog = new CreateRenameConsoleDialog(connectionHandler, consoleVirtualFile);
+                CreateRenameConsoleDialog createConsoleDialog = consoleVirtualFile == null ?
+                        new CreateRenameConsoleDialog(connectionHandler, consoleType) :
+                        new CreateRenameConsoleDialog(connectionHandler, consoleVirtualFile);
                 createConsoleDialog.setModal(true);
                 createConsoleDialog.show();
             }
         }.start();
     }
 
-    public void createConsole(ConnectionHandler connectionHandler, String name) {
-        DBConsoleVirtualFile consoleFile = connectionHandler.getConsoleBundle().createConsole(name);
+    public void createConsole(ConnectionHandler connectionHandler, String name, DBConsoleType type) {
+        DBConsoleVirtualFile consoleFile = connectionHandler.getConsoleBundle().createConsole(name, type);
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
         fileEditorManager.openFile(consoleFile, true);
         eventDispatcher.getMulticaster().fileCreated(new VirtualFileEvent(this, consoleFile, name, null));

@@ -2,11 +2,13 @@ package com.dci.intellij.dbn.connection.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -14,6 +16,7 @@ import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.intellij.openapi.project.Project;
 
 public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBundleSettingsForm> implements TopLevelConfig {
@@ -113,7 +116,8 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
                 for (Object c : consolesElement.getChildren()) {
                     Element consoleElement = (Element) c;
                     String consoleName = consoleElement.getAttributeValue("name");
-                    connection.getConsoleNames().add(consoleName);
+                    DBConsoleType consoleType = SettingsUtil.getEnumAttribute(consoleElement, "type", DBConsoleType.STANDARD);
+                    connection.getConsoles().put(consoleName, consoleType);
                 }
             }
         }
@@ -133,9 +137,12 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
 
             Element consolesElement = new Element("consoles");
             connectionElement.addContent(consolesElement);
-            for (String consoleName : connectionSetting.getConsoleNames()) {
+            Map<String, DBConsoleType> consoles = connectionSetting.getConsoles();
+            for (String consoleName : consoles.keySet()) {
+                DBConsoleType consoleType = consoles.get(consoleName);
                 Element consoleElement = new Element("console");
                 consoleElement.setAttribute("name", consoleName);
+                consoleElement.setAttribute("type", consoleType.name());
                 consolesElement.addContent(consoleElement);
             }
         }

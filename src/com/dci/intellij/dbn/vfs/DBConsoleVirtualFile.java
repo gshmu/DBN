@@ -35,9 +35,11 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
     private CharSequence content = "";
     private ConnectionHandlerRef connectionHandlerRef;
     private DBObjectRef<DBSchema> currentSchemaRef;
+    private DBConsoleType type = DBConsoleType.STANDARD;
 
-    public DBConsoleVirtualFile(ConnectionHandler connectionHandler, String name) {
+    public DBConsoleVirtualFile(ConnectionHandler connectionHandler, String name, DBConsoleType type) {
         super(connectionHandler.getProject());
+        this.type = type;
         connectionHandlerRef = connectionHandler.getRef();
         setCurrentSchemaName(connectionHandler.getUserName());
         setName(name);
@@ -66,7 +68,11 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
     }
 
     public Icon getIcon() {
-        return Icons.FILE_SQL_CONSOLE;
+        switch (type) {
+            case STANDARD: return Icons.FILE_SQL_CONSOLE;
+            case DEBUG: return Icons.FILE_SQL_DEBUG_CONSOLE;
+        }
+        return null;
     }
 
     @NotNull
@@ -111,6 +117,10 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
         return name;
     }
 
+    public DBConsoleType getType() {
+        return type;
+    }
+
     @NotNull
     @Override
     public VirtualFileSystem getFileSystem() {
@@ -120,13 +130,21 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
     @NotNull
     @Override
     protected String createPath() {
-        return DatabaseFileSystem.createPath(getConnectionHandler()) + " CONSOLE - " + name;
+        switch (type) {
+            case STANDARD: return DatabaseFileSystem.createPath(getConnectionHandler()) + " CONSOLE - " + name;
+            case DEBUG: return DatabaseFileSystem.createPath(getConnectionHandler()) + " DEBUG CONSOLE - " + name;
+        }
+        throw new IllegalArgumentException("Unsupported console type " + type);
     }
 
     @NotNull
     @Override
     protected String createUrl() {
-        return DatabaseFileSystem.createUrl(getConnectionHandler()) + "/console#" + name;
+        switch (type) {
+            case STANDARD: return DatabaseFileSystem.createUrl(getConnectionHandler()) + "/console#" + name;
+            case DEBUG: return DatabaseFileSystem.createUrl(getConnectionHandler()) + "/console#" + name;
+        }
+        throw new IllegalArgumentException("Unsupported console type " + type);
     }
 
     @Override

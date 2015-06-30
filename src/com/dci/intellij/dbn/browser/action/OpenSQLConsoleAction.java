@@ -12,6 +12,8 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
+import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -51,7 +53,10 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
                 actions.add(new SelectConsoleAction(console));
             }
             actions.add(Separator.getInstance());
-            actions.add(new SelectConsoleAction(connectionHandler));
+            actions.add(new SelectConsoleAction(connectionHandler, DBConsoleType.STANDARD));
+            if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
+                actions.add(new SelectConsoleAction(connectionHandler, DBConsoleType.DEBUG));
+            }
         }
         return actions.toArray(new AnAction[actions.size()]);
     }
@@ -59,9 +64,11 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
 
     private class SelectConsoleAction extends AbstractConnectionAction{
         private DBConsoleVirtualFile consoleVirtualFile;
+        private DBConsoleType consoleType;
 
-        public SelectConsoleAction(ConnectionHandler connectionHandler) {
-            super("Create New...", connectionHandler);
+        public SelectConsoleAction(ConnectionHandler connectionHandler, @NotNull DBConsoleType consoleType) {
+            super(consoleType == DBConsoleType.DEBUG ? "New Debug Console..." : "New SQL Console...", connectionHandler);
+            this.consoleType = consoleType;
         }
 
         public SelectConsoleAction(DBConsoleVirtualFile consoleVirtualFile) {
@@ -74,7 +81,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
             if (consoleVirtualFile == null) {
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
-                databaseConsoleManager.showCreateConsoleDialog(connectionHandler);
+                databaseConsoleManager.showCreateConsoleDialog(connectionHandler, consoleType);
             } else {
                 ConnectionHandler connectionHandler = consoleVirtualFile.getConnectionHandler();
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
