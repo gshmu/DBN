@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.database;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.database.common.debug.BasicOperationInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
@@ -62,4 +63,6 @@ public interface DatabaseDebuggerInterface extends DatabaseInterface{
     ExecutionBacktraceInfo getExecutionBacktraceInfo(Connection connection) throws SQLException;
 
     String[] getRequiredPrivilegeNames();
+
+    String getDebugConsoleTemplate(CodeStyleCaseSettings settings);
 }

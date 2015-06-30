@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.database.oracle;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseDebuggerInterfaceImpl;
@@ -15,6 +17,7 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
+import com.dci.intellij.dbn.editor.code.SourceCodeOffsets;
 
 public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl implements DatabaseDebuggerInterface {
     public OracleDebuggerInterface(DatabaseInterfaceProvider provider) {
@@ -122,5 +125,33 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
 
     public String[] getRequiredPrivilegeNames() {
         return new String[]{"DEBUG CONNECT SESSION", "DEBUG ANY PROCEDURE"};
+    }
+
+    @Override
+    public String getDebugConsoleTemplate(CodeStyleCaseSettings settings) {
+        CodeStyleCaseOption kco = settings.getKeywordCaseOption();
+        CodeStyleCaseOption oco = settings.getObjectCaseOption();
+        return SourceCodeOffsets.GUARDED_BLOCK_START_OFFSET_MARKER +
+                kco.format("DECLARE\n") +
+                "    -- add yor declarations here\n" +
+                "\n" +
+                SourceCodeOffsets.GUARDED_BLOCK_END_OFFSET_MARKER +
+                "\n" +
+                "\n" +
+                SourceCodeOffsets.GUARDED_BLOCK_START_OFFSET_MARKER +
+                kco.format("BEGIN\n") +
+                "    -- add your code here\n" +
+                SourceCodeOffsets.GUARDED_BLOCK_END_OFFSET_MARKER +
+                "\n" +
+                "\n" +
+                SourceCodeOffsets.GUARDED_BLOCK_START_OFFSET_MARKER +
+                oco.format("    sys.dbms_debug.debug_off();\n") +
+                kco.format("    EXCEPTION\n") +
+                kco.format("        WHEN OTHERS THEN\n") +
+                oco.format("            sys.dbms_debug.debug_off();\n") +
+                kco.format("            RAISE;\n") +
+                kco.format("END;\n") +
+                "/" +
+                SourceCodeOffsets.GUARDED_BLOCK_END_OFFSET_MARKER;
     }
 }

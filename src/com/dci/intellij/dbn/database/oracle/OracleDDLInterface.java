@@ -66,7 +66,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
                     if (sourceCode.charAt(guardedBlockEndOffset) == '"'){
                         guardedBlockEndOffset++;
                     }
-                    content.getOffsets().setGuardedBlockEndOffset(guardedBlockEndOffset);
+                    content.getOffsets().addGuardedBlock(0, guardedBlockEndOffset);
                 }
             }
         }

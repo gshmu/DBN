@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -73,7 +74,16 @@ public class SaveToFileEditorAction extends DumbAwareAction {
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         presentation.setVisible(virtualFile instanceof DBConsoleVirtualFile);
         presentation.setEnabled(true);
+        presentation.setVisible(isVisible(e));
     }
 
+    public static boolean isVisible(AnActionEvent e) {
+        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        if (virtualFile instanceof DBConsoleVirtualFile) {
+            DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+            return consoleVirtualFile.getType() != DBConsoleType.DEBUG;
+        }
+        return true;
+    }
 
 }

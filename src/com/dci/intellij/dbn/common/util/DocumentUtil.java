@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import java.util.ArrayList;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,6 +32,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
+import com.intellij.util.Range;
 
 public class DocumentUtil {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
@@ -103,11 +105,19 @@ public class DocumentUtil {
         }
     }
 
+    public static void createGuardedBlocks(Document document, Set<Range<Integer>> ranges, String reason) {
+        for (Range<Integer> range : ranges) {
+            DocumentUtil.createGuardedBlock(document, range.getFrom(), range.getTo(), null);
+        }
+
+    }
     public static void createGuardedBlock(Document document, int startOffset, int endOffset, String reason) {
-        RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
-        rangeMarker.setGreedyToLeft(true);
-        rangeMarker.setGreedyToRight(false);
-        document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
+        if (startOffset != endOffset) {
+            RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
+            rangeMarker.setGreedyToLeft(true);
+            rangeMarker.setGreedyToRight(false);
+            document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
+        }
     }
 
     public static void removeGuardedBlock(Document document) {

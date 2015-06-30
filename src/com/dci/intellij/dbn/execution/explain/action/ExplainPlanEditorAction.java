@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
-public class ExplainPlanAction extends AnAction {
+public class ExplainPlanEditorAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
