@@ -13,8 +13,11 @@ import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -30,7 +33,24 @@ public class DebugStatementEditorAction extends AnAction {
         Project project = ActionUtil.getProject(e);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
         if (project != null && editor != null) {
-            ExecutablePsiElement executablePsiElement = PsiUtil.lookupExecutableAtCaret(editor, true);
+            VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
+            ExecutablePsiElement executablePsiElement = null;
+            if (virtualFile instanceof DBConsoleVirtualFile) {
+                DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+                if (consoleVirtualFile.getType() == DBConsoleType.DEBUG) {
+                    PsiFile file = DocumentUtil.getFile(editor);
+                    BasePsiElement basePsiElement = PsiUtil.lookupElementAtOffset(file, ElementTypeAttribute.EXECUTABLE, 100);
+                    if (basePsiElement instanceof ExecutablePsiElement) {
+                        executablePsiElement = (ExecutablePsiElement) basePsiElement;
+                    }
+
+                }
+            }
+
+            if (executablePsiElement == null) {
+                executablePsiElement = PsiUtil.lookupExecutableAtCaret(editor, true);
+            }
+
             if (executablePsiElement != null && executablePsiElement.is(ElementTypeAttribute.DEBUGGABLE)) {
                 FileEditor fileEditor = EditorUtil.getFileEditor(editor);
                 StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
@@ -54,14 +74,23 @@ public class DebugStatementEditorAction extends AnAction {
         if (project != null && editor != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
-            ConnectionHandler connectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
-            if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
-                visible = true;
-                PsiFile psiFile = PsiUtil.getPsiFile(project, editor.getDocument());
-                if (psiFile != null) {
-                    ExecutablePsiElement executablePsiElement = PsiUtil.lookupExecutableAtCaret(editor, true);
-                    if (executablePsiElement != null && executablePsiElement.is(ElementTypeAttribute.DEBUGGABLE)) {
-                        enabled = true;
+            if (virtualFile != null) {
+                if (virtualFile instanceof DBConsoleVirtualFile) {
+                    DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+                    enabled = consoleVirtualFile.getType() == DBConsoleType.DEBUG;
+                }
+
+                ConnectionHandler connectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
+                if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
+                    visible = true;
+                    if (!enabled) {
+                        PsiFile psiFile = PsiUtil.getPsiFile(project, editor.getDocument());
+                        if (psiFile != null) {
+                            ExecutablePsiElement executablePsiElement = PsiUtil.lookupExecutableAtCaret(editor, true);
+                            if (executablePsiElement != null && executablePsiElement.is(ElementTypeAttribute.DEBUGGABLE)) {
+                                enabled = true;
+                            }
+                        }
                     }
                 }
             }

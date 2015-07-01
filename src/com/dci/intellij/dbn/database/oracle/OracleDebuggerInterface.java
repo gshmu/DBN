@@ -145,7 +145,7 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
                 kco.format("BEGIN\n") +
                 END_OFFSET_IDENTIFIER +
                 "    -- add your code here" +
-                "\n   NULL;" +
+                "\n    NULL;" +
                 "\n" +
                 "\n" +
                 START_OFFSET_IDENTIFIER +
