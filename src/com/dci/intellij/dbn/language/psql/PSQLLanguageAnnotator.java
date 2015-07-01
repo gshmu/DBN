@@ -27,6 +27,8 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -208,8 +210,16 @@ public class PSQLLanguageAnnotator implements Annotator {
     private static void annotateExecutable(PsiElement psiElement, AnnotationHolder holder) {
         ExecutablePsiElement executable = (ExecutablePsiElement) psiElement;
         if (!executable.isNestedExecutable()) {
-            Annotation annotation = holder.createInfoAnnotation(psiElement, null);
-            annotation.setGutterIconRenderer(new StatementGutterRenderer(executable));
+            boolean isDebugConsole = false;
+            VirtualFile virtualFile = executable.getFile().getVirtualFile();
+            if (virtualFile instanceof DBConsoleVirtualFile) {
+                DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+                isDebugConsole = consoleVirtualFile.getType() == DBConsoleType.DEBUG;
+            }
+            if (!isDebugConsole) {
+                Annotation annotation = holder.createInfoAnnotation(psiElement, null);
+                annotation.setGutterIconRenderer(new StatementGutterRenderer(executable));
+            }
         }
     }
 }
