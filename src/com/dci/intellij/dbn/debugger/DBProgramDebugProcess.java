@@ -204,7 +204,6 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
                 try {
                     status.TARGET_EXECUTION_STARTED = true;
                     doExecuteTarget();
-
                 } catch (SQLException e){
                     status.TARGET_EXECUTION_THREW_EXCEPTION = true;
                     // if the method execution threw exception, the debugger-off statement is not reached,
@@ -284,7 +283,7 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
         }
 
         try {
-            if (defaultBreakpointInfo != null) {
+            if (defaultBreakpointInfo != null && defaultBreakpointInfo.getBreakpointId() != null) {
                 getDebuggerInterface().removeBreakpoint(defaultBreakpointInfo.getBreakpointId(), debugConnection);
             }
         } catch (SQLException e) {
