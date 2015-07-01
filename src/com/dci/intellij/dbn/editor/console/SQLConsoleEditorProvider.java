@@ -1,19 +1,20 @@
 package com.dci.intellij.dbn.editor.console;
 
+import java.awt.BorderLayout;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.console.ui.SQLConsoleEditorToolbarForm;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import java.awt.BorderLayout;
 
 
 public class SQLConsoleEditorProvider extends BasicTextEditorProvider {
@@ -38,9 +39,17 @@ public class SQLConsoleEditorProvider extends BasicTextEditorProvider {
 
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-        SQLConsoleEditor editor = new SQLConsoleEditor(project, (DBConsoleVirtualFile) file, "SQL Console", getEditorProviderId());
+        DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) file;
+        SQLConsoleEditor editor = new SQLConsoleEditor(project, consoleVirtualFile, "SQL Console", getEditorProviderId());
         SQLConsoleEditorToolbarForm toolbarForm = new SQLConsoleEditorToolbarForm(project, editor);
         editor.getComponent().add(toolbarForm.getComponent(), BorderLayout.NORTH);
+
+        Document document = editor.getEditor().getDocument();
+        int documentTracking = document.hashCode();
+        if (document.hashCode() != consoleVirtualFile.getDocumentHashCode()) {
+            document.addDocumentListener(consoleVirtualFile);
+            consoleVirtualFile.setDocumentHashCode(documentTracking);
+        }
         return editor;
     }
 

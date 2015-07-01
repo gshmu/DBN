@@ -23,6 +23,7 @@ import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.DocumentBulkUpdateListener;
+import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -107,21 +108,27 @@ public class DocumentUtil {
 
     public static void createGuardedBlocks(Document document, GuardedBlockMarkers ranges, String reason) {
         for (Range<Integer> range : ranges.getRanges()) {
-            DocumentUtil.createGuardedBlock(document, range.getFrom(), range.getTo(), null);
+            DocumentUtil.createGuardedBlock(document, range.getFrom(), range.getTo(), reason);
         }
 
     }
     public static void createGuardedBlock(Document document, int startOffset, int endOffset, String reason) {
         if (startOffset != endOffset) {
             RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
-            rangeMarker.setGreedyToLeft(true);
+            rangeMarker.setGreedyToLeft(false);
             rangeMarker.setGreedyToRight(false);
             document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
         }
     }
 
-    public static void removeGuardedBlock(Document document) {
-        removeGuardedBlock(document, 0, document.getTextLength());
+    public static void removeGuardedBlocks(Document document) {
+        if (document instanceof DocumentEx) {
+            DocumentEx documentEx = (DocumentEx) document;
+            for (RangeMarker block : documentEx.getGuardedBlocks()) {
+                document.removeGuardedBlock(block);
+            }
+
+        }
     }
 
     public static void removeGuardedBlock(Document document, int startOffset, int endOffset) {
@@ -130,6 +137,7 @@ public class DocumentUtil {
         document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);
     }
 
+    @Nullable
     public static VirtualFile getVirtualFile(Editor editor) {
         return FileDocumentManager.getInstance().getFile(editor.getDocument());
     }

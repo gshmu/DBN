@@ -30,9 +30,9 @@
             <li><b>3.0.NEXT</b>
             <ul>
                 - Compatibility with latest IntelliJ EAP (15.0)<br>
-                - Statement debugging (early preview - Oracle)<br>
+                - Oracle statement debugging (early preview)<br>
                 - Dedicated debugger console (Oracle)<br>
-                - More reliable debugger processor<br>
+                - More reliable debugger processor (Oracle)<br>
                 - Quick object filters in database browser<br>
                 - Connection SSH tunnel with key-pair support<br>
                 - Support Oracle materialized view indexes<br>
@@ -321,7 +321,6 @@
         <component><implementation-class>com.dci.intellij.dbn.connection.ConnectionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.connection.console.DatabaseConsoleManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.ExecutionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.statement.StatementExecutionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.script.ScriptExecutionManager</implementation-class></component>
@@ -348,6 +347,7 @@
         <component><implementation-class>com.dci.intellij.dbn.object.dependency.ObjectDependencyManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.options.ProjectSettingsManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.connection.console.DatabaseConsoleManager</implementation-class></component>
     </project-components>
     <module-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.browser.cache.ModuleBrowserCacheComponent</implementation-class></component>-->
@@ -580,8 +580,8 @@
         <syntaxHighlighter key="DBN-SQL" factoryClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterProvider"/>
         <syntaxHighlighter key="DBN-PSQL" factoryClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterProvider"/>
 
-        <lang.syntaxHighlighterFactory key="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterFactory"/>
-        <lang.syntaxHighlighterFactory key="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterFactory"/>
+        <lang.syntaxHighlighterFactory language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterFactory"/>
+        <lang.syntaxHighlighterFactory language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterFactory"/>
 
         <codeStyleSettingsProvider implementation="com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettingsProvider"/>
         <codeStyleSettingsProvider implementation="com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettingsProvider"/>

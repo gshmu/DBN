@@ -15,6 +15,7 @@ import com.intellij.psi.impl.PsiDocumentManagerBase;
 
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile {
     private static AtomicInteger ID_STORE = new AtomicInteger(0);
+    protected int documentHashCode;
     private int id;
     protected String name;
     protected String path;
@@ -24,6 +25,14 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     public DBVirtualFileImpl(Project project) {
         id = ID_STORE.getAndIncrement();
         projectRef = new ProjectRef(project);
+    }
+
+    public int getDocumentHashCode() {
+        return documentHashCode;
+    }
+
+    public void setDocumentHashCode(int documentHashCode) {
+        this.documentHashCode = documentHashCode;
     }
 
     @Override

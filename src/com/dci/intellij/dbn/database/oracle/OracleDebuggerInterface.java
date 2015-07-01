@@ -137,23 +137,18 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
         CodeStyleCaseOption oco = settings.getObjectCaseOption();
         return START_OFFSET_IDENTIFIER +
                 kco.format("DECLARE\n") +
-                "    -- add yor declarations here\n" +
-                "\n" +
                 END_OFFSET_IDENTIFIER +
+                "    -- add your declarations here\n" +
                 "\n" +
                 "\n" +
                 START_OFFSET_IDENTIFIER +
                 kco.format("BEGIN\n") +
-                "    -- add your code here\n" +
                 END_OFFSET_IDENTIFIER +
+                "    -- add your code here" +
+                "\n   NULL;" +
                 "\n" +
                 "\n" +
                 START_OFFSET_IDENTIFIER +
-                oco.format("    sys.dbms_debug.debug_off();\n") +
-                kco.format("    EXCEPTION\n") +
-                kco.format("        WHEN OTHERS THEN\n") +
-                oco.format("            sys.dbms_debug.debug_off();\n") +
-                kco.format("            RAISE;\n") +
                 kco.format("END;\n") +
                 "/" +
                 END_OFFSET_IDENTIFIER;

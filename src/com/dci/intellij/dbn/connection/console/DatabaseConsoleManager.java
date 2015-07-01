@@ -1,17 +1,30 @@
 package com.dci.intellij.dbn.connection.console;
 
+import java.util.List;
+import org.jdom.CDATA;
+import org.jdom.Content;
+import org.jdom.Element;
+import org.jdom.Text;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.console.ui.CreateRenameConsoleDialog;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -20,7 +33,13 @@ import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.util.EventDispatcher;
 
-public class DatabaseConsoleManager extends AbstractProjectComponent {
+@State(
+        name = "DBNavigator.Project.DatabaseConsoleManager",
+        storages = {
+                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class DatabaseConsoleManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private final EventDispatcher<VirtualFileListener> eventDispatcher = EventDispatcher.create(VirtualFileListener.class);
 
     private DatabaseConsoleManager(final Project project) {
@@ -56,6 +75,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
 
     public void createConsole(ConnectionHandler connectionHandler, String name, DBConsoleType type) {
         DBConsoleVirtualFile consoleFile = connectionHandler.getConsoleBundle().createConsole(name, type);
+        consoleFile.setText("");
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
         fileEditorManager.openFile(consoleFile, true);
         eventDispatcher.getMulticaster().fileCreated(new VirtualFileEvent(this, consoleFile, name, null));
@@ -98,5 +118,61 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
                 "You will loose the information contained in this console.\n" +
                         "Are you sure you want to delete the console?",
                 MessageUtil.OPTIONS_YES_NO, 0, deleteTask);
+    }
+
+    /*********************************************
+     *            PersistentStateComponent       *
+     *********************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        Element element = new Element("state");
+        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionBundle().getAllConnectionHandlers();
+        for (ConnectionHandler connectionHandler : connectionHandlers) {
+            Element connectionElement = new Element("connection");
+            element.addContent(connectionElement);
+            connectionElement.setAttribute("id", connectionHandler.getId());
+
+            List<DBConsoleVirtualFile> consoles = connectionHandler.getConsoleBundle().getConsoles();
+            for (DBConsoleVirtualFile console : consoles) {
+                Element consoleElement = new Element("console");
+                connectionElement.addContent(consoleElement);
+
+                consoleElement.setAttribute("name", console.getName());
+                consoleElement.setAttribute("type", console.getType().name());
+                consoleElement.addContent(new CDATA(console.getContent().exportContent()));
+            }
+        }
+        return element;
+    }
+
+    @Override
+    public void loadState(Element element) {
+        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        for (Element connectionElement : element.getChildren()) {
+            String connectionId = connectionElement.getAttributeValue("id");
+            ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+
+            if (connectionHandler != null) {
+                DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
+                for (Element consoleElement : connectionElement.getChildren()) {
+                    String consoleName = consoleElement.getAttributeValue("name");
+                    DBConsoleType consoleType = SettingsUtil.getEnumAttribute(consoleElement, "type", DBConsoleType.class);
+
+                    String consoleText = "";
+                    if (consoleElement.getContentSize() > 0) {
+                        Content content = consoleElement.getContent(0);
+                        if (content instanceof Text) {
+                            Text cdata = (Text) content;
+                            consoleText = cdata.getText();
+                        }
+                    }
+
+                    DBConsoleVirtualFile consoleVirtualFile = consoleBundle.getConsole(consoleName, consoleType, true);
+                    consoleVirtualFile.setText(consoleText);
+                }
+            }
+        }
     }
 }

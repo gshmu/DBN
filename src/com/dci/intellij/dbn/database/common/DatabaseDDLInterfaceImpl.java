@@ -100,14 +100,14 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
 
     @Override
     public void computeSourceCodeOffsets(SourceCodeContent content, DatabaseObjectTypeId objectTypeId, String objectName) {
-        String sourceCode = content.getSourceCode();
+        String sourceCode = content.getText().toString();
         int gbEndOffset = sourceCode.indexOf(GuardedBlockMarker.END_OFFSET_IDENTIFIER);
         if (gbEndOffset > -1) {
             content.getOffsets().addGuardedBlock(0, gbEndOffset);
             sourceCode =
                     sourceCode.substring(0, gbEndOffset) +
                     sourceCode.substring(gbEndOffset + GuardedBlockMarker.END_OFFSET_IDENTIFIER.length());
-            content.setSourceCode(sourceCode);
+            content.setText(sourceCode);
         }
     }
 }
