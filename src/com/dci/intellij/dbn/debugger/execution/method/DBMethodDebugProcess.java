@@ -5,19 +5,12 @@ import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcess;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
-import com.intellij.openapi.editor.Document;
 import com.intellij.xdebugger.XDebugSession;
 
 public class DBMethodDebugProcess extends DBProgramDebugProcess<MethodExecutionInput>{
@@ -39,49 +32,12 @@ public class DBMethodDebugProcess extends DBProgramDebugProcess<MethodExecutionI
 
     @Override
     protected void registerDefaultBreakpoint() {
-            MethodExecutionInput methodExecutionInput = getExecutionInput();
-            DBMethod method = methodExecutionInput.getMethod();
-            DBEditableObjectVirtualFile mainDatabaseFile = getMainDatabaseFile();
-            if (method != null && mainDatabaseFile != null) {
-                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) mainDatabaseFile.getMainContentFile();
-                PSQLFile psqlFile = (PSQLFile) sourceCodeFile.getPsiFile();
-                if (psqlFile != null) {
-                    BasePsiElement basePsiElement = psqlFile.lookupObjectDeclaration(method.getObjectType().getGenericType(), method.getName());
-                    if (basePsiElement != null) {
-                        BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
-                        int offset = subject.getTextOffset();
-                        Document document = DocumentUtil.getDocument(psqlFile);
-                        int line = document.getLineNumber(offset);
-
-                        DBSchemaObject schemaObject = getMainDatabaseObject();
-                        if (schemaObject != null) {
-                            try {
-                                defaultBreakpointInfo = getDebuggerInterface().addProgramBreakpoint(
-                                        method.getSchema().getName(),
-                                        schemaObject.getName(),
-                                        schemaObject.getObjectType().getName().toUpperCase(),
-                                        line,
-                                        getDebugConnection());
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-        }
-    }
-
-    @Nullable
-    protected DBEditableObjectVirtualFile getMainDatabaseFile() {
-        DBSchemaObject schemaObject = getMainDatabaseObject();
-        return schemaObject == null ? null : schemaObject.getVirtualFile();
-    }
-
-    @Nullable
-    public DBSchemaObject getMainDatabaseObject() {
         MethodExecutionInput methodExecutionInput = getExecutionInput();
         DBMethod method = methodExecutionInput.getMethod();
-        return method != null && method.isProgramMethod() ? method.getProgram() : method;
+        if (method != null) {
+            registerDefaultBreakpoint(method);
+        }
+
     }
 
     @Override
@@ -94,7 +50,8 @@ public class DBMethodDebugProcess extends DBProgramDebugProcess<MethodExecutionI
     @NotNull
     @Override
     public String getName() {
-        DBSchemaObject object = getMainDatabaseObject();
+        DBMethod method = getExecutionInput().getMethod();
+        DBSchemaObject object = getMainDatabaseObject(method);
         if (object != null) {
             return object.getQualifiedName();
         }
@@ -104,7 +61,8 @@ public class DBMethodDebugProcess extends DBProgramDebugProcess<MethodExecutionI
     @Nullable
     @Override
     public Icon getIcon() {
-        DBSchemaObject object = getMainDatabaseObject();
+        DBMethod method = getExecutionInput().getMethod();
+        DBSchemaObject object = getMainDatabaseObject(method);
         if (object != null) {
             return object.getIcon();
         }

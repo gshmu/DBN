@@ -17,7 +17,8 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
-import com.dci.intellij.dbn.editor.code.SourceCodeOffsets;
+import static com.dci.intellij.dbn.editor.code.GuardedBlockMarker.END_OFFSET_IDENTIFIER;
+import static com.dci.intellij.dbn.editor.code.GuardedBlockMarker.START_OFFSET_IDENTIFIER;
 
 public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl implements DatabaseDebuggerInterface {
     public OracleDebuggerInterface(DatabaseInterfaceProvider provider) {
@@ -134,20 +135,20 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
     public String getDebugConsoleTemplate(CodeStyleCaseSettings settings) {
         CodeStyleCaseOption kco = settings.getKeywordCaseOption();
         CodeStyleCaseOption oco = settings.getObjectCaseOption();
-        return SourceCodeOffsets.GUARDED_BLOCK_START_OFFSET_MARKER +
+        return START_OFFSET_IDENTIFIER +
                 kco.format("DECLARE\n") +
                 "    -- add yor declarations here\n" +
                 "\n" +
-                SourceCodeOffsets.GUARDED_BLOCK_END_OFFSET_MARKER +
+                END_OFFSET_IDENTIFIER +
                 "\n" +
                 "\n" +
-                SourceCodeOffsets.GUARDED_BLOCK_START_OFFSET_MARKER +
+                START_OFFSET_IDENTIFIER +
                 kco.format("BEGIN\n") +
                 "    -- add your code here\n" +
-                SourceCodeOffsets.GUARDED_BLOCK_END_OFFSET_MARKER +
+                END_OFFSET_IDENTIFIER +
                 "\n" +
                 "\n" +
-                SourceCodeOffsets.GUARDED_BLOCK_START_OFFSET_MARKER +
+                START_OFFSET_IDENTIFIER +
                 oco.format("    sys.dbms_debug.debug_off();\n") +
                 kco.format("    EXCEPTION\n") +
                 kco.format("        WHEN OTHERS THEN\n") +
@@ -155,6 +156,6 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
                 kco.format("            RAISE;\n") +
                 kco.format("END;\n") +
                 "/" +
-                SourceCodeOffsets.GUARDED_BLOCK_END_OFFSET_MARKER;
+                END_OFFSET_IDENTIFIER;
     }
 }

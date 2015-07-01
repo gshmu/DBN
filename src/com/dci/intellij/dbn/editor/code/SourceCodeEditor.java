@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.editor.code;
 
-import java.util.Set;
-
 import com.dci.intellij.dbn.common.editor.BasicTextEditorImpl;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -16,7 +14,6 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.Range;
 
 public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFile>{
     private DBObjectRef<DBSchemaObject> objectRef;
@@ -32,7 +29,7 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
             if (offsets == null) {
                 offsets = new SourceCodeOffsets();
             } else {
-                Set<Range<Integer>> guardedBlocks = offsets.getGuardedBlocks();
+                GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
                 DocumentUtil.createGuardedBlocks(document, guardedBlocks, null);
             }
         } else {

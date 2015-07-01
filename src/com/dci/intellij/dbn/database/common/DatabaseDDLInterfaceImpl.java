@@ -12,8 +12,8 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.editor.code.GuardedBlockMarker;
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
-import com.dci.intellij.dbn.editor.code.SourceCodeOffsets;
 
 public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseDDLInterface {
     public DatabaseDDLInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
@@ -101,12 +101,12 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
     @Override
     public void computeSourceCodeOffsets(SourceCodeContent content, DatabaseObjectTypeId objectTypeId, String objectName) {
         String sourceCode = content.getSourceCode();
-        int gbEndOffset = sourceCode.indexOf(SourceCodeOffsets.GUARDED_BLOCK_END_OFFSET_MARKER);
+        int gbEndOffset = sourceCode.indexOf(GuardedBlockMarker.END_OFFSET_IDENTIFIER);
         if (gbEndOffset > -1) {
             content.getOffsets().addGuardedBlock(0, gbEndOffset);
             sourceCode =
                     sourceCode.substring(0, gbEndOffset) +
-                    sourceCode.substring(gbEndOffset + SourceCodeOffsets.GUARDED_BLOCK_END_OFFSET_MARKER.length());
+                    sourceCode.substring(gbEndOffset + GuardedBlockMarker.END_OFFSET_IDENTIFIER.length());
             content.setSourceCode(sourceCode);
         }
     }
