@@ -59,7 +59,7 @@ public class DBStatementRunConfiguration extends DBProgramRunConfiguration<State
     @Override
     public List<DBMethod> getMethods() {
         if (executionInput != null) {
-            final ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+            final ExecutablePsiElement executablePsiElement = executionInput.getExecutionProcessor().getCachedExecutable();
             if (executablePsiElement != null) {
                 return new ReadActionRunner<List<DBMethod>>() {
                     @Override

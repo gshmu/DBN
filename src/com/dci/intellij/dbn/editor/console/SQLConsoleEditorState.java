@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.console;
 
-import org.jdom.CDATA;
 import org.jdom.Content;
 import org.jdom.Element;
 import org.jdom.Text;
@@ -21,12 +20,15 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class SQLConsoleEditorState extends BasicTextEditorState {
+    @Deprecated
     private String content = "";
     private String currentSchema = "";
 
     @Override
     public void writeState(Element targetElement, Project project) {
         super.writeState(targetElement, project);
+        targetElement.setAttribute("current-schema", currentSchema);
+/*
         Element contentElement = new Element("content");
         contentElement.setAttribute("current-schema", currentSchema);
         targetElement.addContent(contentElement);
@@ -34,12 +36,16 @@ public class SQLConsoleEditorState extends BasicTextEditorState {
         content = StringUtil.replace(content, "  ", "<sp>");
         CDATA cdata = new CDATA(content);
         contentElement.setContent(cdata);
+*/
 
     }
 
     @Override
     public void readState(@NotNull Element sourceElement, Project project, VirtualFile virtualFile) {
         super.readState(sourceElement, project, virtualFile);
+        currentSchema = sourceElement.getAttributeValue("current-schema");
+
+        // TODO remove (backward compatibility)
         Element contentElement = sourceElement.getChild("content");
         if (contentElement != null) {
             currentSchema = contentElement.getAttributeValue("current-schema");
@@ -62,25 +68,31 @@ public class SQLConsoleEditorState extends BasicTextEditorState {
     @Override
     public void loadFromEditor(@NotNull FileEditorStateLevel level, @NotNull TextEditor textEditor) {
         super.loadFromEditor(level, textEditor);
-        content = textEditor.getEditor().getDocument().getText();
         DBConsoleVirtualFile file = (DBConsoleVirtualFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
-        DBSchema schema = file.getCurrentSchema();
-        currentSchema = schema == null ? "" : schema.getName();
+        if (file != null) {
+            DBSchema schema = file.getCurrentSchema();
+            currentSchema = schema == null ? "" : schema.getName();
+        }
+
+        //content = textEditor.getEditor().getDocument().getText();
     }
 
     @Override
     public void applyToEditor(@NotNull final TextEditor textEditor) {
+        super.applyToEditor(textEditor);
+        DBConsoleVirtualFile file = (DBConsoleVirtualFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
+        if (file != null && StringUtil.isNotEmpty(currentSchema)) {
+            file.setCurrentSchemaName(currentSchema);
+        }
+
+        // TODO remove (backward compatibility)
         new WriteActionRunner() {
             public void run() {
                 Document document = textEditor.getEditor().getDocument();
+
                 VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-                if (virtualFile != null) {
+                if (virtualFile != null && StringUtil.isNotEmpty(content)) {
                     document.setText(CommonUtil.nvl(content, ""));
-                    SQLConsoleEditorState.super.applyToEditor(textEditor);
-                    DBConsoleVirtualFile file = (DBConsoleVirtualFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
-                    if (StringUtil.isNotEmpty(currentSchema)) {
-                        file.setCurrentSchemaName(currentSchema);
-                    }
                 }
             }
         }.start();

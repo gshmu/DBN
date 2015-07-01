@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.editor.code;
 
+import java.util.List;
+
+import com.intellij.openapi.editor.RangeMarker;
+
 public class SourceCodeOffsets {
     private GuardedBlockMarkers guardedBlocks = new GuardedBlockMarkers();
     int headerEndOffset = 0;
@@ -18,5 +22,9 @@ public class SourceCodeOffsets {
 
     public void setHeaderEndOffset(int headerEndOffset) {
         this.headerEndOffset = headerEndOffset;
+    }
+
+    public void setGuardedBlocks(List<RangeMarker> rangeMarkers) {
+        this.guardedBlocks.apply(rangeMarkers);
     }
 }

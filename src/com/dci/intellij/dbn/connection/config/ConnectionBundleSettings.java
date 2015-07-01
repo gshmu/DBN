@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.connection.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -111,6 +110,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
             connection.readConfiguration(connectionElement);
             connections.add(connection);
 
+            // TODO remove (backward compatibility)
             Element consolesElement = connectionElement.getChild("consoles");
             if (consolesElement != null) {
                 for (Object c : consolesElement.getChildren()) {
@@ -135,7 +135,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
             connectionSetting.writeConfiguration(connectionElement);
             element.addContent(connectionElement);
 
-            Element consolesElement = new Element("consoles");
+/*            Element consolesElement = new Element("consoles");
             connectionElement.addContent(consolesElement);
             Map<String, DBConsoleType> consoles = connectionSetting.getConsoles();
             for (String consoleName : consoles.keySet()) {
@@ -144,7 +144,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
                 consoleElement.setAttribute("name", consoleName);
                 consoleElement.setAttribute("type", consoleType.name());
                 consolesElement.addContent(consoleElement);
-            }
+            }*/
         }
     }
 

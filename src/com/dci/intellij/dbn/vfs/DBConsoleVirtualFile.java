@@ -7,32 +7,45 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
+import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.RangeMarker;
+import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.DocumentListener;
+import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
 
-public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
+public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentListener, DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
-    private CharSequence content = "";
+    private SourceCodeContent content = new SourceCodeContent();
     private ConnectionHandlerRef connectionHandlerRef;
     private DBObjectRef<DBSchema> currentSchemaRef;
     private DBConsoleType type = DBConsoleType.STANDARD;
@@ -44,6 +57,32 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
         setCurrentSchemaName(connectionHandler.getUserName());
         setName(name);
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
+    }
+
+    public SourceCodeContent getContent() {
+        return content;
+    }
+
+    public void setText(String text) {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        Project project = connectionHandler.getProject();
+        if (type == DBConsoleType.DEBUG && StringUtil.isEmpty(text)) {
+            DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
+            CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(PSQLLanguage.INSTANCE);
+            text = debuggerInterface.getDebugConsoleTemplate(styleCaseSettings);
+        }
+        content.importContent(text);
+        final Document document = DocumentUtil.getDocument(this);
+        if (document != null) {
+            new WriteActionRunner() {
+                @Override
+                public void run() {
+                    document.setText(content.getText());
+                    DocumentUtil.removeGuardedBlocks(document);
+                    DocumentUtil.createGuardedBlocks(document, content.getOffsets().getGuardedBlocks(), null);
+                }
+            }.start();
+        }
     }
 
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
@@ -180,7 +219,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
         return new ByteArrayOutputStream() {
             public void close() {
                 DBConsoleVirtualFile.this.modificationTimestamp = modificationTimestamp;
-                content = toString();
+                content.setText(toString());
             }
         };
     }
@@ -188,7 +227,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
     @NotNull
     public byte[] contentsToByteArray() throws IOException {
         Charset charset = getCharset();
-        return content.toString().getBytes(charset.name());
+        return content.getBytes(charset);
     }
 
     @Override
@@ -228,5 +267,20 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
     @Override
     public int compareTo(@NotNull DBConsoleVirtualFile o) {
         return name.compareTo(o.name);
+    }
+
+    @Override
+    public void beforeDocumentChange(DocumentEvent event) {
+
+    }
+
+    @Override
+    public void documentChanged(DocumentEvent event) {
+        Document document = event.getDocument();
+        if (document instanceof DocumentEx) {
+            DocumentEx documentEx = (DocumentEx) document;
+            List<RangeMarker> blocks = documentEx.getGuardedBlocks();
+            content.getOffsets().setGuardedBlocks(blocks);
+        }
     }
 }
