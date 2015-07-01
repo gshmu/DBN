@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.common.util;
 
 import java.util.ArrayList;
-import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.editor.code.GuardedBlockMarkers;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -105,8 +105,8 @@ public class DocumentUtil {
         }
     }
 
-    public static void createGuardedBlocks(Document document, Set<Range<Integer>> ranges, String reason) {
-        for (Range<Integer> range : ranges) {
+    public static void createGuardedBlocks(Document document, GuardedBlockMarkers ranges, String reason) {
+        for (Range<Integer> range : ranges.getRanges()) {
             DocumentUtil.createGuardedBlock(document, range.getFrom(), range.getTo(), null);
         }
 

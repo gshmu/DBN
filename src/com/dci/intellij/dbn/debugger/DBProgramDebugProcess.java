@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.Presentable;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -34,12 +35,17 @@ import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.frame.DBProgramDebugSuspendContext;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.execution.ExecutionInput;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.psql.PSQLFile;
+import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -255,6 +261,17 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
 
     protected void registerDefaultBreakpoint() {}
 
+    @Nullable
+    protected DBEditableObjectVirtualFile getMainDatabaseFile(DBMethod method) {
+        DBSchemaObject schemaObject = getMainDatabaseObject(method);
+        return schemaObject == null ? null : schemaObject.getVirtualFile();
+    }
+
+    @Nullable
+    protected DBSchemaObject getMainDatabaseObject(DBMethod method) {
+        return method != null && method.isProgramMethod() ? method.getProgram() : method;
+    }
+
     /**
      * breakpoints need to be unregistered before closing the database session, otherwise they remain resident.
      */
@@ -334,6 +351,37 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
         ConnectionHandler connectionHandler = getConnectionHandler();
         connectionHandler.dropPoolConnection(debugConnection);
         debugConnection = null;
+    }
+
+    protected void registerDefaultBreakpoint(DBMethod method) {
+        DBEditableObjectVirtualFile mainDatabaseFile = getMainDatabaseFile(method);
+        if (mainDatabaseFile != null) {
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) mainDatabaseFile.getMainContentFile();
+            PSQLFile psqlFile = (PSQLFile) sourceCodeFile.getPsiFile();
+            if (psqlFile != null) {
+                BasePsiElement basePsiElement = psqlFile.lookupObjectDeclaration(method.getObjectType().getGenericType(), method.getName());
+                if (basePsiElement != null) {
+                    BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                    int offset = subject.getTextOffset();
+                    Document document = DocumentUtil.getDocument(psqlFile);
+                    int line = document.getLineNumber(offset);
+
+                    DBSchemaObject schemaObject = getMainDatabaseObject(method);
+                    if (schemaObject != null) {
+                        try {
+                            defaultBreakpointInfo = getDebuggerInterface().addProgramBreakpoint(
+                                    method.getSchema().getName(),
+                                    schemaObject.getName(),
+                                    schemaObject.getObjectType().getName().toUpperCase(),
+                                    line,
+                                    getDebugConnection());
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     protected void releaseTargetConnection() {

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.debugger.execution.statement;
 
 import javax.swing.Icon;
 import java.sql.SQLException;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,6 +12,7 @@ import com.dci.intellij.dbn.debugger.DBProgramDebugProcess;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
+import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugSession;
@@ -29,6 +31,13 @@ public class DBStatementDebugProcess extends DBProgramDebugProcess<StatementExec
 
     @Override
     protected void registerDefaultBreakpoint() {
+        DBStatementRunConfiguration runConfiguration = (DBStatementRunConfiguration) getSession().getRunProfile();
+        if (runConfiguration != null) {
+            List<DBMethod> methods = runConfiguration.getMethods();
+            if (methods.size() > 0) {
+                registerDefaultBreakpoint(methods.get(0));
+            }
+        }
 /*
         try {
             defaultBreakpointInfo = getDebuggerInterface().addSourceBreakpoint(1, getDebugConnection());
