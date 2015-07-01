@@ -27,6 +27,17 @@ public class DBStatementDebugProcess extends DBProgramDebugProcess<StatementExec
 
     }
 
+    @Override
+    protected void registerDefaultBreakpoint() {
+/*
+        try {
+            defaultBreakpointInfo = getDebuggerInterface().addSourceBreakpoint(1, getDebugConnection());
+        } catch (SQLException e) {
+            NotificationUtil.sendErrorNotification(getProject(), "Error setting breakpoint.", e.getMessage());
+        }
+*/
+    }
+
     public VirtualFile getRuntimeInfoFile(DebuggerRuntimeInfo runtimeInfo) {
         DBSchemaObject schemaObject = getDatabaseObject(runtimeInfo);
         return schemaObject == null ?

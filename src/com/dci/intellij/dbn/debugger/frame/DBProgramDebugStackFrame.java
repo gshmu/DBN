@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
@@ -197,7 +198,13 @@ public class DBProgramDebugStackFrame extends XStackFrame {
             }
             node.addChildren(children, true);
         }
+    }
 
+    @Nullable
+    @Override
+    public Object getEqualityObject() {
+        DebuggerRuntimeInfo runtimeInfo = debugProcess.getRuntimeInfo();
+        return runtimeInfo == null ? null : runtimeInfo.getOwnerName() + "." + runtimeInfo.getProgramName();
     }
 }
 

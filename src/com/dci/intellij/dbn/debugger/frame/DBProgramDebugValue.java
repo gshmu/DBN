@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcess;
@@ -61,6 +62,7 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
 
     @Override
     public void computePresentation(@NotNull final XValueNode node, @NotNull XValuePlace place) {
+        //node.setPresentation(icon, null, "", childVariableNames != null);
         new SimpleBackgroundTask("load variable value") {
             @Override
             protected void execute() {
@@ -86,6 +88,7 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
 
                     if (errorMessage != null) {
                         errorMessage = errorMessage.toLowerCase();
+                        value = "";
                     }
                     if (childVariableNames != null) {
                         errorMessage = "record";
@@ -94,7 +97,7 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
                     value = "";
                     errorMessage = e.getMessage();
                 } finally {
-                    node.setPresentation(icon, errorMessage, value, childVariableNames != null);
+                    node.setPresentation(icon, errorMessage, CommonUtil.nvl(value, "null"), childVariableNames != null);
                 }
 
             }

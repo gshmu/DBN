@@ -91,7 +91,10 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
     public DebuggerRuntimeInfo runToPosition(String programOwner, String programName, String programType, int line, Connection connection) throws SQLException {
         BreakpointInfo breakpointInfo = addProgramBreakpoint(programOwner, programName, programType, line, connection);
         DebuggerRuntimeInfo runtimeInfo = stepOut(connection);
-        removeBreakpoint(breakpointInfo.getBreakpointId(), connection);
+        Integer breakpointId = breakpointInfo.getBreakpointId();
+        if (breakpointId != null) {
+            removeBreakpoint(breakpointId, connection);
+        }
         return runtimeInfo;
     }
 
