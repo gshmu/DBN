@@ -31,7 +31,8 @@
             <ul>
                 - Compatibility with latest IntelliJ EAP (15.0)<br>
                 - Statement debugging (early preview - Oracle)<br>
-                - Debugger console (Oracle)<br>
+                - Dedicated debugger console (Oracle)<br>
+                - More reliable debugger processor<br>
                 - Quick object filters in database browser<br>
                 - Connection SSH tunnel with key-pair support<br>
                 - Support Oracle materialized view indexes<br>
