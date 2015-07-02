@@ -1,34 +1,34 @@
 package com.dci.intellij.dbn.ddl.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.util.List;
 
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+
 public class SelectDDLFileForm extends DBNFormImpl {
     private JPanel mainPanel;
-    private JTextArea hintTextArea;
     private JList filesList;
     private JPanel headerPanel;
     private JCheckBox doNotPromptCheckBox;
+    private JPanel hintPanel;
 
     public SelectDDLFileForm(DBSchemaObject object, List<VirtualFile> virtualFiles, String hint, boolean isFileOpenEvent) {
         Project project = object.getProject();
         DBNHeaderForm headerForm = new DBNHeaderForm(object);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        hintTextArea.setText(hint);
-        hintTextArea.setBackground(mainPanel.getBackground());
-        hintTextArea.setFont(mainPanel.getFont());
+        DBNHintForm hintForm = new DBNHintForm(hint, null, true);
+        hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
+
         DefaultListModel listModel = new DefaultListModel();
         for (VirtualFile virtualFile : virtualFiles) {
             listModel.addElement(virtualFile);
