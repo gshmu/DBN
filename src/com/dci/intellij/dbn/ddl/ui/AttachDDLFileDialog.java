@@ -21,10 +21,11 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         super(object.getProject(), "Attach DDL File", true);
         this.objectRef = DBObjectRef.from(object);
         this.showLookupOption = showLookupOption;
+        String typeName = object.getTypeName();
         String hint =
-            "Following DDL files were found matching the name of the selected " + object.getTypeName() + ".\n" +
-            "Select files to attach to this object.\n\n" +
-            "NOTE: \nAttached DDL files will become readonly and their content will change automatically when the database object is edited.";
+            "Following DDL files were found matching the name of the selected " + typeName + ". " +
+            "Select the files to attach to this object.\n" +
+            "NOTE: Attached DDL files will become readonly and their content will change automatically when the " + typeName + " is edited.";
         component = new SelectDDLFileForm(object, virtualFiles, hint, showLookupOption);
         getOKAction().putValue(Action.NAME, "Attach selected");
         init();

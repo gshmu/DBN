@@ -65,8 +65,8 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         });
 
         String autoConnectHintText = "NOTE: If \"Connect automatically\" is not selected, the system will not restore the entire workspace the next time you open the project (i.e. all open editors for this connection will not be reopened automatically).";
-        DBNHintForm autoConnectHintForm = new DBNHintForm(autoConnectHintText, MessageType.INFO, false);
-        autoConnectHintPanel.add(autoConnectHintForm.getComponent());
+        DBNHintForm hintForm = new DBNHintForm(autoConnectHintText, MessageType.INFO, false);
+        autoConnectHintPanel.add(hintForm.getComponent());
 
         boolean visibleHint = !autoConnectCheckBox.isSelected();
         autoConnectHintPanel.setVisible(visibleHint);
