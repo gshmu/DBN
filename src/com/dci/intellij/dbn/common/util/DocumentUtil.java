@@ -89,6 +89,7 @@ public class DocumentUtil {
         return PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
     }
 
+    @Nullable
     public static PsiFile getFile(Editor editor) {
         Project project = editor == null ? null : editor.getProject();
         return project == null ? null : PsiUtil.getPsiFile(project, editor.getDocument());

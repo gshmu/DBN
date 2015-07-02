@@ -149,7 +149,7 @@ public class PsiUtil {
         return null;
     }
 
-    public static BasePsiElement lookupElementAtOffset(PsiFile file, ElementTypeAttribute typeAttribute, int offset) {
+    public static BasePsiElement lookupElementAtOffset(@NotNull PsiFile file, ElementTypeAttribute typeAttribute, int offset) {
         PsiElement psiElement = file.findElementAt(offset);
         while (psiElement != null) {
             if (psiElement instanceof BasePsiElement) {

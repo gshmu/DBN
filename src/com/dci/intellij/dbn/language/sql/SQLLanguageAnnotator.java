@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementGutterRenderer;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
@@ -12,8 +13,6 @@ import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
 import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
-import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -126,13 +125,8 @@ public class SQLLanguageAnnotator implements Annotator {
 
     private static void annotateExecutable(ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {
         if (!executablePsiElement.isNestedExecutable()) {
-            boolean isDebugConsole = false;
             VirtualFile virtualFile = executablePsiElement.getFile().getVirtualFile();
-            if (virtualFile instanceof DBConsoleVirtualFile) {
-                DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-                isDebugConsole = consoleVirtualFile.getType() == DBConsoleType.DEBUG;
-            }
-            if (!isDebugConsole) {
+            if (!DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
                 Annotation annotation = holder.createInfoAnnotation(executablePsiElement, null);
                 annotation.setGutterIconRenderer(new StatementGutterRenderer(executablePsiElement));
             }

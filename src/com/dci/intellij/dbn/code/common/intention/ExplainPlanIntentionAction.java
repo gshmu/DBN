@@ -7,13 +7,12 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.explain.ExplainPlanManager;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
-import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -42,11 +41,8 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
         if (psiFile != null) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
 
-            if (virtualFile instanceof DBConsoleVirtualFile) {
-                DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-                if (consoleVirtualFile.getType() == DBConsoleType.DEBUG) {
-                    return false;
-                }
+            if (DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
+                return false;
             }
 
             if (virtualFile != null && virtualFile.getFileType() instanceof DBLanguageFileType) {
