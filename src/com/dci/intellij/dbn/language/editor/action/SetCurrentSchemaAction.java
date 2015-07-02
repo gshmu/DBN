@@ -2,35 +2,31 @@ package com.dci.intellij.dbn.language.editor.action;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
-public class SetCurrentSchemaAction extends DumbAwareAction {
-    private DBObjectRef<DBSchema> schemaRef;
-
+public class SetCurrentSchemaAction extends AnObjectAction<DBSchema> {
     public SetCurrentSchemaAction(DBSchema schema) {
-        super(schema.getName(), null, schema.getIcon());
-        this.schemaRef = DBObjectRef.from(schema);
+        super(schema);
     }
 
 
     @NotNull
     public DBSchema getSchema() {
-        return DBObjectRef.getnn(schemaRef);
+        return FailsafeUtil.get(getObject());
     }
 
 
@@ -45,9 +41,9 @@ public class SetCurrentSchemaAction extends DumbAwareAction {
     }
 
     public void update(AnActionEvent e) {
-        boolean enabled= false;
+        super.update(e);
+        boolean enabled = false;
         Project project = ActionUtil.getProject(e);
-        DBSchema schema = getSchema();
         if (project != null) {
             VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
@@ -61,9 +57,5 @@ public class SetCurrentSchemaAction extends DumbAwareAction {
 
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(enabled);
-        presentation.setText(NamingUtil.enhanceUnderscoresForDisplay(schema.getName()));
-        presentation.setIcon(schema.getIcon());
-        presentation.setDescription(schema.getDescription());
-
     }
 }

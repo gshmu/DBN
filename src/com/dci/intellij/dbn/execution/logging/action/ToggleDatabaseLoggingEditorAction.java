@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -17,9 +18,9 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAware {
+public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements DumbAware {
 
-    public DatabaseLoggingToggleAction() {
+    public ToggleDatabaseLoggingEditorAction() {
         super("Enable / Disable Database Logging", null, Icons.EXEC_LOG_OUTPUT_CONSOLE);
     }
 
@@ -56,9 +57,8 @@ public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAwa
         boolean visible = false;
         String name = "Database Logging";
         if (activeConnection != null) {
-
             boolean supportsLogging = DatabaseFeature.DATABASE_LOGGING.isSupported(activeConnection);
-            if (supportsLogging) {
+            if (supportsLogging && isVisible(e)) {
                 visible = true;
                 DatabaseCompatibilityInterface compatibilityInterface = activeConnection.getInterfaceProvider().getCompatibilityInterface();
                 String databaseLogName = compatibilityInterface.getDatabaseLogName();
@@ -69,5 +69,10 @@ public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAwa
         }
         presentation.setText(name);
         presentation.setVisible(visible);
+    }
+
+    public static boolean isVisible(AnActionEvent e) {
+        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 }

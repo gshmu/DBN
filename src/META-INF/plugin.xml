@@ -30,8 +30,15 @@
         <ul>
             <li><b>3.0.NEXT</b>
             <ul>
+                - Compatibility with latest IntelliJ EAP (15.0)<br>
+                - Oracle statement debugging (early preview)<br>
+                - Dedicated debugger console (Oracle)<br>
+                - More reliable debugger processor (Oracle)<br>
+                - Quick object filters in database browser<br>
+                - Connection SSH tunnel with key-pair support<br>
                 - Support Oracle materialized view indexes<br>
                 - Fixed external driver setup issues<br>
+                - Messages Tree - highlight new messages<br>
                 - Bug fixes<br>
             </ul>
             <li><b>3.0.4560</b>
@@ -315,7 +322,6 @@
         <component><implementation-class>com.dci.intellij.dbn.connection.ConnectionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.connection.console.DatabaseConsoleManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.ExecutionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.statement.StatementExecutionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.script.ScriptExecutionManager</implementation-class></component>
@@ -342,6 +348,7 @@
         <component><implementation-class>com.dci.intellij.dbn.object.dependency.ObjectDependencyManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.options.ProjectSettingsManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.connection.console.DatabaseConsoleManager</implementation-class></component>
     </project-components>
     <module-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.browser.cache.ModuleBrowserCacheComponent</implementation-class></component>-->
@@ -364,13 +371,14 @@
         </group>
 
         <group id="DBNavigator.ActionGroup.FileEditor" text="File Editor Controls">
-            <action id="DBNavigator.Actions.DatabaseLogging" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLoggingToggleAction" text="Script Editor - Enable / Disable Database Logging" icon="/img/LogOutputConsole.png"/>
+            <action id="DBNavigator.Actions.DatabaseLogging" class="com.dci.intellij.dbn.execution.logging.action.ToggleDatabaseLoggingEditorAction" text="Script Editor - Enable / Disable Database Logging" icon="/img/LogOutputConsole.png"/>
             <action id="DBNavigator.Actions.Connections" class="com.dci.intellij.dbn.language.editor.action.SelectConnectionComboBoxAction" text="Script Editor - DB Connections"/>
             <action id="DBNavigator.Actions.CurrentSchema" class="com.dci.intellij.dbn.language.editor.action.SetCurrentSchemaComboBoxAction" text="Script Editor - Current schema"/>
-            <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementAction" text="Script Editor - Execute Statement" icon="/img/action/ExecuteStatement.png">
+            <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementEditorAction" text="Script Editor - Execute Statement" icon="/img/action/ExecuteStatement.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl ENTER"/>
             </action>
-            <action id="DBNavigator.Actions.ExplainPlan" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanAction" text="Script Editor - Explain plan" icon="/img/action/ExplainStatement.png">
+            <action id="DBNavigator.Actions.DebugStatement" class="com.dci.intellij.dbn.debugger.execution.statement.action.DebugStatementEditorAction" text="Script Editor - Debug Statement" icon="/img/action/DebugStatement.png"/>
+            <action id="DBNavigator.Actions.ExplainPlan" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanEditorAction" text="Script Editor - Explain plan" icon="/img/action/ExplainStatement.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift ENTER"/>
             </action>
             <action id="DBNavigator.Actions.Commit" class="com.dci.intellij.dbn.language.editor.action.TransactionCommitEditorAction" text="Script Editor - Commit transaction" icon="/img/action/ConnectionCommit.png"/>
@@ -378,13 +386,12 @@
             <separator/>
             <action id="DBNavigator.Actions.ExecuteAsScript" class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptEditorAction" text="Script Editor - Execute as Script" icon="/img/action/ExecuteAsScript.png"/>
             <separator/>
-            <action id="DBNavigator.Actions.SaveToFile" class="com.dci.intellij.dbn.language.editor.action.SaveToFileEditorAction" text="Console - Save to file" icon="/img/action/SaveToFile.png"/>
-            <action id="DBNavigator.Actions.ConsoleOptions" class="com.dci.intellij.dbn.language.editor.action.ConsoleOptionsAction" text="Script Editor - Local Settings" icon="/img/action/Options.png"/>
+            <action id="DBNavigator.Actions.ConsoleOptions" class="com.dci.intellij.dbn.language.editor.action.EditorOptionsAction" text="Script Editor - Local Settings" icon="/img/action/Options.png"/>
             <!--
                         <action id="DBNavigator.Actions.DeleteConsole" class="com.dci.intellij.dbn.language.editor.action.DeleteConsoleEditorAction" text="Console - Delete" icon="/img/action/Delete.png"/>
-            -->
             <separator/>
             <action id="DBNavigator.Actions.OpenSettings" class="com.dci.intellij.dbn.language.editor.action.OpenSettingsAction" text="Script Editor - Settings"/>
+            -->
         </group>
         <group id="DBNavigator.Actions.MainMenu" text="_DB Navigator">
             <action class="com.dci.intellij.dbn.menu.action.OpenSQLConsoleAction" text="Open SQL Console..." id="DBNavigator.Actions.MainMenu.OpenSQLConsole" icon="/img/file/SQLConsole.png"/>
@@ -452,12 +459,6 @@
             <action id="DBNavigator.Actions.DataEditor.Reload" class="com.dci.intellij.dbn.editor.data.action.ReloadDataAction" text="Data Editor - Reload"/>
             <action id="DBNavigator.Actions.DataEditor.SelectDatasetFilter" class="com.dci.intellij.dbn.editor.data.action.SelectDatasetFilterComboBoxAction" text="Data Editor - Select Filter"/>
             <action id="DBNavigator.Actions.DataEditor.CreateEditFilter" class="com.dci.intellij.dbn.editor.data.action.CreateEditDatasetFilterAction" text="Data Editor - Create / Edit Filter"/>
-            <action id="DBNavigator.Actions.DataEditor.Options" class="com.dci.intellij.dbn.editor.data.action.DatasetEditorOptionsAction" text="Data Editor - Options"/>
-<!--
-            <separator/>
-            <action id="DBNavigator.Actions.DataEditor.OpenColumnVisibilityDialog" class="com.dci.intellij.dbn.editor.data.action.OpenColumnSetupDialogAction" text="Data Editor - Column Setup..."/>
-            <action id="DBNavigator.Actions.DataEditor.OpenSortingDialog" class="com.dci.intellij.dbn.editor.data.action.OpenSortingDialogAction" text="Data Editor - Sorting..."/>
--->
             <separator/>
             <action id="DBNavigator.Actions.DataEditor.DuplicateRecord" class="com.dci.intellij.dbn.editor.data.action.DuplicateRecordAction" text="Data Editor - Duplicate Record">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl D"/>
@@ -475,7 +476,7 @@
             <action id="DBNavigator.Actions.DataEditor.Export" class="com.dci.intellij.dbn.editor.data.action.ExportDataAction" text="Data Editor - Export"/>
             <action id="DBNavigator.Actions.DataEditor.Import" class="com.dci.intellij.dbn.editor.data.action.ImportDataAction" text="Data Editor - Import"/>
             <separator/>
-            <action id="DBNavigator.Actions.DataEditor.OpenSettings" class="com.dci.intellij.dbn.editor.data.action.OpenSettingsAction" text="Data Editor - Settings"/>
+            <action id="DBNavigator.Actions.DataEditor.Options" class="com.dci.intellij.dbn.editor.data.action.DatasetEditorOptionsAction" text="Data Editor - Options"/>
         </group>
         <group id="DBNavigator.ActionGroup.StatementExecutionResult">
             <action id="DBNavigator.Actions.ExecutionResult.Close" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultCloseAction" text="Execution Result - Close" icon="/img/action/Close.png"/>
@@ -541,8 +542,10 @@
             <separator/>
             <action id="DBNavigator.Actions.Browser.NavigateBack" class="com.dci.intellij.dbn.browser.action.NavigateBackAction" text="Browser - Back"/>
             <action id="DBNavigator.Actions.Browser.NavigateForward" class="com.dci.intellij.dbn.browser.action.NavigateForwardAction" text="Browser - Forward"/>
+<!--
             <action id="DBNavigator.Actions.Browser.AutoscrollToEditor" class="com.dci.intellij.dbn.browser.action.AutoscrollToEditorAction" text="Browser - Autoscroll to editor"/>
             <action id="DBNavigator.Actions.Browser.AutoscrollFromEditor" class="com.dci.intellij.dbn.browser.action.AutoscrollFromEditorAction" text="Browser - Autoscroll from editor"/>
+-->
             <action id="DBNavigator.Actions.Browser.ExpandTree" class="com.dci.intellij.dbn.browser.action.ExpandTreeAction" text="Browser - Expand all"/>
             <action id="DBNavigator.Actions.Browser.CollapseTree" class="com.dci.intellij.dbn.browser.action.CollapseTreeAction" text="Browser - Collapse all"/>
             <action id="DBNavigator.Actions.Browser.ShowObjectProperties" class="com.dci.intellij.dbn.browser.action.ShowObjectPropertiesAction" text="Browser - Show object properties"/>
@@ -550,7 +553,7 @@
             <action id="DBNavigator.Actions.Browser.OpenSQLConsole" class="com.dci.intellij.dbn.browser.action.OpenSQLConsoleAction" text="Browser - SQL Console" icon="/img/file/SQLConsole.png"/>
             <action id="DBNavigator.Actions.Browser.OpenSessionBrowser" class="com.dci.intellij.dbn.browser.action.OpenSessionBrowserAction" text="Browser - Session Browser" icon="/img/file/SessionBrowser.png"/>
             <separator/>
-            <action id="DBNavigator.Actions.Browser.OpenSettings" class="com.dci.intellij.dbn.browser.action.OpenSettingsAction" text="Browser - Settings"/>
+            <action id="DBNavigator.Actions.Browser.OpenSettings" class="com.dci.intellij.dbn.browser.action.BrowserOptionsAction" text="Browser - Options"/>
         </group>
     </actions>
     <extensions defaultExtensionNs="com.intellij">
@@ -571,8 +574,8 @@
         <syntaxHighlighter key="DBN-SQL" factoryClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterProvider"/>
         <syntaxHighlighter key="DBN-PSQL" factoryClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterProvider"/>
 
-        <lang.syntaxHighlighterFactory key="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterFactory"/>
-        <lang.syntaxHighlighterFactory key="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterFactory"/>
+        <lang.syntaxHighlighterFactory language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterFactory"/>
+        <lang.syntaxHighlighterFactory language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterFactory"/>
 
         <codeStyleSettingsProvider implementation="com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettingsProvider"/>
         <codeStyleSettingsProvider implementation="com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettingsProvider"/>

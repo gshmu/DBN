@@ -4,19 +4,23 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 import java.awt.Color;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 
 public class DBNHeaderForm extends DBNFormImpl{
+    public static final LineBorder BORDER = new LineBorder(UIUtil.getBoundsColor());
     private JLabel objectLabel;
     private JPanel mainPanel;
 
     public DBNHeaderForm() {
+        mainPanel.setBorder(BORDER);
     }
 
     public DBNHeaderForm(String title, Icon icon) {
@@ -30,6 +34,7 @@ public class DBNHeaderForm extends DBNFormImpl{
         if (background != null) {
             mainPanel.setBackground(background);
         }
+        mainPanel.setBorder(BORDER);
     }
 
     public DBNHeaderForm(@NotNull DBObject object) {
@@ -37,37 +42,39 @@ public class DBNHeaderForm extends DBNFormImpl{
     }
 
     public void update(@NotNull DBObject object) {
-        Project project = object.getProject();
         ConnectionHandler connectionHandler = object.getConnectionHandler();
 
         String connectionName = connectionHandler.getName();
         objectLabel.setText("[" + connectionName + "] " + object.getQualifiedName());
         objectLabel.setIcon(object.getIcon());
-        Color background = UIUtil.getPanelBackground();
-        if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
-            background = object.getEnvironmentType().getColor();
-        }
-
-        if (background != null) {
-            mainPanel.setBackground(background);
-        }
+        updateBorderAndBackground(object);
     }
 
     public DBNHeaderForm(@NotNull Presentable presentable) {
         objectLabel.setText(presentable.getName());
         objectLabel.setIcon(presentable.getIcon());
+        updateBorderAndBackground(presentable);
     }
 
     public DBNHeaderForm(@NotNull ConnectionHandler connectionHandler) {
         objectLabel.setText(connectionHandler.getName());
         objectLabel.setIcon(connectionHandler.getIcon());
-        Color background = UIUtil.getPanelBackground();
-        if (getEnvironmentSettings(connectionHandler.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
-            background = connectionHandler.getEnvironmentType().getColor();
+        updateBorderAndBackground(connectionHandler);
+    }
+
+    private void updateBorderAndBackground(Presentable presentable) {
+        if (presentable instanceof ConnectionProvider) {
+            ConnectionProvider connectionProvider = (ConnectionProvider) presentable;
+            ConnectionHandler connectionHandler = connectionProvider.getConnectionHandler();
+            Color background = null;
+            if (connectionHandler != null) {
+                if (getEnvironmentSettings(connectionHandler.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
+                    background = connectionHandler.getEnvironmentType().getColor();
+                }
+            }
+            mainPanel.setBackground(CommonUtil.nvl(background, UIUtil.getPanelBackground()));
         }
-        if (background != null) {
-            mainPanel.setBackground(background);
-        }
+        mainPanel.setBorder(BORDER);
     }
 
     public void setBackground(Color background) {

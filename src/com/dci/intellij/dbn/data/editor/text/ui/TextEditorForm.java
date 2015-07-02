@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -18,12 +24,6 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
 
 public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
     private JPanel mainPanel;
@@ -103,7 +103,9 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
 
     }
 
-    public JComponent getEditorComponent() {
+    @Nullable
+    @Override
+    public JComponent getPreferredFocusedComponent() {
         return editor.getContentComponent();
     }
 }

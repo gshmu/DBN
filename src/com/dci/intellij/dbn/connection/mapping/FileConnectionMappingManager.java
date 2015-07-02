@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -29,6 +28,7 @@ import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.editor.ui.DBLanguageFileEditorToolbarForm;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.options.ConfigId;
@@ -454,15 +454,13 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     }
 
 
-    private class SelectSchemaAction extends AnAction {
+    private class SelectSchemaAction extends AnObjectAction<DBSchema> {
         private WeakReference<DBLanguagePsiFile> fileRef;
-        private DBObjectRef<DBSchema> schemaRef;
         private RunnableTask callback;
 
         private SelectSchemaAction(DBLanguagePsiFile file, DBSchema schema, RunnableTask callback) {
-            super(NamingUtil.enhanceUnderscoresForDisplay(schema.getName()), null, schema.getIcon());
+            super(schema);
             this.fileRef = new WeakReference<DBLanguagePsiFile>(file);
-            this.schemaRef = DBObjectRef.from(schema);
             this.callback = callback;
         }
 
@@ -470,7 +468,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         public void actionPerformed(@NotNull AnActionEvent e) {
             DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
-                file.setCurrentSchema(DBObjectRef.get(schemaRef));
+                file.setCurrentSchema(getObject());
                 if (callback != null) {
                     callback.start();
                 }

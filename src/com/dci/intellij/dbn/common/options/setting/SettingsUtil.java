@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.options.setting;
 
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
 
@@ -111,6 +112,11 @@ public class SettingsUtil {
     public static <T extends Enum<T>> T getEnumAttribute(Element element, String attributeName, Class<T> enumClass) {
         String attributeValue = element.getAttributeValue(attributeName);
         return StringUtil.isEmpty(attributeValue) ? null : T.valueOf(enumClass, attributeValue);
+    }
+
+    public static <T extends Enum<T>> T getEnumAttribute(Element element, String attributeName, @NotNull T defaultValue) {
+        String attributeValue = element.getAttributeValue(attributeName);
+        return StringUtil.isEmpty(attributeValue) ? defaultValue : (T) defaultValue.valueOf(defaultValue.getClass(), attributeValue);
     }
 
     public static <T extends Enum<T>> void setEnumAttribute(Element element, String attributeName, T value) {

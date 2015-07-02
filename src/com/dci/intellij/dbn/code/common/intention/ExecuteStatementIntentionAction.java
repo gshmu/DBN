@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
@@ -37,6 +38,10 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction impl
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile != null) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
+
+            if (DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
+                return false;
+            }
             if (virtualFile != null && virtualFile.getFileType() instanceof DBLanguageFileType) {
                 ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
                 FileEditor fileEditor = EditorUtil.getFileEditor(editor);

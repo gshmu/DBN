@@ -54,7 +54,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Nullable
     @Override
-    protected Filter<T> getFilter() {
+    public Filter<T> getFilter() {
         if (filter == null) {
             return getConfigFilter();
         } else {
@@ -63,7 +63,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
-    public void setQuickFilter(final ObjectQuickFilter quickFilter) {
+    public void setQuickFilter(ObjectQuickFilter quickFilter) {
         if (quickFilter == null) {
             filter = null;
         } else {
@@ -71,6 +71,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
+    @Nullable
     @Override
     public ObjectQuickFilter getQuickFilter() {
         return filter == null ? null : filter.quickFilter;
@@ -94,15 +95,16 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
+    @Override
     @Nullable
-    private Filter<T> getConfigFilter() {
+    public Filter<T> getConfigFilter() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         return connectionHandler.isVirtual() ? null : (Filter<T>) connectionHandler.getSettings().getFilterSettings().getNameFilter(objectType);
     }
 
     @NotNull
     public List<T> getObjects() {
-        return getElements();
+        return getAllElements();
     }
 
     @Override

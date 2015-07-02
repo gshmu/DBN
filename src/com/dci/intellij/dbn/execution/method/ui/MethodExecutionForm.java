@@ -32,6 +32,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -52,6 +53,8 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
     private JScrollPane argumentsScrollPane;
     private AutoCommitLabel autoCommitLabel;
     private JCheckBox enableLoggingCheckBox;
+    private JLabel debuggerVersionLabel;
+    private JPanel versionPanel;
 
 
     private List<MethodExecutionArgumentForm> argumentForms = new ArrayList<MethodExecutionArgumentForm>();
@@ -66,6 +69,16 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
         DBMethod method = executionInput.getMethod();
 
         ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+        if (debug) {
+            versionPanel.setVisible(true);
+            versionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
+            DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
+            String debuggerVersion = debuggerManager.getDebuggerVersion(connectionHandler);
+            debuggerVersionLabel.setText(debuggerVersion);
+        } else {
+            versionPanel.setVisible(false);
+        }
+
         if (DatabaseFeature.AUTHID_METHOD_EXECUTION.isSupported(connectionHandler)) {
             //ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SetExecutionSchemaComboBoxAction(executionInput));
             executionSchemaActionPanel.add(new SchemaSelector(), BorderLayout.CENTER);

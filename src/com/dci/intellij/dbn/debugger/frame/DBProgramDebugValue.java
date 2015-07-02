@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcess;
@@ -24,51 +26,22 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
     private String errorMessage;
     private Icon icon;
     private int frameIndex;
+    private DBProgramDebugValue parentValue;
     private Set<String> childVariableNames;
 
     public DBProgramDebugValue(DBProgramDebugProcess debugProcess, DBProgramDebugValue parentValue, String variableName, @Nullable Set<String> childVariableNames, Icon icon, int frameIndex) {
         super(variableName);
         this.debugProcess = debugProcess;
         if (icon == null) {
-            if (parentValue == null) {
-                icon = Icons.DBO_VARIABLE;
-            } else {
-                icon = Icons.DBO_ATTRIBUTE;
-            }
+            icon = parentValue == null ?
+                    Icons.DBO_VARIABLE :
+                    Icons.DBO_ATTRIBUTE;
         }
         this.icon = icon;
+        this.parentValue = parentValue;
 
         this.frameIndex = frameIndex;
         this.childVariableNames = childVariableNames;
-        try {
-            String databaseVariableName = parentValue == null ? variableName : parentValue.getVariableName() + "." + variableName;
-            VariableInfo variableInfo = debugProcess.getDebuggerInterface().getVariableInfo(
-                    databaseVariableName.toUpperCase(), frameIndex,
-                    debugProcess.getDebugConnection());
-            value = variableInfo.getValue();
-            errorMessage = variableInfo.getError();
-            if (childVariableNames != null) {
-                errorMessage = null;
-            }
-
-            if (value == null) {
-                value = childVariableNames != null ? "" : "null";
-            } else {
-                if (!StringUtil.isNumber(value)) {
-                    value = '"' + value + '"';
-                }
-            }
-
-            if (errorMessage != null) {
-                errorMessage = errorMessage.toLowerCase();
-            }
-            if (childVariableNames != null) {
-                errorMessage = "record";
-            }
-        } catch (SQLException e) {
-            value = "";
-            errorMessage = e.getMessage();
-        }
     }
 
     public DBProgramDebugProcess getDebugProcess() {
@@ -88,8 +61,47 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
     }
 
     @Override
-    public void computePresentation(@NotNull XValueNode node, @NotNull XValuePlace place) {
-        node.setPresentation(icon, errorMessage, value, childVariableNames != null);
+    public void computePresentation(@NotNull final XValueNode node, @NotNull XValuePlace place) {
+        //node.setPresentation(icon, null, "", childVariableNames != null);
+        new SimpleBackgroundTask("load variable value") {
+            @Override
+            protected void execute() {
+                try {
+                    String variableName = getVariableName();
+                    String databaseVariableName = parentValue == null ? variableName : parentValue.getVariableName() + "." + variableName;
+                    VariableInfo variableInfo = debugProcess.getDebuggerInterface().getVariableInfo(
+                            databaseVariableName.toUpperCase(), frameIndex,
+                            debugProcess.getDebugConnection());
+                    value = variableInfo.getValue();
+                    errorMessage = variableInfo.getError();
+                    if (childVariableNames != null) {
+                        errorMessage = null;
+                    }
+
+                    if (value == null) {
+                        value = childVariableNames != null ? "" : "null";
+                    } else {
+                        if (!StringUtil.isNumber(value)) {
+                            value = '\'' + value + '\'';
+                        }
+                    }
+
+                    if (errorMessage != null) {
+                        errorMessage = errorMessage.toLowerCase();
+                        value = "";
+                    }
+                    if (childVariableNames != null) {
+                        errorMessage = "record";
+                    }
+                } catch (SQLException e) {
+                    value = "";
+                    errorMessage = e.getMessage();
+                } finally {
+                    node.setPresentation(icon, errorMessage, CommonUtil.nvl(value, "null"), childVariableNames != null);
+                }
+
+            }
+        }.start();
     }
 
     @Override

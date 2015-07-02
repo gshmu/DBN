@@ -596,7 +596,7 @@
             <token id="000000288" type-id="KW_ALL" />
             <sequence id="000000289">
                 <token id="000000290" type-id="KW_DISTINCT" />
-                <one-of optional="true" id="000000291">
+                <one-of id="000000291" optional="true">
                     <sequence id="000000292">
                         <token id="000000293" type-id="KW_ON" />
                         <wrapper id="000000294" template="PARENTHESES">
@@ -1341,77 +1341,83 @@
         <one-of id="000000688">
             <sequence id="000000689">
                 <token id="000000690" optional="true" type-id="CHR_EXCLAMATION" />
-                <token exit="true" id="000000691" type-id="CHR_EQUAL" />
+                <one-of exit="true" id="000000691">
+                    <token id="000000692" type-id="CHR_EQUAL" />
+                    <sequence id="000000693">
+                        <token id="000000694" type-id="CHR_TILDE" />
+                        <token id="000000695" optional="true" type-id="CHR_STAR" />
+                    </sequence>
+                </one-of>
             </sequence>
-            <sequence id="000000692">
-                <token id="000000693" type-id="CHR_LESS" />
-                <token exit="true" id="000000694" type-id="CHR_GREATER" />
+            <sequence id="000000696">
+                <token id="000000697" type-id="CHR_LESS" />
+                <token exit="true" id="000000698" type-id="CHR_GREATER" />
             </sequence>
         </one-of>
     </element-def>
     <element-def description="GREATER/LESS operator" id="greater_less_operator">
-        <one-of id="000000695">
-            <sequence id="000000696">
-                <token id="000000697" type-id="CHR_GREATER" />
-                <token id="000000698" optional="true" type-id="CHR_EQUAL" />
+        <one-of id="000000699">
+            <sequence id="000000700">
+                <token id="000000701" type-id="CHR_GREATER" />
+                <token id="000000702" optional="true" type-id="CHR_EQUAL" />
             </sequence>
-            <sequence id="000000699">
-                <token id="000000700" type-id="CHR_LESS" />
-                <token id="000000701" optional="true" type-id="CHR_EQUAL" />
+            <sequence id="000000703">
+                <token id="000000704" type-id="CHR_LESS" />
+                <token id="000000705" optional="true" type-id="CHR_EQUAL" />
             </sequence>
         </one-of>
     </element-def>
     <element-def description="CONCATENATION operator" id="concatenation_operator">
-        <token id="000000702" type-id="CHR_VERTICAL_BAR" />
-        <token id="000000703" type-id="CHR_VERTICAL_BAR" />
+        <token id="000000706" type-id="CHR_VERTICAL_BAR" />
+        <token id="000000707" type-id="CHR_VERTICAL_BAR" />
     </element-def>
 
     <!-- ========= MISCELLANEOUS ========= -->
     <element-def description="Integer" id="integer">
-        <one-of id="000000704" optional="true">
-            <token id="000000705" type-id="CHR_MINUS" />
-            <token id="000000706" type-id="CHR_PLUS" />
-        </one-of>
-        <token id="000000707" type-id="INTEGER" />
-    </element-def>
-
-    <element-def description="Number" id="number">
         <one-of id="000000708" optional="true">
             <token id="000000709" type-id="CHR_MINUS" />
             <token id="000000710" type-id="CHR_PLUS" />
         </one-of>
-        <one-of id="000000711">
-            <token id="000000712" type-id="NUMBER" />
-            <token id="000000713" type-id="INTEGER" />
+        <token id="000000711" type-id="INTEGER" />
+    </element-def>
+
+    <element-def description="Number" id="number">
+        <one-of id="000000712" optional="true">
+            <token id="000000713" type-id="CHR_MINUS" />
+            <token id="000000714" type-id="CHR_PLUS" />
+        </one-of>
+        <one-of id="000000715">
+            <token id="000000716" type-id="NUMBER" />
+            <token id="000000717" type-id="INTEGER" />
         </one-of>
     </element-def>
 
     <element-def description="Boolean" id="boolean">
-        <one-of id="000000714">
-            <token id="000000715" type-id="KW_TRUE" />
-            <token id="000000716" type-id="KW_FALSE" />
-            <token id="000000717" type-id="KW_ON" />
-            <token id="000000718" type-id="KW_OFF" />
-            <token id="000000719" type-id="INTEGER" />
+        <one-of id="000000718">
+            <token id="000000719" type-id="KW_TRUE" />
+            <token id="000000720" type-id="KW_FALSE" />
+            <token id="000000721" type-id="KW_ON" />
+            <token id="000000722" type-id="KW_OFF" />
+            <token id="000000723" type-id="INTEGER" />
         </one-of>
     </element-def>
 
     <!-- CUSTOM -->
     <element-def description="IF EXISTS clause" id="if_exists_clause">
-        <token id="000000720" type-id="KW_IF" />
-        <token id="000000721" type-id="KW_EXISTS" />
+        <token id="000000724" type-id="KW_IF" />
+        <token id="000000725" type-id="KW_EXISTS" />
     </element-def>
     <element-def description="IF NOT EXISTS clause" id="if_not_exists_clause">
-        <token id="000000722" type-id="KW_IF" />
-        <token id="000000723" type-id="KW_NOT" />
-        <token id="000000724" type-id="KW_EXISTS" />
+        <token id="000000726" type-id="KW_IF" />
+        <token id="000000727" type-id="KW_NOT" />
+        <token id="000000728" type-id="KW_EXISTS" />
     </element-def>
 
     <element-def description="Unknown identifier" id="custom_undefined">
-        <token id="000000725" type-id="IDENTIFIER" />
+        <token id="000000729" type-id="IDENTIFIER" />
     </element-def>
 
     <element-def description="Statement end" formatting-spacing-before="NO_SPACE" id="end" truncate-on-execution="true">
-        <token id="000000726" type-id="CHR_SEMICOLON" />
+        <token id="000000730" type-id="CHR_SEMICOLON" />
     </element-def>
 </element-defs>

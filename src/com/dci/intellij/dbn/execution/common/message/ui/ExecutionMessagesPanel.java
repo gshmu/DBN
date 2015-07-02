@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.execution.common.message.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.tree.TreePath;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.common.message.action.CloseMessagesWindowAction;
@@ -15,12 +22,6 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.tree.TreePath;
 
 public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
     private JPanel mainPanel;
@@ -49,20 +50,24 @@ public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
         Disposer.register(this, messagesTree);
     }
 
+    public void resetMessagesStatus() {
+        getMessagesTree().resetMessagesStatus();
+    }
+
     public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, boolean select, boolean focus) {
-        return messagesTree.addExecutionMessage(executionMessage, select, focus);
+        return getMessagesTree().addExecutionMessage(executionMessage, select, focus);
     }
 
     public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean select) {
-        return messagesTree.addCompilerMessage(compilerMessage, select);
+        return getMessagesTree().addCompilerMessage(compilerMessage, select);
     }
 
     public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage, boolean select) {
-        return messagesTree.addExplainPlanMessage(explainPlanMessage, select);
+        return getMessagesTree().addExplainPlanMessage(explainPlanMessage, select);
     }
 
     public void reset() {
-        messagesTree.reset();
+        getMessagesTree().reset();
     }
 
     public JComponent getComponent() {
@@ -70,18 +75,25 @@ public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
     }
 
     public void selectMessage(@NotNull CompilerMessage compilerMessage) {
-        messagesTree.selectCompilerMessage(compilerMessage);
+        getMessagesTree().selectCompilerMessage(compilerMessage);
     }
 
     public void selectMessage(@NotNull StatementExecutionMessage statementExecutionMessage, boolean focus) {
-        messagesTree.selectExecutionMessage(statementExecutionMessage, focus);
+        getMessagesTree().selectExecutionMessage(statementExecutionMessage, focus);
     }
 
     public void expand(TreePath treePath) {
-        messagesTree.makeVisible(treePath);
+        getMessagesTree().makeVisible(treePath);
     }
 
-    public TreePath getMessageTreePath(StatementExecutionMessage executionMessage) {
-        return null;
+    @NotNull
+    public MessagesTree getMessagesTree() {
+        return FailsafeUtil.get(messagesTree);
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        messagesTree = null;
     }
 }

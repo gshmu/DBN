@@ -116,7 +116,6 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
                     DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
                     DBSchemaObject editableObject = attachmentManager.getEditableObject(virtualFile);
                     if (editableObject != null) {
-                        DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
                         if (DatabaseFileSystem.isFileOpened(editableObject))
                             return createPanel(virtualFile, editableObject);
                     }
@@ -128,7 +127,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
     }
 
     private DDLMappedNotificationPanel createPanel(@NotNull final VirtualFile virtualFile, final DBSchemaObject editableObject) {
-        final DBObjectRef<DBSchemaObject> editableObjectRef = editableObject.getRef();
+        final DBObjectRef<DBSchemaObject> editableObjectRef = DBObjectRef.from(editableObject);
         DDLMappedNotificationPanel panel = new DDLMappedNotificationPanel();
         panel.setText("This DDL file is attached to the database " + editableObject.getQualifiedNameWithType() + ". Changes done to the " + editableObject.getObjectType().getName() + " are automatically mirrored to this DDL file, overwriting any changes you may do to it.");
         panel.createActionLabel("Detach", new Runnable() {

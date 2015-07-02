@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
+import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
@@ -28,7 +30,11 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
             new BackgroundTask(project, "Executing " + executionResult.getExecutionProcessor().getStatementName(), false, true) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    executionProcessor.execute();
+                    try {
+                        executionProcessor.execute();
+                    } catch (SQLException ex) {
+                        NotificationUtil.sendErrorNotification(getProject(), "Error executing statement", ex.getMessage());
+                    }
                 }
             });
         }

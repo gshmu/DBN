@@ -2,12 +2,15 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
+import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.execution.method.MethodExecutionMessage;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.intellij.openapi.util.Disposer;
 
-public class MethodExecutionMessageNode implements MessagesTreeNode {
+public class MethodExecutionMessageNode implements MessageTreeNode {
     private MethodExecutionMessage methodExecutionMessage;
     private MethodExecutionMessagesObjectNode parent;
 
@@ -19,20 +22,15 @@ public class MethodExecutionMessageNode implements MessagesTreeNode {
     }
 
     public MethodExecutionMessage getExecutionMessage() {
-        return methodExecutionMessage;
+        return FailsafeUtil.get(methodExecutionMessage);
     }
 
     public DBContentVirtualFile getVirtualFile() {
         return null;
     }
 
-    public void dispose() {
-        methodExecutionMessage = null;
-        parent = null;
-    }
-
     public MessagesTreeModel getTreeModel() {
-        return parent.getTreeModel();
+        return getParent().getTreeModel();
     }
 
     /*********************************************************
@@ -46,8 +44,8 @@ public class MethodExecutionMessageNode implements MessagesTreeNode {
         return 0;
     }
 
-    public TreeNode getParent() {
-        return parent;
+    public MethodExecutionMessagesObjectNode getParent() {
+        return FailsafeUtil.get(parent);
     }
 
     public int getIndex(TreeNode node) {
@@ -64,5 +62,16 @@ public class MethodExecutionMessageNode implements MessagesTreeNode {
 
     public Enumeration children() {
         return null;
+    }
+
+    @NotNull
+    @Override
+    public ConsoleMessage getMessage() {
+        return getExecutionMessage();
+    }
+
+    public void dispose() {
+        methodExecutionMessage = null;
+        parent = null;
     }
 }

@@ -1,16 +1,19 @@
 package com.dci.intellij.dbn.editor.code;
 
+import java.util.List;
+
+import com.intellij.openapi.editor.RangeMarker;
+
 public class SourceCodeOffsets {
-    public static final String GUARDED_BLOCK_END_OFFSET_MARKER = "$$DBN_GUARDED_BLOCK_END_OFFSET$$";
-    int guardedBlockEndOffset = 0;
+    private GuardedBlockMarkers guardedBlocks = new GuardedBlockMarkers();
     int headerEndOffset = 0;
 
-    public int getGuardedBlockEndOffset() {
-        return guardedBlockEndOffset;
+    public void addGuardedBlock(int startOffset, int endOffset) {
+        guardedBlocks.addMarker(startOffset, endOffset);
     }
 
-    public void setGuardedBlockEndOffset(int guardedBlockEndOffset) {
-        this.guardedBlockEndOffset = guardedBlockEndOffset;
+    public GuardedBlockMarkers getGuardedBlocks() {
+        return guardedBlocks;
     }
 
     public int getHeaderEndOffset() {
@@ -19,5 +22,9 @@ public class SourceCodeOffsets {
 
     public void setHeaderEndOffset(int headerEndOffset) {
         this.headerEndOffset = headerEndOffset;
+    }
+
+    public void setGuardedBlocks(List<RangeMarker> rangeMarkers) {
+        this.guardedBlocks.apply(rangeMarkers);
     }
 }

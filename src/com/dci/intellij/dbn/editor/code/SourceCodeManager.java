@@ -99,9 +99,9 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 Project project = getProject();
                 try {
                     SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                    String referenceText = sourceCodeManager.loadSourceCodeFromDatabase(object, sourcecodeFile.getContentType());
+                    CharSequence referenceText = sourceCodeManager.loadSourceCodeFromDatabase(object, sourcecodeFile.getContentType());
                     if (!isCanceled()) {
-                        openDiffWindow(sourcecodeFile, referenceText, "Database version", "Local version vs. database version");
+                        openDiffWindow(sourcecodeFile, referenceText.toString(), "Database version", "Local version vs. database version");
                     }
 
                 } catch (SQLException e1) {
@@ -188,8 +188,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                                 " has been changed by another user. \nYou will be prompted to merge the changes";
                                 MessageUtil.showErrorDialog(project, "Version conflict", message);
 
-                                String databaseContent = loadSourceCodeFromDatabase(object, contentType);
-                                showSourceDiffDialog(databaseContent, virtualFile, fileEditor);
+                                CharSequence databaseContent = loadSourceCodeFromDatabase(object, contentType);
+                                showSourceDiffDialog(databaseContent.toString(), virtualFile, fileEditor);
                             } else {
                                 doUpdateSourceToDatabase(object, virtualFile, fileEditor);
                                 //sourceCodeEditor.afterSave();
@@ -218,8 +218,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }.start();
     }
 
-    public String loadSourceCodeFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {
-        return loadSourceFromDatabase(object, contentType).getSourceCode();
+    public CharSequence loadSourceCodeFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {
+        return loadSourceFromDatabase(object, contentType).getText();
     }
 
     public SourceCodeContent loadSourceFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {

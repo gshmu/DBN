@@ -12,6 +12,9 @@ public class SshTunnelConnector {
     private int proxyPort;
     private String proxyUser;
     private String proxyPassword;
+    private SshAuthType authType;
+    private String keyFile;
+    private String keyPassphrase;
 
     private String localHost = "localhost";
     private int localPort;
@@ -21,11 +24,15 @@ public class SshTunnelConnector {
 
     private Session session;
 
-    public SshTunnelConnector(String proxyHost, int proxyPort, String proxyUser, String proxyPassword, String remoteHost, int remotePort) {
+    public SshTunnelConnector(String proxyHost, int proxyPort, String proxyUser, SshAuthType authType, String keyFile, String keyPassphrase, String proxyPassword, String remoteHost, int remotePort) {
         this.proxyHost = proxyHost;
         this.proxyPort = proxyPort;
         this.proxyUser = proxyUser;
         this.proxyPassword = proxyPassword;
+
+        this.authType = authType;
+        this.keyFile = keyFile;
+        this.keyPassphrase = keyPassphrase;
 
         this.remoteHost = remoteHost;
         this.remotePort = remotePort;
@@ -45,7 +52,13 @@ public class SshTunnelConnector {
 
         JSch jsch = new JSch();
         session = jsch.getSession(proxyUser, proxyHost, proxyPort);
-        session.setPassword(proxyPassword);
+
+        if(authType == SshAuthType.KEY_PAIR) {
+            jsch.addIdentity(keyFile, keyPassphrase);
+        } else {
+            session.setPassword(proxyPassword);
+        }
+
         session.setConfig("StrictHostKeyChecking", "no");
         session.connect();
 

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.debug.BasicOperationInfo;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcess;
 import com.intellij.xdebugger.frame.XValueModifier;
@@ -19,6 +20,15 @@ public class DBProgramDebugValueModifier extends XValueModifier {
     public void setValue(@NotNull String expression, @NotNull XModificationCallback callback) {
         DBProgramDebugProcess debugProcess = value.getDebugProcess();
         try {
+            if (StringUtil.isNotEmpty(expression)) {
+                while (expression.charAt(0) == '\'') {
+                    expression = expression.substring(1);
+                }
+
+                while (expression.charAt(expression.length()-1) == '\'') {
+                    expression = expression.substring(0, expression.length() -1);
+                }
+            }
             BasicOperationInfo operationInfo = debugProcess.getDebuggerInterface().setVariableValue(
                     value.getVariableName(),
                     0,

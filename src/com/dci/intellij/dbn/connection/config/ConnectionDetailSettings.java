@@ -48,6 +48,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         this.charset = charset;
     }
 
+    @NotNull
     public EnvironmentType getEnvironmentType() {
         EnvironmentSettings environmentSettings = GeneralProjectSettings.getInstance(getProject()).getEnvironmentSettings();
         return environmentSettings.getEnvironmentType(environmentTypeId);

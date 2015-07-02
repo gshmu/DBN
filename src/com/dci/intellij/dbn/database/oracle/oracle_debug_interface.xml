@@ -24,11 +24,21 @@
                 v_session_id VARCHAR2(100);
             begin
                 v_session_id := SYS.DBMS_DEBUG.initialize(
-                                        null,
-                                        SYS.DBMS_DEBUG.diagnostic_level,
-                                        null,
-                                        null);
+                        null, SYS.DBMS_DEBUG.diagnostic_level,
+                        null,
+                        null);
                 ? := v_session_id;
+            end;
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="get-debugger-version" timeout="20">
+        <statement>
+            declare
+                v_major_version BINARY_INTEGER;
+                v_minor_version BINARY_INTEGER;
+            begin
+                SYS.DBMS_DEBUG.probe_version(v_major_version, v_minor_version);
+                ? := v_major_version||'.'||v_minor_version;
             end;
         </statement>
     </statement-execution-processor>
@@ -228,6 +238,7 @@
             declare
                 v_program_info SYS.DBMS_DEBUG.program_info;
                 v_program_type VARCHAR(10);
+                v_breakpoint_id BINARY_INTEGER;
                 v_result BINARY_INTEGER;
                 v_message VARCHAR2(100);
             begin
@@ -250,9 +261,9 @@
                 v_result := SYS.DBMS_DEBUG.set_breakpoint(
                                 v_program_info,
                                 {3},
-                                ?,
-                                null,
-                                null);
+                                v_breakpoint_id,
+                                0,
+                                0);
 
                 v_message :=
                     case v_result
@@ -261,6 +272,7 @@
                         when SYS.DBMS_DEBUG.error_bad_handle then 'No such program unit.'
                         else 'Could not register breakpoint. Unknown reason.'
                     end;
+                ? := v_breakpoint_id;
                 ? := v_message;
             end;
         </statement>
@@ -270,6 +282,7 @@
             declare
                 v_program_info SYS.DBMS_DEBUG.program_info;
                 v_result BINARY_INTEGER;
+                v_breakpoint_id BINARY_INTEGER;
                 v_message VARCHAR2(100);
             begin
                 v_program_info.namespace := null;
@@ -280,9 +293,9 @@
                 v_result := SYS.DBMS_DEBUG.set_breakpoint(
                                 v_program_info,
                                 {0},
-                                ?,
-                                null,
-                                null);
+                                v_breakpoint_id,
+                                0,
+                                0);
 
                 v_message :=
                     case v_result
@@ -291,6 +304,8 @@
                         when SYS.DBMS_DEBUG.error_bad_handle then 'No such program unit.'
                         else 'Could not register breakpoint. Unknown reason.'
                     end;
+
+                ? := v_breakpoint_id;
                 ? := v_message;
             end;
         </statement>
@@ -437,7 +452,11 @@
                 SYS.DBMS_DEBUG.print_backtrace(v_execution_stack);
                 for i in v_execution_stack.first .. v_execution_stack.last loop
                     v_program_info := v_execution_stack(i);
-                    v_listing := v_listing||v_program_info.owner||'.'||v_program_info.name||' '||v_program_info.line#||' '||v_program_info.namespace||chr(13);
+                    if v_program_info.owner IS NULL and v_program_info.name IS NULL THEN
+                        v_listing := v_listing||v_program_info.line#||' '||v_program_info.namespace||chr(13);
+                    ELSE
+                        v_listing := v_listing||v_program_info.owner||'.'||v_program_info.name||' '||v_program_info.line#||' '||v_program_info.namespace||chr(13);
+                    END IF;
                 end loop;
 
                 ? := v_listing;

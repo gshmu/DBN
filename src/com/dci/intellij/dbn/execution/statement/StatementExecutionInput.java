@@ -73,6 +73,10 @@ public class StatementExecutionInput implements ExecutionInput {
         this.executableStatementText = executableStatementText;
     }
 
+    public int getExecutableLineNumber() {
+        return executionProcessor == null ? 0 : executionProcessor.getExecutableLineNumber();
+    }
+
     @NotNull
     @Override
     public ExecutionContext getExecutionContext() {

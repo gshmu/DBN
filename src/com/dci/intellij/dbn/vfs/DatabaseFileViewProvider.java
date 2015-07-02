@@ -50,7 +50,9 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
             } else {
                 forceCachedPsi(psiFile);
                 Document document = DocumentUtil.getDocument(getVirtualFile());
-                PsiDocumentManagerImpl.cachePsi(document, psiFile);
+                if (document != null) {
+                    PsiDocumentManagerImpl.cachePsi(document, psiFile);
+                }
                 return psiFile;
             }
         }

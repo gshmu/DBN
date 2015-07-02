@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -52,11 +51,11 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
 
         ConnectionHandler connectionHandler = browserComponent.getSettings().getConnectionHandler();
         if (connectionHandler != null) {
-            text = NamingUtil.enhanceUnderscoresForDisplay(connectionHandler.getQualifiedName());
+            text = connectionHandler.getQualifiedName();
             icon = connectionHandler.getIcon();
         }
 
-        presentation.setText(text);
+        presentation.setText(text, false);
         presentation.setIcon(icon);
     }
  }

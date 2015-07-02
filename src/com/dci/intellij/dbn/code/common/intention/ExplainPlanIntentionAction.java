@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.explain.ExplainPlanManager;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -39,6 +40,11 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile != null) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
+
+            if (DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
+                return false;
+            }
+
             if (virtualFile != null && virtualFile.getFileType() instanceof DBLanguageFileType) {
                 ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
                 FileEditor fileEditor = EditorUtil.getFileEditor(editor);

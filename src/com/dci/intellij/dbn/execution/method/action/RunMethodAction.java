@@ -1,31 +1,29 @@
 package com.dci.intellij.dbn.execution.method.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAwareAction;
 
-public class RunMethodAction extends DumbAwareAction {
-    private DBObjectRef<DBMethod> methodRef;
+public class RunMethodAction extends AnObjectAction<DBMethod> {
     public RunMethodAction(DBMethod method) {
-        super("Run", "", Icons.METHOD_EXECUTION_RUN);
-        this.methodRef = DBObjectRef.from(method);
+        super("Run", Icons.METHOD_EXECUTION_RUN, method);
     }
 
     public RunMethodAction(DBProgram program, DBMethod method) {
-        super(NamingUtil.enhanceUnderscoresForDisplay(method.getName()), "", method.getIcon());
-        this.methodRef = DBObjectRef.from(method);
+        super(method);
     }
 
     public void actionPerformed(AnActionEvent e) {
-        DBMethod method = DBObjectRef.getnn(methodRef);
-        MethodExecutionManager executionManager = MethodExecutionManager.getInstance(method.getProject());
-        if (executionManager.promptExecutionDialog(method, false)) {
-            executionManager.execute(method);
+        DBMethod method = getObject();
+        if (method != null) {
+            MethodExecutionManager executionManager = MethodExecutionManager.getInstance(method.getProject());
+            if (executionManager.promptExecutionDialog(method, false)) {
+                executionManager.execute(method);
+            }
+
         }
     }
 }

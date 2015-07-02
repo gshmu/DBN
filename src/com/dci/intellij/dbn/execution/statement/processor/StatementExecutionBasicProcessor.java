@@ -1,21 +1,12 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -48,11 +39,22 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
@@ -209,11 +211,11 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     }
 
-    public void execute() {
-        execute(null);
+    public void execute() throws SQLException {
+        execute(null, false);
     }
 
-    public void execute(@Nullable Connection connection) {
+    public void execute(@Nullable Connection connection, boolean debug) throws SQLException {
         executionInput.initExecution();
         ProgressMonitor.setTaskDescription("Executing " + getStatementName());
         resultName = null;
@@ -234,6 +236,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
             }
         }
 
+        SQLException executionException = null;
         Project project = getProject();
         boolean loggingEnabled = false;
         if (continueExecution) {
@@ -246,12 +249,15 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     connection = activeConnection.getStandaloneConnection(currentSchema);
                 }
 
-                if (activeConnection.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
+                if (!debug && activeConnection.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
                     loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
                 }
                 PreparedStatement statement = connection.prepareStatement(executableStatementText);
 
-                int timeout = getStatementExecutionSettings().getExecutionTimeout();
+                StatementExecutionSettings executionSettings = getStatementExecutionSettings();
+                int timeout = debug ?
+                        executionSettings.getDebugExecutionTimeout() :
+                        executionSettings.getExecutionTimeout();
                 statement.setQueryTimeout(timeout);
                 statement.execute();
                 executionResult = createExecutionResult(statement, executionInput);
@@ -287,6 +293,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                 }
             } catch (SQLException e) {
                 executionResult = createErrorExecutionResult(e.getMessage());
+                executionException = e;
             } finally {
                 runningStatements.decrement();
                 if (loggingEnabled) {
@@ -298,6 +305,9 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         executionResult.calculateExecDuration();
         ExecutionManager executionManager = ExecutionManager.getInstance(project);
         executionManager.addExecutionResult(executionResult);
+        if (executionException != null && debug) {
+            throw executionException;
+        }
     }
 
     public StatementExecutionVariablesBundle getExecutionVariables() {
@@ -365,7 +375,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     public StatementExecutionResult createErrorExecutionResult(String cause) {
         StatementExecutionResult executionResult = new StatementExecutionBasicResult(this, getResultName(), 0);
-        executionResult.updateExecutionMessage(MessageType.ERROR, "Could not execute " + getStatementName() + '.', cause);
+        executionResult.updateExecutionMessage(MessageType.ERROR, "Error executing " + getStatementName() + '.', cause);
         executionResult.setExecutionStatus(StatementExecutionStatus.ERROR);
         return executionResult;
     }
@@ -508,6 +518,19 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         List<StatementExecutionProcessor> list = new ArrayList<StatementExecutionProcessor>();
         list.add(this);
         return list;
+    }
+
+    @Override
+    public int getExecutableLineNumber() {
+        if (cachedExecutable != null) {
+            Document document = DocumentUtil.getDocument(cachedExecutable.getFile());
+            if (document != null) {
+                int textOffset = cachedExecutable.getTextOffset();
+                return document.getLineNumber(textOffset);
+            }
+        }
+
+        return 0;
     }
 
     /********************************************************

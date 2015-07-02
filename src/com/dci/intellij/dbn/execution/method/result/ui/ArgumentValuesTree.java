@@ -110,7 +110,7 @@ public class ArgumentValuesTree extends DBNTree{
                     append(" = ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
                     DBDataType dataType = attribute.getDataType();
                     if (dataType != null) {
-                        append("{" + dataType.getName() + "}" , SimpleTextAttributes.GRAY_ATTRIBUTES);
+                        append("{" + dataType.getName() + "} " , SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }
                     append(displayValue, SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
                 }

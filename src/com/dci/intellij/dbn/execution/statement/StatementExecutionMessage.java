@@ -32,6 +32,11 @@ public class StatementExecutionMessage extends ConsoleMessage {
                 executionProcessor.getExecutionResult() != executionResult; // overwritten result
     }
 
+    @Override
+    public boolean isNew() {
+        return super.isNew() && !isOrphan();
+    }
+
     public String getCauseMessage() {
         return causeMessage;
     }

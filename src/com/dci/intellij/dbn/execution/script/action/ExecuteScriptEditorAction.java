@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -35,6 +36,12 @@ public class ExecuteScriptEditorAction extends AnAction {
         presentation.setEnabled(isEnabled(e));
         presentation.setIcon(Icons.EXECUTE_SQL_SCRIPT);
         presentation.setText("Execute SQL Script");
+        presentation.setVisible(isVisible(e));
+    }
+
+    private static boolean isVisible(AnActionEvent e) {
+        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 
     private static boolean isEnabled(AnActionEvent e) {

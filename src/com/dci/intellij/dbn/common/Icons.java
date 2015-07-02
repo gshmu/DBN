@@ -75,6 +75,7 @@ public class Icons {
     public static final Icon WINDOW_EXECUTION_CONSOLE = load("/img/window/ExecutionConsole.png");
 
     public static final Icon FILE_SQL_CONSOLE = load("/img/file/SQLConsole.png");
+    public static final Icon FILE_SQL_DEBUG_CONSOLE = load("/img/file/SQLDebugConsole.png");
     public static final Icon FILE_SESSION_BROWSER = load("/img/file/SessionBrowser.png");
     public static final Icon FILE_SQL = load("/img/file/SQLFile.png");
     public static final Icon FILE_PLSQL = load("/img/file/PLSQLFile.png");

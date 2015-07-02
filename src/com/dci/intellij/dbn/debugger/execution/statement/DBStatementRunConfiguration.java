@@ -28,7 +28,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 
-public class DBStatementRunConfiguration extends DBProgramRunConfiguration<DBLanguagePsiFile, StatementExecutionInput> {
+public class DBStatementRunConfiguration extends DBProgramRunConfiguration<StatementExecutionInput> {
     private StatementExecutionInput executionInput;
     private DBStatementRunConfigurationEditor configurationEditor;
 
@@ -59,7 +59,7 @@ public class DBStatementRunConfiguration extends DBProgramRunConfiguration<DBLan
     @Override
     public List<DBMethod> getMethods() {
         if (executionInput != null) {
-            final ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+            final ExecutablePsiElement executablePsiElement = executionInput.getExecutionProcessor().getCachedExecutable();
             if (executablePsiElement != null) {
                 return new ReadActionRunner<List<DBMethod>>() {
                     @Override

@@ -1,9 +1,21 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.PresentableFactory;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
@@ -18,18 +30,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
 
 public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDialog>{
     private JPanel headerPanel;
@@ -37,8 +37,8 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
     private DBNComboBox<DBSchema> schemaComboBox;
     private JPanel mainPanel;
     private DBNComboBox<CmdLineInterface> cmdLineExecutableComboBox;
-    private JTextArea hintTextArea;
     private JCheckBox clearOutputCheckBox;
+    private JPanel hintPanel;
 
     private DBNHeaderForm headerForm;
 
@@ -56,13 +56,12 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         headerForm = new DBNHeaderForm(headerTitle, headerIcon, null);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        hintTextArea.setText(
-                "Script execution uses the Command-Line Interface executable supplied with your database client.\n" +
-                "Make sure it is available in the \"PATH\" environment variable or provide the path to the executable.");
-        hintTextArea.setBackground(mainPanel.getBackground());
-        hintTextArea.setFont(mainPanel.getFont());
-        //hintTextArea.setForeground(Colors.HINT_COLOR);
-        //hintTextArea.setBorder(Borders.BOTTOM_LINE_BORDER);
+        String hintText =
+                "Script execution uses the Command-Line Interface executable supplied with your database client. " +
+                "Make sure it is available in the \"PATH\" environment variable or provide the path to the executable.";
+
+        DBNHintForm hintForm = new DBNHintForm(hintText, null, true);
+        hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
         final Project project = getProject();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);

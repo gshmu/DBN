@@ -19,7 +19,7 @@ public class SimpleDynamicContent<T extends DynamicContentElement> extends Dynam
 
     @Nullable
     @Override
-    protected Filter<T> getFilter() {
+    public Filter<T> getFilter() {
         return null;
     }
 

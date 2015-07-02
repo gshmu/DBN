@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterGroup;
@@ -75,7 +74,7 @@ public class SelectDatasetFilterComboBoxAction extends DBNComboBoxAction {
                 presentation.setIcon(Icons.DATASET_FILTER_EMPTY);
             } else {
                 //e.getPresentation().setText(activeFilter.getName());
-                presentation.setText(NamingUtil.enhanceNameForDisplay(activeFilter.getName()));
+                presentation.setText(activeFilter.getName(), false);
                 presentation.setIcon(activeFilter.getIcon());
             }
         }

@@ -4,7 +4,9 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSshTunnelSettingsForm;
+import com.dci.intellij.dbn.connection.ssh.SshAuthType;
 import com.intellij.openapi.project.Project;
 
 public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunnelSettingsForm> {
@@ -15,6 +17,9 @@ public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunn
     private String user;
     private String password;
     private String port = "22";
+    private SshAuthType authType = SshAuthType.PASSWORD;
+    private String keyFile;
+    private String keyPassphrase;
 
     public ConnectionSshTunnelSettings(ConnectionSettings parent) {
         this.parent = parent;
@@ -72,6 +77,30 @@ public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunn
         this.port = port;
     }
 
+    public SshAuthType getAuthType() {
+        return authType;
+    }
+
+    public void setAuthType(SshAuthType authType) {
+        this.authType = authType;
+    }
+
+    public String getKeyFile() {
+        return keyFile;
+    }
+
+    public void setKeyFile(String keyFile) {
+        this.keyFile = keyFile;
+    }
+
+    public String getKeyPassphrase() {
+        return keyPassphrase;
+    }
+
+    public void setKeyPassphrase(String keyPassphrase) {
+        this.keyPassphrase = keyPassphrase;
+    }
+
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
@@ -89,20 +118,34 @@ public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunn
     @Override
     public void readConfiguration(Element element) {
         active = getBoolean(element, "active", active);
-        host = getString(element, "host", host);
-        port = getString(element, "port", port);
-        user = getString(element, "user", user);
-        password = PasswordUtil.decodePassword(getString(element, "password", password));
+        host = getString(element, "proxy-host", host);
+        port = getString(element, "proxy-port", port);
+        user = getString(element, "proxy-user", user);
+        password = PasswordUtil.decodePassword(getString(element, "proxy-password", password));
+
+        // TODO remove (backward compatibility)
+        if (active && StringUtil.isEmpty(host)) {
+            host = getString(element, "host", host);
+            port = getString(element, "port", port);
+            user = getString(element, "user", user);
+            password = PasswordUtil.decodePassword(getString(element, "password", password));
+        }
+
+        authType = getEnum(element, "auth-type", authType);
+        keyFile = getString(element, "key-file", keyFile);
+        keyPassphrase = PasswordUtil.decodePassword(getString(element, "key-passphrase", keyPassphrase));
     }
 
     @Override
     public void writeConfiguration(Element element) {
         setBoolean(element, "active", active);
-        setString(element, "host", host);
-        setString(element, "port", port);
-        setString(element, "user", user);
-        setString(element, "password", PasswordUtil.encodePassword(password));
-
+        setString(element, "proxy-host", host);
+        setString(element, "proxy-port", port);
+        setString(element, "proxy-user", user);
+        setString(element, "proxy-password", PasswordUtil.encodePassword(password));
+        setEnum(element, "auth-type", authType);
+        setString(element, "key-file", keyFile);
+        setString(element, "key-passphrase", PasswordUtil.encodePassword(keyPassphrase));
     }
 
     public Project getProject() {

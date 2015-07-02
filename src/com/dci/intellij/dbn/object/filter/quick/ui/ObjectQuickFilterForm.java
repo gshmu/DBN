@@ -4,6 +4,8 @@ import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -12,8 +14,11 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
@@ -34,6 +39,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
     private JPanel headerPanel;
     private JPanel conditionsPanel;
     private JPanel actionsPanel;
+    private JPanel hintPanel;
 
     private List<ObjectQuickFilterConditionForm> conditionForms = new ArrayList<ObjectQuickFilterConditionForm>();
     private DBObjectList objectList;
@@ -59,7 +65,15 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
             ObjectQuickFilterCondition condition = filter.addNewCondition(quickFilterManager.getLastUsedOperator());
             addConditionPanel(condition);*/
         }
-        actionsPanel.add(new NewFilterSelector(filter), BorderLayout.CENTER);
+
+        Filter filter = objectList.getConfigFilter();
+        if (filter != null) {
+            String hintText = "NOTE: This list is filtered according to connection \"Filter\" settings. Any additional condition will narrow down the already filtered list." ;
+            DBNHintForm hintForm = new DBNHintForm(hintText, null, true);
+            hintPanel.add(hintForm.getComponent());
+        }
+
+        actionsPanel.add(new NewFilterSelector(this.filter), BorderLayout.CENTER);
 
         Icon headerIcon = Icons.DATASET_FILTER;
         ConnectionHandler connectionHandler = objectList.getConnectionHandler();
@@ -72,14 +86,22 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 
+    protected void updateJoinTypeComponents() {
+        for (ObjectQuickFilterConditionForm conditionForm : conditionForms) {
+            conditionForm.updateJoinTypeComponent();
+        }
+    }
+
     private void addConditionPanel(ObjectQuickFilterCondition condition) {
         ObjectQuickFilterConditionForm conditionForm = new ObjectQuickFilterConditionForm(this, condition);
         conditionsPanel.add(conditionForm.getComponent());
+        conditionsPanel.setBorder(new CompoundBorder(Borders.BOTTOM_LINE_BORDER, new EmptyBorder(0,0,4,0)));
         conditionsPanel.revalidate();
         conditionsPanel.repaint();
 
         conditionForms.add(conditionForm);
         Disposer.register(this, conditionForm);
+        updateJoinTypeComponents();
 
     }
 
@@ -94,8 +116,11 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
                 break;
             }
         }
+        int conditionsCount = filter.getConditions().size();
+        conditionsPanel.setBorder(conditionsCount > 0 ? new CompoundBorder(Borders.BOTTOM_LINE_BORDER, new EmptyBorder(0,0,4,0)) : null);
         conditionsPanel.revalidate();
         conditionsPanel.repaint();
+        updateJoinTypeComponents();
     }
 
     private class NewFilterSelector extends ValueSelector<ConditionOperator> {

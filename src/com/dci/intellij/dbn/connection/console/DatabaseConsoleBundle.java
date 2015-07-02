@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.Disposable;
 
@@ -25,7 +27,12 @@ public class DatabaseConsoleBundle implements Disposable{
 
     public List<DBConsoleVirtualFile> getConsoles() {
         if (consoles.size() == 0) {
-            createConsole(getConnectionHandler().getName());
+            synchronized (this) {
+                if (consoles.size() == 0) {
+                    createConsole(getConnectionHandler().getName(), DBConsoleType.STANDARD);
+                }
+            }
+
         }
         return consoles;
     }
@@ -45,40 +52,51 @@ public class DatabaseConsoleBundle implements Disposable{
 
     @NotNull
     public DBConsoleVirtualFile getDefaultConsole() {
-        return getConsole(getConnectionHandler().getName(), true);
+        return getConsole(getConnectionHandler().getName(), DBConsoleType.STANDARD, true);
     }
 
     @Nullable
     public DBConsoleVirtualFile getConsole(String name) {
-        return getConsole(name, false);
-    }
-
-    public DBConsoleVirtualFile getConsole(String name, boolean create) {
         for (DBConsoleVirtualFile console : consoles) {
             if (console.getName().equals(name)) {
                 return console;
             }
         }
-        return create ? createConsole(name) : null;
+        return null;
     }
 
-    public DBConsoleVirtualFile createConsole(String name) {
+    public DBConsoleVirtualFile getConsole(String name, DBConsoleType type, boolean create) {
+        DBConsoleVirtualFile console = getConsole(name);
+        if (console == null && create) {
+            synchronized (this) {
+                console = getConsole(name);
+                if (console == null) {
+                    return createConsole(name, type);
+                }
+            }
+        }
+        return console;
+    }
+
+    public DBConsoleVirtualFile createConsole(String name, DBConsoleType type) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DBConsoleVirtualFile console = new DBConsoleVirtualFile(connectionHandler, name);
+        DBConsoleVirtualFile console = new DBConsoleVirtualFile(connectionHandler, name, type);
         consoles.add(console);
         Collections.sort(consoles);
-        List<String> consoleNames = connectionHandler.getSettings().getConsoleNames();
-        if (!consoleNames.contains(name)) {
-            consoleNames.add(name);
-            Collections.sort(consoleNames);
+        Map<String, DBConsoleType> configConsoles = connectionHandler.getSettings().getConsoles();
+        if (!configConsoles.keySet().contains(name)) {
+            configConsoles.put(name, type);
         }
 
         return console;
     }
 
     public void removeConsole(String name) {
+        ConnectionHandler connectionHandler = getConnectionHandler();
         DBConsoleVirtualFile console = getConsole(name);
         consoles.remove(console);
+        Map<String, DBConsoleType> configConsoles = connectionHandler.getSettings().getConsoles();
+        configConsoles.remove(name);
         DisposerUtil.dispose(console);
     }
 

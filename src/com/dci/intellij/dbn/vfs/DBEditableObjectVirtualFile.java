@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -14,6 +20,7 @@ import com.dci.intellij.dbn.ddl.ObjectToDDLContentSynchronizer;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
@@ -36,16 +43,11 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObject> implements FileConnectionMappingProvider {
     public ThreadLocal<Document> FAKE_DOCUMENT = new ThreadLocal<Document>();
     private List<DBContentVirtualFile> contentFiles;
+    private transient EditorProviderId selectedEditorProviderId;
 
     public DBEditableObjectVirtualFile(DBSchemaObject object) {
         super(object);
@@ -187,6 +189,14 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
             }
         }
         return null;
+    }
+
+    public EditorProviderId getSelectedEditorProviderId() {
+        return selectedEditorProviderId;
+    }
+
+    public void setSelectedEditorProviderId(EditorProviderId selectedEditorProviderId) {
+        this.selectedEditorProviderId = selectedEditorProviderId;
     }
 
     /*********************************************************

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -41,6 +43,7 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionVariablesDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement.MatchType;
+import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -170,25 +173,27 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     private void bindExecutionProcessors(FileEditor fileEditor, MatchType matchType) {
         Editor editor = EditorUtil.getEditor(fileEditor);
         PsiFile psiFile = DocumentUtil.getFile(editor);
-        PsiElement child = psiFile.getFirstChild();
-        while (child != null) {
-            if (child instanceof RootPsiElement) {
-                RootPsiElement root = (RootPsiElement) child;
-                for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
-                    if (matchType == MatchType.CACHED) {
-                        StatementExecutionProcessor executionProcessor = executable.getExecutionProcessor();
-                        if (executionProcessor != null && !executionProcessor.isBound() && executionProcessor.isQuery() == executable.isQuery()) {
-                            executionProcessor.bind(executable);
-                        }
-                    } else {
-                        StatementExecutionProcessor executionProcessor = findExecutionProcessor(executable, fileEditor, matchType);
-                        if (executionProcessor != null) {
-                            executionProcessor.bind(executable);
+        if (psiFile != null) {
+            PsiElement child = psiFile.getFirstChild();
+            while (child != null) {
+                if (child instanceof RootPsiElement) {
+                    RootPsiElement root = (RootPsiElement) child;
+                    for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
+                        if (matchType == MatchType.CACHED) {
+                            StatementExecutionProcessor executionProcessor = executable.getExecutionProcessor();
+                            if (executionProcessor != null && !executionProcessor.isBound() && executionProcessor.isQuery() == executable.isQuery()) {
+                                executionProcessor.bind(executable);
+                            }
+                        } else {
+                            StatementExecutionProcessor executionProcessor = findExecutionProcessor(executable, fileEditor, matchType);
+                            if (executionProcessor != null) {
+                                executionProcessor.bind(executable);
+                            }
                         }
                     }
                 }
+                child = child.getNextSibling();
             }
-            child = child.getNextSibling();
         }
     }
 
@@ -209,9 +214,9 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     /*********************************************************
      *                       Execution                       *
      *********************************************************/
-    public void debugExecute(@NotNull StatementExecutionProcessor executionProcessor, @NotNull Connection connection) {
+    public void debugExecute(@NotNull StatementExecutionProcessor executionProcessor, @NotNull Connection connection) throws SQLException {
         try {
-            executionProcessor.execute(connection);
+            executionProcessor.execute(connection, true);
         } finally {
             DBLanguagePsiFile file = executionProcessor.getPsiFile();
             DocumentUtil.refreshEditorAnnotations(file);
@@ -251,6 +256,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                             progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, size));
                                         }
                                         executionProcessor.execute();
+                                    } catch (SQLException e) {
+                                        NotificationUtil.sendErrorNotification(getProject(), "Error executing statement", e.getMessage());
                                     } finally {
                                         if (TimeUtil.isOlderThan(lastRefresh, 2, TimeUnit.SECONDS)) {
                                             lastRefresh = System.currentTimeMillis();
@@ -383,19 +390,29 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
         if (editor != null) {
             DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
-            PsiElement child = file.getFirstChild();
-            while (child != null) {
-                if (child instanceof RootPsiElement) {
-                    RootPsiElement root = (RootPsiElement) child;
-
-                    for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
-                        if (executable.getTextOffset() > offset) {
+            if (file != null) {
+                PsiElement child = file.getFirstChild();
+                while (child != null) {
+                    if (child instanceof ChameleonPsiElement) {
+                        ChameleonPsiElement chameleonPsiElement = (ChameleonPsiElement) child;
+                        for (ExecutablePsiElement executable : chameleonPsiElement.getExecutablePsiElements()) {
                             StatementExecutionProcessor executionProcessor = getExecutionProcessor(fileEditor, executable, true);
                             executionProcessors.add(executionProcessor);
                         }
+
                     }
+                    if (child instanceof RootPsiElement) {
+                        RootPsiElement root = (RootPsiElement) child;
+
+                        for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
+                            if (executable.getTextOffset() > offset) {
+                                StatementExecutionProcessor executionProcessor = getExecutionProcessor(fileEditor, executable, true);
+                                executionProcessors.add(executionProcessor);
+                            }
+                        }
+                    }
+                    child = child.getNextSibling();
                 }
-                child = child.getNextSibling();
             }
         }
         return executionProcessors;

@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.explain.ExplainPlanManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -19,9 +20,10 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
-public class ExplainPlanAction extends AnAction {
+public class ExplainPlanEditorAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
@@ -51,7 +53,7 @@ public class ExplainPlanAction extends AnAction {
                 DBLanguagePsiFile languagePsiFile = (DBLanguagePsiFile) psiFile;
 
                 ConnectionHandler activeConnection = languagePsiFile.getActiveConnection();
-                visible = DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
+                visible = isVisible(e) && DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
 
                 ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
                 if (executable != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
@@ -63,7 +65,8 @@ public class ExplainPlanAction extends AnAction {
         presentation.setVisible(visible);
     }
 
-    private boolean isEnabled(AnActionEvent e) {
-        return false;
+    public static boolean isVisible(AnActionEvent e) {
+        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 }

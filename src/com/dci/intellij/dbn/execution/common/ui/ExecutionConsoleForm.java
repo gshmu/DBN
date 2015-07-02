@@ -209,7 +209,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     public void selectResult(StatementExecutionResult executionResult) {
         StatementExecutionMessage executionMessage = executionResult.getExecutionMessage();
         if (executionMessage != null) {
-            prepareMessagesTab();
+            prepareMessagesTab(false);
             ExecutionMessagesPanel messagesPane = getMessagesPanel();
             messagesPane.selectMessage(executionMessage, true);
         }
@@ -217,7 +217,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     public void addResult(ExplainPlanResult explainPlanResult) {
         if (explainPlanResult.isError()) {
-            prepareMessagesTab();
+            prepareMessagesTab(true);
             ExecutionMessagesPanel messagesPane = getMessagesPanel();
             ExplainPlanMessage explainPlanMessage = new ExplainPlanMessage(explainPlanResult, MessageType.ERROR);
             messagesPane.addExplainPlanMessage(explainPlanMessage, true);
@@ -238,11 +238,11 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             if (executionMessage == null) {
                 showResultTab(executionResult);
             } else {
-                prepareMessagesTab();
+                prepareMessagesTab(true);
                 messageTreePath = messagesPane.addExecutionMessage(executionMessage, selectMessage, focusMessage);
             }
         } else {
-            prepareMessagesTab();
+            prepareMessagesTab(true);
             messageTreePath = messagesPane.addExecutionMessage(executionResult.getExecutionMessage(), selectMessage, focusMessage);
         }
 
@@ -261,7 +261,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     }
 
     public void addResult(CompilerResult compilerResult) {
-        prepareMessagesTab();
+        prepareMessagesTab(true);
         CompilerMessage firstMessage = null;
         ExecutionMessagesPanel messagesPanel = getMessagesPanel();
         if (compilerResult.getCompilerMessages().size() > 0) {
@@ -283,7 +283,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     }
 
     public void addResults(List<CompilerResult> compilerResults) {
-        prepareMessagesTab();
+        prepareMessagesTab(true);
         CompilerMessage firstMessage = null;
         ExecutionMessagesPanel messagesPanel = getMessagesPanel();
         for (CompilerResult compilerResult : compilerResults) {
@@ -319,9 +319,13 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         return executionMessagesPanel.get();
     }
 
-    private void prepareMessagesTab() {
+    private void prepareMessagesTab(boolean resetMessages) {
         TabbedPane resultTabs = getResultTabs();
-        JComponent component = getMessagesPanel().getComponent();
+        ExecutionMessagesPanel messagesPanel = getMessagesPanel();
+        if (resetMessages) {
+            messagesPanel.resetMessagesStatus();
+        }
+        JComponent component = messagesPanel.getComponent();
         if (resultTabs.getTabCount() == 0 || resultTabs.getTabAt(0).getComponent() != component) {
             TabInfo tabInfo = new TabInfo(component);
 
