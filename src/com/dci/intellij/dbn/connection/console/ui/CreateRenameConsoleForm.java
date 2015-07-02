@@ -41,7 +41,9 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
         errorLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
         errorLabel.setVisible(false);
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(console);
+        DBNHeaderForm headerForm = console == null ?
+                new DBNHeaderForm("[New " + consoleType.getName() + "]", consoleType.getIcon(), connectionHandler.getEnvironmentType().getColor()) :
+                new DBNHeaderForm(console);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         final Set<String> consoleNames = connectionHandler.getConsoleBundle().getConsoleNames();

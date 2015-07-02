@@ -11,14 +11,14 @@ import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 
 public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm> {
     public CreateRenameConsoleDialog(ConnectionHandler connectionHandler, @NotNull DBConsoleType consoleType) {
-        super(connectionHandler.getProject(), consoleType == DBConsoleType.DEBUG ? "Create Debug Console" : "Create SQL Console", true);
+        super(connectionHandler.getProject(), "Create " + consoleType.getName(), true);
         component = new CreateRenameConsoleForm(this, connectionHandler, null, consoleType);
         getOKAction().putValue(Action.NAME, "Create");
         init();
     }
 
     public CreateRenameConsoleDialog(ConnectionHandler connectionHandler, @NotNull DBConsoleVirtualFile console) {
-        super(connectionHandler.getProject(), "Rename SQL Console", true);
+        super(connectionHandler.getProject(), "Rename " + console.getType().getName(), true);
         component = new CreateRenameConsoleForm(this, connectionHandler, console, console.getType());
         getOKAction().putValue(Action.NAME, "Rename");
         init();

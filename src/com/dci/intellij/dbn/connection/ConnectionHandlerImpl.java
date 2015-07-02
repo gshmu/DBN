@@ -207,6 +207,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return psiCache.get();
     }
 
+    @NotNull
     @Override
     public EnvironmentType getEnvironmentType() {
         return connectionSettings.getDetailSettings().getEnvironmentType();

@@ -67,7 +67,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
         private DBConsoleType consoleType;
 
         public SelectConsoleAction(ConnectionHandler connectionHandler, @NotNull DBConsoleType consoleType) {
-            super(consoleType == DBConsoleType.DEBUG ? "New Debug Console..." : "New SQL Console...", connectionHandler);
+            super("New " + consoleType.getName() + "...", connectionHandler);
             this.consoleType = consoleType;
         }
 

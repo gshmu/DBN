@@ -150,7 +150,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
 
 
         public SelectConsoleAction(ConnectionHandler connectionHandler, DBConsoleType consoleType) {
-            super(consoleType == DBConsoleType.DEBUG ? "New Debug Console...": "New SQL Console...");
+            super("New " + consoleType.getName() + "...");
             this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
             this.consoleType = consoleType;
         }
