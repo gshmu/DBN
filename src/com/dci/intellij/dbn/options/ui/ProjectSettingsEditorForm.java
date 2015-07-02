@@ -25,7 +25,6 @@ import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginInstaller;
 import com.intellij.ide.plugins.PluginManagerMain;
 import com.intellij.ide.plugins.PluginNode;
 import com.intellij.ide.plugins.RepositoryHelper;
@@ -119,7 +118,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                         protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                             try {
                                 final List<PluginNode> updateDescriptors = new ArrayList<PluginNode>();
-                                final List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadCachedPlugins();
+                                final List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadPluginsFromRepository(null);
                                 if (descriptors != null) {
                                     for (IdeaPluginDescriptor descriptor : descriptors) {
                                         if (descriptor.getPluginId().toString().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {
