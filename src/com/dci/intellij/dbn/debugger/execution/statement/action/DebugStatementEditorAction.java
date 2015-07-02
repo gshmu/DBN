@@ -39,11 +39,12 @@ public class DebugStatementEditorAction extends AnAction {
                 DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
                 if (consoleVirtualFile.getType() == DBConsoleType.DEBUG) {
                     PsiFile file = DocumentUtil.getFile(editor);
-                    BasePsiElement basePsiElement = PsiUtil.lookupElementAtOffset(file, ElementTypeAttribute.EXECUTABLE, 100);
-                    if (basePsiElement instanceof ExecutablePsiElement) {
-                        executablePsiElement = (ExecutablePsiElement) basePsiElement;
+                    if (file != null) {
+                        BasePsiElement basePsiElement = PsiUtil.lookupElementAtOffset(file, ElementTypeAttribute.EXECUTABLE, 100);
+                        if (basePsiElement instanceof ExecutablePsiElement) {
+                            executablePsiElement = (ExecutablePsiElement) basePsiElement;
+                        }
                     }
-
                 }
             }
 
@@ -75,10 +76,7 @@ public class DebugStatementEditorAction extends AnAction {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
             if (virtualFile != null) {
-                if (virtualFile instanceof DBConsoleVirtualFile) {
-                    DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-                    enabled = consoleVirtualFile.getType() == DBConsoleType.DEBUG;
-                }
+                enabled = DatabaseDebuggerManager.isDebugConsole(virtualFile);
 
                 ConnectionHandler connectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
                 if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){

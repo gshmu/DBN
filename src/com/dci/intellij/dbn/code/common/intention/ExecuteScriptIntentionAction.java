@@ -4,10 +4,9 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguage;
-import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -33,13 +32,7 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction {
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile != null && psiFile.getLanguage() instanceof DBLanguage) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
-            if (virtualFile instanceof DBConsoleVirtualFile) {
-                DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-                if (consoleVirtualFile.getType() == DBConsoleType.DEBUG) {
-                    return false;
-                }
-            }
-            return true;
+            return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
         }
         return false;
     }

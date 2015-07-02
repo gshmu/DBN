@@ -9,8 +9,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -74,10 +73,6 @@ public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements D
 
     public static boolean isVisible(AnActionEvent e) {
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
-        if (virtualFile instanceof DBConsoleVirtualFile) {
-            DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-            return consoleVirtualFile.getType() != DBConsoleType.DEBUG;
-        }
-        return true;
+        return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 }

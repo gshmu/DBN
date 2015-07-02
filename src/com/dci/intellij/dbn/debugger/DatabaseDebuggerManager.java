@@ -39,6 +39,8 @@ import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunManagerEx;
@@ -59,6 +61,7 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 
@@ -122,6 +125,14 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             if (configurationSetting.getName().equals(name)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    public static boolean isDebugConsole(VirtualFile virtualFile) {
+        if (virtualFile instanceof DBConsoleVirtualFile) {
+            DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+            return consoleVirtualFile.getType() == DBConsoleType.DEBUG;
         }
         return false;
     }

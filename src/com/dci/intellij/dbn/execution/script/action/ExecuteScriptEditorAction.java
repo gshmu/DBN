@@ -5,11 +5,10 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
-import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -42,11 +41,7 @@ public class ExecuteScriptEditorAction extends AnAction {
 
     private static boolean isVisible(AnActionEvent e) {
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
-        if (virtualFile instanceof DBConsoleVirtualFile) {
-            DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-            return consoleVirtualFile.getType() != DBConsoleType.DEBUG;
-        }
-        return true;
+        return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 
     private static boolean isEnabled(AnActionEvent e) {

@@ -7,13 +7,12 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.explain.ExplainPlanManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
-import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -68,14 +67,6 @@ public class ExplainPlanEditorAction extends AnAction {
 
     public static boolean isVisible(AnActionEvent e) {
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
-        if (virtualFile instanceof DBConsoleVirtualFile) {
-            DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-            return consoleVirtualFile.getType() != DBConsoleType.DEBUG;
-        }
-        return true;
-    }
-
-    private boolean isEnabled(AnActionEvent e) {
-        return false;
+        return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 }
