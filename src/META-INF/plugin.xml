@@ -385,13 +385,12 @@
             <separator/>
             <action id="DBNavigator.Actions.ExecuteAsScript" class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptEditorAction" text="Script Editor - Execute as Script" icon="/img/action/ExecuteAsScript.png"/>
             <separator/>
-            <action id="DBNavigator.Actions.SaveToFile" class="com.dci.intellij.dbn.language.editor.action.SaveToFileEditorAction" text="Console - Save to file" icon="/img/action/SaveToFile.png"/>
-            <action id="DBNavigator.Actions.ConsoleOptions" class="com.dci.intellij.dbn.language.editor.action.ConsoleOptionsAction" text="Script Editor - Local Settings" icon="/img/action/Options.png"/>
+            <action id="DBNavigator.Actions.ConsoleOptions" class="com.dci.intellij.dbn.language.editor.action.EditorOptionsAction" text="Script Editor - Local Settings" icon="/img/action/Options.png"/>
             <!--
                         <action id="DBNavigator.Actions.DeleteConsole" class="com.dci.intellij.dbn.language.editor.action.DeleteConsoleEditorAction" text="Console - Delete" icon="/img/action/Delete.png"/>
-            -->
             <separator/>
             <action id="DBNavigator.Actions.OpenSettings" class="com.dci.intellij.dbn.language.editor.action.OpenSettingsAction" text="Script Editor - Settings"/>
+            -->
         </group>
         <group id="DBNavigator.Actions.MainMenu" text="_DB Navigator">
             <action class="com.dci.intellij.dbn.menu.action.OpenSQLConsoleAction" text="Open SQL Console..." id="DBNavigator.Actions.MainMenu.OpenSQLConsole" icon="/img/file/SQLConsole.png"/>
