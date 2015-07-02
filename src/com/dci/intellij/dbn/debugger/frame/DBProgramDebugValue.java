@@ -82,7 +82,7 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
                         value = childVariableNames != null ? "" : "null";
                     } else {
                         if (!StringUtil.isNumber(value)) {
-                            value = '"' + value + '"';
+                            value = '\'' + value + '\'';
                         }
                     }
 
