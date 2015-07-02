@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.execution.method;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -36,6 +26,16 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @State(
     name = "DBNavigator.Project.MethodExecutionManager",
@@ -173,7 +173,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         if (!executionContext.isExecutionCancelled()) {
                             new SimpleLaterInvocator() {
                                 protected void execute() {
-                                    MessageUtil.showErrorDialog(project, "Could not execute " + method.getTypeName() + ".", e);
+                                    MessageUtil.showErrorDialog(project, "Error executing " + method.getTypeName() + ".", e);
                                     if (promptExecutionDialog(executionInput, false)) {
                                         MethodExecutionManager.this.execute(executionInput);
                                     }
