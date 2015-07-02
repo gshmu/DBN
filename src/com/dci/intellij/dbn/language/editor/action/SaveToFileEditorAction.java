@@ -79,7 +79,7 @@ public class SaveToFileEditorAction extends DumbAwareAction {
 
     public static boolean isVisible(AnActionEvent e) {
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
-        return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
+        return virtualFile instanceof DBConsoleVirtualFile && !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 
 }
