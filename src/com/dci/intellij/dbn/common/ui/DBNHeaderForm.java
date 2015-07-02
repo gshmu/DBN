@@ -4,6 +4,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 import java.awt.Color;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,15 +12,15 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.intellij.ui.RoundedLineBorder;
 import com.intellij.util.ui.UIUtil;
 
 public class DBNHeaderForm extends DBNFormImpl{
+    public static final LineBorder BORDER = new LineBorder(UIUtil.getBoundsColor());
     private JLabel objectLabel;
     private JPanel mainPanel;
 
     public DBNHeaderForm() {
-        mainPanel.setBorder(new RoundedLineBorder(UIUtil.getBoundsColor(), 4));
+        mainPanel.setBorder(BORDER);
     }
 
     public DBNHeaderForm(String title, Icon icon) {
@@ -33,7 +34,7 @@ public class DBNHeaderForm extends DBNFormImpl{
         if (background != null) {
             mainPanel.setBackground(background);
         }
-        mainPanel.setBorder(new RoundedLineBorder(UIUtil.getBoundsColor(), 4));
+        mainPanel.setBorder(BORDER);
     }
 
     public DBNHeaderForm(@NotNull DBObject object) {
@@ -52,7 +53,6 @@ public class DBNHeaderForm extends DBNFormImpl{
     public DBNHeaderForm(@NotNull Presentable presentable) {
         objectLabel.setText(presentable.getName());
         objectLabel.setIcon(presentable.getIcon());
-        mainPanel.setBorder(new RoundedLineBorder(UIUtil.getBoundsColor(), 4));
         updateBorderAndBackground(presentable);
     }
 
@@ -74,7 +74,7 @@ public class DBNHeaderForm extends DBNFormImpl{
             }
             mainPanel.setBackground(CommonUtil.nvl(background, UIUtil.getPanelBackground()));
         }
-        mainPanel.setBorder(new RoundedLineBorder(UIUtil.getBoundsColor(), 4));
+        mainPanel.setBorder(BORDER);
     }
 
     public void setBackground(Color background) {
