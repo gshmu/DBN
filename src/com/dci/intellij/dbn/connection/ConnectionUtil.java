@@ -5,6 +5,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.Properties;
@@ -24,6 +25,7 @@ import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 
 public class ConnectionUtil {
@@ -31,11 +33,20 @@ public class ConnectionUtil {
 
     public static void closeResultSet(final ResultSet resultSet) {
         if (resultSet != null) {
-            try {
-                closeStatement(resultSet.getStatement());
-                resultSet.close();
-            } catch (Throwable e) {
-                LOGGER.warn("Error closing result set: " + e.getMessage());
+            if (ApplicationManager.getApplication().isDispatchThread()) {
+                new SimpleBackgroundTask("close result set") {
+                    @Override
+                    protected void execute() {
+                        closeResultSet(resultSet);
+                    }
+                }.start();
+            } else {
+                try {
+                    closeStatement(resultSet.getStatement());
+                    resultSet.close();
+                } catch (Throwable e) {
+                    LOGGER.warn("Error closing result set: " + e.getMessage());
+                }
             }
         }
     }
@@ -249,6 +260,8 @@ public class ConnectionUtil {
     public static void commit(Connection connection) {
         try {
             if (connection != null) connection.commit();
+        } catch (SQLRecoverableException e){
+            // ignore
         } catch (SQLException e) {
             LOGGER.warn("Error committing connection", e);
         }
@@ -257,15 +270,19 @@ public class ConnectionUtil {
     public static void rollback(Connection connection) {
         try {
             if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) connection.rollback();
+        } catch (SQLRecoverableException e){
+            // ignore
         } catch (SQLException e) {
-            LOGGER.warn("Error rolling connection back", e);
+            LOGGER.warn("Error committing connection", e);
         }
     }
     public static void setAutocommit(Connection connection, boolean autoCommit) {
         try {
             if (connection != null && !connection.isClosed()) connection.setAutoCommit(autoCommit);
+        } catch (SQLRecoverableException e){
+            // ignore
         } catch (SQLException e) {
-            LOGGER.warn("Error setting autocommit to connection", e);
+            LOGGER.warn("Error committing connection", e);
         }
     }
 }

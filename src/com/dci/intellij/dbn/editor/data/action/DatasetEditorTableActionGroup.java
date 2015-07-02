@@ -1,8 +1,13 @@
 package com.dci.intellij.dbn.editor.data.action;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -24,23 +29,15 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAwareAction;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 
 public class DatasetEditorTableActionGroup extends DefaultActionGroup {
     private ColumnInfo columnInfo;
     private Object columnValue;
-    private String columnDisplayName;
     boolean isHeaderAction;
     private DatasetEditor datasetEditor;
     public DatasetEditorTableActionGroup(DatasetEditor datasetEditor, @Nullable DatasetEditorModelCell cell, ColumnInfo columnInfo) {
         this.datasetEditor = datasetEditor;
         this.columnInfo = columnInfo;
-        this.columnDisplayName = NamingUtil.enhanceUnderscoresForDisplay(columnInfo.getName());
         DatasetEditorTable table = datasetEditor.getEditorTable();
 
         isHeaderAction = cell == null;

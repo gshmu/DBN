@@ -22,6 +22,11 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
         init();
     }
 
+    @Override
+    protected String getDimensionServiceKey() {
+        return null;
+    }
+
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

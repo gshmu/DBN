@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.intellij.openapi.project.Project;
@@ -67,6 +68,10 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
     @Nullable List<T> getElements(String name);
 
     List<T> getAllElements();
+
+    @Nullable
+    Filter<T> getFilter();
+
 
     T getElement(String name, int overload);
     void setElements(@Nullable List<T> elements);

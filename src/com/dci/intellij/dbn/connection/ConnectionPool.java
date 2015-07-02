@@ -112,7 +112,7 @@ public class ConnectionPool implements Disposable {
     }
 
     @Nullable
-    private synchronized Connection lookupConnection() throws SQLException {
+    private Connection lookupConnection() throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
 
@@ -133,7 +133,7 @@ public class ConnectionPool implements Disposable {
     }
 
     @NotNull
-    private synchronized Connection createConnection() throws SQLException {
+    private Connection createConnection() throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         String connectionName = connectionHandler.getName();
@@ -165,6 +165,19 @@ public class ConnectionPool implements Disposable {
                     ConnectionUtil.rollback(connection);
                     ConnectionUtil.setAutocommit(connection, true);
                     connectionWrapper.setBusy(false);
+                    break;
+                }
+            }
+        }
+        lastAccessTimestamp = System.currentTimeMillis();
+    }
+
+    public void dropConnection(Connection connection) {
+        if (connection != null) {
+            for (ConnectionWrapper connectionWrapper : poolConnections) {
+                if (connectionWrapper.getConnection() == connection) {
+                    poolConnections.remove(connectionWrapper);
+                    connectionWrapper.closeConnection();
                     break;
                 }
             }

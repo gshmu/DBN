@@ -30,7 +30,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
     }
 
     @Nullable
-    protected Filter getFilter() {
+    public Filter getFilter() {
         return null;
     }
 

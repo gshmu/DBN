@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -29,7 +28,7 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
         return new SelectConnectionActionGroup(project);
     }
 
-    public synchronized void update(AnActionEvent e) {
+    public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         String text = NAME;
         Icon icon = null;
@@ -40,7 +39,7 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             ConnectionHandler activeConnection = connectionMappingManager.getActiveConnection(virtualFile);
             if (activeConnection != null) {
-                text = NamingUtil.enhanceUnderscoresForDisplay(activeConnection.getQualifiedName());
+                text = activeConnection.getQualifiedName();
                 icon = activeConnection.getIcon();
             }
 
@@ -57,7 +56,7 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
             }
         }
 
-        presentation.setText(text);
+        presentation.setText(text, false);
         presentation.setIcon(icon);
     }
  }

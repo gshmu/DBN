@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.debugger.execution.method;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.debugger.DBProgramDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunner;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
@@ -23,6 +25,11 @@ public class DBMethodRunner extends DBProgramRunner<MethodExecutionInput> {
             return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) && runConfiguration.getMethod() != null;
         }
         return false;
+    }
+
+    @Override
+    protected DBProgramDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler) {
+        return new DBMethodProcessStarter(connectionHandler);
     }
 
     @Override

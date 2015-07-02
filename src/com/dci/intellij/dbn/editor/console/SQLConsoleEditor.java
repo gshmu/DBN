@@ -4,9 +4,10 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditorImpl;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorState;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 
-public class SQLConsoleEditor extends BasicTextEditorImpl<DBConsoleVirtualFile>{
+public class SQLConsoleEditor extends BasicTextEditorImpl<DBConsoleVirtualFile> implements TextEditor {
     public SQLConsoleEditor(Project project, DBConsoleVirtualFile sqlConsoleFile, String name, EditorProviderId editorProviderId) {
         super(project, sqlConsoleFile, name, editorProviderId);
     }

@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.common;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -15,8 +18,9 @@ public abstract class AbstractProjectComponent implements ProjectComponent, Proj
         projectManager.addProjectManagerListener(project, this);
     }
 
+    @NotNull
     public Project getProject() {
-        return project;
+        return FailsafeUtil.get(project);
     }
 
     public void projectOpened() {

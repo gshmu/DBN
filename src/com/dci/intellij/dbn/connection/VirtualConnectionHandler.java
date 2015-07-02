@@ -77,9 +77,10 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return psiCache;
     }
 
+    @NotNull
     @Override
     public EnvironmentType getEnvironmentType() {
-        return null;
+        return EnvironmentType.DEFAULT;
     }
 
     @Override
@@ -155,6 +156,8 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public Connection getStandaloneConnection() throws SQLException {return null;}
     @Override public Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException {return null;}
     @Override public void freePoolConnection(Connection connection) {}
+    @Override public void dropPoolConnection(Connection connection) {}
+
     @Override public ConnectionSettings getSettings() {return null;}
     @Override public void setSettings(ConnectionSettings connectionSettings) {}
     @NotNull
@@ -178,7 +181,9 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return false;
     }
 
+    @NotNull
     public ConnectionBundle getConnectionBundle() {return null;}
+    @NotNull
     public ConnectionPool getConnectionPool() {return null;}
 
     @Override

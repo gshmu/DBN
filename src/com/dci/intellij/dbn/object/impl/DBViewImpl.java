@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.ddl.DDLFileManager;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -129,6 +130,11 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
 
     public String getCodeParseRootId(DBContentType contentType) {
         return "subquery";
+    }
+
+    @Override
+    public EditorProviderId getDefaultEditorProviderId() {
+        return EditorProviderId.CODE;
     }
 
     public DBLanguage getCodeLanguage(DBContentType contentType) {

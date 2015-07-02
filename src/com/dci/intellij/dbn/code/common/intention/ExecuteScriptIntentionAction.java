@@ -4,18 +4,20 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 
 public class ExecuteScriptIntentionAction extends GenericIntentionAction {
     @NotNull
     public String getText() {
-        return "Execute SQL Script...";
+        return "Execute SQL script...";
     }
 
     @NotNull
@@ -28,7 +30,11 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction {
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        return psiFile != null && psiFile.getLanguage() instanceof DBLanguage;
+        if (psiFile != null && psiFile.getLanguage() instanceof DBLanguage) {
+            VirtualFile virtualFile = psiFile.getVirtualFile();
+            return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
+        }
+        return false;
     }
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {

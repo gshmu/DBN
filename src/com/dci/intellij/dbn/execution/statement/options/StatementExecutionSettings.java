@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.execution.statement.options.ui.StatementExecutionSet
 public class StatementExecutionSettings extends Configuration{
     private int resultSetFetchBlockSize = 100;
     private int executionTimeout = 20;
+    private int debugExecutionTimeout = 600;
     private boolean focusResult = false;
 
     public String getDisplayName() {
@@ -41,6 +42,14 @@ public class StatementExecutionSettings extends Configuration{
         this.executionTimeout = executionTimeout;
     }
 
+    public int getDebugExecutionTimeout() {
+        return debugExecutionTimeout;
+    }
+
+    public void setDebugExecutionTimeout(int debugExecutionTimeout) {
+        this.debugExecutionTimeout = debugExecutionTimeout;
+    }
+
     public void setFocusResult(boolean focusResult) {
         this.focusResult = focusResult;
     }
@@ -65,6 +74,7 @@ public class StatementExecutionSettings extends Configuration{
     public void readConfiguration(Element element) {
         resultSetFetchBlockSize = SettingsUtil.getInteger(element, "fetch-block-size", resultSetFetchBlockSize);
         executionTimeout = SettingsUtil.getInteger(element, "execution-timeout", executionTimeout);
+        debugExecutionTimeout = SettingsUtil.getInteger(element, "debug-execution-timeout", debugExecutionTimeout);
         focusResult = SettingsUtil.getBoolean(element, "focus-result", focusResult);
 
     }
@@ -72,6 +82,7 @@ public class StatementExecutionSettings extends Configuration{
     public void writeConfiguration(Element element) {
         SettingsUtil.setInteger(element, "fetch-block-size", resultSetFetchBlockSize);
         SettingsUtil.setInteger(element, "execution-timeout", executionTimeout);
+        SettingsUtil.setInteger(element, "debug-execution-timeout", debugExecutionTimeout);
         SettingsUtil.setBoolean(element, "focus-result", focusResult);
     }
 }

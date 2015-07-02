@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -13,8 +14,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class CreateConsoleEditorAction extends DumbAwareAction {
-    public CreateConsoleEditorAction() {
-        super("Create console");
+    private DBConsoleType consoleType;
+    public CreateConsoleEditorAction(DBConsoleType consoleType) {
+        super("New " + consoleType.getName() + "...");
+        this.consoleType = consoleType;
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -23,7 +26,7 @@ public class CreateConsoleEditorAction extends DumbAwareAction {
         if (project != null && virtualFile instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
             DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(project);
-            consoleManager.showCreateConsoleDialog(consoleVirtualFile.getConnectionHandler());
+            consoleManager.showCreateConsoleDialog(consoleVirtualFile.getConnectionHandler(), consoleType);
         }
     }
 
@@ -31,7 +34,7 @@ public class CreateConsoleEditorAction extends DumbAwareAction {
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
         Presentation presentation = e.getPresentation();
-        presentation.setText("Create Console");
+        presentation.setText("New " + consoleType.getName() + "...");
     }
 
 

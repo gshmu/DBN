@@ -29,11 +29,8 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
             if (offsets == null) {
                 offsets = new SourceCodeOffsets();
             } else {
-                int guardedBlockEndOffset = offsets.getGuardedBlockEndOffset();
-                if (guardedBlockEndOffset > 0) {
-                    DocumentUtil.createGuardedBlock(document, 0, guardedBlockEndOffset, null
-                        /*"You are not allowed to change the name of the " + object.getTypeName()*/);
-                }
+                GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
+                DocumentUtil.createGuardedBlocks(document, guardedBlocks, null);
             }
         } else {
             offsets = new SourceCodeOffsets();

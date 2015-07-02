@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.code.common.style.presets.clause;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -14,10 +16,12 @@ public class ClauseChopDownNeverPreset extends ClauseAbstractPreset {
         super("do_not_chop_down", "Do not chop down");
     }
 
+    @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         return WRAP_NONE;
     }
 
+    @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         PsiElement previousPsiElement = psiElement.getPrevSibling();
         if (previousPsiElement instanceof TokenPsiElement) {

@@ -1,27 +1,33 @@
 package com.dci.intellij.dbn.object.action;
 
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.DumbAwareAction;
 
-public class NavigateToObjectAction extends AnAction {
+public class NavigateToObjectAction extends DumbAwareAction {
     private DBObjectRef<DBObject> objectRef;
 
     public NavigateToObjectAction(DBObject object) {
-        super(NamingUtil.enhanceUnderscoresForDisplay(object.getName()), null, object.getIcon());
+        super();
+        Presentation presentation = getTemplatePresentation();
+        presentation.setText(object.getName(), false);
+        presentation.setIcon(object.getIcon());
         this.objectRef = DBObjectRef.from(object);
     }
 
     public NavigateToObjectAction(DBObject sourceObject, DBObject object) {
-        super(NamingUtil.enhanceUnderscoresForDisplay(
-                    sourceObject != object.getParentObject() ?
-                            object.getQualifiedName() :
-                            object.getName()),
-                object.getTypeName(),
-                object.getIcon(0));
+        super();
         this.objectRef = DBObjectRef.from(object);
+
+        Presentation presentation = getTemplatePresentation();
+        presentation.setText(
+                sourceObject != object.getParentObject() ?
+                        object.getQualifiedName() :
+                        object.getName(), false);
+        presentation.setIcon(object.getIcon());
+        presentation.setDescription(object.getTypeName());
     }
 
     public void actionPerformed(AnActionEvent event) {

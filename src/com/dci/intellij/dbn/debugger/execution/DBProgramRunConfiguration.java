@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.debugger.execution;
 
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.execution.ExecutionInput;
@@ -10,12 +14,8 @@ import com.intellij.execution.configurations.LocatableConfiguration;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-public abstract class DBProgramRunConfiguration<T extends PresentableConnectionProvider, I extends ExecutionInput> extends RunConfigurationBase implements RunConfigurationWithSuppressedDefaultRunAction, LocatableConfiguration {
+public abstract class DBProgramRunConfiguration<I extends ExecutionInput> extends RunConfigurationBase implements RunConfigurationWithSuppressedDefaultRunAction, LocatableConfiguration {
     private boolean compileDependencies = true;
     private boolean generic;
     private I executionInput;
@@ -53,11 +53,11 @@ public abstract class DBProgramRunConfiguration<T extends PresentableConnectionP
     public abstract List<DBMethod> getMethods();
 
     @Nullable
-    public abstract T getSource();
+    public abstract PresentableConnectionProvider getSource();
 
     @Nullable
     public final ConnectionHandler getConnectionHandler() {
-        T source = getSource();
+        PresentableConnectionProvider source = getSource();
         return source == null ? null : source.getConnectionHandler();
     }
 }

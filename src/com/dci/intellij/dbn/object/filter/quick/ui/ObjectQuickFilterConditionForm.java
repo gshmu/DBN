@@ -14,7 +14,9 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
+import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterCondition;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.dci.intellij.dbn.object.filter.quick.action.DeleteQuickFilterConditionAction;
@@ -28,14 +30,28 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
     private JLabel objectNameLabel;
     private DBNComboBox<ConditionOperator> operatorComboBox;
     private JPanel actionsPanel;
+    private DBNComboBox<ConditionJoinType> joinTypeComboBox;
 
     private ObjectQuickFilterCondition condition;
 
-    public ObjectQuickFilterConditionForm(ObjectQuickFilterForm parentComponent, @NotNull final ObjectQuickFilterCondition condition) {
+    public ObjectQuickFilterConditionForm(final ObjectQuickFilterForm parentComponent, @NotNull final ObjectQuickFilterCondition condition) {
         super(parentComponent);
         this.condition = condition;
 
-        DBObjectType objectType = condition.getFilter().getObjectType();
+        final ObjectQuickFilter filter = condition.getFilter();
+        joinTypeComboBox.setValues(ConditionJoinType.values());
+        joinTypeComboBox.addListener(new ValueSelectorListener<ConditionJoinType>() {
+            @Override
+            public void selectionChanged(ConditionJoinType oldValue, ConditionJoinType newValue) {
+                if (condition.index() == 0) {
+                    filter.setJoinType(newValue);
+                    parentComponent.updateJoinTypeComponents();
+                }
+            }
+        });
+
+
+        DBObjectType objectType = filter.getObjectType();
         objectNameLabel.setIcon(objectType.getIcon());
         objectNameLabel.setText(objectType.getName().toUpperCase() + " NAME");
 
@@ -65,7 +81,13 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
                 new EnableDisableQuickFilterConditionAction(this),
                 new DeleteQuickFilterConditionAction(this));
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
+    }
 
+    protected void updateJoinTypeComponent() {
+        joinTypeComboBox.setSelectedValue(condition.getFilter().getJoinType());
+        int conditionsCount = condition.getFilter().getConditions().size();
+        joinTypeComboBox.setEnabled(conditionsCount > 1 && condition.index() == 0);
+        joinTypeComboBox.setVisible(conditionsCount > 1 && condition.index() < conditionsCount - 1);
     }
 
     public JComponent getPreferredFocusedComponent() {

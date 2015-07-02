@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -56,7 +55,7 @@ public class SetCurrentSchemaComboBoxAction extends DBNComboBoxAction {
             if (visible) {
                 DBSchema schema = mappingManager.getCurrentSchema(virtualFile);
                 if (schema != null) {
-                    text = NamingUtil.enhanceUnderscoresForDisplay(schema.getName());
+                    text = schema.getName();
                     icon = schema.getIcon();
                     enabled = true;
                 }
@@ -75,7 +74,7 @@ public class SetCurrentSchemaComboBoxAction extends DBNComboBoxAction {
         }
 
         Presentation presentation = e.getPresentation();
-        presentation.setText(text);
+        presentation.setText(text, false);
         presentation.setIcon(icon);
         presentation.setVisible(visible);
         presentation.setEnabled(enabled);

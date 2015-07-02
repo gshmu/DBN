@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.database.oracle;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseDebuggerInterfaceImpl;
@@ -11,9 +13,12 @@ import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerSessionInfo;
+import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
+import static com.dci.intellij.dbn.editor.code.GuardedBlockMarker.END_OFFSET_IDENTIFIER;
+import static com.dci.intellij.dbn.editor.code.GuardedBlockMarker.START_OFFSET_IDENTIFIER;
 
 public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl implements DatabaseDebuggerInterface {
     public OracleDebuggerInterface(DatabaseInterfaceProvider provider) {
@@ -24,6 +29,11 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
         executeCall(connection, null, "initialize-session-debugging");
         executeCall(connection, null, "initialize-session-compiler-flags");
         return executeCall(connection, new DebuggerSessionInfo(), "initialize-session");
+    }
+
+    @Override
+    public DebuggerVersionInfo getDebuggerVersion(Connection connection) throws SQLException {
+        return executeCall(connection, new DebuggerVersionInfo(), "get-debugger-version");
     }
 
     public void enableDebugging(Connection connection) throws SQLException {
@@ -82,7 +92,10 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
     public DebuggerRuntimeInfo runToPosition(String programOwner, String programName, String programType, int line, Connection connection) throws SQLException {
         BreakpointInfo breakpointInfo = addProgramBreakpoint(programOwner, programName, programType, line, connection);
         DebuggerRuntimeInfo runtimeInfo = stepOut(connection);
-        removeBreakpoint(breakpointInfo.getBreakpointId(), connection);
+        Integer breakpointId = breakpointInfo.getBreakpointId();
+        if (breakpointId != null) {
+            removeBreakpoint(breakpointId, connection);
+        }
         return runtimeInfo;
     }
 
@@ -116,5 +129,55 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
 
     public String[] getRequiredPrivilegeNames() {
         return new String[]{"DEBUG CONNECT SESSION", "DEBUG ANY PROCEDURE"};
+    }
+
+    @Override
+    public String getDebugConsoleTemplate(CodeStyleCaseSettings settings) {
+        CodeStyleCaseOption kco = settings.getKeywordCaseOption();
+        CodeStyleCaseOption oco = settings.getObjectCaseOption();
+        return START_OFFSET_IDENTIFIER +
+                kco.format("DECLARE\n") +
+                END_OFFSET_IDENTIFIER +
+                "    -- add your declarations here\n" +
+                "\n" +
+                "\n" +
+                START_OFFSET_IDENTIFIER +
+                kco.format("BEGIN\n") +
+                END_OFFSET_IDENTIFIER +
+                "    -- add your code here" +
+                "\n" +
+                "\n" +
+                "\n    COMMIT;\n" +
+                START_OFFSET_IDENTIFIER +
+                kco.format("END;\n") +
+                "/" +
+                END_OFFSET_IDENTIFIER;
+    }
+
+    @Override
+    public String getRuntimeEventReason(int code) {
+        switch (code) {
+            case 0: return "None";
+            case 2: return "Interpreter starting";
+            case 3: return  "Stopped at a breakpoint";
+            case 6: return  "Stopped at procedure entry";
+            case 7: return  "Procedure return";
+            case 8: return  "Procedure is finished";
+            case 9: return  "Reached a new line";
+            case 10: return  "An interrupt occurred";
+            case 11: return  "An exception was raised";
+            case 15: return  "Interpreter is exiting";
+            case 16: return  "Start exception-handler";
+            case 17: return  "A timeout occurred";
+            case 20: return  "Instantiation block";
+            case 21: return  "Interpreter is aborting";
+            case 25: return  "Interpreter is exiting";
+            case 4: return   "Executing SQL";
+            case 14: return  "Watched value changed";
+            case 18: return  "An RPC started";
+            case 19: return  "Unhandled exception";
+        }
+
+        return null;
     }
 }

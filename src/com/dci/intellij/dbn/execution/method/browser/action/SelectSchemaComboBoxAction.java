@@ -5,7 +5,6 @@ import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserForm;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -40,11 +39,11 @@ public class SelectSchemaComboBoxAction extends DBNComboBoxAction {
 
         DBSchema schema = browserComponent.getSettings().getSchema();
         if (schema != null) {
-            text = NamingUtil.enhanceUnderscoresForDisplay(schema.getName());
+            text = schema.getName();
             icon = schema.getIcon();
         }
 
-        presentation.setText(text);
+        presentation.setText(text, false);
         presentation.setIcon(icon);
     }
  }

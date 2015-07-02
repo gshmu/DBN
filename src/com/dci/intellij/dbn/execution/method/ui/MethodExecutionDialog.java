@@ -2,10 +2,8 @@ package com.dci.intellij.dbn.execution.method.ui;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -30,12 +28,6 @@ public class MethodExecutionDialog extends DBNDialog<MethodExecutionForm> {
                 getCancelAction(),
                 getHelpAction()
         };
-    }
-
-    @Nullable
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return component == null ? null : component.getComponent();
     }
 
     @Override

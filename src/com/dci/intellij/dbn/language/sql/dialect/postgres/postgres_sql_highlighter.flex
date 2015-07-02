@@ -56,7 +56,7 @@ NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 
 operator_equals             = "="
-operator_not_equals         = (("!"|"^"|"�"){wso}"=")|("<"{wso}">")
+operator_not_equals         = (("!"|"^"){wso}"=")|("<"{wso}">")
 operator_greater_than       = ">"
 operator_greater_equal_than = ">"{wso}"="
 operator_less_than          = "<"

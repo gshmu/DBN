@@ -4,6 +4,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -11,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -56,61 +59,97 @@ public class MessagesTree extends DBNTree implements Disposable {
         addKeyListener(keyListener);
         setRootVisible(false);
         setShowsRootHandles(true);
+        setOpaque(false);
         Color bgColor = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
+    }
+
+    @Override public void paintComponent(Graphics g) {
+        g.setColor(getBackground());
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        for (int i=0; i<getRowCount();i++){
+            TreePath treePath = getPathForRow(i);
+            if (!isRowSelected(i)) {
+                Object lastPathComponent = treePath.getLastPathComponent();
+                if (lastPathComponent instanceof MessageTreeNode) {
+                    MessageTreeNode node = (MessageTreeNode) lastPathComponent;
+                    if (node.getMessage().isNew()) {
+                        Rectangle r = getRowBounds(i);
+                        g.setColor(MessagesTreeCellRenderer.HIGHLIGHT_BACKGROUND);
+                        g.fillRect(0, r.y, getWidth(), r.height);
+                    }
+                }
+            }
+        }
+        //super.paintComponent(g);
+        if (ui != null) {
+            Graphics scratchGraphics = g.create();
+            try {
+                ui.update(scratchGraphics, this);
+            }
+            finally {
+                scratchGraphics.dispose();
+            }
+        }
     }
 
     public MessagesTreeModel getModel() {
         return (MessagesTreeModel) super.getModel();
     }
 
+    public void resetMessagesStatus() {
+        getModel().resetMessagesStatus();
+    }
+
     public void reset() {
-        Disposer.dispose(getModel());
+        MessagesTreeModel oldModel = getModel();
         setModel(new MessagesTreeModel());
+        Disposer.dispose(oldModel);
     }
 
     public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, boolean select, boolean focus) {
         TreePath treePath = getModel().addExecutionMessage(executionMessage);
-        scrollPathToVisible(treePath);
-        if (select) {
-            getSelectionModel().setSelectionPath(treePath);
-        }
-        if (focus) requestFocus();
+        scrollToPath(treePath, select, focus);
         return treePath;
     }
 
     public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean select) {
         TreePath treePath = getModel().addCompilerMessage(compilerMessage);
-        scrollPathToVisible(treePath);
-        if (select) {
-            getSelectionModel().setSelectionPath(treePath);
-        }
+        scrollToPath(treePath, select, false);
         return treePath;
     }
 
     public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage, boolean select) {
         TreePath treePath = getModel().addExplainPlanMessage(explainPlanMessage);
-        scrollPathToVisible(treePath);
-        if (select) {
-            getSelectionModel().setSelectionPath(treePath);
-        }
+        scrollToPath(treePath, select, false);
         return treePath;
     }
 
     public void selectCompilerMessage(CompilerMessage compilerMessage) {
         TreePath treePath = getModel().getTreePath(compilerMessage);
-        if (treePath != null) {
-            getSelectionModel().setSelectionPath(treePath);
-            scrollPathToVisible(treePath);
-        }
+        scrollToPath(treePath, true, false);
     }
 
     public void selectExecutionMessage(StatementExecutionMessage statementExecutionMessage, boolean focus) {
         TreePath treePath = getModel().getTreePath(statementExecutionMessage);
+        scrollToPath(treePath, true, focus);
+    }
+
+    private void scrollToPath(final TreePath treePath, final boolean select, final boolean focus) {
         if (treePath != null) {
-            getSelectionModel().setSelectionPath(treePath);
-            scrollPathToVisible(treePath);
-            if (focus) requestFocus();
+            new SimpleLaterInvocator() {
+                @Override
+                protected void execute() {
+                    scrollPathToVisible(treePath);
+                    if (select) {
+                        getSelectionModel().setSelectionPath(treePath);
+                    }
+                    if (focus) {
+                        requestFocus();
+                    }
+                }
+            }.start();
         }
     }
 
@@ -291,7 +330,7 @@ public class MessagesTree extends DBNTree implements Disposable {
         public void valueChanged(TreeSelectionEvent event) {
             if (event.isAddedPath()) {
                 Object object = event.getPath().getLastPathComponent();
-                navigateToCode(object, object instanceof CompilerMessageNode);
+                navigateToCode(object, false/*object instanceof CompilerMessageNode*/);
                 //grabFocus();
             }
         }

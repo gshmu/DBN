@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +27,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSetupListener;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -106,8 +108,10 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
                 newConnectionHandlers.add(connectionHandler);
                 oldConnectionHandlers.remove(connectionHandler);
             }
-            for (String console : connection.getConsoleNames()) {
-                connectionHandler.getConsoleBundle().getConsole(console, true);
+            Map<String, DBConsoleType> consoles = connection.getConsoles();
+            for (String consoleName : consoles.keySet()) {
+                DBConsoleType consoleType = consoles.get(consoleName);
+                connectionHandler.getConsoleBundle().getConsole(consoleName, consoleType, true);
             }
 
         }

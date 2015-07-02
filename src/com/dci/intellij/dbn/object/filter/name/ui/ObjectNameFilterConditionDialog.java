@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -34,11 +33,6 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
         return operation == ObjectNameFilterConditionForm.Operation.CREATE ? "Create filter" :
         operation == ObjectNameFilterConditionForm.Operation.EDIT ? "Edit filter condition" :
         operation == ObjectNameFilterConditionForm.Operation.JOIN ? "Join filter condition" : null;
-    }
-
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return component == null ? null : component.getPreferredFocusedComponent();
     }
 
     public void doOKAction() {

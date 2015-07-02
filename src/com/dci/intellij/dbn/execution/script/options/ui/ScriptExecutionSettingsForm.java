@@ -6,7 +6,6 @@ import java.awt.Dimension;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
@@ -91,7 +90,9 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
     public class CreateInterfaceAction extends DumbAwareAction {
         private DatabaseType databaseType;
         public CreateInterfaceAction(DatabaseType databaseType) {
-            super(NamingUtil.enhanceUnderscoresForDisplay(databaseType.getName()), null, databaseType.getIcon());
+            super();
+            getTemplatePresentation().setText(databaseType.getName(), false);
+            getTemplatePresentation().setIcon(databaseType.getIcon());
             this.databaseType = databaseType;
         }
 
@@ -106,11 +107,6 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
                     }
                 });
             }
-        }
-
-        @Override
-        public void update(AnActionEvent e) {
-
         }
     }
     

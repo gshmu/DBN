@@ -1,9 +1,17 @@
 package com.dci.intellij.dbn.database.common.execution;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -18,13 +26,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
 
 public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implements MethodExecutionProcessor<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -121,13 +122,22 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             }
 
             if (executionInput.isCommitAfterExecution()) {
-                if (usePoolConnection) {
-                    connection.commit();
-                } else {
-                    connectionHandler.commit();
+                try {
+                    if (usePoolConnection) {
+                        connection.commit();
+                    } else {
+                        connectionHandler.commit();
+                    }
+                } catch (SQLException e) {
+                    NotificationUtil.sendErrorNotification(getProject(), "Error committing after method execution.", e.getMessage());
                 }
             }
-            if (usePoolConnection) connectionHandler.freePoolConnection(connection);
+
+            if (debug) {
+                connectionHandler.dropPoolConnection(connection);
+            } else  if (usePoolConnection) {
+                connectionHandler.freePoolConnection(connection);
+            }
         }
     }
 

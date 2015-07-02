@@ -40,7 +40,7 @@
         <token id="000000009" type-id="CHR_SEMICOLON" />
         <element optional="true" ref-id="end" />
     </element-def>
-    <element-def attributes="SPECIFIC" description="Anonymous block" formatting-indent="ABSOLUTE_NONE" id="anonymous_block">
+    <element-def attributes="SPECIFIC, SCOPE_DEMARCATION" description="Anonymous block" formatting-indent="ABSOLUTE_NONE" id="anonymous_block">
         <sequence id="000000010" optional="true">
             <token id="000000011" type-id="KW_DECLARE" />
             <iteration id="000000012" optional="true">

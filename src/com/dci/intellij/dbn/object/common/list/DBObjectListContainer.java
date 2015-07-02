@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -62,10 +63,24 @@ public class DBObjectListContainer implements Disposable {
         }
     }
 
+    @NotNull
+    public List<? extends DBObject> getObjects(DBObjectType objectType, boolean hidden) {
+        DBObjectList objectList = hidden ?
+                getHiddenObjectList(objectType) :
+                getObjectList(objectType);
+        if (objectList == null) {
+            return Collections.emptyList();
+        } else {
+            return objectList.getObjects();
+        }
+    }
+
+    @Nullable
     public DBObjectList getObjectList(DBObjectType objectType) {
         return objectLists == null ? null : objectLists.get(objectType);
     }
 
+    @Nullable
     public DBObjectList getHiddenObjectList(DBObjectType objectType) {
         return hiddenObjectLists == null ? null : hiddenObjectLists.get(objectType);
     }

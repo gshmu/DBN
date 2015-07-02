@@ -9,6 +9,7 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
     private String programName;
     private Integer namespace;
     private Integer lineNumber;
+    private Integer frameIndex;
     private int breakpointId;
     private int reason;
     private boolean terminated;
@@ -50,6 +51,14 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
         return reason;
     }
 
+    public Integer getFrameIndex() {
+        return frameIndex;
+    }
+
+    public void setFrameIndex(Integer frameIndex) {
+        this.frameIndex = frameIndex;
+    }
+
     public void registerParameters(CallableStatement statement) throws SQLException {
         statement.registerOutParameter(1, Types.VARCHAR);
         statement.registerOutParameter(2, Types.VARCHAR);
@@ -79,19 +88,16 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
 
         DebuggerRuntimeInfo that = (DebuggerRuntimeInfo) o;
 
-        if (!lineNumber.equals(that.lineNumber)) return false;
-        if (!namespace.equals(that.namespace)) return false;
-        if (!ownerName.equals(that.ownerName)) return false;
-        if (!programName.equals(that.programName)) return false;
+        if (ownerName != null ? !ownerName.equals(that.ownerName) : that.ownerName != null) return false;
+        if (programName != null ? !programName.equals(that.programName) : that.programName != null) return false;
+        return lineNumber.equals(that.lineNumber);
 
-        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = ownerName.hashCode();
-        result = 31 * result + programName.hashCode();
-        result = 31 * result + namespace.hashCode();
+        int result = ownerName != null ? ownerName.hashCode() : 0;
+        result = 31 * result + (programName != null ? programName.hashCode() : 0);
         result = 31 * result + lineNumber.hashCode();
         return result;
     }

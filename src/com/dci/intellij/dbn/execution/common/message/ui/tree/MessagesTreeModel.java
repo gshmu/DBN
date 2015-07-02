@@ -4,6 +4,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import org.jetbrains.annotations.Nullable;
@@ -99,5 +100,22 @@ public class MessagesTreeModel implements TreeModel, Disposable {
 
     public void removeTreeModelListener(TreeModelListener treeModelListener) {
         treeModelListeners.remove(treeModelListener);
+    }
+
+    public void resetMessagesStatus() {
+        resetMessagesStatus(rootNode);
+    }
+
+    private void resetMessagesStatus(TreeNode node) {
+        if (node instanceof MessageTreeNode) {
+            MessageTreeNode messageTreeNode = (MessageTreeNode) node;
+            messageTreeNode.getMessage().setNew(false);
+        } else {
+            Enumeration<TreeNode> children = node.children();
+            while (children.hasMoreElements()) {
+                TreeNode treeNode = children.nextElement();
+                resetMessagesStatus(treeNode);
+            }
+        }
     }
 }

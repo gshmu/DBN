@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.debugger.execution.statement;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.debugger.DBProgramDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunner;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.intellij.execution.configurations.RunProfile;
@@ -16,6 +18,11 @@ public class DBStatementRunner extends DBProgramRunner<StatementExecutionInput> 
 
     public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
         return false;
+    }
+
+    @Override
+    protected DBProgramDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler) {
+        return new DBStatementProcessStarter(connectionHandler);
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -13,8 +14,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.PsiDocumentManagerBase;
 
-public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile {
+public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable {
     private static AtomicInteger ID_STORE = new AtomicInteger(0);
+    protected int documentHashCode;
     private int id;
     protected String name;
     protected String path;
@@ -24,6 +26,14 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     public DBVirtualFileImpl(Project project) {
         id = ID_STORE.getAndIncrement();
         projectRef = new ProjectRef(project);
+    }
+
+    public int getDocumentHashCode() {
+        return documentHashCode;
+    }
+
+    public void setDocumentHashCode(int documentHashCode) {
+        this.documentHashCode = documentHashCode;
     }
 
     @Override
@@ -47,6 +57,12 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     @Override
     public String getName() {
         return name;
+    }
+
+    @Nullable
+    @Override
+    public String getDescription() {
+        return null;
     }
 
     @NotNull

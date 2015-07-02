@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
@@ -29,16 +30,20 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
 
     private ConnectionHandlerRef connectionHandlerRef;
     private DBConsoleVirtualFile console;
+    private DBConsoleType consoleType;
 
-    public CreateRenameConsoleForm(final CreateRenameConsoleDialog parentComponent, @NotNull ConnectionHandler connectionHandler, @Nullable final DBConsoleVirtualFile console) {
+    public CreateRenameConsoleForm(final CreateRenameConsoleDialog parentComponent, @NotNull ConnectionHandler connectionHandler, @Nullable final DBConsoleVirtualFile console, DBConsoleType consoleType) {
         super(parentComponent);
         this.connectionHandlerRef = connectionHandler.getRef();
         this.console = console;
+        this.consoleType = consoleType;
         errorLabel.setForeground(JBColor.RED);
         errorLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
         errorLabel.setVisible(false);
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
+        DBNHeaderForm headerForm = console == null ?
+                new DBNHeaderForm("[New " + consoleType.getName() + "]", consoleType.getIcon(), connectionHandler.getEnvironmentType().getColor()) :
+                new DBNHeaderForm(console);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         final Set<String> consoleNames = connectionHandler.getConsoleBundle().getConsoleNames();
@@ -79,12 +84,18 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
         });
     }
 
-    public JTextField getConsoleNameTextField() {
+    @Nullable
+    @Override
+    public JComponent getPreferredFocusedComponent() {
         return consoleNameTextField;
     }
 
     public String getConsoleName() {
         return consoleNameTextField.getText();
+    }
+
+    public DBConsoleType getConsoleType() {
+        return console == null ? consoleType : console.getType();
     }
 
     public ConnectionHandler getConnectionHandler() {

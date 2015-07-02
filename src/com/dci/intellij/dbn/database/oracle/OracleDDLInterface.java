@@ -46,7 +46,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
 
     @Override
     public void computeSourceCodeOffsets(SourceCodeContent content, DatabaseObjectTypeId objectTypeId, String objectName) {
-        String sourceCode = content.getSourceCode();
+        String sourceCode = content.getText().toString();
         if (StringUtil.isNotEmpty(sourceCode)) {
             if (objectTypeId == DatabaseObjectTypeId.DATASET_TRIGGER || objectTypeId == DatabaseObjectTypeId.DATABASE_TRIGGER) {
                 if (sourceCode.length() > 0) {
@@ -66,7 +66,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
                     if (sourceCode.charAt(guardedBlockEndOffset) == '"'){
                         guardedBlockEndOffset++;
                     }
-                    content.getOffsets().setGuardedBlockEndOffset(guardedBlockEndOffset);
+                    content.getOffsets().addGuardedBlock(0, guardedBlockEndOffset);
                 }
             }
         }

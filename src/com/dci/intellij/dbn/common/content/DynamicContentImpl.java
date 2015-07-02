@@ -50,9 +50,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         this.indexed = indexed;
     }
 
-    @Nullable
-    protected abstract Filter<T> getFilter();
-
     @NotNull
     public GenericDatabaseElement getParentElement() {
         return FailsafeUtil.get(parent);

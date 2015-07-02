@@ -14,6 +14,7 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
     private JTextField fetchBlockSizeTextField;
     private JTextField executionTimeoutTextField;
     private JCheckBox focusResultCheckBox;
+    private JTextField debugExecutionTimeoutTextField;
 
     public StatementExecutionSettingsForm(StatementExecutionSettings settings) {
         super(settings);
@@ -31,6 +32,7 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
         StatementExecutionSettings settings = getConfiguration();
         settings.setResultSetFetchBlockSize(ConfigurationEditorUtil.validateIntegerInputValue(fetchBlockSizeTextField, "Fetch block size", true, 1, 10000, null));
         settings.setExecutionTimeout(ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 300, "\nUse value 0 for no timeout"));
+        settings.setDebugExecutionTimeout(ConfigurationEditorUtil.validateIntegerInputValue(debugExecutionTimeoutTextField, "Debug execution timeout", true, 0, 600, "\nUse value 0 for no timeout"));
         settings.setFocusResult(focusResultCheckBox.isSelected());
     }
 
@@ -38,6 +40,7 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
         StatementExecutionSettings settings = getConfiguration();
         fetchBlockSizeTextField.setText(Integer.toString(settings.getResultSetFetchBlockSize()));
         executionTimeoutTextField.setText(Integer.toString(settings.getExecutionTimeout()));
+        debugExecutionTimeoutTextField.setText(Integer.toString(settings.getDebugExecutionTimeout()));
         focusResultCheckBox.setSelected(settings.isFocusResult());
     }
 }

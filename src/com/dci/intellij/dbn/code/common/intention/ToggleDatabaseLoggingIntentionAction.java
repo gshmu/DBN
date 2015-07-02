@@ -8,9 +8,11 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 
@@ -56,6 +58,11 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
+        VirtualFile virtualFile = psiFile.getVirtualFile();
+        if (DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
+            return false;
+        }
+
         lastChecked = new WeakReference<PsiFile>(psiFile);
         ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
         return supportsLogging(connectionHandler);

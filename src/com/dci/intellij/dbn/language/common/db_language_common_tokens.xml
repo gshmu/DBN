@@ -28,6 +28,7 @@
         <token index="20" id="CHR_STAR" value="*" type="character"/>
         <token index="21" id="CHR_VERTICAL_BAR" value="|" type="character"/>
         <token index="22" id="CHR_AND" value="&amp;" type="character"/>
+        <token index="23" id="CHR_TILDE" value="~" type="character"/>
 
 
         <token index="0" id="OPR_CONCATENATION" value="||" type="operator" formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>

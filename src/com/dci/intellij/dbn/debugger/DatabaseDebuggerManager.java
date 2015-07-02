@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.debugger;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +16,8 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.debugger.breakpoint.BreakpointUpdaterFileEditorListener;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfigurationFactory;
@@ -36,6 +39,8 @@ import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunManagerEx;
@@ -56,6 +61,7 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 
@@ -119,6 +125,14 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             if (configurationSetting.getName().equals(name)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    public static boolean isDebugConsole(VirtualFile virtualFile) {
+        if (virtualFile instanceof DBConsoleVirtualFile) {
+            DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+            return consoleVirtualFile.getType() == DBConsoleType.DEBUG;
         }
         return false;
     }
@@ -320,6 +334,23 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         }
     };
 
+    public String getDebuggerVersion(ConnectionHandler connectionHandler) {
+
+        if (connectionHandler != null) {
+            DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
+            Connection connection = null;
+            try {
+                connection = connectionHandler.getPoolConnection();
+                DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(connection);
+                return debuggerVersion.getVersion();
+            } catch (Exception e) {
+
+            } finally {
+                connectionHandler.freePoolConnection(connection);
+            }
+        }
+        return "Unknown";
+    }
 
 
     /***************************************

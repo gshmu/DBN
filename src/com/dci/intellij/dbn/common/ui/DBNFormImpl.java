@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.common.ui;
 
+import javax.swing.JComponent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
@@ -9,10 +13,6 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JComponent;
 
 public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends GUIUtil implements DBNForm {
     private boolean disposed;
@@ -59,6 +59,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
         return disposed;
     }
 
+    @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
         return null;

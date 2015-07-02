@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.code.psql.color.PSQLTextAttributesKeys;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorGeneralSettings;
@@ -208,8 +209,11 @@ public class PSQLLanguageAnnotator implements Annotator {
     private static void annotateExecutable(PsiElement psiElement, AnnotationHolder holder) {
         ExecutablePsiElement executable = (ExecutablePsiElement) psiElement;
         if (!executable.isNestedExecutable()) {
-            Annotation annotation = holder.createInfoAnnotation(psiElement, null);
-            annotation.setGutterIconRenderer(new StatementGutterRenderer(executable));
+            VirtualFile virtualFile = executable.getFile().getVirtualFile();
+            if (!DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
+                Annotation annotation = holder.createInfoAnnotation(psiElement, null);
+                annotation.setGutterIconRenderer(new StatementGutterRenderer(executable));
+            }
         }
     }
 }

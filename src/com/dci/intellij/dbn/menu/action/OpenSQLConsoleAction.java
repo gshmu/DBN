@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.menu.action;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -7,10 +12,13 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -24,11 +32,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class OpenSQLConsoleAction extends DumbAwareAction {
     private ConnectionHandler latestSelection; // todo move to data context
@@ -107,11 +110,11 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
     }
 
     private class SelectConnectionAction extends ActionGroup {
-        private ConnectionHandler connectionHandler;
+        private ConnectionHandlerRef connectionHandlerRef;
 
         private SelectConnectionAction(ConnectionHandler connectionHandler) {
             super(connectionHandler.getName(), null, connectionHandler.getIcon());
-            this.connectionHandler = connectionHandler;
+            this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
             setPopup(true);
         }
 /*
@@ -124,26 +127,32 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
         @NotNull
         @Override
         public AnAction[] getChildren(AnActionEvent e) {
+            ConnectionHandler connectionHandler = connectionHandlerRef.get();
             List<AnAction> actions = new ArrayList<AnAction>();
             Collection<DBConsoleVirtualFile> consoles = connectionHandler.getConsoleBundle().getConsoles();
             for (DBConsoleVirtualFile console : consoles) {
                 actions.add(new SelectConsoleAction(console));
             }
             actions.add(Separator.getInstance());
-            actions.add(new SelectConsoleAction(connectionHandler));
+            actions.add(new SelectConsoleAction(connectionHandler, DBConsoleType.STANDARD));
+            if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
+                actions.add(new SelectConsoleAction(connectionHandler, DBConsoleType.DEBUG));
+            }
 
             return actions.toArray(new AnAction[actions.size()]);
         }
     }
 
     private class SelectConsoleAction extends AnAction{
-        private ConnectionHandler connectionHandler;
+        private ConnectionHandlerRef connectionHandlerRef;
         private DBConsoleVirtualFile consoleVirtualFile;
+        private DBConsoleType consoleType;
 
 
-        public SelectConsoleAction(ConnectionHandler connectionHandler) {
-            super("Create SQL Console...");
-            this.connectionHandler = connectionHandler;
+        public SelectConsoleAction(ConnectionHandler connectionHandler, DBConsoleType consoleType) {
+            super("New " + consoleType.getName() + "...");
+            this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+            this.consoleType = consoleType;
         }
 
         public SelectConsoleAction(DBConsoleVirtualFile consoleVirtualFile) {
@@ -154,8 +163,9 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             if (consoleVirtualFile == null) {
+                ConnectionHandler connectionHandler = connectionHandlerRef.get();
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
-                databaseConsoleManager.showCreateConsoleDialog(connectionHandler);
+                databaseConsoleManager.showCreateConsoleDialog(connectionHandler, consoleType);
             } else {
                 ConnectionHandler connectionHandler = FailsafeUtil.get(consoleVirtualFile.getConnectionHandler());
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());

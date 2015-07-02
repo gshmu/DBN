@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.ui;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,11 +66,6 @@ public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenti
 
     public void updateConnectButton() {
         getOKAction().setEnabled(authenticationInfo.isProvided());
-    }
-
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return component == null ? null : component.getPreferredFocusedComponent();
     }
 
     @NotNull

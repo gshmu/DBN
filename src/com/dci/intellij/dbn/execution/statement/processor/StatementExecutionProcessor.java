@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,9 +48,9 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     @Deprecated
     void navigateToEditor(boolean requestFocus);
 
-    void execute();
+    void execute() throws SQLException;
 
-    void execute(@Nullable Connection connection);
+    void execute(@Nullable Connection connection, boolean debug) throws SQLException;
 
     StatementExecutionVariablesBundle getExecutionVariables();
 
@@ -77,4 +78,6 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     boolean isQuery();
 
     List<StatementExecutionProcessor> asList();
+
+    int getExecutableLineNumber();
 }

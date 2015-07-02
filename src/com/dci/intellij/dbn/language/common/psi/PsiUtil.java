@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import java.util.Iterator;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -23,11 +28,6 @@ import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Iterator;
-import java.util.Set;
 
 public class PsiUtil {
 
@@ -115,38 +115,41 @@ public class PsiUtil {
         int offset = editor.getCaretModel().getOffset();
 
         PsiFile file = DocumentUtil.getFile(editor);
-        PsiElement current = null;
+        if (file != null) {
+            PsiElement current;
 
-        if (lenient) {
-            int lineStart = editor.getCaretModel().getVisualLineStart();
-            int lineEnd = editor.getCaretModel().getVisualLineEnd();
-            current = file.findElementAt(lineStart);
-            while (ignore(current)) {
-                offset = current.getTextOffset() + current.getTextLength();
-                if (offset >= lineEnd) break;
+            if (lenient) {
+                int lineStart = editor.getCaretModel().getVisualLineStart();
+                int lineEnd = editor.getCaretModel().getVisualLineEnd();
+                current = file.findElementAt(lineStart);
+                while (ignore(current)) {
+                    offset = current.getTextOffset() + current.getTextLength();
+                    if (offset >= lineEnd) break;
+                    current = file.findElementAt(offset);
+                }
+            } else {
                 current = file.findElementAt(offset);
             }
-        } else {
-            current = file.findElementAt(offset);
-        }
 
-        if (current != null) {
-            PsiElement parent = current.getParent();
-            while (parent != null) {
-                if (parent instanceof ExecutablePsiElement){
-                    ExecutablePsiElement executable = (ExecutablePsiElement) parent;
-                    if (!executable.isNestedExecutable()) {
-                        return executable;
+            if (current != null) {
+                PsiElement parent = current.getParent();
+                while (parent != null) {
+                    if (parent instanceof ExecutablePsiElement){
+                        ExecutablePsiElement executable = (ExecutablePsiElement) parent;
+                        if (!executable.isNestedExecutable()) {
+                            return executable;
+                        }
+
                     }
-
+                    parent = parent.getParent();
                 }
-                parent = parent.getParent();
             }
         }
+
         return null;
     }
 
-    public static BasePsiElement lookupElementAtOffset(PsiFile file, ElementTypeAttribute typeAttribute, int offset) {
+    public static BasePsiElement lookupElementAtOffset(@NotNull PsiFile file, ElementTypeAttribute typeAttribute, int offset) {
         PsiElement psiElement = file.findElementAt(offset);
         while (psiElement != null) {
             if (psiElement instanceof BasePsiElement) {
@@ -257,6 +260,7 @@ public class PsiUtil {
         return nextPsiElement;
     }
 
+    @Nullable
     public static PsiFile getPsiFile(Project project, Document document) {
         PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
         return psiDocumentManager == null ? null : psiDocumentManager.getPsiFile(document);

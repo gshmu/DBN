@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.data.filter;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.StringTokenizer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,20 +104,29 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
         }
 
         DBColumn column = dataset.getColumn(columnName);
+        DBDataType dataType = column == null ? null : column.getDataType();
 
-        if (operator != null &&
-                operator.getValuePrefix() != null &&
-                operator.getValuePostfix() != null) {
-            value = operator.getValuePrefix() + value + operator.getValuePostfix();
-        }
-        else if (StringUtil.isNotEmptyOrSpaces(value)) {
-            DBDataType dataType = column == null ? null : column.getDataType();
-            if (dataType != null && dataType.isNative()) {
-                ConnectionHandler connectionHandler = FailsafeUtil.get(dataset.getConnectionHandler());
-                GenericDataType genericDataType = dataType.getGenericDataType();
+
+        if (dataType != null && dataType.isNative()) {
+            GenericDataType genericDataType = dataType.getGenericDataType();
+
+            if (operator == ConditionOperator.IN || operator == ConditionOperator.NOT_IN) {
                 if (genericDataType == GenericDataType.LITERAL) {
-                    value = com.intellij.openapi.util.text.StringUtil.replace(value, "'", "''");
-                    value = "'" + value + "'";
+                    StringTokenizer tokenizer = new StringTokenizer(value, ",");
+                    StringBuilder valueBuilder = new StringBuilder();
+                    while (tokenizer.hasMoreTokens()) {
+                        if (valueBuilder.length() > 0) valueBuilder.append(", ");
+                        String quotedValue = quoteValue(tokenizer.nextToken().trim());
+                        valueBuilder.append(quotedValue);
+                    }
+                    value = valueBuilder.toString();
+                }
+                value = "(" + value + ")";
+            }
+            else if (StringUtil.isNotEmptyOrSpaces(value)) {
+                ConnectionHandler connectionHandler = FailsafeUtil.get(dataset.getConnectionHandler());
+                if (genericDataType == GenericDataType.LITERAL) {
+                    value = quoteValue(value);
                 } else if (genericDataType == GenericDataType.DATE_TIME) {
                     DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
                     Formatter formatter = Formatter.getInstance(dataset.getProject());
@@ -142,6 +152,7 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
                 }
             }
         }
+
         buffer.append(column == null ? columnName : column.getQuotedName(false));
         buffer.append(" ");
         buffer.append(operator == null ? " " : operator.getText());
@@ -149,7 +160,28 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
         buffer.append(value);
     }
 
-   /****************************************************
+    @NotNull
+    private String quoteValue(String value) {
+        if (value.length() > 0) {
+            boolean needsBeginQuote = value.charAt(0) != '\'';
+            boolean needsEndQuote = value.charAt(value.length() -1) != '\'';
+
+            if (needsBeginQuote && needsEndQuote) {
+                value = StringUtil.replace(value, "'", "''");
+            }
+
+            if (needsBeginQuote) {
+                value = '\'' + value;
+            }
+
+            if (needsEndQuote) {
+                value = value + '\'';
+            }
+        }
+        return value;
+    }
+
+    /****************************************************
     *                   Configuration                  *
     ****************************************************/
     @NotNull

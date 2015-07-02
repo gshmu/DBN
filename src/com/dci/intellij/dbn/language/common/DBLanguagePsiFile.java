@@ -18,16 +18,24 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierDefinitionLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
+import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.lang.Language;
@@ -41,6 +49,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiManager;
@@ -48,6 +57,7 @@ import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
+import gnu.trove.THashSet;
 
 public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, PresentableConnectionProvider, Disposable {
     private Language language;
@@ -79,7 +89,12 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     @Nullable
     @Override
     public Icon getIcon() {
-        return getVirtualFile().getFileType().getIcon();
+        VirtualFile virtualFile = getVirtualFile();
+        if (virtualFile instanceof DBVirtualFile) {
+            DBVirtualFile databaseVirtualFile = (DBVirtualFile) virtualFile;
+            return databaseVirtualFile.getIcon();
+        }
+        return virtualFile.getFileType().getIcon();
     }
 
     @Nullable
@@ -327,6 +342,28 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         psiFile.setActiveConnection(activeConnection);
         psiFile.setCurrentSchema(currentSchema);
         return psiFile;
+    }
+
+    public Set<BasePsiElement> lookupVariableDefinition(int offset) {
+        BasePsiElement scope = PsiUtil.lookupElementAtOffset(this, ElementTypeAttribute.SCOPE_DEMARCATION, offset);
+        Set<BasePsiElement> variableDefinitions = new THashSet<BasePsiElement>();
+        while (scope != null) {
+            PsiLookupAdapter lookupAdapter = new IdentifierDefinitionLookupAdapter(null, DBObjectType.ARGUMENT, null);
+            variableDefinitions = scope.collectPsiElements(lookupAdapter, variableDefinitions, 0);
+
+            lookupAdapter = LookupAdapterCache.VARIABLE_DEFINITION.get(DBObjectType.ANY);
+            variableDefinitions = scope.collectPsiElements(lookupAdapter, variableDefinitions, 0);
+
+            PsiElement parent = scope.getParent();
+            if (parent instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) parent;
+                scope = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.SCOPE_DEMARCATION);
+                if (scope == null) scope = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.SCOPE_ISOLATION);
+            } else {
+                scope = null;
+            }
+        }
+        return variableDefinitions;
     }
 
     /********************************************************
