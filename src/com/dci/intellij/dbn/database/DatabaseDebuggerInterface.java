@@ -65,4 +65,6 @@ public interface DatabaseDebuggerInterface extends DatabaseInterface{
     String[] getRequiredPrivilegeNames();
 
     String getDebugConsoleTemplate(CodeStyleCaseSettings settings);
+
+    String getRuntimeEventReason(int code);
 }

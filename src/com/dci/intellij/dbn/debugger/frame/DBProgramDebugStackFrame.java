@@ -156,6 +156,11 @@ public class DBProgramDebugStackFrame extends XStackFrame {
     @Override
     public void computeChildren(@NotNull XCompositeNode node) {
         valuesMap = new THashMap<String, DBProgramDebugValue>();
+        List<DBProgramDebugValue> values = new ArrayList<DBProgramDebugValue>();
+
+        DBProgramDebugValue frameInfoValue = new DBSuspendReasonDebugValue(debugProcess, index);
+        values.add(frameInfoValue);
+        valuesMap.put(frameInfoValue.getName(), frameInfoValue);
 
         VirtualFile sourceCodeFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
 
@@ -169,7 +174,6 @@ public class DBProgramDebugStackFrame extends XStackFrame {
             CodeStyleCaseSettings codeStyleCaseSettings = DBLCodeStyleManager.getInstance(psiFile.getProject()).getCodeStyleCaseSettings(PSQLLanguage.INSTANCE);
             CodeStyleCaseOption objectCaseOption = codeStyleCaseSettings.getObjectCaseOption();
 
-            List<DBProgramDebugValue> values = new ArrayList<DBProgramDebugValue>();
             for (final BasePsiElement basePsiElement : variables) {
                 String variableName = objectCaseOption.format(basePsiElement.getText());
                 //DBObject object = basePsiElement.resolveUnderlyingObject();
@@ -190,14 +194,14 @@ public class DBProgramDebugStackFrame extends XStackFrame {
                 values.add(value);
                 valuesMap.put(variableName.toLowerCase(), value);
             }
-            Collections.sort(values);
-
-            XValueChildrenList children = new XValueChildrenList();
-            for (DBProgramDebugValue value : values) {
-                children.add(value.getVariableName(), value);
-            }
-            node.addChildren(children, true);
         }
+        Collections.sort(values);
+
+        XValueChildrenList children = new XValueChildrenList();
+        for (DBProgramDebugValue value : values) {
+            children.add(value.getVariableName(), value);
+        }
+        node.addChildren(children, true);
     }
 
     @Nullable
