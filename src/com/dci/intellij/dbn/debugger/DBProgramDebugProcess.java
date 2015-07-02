@@ -9,6 +9,7 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -479,8 +480,12 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
 
     private void suspendSession() {
         if (status.PROCESS_IS_TERMINATING) return;
-
+        Project project = getProject();
         if (isTerminated()) {
+            int reasonCode = runtimeInfo.getReason();
+            String message = "Session terminated with code :" + reasonCode + " (" + getDebuggerInterface().getRuntimeEventReason(reasonCode) + ")";
+            NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Debugger", message);
+
             status.PROCESS_STOPPED_NORMALLY = true;
             getSession().stop();
         } else {
@@ -489,6 +494,11 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
                 List<DebuggerRuntimeInfo> frames = backtraceInfo.getFrames();
                 if (frames.size() > 0) {
                     DebuggerRuntimeInfo topRuntimeInfo = frames.get(0);
+                    if (runtimeInfo.isTerminated()) {
+                        int reasonCode = runtimeInfo.getReason();
+                        String message = "Session terminated with code :" + reasonCode + " (" + getDebuggerInterface().getRuntimeEventReason(reasonCode) + ")";
+                        NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Debugger", message);
+                    }
                     if (!runtimeInfo.equals(topRuntimeInfo)) {
                         runtimeInfo = topRuntimeInfo;
                         resume();
@@ -496,7 +506,7 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
                     }
                 }
             } catch (SQLException e) {
-                NotificationUtil.sendErrorNotification(getProject(), "Error suspending debugger session.", e.getMessage());
+                NotificationUtil.sendErrorNotification(project, "Error suspending debugger session.", e.getMessage());
                 //showErrorDialog(e);
             }
             VirtualFile virtualFile = getRuntimeInfoFile(runtimeInfo);
