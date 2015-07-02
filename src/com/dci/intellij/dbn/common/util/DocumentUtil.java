@@ -127,14 +127,8 @@ public class DocumentUtil {
             for (RangeMarker block : documentEx.getGuardedBlocks()) {
                 document.removeGuardedBlock(block);
             }
-
+            document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);
         }
-    }
-
-    public static void removeGuardedBlock(Document document, int startOffset, int endOffset) {
-        RangeMarker rangeMarker = document.getRangeGuard(startOffset, endOffset);
-        document.removeGuardedBlock(rangeMarker);
-        document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);
     }
 
     @Nullable
