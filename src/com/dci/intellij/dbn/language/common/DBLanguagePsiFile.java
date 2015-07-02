@@ -35,6 +35,7 @@ import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.lang.Language;
@@ -88,7 +89,12 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     @Nullable
     @Override
     public Icon getIcon() {
-        return getVirtualFile().getFileType().getIcon();
+        VirtualFile virtualFile = getVirtualFile();
+        if (virtualFile instanceof DBVirtualFile) {
+            DBVirtualFile databaseVirtualFile = (DBVirtualFile) virtualFile;
+            return databaseVirtualFile.getIcon();
+        }
+        return virtualFile.getFileType().getIcon();
     }
 
     @Nullable
