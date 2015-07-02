@@ -16,7 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 public class CreateConsoleEditorAction extends DumbAwareAction {
     private DBConsoleType consoleType;
     public CreateConsoleEditorAction(DBConsoleType consoleType) {
-        super(consoleType == DBConsoleType.DEBUG ? "New Debug Console..." : "New SQL Console...");
+        super("New " + consoleType.getName() + "...");
         this.consoleType = consoleType;
     }
 
@@ -34,7 +34,7 @@ public class CreateConsoleEditorAction extends DumbAwareAction {
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
         Presentation presentation = e.getPresentation();
-        presentation.setText(consoleType == DBConsoleType.DEBUG ? "New Debug Console..." : "New SQL Console...");
+        presentation.setText("New " + consoleType.getName() + "...");
     }
 
 

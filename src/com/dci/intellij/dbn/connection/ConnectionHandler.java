@@ -98,6 +98,7 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider, Prese
     Filter<BrowserTreeNode> getObjectTypeFilter();
     NavigationPsiCache getPsiCache();
 
+    @NotNull
     EnvironmentType getEnvironmentType();
     UncommittedChangeBundle getUncommittedChanges();
     boolean isConnected();

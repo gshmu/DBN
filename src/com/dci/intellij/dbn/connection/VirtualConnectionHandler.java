@@ -77,9 +77,10 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return psiCache;
     }
 
+    @NotNull
     @Override
     public EnvironmentType getEnvironmentType() {
-        return null;
+        return EnvironmentType.DEFAULT;
     }
 
     @Override
