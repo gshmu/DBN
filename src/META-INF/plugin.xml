@@ -458,12 +458,6 @@
             <action id="DBNavigator.Actions.DataEditor.Reload" class="com.dci.intellij.dbn.editor.data.action.ReloadDataAction" text="Data Editor - Reload"/>
             <action id="DBNavigator.Actions.DataEditor.SelectDatasetFilter" class="com.dci.intellij.dbn.editor.data.action.SelectDatasetFilterComboBoxAction" text="Data Editor - Select Filter"/>
             <action id="DBNavigator.Actions.DataEditor.CreateEditFilter" class="com.dci.intellij.dbn.editor.data.action.CreateEditDatasetFilterAction" text="Data Editor - Create / Edit Filter"/>
-            <action id="DBNavigator.Actions.DataEditor.Options" class="com.dci.intellij.dbn.editor.data.action.DatasetEditorOptionsAction" text="Data Editor - Options"/>
-<!--
-            <separator/>
-            <action id="DBNavigator.Actions.DataEditor.OpenColumnVisibilityDialog" class="com.dci.intellij.dbn.editor.data.action.OpenColumnSetupDialogAction" text="Data Editor - Column Setup..."/>
-            <action id="DBNavigator.Actions.DataEditor.OpenSortingDialog" class="com.dci.intellij.dbn.editor.data.action.OpenSortingDialogAction" text="Data Editor - Sorting..."/>
--->
             <separator/>
             <action id="DBNavigator.Actions.DataEditor.DuplicateRecord" class="com.dci.intellij.dbn.editor.data.action.DuplicateRecordAction" text="Data Editor - Duplicate Record">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl D"/>
@@ -481,7 +475,7 @@
             <action id="DBNavigator.Actions.DataEditor.Export" class="com.dci.intellij.dbn.editor.data.action.ExportDataAction" text="Data Editor - Export"/>
             <action id="DBNavigator.Actions.DataEditor.Import" class="com.dci.intellij.dbn.editor.data.action.ImportDataAction" text="Data Editor - Import"/>
             <separator/>
-            <action id="DBNavigator.Actions.DataEditor.OpenSettings" class="com.dci.intellij.dbn.editor.data.action.OpenSettingsAction" text="Data Editor - Settings"/>
+            <action id="DBNavigator.Actions.DataEditor.Options" class="com.dci.intellij.dbn.editor.data.action.DatasetEditorOptionsAction" text="Data Editor - Options"/>
         </group>
         <group id="DBNavigator.ActionGroup.StatementExecutionResult">
             <action id="DBNavigator.Actions.ExecutionResult.Close" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultCloseAction" text="Execution Result - Close" icon="/img/action/Close.png"/>
