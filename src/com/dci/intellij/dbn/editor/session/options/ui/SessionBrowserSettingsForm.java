@@ -50,8 +50,4 @@ public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionB
         killSessionComboBox.setSelectedValue(settings.getKillSessionOptionHandler().getSelectedOption());
         reloadOnFilterChangeCheckBox.setSelected(settings.isReloadOnFilterChange());
     }
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
 }

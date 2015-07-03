@@ -34,8 +34,6 @@ import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
 
 public class OpenSQLConsoleAction extends DumbAwareAction {
-    private ConnectionHandler latestSelection; // todo move to data context
-
     public OpenSQLConsoleAction() {
         super("Open SQL console...", null, Icons.FILE_SQL_CONSOLE);
     }

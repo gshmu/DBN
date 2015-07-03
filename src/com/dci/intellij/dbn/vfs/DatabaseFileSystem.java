@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.UUID;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +27,6 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -103,7 +101,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                         DBEditableObjectVirtualFile virtualFile = findDatabaseFile((DBSchemaObject) object);
                         return virtualFile.getContentFile(contentType);
                     }
-                } else {
+                } /*else {
                     // TODO remove this backward compatibility
                     StringTokenizer path = new StringTokenizer(objectPath, ".");
                     DBObject object = connectionHandler.getObjectBundle().getSchema(path.nextToken());
@@ -127,7 +125,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                             return findDatabaseFile((DBSchemaObject) object);
                         }
                     }
-                }
+                }*/
             }
         }
         return null;
