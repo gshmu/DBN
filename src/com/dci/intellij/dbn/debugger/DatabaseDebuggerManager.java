@@ -281,6 +281,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
 
     public List<DBSchemaObject> loadCompileDependencies(List<DBMethod> methods, ProgressIndicator progressIndicator) {
+        // TODO improve this logic (currently only drilling one level down in the dependencies)
         List<DBSchemaObject> compileList = new ArrayList<DBSchemaObject>();
         for (DBMethod method : methods) {
             DBSchemaObject executable = method.getProgram() == null ? method : method.getProgram();
@@ -290,7 +291,6 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                 if (object instanceof DBSchemaObject && object != executable) {
                     if (!progressIndicator.isCanceled()) {
                         DBSchemaObject schemaObject = (DBSchemaObject) object;
-                        DBSchema schema = schemaObject.getSchema();
                         boolean added = addToCompileList(compileList, schemaObject);
                         if (added) {
                             progressIndicator.setText("Loading dependencies of " + schemaObject.getQualifiedNameWithType());
