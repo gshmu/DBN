@@ -39,6 +39,7 @@ import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.execution.ExecutionException;
@@ -283,21 +284,17 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         List<DBSchemaObject> compileList = new ArrayList<DBSchemaObject>();
         for (DBMethod method : methods) {
             DBSchemaObject executable = method.getProgram() == null ? method : method.getProgram();
-            if (!executable.getStatus().is(DBObjectStatus.DEBUG)) {
-                compileList.add(executable);
-            }
+            addToCompileList(compileList, executable);
 
             for (DBObject object : executable.getReferencedObjects()) {
                 if (object instanceof DBSchemaObject && object != executable) {
                     if (!progressIndicator.isCanceled()) {
                         DBSchemaObject schemaObject = (DBSchemaObject) object;
                         DBSchema schema = schemaObject.getSchema();
-                        if (!schema.isPublicSchema() && !schema.isSystemSchema() && schemaObject.getStatus().has(DBObjectStatus.DEBUG)) {
-                            if (!schemaObject.getStatus().is(DBObjectStatus.DEBUG)) {
-                                compileList.add(schemaObject);
-                                progressIndicator.setText("Loading dependencies of " + schemaObject.getQualifiedNameWithType());
-                                schemaObject.getReferencedObjects();
-                            }
+                        boolean added = addToCompileList(compileList, schemaObject);
+                        if (added) {
+                            progressIndicator.setText("Loading dependencies of " + schemaObject.getQualifiedNameWithType());
+                            schemaObject.getReferencedObjects();
                         }
                     }
                 }
@@ -306,6 +303,16 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
         Collections.sort(compileList, DEPENDENCY_COMPARATOR);
         return compileList;
+    }
+
+    private boolean addToCompileList(List<DBSchemaObject> compileList, DBSchemaObject schemaObject) {
+        DBSchema schema = schemaObject.getSchema();
+        DBObjectStatusHolder status = schemaObject.getStatus();
+        if (schema.isPublicSchema() && !schema.isSystemSchema() && status.has(DBObjectStatus.DEBUG) && !status.is(DBObjectStatus.DEBUG)) {
+            compileList.add(schemaObject);
+            return true;
+        }
+        return false;
     }
 
     public List<String> getMissingDebugPrivileges(@NotNull ConnectionHandler connectionHandler) {
