@@ -19,8 +19,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 
 public class OpenSessionBrowserAction extends DumbAwareAction {
-    private ConnectionHandler latestSelection; // todo move to data context
-
     public OpenSessionBrowserAction() {
         super("Open Session Browser...", null, Icons.FILE_SESSION_BROWSER);
     }
