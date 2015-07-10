@@ -6,7 +6,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.debugger.jdbc.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
 import com.intellij.execution.ExecutionTarget;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 

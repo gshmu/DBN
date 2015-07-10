@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.debugger.jdbc.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.common.DBObject;

@@ -4,6 +4,8 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.config.DBProgramRunConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;

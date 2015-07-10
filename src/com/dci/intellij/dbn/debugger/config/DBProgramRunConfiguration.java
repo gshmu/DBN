@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdbc.config;
+package com.dci.intellij.dbn.debugger.config;
 
 import java.util.List;
 import org.jetbrains.annotations.NotNull;

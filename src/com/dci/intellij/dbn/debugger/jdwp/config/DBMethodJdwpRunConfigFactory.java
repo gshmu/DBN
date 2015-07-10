@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdbc.config;
+package com.dci.intellij.dbn.debugger.jdwp.config;
 
 import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
@@ -14,14 +14,14 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 
-public class DBMethodRunConfigFactory extends DBProgramRunConfigurationFactory {
-    protected DBMethodRunConfigFactory(@NotNull ConfigurationType type) {
+public class DBMethodJdwpRunConfigFactory extends DBProgramRunConfigurationFactory {
+    protected DBMethodJdwpRunConfigFactory(@NotNull ConfigurationType type) {
         super(type);
     }
 
     @Override
     public Icon getIcon(@NotNull RunConfiguration configuration) {
-        DBMethodRunConfig runConfiguration = (DBMethodRunConfig) configuration;
+        DBMethodJdwpRunConfig runConfiguration = (DBMethodJdwpRunConfig) configuration;
         MethodExecutionInput executionInput = runConfiguration.getExecutionInput();
         if (runConfiguration.isGeneric() || executionInput == null) {
             return super.getIcon();
@@ -34,17 +34,17 @@ public class DBMethodRunConfigFactory extends DBProgramRunConfigurationFactory {
 
     @Override
     public RunConfiguration createTemplateConfiguration(Project project) {
-        return new DBMethodRunConfig(project, this, "", false);
+        return new DBMethodJdwpRunConfig(project, this, "", false);
     }
 
     @Override
     public DBProgramRunConfiguration createConfiguration(Project project, String name, boolean generic) {
-        return new DBMethodRunConfig(project, this, name, generic);
+        return new DBMethodJdwpRunConfig(project, this, name, generic);
     }
 
-    public DBMethodRunConfig createConfiguration(DBMethod method) {
+    public DBMethodJdwpRunConfig createConfiguration(DBMethod method) {
         String name = DatabaseDebuggerManager.createMethodConfigurationName(method);
-        DBMethodRunConfig runConfiguration = new DBMethodRunConfig(method.getProject(), this, name, false);
+        DBMethodJdwpRunConfig runConfiguration = new DBMethodJdwpRunConfig(method.getProject(), this, name, false);
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(method.getProject());
         MethodExecutionInput executionInput = executionManager.getExecutionInput(method);
         runConfiguration.setExecutionInput(executionInput);

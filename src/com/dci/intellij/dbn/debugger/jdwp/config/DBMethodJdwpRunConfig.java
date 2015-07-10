@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdbc.config;
+package com.dci.intellij.dbn.debugger.jdwp.config;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodRunProfileState;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -29,19 +30,19 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import gnu.trove.THashSet;
 
-public class DBMethodRunConfig extends DBProgramRunConfiguration<MethodExecutionInput> {
+public class DBMethodJdwpRunConfig extends DBProgramRunConfiguration<MethodExecutionInput> {
     private Set<MethodExecutionInput> methodSelectionHistory = new THashSet<MethodExecutionInput>();
-    private DBMethodRunConfigEditor configurationEditor;
+    private DBMethodJdwpRunConfigEditor configurationEditor;
     private boolean isGeneratedName = true;
 
-    public DBMethodRunConfig(Project project, ConfigurationFactory factory, String name, boolean generic) {
+    public DBMethodJdwpRunConfig(Project project, ConfigurationFactory factory, String name, boolean generic) {
         super(project, factory, name, generic);
     }
 
     @NotNull
-    public DBMethodRunConfigEditor getConfigurationEditor() {
+    public DBMethodJdwpRunConfigEditor getConfigurationEditor() {
         if (configurationEditor == null )
-            configurationEditor = new DBMethodRunConfigEditor(this);
+            configurationEditor = new DBMethodJdwpRunConfigEditor(this);
         return configurationEditor;
     }
 
@@ -177,7 +178,7 @@ public class DBMethodRunConfig extends DBProgramRunConfiguration<MethodExecution
 
     @Override
     public RunConfiguration clone() {
-        DBMethodRunConfig runConfiguration = (DBMethodRunConfig) super.clone();
+        DBMethodJdwpRunConfig runConfiguration = (DBMethodJdwpRunConfig) super.clone();
         runConfiguration.configurationEditor = null;
         MethodExecutionInput executionInput = getExecutionInput();
         runConfiguration.setExecutionInput(executionInput == null ? null : executionInput.clone());

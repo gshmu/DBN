@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
-import com.dci.intellij.dbn.debugger.jdbc.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.jdbc.config.ui.CompileDebugDependenciesDialog;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
@@ -65,7 +65,6 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                 performPrivilegeCheck(
                         project,
                         (T) runProfile.getExecutionInput(),
-                        executor,
                         environment,
                         null);
             }
@@ -76,7 +75,6 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
     private void performPrivilegeCheck(
             final Project project,
             final T executionInput,
-            final Executor executor,
             final ExecutionEnvironment environment,
             final Callback callback) {
         final DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) environment.getRunProfile();
@@ -109,7 +107,6 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                                 performInitialize(
                                         connectionHandler,
                                         executionInput,
-                                        executor,
                                         environment,
                                         callback);
                             }
@@ -118,7 +115,6 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                 performInitialize(
                         connectionHandler,
                         executionInput,
-                        executor,
                         environment,
                         callback);
             }
@@ -128,7 +124,6 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
     private void performInitialize(
             @NotNull final ConnectionHandler connectionHandler,
             @NotNull final T executionInput,
-            @NotNull final Executor executor,
             @NotNull final ExecutionEnvironment environment,
             final Callback callback) {
         final DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) environment.getRunProfile();
@@ -148,14 +143,12 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                                 performCompile(
                                         connectionHandler,
                                         executionInput,
-                                        executor,
                                         environment,
                                         callback,
                                         dependencies);
                             } else {
                                 performExecution(
                                         executionInput,
-                                        executor,
                                         environment,
                                         callback);
                             }
@@ -169,7 +162,6 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
     private void performCompile(
             @NotNull final ConnectionHandler connectionHandler,
             @NotNull final T executionInput,
-            @NotNull final Executor executor,
             @NotNull final ExecutionEnvironment environment,
             final Callback callback,
             final List<DBSchemaObject> dependencies) {
@@ -201,7 +193,6 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                                 if (!progressIndicator.isCanceled()) {
                                     performExecution(
                                             executionInput,
-                                            executor,
                                             environment,
                                             callback);
                                 }
@@ -210,7 +201,6 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                     } else {
                         performExecution(
                                 executionInput,
-                                executor,
                                 environment,
                                 callback);
                     }
@@ -221,7 +211,6 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
 
     private void performExecution(
             final T executionInput,
-            final Executor executor,
             final ExecutionEnvironment environment,
             final Callback callback) {
         new SimpleLaterInvocator() {
@@ -244,7 +233,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                         RunContentDescriptor descriptor = session.getRunContentDescriptor();
 
                         if (callback != null) callback.processStarted(descriptor);
-
+                        Executor executor = environment.getExecutor();
                         if (true /*LocalHistoryConfiguration.getInstance().ADD_LABEL_ON_RUNNING*/) {
                             RunProfile runProfile = environment.getRunProfile();
                             LocalHistory.getInstance().putSystemLabel(project, executor.getId() + " " + runProfile.getName());
