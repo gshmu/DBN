@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdbc.process;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
@@ -33,6 +24,7 @@ import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.debugger.DBProgramDebugTabLayouter;
 import com.dci.intellij.dbn.debugger.DBProgramDebugUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.DebugOperationThread;
 import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.jdbc.breakpoint.DBProgramBreakpointHandler;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBProgramDebuggerEditorsProvider;
@@ -68,6 +60,15 @@ import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XDebugProcess implements Presentable{
     protected Connection targetConnection;
@@ -153,9 +154,9 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
 
                     synchronizeSession();
                 } catch (SQLException e) {
-                    getSession().stop();
+                    status.SESSION_INITIALIZATION_THREW_EXCEPTION = true;
                     NotificationUtil.sendErrorNotification(getProject(), "Error initializing debug environment.", e.getMessage());
-                    //showErrorDialog(e);
+                    getSession().stop();
                 }
             }
         }.start();
@@ -186,7 +187,7 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
                                 }
 
                             } catch (SQLException e) {
-                                status.SESSION_SYNCHRONIZING_THREW_EXCEPTION = true;
+                                status.SESSION_INITIALIZATION_THREW_EXCEPTION = true;
                                 MessageUtil.showErrorDialog(project, "Could not initialize debug environment on connection \"" + getConnectionHandler().getName() + "\". ", e);
                                 session.stop();
                             }
@@ -205,11 +206,11 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
 
     private void executeTarget() {
         final Project project = getProject();
-        new DebugOperationThread("execute target program", project) {
+        new DebugOperationThread(getProject(), "execute target program") {
             public void executeOperation() throws SQLException {
 
                 if (status.PROCESS_IS_TERMINATING) return;
-                if (status.SESSION_SYNCHRONIZING_THREW_EXCEPTION) return;
+                if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
                 try {
                     status.TARGET_EXECUTION_STARTED = true;
                     doExecuteTarget();
@@ -356,6 +357,12 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
         debugConnection = null;
     }
 
+    protected void releaseTargetConnection() {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        connectionHandler.dropPoolConnection(targetConnection);
+        targetConnection = null;
+    }
+
     protected void registerDefaultBreakpoint(DBMethod method) {
         DBEditableObjectVirtualFile mainDatabaseFile = getMainDatabaseFile(method);
         if (mainDatabaseFile != null) {
@@ -387,16 +394,10 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
         }
     }
 
-    protected void releaseTargetConnection() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        connectionHandler.dropPoolConnection(targetConnection);
-        targetConnection = null;
-    }
-
 
     @Override
     public void startStepOver() {
-        new DebugOperationThread("step over", getProject()) {
+        new DebugOperationThread(getProject(), "step over") {
             public void executeOperation() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.stepOver(debugConnection);
@@ -407,7 +408,7 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
 
     @Override
     public void startStepInto() {
-        new DebugOperationThread("step into", getProject()) {
+        new DebugOperationThread(getProject(), "step into") {
             public void executeOperation() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.stepInto(debugConnection);
@@ -418,7 +419,7 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
 
     @Override
     public void startStepOut() {
-        new DebugOperationThread("step out", getProject()) {
+        new DebugOperationThread(getProject(), "step out") {
             public void executeOperation() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.stepOut(debugConnection);
@@ -429,7 +430,7 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
 
     @Override
     public void resume() {
-        new DebugOperationThread("resume execution", getProject()) {
+        new DebugOperationThread(getProject(), "resume execution") {
             public void executeOperation() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.resumeExecution(debugConnection);
@@ -440,7 +441,7 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
 
     @Override
     public void runToPosition(@NotNull final XSourcePosition position) {
-        new DebugOperationThread("run to position", getProject()) {
+        new DebugOperationThread(getProject(), "run to position") {
             public void executeOperation() throws SQLException {
                 DBSchemaObject object = DBProgramDebugUtil.getObject(position);
                 if (object != null) {
@@ -467,7 +468,7 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
     @Override
     public void startPausing() {
         // NOT SUPPORTED!!!
-        new DebugOperationThread("run to position", getProject()) {
+        new DebugOperationThread(getProject(), "run to position") {
             public void executeOperation() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
@@ -632,22 +633,4 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
         return "Database Debug Process";
     }
 
-    abstract class DebugOperationThread extends Thread {
-        private String operationName;
-        protected DebugOperationThread(String operationName, Project project) {
-            super("DBN Debug Operation (" + operationName + ')');
-            this.operationName = operationName;
-        }
-
-        @Override
-        public final void run() {
-            try {
-                executeOperation();
-            } catch (final SQLException e) {
-                NotificationUtil.sendErrorNotification(getProject(), "Error performing debug operation (" + operationName + ").", e.getMessage());
-                //MessageUtil.showErrorDialog(getProject(), "Could not perform debug operation (" + operationName + ").", e);
-            }
-        }
-        public abstract void executeOperation() throws SQLException;
-    }
 }
