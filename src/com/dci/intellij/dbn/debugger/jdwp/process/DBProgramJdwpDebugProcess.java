@@ -21,14 +21,26 @@ public abstract class DBProgramJdwpDebugProcess<T extends ExecutionInput> extend
         super(session, debuggerSession);
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
         Project project = session.getProject();
-        DatabaseDebuggerManager.getInstance(project).registerDebugSession(connectionHandler);
+        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
+        debuggerManager.registerDebugSession(connectionHandler);
 
         DBProgramRunConfiguration<T> runProfile = (DBProgramRunConfiguration) session.getRunProfile();
         executionInput = runProfile.getExecutionInput();
     }
 
+    public ConnectionHandler getConnectionHandler() {
+        return connectionHandlerRef.get();
+    }
 
     public T getExecutionInput() {
         return executionInput;
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        Project project = getSession().getProject();
+        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
+        debuggerManager.unregisterDebugSession(getConnectionHandler());
     }
 }

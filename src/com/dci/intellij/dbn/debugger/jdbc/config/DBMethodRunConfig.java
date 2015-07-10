@@ -46,7 +46,7 @@ public class DBMethodRunConfig extends DBProgramRunConfiguration<MethodExecution
     }
 
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-        return new DBMethodRunProfileState();
+        return new DBMethodRunProfileState(env);
     }
 
     public Set<MethodExecutionInput> getMethodSelectionHistory() {

@@ -7,10 +7,15 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
 import com.intellij.execution.configurations.RunnerSettings;
+import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 
 
 public class DBStatementRunProfileState extends DBProgramRunProfileState {
+    public DBStatementRunProfileState(ExecutionEnvironment environment) {
+        super(environment);
+    }
+
     public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
         return null;
     }

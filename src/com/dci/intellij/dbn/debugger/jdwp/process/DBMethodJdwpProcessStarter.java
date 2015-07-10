@@ -14,6 +14,7 @@ import com.intellij.execution.configurations.RemoteConnection;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
 
@@ -25,15 +26,21 @@ public class DBMethodJdwpProcessStarter extends DBProgramDebugProcessStarter{
     @NotNull
     @Override
     public XDebugProcess start(@NotNull XDebugSession session) throws ExecutionException {
-        ExecutionEnvironment environment = new ExecutionEnvironment();
+        Executor executor = DefaultDebugExecutor.getDebugExecutorInstance();
         RunProfile runProfile = session.getRunProfile();
         if (runProfile == null) {
             throw new ExecutionException("Invalid run profile");
         }
 
-        Executor executorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
-        DebugEnvironment debugEnvironment = new DefaultDebugEnvironment(environment, runProfile.getState(executorInstance, environment), new RemoteConnection(false, "test", "test", true), false);
-        DebuggerSession debuggerSession = DebuggerManagerEx.getInstanceEx(session.getProject()).attachVirtualMachine(debugEnvironment);
+        ExecutionEnvironment environment = ExecutionEnvironmentBuilder.create(session.getProject(), executor, runProfile).build();
+
+
+        DebugEnvironment debugEnvironment = new DefaultDebugEnvironment(environment, runProfile.getState(executor, environment), new RemoteConnection(false, "localhost", "4000", true), false);
+        DebuggerManagerEx debuggerManagerEx = DebuggerManagerEx.getInstanceEx(session.getProject());
+        DebuggerSession debuggerSession = debuggerManagerEx.attachVirtualMachine(debugEnvironment);
+        if (debuggerSession == null) {
+            throw new ExecutionException("Could not initialize JDWP listener");
+        }
 
         return new DBMethodJdwpDebugProcess(session, debuggerSession, getConnectionHandler());
     }

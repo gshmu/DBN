@@ -10,6 +10,7 @@ public abstract class DBProgramRunConfigurationEditorForm<T extends DBProgramRun
     private T configuration;
 
     public DBProgramRunConfigurationEditorForm(T configuration) {
+        super(configuration.getProject());
         this.configuration = configuration;
     }
 
