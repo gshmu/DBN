@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.database.oracle;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
@@ -17,12 +14,28 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import static com.dci.intellij.dbn.editor.code.GuardedBlockMarker.END_OFFSET_IDENTIFIER;
 import static com.dci.intellij.dbn.editor.code.GuardedBlockMarker.START_OFFSET_IDENTIFIER;
 
 public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl implements DatabaseDebuggerInterface {
     public OracleDebuggerInterface(DatabaseInterfaceProvider provider) {
         super("oracle_debug_interface.xml", provider);
+    }
+
+    @Override
+    public void initializeJdwpSession(Connection connection, String host, String port) throws SQLException {
+        executeCall(connection, null, "initialize-session-debugging");
+        executeCall(connection, null, "initialize-session-compiler-flags");
+        executeCall(connection, null, "connect-jdwp-session", host, port);
+    }
+
+    @Override
+    public void disconnectJdwpSession(Connection connection) throws SQLException {
+        executeCall(connection, null, "disconnect-jdwp-session");
     }
 
     public DebuggerSessionInfo initializeSession(Connection connection) throws SQLException {

@@ -196,12 +196,14 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void debugExecute(final MethodExecutionInput executionInput, final Connection connection) throws SQLException {
+    public void debugExecute(final MethodExecutionInput executionInput, final Connection connection, boolean jdwpDebugging) throws SQLException {
         final DBMethod method = executionInput.getMethod();
         if (method != null) {
             ConnectionHandler connectionHandler = method.getConnectionHandler();
             DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
-            final MethodExecutionProcessor executionProcessor = executionInterface.createDebugExecutionProcessor(method);
+            final MethodExecutionProcessor executionProcessor = jdwpDebugging ?
+                    executionInterface.createExecutionProcessor(method) :
+                    executionInterface.createDebugExecutionProcessor(method);
 
             executionProcessor.execute(executionInput, connection, true);
             ExecutionContext executionContext = executionInput.getExecutionContext();

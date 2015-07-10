@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.debugger;
 
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -65,6 +54,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 @State(
     name = "DBNavigator.Project.DebuggerManager",
@@ -308,7 +308,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     private boolean addToCompileList(List<DBSchemaObject> compileList, DBSchemaObject schemaObject) {
         DBSchema schema = schemaObject.getSchema();
         DBObjectStatusHolder status = schemaObject.getStatus();
-        if (schema.isPublicSchema() && !schema.isSystemSchema() && status.has(DBObjectStatus.DEBUG) && !status.is(DBObjectStatus.DEBUG)) {
+        if (!schema.isPublicSchema() && !schema.isSystemSchema() && status.has(DBObjectStatus.DEBUG) && !status.is(DBObjectStatus.DEBUG)) {
             compileList.add(schemaObject);
             return true;
         }
