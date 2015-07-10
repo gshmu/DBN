@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.debugger.jdbc.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
 
 public abstract class DBProgramRunConfigurationEditorForm<T extends DBProgramRunConfiguration> extends DBNFormImpl {
     private T configuration;

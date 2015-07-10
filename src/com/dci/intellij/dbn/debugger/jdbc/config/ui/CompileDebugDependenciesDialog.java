@@ -8,7 +8,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.debugger.jdbc.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDependenciesForm> {

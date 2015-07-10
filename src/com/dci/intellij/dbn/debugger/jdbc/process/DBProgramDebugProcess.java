@@ -33,8 +33,8 @@ import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.debugger.DBProgramDebugTabLayouter;
 import com.dci.intellij.dbn.debugger.DBProgramDebugUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.jdbc.breakpoint.DBProgramBreakpointHandler;
-import com.dci.intellij.dbn.debugger.jdbc.config.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBProgramDebuggerEditorsProvider;
 import com.dci.intellij.dbn.debugger.jdbc.frame.DBProgramDebugSuspendContext;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -90,7 +90,6 @@ public abstract class DBProgramDebugProcess<T extends ExecutionInput> extends XD
         DatabaseDebuggerManager.getInstance(project).registerDebugSession(connectionHandler);
 
         DBProgramRunConfiguration<T> runProfile = (DBProgramRunConfiguration) session.getRunProfile();
-
         executionInput = runProfile.getExecutionInput();
 
         breakpointHandler = new DBProgramBreakpointHandler(session, this);

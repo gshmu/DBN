@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdbc.config.ui;
+package com.dci.intellij.dbn.debugger.jdwp.config.ui;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -13,7 +13,8 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodRunConfig;
+import com.dci.intellij.dbn.debugger.jdbc.config.ui.DBProgramRunConfigurationEditorForm;
+import com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfig;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
@@ -32,7 +33,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.UIUtil;
 
-public class DBMethodRunConfigurationEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodRunConfig>{
+public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodJdwpRunConfig>{
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JPanel methodArgumentsPanel;
@@ -42,7 +43,7 @@ public class DBMethodRunConfigurationEditorForm extends DBProgramRunConfiguratio
     private MethodExecutionForm methodExecutionForm;
     private MethodExecutionInput executionInput;
 
-    public DBMethodRunConfigurationEditorForm(final DBMethodRunConfig configuration) {
+    public DBMethodJdwpRunConfigEditorForm(final DBMethodJdwpRunConfig configuration) {
         super(configuration);
         if (configuration.isGeneric()) {
             selectMethodActionPanel.setVisible(false);
@@ -85,7 +86,7 @@ public class DBMethodRunConfigurationEditorForm extends DBProgramRunConfiguratio
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {
                         final MethodBrowserSettings settings = MethodExecutionManager.getInstance(project).getBrowserSettings();
-                        final DBMethodRunConfig configuration = getConfiguration();
+                        final DBMethodJdwpRunConfig configuration = getConfiguration();
                         DBMethod currentMethod = configuration.getExecutionInput() == null ? null : configuration.getExecutionInput().getMethod();
                         if (currentMethod != null) {
                             settings.setConnectionHandler(currentMethod.getConnectionHandler());
@@ -127,7 +128,7 @@ public class DBMethodRunConfigurationEditorForm extends DBProgramRunConfiguratio
             Project project = ActionUtil.getProject(e);
             if (project != null) {
                 MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                DBMethodRunConfig configuration = getConfiguration();
+                DBMethodJdwpRunConfig configuration = getConfiguration();
                 MethodExecutionInput currentInput = configuration.getExecutionInput();
                 MethodExecutionInput methodExecutionInput = methodExecutionManager.selectHistoryMethodExecutionInput(currentInput);
                 if (methodExecutionInput != null) {
@@ -167,7 +168,7 @@ public class DBMethodRunConfigurationEditorForm extends DBProgramRunConfiguratio
         return executionInput;
     }
 
-    public void writeConfiguration(DBMethodRunConfig configuration) {
+    public void writeConfiguration(DBMethodJdwpRunConfig configuration) {
         if (methodExecutionForm != null) {
             methodExecutionForm.setExecutionInput(configuration.getExecutionInput());
             methodExecutionForm.updateExecutionInput();
@@ -177,7 +178,7 @@ public class DBMethodRunConfigurationEditorForm extends DBProgramRunConfiguratio
         //selectMethodAction.setConfiguration(configuration);
     }
 
-    public void readConfiguration(DBMethodRunConfig configuration) {
+    public void readConfiguration(DBMethodJdwpRunConfig configuration) {
         setExecutionInput(configuration.getExecutionInput(), false);
         compileDependenciesCheckBox.setSelected(configuration.isCompileDependencies());
     }
