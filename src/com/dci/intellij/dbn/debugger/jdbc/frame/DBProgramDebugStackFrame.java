@@ -189,10 +189,13 @@ public class DBProgramDebugStackFrame extends XStackFrame {
                         childVariableNames.add(childVariableName);
                     }
                 }
-                Icon icon = basePsiElement.getIcon(true);
-                DBProgramDebugValue value = new DBProgramDebugValue(debugProcess, null, variableName, childVariableNames, icon, index);
-                values.add(value);
-                valuesMap.put(variableName.toLowerCase(), value);
+
+                if (!valuesMap.containsKey(variableName.toLowerCase())) {
+                    Icon icon = basePsiElement.getIcon(true);
+                    DBProgramDebugValue value = new DBProgramDebugValue(debugProcess, null, variableName, childVariableNames, icon, index);
+                    values.add(value);
+                    valuesMap.put(variableName.toLowerCase(), value);
+                }
             }
         }
         Collections.sort(values);
