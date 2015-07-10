@@ -44,7 +44,7 @@ public class DBStatementRunConfig extends DBProgramRunConfiguration<StatementExe
     }
 
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-        return new DBStatementRunProfileState();
+        return new DBStatementRunProfileState(env);
     }
 
     @Nullable

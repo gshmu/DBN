@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
-import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodRunProfileState;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -47,7 +46,7 @@ public class DBMethodJdwpRunConfig extends DBProgramRunConfiguration<MethodExecu
     }
 
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-        return new DBMethodRunProfileState();
+        return new DBMethodJdwpRunProfileState(env);
     }
 
     public Set<MethodExecutionInput> getMethodSelectionHistory() {

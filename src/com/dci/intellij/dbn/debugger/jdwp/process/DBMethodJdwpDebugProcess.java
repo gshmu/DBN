@@ -10,8 +10,6 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XSourcePosition;
-import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 
 public class DBMethodJdwpDebugProcess extends DBProgramJdwpDebugProcess<MethodExecutionInput>{
     public DBMethodJdwpDebugProcess(@NotNull XDebugSession session, @NotNull DebuggerSession debuggerSession, ConnectionHandler connectionHandler) {
@@ -49,36 +47,5 @@ public class DBMethodJdwpDebugProcess extends DBProgramJdwpDebugProcess<MethodEx
     @Nullable
     protected DBSchemaObject getMainDatabaseObject(DBMethod method) {
         return method != null && method.isProgramMethod() ? method.getProgram() : method;
-    }
-
-    @NotNull
-    @Override
-    public XDebuggerEditorsProvider getEditorsProvider() {
-        return null;
-    }
-
-    @Override
-    public void startStepOver() {
-
-    }
-
-    @Override
-    public void startStepInto() {
-
-    }
-
-    @Override
-    public void startStepOut() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void runToPosition(@NotNull XSourcePosition position) {
-
     }
 }

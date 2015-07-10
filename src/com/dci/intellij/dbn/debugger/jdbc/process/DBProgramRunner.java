@@ -4,6 +4,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -243,7 +244,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                         ProcessHandler processHandler = descriptor.getProcessHandler();
                         if (processHandler != null) processHandler.startNotify();
                     } catch (ExecutionException e) {
-                        e.printStackTrace();
+                        NotificationUtil.sendErrorNotification(project, "Debugger", "Error initializing debug environment");
                     }
                 }
 
