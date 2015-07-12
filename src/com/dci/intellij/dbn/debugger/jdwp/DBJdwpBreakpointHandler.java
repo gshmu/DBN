@@ -4,13 +4,21 @@ import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.intellij.debugger.engine.DebugProcessImpl;
+import com.intellij.debugger.engine.events.DebuggerCommandImpl;
+import com.intellij.debugger.engine.requests.RequestManagerImpl;
+import com.intellij.debugger.jdi.VirtualMachineProxyImpl;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import com.sun.jdi.Location;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.request.EventRequestManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProcess> {
     public static final Key<Integer> BREAKPOINT_ID_KEY = new Key<Integer>("BREAKPOINT_ID");
@@ -23,7 +31,30 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
 
     @Override
     protected BreakpointInfo addBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, DBSchemaObject object) throws Exception {
-        return null;
+        final DebugProcessImpl debugProcess = getDebugProcess().getDebuggerSession().getProcess();
+        debugProcess.getManagerThread().invokeAndWait(new DebuggerCommandImpl() {
+            @Override
+            protected void action() throws Exception {
+                VirtualMachineProxyImpl virtualMachineProxy = debugProcess.getVirtualMachineProxy();
+                RequestManagerImpl requestsManager = debugProcess.getRequestsManager();
+                EventRequestManager eventRequestManager = virtualMachineProxy.eventRequestManager();
+
+                eventRequestManager.createClassPrepareRequest().addClassFilter("$Oracle.Procedure.HR.ADD_JOB_HISTORY");
+                List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName("$Oracle.Procedure.HR.ADD_JOB_HISTORY");
+                if (referenceTypes != null && referenceTypes.size() > 0) {
+                    ReferenceType referenceType = referenceTypes.get(0);
+                    List<Location> locations = referenceType.locationsOfLine(10);
+                    if (locations != null && locations.size() > 0) {
+                        Location location = locations.get(0);
+                        eventRequestManager.createBreakpointRequest(location);
+                    }
+
+                }
+
+            }
+        });
+
+        return new BreakpointInfo();
     }
 
     @Override
