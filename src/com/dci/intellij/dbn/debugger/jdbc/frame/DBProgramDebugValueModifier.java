@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
-import java.sql.SQLException;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.database.common.debug.BasicOperationInfo;
+import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
+import com.intellij.xdebugger.frame.XValueModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.database.common.debug.BasicOperationInfo;
-import com.dci.intellij.dbn.debugger.jdbc.process.DBProgramDebugProcess;
-import com.intellij.xdebugger.frame.XValueModifier;
+import java.sql.SQLException;
 
 public class DBProgramDebugValueModifier extends XValueModifier {
     private DBProgramDebugValue value;
@@ -18,7 +18,7 @@ public class DBProgramDebugValueModifier extends XValueModifier {
 
     @Override
     public void setValue(@NotNull String expression, @NotNull XModificationCallback callback) {
-        DBProgramDebugProcess debugProcess = value.getDebugProcess();
+        DBJdbcDebugProcess debugProcess = value.getDebugProcess();
         try {
             if (StringUtil.isNotEmpty(expression)) {
                 while (expression.charAt(0) == '\'') {

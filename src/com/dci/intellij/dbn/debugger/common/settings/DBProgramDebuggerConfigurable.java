@@ -1,6 +1,6 @@
-package com.dci.intellij.dbn.debugger.settings;
+package com.dci.intellij.dbn.debugger.common.settings;
 
-import com.dci.intellij.dbn.debugger.settings.ui.DBProgramDebuggerSettingsForm;
+import com.dci.intellij.dbn.debugger.common.settings.ui.DBProgramDebuggerSettingsForm;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.Nls;

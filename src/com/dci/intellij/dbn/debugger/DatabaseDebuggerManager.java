@@ -7,9 +7,9 @@ import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
-import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
-import com.dci.intellij.dbn.debugger.config.DBProgramRunConfigurationFactory;
-import com.dci.intellij.dbn.debugger.jdbc.breakpoint.BreakpointUpdaterFileEditorListener;
+import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigurationFactory;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodRunConfig;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodRunConfigFactory;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodRunConfigType;
@@ -77,7 +77,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
     private DatabaseDebuggerManager(Project project) {
         super(project);
-        FileEditorManager.getInstance(project).addFileEditorManagerListener(new BreakpointUpdaterFileEditorListener());
+        FileEditorManager.getInstance(project).addFileEditorManagerListener(new DBBreakpointUpdaterFileEditorListener());
     }
 
     public void registerDebugSession(ConnectionHandler connectionHandler) {

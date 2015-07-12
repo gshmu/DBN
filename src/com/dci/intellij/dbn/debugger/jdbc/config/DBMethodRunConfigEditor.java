@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdbc.config;
 
-import com.dci.intellij.dbn.debugger.config.DBProgramRunConfigurationEditor;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigurationEditor;
 import com.dci.intellij.dbn.debugger.jdbc.config.ui.DBMethodRunConfigEditorForm;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 

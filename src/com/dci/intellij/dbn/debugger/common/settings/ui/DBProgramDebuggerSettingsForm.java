@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.settings.ui;
+package com.dci.intellij.dbn.debugger.common.settings.ui;
 
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 

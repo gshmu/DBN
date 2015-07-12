@@ -1,6 +1,4 @@
-package com.dci.intellij.dbn.debugger.action;
-
-import org.jetbrains.annotations.NotNull;
+package com.dci.intellij.dbn.debugger.common.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -27,6 +25,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 
 public class DebugStatementEditorAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {

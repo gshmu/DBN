@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.debugger.jdbc.process;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.debugger.DBDebugUtil;
+import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -12,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.Icon;
 import java.sql.SQLException;
 
-public class DBMethodDebugProcess extends DBProgramDebugProcess<MethodExecutionInput>{
+public class DBMethodDebugProcess extends DBJdbcDebugProcess<MethodExecutionInput> {
     public DBMethodDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
         super(session, connectionHandler);
     }
@@ -50,7 +52,7 @@ public class DBMethodDebugProcess extends DBProgramDebugProcess<MethodExecutionI
     @Override
     public String getName() {
         DBMethod method = getExecutionInput().getMethod();
-        DBSchemaObject object = getMainDatabaseObject(method);
+        DBSchemaObject object = DBDebugUtil.getMainDatabaseObject(method);
         if (object != null) {
             return object.getQualifiedName();
         }
@@ -61,7 +63,7 @@ public class DBMethodDebugProcess extends DBProgramDebugProcess<MethodExecutionI
     @Override
     public Icon getIcon() {
         DBMethod method = getExecutionInput().getMethod();
-        DBSchemaObject object = getMainDatabaseObject(method);
+        DBSchemaObject object = DBDebugUtil.getMainDatabaseObject(method);
         if (object != null) {
             return object.getIcon();
         }

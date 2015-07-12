@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.settings;
+package com.dci.intellij.dbn.debugger.common.settings;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.xdebugger.settings.XDebuggerSettings;

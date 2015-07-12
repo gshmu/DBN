@@ -1,21 +1,21 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
-import com.dci.intellij.dbn.debugger.jdbc.process.DBProgramDebugProcess;
+import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DBProgramDebugExecutionStack extends XExecutionStack {
     private DBProgramDebugStackFrame topStackFrame;
-    private DBProgramDebugProcess debugProcess;
+    private DBJdbcDebugProcess debugProcess;
 
-    protected DBProgramDebugExecutionStack(DBProgramDebugProcess debugProcess) {
+    protected DBProgramDebugExecutionStack(DBJdbcDebugProcess debugProcess) {
         super(debugProcess.getName(), debugProcess.getIcon());
         this.debugProcess = debugProcess;
         ExecutionBacktraceInfo backtraceInfo = debugProcess.getBacktraceInfo();

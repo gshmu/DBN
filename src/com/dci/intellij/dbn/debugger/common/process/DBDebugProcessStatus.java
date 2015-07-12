@@ -1,6 +1,6 @@
-package com.dci.intellij.dbn.debugger.jdbc.process;
+package com.dci.intellij.dbn.debugger.common.process;
 
-public class DBProgramDebugProcessStatus {
+public class DBDebugProcessStatus {
     public boolean CAN_SET_BREAKPOINTS;
     public boolean TARGET_EXECUTION_STARTED;
     public boolean TARGET_EXECUTION_TERMINATED;

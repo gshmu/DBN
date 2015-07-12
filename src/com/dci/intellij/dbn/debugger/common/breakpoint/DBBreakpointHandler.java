@@ -1,17 +1,11 @@
-package com.dci.intellij.dbn.debugger.jdbc.breakpoint;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import org.jetbrains.annotations.NotNull;
+package com.dci.intellij.dbn.debugger.common.breakpoint;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
-import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
-import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
-import com.dci.intellij.dbn.debugger.jdbc.process.DBProgramDebugProcess;
+import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
@@ -27,23 +21,35 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import org.jetbrains.annotations.NotNull;
 
-public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoint<DBProgramBreakpointProperties>> {
+import java.sql.SQLException;
+
+public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBreakpointHandler<XLineBreakpoint<DBBreakpointProperties>> {
     public static final Key<Integer> BREAKPOINT_ID_KEY = new Key<Integer>("BREAKPOINT_ID");
     public static final Key<VirtualFile> BREAKPOINT_FILE_KEY = Key.create("DBNavigator.BreakpointFile");
 
     private XDebugSession session;
-    private DBProgramDebugProcess debugProcess;
+    private T debugProcess;
 
-    public DBProgramBreakpointHandler(XDebugSession session, DBProgramDebugProcess debugProcess) {
-        super(DBProgramBreakpointType.class);
+    protected DBBreakpointHandler(XDebugSession session, T debugProcess) {
+        super(DBBreakpointType.class);
         this.session = session;
-        this.debugProcess  =debugProcess;
-        //resetBreakpoints();
+        this.debugProcess = debugProcess;
+    }
+
+    public XDebugSession getSession() {
+        return session;
+    }
+
+    public T getDebugProcess() {
+        return debugProcess;
     }
 
     @Override
-    public void registerBreakpoint(@NotNull XLineBreakpoint<DBProgramBreakpointProperties> breakpoint) {
+    public void registerBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) {
+        DBDebugProcess debugProcess = getDebugProcess();
+        XDebugSession session = getSession();
         if (!debugProcess.getStatus().CAN_SET_BREAKPOINTS) return;
 
         ConnectionHandler connectionHandler = debugProcess.getConnectionHandler();
@@ -63,32 +69,12 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
                     object = objectVirtualFile.getObject();
                 }
 
-                DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
-
-                Connection debugConnection = debugProcess.getDebugConnection();
                 try {
-                    Integer breakpointId = breakpoint.getUserData(BREAKPOINT_ID_KEY);
-
-                    if (breakpointId != null) {
-                        BreakpointOperationInfo breakpointOperationInfo = debuggerInterface.enableBreakpoint(breakpointId, debugConnection);
-                        String error = breakpointOperationInfo.getError();
-                        if (error != null) {
-                            session.updateBreakpointPresentation( breakpoint,
-                                    Icons.DEBUG_INVALID_BREAKPOINT,
-                                    "INVALID: " + error);
-                        }
+                    if (getBreakpointId(breakpoint) != null) {
+                        enableBreakpoint(breakpoint);
 
                     } else {
-                        BreakpointInfo breakpointInfo = object == null ?
-                                debuggerInterface.addSourceBreakpoint(
-                                        breakpoint.getLine(),
-                                        debugConnection) :
-                                debuggerInterface.addProgramBreakpoint(
-                                        object.getSchema().getName(),
-                                        object.getName(),
-                                        object.getObjectType().getName().toUpperCase(),
-                                        breakpoint.getLine(),
-                                        debugConnection);
+                        BreakpointInfo breakpointInfo = addBreakpoint(breakpoint, object);
 
                         String error = breakpointInfo.getError();
                         if (error != null) {
@@ -96,11 +82,11 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
                                     Icons.DEBUG_INVALID_BREAKPOINT,
                                     "INVALID: " + error);
                         } else {
-                            breakpoint.putUserData(BREAKPOINT_ID_KEY, breakpointInfo.getBreakpointId());
+                            Integer breakpointId = breakpointInfo.getBreakpointId();
+                            breakpoint.putUserData(BREAKPOINT_ID_KEY, breakpointId);
 
                             if (!breakpoint.isEnabled()) {
-                                BreakpointOperationInfo breakpointOperationInfo = debuggerInterface.disableBreakpoint(breakpointInfo.getBreakpointId(), debugConnection);
-                                error = breakpointOperationInfo.getError();
+                                error = disableBreakpoint(breakpointId);
                                 if (error != null) {
                                     session.updateBreakpointPresentation( breakpoint,
                                             Icons.DEBUG_INVALID_BREAKPOINT,
@@ -115,13 +101,17 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
                     session.updateBreakpointPresentation( breakpoint,
                             Icons.DEBUG_INVALID_BREAKPOINT,
                             "INVALID: " + e.getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
     }
 
     @Override
-    public void unregisterBreakpoint(@NotNull XLineBreakpoint<DBProgramBreakpointProperties> breakpoint, boolean temporary) {
+    public void unregisterBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, boolean temporary) {
+        DBDebugProcess debugProcess = getDebugProcess();
+
         if (!debugProcess.getStatus().CAN_SET_BREAKPOINTS) return;
 
         Integer breakpointId = breakpoint.getUserData(BREAKPOINT_ID_KEY);
@@ -132,13 +122,7 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
             ConnectionHandler connectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
             if (connectionHandler != null && connectionHandler == debugProcess.getConnectionHandler()) {
                 try {
-                    Connection debugConnection = debugProcess.getDebugConnection();
-                    DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
-                    if (temporary) {
-                        debuggerInterface.disableBreakpoint(breakpointId, debugConnection);
-                    } else {
-                        debuggerInterface.removeBreakpoint(breakpointId, debugConnection);
-                    }
+                    removeBreakpoint(temporary, breakpointId);
                 } catch (SQLException e) {
                     NotificationUtil.sendErrorNotification(project, "Error stopping debugger session.", e.getMessage());
                 } finally {
@@ -149,6 +133,14 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
 
     }
 
+    protected abstract BreakpointInfo addBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, DBSchemaObject object) throws Exception;
+
+    protected abstract void removeBreakpoint(boolean temporary, Integer breakpointId) throws SQLException;
+
+    protected abstract void enableBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) throws Exception;
+
+
+    protected abstract String disableBreakpoint(Integer breakpointId) throws SQLException;
 
     private void resetBreakpoints() {
         Project project = session.getProject();
@@ -157,7 +149,7 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
         XBreakpoint<?>[] breakpoints = breakpointManager.getAllBreakpoints();
 
         for (XBreakpoint breakpoint : breakpoints) {
-            if (breakpoint.getType() instanceof DBProgramBreakpointType) {
+            if (breakpoint.getType() instanceof DBBreakpointType) {
                 XLineBreakpoint lineBreakpoint = (XLineBreakpoint) breakpoint;
                 VirtualFile virtualFile = getVirtualFile(lineBreakpoint);
                 if (virtualFile != null) {
@@ -172,7 +164,7 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
         }
     }
 
-    public static VirtualFile getVirtualFile(XLineBreakpoint<DBProgramBreakpointProperties> breakpoint) {
+    public static VirtualFile getVirtualFile(XLineBreakpoint<DBBreakpointProperties> breakpoint) {
         VirtualFile breakpointFile = breakpoint.getUserData(BREAKPOINT_FILE_KEY);
         if (breakpointFile == null) {
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
@@ -194,5 +186,7 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
         return breakpointFile;
     }
 
-
+    protected Integer getBreakpointId(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) {
+        return breakpoint.getUserData(BREAKPOINT_ID_KEY);
+    }
 }

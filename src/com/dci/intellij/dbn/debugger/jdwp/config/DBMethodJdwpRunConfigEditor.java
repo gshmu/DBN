@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp.config;
 
-import com.dci.intellij.dbn.debugger.config.DBProgramRunConfigurationEditor;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigurationEditor;
 import com.dci.intellij.dbn.debugger.jdwp.config.ui.DBMethodJdwpRunConfigEditorForm;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 
