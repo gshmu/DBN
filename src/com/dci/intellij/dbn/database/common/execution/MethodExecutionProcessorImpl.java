@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.database.common.execution;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -15,6 +8,7 @@ import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.execution.ExecutionType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -26,6 +20,13 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
 
 public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implements MethodExecutionProcessor<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -55,8 +56,8 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
     }
 
 
-    public void execute(MethodExecutionInput executionInput, boolean debug) throws SQLException {
-        executionInput.initExecution(debug);
+    public void execute(MethodExecutionInput executionInput, ExecutionType executionType) throws SQLException {
+        executionInput.initExecution(executionType);
         boolean usePoolConnection = executionInput.isUsePoolConnection();
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBSchema executionSchema = executionInput.getExecutionSchema();
@@ -67,14 +68,14 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             connection.setAutoCommit(false);
         }
 
-        execute(executionInput, connection, debug);
+        execute(executionInput, connection, executionType);
     }
 
-    public void execute(MethodExecutionInput executionInput, Connection connection, boolean debug) throws SQLException {
-        executionInput.initExecution(debug);
+    public void execute(MethodExecutionInput executionInput, Connection connection, ExecutionType executionType) throws SQLException {
+        executionInput.initExecution(executionType);
         ConnectionHandler connectionHandler = getConnectionHandler();
         boolean usePoolConnection = false;
-        boolean loggingEnabled = !debug && executionInput.isEnableLogging();
+        boolean loggingEnabled = executionType != ExecutionType.DEBUG && executionInput.isEnableLogging();
         Project project = getProject();
         DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
         Counter runningMethods = connectionHandler.getLoadMonitor().getRunningMethods();
@@ -95,7 +96,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             bindParameters(executionInput, preparedStatement);
 
             MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
-            int timeout = debug ?
+            int timeout = executionType.isDebug() ?
                     methodExecutionSettings.getDebugExecutionTimeout() :
                     methodExecutionSettings.getExecutionTimeout();
 
@@ -133,11 +134,9 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 }
             }
 
-            if (debug) {
-                connectionHandler.dropPoolConnection(connection);
-            } else  if (usePoolConnection) {
+            if (executionType == ExecutionType.DEBUG)
+                connectionHandler.dropPoolConnection(connection); else
                 connectionHandler.freePoolConnection(connection);
-            }
         }
     }
 

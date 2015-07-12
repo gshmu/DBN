@@ -232,8 +232,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     //showErrorDialog(e);
                 } finally {
                     status.PROCESS_IS_TERMINATED = true;
-                    releaseTargetConnection();
                     DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
+                    releaseTargetConnection();
                 }
             }
         }.start();
