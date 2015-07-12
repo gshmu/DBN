@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.debugger.jdbc.config.ui;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class DBProgramRunConfigurationEditorForm<T extends DBProgramRunConfiguration> extends DBNFormImpl {
     private T configuration;

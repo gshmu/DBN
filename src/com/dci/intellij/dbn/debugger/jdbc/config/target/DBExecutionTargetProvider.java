@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.debugger.jdbc.config.target;
 
-import java.util.Collections;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
 import com.intellij.execution.ExecutionTarget;
 import com.intellij.execution.ExecutionTargetProvider;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
 
 public class DBExecutionTargetProvider extends ExecutionTargetProvider{
     @NotNull

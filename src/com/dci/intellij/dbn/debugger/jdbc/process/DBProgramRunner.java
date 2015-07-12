@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdbc.process;
 
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -13,7 +9,8 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
-import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.jdbc.config.ui.CompileDebugDependenciesDialog;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
@@ -37,6 +34,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericProgramRunner {
     @Nullable
@@ -224,7 +225,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
 
                 if (continueExecution) {
                     RunContentDescriptor reuseContent = environment.getContentToReuse();
-                    DBProgramDebugProcessStarter debugProcessStarter = createProcessStarter(connectionHandler);
+                    DBDebugProcessStarter debugProcessStarter = createProcessStarter(connectionHandler);
                     XDebugSession session = null;
                     try {
                         session = XDebuggerManager.getInstance(project).startSession(
@@ -252,7 +253,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
         }.start();
     }
 
-    protected abstract DBProgramDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler);
+    protected abstract DBDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler);
 
     protected abstract boolean promptExecutionDialog(T executionInput);
 }

@@ -1,13 +1,13 @@
-package com.dci.intellij.dbn.debugger.jdbc.breakpoint;
+package com.dci.intellij.dbn.debugger.common.breakpoint;
 
-public class DBProgramBreakpointState {
+public class DBBreakpointState {
     private boolean enabled;
 
-    public DBProgramBreakpointState() {
+    public DBBreakpointState() {
         enabled = true;
     }
 
-    public DBProgramBreakpointState(boolean enabled) {
+    public DBBreakpointState(boolean enabled) {
         this.enabled = enabled;
     }
 

@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.debugger;
 
-import org.jetbrains.annotations.Nullable;
-
+import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
+import org.jetbrains.annotations.Nullable;
 
-public class DBProgramDebugUtil {
+public class DBDebugUtil {
 
     public static @Nullable DBSchemaObject getObject(@Nullable XSourcePosition sourcePosition) {
         if (sourcePosition != null) {
@@ -37,5 +37,17 @@ public class DBProgramDebugUtil {
             return virtualFile;
         }
         return null;
+    }
+
+
+    @Nullable
+    public static DBEditableObjectVirtualFile getMainDatabaseFile(DBMethod method) {
+        DBSchemaObject schemaObject = getMainDatabaseObject(method);
+        return schemaObject == null ? null : schemaObject.getVirtualFile();
+    }
+
+    @Nullable
+    public static DBSchemaObject getMainDatabaseObject(DBMethod method) {
+        return method != null && method.isProgramMethod() ? method.getProgram() : method;
     }
 }

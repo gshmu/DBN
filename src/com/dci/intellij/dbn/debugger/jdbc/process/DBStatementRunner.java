@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.debugger.jdbc.process;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.intellij.execution.configurations.RunProfile;
+import org.jetbrains.annotations.NotNull;
 
 public class DBStatementRunner extends DBProgramRunner<StatementExecutionInput> {
     public static final String RUNNER_ID = "DBNStatementRunner";
@@ -19,7 +19,7 @@ public class DBStatementRunner extends DBProgramRunner<StatementExecutionInput> 
     }
 
     @Override
-    protected DBProgramDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler) {
+    protected DBDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler) {
         return new DBStatementProcessStarter(connectionHandler);
     }
 

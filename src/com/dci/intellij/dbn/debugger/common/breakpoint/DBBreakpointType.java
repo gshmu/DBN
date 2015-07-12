@@ -1,7 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdbc.breakpoint;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+package com.dci.intellij.dbn.debugger.common.breakpoint;
 
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBProgramDebuggerEditorsProvider;
@@ -22,9 +19,11 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class DBProgramBreakpointType extends XLineBreakpointType<DBProgramBreakpointProperties> {
-    public DBProgramBreakpointType() {
+public class DBBreakpointType extends XLineBreakpointType<DBBreakpointProperties> {
+    public DBBreakpointType() {
         super("db-program", "DB-Program Breakpoint");
     }
 
@@ -80,8 +79,8 @@ public class DBProgramBreakpointType extends XLineBreakpointType<DBProgramBreakp
     }
 
     @Override
-    public DBProgramBreakpointProperties createBreakpointProperties(@NotNull VirtualFile file, int line) {
-        return new DBProgramBreakpointProperties(file, line);
+    public DBBreakpointProperties createBreakpointProperties(@NotNull VirtualFile file, int line) {
+        return new DBBreakpointProperties(file, line);
     }
 
     @Override
@@ -91,7 +90,7 @@ public class DBProgramBreakpointType extends XLineBreakpointType<DBProgramBreakp
 
     @Nullable
     @Override
-    public XDebuggerEditorsProvider getEditorsProvider(@NotNull XLineBreakpoint<DBProgramBreakpointProperties> breakpoint, @NotNull Project project) {
+    public XDebuggerEditorsProvider getEditorsProvider(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, @NotNull Project project) {
         return DBProgramDebuggerEditorsProvider.INSTANCE;
     }
 

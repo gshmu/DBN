@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.Icon;
 import java.sql.SQLException;
 
-public class DBMethodJdwpDebugProcess extends DBProgramJdwpDebugProcess<MethodExecutionInput>{
+public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecutionInput> {
     public DBMethodJdwpDebugProcess(@NotNull XDebugSession session, @NotNull DebuggerSession debuggerSession, ConnectionHandler connectionHandler) {
         super(session, debuggerSession, connectionHandler);
     }
@@ -56,6 +57,15 @@ public class DBMethodJdwpDebugProcess extends DBProgramJdwpDebugProcess<MethodEx
         MethodExecutionInput methodExecutionInput = getExecutionInput();
         MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
         methodExecutionManager.debugExecute(methodExecutionInput, getTargetConnection(), true);
+    }
+
+    @Override
+    protected void registerDefaultBreakpoint() {
+        MethodExecutionInput methodExecutionInput = getExecutionInput();
+        DBMethod method = methodExecutionInput.getMethod();
+        if (method != null) {
+            registerDefaultBreakpoint(method);
+        }
     }
 
     @Override

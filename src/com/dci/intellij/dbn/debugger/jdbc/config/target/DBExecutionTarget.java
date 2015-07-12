@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.debugger.jdbc.config.target;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
+import com.intellij.execution.ExecutionTarget;
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.debugger.config.DBProgramRunConfiguration;
-import com.intellij.execution.ExecutionTarget;
-import com.intellij.execution.RunnerAndConfigurationSettings;
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBExecutionTarget extends ExecutionTarget{
     public static DBExecutionTarget INSTANCE = new DBExecutionTarget();

@@ -1,23 +1,13 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
-import com.dci.intellij.dbn.debugger.DBProgramDebugUtil;
+import com.dci.intellij.dbn.debugger.DBDebugUtil;
+import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBProgramDebuggerEvaluator;
-import com.dci.intellij.dbn.debugger.jdbc.process.DBProgramDebugProcess;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -44,15 +34,25 @@ import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.intellij.xdebugger.impl.XSourcePositionImpl;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DBProgramDebugStackFrame extends XStackFrame {
-    private DBProgramDebugProcess debugProcess;
+    private DBJdbcDebugProcess debugProcess;
     private XSourcePosition sourcePosition;
     private int index;
     private DBProgramDebuggerEvaluator evaluator;
     private Map<String, DBProgramDebugValue> valuesMap;
 
-    public DBProgramDebugStackFrame(DBProgramDebugProcess debugProcess, DebuggerRuntimeInfo runtimeInfo, int index) {
+    public DBProgramDebugStackFrame(DBJdbcDebugProcess debugProcess, DebuggerRuntimeInfo runtimeInfo, int index) {
         this.index = index;
         VirtualFile virtualFile = debugProcess.getRuntimeInfoFile(runtimeInfo);
 
@@ -68,7 +68,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
         sourcePosition = XSourcePositionImpl.create(virtualFile, lineNumber);
     }
 
-    public DBProgramDebugProcess getDebugProcess() {
+    public DBJdbcDebugProcess getDebugProcess() {
         return debugProcess;
     }
 
@@ -101,9 +101,9 @@ public class DBProgramDebugStackFrame extends XStackFrame {
     }
 
     public void customizePresentation(@NotNull ColoredTextContainer component) {
-        VirtualFile virtualFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
+        VirtualFile virtualFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
 
-        DBSchemaObject object = DBProgramDebugUtil.getObject(sourcePosition);
+        DBSchemaObject object = DBDebugUtil.getObject(sourcePosition);
         if (object != null) {
             String frameName = object.getName();
             Icon frameIcon = object.getIcon();
@@ -162,7 +162,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
         values.add(frameInfoValue);
         valuesMap.put(frameInfoValue.getName(), frameInfoValue);
 
-        VirtualFile sourceCodeFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
+        VirtualFile sourceCodeFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
 
         Project project = getDebugProcess().getProject();
         Document document = DocumentUtil.getDocument(sourceCodeFile);

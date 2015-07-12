@@ -8,7 +8,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
 import org.jetbrains.annotations.NotNull;
 
-public class DBProgramDebugTabLayouter extends XDebugTabLayouter {
+public class DBDebugTabLayouter extends XDebugTabLayouter {
     @NotNull
     @Override
     public Content registerConsoleContent(@NotNull RunnerLayoutUi ui, @NotNull ExecutionConsole console) {
