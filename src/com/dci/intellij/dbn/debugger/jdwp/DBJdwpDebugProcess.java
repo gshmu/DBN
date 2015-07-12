@@ -114,6 +114,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     progressIndicator.setText("Initializing debugger target session");
                     debuggerInterface.initializeJdwpSession(targetConnection, Inet4Address.getLocalHost().getHostAddress(), "4000");
 
+                    status.CAN_SET_BREAKPOINTS = true;
                     registerBreakpoints(new ExecuteTargetTask());
                 } catch (Exception e) {
                     status.SESSION_INITIALIZATION_THREW_EXCEPTION = true;
