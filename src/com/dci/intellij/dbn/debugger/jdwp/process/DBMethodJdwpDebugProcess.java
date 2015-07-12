@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.debugger.jdwp.process;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
+import com.dci.intellij.dbn.execution.ExecutionType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -56,7 +57,7 @@ public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecution
     protected void doExecuteTarget() throws SQLException {
         MethodExecutionInput methodExecutionInput = getExecutionInput();
         MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
-        methodExecutionManager.debugExecute(methodExecutionInput, getTargetConnection(), true);
+        methodExecutionManager.debugExecute(methodExecutionInput, getTargetConnection(), ExecutionType.DEBUG_JWDP);
     }
 
     @Override
