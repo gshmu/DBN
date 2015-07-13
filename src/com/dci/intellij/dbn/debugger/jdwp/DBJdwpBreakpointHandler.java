@@ -24,6 +24,7 @@ import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequestManager;
 
 public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProcess> {
@@ -58,7 +59,9 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
 
                     List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
                     if (referenceTypes == null || referenceTypes.size() == 0) {
-                        eventRequestManager.createClassPrepareRequest().addClassFilter(programIdentifier);
+                        ClassPrepareRequest classPrepareRequest = eventRequestManager.createClassPrepareRequest();
+                        classPrepareRequest.enable();
+                        classPrepareRequest.addClassFilter(programIdentifier);
                         referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
                     }
 
