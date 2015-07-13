@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.database;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.database.common.debug.BasicOperationInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
@@ -10,9 +13,8 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
-
-import java.sql.Connection;
-import java.sql.SQLException;
+import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public interface DatabaseDebuggerInterface extends DatabaseInterface{
 
@@ -70,4 +72,6 @@ public interface DatabaseDebuggerInterface extends DatabaseInterface{
     String getDebugConsoleTemplate(CodeStyleCaseSettings settings);
 
     String getRuntimeEventReason(int code);
+
+    String getJdwpProgramIdentifier(DBObjectType objectType, DBContentType contentType, String qualifiedObjectName);
 }

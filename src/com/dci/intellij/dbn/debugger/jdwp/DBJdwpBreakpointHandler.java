@@ -1,9 +1,16 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
+import java.sql.SQLException;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.events.DebuggerCommandImpl;
 import com.intellij.debugger.engine.requests.RequestManagerImpl;
@@ -18,10 +25,6 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.EventRequestManager;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.SQLException;
-import java.util.List;
 
 public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProcess> {
     public static final Key<Integer> BREAKPOINT_ID_KEY = new Key<Integer>("BREAKPOINT_ID");
@@ -33,18 +36,32 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
     }
 
     @Override
-    protected BreakpointInfo addBreakpoint(@NotNull final XLineBreakpoint<DBBreakpointProperties> breakpoint, DBSchemaObject object) throws Exception {
+    protected BreakpointInfo addBreakpoint(@NotNull final XLineBreakpoint<DBBreakpointProperties> breakpoint, final DBSchemaObject object) throws Exception {
         final DebugProcessImpl debugProcess = getDebugProcess().getDebuggerSession().getProcess();
         debugProcess.getManagerThread().invokeAndWait(new DebuggerCommandImpl() {
             @Override
             protected void action() throws Exception {
                 try {
+
                     VirtualMachineProxyImpl virtualMachineProxy = debugProcess.getVirtualMachineProxy();
                     RequestManagerImpl requestsManager = debugProcess.getRequestsManager();
                     EventRequestManager eventRequestManager = virtualMachineProxy.eventRequestManager();
+                    DBContentType contentType = DBContentType.CODE;
+                    VirtualFile virtualFile = getVirtualFile(breakpoint);
+                    if (virtualFile instanceof DBSourceCodeVirtualFile) {
+                        DBSourceCodeVirtualFile sourceCodeVirtualFile = (DBSourceCodeVirtualFile) virtualFile;
+                        contentType = sourceCodeVirtualFile.getContentType();
+                    }
 
-                    eventRequestManager.createClassPrepareRequest().addClassFilter("$Oracle.Procedure.HR.ADD_JOB_HISTORY");
-                    List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName("$Oracle.Procedure.HR.ADD_JOB_HISTORY");
+                    DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface(object);
+                    String programIdentifier = debuggerInterface.getJdwpProgramIdentifier(object.getObjectType(), contentType, object.getQualifiedName());
+
+                    List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
+                    if (referenceTypes == null || referenceTypes.size() == 0) {
+                        eventRequestManager.createClassPrepareRequest().addClassFilter(programIdentifier);
+                        referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
+                    }
+
                     if (referenceTypes != null && referenceTypes.size() > 0) {
                         ReferenceType referenceType = referenceTypes.get(0);
                         List<Location> locations = referenceType.locationsOfLine(breakpoint.getLine() + 1);
@@ -57,6 +74,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
 
                             breakpointRequest.addThreadFilter(threadReference);
                             breakpointRequest.enable();
+                            Location breakpointLocation = breakpointRequest.location();
                             System.out.println(breakpointRequest);
                         }
 

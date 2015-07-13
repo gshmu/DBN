@@ -1,9 +1,13 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
+import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -21,9 +25,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.SQLException;
 
 public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBreakpointHandler<XLineBreakpoint<DBBreakpointProperties>> {
     public static final Key<Integer> BREAKPOINT_ID_KEY = new Key<Integer>("BREAKPOINT_ID");
@@ -134,6 +135,10 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
     }
 
     protected abstract BreakpointInfo addBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, DBSchemaObject object) throws Exception;
+
+    protected DatabaseDebuggerInterface getDebuggerInterface(DBSchemaObject object) {
+        return object.getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
+    }
 
     protected abstract void removeBreakpoint(boolean temporary, Integer breakpointId) throws SQLException;
 

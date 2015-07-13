@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.database.oracle;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
@@ -14,10 +17,8 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-
+import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import static com.dci.intellij.dbn.editor.code.GuardedBlockMarker.END_OFFSET_IDENTIFIER;
 import static com.dci.intellij.dbn.editor.code.GuardedBlockMarker.START_OFFSET_IDENTIFIER;
 
@@ -192,5 +193,19 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
         }
 
         return null;
+    }
+
+    @Override
+    public String getJdwpProgramIdentifier(DBObjectType objectType, DBContentType contentType, String qualifiedObjectName) {
+        String objectTypeName = "Unknown";
+        switch (objectType) {
+            case PACKAGE: objectTypeName = contentType == DBContentType.CODE_SPEC ? "PackageSpec" : "PackageBody"; break;
+            case FUNCTION: objectTypeName = "Function"; break;
+            case PROCEDURE: objectTypeName = "Procedure"; break;
+            case DATABASE_TRIGGER: objectTypeName = "Trigger"; break;
+            case DATASET_TRIGGER: objectTypeName = "Trigger"; break;
+            case TYPE: objectTypeName = contentType == DBContentType.CODE_SPEC ? "TypeSpec" : "TypeBody"; break;
+        }
+        return "$Oracle." + objectTypeName + "." + qualifiedObjectName;
     }
 }
