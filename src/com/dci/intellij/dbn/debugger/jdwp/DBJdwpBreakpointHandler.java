@@ -60,8 +60,10 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                     List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
                     if (referenceTypes == null || referenceTypes.size() == 0) {
                         ClassPrepareRequest classPrepareRequest = eventRequestManager.createClassPrepareRequest();
-                        classPrepareRequest.enable();
                         classPrepareRequest.addClassFilter(programIdentifier);
+                        if (!classPrepareRequest.isEnabled()) {
+                            classPrepareRequest.enable();
+                        }
                         referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
                     }
 

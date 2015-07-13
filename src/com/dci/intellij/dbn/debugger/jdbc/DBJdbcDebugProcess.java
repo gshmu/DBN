@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.debugger.jdbc;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
@@ -20,10 +29,10 @@ import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerSessionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
+import com.dci.intellij.dbn.debugger.DBDebugOperationTask;
 import com.dci.intellij.dbn.debugger.DBDebugTabLayouter;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
-import com.dci.intellij.dbn.debugger.DebugOperationThread;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
@@ -60,15 +69,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebugProcess implements DBDebugProcess {
     protected Connection targetConnection;
@@ -206,8 +206,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     private void executeTarget() {
         final Project project = getProject();
-        new DebugOperationThread(getProject(), "execute target program") {
-            public void executeOperation() throws SQLException {
+        new DBDebugOperationTask(getProject(), "execute target program") {
+            public void execute() throws SQLException {
 
                 if (status.PROCESS_IS_TERMINATING) return;
                 if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
@@ -386,8 +386,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     @Override
     public void startStepOver() {
-        new DebugOperationThread(getProject(), "step over") {
-            public void executeOperation() throws SQLException {
+        new DBDebugOperationTask(getProject(), "step over") {
+            public void execute() throws Exception {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.stepOver(debugConnection);
                 suspendSession();
@@ -397,8 +397,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     @Override
     public void startStepInto() {
-        new DebugOperationThread(getProject(), "step into") {
-            public void executeOperation() throws SQLException {
+        new DBDebugOperationTask(getProject(), "step into") {
+            public void execute() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.stepInto(debugConnection);
                 suspendSession();
@@ -408,8 +408,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     @Override
     public void startStepOut() {
-        new DebugOperationThread(getProject(), "step out") {
-            public void executeOperation() throws SQLException {
+        new DBDebugOperationTask(getProject(), "step out") {
+            public void execute() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.stepOut(debugConnection);
                 suspendSession();
@@ -419,8 +419,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     @Override
     public void resume() {
-        new DebugOperationThread(getProject(), "resume execution") {
-            public void executeOperation() throws SQLException {
+        new DBDebugOperationTask(getProject(), "resume execution") {
+            public void execute() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.resumeExecution(debugConnection);
                 suspendSession();
@@ -430,8 +430,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     @Override
     public void runToPosition(@NotNull final XSourcePosition position) {
-        new DebugOperationThread(getProject(), "run to position") {
-            public void executeOperation() throws SQLException {
+        new DBDebugOperationTask(getProject(), "run to position") {
+            public void execute() throws SQLException {
                 DBSchemaObject object = DBDebugUtil.getObject(position);
                 if (object != null) {
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
@@ -457,8 +457,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     @Override
     public void startPausing() {
         // NOT SUPPORTED!!!
-        new DebugOperationThread(getProject(), "run to position") {
-            public void executeOperation() throws SQLException {
+        new DBDebugOperationTask(getProject(), "run to position") {
+            public void execute() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
                 suspendSession();

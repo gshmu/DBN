@@ -130,7 +130,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                         new SimpleTask() {
                                             @Override
                                             protected void execute() {
-                                                if (getOption() == 0) {
+                                                if (getHandle() == 0) {
                                                     executeScript(virtualFile);
                                                 }
                                             }

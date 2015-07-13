@@ -100,7 +100,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
         SimpleTask deleteTask = new SimpleTask() {
             @Override
             protected boolean canExecute() {
-                return getOption() == 0;
+                return getHandle() == 0;
             }
 
             @Override
