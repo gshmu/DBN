@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
+import java.net.Inet4Address;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -27,6 +33,7 @@ import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.debugger.engine.JavaDebugProcess;
 import com.intellij.debugger.impl.DebuggerSession;
+import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -37,12 +44,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
-import org.jetbrains.annotations.NotNull;
-
-import java.net.Inet4Address;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     protected Connection targetConnection;
@@ -67,6 +68,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         breakpointHandler = new DBJdwpBreakpointHandler(session, this);
         breakpointHandlers = new DBJdwpBreakpointHandler[]{breakpointHandler};
     }
+
+
 
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
@@ -100,6 +103,11 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     }
 
     @Override
+    public boolean checkCanInitBreakpoints() {
+        return status.CAN_SET_BREAKPOINTS;
+    }
+
+    @Override
     public void sessionInitialized() {
         final Project project = getProject();
         new BackgroundTask(project, "Initialize debug environment", true) {
@@ -113,6 +121,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                     progressIndicator.setText("Initializing debugger target session");
                     debuggerInterface.initializeJdwpSession(targetConnection, Inet4Address.getLocalHost().getHostAddress(), "4000");
+                    getSession().getConsoleView().print("JWDP Session initialized", ConsoleViewContentType.SYSTEM_OUTPUT);
 
                     status.CAN_SET_BREAKPOINTS = true;
                     registerBreakpoints(new ExecuteTargetTask());
@@ -201,7 +210,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                         MessageUtil.showErrorDialog(project, "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
                     } finally {
                         status.TARGET_EXECUTION_TERMINATED = true;
-                        getSession().stop();
+                        DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                        debuggerInterface.disconnectJdwpSession(targetConnection);
                     }
                 }
             }.start();
@@ -225,9 +235,11 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 try {
                     status.CAN_SET_BREAKPOINTS = false;
-                    DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                    if (!status.TARGET_EXECUTION_TERMINATED) {
+                        DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                        debuggerInterface.disconnectJdwpSession(targetConnection);
+                    }
 
-                    debuggerInterface.disconnectJdwpSession(targetConnection);
                 } catch (final SQLException e) {
                     NotificationUtil.sendErrorNotification(getProject(), "Error stopping debugger.", e.getMessage());
                     //showErrorDialog(e);
