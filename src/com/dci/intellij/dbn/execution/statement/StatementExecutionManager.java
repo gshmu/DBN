@@ -293,7 +293,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, new SimpleTask() {
                             @Override
                             protected void execute() {
-                                int option = getOption();
+                                int option = getHandle();
                                 if (option == 0 || option == 1) {
                                     int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();
                                     List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(fileEditor, offset);

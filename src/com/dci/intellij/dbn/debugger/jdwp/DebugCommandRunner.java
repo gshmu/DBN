@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger;
+package com.dci.intellij.dbn.debugger.jdwp;
 
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.events.DebuggerCommandImpl;

@@ -10,16 +10,15 @@ import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.debugger.DBDebugOperationTask;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
-import com.dci.intellij.dbn.debugger.DebugOperationThread;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
@@ -193,28 +192,25 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         }
     }
 
-    private class ExecuteTargetTask extends SimpleTask {
-        @Override
-        protected void execute() {
-            final Project project = getProject();
-            new DebugOperationThread(project, "execute target program") {
-                public void executeOperation() throws SQLException {
+    private class ExecuteTargetTask extends DBDebugOperationTask {
+        public ExecuteTargetTask() {
+            super(getProject(), "execute method");
+        }
 
-                    if (status.PROCESS_IS_TERMINATING) return;
-                    if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
-                    try {
-                        status.TARGET_EXECUTION_STARTED = true;
-                        doExecuteTarget();
-                    } catch (SQLException e){
-                        status.TARGET_EXECUTION_THREW_EXCEPTION = true;
-                        MessageUtil.showErrorDialog(project, "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
-                    } finally {
-                        status.TARGET_EXECUTION_TERMINATED = true;
-                        DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                        debuggerInterface.disconnectJdwpSession(targetConnection);
-                    }
-                }
-            }.start();
+        public void execute() throws SQLException {
+            if (status.PROCESS_IS_TERMINATING) return;
+            if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
+            try {
+                status.TARGET_EXECUTION_STARTED = true;
+                doExecuteTarget();
+            } catch (SQLException e){
+                status.TARGET_EXECUTION_THREW_EXCEPTION = true;
+                MessageUtil.showErrorDialog(getProject(), "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
+            } finally {
+                status.TARGET_EXECUTION_TERMINATED = true;
+                DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                debuggerInterface.disconnectJdwpSession(targetConnection);
+            }
         }
     }
 
