@@ -57,7 +57,7 @@ public class ConnectionPool implements Disposable {
                         standaloneConnection = new ConnectionWrapper(connection);
                         NotificationUtil.sendInfoNotification(
                                 getProject(),
-                                Constants.DBN_TITLE_PREFIX + "Connected",
+                                Constants.DBN_TITLE_PREFIX + "Connection",
                                 "Connected to database \"{0}\"",
                                 connectionHandler.getName());
                     } finally {

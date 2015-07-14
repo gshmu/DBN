@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.DBDebugOperationTask;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -52,10 +53,12 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
     private DBJdwpBreakpointHandler breakpointHandler;
     private DBJdwpBreakpointHandler[] breakpointHandlers;
+    private DBDebugConsoleLogger console;
 
 
     protected DBJdwpDebugProcess(@NotNull XDebugSession session, DebuggerSession debuggerSession, ConnectionHandler connectionHandler) {
         super(session, debuggerSession);
+        console = new DBDebugConsoleLogger(session);
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
         Project project = session.getProject();
         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
@@ -106,6 +109,10 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         return status.CAN_SET_BREAKPOINTS;
     }
 
+    public DBDebugConsoleLogger getConsole() {
+        return console;
+    }
+
     @Override
     public void sessionInitialized() {
         final Project project = getProject();
@@ -121,7 +128,6 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     progressIndicator.setText("Initializing debugger target session");
                     debuggerInterface.initializeJdwpSession(targetConnection, Inet4Address.getLocalHost().getHostAddress(), "4000");
                     getSession().getConsoleView().print("JWDP Session initialized", ConsoleViewContentType.SYSTEM_OUTPUT);
-                    //getSession().getConsoleView().
 
                     status.CAN_SET_BREAKPOINTS = true;
                     registerBreakpoints(new ExecuteTargetTask());

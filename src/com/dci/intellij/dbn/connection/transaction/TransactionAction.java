@@ -53,7 +53,7 @@ public enum TransactionAction implements Serializable {
             }),
 
     DISCONNECT_IDLE(
-            "Idle Disconnect",
+            "Connection",
             NotificationType.WARNING, "Disconnected from \"{0}\" because it has exceeded the configured idle timeout.",
             "Error disconnecting from \"{0}\". Details: {1}",
             true,
