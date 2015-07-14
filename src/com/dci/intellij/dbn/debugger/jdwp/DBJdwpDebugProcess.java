@@ -121,6 +121,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     progressIndicator.setText("Initializing debugger target session");
                     debuggerInterface.initializeJdwpSession(targetConnection, Inet4Address.getLocalHost().getHostAddress(), "4000");
                     getSession().getConsoleView().print("JWDP Session initialized", ConsoleViewContentType.SYSTEM_OUTPUT);
+                    //getSession().getConsoleView().
 
                     status.CAN_SET_BREAKPOINTS = true;
                     registerBreakpoints(new ExecuteTargetTask());
