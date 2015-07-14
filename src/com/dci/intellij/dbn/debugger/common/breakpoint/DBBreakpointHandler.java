@@ -208,9 +208,10 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
     @NotNull
     private String getBreakpointDesc(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, VirtualFile virtualFile) {
         DBSchemaObject object = getObject(virtualFile);
+        int line = breakpoint.getLine() + 1;
         return object == null ?
-                virtualFile.getName() + " Line " + breakpoint.getLine() :
-                object.getQualifiedName() + " Line " + breakpoint.getLine();
+                virtualFile.getName() + " Line " + line :
+                object.getQualifiedName() + " Line " + line;
     }
 
     @Nullable
