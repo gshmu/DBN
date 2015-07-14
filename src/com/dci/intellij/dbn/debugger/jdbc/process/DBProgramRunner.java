@@ -31,6 +31,8 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.history.LocalHistory;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -242,8 +244,17 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                         }
 
                         ExecutionManager.getInstance(project).getContentManager().showRunContent(executor, descriptor);
+
                         ProcessHandler processHandler = descriptor.getProcessHandler();
-                        if (processHandler != null) processHandler.startNotify();
+                        if (processHandler != null) {
+                            processHandler.startNotify();
+                            ExecutionConsole executionConsole = descriptor.getExecutionConsole();
+                            if (executionConsole instanceof ConsoleView) {
+                                ConsoleView consoleView = (ConsoleView) executionConsole;
+                                consoleView.attachToProcess(processHandler);
+                            }
+                        }
+
                     } catch (ExecutionException e) {
                         NotificationUtil.sendErrorNotification(project, "Debugger", "Error initializing debug environment");
                     }

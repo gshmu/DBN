@@ -29,6 +29,7 @@ import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerSessionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
+import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.DBDebugOperationTask;
 import com.dci.intellij.dbn.debugger.DBDebugTabLayouter;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
@@ -82,10 +83,12 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     private transient DebuggerRuntimeInfo runtimeInfo;
     private transient ExecutionBacktraceInfo backtraceInfo;
+    private DBDebugConsoleLogger console;
 
 
     public DBJdbcDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
         super(session);
+        console = new DBDebugConsoleLogger(session);
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
         Project project = session.getProject();
         DatabaseDebuggerManager.getInstance(project).registerDebugSession(connectionHandler);
@@ -135,22 +138,32 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     @Override
+    public DBDebugConsoleLogger getConsole() {
+        return console;
+    }
+
+    @Override
     public void sessionInitialized() {
         final Project project = getProject();
         new BackgroundTask(project, "Initialize debug environment", true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 try {
+                    console.system("Initializing debug environment");
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionContext().getTargetSchema());
                     targetConnection.setAutoCommit(false);
                     debugConnection = connectionHandler.getPoolConnection();
+                    console.system("Debug connections allocated");
 
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                     progressIndicator.setText("Initializing debugger target session");
+
                     DebuggerSessionInfo sessionInfo = debuggerInterface.initializeSession(targetConnection);
+                    console.system("Debug target session initialized");
                     debuggerInterface.enableDebugging(targetConnection);
                     debuggerInterface.attachSession(sessionInfo.getSessionId(), debugConnection);
+                    console.system("Attached debug session");
 
                     synchronizeSession();
                 } catch (SQLException e) {
@@ -183,11 +196,13 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                                     runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
                                     runtimeInfo = debuggerInterface.stepOver(debugConnection);
                                     progressIndicator.setText("Suspending session");
+                                    console.system("Debug session synchronized");
                                     suspendSession();
                                 }
 
                             } catch (SQLException e) {
                                 status.SESSION_INITIALIZATION_THREW_EXCEPTION = true;
+                                console.system("Error synchronizing debug session: " + e.getMessage());
                                 MessageUtil.showErrorDialog(project, "Could not initialize debug environment on connection \"" + getConnectionHandler().getName() + "\". ", e);
                                 session.stop();
                             }
@@ -213,9 +228,12 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
                 try {
                     status.TARGET_EXECUTION_STARTED = true;
+                    console.system("Target program execution started: " + getExecutionInput().getExecutionContext().getTargetName());
                     doExecuteTarget();
+                    console.system("Target program execution ended");
                 } catch (SQLException e){
                     status.TARGET_EXECUTION_THREW_EXCEPTION = true;
+                    console.error("Target program execution failed. " + e.getMessage());
                     // if the method execution threw exception, the debugger-off statement is not reached,
                     // hence the session will hag as debuggable. To avoid this, disable debugging has
                     // to explicitly be called here
@@ -240,6 +258,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
      * otherwise they do not get valid ids
      */
     private void registerBreakpoints(final RunnableTask callback) {
+        console.system("Registering breakpoints");
         final Collection<XLineBreakpoint> breakpoints = new ReadActionRunner<Collection<XLineBreakpoint>>() {
             @Override
             protected Collection<XLineBreakpoint> run() {
@@ -258,6 +277,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 }
 
                 registerDefaultBreakpoint();
+                console.system("Done registering breakpoints");
                 callback.start();
             }
         }.start();

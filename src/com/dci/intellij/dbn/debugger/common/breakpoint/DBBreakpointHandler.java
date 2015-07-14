@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.debugger.common.breakpoint;
 
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -9,6 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
+import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
@@ -50,6 +52,8 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
     @Override
     public void registerBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) {
         DBDebugProcess debugProcess = getDebugProcess();
+        DBDebugConsoleLogger console = debugProcess.getConsole();
+
         XDebugSession session = getSession();
         if (!debugProcess.getStatus().CAN_SET_BREAKPOINTS) return;
 
@@ -64,17 +68,14 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
             ConnectionHandler breakpointConnectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
 
             if (breakpointConnectionHandler == connectionHandler) {
-                DBSchemaObject object = null;
-                if (virtualFile instanceof DBEditableObjectVirtualFile) {
-                    DBEditableObjectVirtualFile objectVirtualFile = (DBEditableObjectVirtualFile) virtualFile;
-                    object = objectVirtualFile.getObject();
-                }
+                String breakpointDesc = getBreakpointDesc(breakpoint, virtualFile);
 
                 try {
                     if (getBreakpointId(breakpoint) != null) {
                         enableBreakpoint(breakpoint);
 
                     } else {
+                        DBSchemaObject object = getObject(virtualFile);
                         BreakpointInfo breakpointInfo = addBreakpoint(breakpoint, object);
 
                         String error = breakpointInfo.getError();
@@ -82,6 +83,7 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
                             session.updateBreakpointPresentation( breakpoint,
                                     Icons.DEBUG_INVALID_BREAKPOINT,
                                     "INVALID: " + error);
+                            console.error("Error adding breakpoint: " + breakpointDesc + ". " + error);
                         } else {
                             Integer breakpointId = breakpointInfo.getBreakpointId();
                             breakpoint.putUserData(BREAKPOINT_ID_KEY, breakpointId);
@@ -95,15 +97,17 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
                                 }
 
                             }
+                            console.system("Breakpoint added: " + breakpointDesc);
                         }
                     }
 
                 } catch (SQLException e) {
+                    console.error("Error adding breakpoint: " + breakpointDesc + ". " + e.getMessage());
                     session.updateBreakpointPresentation( breakpoint,
                             Icons.DEBUG_INVALID_BREAKPOINT,
                             "INVALID: " + e.getMessage());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    console.error("Error adding breakpoint: " + breakpointDesc + ". " + e.getMessage());
                 }
             }
         }
@@ -117,15 +121,20 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
 
         Integer breakpointId = breakpoint.getUserData(BREAKPOINT_ID_KEY);
         if (breakpointId != null) {
+            DBDebugConsoleLogger console = debugProcess.getConsole();
+
             VirtualFile virtualFile = getVirtualFile(breakpoint);
             Project project = session.getProject();
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             ConnectionHandler connectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
             if (connectionHandler != null && connectionHandler == debugProcess.getConnectionHandler()) {
+                String breakpointDesc = getBreakpointDesc(breakpoint, virtualFile);
                 try {
                     removeBreakpoint(temporary, breakpointId);
+                    console.system("Breakpoint removed: " + breakpointDesc);
                 } catch (SQLException e) {
-                    NotificationUtil.sendErrorNotification(project, "Error stopping debugger session.", e.getMessage());
+                    console.error("Error removing breakpoint: " + breakpointDesc + ". " + e.getMessage());
+                    NotificationUtil.sendErrorNotification(project, "Error.", e.getMessage());
                 } finally {
                     breakpoint.putUserData(BREAKPOINT_ID_KEY, null);
                 }
@@ -134,7 +143,7 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
 
     }
 
-    protected abstract BreakpointInfo addBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, DBSchemaObject object) throws Exception;
+    protected abstract BreakpointInfo addBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, @Nullable DBSchemaObject object) throws Exception;
 
     protected DatabaseDebuggerInterface getDebuggerInterface(DBSchemaObject object) {
         return object.getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
@@ -169,6 +178,10 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
         }
     }
 
+    protected Integer getBreakpointId(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) {
+        return breakpoint.getUserData(BREAKPOINT_ID_KEY);
+    }
+
     public static VirtualFile getVirtualFile(XLineBreakpoint<DBBreakpointProperties> breakpoint) {
         VirtualFile breakpointFile = breakpoint.getUserData(BREAKPOINT_FILE_KEY);
         if (breakpointFile == null) {
@@ -191,7 +204,23 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
         return breakpointFile;
     }
 
-    protected Integer getBreakpointId(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) {
-        return breakpoint.getUserData(BREAKPOINT_ID_KEY);
+
+    @NotNull
+    private String getBreakpointDesc(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, VirtualFile virtualFile) {
+        DBSchemaObject object = getObject(virtualFile);
+        return object == null ?
+                virtualFile.getName() + " Line " + breakpoint.getLine() :
+                object.getQualifiedName() + " Line " + breakpoint.getLine();
     }
+
+    @Nullable
+    private DBSchemaObject getObject(VirtualFile virtualFile) {
+        DBSchemaObject object = null;
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
+            DBEditableObjectVirtualFile objectVirtualFile = (DBEditableObjectVirtualFile) virtualFile;
+            object = objectVirtualFile.getObject();
+        }
+        return object;
+    }
+
 }
