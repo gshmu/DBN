@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdbc.process;
+package com.dci.intellij.dbn.debugger.common.process;
 
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
-import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.jdbc.config.ui.CompileDebugDependenciesDialog;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.ExecutionInput;

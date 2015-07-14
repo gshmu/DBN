@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
+import com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugSuspendContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -37,13 +38,17 @@ import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugSession;
+import com.intellij.xdebugger.XDebugSessionAdapter;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import com.intellij.xdebugger.frame.XStackFrame;
+import com.intellij.xdebugger.frame.XSuspendContext;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     protected Connection targetConnection;
@@ -117,6 +122,14 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     public void sessionInitialized() {
         DebugProcessImpl debugProcess = getDebuggerSession().getProcess();
         debugProcess.setXDebugProcess(this);
+        getSession().addSessionListener(new XDebugSessionAdapter() {
+            @Override
+            public void sessionPaused() {
+                XSuspendContext suspendContext = getSession().getSuspendContext();
+                DBJdwpDebugSuspendContext debugSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this);
+                getSession().positionReached(debugSuspendContext);
+            }
+        });
         final Project project = getProject();
         new BackgroundTask(project, "Initialize debug environment", true) {
             @Override
@@ -269,4 +282,11 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         targetConnection = null;
     }
 
+    public VirtualFile getVirtualFile(XStackFrame stackFrame) {
+        return null;
+    }
+
+    public String getOwnerName(XStackFrame stackFrame) {
+        return null;
+    }
 }
