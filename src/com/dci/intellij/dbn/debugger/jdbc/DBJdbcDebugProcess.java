@@ -149,7 +149,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 try {
-                    console.system("Initializing debug environment");
+                    console.system("Initializing debug environment...");
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionContext().getTargetSchema());
                     targetConnection.setAutoCommit(false);
@@ -220,7 +220,6 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     private void executeTarget() {
-        final Project project = getProject();
         new DBDebugOperationTask(getProject(), "execute target program") {
             public void execute() throws SQLException {
 
@@ -242,7 +241,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                     //DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                     //debuggerInterface.disableDebugging(targetConnection);
 
-                    MessageUtil.showErrorDialog(project, "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
+                    MessageUtil.showErrorDialog(getProject(), "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
                 } finally {
                     status.TARGET_EXECUTION_TERMINATED = true;
                     getSession().stop();
@@ -324,6 +323,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     @Override
     public synchronized void stop() {
         if (!status.PROCESS_IS_TERMINATED && !status.PROCESS_IS_TERMINATING) {
+            console.system("Stopping debugger...");
             status.PROCESS_IS_TERMINATING = true;
             executionInput.getExecutionContext().setExecutionCancelled(!status.PROCESS_STOPPED_NORMALLY);
             stopDebugger();
@@ -347,14 +347,15 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                         runtimeInfo = debuggerInterface.stopExecution(debugConnection);
                     }
                     debuggerInterface.detachSession(debugConnection);
+                    console.system("Debugger session detached");
                 } catch (final SQLException e) {
-                    NotificationUtil.sendErrorNotification(getProject(), "Error stopping debugger.", e.getMessage());
-                    //showErrorDialog(e);
+                    console.error("Error detaching debugger session: " + e.getMessage());
                 } finally {
                     status.PROCESS_IS_TERMINATED = true;
                     releaseDebugConnection();
                     releaseTargetConnection();
                     DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
+                    console.system("Debugger stopped");
                 }
             }
         }.start();
