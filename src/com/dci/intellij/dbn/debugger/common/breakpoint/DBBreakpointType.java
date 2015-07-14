@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBProgramDebuggerEditorsProvider;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -19,8 +22,6 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class DBBreakpointType extends XLineBreakpointType<DBBreakpointProperties> {
     public DBBreakpointType() {
@@ -80,7 +81,7 @@ public class DBBreakpointType extends XLineBreakpointType<DBBreakpointProperties
 
     @Override
     public DBBreakpointProperties createBreakpointProperties(@NotNull VirtualFile file, int line) {
-        return new DBBreakpointProperties(file, line);
+        return null;//new DBBreakpointProperties(file, line);
     }
 
     @Override

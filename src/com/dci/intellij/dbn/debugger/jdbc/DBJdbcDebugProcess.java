@@ -176,88 +176,88 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     private void synchronizeSession() {
-        final XDebugSession session = getSession();
         final Project project = getProject();
         new BackgroundTask(project, "Initialize debug environment", true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                final DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-
                 if (status.PROCESS_IS_TERMINATING || status.TARGET_EXECUTION_TERMINATED) {
-                    session.stop();
+                    getSession().stop();
                 } else {
-                    BackgroundTask sessionSynchronizeTask = new BackgroundTask(project, "Synchronizing debug session", false) {
-                        @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                            try {
-                                executeTarget();
-                                Thread.sleep(1000);
-                                if (!status.TARGET_EXECUTION_THREW_EXCEPTION && !status.TARGET_EXECUTION_TERMINATED) {
-                                    runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
-                                    runtimeInfo = debuggerInterface.stepOver(debugConnection);
-                                    progressIndicator.setText("Suspending session");
-                                    console.system("Debug session synchronized");
-                                    suspendSession();
-                                }
-
-                            } catch (SQLException e) {
-                                status.SESSION_INITIALIZATION_THREW_EXCEPTION = true;
-                                console.system("Error synchronizing debug session: " + e.getMessage());
-                                MessageUtil.showErrorDialog(project, "Could not initialize debug environment on connection \"" + getConnectionHandler().getName() + "\". ", e);
-                                session.stop();
-                            }
-
-                        }
-                    };
-
 
                     status.CAN_SET_BREAKPOINTS = true;
                     progressIndicator.setText("Registering breakpoints");
-                    registerBreakpoints(sessionSynchronizeTask);
+                    registerBreakpoints(new SynchronizeSessionTask(project));
                 }
             }
         }.start();
     }
 
-    private void executeTarget() {
-        new DBDebugOperationTask(getProject(), "execute target program") {
-            public void execute() throws SQLException {
+    private class SynchronizeSessionTask extends BackgroundTask {
+        public SynchronizeSessionTask(Project project) {
+            super(project, "Synchronizing debug session", false);
+        }
 
-                if (status.PROCESS_IS_TERMINATING) return;
-                if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
-                try {
-                    status.TARGET_EXECUTION_STARTED = true;
-                    console.system("Target program execution started: " + getExecutionInput().getExecutionContext().getTargetName());
-                    doExecuteTarget();
-                    console.system("Target program execution ended");
-                } catch (SQLException e){
-                    status.TARGET_EXECUTION_THREW_EXCEPTION = true;
-                    console.error("Target program execution failed. " + e.getMessage());
-                    // if the method execution threw exception, the debugger-off statement is not reached,
-                    // hence the session will hag as debuggable. To avoid this, disable debugging has
-                    // to explicitly be called here
-
-                    // TODO: is this required? the target connection will be dropped anyways
-                    //DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                    //debuggerInterface.disableDebugging(targetConnection);
-
-                    MessageUtil.showErrorDialog(getProject(), "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
-                } finally {
-                    status.TARGET_EXECUTION_TERMINATED = true;
-                    getSession().stop();
+        @Override
+        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+            final DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+            try {
+                executeTargetTask.start();
+                Thread.sleep(1000);
+                if (!status.TARGET_EXECUTION_THREW_EXCEPTION && !status.TARGET_EXECUTION_TERMINATED) {
+                    runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
+                    runtimeInfo = debuggerInterface.stepOver(debugConnection);
+                    progressIndicator.setText("Suspending session");
+                    console.system("Debug session synchronized");
+                    suspendSession();
                 }
+
+            } catch (SQLException e) {
+                status.SESSION_INITIALIZATION_THREW_EXCEPTION = true;
+                console.system("Error synchronizing debug session: " + e.getMessage());
+                MessageUtil.showErrorDialog(getProject(), "Could not initialize debug environment on connection \"" + getConnectionHandler().getName() + "\". ", e);
+                getSession().stop();
             }
-        }.start();
+
+        }
     }
 
-    protected abstract void doExecuteTarget() throws SQLException;
+    private DBDebugOperationTask executeTargetTask = new DBDebugOperationTask(getProject(), "execute target program") {
+        @Override
+        public void execute() throws Exception {
+            if (status.PROCESS_IS_TERMINATING) return;
+            if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
+            try {
+                status.TARGET_EXECUTION_STARTED = true;
+                console.system("Target program execution started: " + getExecutionInput().getExecutionContext().getTargetName());
+                executeTarget();
+                console.system("Target program execution ended");
+            } catch (SQLException e) {
+                status.TARGET_EXECUTION_THREW_EXCEPTION = true;
+                console.error("Target program execution failed. " + e.getMessage());
+                // if the method execution threw exception, the debugger-off statement is not reached,
+                // hence the session will hag as debuggable. To avoid this, disable debugging has
+                // to explicitly be called here
+
+                // TODO: is this required? the target connection will be dropped anyways
+                //DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                //debuggerInterface.disableDebugging(targetConnection);
+
+                MessageUtil.showErrorDialog(getProject(), "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
+            } finally {
+                status.TARGET_EXECUTION_TERMINATED = true;
+                getSession().stop();
+            }
+        }
+    };
+
+    protected abstract void executeTarget() throws SQLException;
 
     /**
      * breakpoints need to be registered after the database session is started,
      * otherwise they do not get valid ids
      */
     private void registerBreakpoints(final RunnableTask callback) {
-        console.system("Registering breakpoints");
+        console.system("Registering breakpoints...");
         final Collection<XLineBreakpoint> breakpoints = new ReadActionRunner<Collection<XLineBreakpoint>>() {
             @Override
             protected Collection<XLineBreakpoint> run() {
@@ -323,8 +323,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     @Override
     public synchronized void stop() {
         if (!status.PROCESS_IS_TERMINATED && !status.PROCESS_IS_TERMINATING) {
-            console.system("Stopping debugger...");
             status.PROCESS_IS_TERMINATING = true;
+            console.system("Stopping debugger...");
             executionInput.getExecutionContext().setExecutionCancelled(!status.PROCESS_STOPPED_NORMALLY);
             stopDebugger();
         }

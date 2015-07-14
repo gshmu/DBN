@@ -31,9 +31,9 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.JavaDebugProcess;
 import com.intellij.debugger.impl.DebuggerSession;
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -115,6 +115,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
     @Override
     public void sessionInitialized() {
+        DebugProcessImpl debugProcess = getDebuggerSession().getProcess();
+        debugProcess.setXDebugProcess(this);
         final Project project = getProject();
         new BackgroundTask(project, "Initialize debug environment", true) {
             @Override
@@ -127,10 +129,10 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                     progressIndicator.setText("Initializing debugger target session");
                     debuggerInterface.initializeJdwpSession(targetConnection, Inet4Address.getLocalHost().getHostAddress(), "4000");
-                    getSession().getConsoleView().print("JWDP Session initialized", ConsoleViewContentType.SYSTEM_OUTPUT);
+                    console.system("Debug session initialized (JDWP)");
 
                     status.CAN_SET_BREAKPOINTS = true;
-                    registerBreakpoints(new ExecuteTargetTask());
+                    registerBreakpoints(executeTargetTask);
                 } catch (Exception e) {
                     status.SESSION_INITIALIZATION_THREW_EXCEPTION = true;
                     getSession().stop();
@@ -141,6 +143,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     }
 
     private void registerBreakpoints(final RunnableTask callback) {
+        console.system("Registering breakpoints...");
         final Collection<XLineBreakpoint> breakpoints = new ReadActionRunner<Collection<XLineBreakpoint>>() {
             @Override
             protected Collection<XLineBreakpoint> run() {
@@ -159,6 +162,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 }
 
                 registerDefaultBreakpoint();
+                console.system("Done registering breakpoints");
                 callback.start();
             }
         }.start();
@@ -199,12 +203,13 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         }
     }
 
-    private class ExecuteTargetTask extends DBDebugOperationTask {
-        public ExecuteTargetTask() {
-            super(getProject(), "execute method");
-        }
-
+    private DBDebugOperationTask executeTargetTask = new DBDebugOperationTask(getProject(), "execute method") {
         public void execute() throws SQLException {
+/*
+            final DebugProcessImpl debugProcess = getDebuggerSession().getProcess();
+            debugProcess.getVirtualMachineProxy().threadStarted();
+*/
+
             if (status.PROCESS_IS_TERMINATING) return;
             if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
             try {
@@ -219,7 +224,9 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 debuggerInterface.disconnectJdwpSession(targetConnection);
             }
         }
-    }
+    };
+
+
 
     protected abstract void doExecuteTarget() throws SQLException;
 
