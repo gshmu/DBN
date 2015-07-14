@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdbc.frame;
+package com.dci.intellij.dbn.debugger.jdwp.frame;
 
 import javax.swing.Icon;
 import java.util.ArrayList;
@@ -14,10 +14,9 @@ import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
-import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBProgramDebuggerEvaluator;
+import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -45,53 +44,55 @@ import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.intellij.xdebugger.impl.XSourcePositionImpl;
 import gnu.trove.THashMap;
 
-public class DBProgramDebugStackFrame extends XStackFrame {
+public class DBJdwpDebugStackFrame extends XStackFrame {
     private int index;
-    private DBJdbcDebugProcess debugProcess;
+    private XStackFrame underlyingFrame;
+    private DBJdwpDebugProcess debugProcess;
     private XSourcePosition sourcePosition;
     private DBProgramDebuggerEvaluator evaluator;
-    private Map<String, DBProgramDebugValue> valuesMap;
+    private Map<String, DBJdwpDebugValue> valuesMap;
 
-    public DBProgramDebugStackFrame(DBJdbcDebugProcess debugProcess, DebuggerRuntimeInfo runtimeInfo, int index) {
+    public DBJdwpDebugStackFrame(DBJdwpDebugProcess debugProcess, XStackFrame underlyingFrame, int index) {
+        this.underlyingFrame = underlyingFrame;
         this.index = index;
-        VirtualFile virtualFile = debugProcess.getRuntimeInfoFile(runtimeInfo);
+        VirtualFile virtualFile = debugProcess.getVirtualFile(underlyingFrame);
 
         this.debugProcess = debugProcess;
-        int lineNumber = runtimeInfo.getLineNumber();
-        if (runtimeInfo.getOwnerName() == null) {
+        XSourcePosition sourcePosition = underlyingFrame.getSourcePosition();
+        int lineNumber = sourcePosition == null ? 0 : sourcePosition.getLine();
+        String ownerName = debugProcess.getOwnerName(underlyingFrame);
+        if (ownerName == null) {
             ExecutionInput executionInput = debugProcess.getExecutionInput();
             if (executionInput instanceof StatementExecutionInput) {
                 StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
                 lineNumber += statementExecutionInput.getExecutableLineNumber();
             }
         }
-        sourcePosition = XSourcePositionImpl.create(virtualFile, lineNumber);
+        this.sourcePosition = XSourcePositionImpl.create(virtualFile, lineNumber);
     }
 
-    public DBJdbcDebugProcess getDebugProcess() {
+    public DBJdwpDebugProcess getDebugProcess() {
         return debugProcess;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public DBProgramDebugValue getValue(String variableName) {
+    public DBJdwpDebugValue getValue(String variableName) {
         return valuesMap == null ? null : valuesMap.get(variableName.toLowerCase());
     }
 
-    public void setValue(String variableName, DBProgramDebugValue value) {
+    public void setValue(String variableName, DBJdwpDebugValue value) {
         if (valuesMap == null) {
-            valuesMap =new THashMap<String, DBProgramDebugValue>();
+            valuesMap =new THashMap<String, DBJdwpDebugValue>();
         }
         valuesMap.put(variableName.toLowerCase(), value);
     }
 
     @Override
     public XDebuggerEvaluator getEvaluator() {
+/*
         if (evaluator == null) {
             evaluator = new DBProgramDebuggerEvaluator(this);
         }
+*/
         return evaluator;
     }
 
@@ -155,12 +156,8 @@ public class DBProgramDebugStackFrame extends XStackFrame {
 
     @Override
     public void computeChildren(@NotNull XCompositeNode node) {
-        valuesMap = new THashMap<String, DBProgramDebugValue>();
-        List<DBProgramDebugValue> values = new ArrayList<DBProgramDebugValue>();
-
-        DBProgramDebugValue frameInfoValue = new DBSuspendReasonDebugValue(debugProcess, index);
-        values.add(frameInfoValue);
-        valuesMap.put(frameInfoValue.getName(), frameInfoValue);
+        valuesMap = new THashMap<String, DBJdwpDebugValue>();
+        List<DBJdwpDebugValue> values = new ArrayList<DBJdwpDebugValue>();
 
         VirtualFile sourceCodeFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
 
@@ -192,7 +189,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
 
                 if (!valuesMap.containsKey(variableName.toLowerCase())) {
                     Icon icon = basePsiElement.getIcon(true);
-                    DBProgramDebugValue value = new DBProgramDebugValue(debugProcess, null, variableName, childVariableNames, icon, index);
+                    DBJdwpDebugValue value = new DBJdwpDebugValue(debugProcess, null, variableName, childVariableNames, icon, index);
                     values.add(value);
                     valuesMap.put(variableName.toLowerCase(), value);
                 }
@@ -201,7 +198,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
         Collections.sort(values);
 
         XValueChildrenList children = new XValueChildrenList();
-        for (DBProgramDebugValue value : values) {
+        for (DBJdwpDebugValue value : values) {
             children.add(value.getVariableName(), value);
         }
         node.addChildren(children, true);
@@ -210,8 +207,11 @@ public class DBProgramDebugStackFrame extends XStackFrame {
     @Nullable
     @Override
     public Object getEqualityObject() {
+/*
         DebuggerRuntimeInfo runtimeInfo = debugProcess.getRuntimeInfo();
         return runtimeInfo == null ? null : runtimeInfo.getOwnerName() + "." + runtimeInfo.getProgramName();
+*/
+        return null;
     }
 }
 
