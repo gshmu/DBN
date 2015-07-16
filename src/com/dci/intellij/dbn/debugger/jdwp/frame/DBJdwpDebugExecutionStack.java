@@ -3,38 +3,55 @@ package com.dci.intellij.dbn.debugger.jdwp.frame;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 
 public class DBJdwpDebugExecutionStack extends XExecutionStack {
-    private DBJdwpDebugStackFrame topStackFrame;
-    private DBJdwpDebugProcess debugProcess;
-    private XExecutionStack underlyingStack;
+    private DBJdwpDebugSuspendContext suspendContext;
+    private LazyValue<DBJdwpDebugStackFrame> topStackFrame = new SimpleLazyValue<DBJdwpDebugStackFrame>() {
+        @Override
+        protected DBJdwpDebugStackFrame load() {
+            XExecutionStack underlyingStack = getUnderlyingStack();
+            XStackFrame topFrame = underlyingStack == null ? null : underlyingStack.getTopFrame();
+            DBJdwpDebugProcess debugProcess = suspendContext.getDebugProcess();
+            return new DBJdwpDebugStackFrame(debugProcess, topFrame, 1);
+        }
+    };
 
-    public DBJdwpDebugExecutionStack(DBJdwpDebugProcess debugProcess) {
-        super(debugProcess.getName(), debugProcess.getIcon());
-        this.debugProcess = debugProcess;
-        underlyingStack = debugProcess.getSession().getSuspendContext().getActiveExecutionStack();
-        XStackFrame topFrame = underlyingStack == null ? null : underlyingStack.getTopFrame();
-        topStackFrame = new DBJdwpDebugStackFrame(debugProcess, topFrame, 1);
+    @Nullable
+    private XExecutionStack getUnderlyingStack() {
+        return suspendContext.getUnderlyingContext().getActiveExecutionStack();
+    }
 
+    public DBJdwpDebugExecutionStack(DBJdwpDebugSuspendContext suspendContext) {
+        super(suspendContext.getDebugProcess().getName(), suspendContext.getDebugProcess().getIcon());
+        this.suspendContext = suspendContext;
+    }
+
+    public DBJdwpDebugSuspendContext getSuspendContext() {
+        return suspendContext;
     }
 
     @Override
     public XStackFrame getTopFrame() {
-        return topStackFrame;
+        return topStackFrame.get();
     }
 
     @Override
     public void computeStackFrames(int firstFrameIndex, final XStackFrameContainer container) {
+        XExecutionStack underlyingStack = getUnderlyingStack();
         if (underlyingStack != null) {
-            XStackFrameContainer undelyingContainer = new XStackFrameContainer() {
+            XStackFrameContainer fakeContainer = new XStackFrameContainer() {
 
                 @Override
                 public void addStackFrames(@NotNull List<? extends XStackFrame> stackFrames, boolean last) {
-                    final List<DBJdwpDebugStackFrame> frames = new ArrayList<DBJdwpDebugStackFrame>();
+                    DBJdwpDebugProcess debugProcess = suspendContext.getDebugProcess();
+                    List<DBJdwpDebugStackFrame> frames = new ArrayList<DBJdwpDebugStackFrame>();
                     for (XStackFrame underlyingFrame : stackFrames) {
                         DBJdwpDebugStackFrame frame = new DBJdwpDebugStackFrame(debugProcess, underlyingFrame, frames.size());
                         if (frame.getVirtualFile() != null) {
@@ -54,7 +71,7 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
 
                 }
             };
-            underlyingStack.computeStackFrames(0, undelyingContainer);
+            underlyingStack.computeStackFrames(0, fakeContainer);
 
         }
     }
