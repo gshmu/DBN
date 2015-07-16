@@ -285,4 +285,14 @@ public class ConnectionUtil {
             LOGGER.warn("Error committing connection", e);
         }
     }
+
+
+    public static boolean isClosed(final Connection connection) {
+        return new SimpleTimeoutCall<Boolean>(2, TimeUnit.SECONDS, false) {
+            @Override
+            public Boolean call() throws Exception {
+                return connection.isClosed();
+            }
+        }.start();
+    }
 }

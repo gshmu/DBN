@@ -4,6 +4,7 @@ import java.net.Inet4Address;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.StringTokenizer;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -29,11 +30,14 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.DBProgram;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.JavaDebugProcess;
+import com.intellij.debugger.engine.JavaStackFrame;
 import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -48,7 +52,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.frame.XStackFrame;
-import com.intellij.xdebugger.frame.XSuspendContext;
+import com.sun.jdi.Location;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     protected Connection targetConnection;
@@ -125,9 +129,12 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         getSession().addSessionListener(new XDebugSessionAdapter() {
             @Override
             public void sessionPaused() {
-                XSuspendContext suspendContext = getSession().getSuspendContext();
-                DBJdwpDebugSuspendContext debugSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this);
-                getSession().positionReached(debugSuspendContext);
+                if (getSession().getSuspendContext() instanceof DBJdwpDebugSuspendContext) {
+
+                } else {
+                    DBJdwpDebugSuspendContext debugSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this);
+                    getSession().positionReached(debugSuspendContext);
+                }
             }
         });
         final Project project = getProject();
@@ -283,10 +290,45 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     }
 
     public VirtualFile getVirtualFile(XStackFrame stackFrame) {
+        try {
+            Location location = ((JavaStackFrame) stackFrame).getDescriptor().getLocation();
+            if (location != null) {
+                int lineNumber = location.lineNumber();
+                String sourcePath = location.sourcePath();
+                StringTokenizer tokenizer = new StringTokenizer(sourcePath, "\\.");
+                String signature = tokenizer.nextToken();
+                String programType = tokenizer.nextToken();
+                String schemaName = tokenizer.nextToken();
+                String programName = tokenizer.nextToken();
+                DBSchema schema = getConnectionHandler().getObjectBundle().getSchema(schemaName);
+                if (schema != null) {
+                    DBProgram program = schema.getProgram(programName);
+                    if (program != null) {
+                        return program.getVirtualFile();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
     public String getOwnerName(XStackFrame stackFrame) {
+        try {
+            Location location = ((JavaStackFrame) stackFrame).getDescriptor().getLocation();
+            if (location != null) {
+                String sourcePath = location.sourcePath();
+                StringTokenizer tokenizer = new StringTokenizer(sourcePath, "\\.");
+                String signature = tokenizer.nextToken();
+                String programType = tokenizer.nextToken();
+                return tokenizer.nextToken();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 }

@@ -43,7 +43,7 @@ REM_LINE_COMMENT = "rem"({white_space}+{input_character}*|{line_terminator})
 IDENTIFIER = [:jletter:] ([:jletterdigit:]|"#")*
 QUOTED_IDENTIFIER = "\""[^\"]*"\""?
 
-string_simple_quoted      = "'"([^\']|"''"|"\\'")*"'"?
+string_simple_quoted      = "'"([^\']|"''")*"'"?
 string_alternative_quoted = "q'["[^\[\]]*"]'"? | "q'("[^\(\)]*")'"? | "q'{"[^\{\}]*"}'"? | "q'!"[^\!]*"!'"? | "q'<"[^\<\>]*">'"? | "q'|"[^|]*"|'"?
 STRING = "n"?({string_alternative_quoted}|{string_simple_quoted})
 
