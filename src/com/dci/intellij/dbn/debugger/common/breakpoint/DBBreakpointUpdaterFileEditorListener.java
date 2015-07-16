@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
-import com.dci.intellij.dbn.debugger.jdbc.DBJdbcBreakpointHandler;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
@@ -12,7 +13,8 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.impl.breakpoints.XBreakpointManagerImpl;
 import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointImpl;
 import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointManager;
-import org.jetbrains.annotations.NotNull;
+import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getVirtualFile;
+import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.setBreakpointId;
 
 /**
  * WORKAROUND: Breakpoints do not seem to be registered properly in the XLineBreakpointManager.
@@ -26,8 +28,8 @@ public class DBBreakpointUpdaterFileEditorListener implements FileEditorManagerL
             for (XBreakpoint breakpoint : breakpointManager.getAllBreakpoints()) {
                 if (breakpoint instanceof XLineBreakpoint) {
                     XLineBreakpoint lineBreakpoint = (XLineBreakpoint) breakpoint;
-                    lineBreakpoint.putUserData(DBJdbcBreakpointHandler.BREAKPOINT_ID_KEY, null);
-                    VirtualFile virtualFile = DBJdbcBreakpointHandler.getVirtualFile(lineBreakpoint);
+                    setBreakpointId(lineBreakpoint, null);
+                    VirtualFile virtualFile = getVirtualFile(lineBreakpoint);
                     if (databaseFile.equals(virtualFile)) {
                         XLineBreakpointManager lineBreakpointManager = breakpointManager.getLineBreakpointManager();
                         lineBreakpointManager.registerBreakpoint((XLineBreakpointImpl) lineBreakpoint, true);
