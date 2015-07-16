@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.debugger.jdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -15,6 +14,8 @@ import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointId;
+import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getDatabaseObject;
 
 public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProcess> {
 
@@ -23,11 +24,12 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
         //resetBreakpoints();
     }
 
-    protected BreakpointInfo addBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, @Nullable DBSchemaObject object) throws Exception {
+    protected BreakpointInfo addBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) throws Exception {
         DBJdbcDebugProcess debugProcess = getDebugProcess();
         ConnectionHandler connectionHandler = debugProcess.getConnectionHandler();
         DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
         Connection debugConnection = debugProcess.getDebugConnection();
+        DBSchemaObject object = getDatabaseObject(breakpoint);
         return object == null ?
                 debuggerInterface.addSourceBreakpoint(
                         breakpoint.getLine(),
