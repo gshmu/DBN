@@ -28,16 +28,20 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
     }
 
     @Override
-    public void computeStackFrames(int firstFrameIndex, XStackFrameContainer container) {
+    public void computeStackFrames(int firstFrameIndex, final XStackFrameContainer container) {
         if (underlyingStack != null) {
-            final List<DBJdwpDebugStackFrame> frames = new ArrayList<DBJdwpDebugStackFrame>();
-            final List<XStackFrame> underlyingFrames = new ArrayList<XStackFrame>();
-
             XStackFrameContainer undelyingContainer = new XStackFrameContainer() {
 
                 @Override
                 public void addStackFrames(@NotNull List<? extends XStackFrame> stackFrames, boolean last) {
-                    underlyingFrames.addAll(stackFrames);
+                    final List<DBJdwpDebugStackFrame> frames = new ArrayList<DBJdwpDebugStackFrame>();
+                    for (XStackFrame underlyingFrame : stackFrames) {
+                        DBJdwpDebugStackFrame frame = new DBJdwpDebugStackFrame(debugProcess, underlyingFrame, frames.size());
+                        if (frame.getVirtualFile() != null) {
+                            frames.add(frame);
+                        }
+                    }
+                    container.addStackFrames(frames, true) ;
                 }
 
                 @Override
@@ -51,12 +55,6 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
                 }
             };
             underlyingStack.computeStackFrames(0, undelyingContainer);
-
-            for (XStackFrame underlyingFrame : underlyingFrames) {
-                DBJdwpDebugStackFrame frame = new DBJdwpDebugStackFrame(debugProcess, underlyingFrame, frames.size());
-                frames.add(frame);
-            }
-            container.addStackFrames(frames, true) ;
 
         }
     }

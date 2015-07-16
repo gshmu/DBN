@@ -330,7 +330,7 @@ public class ConnectionPool implements Disposable {
         }
 
         public boolean isClosed() throws SQLException {
-            return connection.isClosed();
+            return ConnectionUtil.isClosed(connection);
         }
 
         public boolean isBusy() {
