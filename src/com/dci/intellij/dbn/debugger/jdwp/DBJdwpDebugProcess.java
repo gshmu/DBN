@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -37,7 +38,6 @@ import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.debugger.engine.JavaDebugProcess;
 import com.intellij.debugger.engine.JavaStackFrame;
-import com.intellij.debugger.engine.events.DebuggerCommandImpl;
 import com.intellij.debugger.impl.DebuggerContextImpl;
 import com.intellij.debugger.impl.DebuggerContextListener;
 import com.intellij.debugger.impl.DebuggerSession;
@@ -73,13 +73,18 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         @Override
         public void sessionPaused() {
             final XDebugSession session = getSession();
-            XSuspendContext suspendContext = session.getSuspendContext();
+            final XSuspendContext suspendContext = session.getSuspendContext();
             if (suspendContext instanceof DBJdwpDebugSuspendContext) {
 
             } else if (suspendContext != lastSuspendContext){
                 lastSuspendContext = suspendContext;
-                final DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
-                session.positionReached(dbSuspendContext);
+                new SimpleLaterInvocator() {
+                    @Override
+                    protected void execute() {
+                        final DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
+                        session.positionReached(dbSuspendContext);
+                    }
+                }.start();
             }
         }
     };
@@ -102,7 +107,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         getDebuggerSession().getContextManager().addListener(new DebuggerContextListener() {
             @Override
             public void changeEvent(DebuggerContextImpl newContext, int event) {
-                System.out.println();
+                //System.out.println();
             }
         });
     }
@@ -153,17 +158,14 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         session.addSessionListener(suspendContextOverwriteListener);
         getDebuggerSession().getProcess().setXDebugProcess(this);
 
-        final Project project = getProject();
-        new BackgroundTask(project, "Initialize debug environment", true) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) {
+        new DBDebugOperationTask(getProject(), "initialize debug environment") {
+            public void execute() {
                 try {
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionContext().getTargetSchema());
                     targetConnection.setAutoCommit(false);
 
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                    progressIndicator.setText("Initializing debugger target session");
                     debuggerInterface.initializeJdwpSession(targetConnection, Inet4Address.getLocalHost().getHostAddress(), "4000");
                     console.system("Debug session initialized (JDWP)");
 
@@ -190,15 +192,10 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             }
         }.start();
 
-        breakpointHandler.registerBreakpoints(breakpoints);
+        //breakpointHandler.registerBreakpoints(breakpoints);
         registerDefaultBreakpoint();
         console.system("Done registering breakpoints");
-        getDebuggerSession().getProcess().getManagerThread().invoke(new DebuggerCommandImpl() {
-            @Override
-            protected void action() throws Exception {
-                executeTargetProgram();
-            }
-        });
+        executeTargetProgram();
     }
 
     protected abstract void registerDefaultBreakpoint();

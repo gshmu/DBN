@@ -11,6 +11,7 @@ public abstract class SimpleBackgroundTask extends SynchronizedTask{
         public Thread newThread(@NotNull Runnable runnable) {
             Thread thread = new Thread(runnable, "DBN - Background Thread");
             thread.setPriority(Thread.MIN_PRIORITY);
+            thread.setDaemon(true);
             return thread;
         }
     });
