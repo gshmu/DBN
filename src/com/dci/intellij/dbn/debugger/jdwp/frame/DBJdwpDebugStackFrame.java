@@ -55,10 +55,17 @@ public class DBJdwpDebugStackFrame extends XStackFrame {
     private DBProgramDebuggerEvaluator evaluator;
     private Map<String, DBJdwpDebugValue> valuesMap;
 
+    private LazyValue<Location> location = new SimpleLazyValue<Location>() {
+        @Override
+        protected Location load() {
+            return ((JavaStackFrame) underlyingFrame).getDescriptor().getLocation();
+        }
+    };
+
     private LazyValue<XSourcePosition> sourcePosition = new SimpleLazyValue<XSourcePosition>() {
         @Override
         protected XSourcePosition load() {
-            Location location = ((JavaStackFrame) underlyingFrame).getDescriptor().getLocation();
+            Location location = getLocation();
             int lineNumber = location == null ? 0 : location.lineNumber() - 1;
 
             String ownerName = debugProcess.getOwnerName(underlyingFrame);
@@ -80,10 +87,42 @@ public class DBJdwpDebugStackFrame extends XStackFrame {
         }
     };
 
+    private LazyValue<IdentifierPsiElement> subject = new SimpleLazyValue<IdentifierPsiElement>() {
+        @Override
+        protected IdentifierPsiElement load() {
+            Project project = getDebugProcess().getProject();
+            XSourcePosition sourcePosition = getSourcePosition();
+            VirtualFile virtualFile = getVirtualFile();
+            Document document = DocumentUtil.getDocument(virtualFile);
+            DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, virtualFile);
+
+            if (sourcePosition != null && psiFile != null && document != null) {
+                int offset = document.getLineEndOffset(sourcePosition.getLine());
+                PsiElement elementAtOffset = psiFile.findElementAt(offset);
+                while (elementAtOffset instanceof PsiWhiteSpace || elementAtOffset instanceof PsiComment) {
+                    elementAtOffset = elementAtOffset.getNextSibling();
+                }
+
+                if (elementAtOffset instanceof BasePsiElement) {
+                    BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
+                    BasePsiElement objectDeclarationPsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
+                    if (objectDeclarationPsiElement != null) {
+                        return (IdentifierPsiElement) objectDeclarationPsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                    }
+                }
+            }
+            return null;
+        }
+    };
+
     public DBJdwpDebugStackFrame(DBJdwpDebugProcess debugProcess, XStackFrame underlyingFrame, int index) {
         this.debugProcess = debugProcess;
         this.underlyingFrame = underlyingFrame;
         this.index = index;
+    }
+
+    public XStackFrame getUnderlyingFrame() {
+        return underlyingFrame;
     }
 
     public DBJdwpDebugProcess getDebugProcess() {
@@ -111,6 +150,11 @@ public class DBJdwpDebugStackFrame extends XStackFrame {
         return evaluator;
     }
 
+
+    public Location getLocation() {
+        return location.get();
+    }
+
     @Override
     public XSourcePosition getSourcePosition() {
         return sourcePosition.get();
@@ -118,6 +162,10 @@ public class DBJdwpDebugStackFrame extends XStackFrame {
 
     public VirtualFile getVirtualFile() {
         return virtualFile.get();
+    }
+
+    public IdentifierPsiElement getSubject() {
+        return subject.get();
     }
 
     public void customizePresentation(@NotNull ColoredTextContainer component) {
@@ -129,31 +177,11 @@ public class DBJdwpDebugStackFrame extends XStackFrame {
             String frameName = object.getName();
             Icon frameIcon = object.getIcon();
 
-            Project project = getDebugProcess().getProject();
-            Document document = DocumentUtil.getDocument(virtualFile);
-            DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, virtualFile);
-
-            if (psiFile != null && document != null) {
-                int offset = document.getLineEndOffset(sourcePosition.getLine());
-                PsiElement elementAtOffset = psiFile.findElementAt(offset);
-                while (elementAtOffset instanceof PsiWhiteSpace || elementAtOffset instanceof PsiComment) {
-                    elementAtOffset = elementAtOffset.getNextSibling();
-                }
-
-                if (elementAtOffset instanceof BasePsiElement) {
-                    BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
-                    BasePsiElement objectDeclarationPsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
-                    if (objectDeclarationPsiElement != null) {
-                        IdentifierPsiElement subjectPsiElement = (IdentifierPsiElement) objectDeclarationPsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
-                        if (subjectPsiElement != null) {
-                            frameName = frameName + "." + subjectPsiElement.getChars();
-                            frameIcon = subjectPsiElement.getObjectType().getIcon();
-                        }
-                    }
-                }
-
+            IdentifierPsiElement subject = getSubject();
+            if (subject != null) {
+                frameName = frameName + "." + subject.getChars();
+                frameIcon = subject.getObjectType().getIcon();
             }
-
 
             component.append(frameName, SimpleTextAttributes.REGULAR_ATTRIBUTES);
             component.append(" (line " + (sourcePosition.getLine() + 1) + ") ", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
@@ -211,7 +239,7 @@ public class DBJdwpDebugStackFrame extends XStackFrame {
 
                     if (!valuesMap.containsKey(variableName.toLowerCase())) {
                         Icon icon = basePsiElement.getIcon(true);
-                        DBJdwpDebugValue value = new DBJdwpDebugValue(debugProcess, null, variableName, childVariableNames, icon, index);
+                        DBJdwpDebugValue value = new DBJdwpDebugValue(this, null, variableName, childVariableNames, icon, index);
                         values.add(value);
                         valuesMap.put(variableName.toLowerCase(), value);
                     }
@@ -232,11 +260,8 @@ public class DBJdwpDebugStackFrame extends XStackFrame {
     @Nullable
     @Override
     public Object getEqualityObject() {
-/*
-        DebuggerRuntimeInfo runtimeInfo = debugProcess.getRuntimeInfo();
-        return runtimeInfo == null ? null : runtimeInfo.getOwnerName() + "." + runtimeInfo.getProgramName();
-*/
-        return null;
+        DBSchemaObject object = DBDebugUtil.getObject(getSourcePosition());
+        return object == null ? null : object.getQualifiedName();
     }
 }
 
