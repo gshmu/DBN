@@ -85,7 +85,7 @@ public enum DBObjectType implements DynamicContentType {
     VARRAY_TYPE(DatabaseObjectTypeId.VARRAY_TYPE, "varray type", "varray types", null, null, false),
     VIEW(DatabaseObjectTypeId.VIEW, "view", "views", Icons.DBO_VIEW, Icons.DBO_VIEWS, false),
 
-    CURSOR(DatabaseObjectTypeId.CURSOR, "cursor", "cursors", null, null, false),
+    CURSOR(DatabaseObjectTypeId.CURSOR, "cursor", "cursors", Icons.DBO_CURSOR, null, false),
     RECORD(DatabaseObjectTypeId.RECORD, "record", "records", null, null, false),
     PROPERTY(DatabaseObjectTypeId.PROPERTY, "property", "properties", null, null, false),
     JAVA(DatabaseObjectTypeId.JAVA, "java", "java", null, null, false),

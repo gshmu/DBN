@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
+import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl;
@@ -32,79 +32,17 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
 
     public DBJdwpBreakpointHandler(XDebugSession session, DBJdwpDebugProcess debugProcess) {
         super(session, debugProcess);
-        //resetBreakpoints();
     }
 
     @Override
-    public void registerBreakpoints(final Collection<XLineBreakpoint<DBBreakpointProperties>> breakpoints) {
-/*        for (XLineBreakpoint<DBBreakpointProperties> breakpoint : breakpoints) {
-            initializeResources(breakpoint);
-        }
-        clearVmCaches();*/
+    public void registerDefaultBreakpoint(DBMethod method) {
 
-        super.registerBreakpoints(breakpoints);
     }
 
-    void clearVmCaches() {
-        getManagerThread().invokeAndWait(new DebuggerCommandImpl() {
-            @Override
-            protected void action() throws Exception {
-                VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
-                virtualMachineProxy.clearCaches();
-            }
-        });
+    @Override
+    public void unregisterDefaultBreakpoint() {
+
     }
-
-    private void initializeResources(@NotNull final XLineBreakpoint<DBBreakpointProperties> breakpoint) {
-        DBSchemaObject object = getDatabaseObject(breakpoint);
-        if (object != null) {
-            getManagerThread().invokeAndWait(new DebuggerCommandImpl() {
-                @Override
-                protected void action() throws Exception {
-                    Project project = getSession().getProject();
-                    String programIdentifier = getProgramIdentifier(breakpoint);
-                    boolean initRequested = initRequestCache.contains(programIdentifier);
-                    VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
-                    List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
-                    if (!initRequested && referenceTypes.size() == 0) {
-                        initRequestCache.add(programIdentifier);
-                        //ClassPrepareRequest classPrepareRequest = eventRequestManager.createClassPrepareRequest();
-                        //classPrepareRequest.addClassFilter(programIdentifier);
-                        //classPrepareRequest.enable();
-
-                        LineBreakpoint lineBreakpoint = getLineBreakpoint(project, breakpoint);
-                        RequestManagerImpl requestsManager = getRequestsManager();
-                        ClassPrepareRequest classPrepareRequest = requestsManager.createClassPrepareRequest(lineBreakpoint, programIdentifier);
-                        classPrepareRequest.setSuspendPolicy(EventRequest.SUSPEND_ALL);
-                        requestsManager.enableRequest(classPrepareRequest);
-                    }
-                }
-            });
-        }
-    }
-
-    private ThreadReference getMainThread() {
-        VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
-        ThreadReferenceProxyImpl threadReferenceProxy = virtualMachineProxy.allThreads().iterator().next();
-        return threadReferenceProxy.getThreadReference();
-    }
-
-    DebuggerManagerThreadImpl getManagerThread() {
-        return getJdiDebugProcess().getManagerThread();
-    }
-
-    private DebugProcessImpl getJdiDebugProcess() {
-        return getDebugProcess().getDebuggerSession().getProcess();
-    }
-
-    private RequestManagerImpl getRequestsManager() {
-        return getJdiDebugProcess().getRequestsManager();
-    }
-
-    private VirtualMachineProxyImpl getVirtualMachineProxy() {
-        return getJdiDebugProcess().getVirtualMachineProxy();
-    }
-
 
     @Override
     public void registerBreakpoint(@NotNull final XLineBreakpoint<DBBreakpointProperties> breakpoint) {
@@ -160,5 +98,55 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                 }
             }
         });
+    }
+
+    private void initializeResources(@NotNull final XLineBreakpoint<DBBreakpointProperties> breakpoint) {
+        DBSchemaObject object = getDatabaseObject(breakpoint);
+        if (object != null) {
+            getManagerThread().invokeAndWait(new DebuggerCommandImpl() {
+                @Override
+                protected void action() throws Exception {
+                    Project project = getSession().getProject();
+                    String programIdentifier = getProgramIdentifier(breakpoint);
+                    boolean initRequested = initRequestCache.contains(programIdentifier);
+                    VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
+                    List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
+                    if (!initRequested && referenceTypes.size() == 0) {
+                        initRequestCache.add(programIdentifier);
+                        //ClassPrepareRequest classPrepareRequest = eventRequestManager.createClassPrepareRequest();
+                        //classPrepareRequest.addClassFilter(programIdentifier);
+                        //classPrepareRequest.enable();
+
+                        LineBreakpoint lineBreakpoint = getLineBreakpoint(project, breakpoint);
+                        RequestManagerImpl requestsManager = getRequestsManager();
+                        ClassPrepareRequest classPrepareRequest = requestsManager.createClassPrepareRequest(lineBreakpoint, programIdentifier);
+                        classPrepareRequest.setSuspendPolicy(EventRequest.SUSPEND_ALL);
+                        requestsManager.enableRequest(classPrepareRequest);
+                    }
+                }
+            });
+        }
+    }
+
+    private ThreadReference getMainThread() {
+        VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
+        ThreadReferenceProxyImpl threadReferenceProxy = virtualMachineProxy.allThreads().iterator().next();
+        return threadReferenceProxy.getThreadReference();
+    }
+
+    DebuggerManagerThreadImpl getManagerThread() {
+        return getJdiDebugProcess().getManagerThread();
+    }
+
+    private DebugProcessImpl getJdiDebugProcess() {
+        return getDebugProcess().getDebuggerSession().getProcess();
+    }
+
+    private RequestManagerImpl getRequestsManager() {
+        return getJdiDebugProcess().getRequestsManager();
+    }
+
+    private VirtualMachineProxyImpl getVirtualMachineProxy() {
+        return getJdiDebugProcess().getVirtualMachineProxy();
     }
 }

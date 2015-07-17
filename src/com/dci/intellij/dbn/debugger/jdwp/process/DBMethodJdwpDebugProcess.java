@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
+import javax.swing.Icon;
+import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
 import com.dci.intellij.dbn.execution.ExecutionType;
@@ -9,11 +14,6 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.xdebugger.XDebugSession;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.SQLException;
 
 public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecutionInput> {
     public DBMethodJdwpDebugProcess(@NotNull XDebugSession session, @NotNull DebuggerSession debuggerSession, ConnectionHandler connectionHandler) {
@@ -65,7 +65,7 @@ public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecution
         MethodExecutionInput methodExecutionInput = getExecutionInput();
         DBMethod method = methodExecutionInput.getMethod();
         if (method != null) {
-            registerDefaultBreakpoint(method);
+            getBreakpointHandler().registerDefaultBreakpoint(method);
         }
     }
 

@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.DBDebugOperationTask;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointType;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
@@ -50,7 +51,6 @@ import com.intellij.xdebugger.XDebugSessionAdapter;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.XDebuggerUtil;
-import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.frame.XStackFrame;
@@ -63,8 +63,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     private ConnectionHandlerRef connectionHandlerRef;
     private DBDebugProcessStatus status = new DBDebugProcessStatus();
 
-    private DBJdwpBreakpointHandler breakpointHandler;
-    private DBJdwpBreakpointHandler[] breakpointHandlers;
+    private DBBreakpointHandler<DBJdwpDebugProcess>[] breakpointHandlers;
     private DBDebugConsoleLogger console;
 
     private transient XSuspendContext lastSuspendContext;
@@ -97,8 +96,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         DBProgramRunConfiguration<T> runProfile = (DBProgramRunConfiguration<T>) session.getRunProfile();
         executionInput = runProfile.getExecutionInput();
 
-        breakpointHandler = new DBJdwpBreakpointHandler(session, this);
-        breakpointHandlers = new DBJdwpBreakpointHandler[]{breakpointHandler};
+        DBJdwpBreakpointHandler breakpointHandler = new DBJdwpBreakpointHandler(session, this);
+        breakpointHandlers = new DBBreakpointHandler[]{breakpointHandler};
 
         getDebuggerSession().getContextManager().addListener(new DebuggerContextListener() {
             @Override
@@ -135,8 +134,12 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
     @NotNull
     @Override
-    public XBreakpointHandler<?>[] getBreakpointHandlers() {
+    public DBBreakpointHandler<DBJdwpDebugProcess>[] getBreakpointHandlers() {
         return breakpointHandlers;
+    }
+
+    public DBBreakpointHandler<DBJdwpDebugProcess> getBreakpointHandler() {
+        return breakpointHandlers[0];
     }
 
     @Override
@@ -166,7 +169,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     console.system("Debug session initialized (JDWP)");
 
                     status.CAN_SET_BREAKPOINTS = true;
-                    registerBreakpoints();
+                    executeTargetProgram();
                 } catch (Exception e) {
                     status.SESSION_INITIALIZATION_THREW_EXCEPTION = true;
                     session.stop();
