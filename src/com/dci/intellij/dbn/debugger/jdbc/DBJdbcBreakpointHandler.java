@@ -6,18 +6,27 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
+import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointType;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.psql.PSQLFile;
+import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugSession;
@@ -28,6 +37,7 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.*;
 
 public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProcess> {
+    protected BreakpointInfo defaultBreakpointInfo;
 
     public DBJdbcBreakpointHandler(XDebugSession session, DBJdbcDebugProcess debugProcess) {
         super(session, debugProcess);
@@ -119,6 +129,48 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
         }
     }
 
+    public void registerDefaultBreakpoint(DBMethod method) {
+        DBEditableObjectVirtualFile mainDatabaseFile = DBDebugUtil.getMainDatabaseFile(method);
+        if (mainDatabaseFile != null) {
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) mainDatabaseFile.getMainContentFile();
+            PSQLFile psqlFile = (PSQLFile) sourceCodeFile.getPsiFile();
+            if (psqlFile != null) {
+                BasePsiElement basePsiElement = psqlFile.lookupObjectDeclaration(method.getObjectType().getGenericType(), method.getName());
+                if (basePsiElement != null) {
+                    BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                    int offset = subject.getTextOffset();
+                    Document document = DocumentUtil.getDocument(psqlFile);
+                    int line = document.getLineNumber(offset);
+
+                    DBSchemaObject schemaObject = DBDebugUtil.getMainDatabaseObject(method);
+                    if (schemaObject != null) {
+                        try {
+                            defaultBreakpointInfo = getDebuggerInterface().addProgramBreakpoint(
+                                    method.getSchema().getName(),
+                                    schemaObject.getName(),
+                                    schemaObject.getObjectType().getName().toUpperCase(),
+                                    line,
+                                    getDebugConnection());
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void unregisterDefaultBreakpoint() {
+        try {
+            if (defaultBreakpointInfo != null && defaultBreakpointInfo.getBreakpointId() != null) {
+                getDebuggerInterface().removeBreakpoint(defaultBreakpointInfo.getBreakpointId(), getDebugConnection());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private Connection getDebugConnection() {
         DBJdbcDebugProcess debugProcess = getDebugProcess();
         return debugProcess.getDebugConnection();
@@ -199,7 +251,4 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
             }
         }
     }
-
-
-
 }

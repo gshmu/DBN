@@ -36,16 +36,9 @@ public class DBStatementDebugProcess extends DBJdbcDebugProcess<StatementExecuti
         if (runConfiguration != null) {
             List<DBMethod> methods = runConfiguration.getMethods();
             if (methods.size() > 0) {
-                registerDefaultBreakpoint(methods.get(0));
+                getBreakpointHandler().registerDefaultBreakpoint(methods.get(0));
             }
         }
-/*
-        try {
-            defaultBreakpointInfo = getDebuggerInterface().addSourceBreakpoint(1, getDebugConnection());
-        } catch (SQLException e) {
-            NotificationUtil.sendErrorNotification(getProject(), "Error setting breakpoint.", e.getMessage());
-        }
-*/
     }
 
     public VirtualFile getRuntimeInfoFile(DebuggerRuntimeInfo runtimeInfo) {

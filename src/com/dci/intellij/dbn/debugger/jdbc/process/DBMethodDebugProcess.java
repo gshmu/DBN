@@ -37,7 +37,7 @@ public class DBMethodDebugProcess extends DBJdbcDebugProcess<MethodExecutionInpu
         MethodExecutionInput methodExecutionInput = getExecutionInput();
         DBMethod method = methodExecutionInput.getMethod();
         if (method != null) {
-            registerDefaultBreakpoint(method);
+            getBreakpointHandler().registerDefaultBreakpoint(method);
         }
 
     }

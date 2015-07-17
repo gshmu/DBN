@@ -29,6 +29,11 @@
         <ul>
             <li><b>3.0.4705</b>
             <ul>
+                - Oracle JDWP debug interface<br>
+                - Bug fixes<br>
+            </ul>
+            <li><b>3.0.4705</b>
+            <ul>
                 - Compatibility with latest IntelliJ EAP (15.0)<br>
                 - Oracle statement debugging (early preview)<br>
                 - Dedicated debugger console (Oracle)<br>

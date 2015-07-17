@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
@@ -53,11 +53,15 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
         return getDebugProcess().getConsole();
     }
 
-    protected DatabaseDebuggerInterface getDebuggerInterface(@NotNull DBSchemaObject object) {
-        return object.getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
-    }
-
     protected ConnectionHandler getConnectionHandler() {
         return getDebugProcess().getConnectionHandler();
     }
+
+    protected DatabaseDebuggerInterface getDebuggerInterface() {
+        return getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
+    }
+
+    public abstract void registerDefaultBreakpoint(DBMethod method);
+
+    public abstract void unregisterDefaultBreakpoint();
 }
