@@ -118,18 +118,25 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
 
                 String programIdentifier = getProgramIdentifier(breakpoint);
                 LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
-                List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
-                if (referenceTypes.size() > 0) {
-                    ReferenceType referenceType = referenceTypes.get(0);
-                    List<Location> locations = referenceType.locationsOfLine(breakpoint.getLine() + 1);
-                    if (locations != null && locations.size() > 0) {
-                        Location location = locations.get(0);
-                        BreakpointRequest breakpointRequest = requestsManager.createBreakpointRequest(lineBreakpoint, location);
-                        breakpointRequest.addThreadFilter(getMainThread());
-                        requestsManager.enableRequest(breakpointRequest);
+                Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
+                if (requests.size() > 0) {
+                    for (EventRequest request : requests) {
+                        request.enable();
                     }
                 } else {
-                    requestsManager.callbackOnPrepareClasses(lineBreakpoint, programIdentifier);
+                    List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
+                    if (referenceTypes.size() > 0) {
+                        ReferenceType referenceType = referenceTypes.get(0);
+                        List<Location> locations = referenceType.locationsOfLine(breakpoint.getLine() + 1);
+                        if (locations.size() > 0) {
+                            Location location = locations.get(0);
+                            BreakpointRequest breakpointRequest = requestsManager.createBreakpointRequest(lineBreakpoint, location);
+                            breakpointRequest.addThreadFilter(getMainThread());
+                            requestsManager.enableRequest(breakpointRequest);
+                        }
+                    } else {
+                        requestsManager.callbackOnPrepareClasses(lineBreakpoint, programIdentifier);
+                    }
                 }
             }
         });
