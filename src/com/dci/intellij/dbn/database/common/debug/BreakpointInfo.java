@@ -28,4 +28,8 @@ public class BreakpointInfo extends BasicOperationInfo {
 
         error = statement.getString(2);
     }
+
+    public void setBreakpointId(Integer breakpointId) {
+        this.breakpointId = breakpointId;
+    }
 }

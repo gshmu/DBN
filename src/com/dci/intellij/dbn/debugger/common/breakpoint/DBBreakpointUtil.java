@@ -99,8 +99,8 @@ public class DBBreakpointUtil {
         DBSchemaObject object = getDatabaseObject(breakpoint);
         final VirtualFile virtualFile = getVirtualFile(breakpoint);
         return object == null ?
-                virtualFile == null ? "unknown" : virtualFile.getName() + " Line " + (breakpoint.getLine() + 1) :
-                object.getQualifiedName() + " Line " + (breakpoint.getLine() + 1);
+                virtualFile == null ? "unknown" : virtualFile.getName() + ":" + (breakpoint.getLine() + 1) :
+                object.getQualifiedName() + ":" + (breakpoint.getLine() + 1);
     }
 
 }
