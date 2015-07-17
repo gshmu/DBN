@@ -68,7 +68,7 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
         this.debug = debug;
         DBMethod method = executionInput.getMethod();
 
-        ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+        final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
         if (debug) {
             versionPanel.setVisible(true);
             versionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);

@@ -25,10 +25,9 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
     }
 
     protected BreakpointInfo addBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) throws Exception {
-        DBJdbcDebugProcess debugProcess = getDebugProcess();
-        ConnectionHandler connectionHandler = debugProcess.getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnectionHandler();
         DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
-        Connection debugConnection = debugProcess.getDebugConnection();
+        Connection debugConnection = getDebugConnection();
         DBSchemaObject object = getDatabaseObject(breakpoint);
         return object == null ?
                 debuggerInterface.addSourceBreakpoint(
@@ -44,9 +43,8 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
 
     @Override
     protected void removeBreakpoint(boolean temporary, Integer breakpointId) throws SQLException {
-        DBJdbcDebugProcess debugProcess = getDebugProcess();
-        ConnectionHandler connectionHandler = debugProcess.getConnectionHandler();
-        Connection debugConnection = debugProcess.getDebugConnection();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        Connection debugConnection = getDebugConnection();
         DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
         if (temporary) {
             debuggerInterface.disableBreakpoint(breakpointId, debugConnection);
@@ -55,13 +53,17 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
         }
     }
 
+    private Connection getDebugConnection() {
+        DBJdbcDebugProcess debugProcess = getDebugProcess();
+        return debugProcess.getDebugConnection();
+    }
+
     @Override
     protected void enableBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) throws Exception {
         Integer breakpointId = getBreakpointId(breakpoint);
         if (breakpointId != null) {
-            DBJdbcDebugProcess debugProcess = getDebugProcess();
-            ConnectionHandler connectionHandler = debugProcess.getConnectionHandler();
-            Connection debugConnection = debugProcess.getDebugConnection();
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            Connection debugConnection = getDebugConnection();
 
             DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
             BreakpointOperationInfo breakpointOperationInfo = debuggerInterface.enableBreakpoint(breakpointId, debugConnection);
@@ -77,10 +79,9 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
 
     @Override
     protected String disableBreakpoint(Integer breakpointId) throws SQLException {
-        DBJdbcDebugProcess debugProcess = getDebugProcess();
-        ConnectionHandler connectionHandler = debugProcess.getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnectionHandler();
         DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
-        Connection debugConnection = debugProcess.getDebugConnection();
+        Connection debugConnection = getDebugConnection();
         BreakpointOperationInfo breakpointOperationInfo = debuggerInterface.disableBreakpoint(breakpointId, debugConnection);
         return breakpointOperationInfo.getError();
     }

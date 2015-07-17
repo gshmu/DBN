@@ -4,8 +4,6 @@ import java.net.Inet4Address;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.StringTokenizer;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,13 +63,11 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     private ConnectionHandlerRef connectionHandlerRef;
     private DBDebugProcessStatus status = new DBDebugProcessStatus();
 
-
     private DBJdwpBreakpointHandler breakpointHandler;
     private DBJdwpBreakpointHandler[] breakpointHandlers;
     private DBDebugConsoleLogger console;
 
     private transient XSuspendContext lastSuspendContext;
-    private Set<String> initRequestCache = new HashSet<String>();
 
     private XDebugSessionListener suspendContextOverwriteListener = new XDebugSessionAdapter() {
         @Override
@@ -109,14 +105,6 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 System.out.println();
             }
         });
-    }
-
-    public boolean isInitRequested(String identifier) {
-        return initRequestCache.contains(identifier);
-    }
-
-    public void registerInitRequest(String identifier) {
-        initRequestCache.add(identifier);
     }
 
     public ConnectionHandler getConnectionHandler() {

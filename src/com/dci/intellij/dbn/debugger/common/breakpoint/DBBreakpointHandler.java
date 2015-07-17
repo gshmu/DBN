@@ -44,17 +44,8 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
 
     public void registerBreakpoints(Collection<XLineBreakpoint<DBBreakpointProperties>> breakpoints) {
         for (XLineBreakpoint<DBBreakpointProperties> breakpoint : breakpoints) {
-            initializeResources(breakpoint);
-        }
-        try { Thread.sleep(2000); } catch (InterruptedException ignore) {}
-
-        for (XLineBreakpoint<DBBreakpointProperties> breakpoint : breakpoints) {
             registerBreakpoint(breakpoint);
         }
-    }
-
-    public void initializeResources(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) {
-        // no initialization by default
     }
 
     @Override
@@ -155,6 +146,10 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
 
     protected DatabaseDebuggerInterface getDebuggerInterface(@NotNull DBSchemaObject object) {
         return object.getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
+    }
+
+    protected ConnectionHandler getConnectionHandler() {
+        return getDebugProcess().getConnectionHandler();
     }
 
     protected abstract void removeBreakpoint(boolean temporary, Integer breakpointId) throws SQLException;
