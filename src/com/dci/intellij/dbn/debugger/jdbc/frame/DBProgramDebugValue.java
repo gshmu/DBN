@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
+import javax.swing.Icon;
+import java.sql.SQLException;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -12,12 +18,6 @@ import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.intellij.xdebugger.frame.XValueModifier;
 import com.intellij.xdebugger.frame.XValueNode;
 import com.intellij.xdebugger.frame.XValuePlace;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.SQLException;
-import java.util.Set;
 
 public class DBProgramDebugValue extends XNamedValue implements Comparable<DBProgramDebugValue>{
     private DBProgramDebugValueModifier modifier;
@@ -62,6 +62,7 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
 
     @Override
     public void computePresentation(@NotNull final XValueNode node, @NotNull XValuePlace place) {
+        // enabling this will show always variables as changed
         //node.setPresentation(icon, null, "", childVariableNames != null);
         new SimpleBackgroundTask("load variable value") {
             @Override
