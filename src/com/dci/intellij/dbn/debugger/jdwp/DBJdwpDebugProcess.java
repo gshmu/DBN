@@ -7,10 +7,10 @@ import java.util.Collection;
 import java.util.StringTokenizer;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -78,13 +78,9 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
             } else if (suspendContext != lastSuspendContext){
                 lastSuspendContext = suspendContext;
-                new SimpleLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        final DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
-                        session.positionReached(dbSuspendContext);
-                    }
-                }.start();
+                final DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
+                session.positionReached(dbSuspendContext);
+                throw AlreadyDisposedException.INSTANCE;
             }
         }
     };
