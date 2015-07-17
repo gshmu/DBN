@@ -423,7 +423,7 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
 
     public boolean isValid(Connection connection) {
         try {
-            if (connection == null || connection.isClosed()) return false;
+            if (connection == null || ConnectionUtil.isClosed(connection)) return false;
             ResultSet resultSet = executeQuery(connection, true, "validate-connection");
             ConnectionUtil.closeResultSet(resultSet);
         } catch (SQLException e) {
