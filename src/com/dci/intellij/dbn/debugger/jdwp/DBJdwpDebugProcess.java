@@ -309,8 +309,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 if (schema != null) {
                     DBProgram program = schema.getProgram(programName);
                     if (program != null) {
-                        DBEditableObjectVirtualFile virtualFile = program.getVirtualFile();
-                        return virtualFile.getMainContentFile();
+                        return program.getVirtualFile();
                     }
                 }
             }

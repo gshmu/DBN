@@ -495,7 +495,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     public VirtualFile getRuntimeInfoFile(DebuggerRuntimeInfo runtimeInfo) {
         DBSchemaObject schemaObject = getDatabaseObject(runtimeInfo);
         if (schemaObject != null) {
-            return schemaObject.getVirtualFile().getMainContentFile();
+            return schemaObject.getVirtualFile();
         }
         return null;
     }
