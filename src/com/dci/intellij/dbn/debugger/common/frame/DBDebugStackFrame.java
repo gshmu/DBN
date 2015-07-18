@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
@@ -61,7 +62,7 @@ public abstract class DBDebugStackFrame<T extends DBDebugProcess> extends XStack
             XSourcePosition sourcePosition = getSourcePosition();
             VirtualFile virtualFile = getVirtualFile();
             Document document = DocumentUtil.getDocument(virtualFile);
-            DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, virtualFile);
+            DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, document);
 
             if (sourcePosition != null && psiFile != null && document != null) {
                 int offset = document.getLineEndOffset(sourcePosition.getLine());
@@ -139,12 +140,15 @@ public abstract class DBDebugStackFrame<T extends DBDebugProcess> extends XStack
         }
 
         XSourcePosition sourcePosition = getSourcePosition();
-        VirtualFile sourceCodeFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
+        VirtualFile virtualFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
 
-        if (sourceCodeFile != null) {
+        if (virtualFile != null) {
+            if (virtualFile instanceof DBEditableObjectVirtualFile) {
+                virtualFile = ((DBEditableObjectVirtualFile) virtualFile).getMainContentFile();
+            }
             Project project = getDebugProcess().getProject();
-            Document document = DocumentUtil.getDocument(sourceCodeFile);
-            DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, sourceCodeFile);
+            Document document = DocumentUtil.getDocument(virtualFile);
+            DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, virtualFile);
 
             if (document != null && psiFile != null) {
                 int offset = document.getLineStartOffset(sourcePosition.getLine());
