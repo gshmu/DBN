@@ -38,8 +38,8 @@ import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointType;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
-import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBProgramDebuggerEditorsProvider;
-import com.dci.intellij.dbn.debugger.jdbc.frame.DBProgramDebugSuspendContext;
+import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBJdbcDebuggerEditorsProvider;
+import com.dci.intellij.dbn.debugger.jdbc.frame.DBJdbcDebugSuspendContext;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -125,7 +125,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     @NotNull
     @Override
     public XDebuggerEditorsProvider getEditorsProvider() {
-        return DBProgramDebuggerEditorsProvider.INSTANCE;
+        return DBJdbcDebuggerEditorsProvider.INSTANCE;
     }
 
     public T getExecutionInput() {
@@ -477,7 +477,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 //showErrorDialog(e);
             }
             VirtualFile virtualFile = getRuntimeInfoFile(runtimeInfo);
-            DBProgramDebugSuspendContext suspendContext = new DBProgramDebugSuspendContext(this);
+            DBJdbcDebugSuspendContext suspendContext = new DBJdbcDebugSuspendContext(this);
             getSession().positionReached(suspendContext);
             navigateInEditor(virtualFile, runtimeInfo.getLineNumber());
         }
@@ -495,7 +495,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     public VirtualFile getRuntimeInfoFile(DebuggerRuntimeInfo runtimeInfo) {
         DBSchemaObject schemaObject = getDatabaseObject(runtimeInfo);
         if (schemaObject != null) {
-            return schemaObject.getVirtualFile();
+            return schemaObject.getVirtualFile().getMainContentFile();
         }
         return null;
     }

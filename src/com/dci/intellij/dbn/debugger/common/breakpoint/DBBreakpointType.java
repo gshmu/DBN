@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBProgramDebuggerEditorsProvider;
+import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBJdbcDebuggerEditorsProvider;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -86,13 +86,13 @@ public class DBBreakpointType extends XLineBreakpointType<DBBreakpointProperties
 
     @Override
     public XDebuggerEditorsProvider getEditorsProvider() {
-        return DBProgramDebuggerEditorsProvider.INSTANCE;
+        return DBJdbcDebuggerEditorsProvider.INSTANCE;
     }
 
     @Nullable
     @Override
     public XDebuggerEditorsProvider getEditorsProvider(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, @NotNull Project project) {
-        return DBProgramDebuggerEditorsProvider.INSTANCE;
+        return DBJdbcDebuggerEditorsProvider.INSTANCE;
     }
 
     @Override

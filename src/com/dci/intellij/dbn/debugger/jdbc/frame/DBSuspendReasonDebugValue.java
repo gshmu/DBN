@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
-import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.intellij.xdebugger.frame.XValueNode;
 import com.intellij.xdebugger.frame.XValuePlace;
-import org.jetbrains.annotations.NotNull;
 
-public class DBSuspendReasonDebugValue extends DBProgramDebugValue{
-    public DBSuspendReasonDebugValue(DBJdbcDebugProcess debugProcess, int frameIndex) {
-        super(debugProcess, null, "DEBUG_RUNTIME_EVENT", null, Icons.EXEC_MESSAGES_INFO, frameIndex);
+public class DBSuspendReasonDebugValue extends DBJdbcDebugValue {
+    public DBSuspendReasonDebugValue(DBJdbcDebugStackFrame stackFrame) {
+        super(stackFrame, null, "DEBUG_RUNTIME_EVENT", null, Icons.EXEC_MESSAGES_INFO);
     }
 
     @Override

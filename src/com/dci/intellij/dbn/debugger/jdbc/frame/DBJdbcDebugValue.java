@@ -6,58 +6,23 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
+import com.dci.intellij.dbn.debugger.common.frame.DBDebugValue;
 import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.intellij.xdebugger.frame.XCompositeNode;
-import com.intellij.xdebugger.frame.XNamedValue;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.intellij.xdebugger.frame.XValueModifier;
 import com.intellij.xdebugger.frame.XValueNode;
 import com.intellij.xdebugger.frame.XValuePlace;
 
-public class DBProgramDebugValue extends XNamedValue implements Comparable<DBProgramDebugValue>{
-    private DBProgramDebugValueModifier modifier;
-    private DBJdbcDebugProcess debugProcess;
-    private String value;
-    private String errorMessage;
-    private Icon icon;
-    private int frameIndex;
-    private DBProgramDebugValue parentValue;
-    private Set<String> childVariableNames;
+public class DBJdbcDebugValue extends DBDebugValue<DBJdbcDebugStackFrame>{
+    private DBJdbcDebugValueModifier modifier;
 
-    public DBProgramDebugValue(DBJdbcDebugProcess debugProcess, DBProgramDebugValue parentValue, String variableName, @Nullable Set<String> childVariableNames, Icon icon, int frameIndex) {
-        super(variableName);
-        this.debugProcess = debugProcess;
-        if (icon == null) {
-            icon = parentValue == null ?
-                    Icons.DBO_VARIABLE :
-                    Icons.DBO_ATTRIBUTE;
-        }
-        this.icon = icon;
-        this.parentValue = parentValue;
-
-        this.frameIndex = frameIndex;
-        this.childVariableNames = childVariableNames;
-    }
-
-    public DBJdbcDebugProcess getDebugProcess() {
-        return debugProcess;
-    }
-
-    public String getVariableName() {
-        return getName();
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public String getValue() {
-        return value;
+    public DBJdbcDebugValue(DBJdbcDebugStackFrame stackFrame, DBJdbcDebugValue parentValue, String variableName, @Nullable Set<String> childVariableNames, Icon icon) {
+        super(stackFrame, variableName, childVariableNames, parentValue, icon);
     }
 
     @Override
@@ -68,10 +33,13 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
             @Override
             protected void execute() {
                 try {
+                    DBJdbcDebugProcess debugProcess = getDebugProcess();
                     String variableName = getVariableName();
+                    DBDebugValue parentValue = getParentValue();
                     String databaseVariableName = parentValue == null ? variableName : parentValue.getVariableName() + "." + variableName;
                     VariableInfo variableInfo = debugProcess.getDebuggerInterface().getVariableInfo(
-                            databaseVariableName.toUpperCase(), frameIndex,
+                            databaseVariableName.toUpperCase(),
+                            getStackFrame().getFrameIndex(),
                             debugProcess.getDebugConnection());
                     value = variableInfo.getValue();
                     errorMessage = variableInfo.getError();
@@ -106,13 +74,14 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
     }
 
     @Override
-    public XValueModifier getModifier() {
-        if (modifier == null) modifier = new DBProgramDebugValueModifier(this);
-        return modifier;
+    public DBJdbcDebugProcess getDebugProcess() {
+        return (DBJdbcDebugProcess) super.getDebugProcess();
     }
 
-    public int compareTo(@NotNull DBProgramDebugValue remote) {
-        return getName().compareTo(remote.getName());
+    @Override
+    public XValueModifier getModifier() {
+        if (modifier == null) modifier = new DBJdbcDebugValueModifier(this);
+        return modifier;
     }
 
     @Override
@@ -121,7 +90,7 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
             for (String childVariableName : childVariableNames) {
                 childVariableName = childVariableName.substring(getVariableName().length() + 1);
                 XValueChildrenList debugValueChildren = new XValueChildrenList();
-                DBProgramDebugValue value = new DBProgramDebugValue(debugProcess, this, childVariableName, null, null, frameIndex);
+                DBJdbcDebugValue value = new DBJdbcDebugValue(getStackFrame(), this, childVariableName, null, null);
                 debugValueChildren.add(value);
                 node.addChildren(debugValueChildren, true);
             }
@@ -130,18 +99,4 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
         }
 
     }
-
-/*    private List<DBObject> getChildObjects() {
-        DBObject object = DBObjectRef.get(objectRef);
-        if (object instanceof DBVirtualObject) {
-            DBObjectListContainer childObjectsContainer = object.getChildObjects();
-            if (childObjectsContainer != null) {
-                List<DBObjectList<DBObject>> objectLists = childObjectsContainer.getAllObjectLists();
-                if (objectLists.size() > 0) {
-                    return objectLists.get(0).getObjects();
-                }
-            }
-        }
-        return null;
-    }*/
 }

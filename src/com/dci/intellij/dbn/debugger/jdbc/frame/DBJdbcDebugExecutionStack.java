@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
@@ -8,19 +11,16 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class DBProgramDebugExecutionStack extends XExecutionStack {
-    private DBProgramDebugStackFrame topStackFrame;
+public class DBJdbcDebugExecutionStack extends XExecutionStack {
+    private DBJdbcDebugStackFrame topStackFrame;
     private DBJdbcDebugProcess debugProcess;
 
-    protected DBProgramDebugExecutionStack(DBJdbcDebugProcess debugProcess) {
+    protected DBJdbcDebugExecutionStack(DBJdbcDebugProcess debugProcess) {
         super(debugProcess.getName(), debugProcess.getIcon());
         this.debugProcess = debugProcess;
         ExecutionBacktraceInfo backtraceInfo = debugProcess.getBacktraceInfo();
         int frameNumber = backtraceInfo == null ? 1 : backtraceInfo.getTopFrameIndex();
-        topStackFrame = new DBProgramDebugStackFrame(debugProcess, debugProcess.getRuntimeInfo(), frameNumber);
+        topStackFrame = new DBJdbcDebugStackFrame(debugProcess, debugProcess.getRuntimeInfo(), frameNumber);
 
     }
 
@@ -33,12 +33,12 @@ public class DBProgramDebugExecutionStack extends XExecutionStack {
 
     @Override
     public void computeStackFrames(int firstFrameIndex, XStackFrameContainer container) {
-        List<DBProgramDebugStackFrame> frames = new ArrayList<DBProgramDebugStackFrame>();
+        List<DBJdbcDebugStackFrame> frames = new ArrayList<DBJdbcDebugStackFrame>();
         ExecutionBacktraceInfo backtraceInfo = debugProcess.getBacktraceInfo();
         if (backtraceInfo != null) {
             for (DebuggerRuntimeInfo runtimeInfo : backtraceInfo.getFrames()) {
                 if (StringUtil.isNotEmpty(runtimeInfo.getOwnerName()) || debugProcess.getExecutionInput() instanceof StatementExecutionInput) {
-                    DBProgramDebugStackFrame frame = new DBProgramDebugStackFrame(debugProcess, runtimeInfo, runtimeInfo.getFrameIndex());
+                    DBJdbcDebugStackFrame frame = new DBJdbcDebugStackFrame(debugProcess, runtimeInfo, runtimeInfo.getFrameIndex());
                     frames.add(frame);
                 }
             }
