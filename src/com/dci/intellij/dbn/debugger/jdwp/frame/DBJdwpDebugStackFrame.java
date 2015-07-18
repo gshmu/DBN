@@ -9,23 +9,26 @@ import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugStackFrame;
-import com.dci.intellij.dbn.debugger.common.frame.DBDebugValue;
-import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBJdbcDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
+import com.dci.intellij.dbn.debugger.jdwp.evaluation.DBJdwpDebuggerEvaluator;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.debugger.engine.JavaStackFrame;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
-import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.impl.XSourcePositionImpl;
 import com.sun.jdi.Location;
 
-public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess>{
+public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess, DBJdwpDebugValue>{
     private XStackFrame underlyingFrame;
-    private DBJdbcDebuggerEvaluator evaluator;
+    private LazyValue<DBJdwpDebuggerEvaluator> evaluator = new SimpleLazyValue<DBJdwpDebuggerEvaluator>() {
+        @Override
+        protected DBJdwpDebuggerEvaluator load() {
+            return new DBJdwpDebuggerEvaluator(DBJdwpDebugStackFrame.this);
+        }
+    };
 
     private LazyValue<Location> location = new SimpleLazyValue<Location>() {
         @Override
@@ -68,13 +71,9 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess>
 }
 
     @Override
-    public XDebuggerEvaluator getEvaluator() {
-/*
-        if (evaluator == null) {
-            evaluator = new DBProgramDebuggerEvaluator(this);
-        }
-*/
-        return evaluator;
+    @NotNull
+    public DBJdwpDebuggerEvaluator getEvaluator() {
+        return evaluator.get();
     }
 
 
@@ -89,14 +88,14 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess>
 
     @Nullable
     @Override
-    protected DBDebugValue createSuspendReasonDebugValue() {
+    protected DBJdwpDebugValue createSuspendReasonDebugValue() {
         return null;
     }
 
     @NotNull
     @Override
-    protected DBJdwpDebugValue createDebugValue(String variableName, Set<String> childVariableNames, Icon icon) {
-        return new DBJdwpDebugValue(this, null, variableName, childVariableNames, icon);
+    public DBJdwpDebugValue createDebugValue(String variableName, DBJdwpDebugValue parentValue, Set<String> childVariableNames, Icon icon) {
+        return new DBJdwpDebugValue(this, parentValue, variableName, childVariableNames, icon);
     }
 
         @Nullable
