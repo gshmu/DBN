@@ -3,8 +3,9 @@ package com.dci.intellij.dbn.debugger.jdbc.evaluation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.debugger.jdbc.frame.DBProgramDebugStackFrame;
-import com.dci.intellij.dbn.debugger.jdbc.frame.DBProgramDebugValue;
+import com.dci.intellij.dbn.debugger.common.frame.DBDebugValue;
+import com.dci.intellij.dbn.debugger.jdbc.frame.DBJdbcDebugStackFrame;
+import com.dci.intellij.dbn.debugger.jdbc.frame.DBJdbcDebugValue;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
@@ -16,10 +17,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 
-public class DBProgramDebuggerEvaluator extends XDebuggerEvaluator {
-    private DBProgramDebugStackFrame frame;
+public class DBJdbcDebuggerEvaluator extends XDebuggerEvaluator {
+    private DBJdbcDebugStackFrame frame;
 
-    public DBProgramDebuggerEvaluator(DBProgramDebugStackFrame frame) {
+    public DBJdbcDebuggerEvaluator(DBJdbcDebugStackFrame frame) {
         this.frame = frame;
     }
 
@@ -37,9 +38,9 @@ public class DBProgramDebuggerEvaluator extends XDebuggerEvaluator {
     }
 
     public void evaluate(@NotNull String expression, XEvaluationCallback callback) {
-        DBProgramDebugValue value = frame.getValue(expression);
+        DBDebugValue value = frame.getValue(expression);
         if (value == null) {
-            value = new DBProgramDebugValue(frame.getDebugProcess(), null, expression, null, null, frame.getIndex());
+            value = new DBJdbcDebugValue(frame, null, expression, null, null);
             frame.setValue(expression, value);
         }
 

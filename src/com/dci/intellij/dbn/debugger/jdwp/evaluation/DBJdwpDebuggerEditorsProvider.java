@@ -12,10 +12,10 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.EvaluationMode;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 
-public class DBProgramDebuggerEditorsProvider extends XDebuggerEditorsProvider {
-    public static final DBProgramDebuggerEditorsProvider INSTANCE = new DBProgramDebuggerEditorsProvider();
+public class DBJdwpDebuggerEditorsProvider extends XDebuggerEditorsProvider {
+    public static final DBJdwpDebuggerEditorsProvider INSTANCE = new DBJdwpDebuggerEditorsProvider();
 
-    private DBProgramDebuggerEditorsProvider(){}
+    private DBJdwpDebuggerEditorsProvider(){}
 
     @NotNull
     @Override

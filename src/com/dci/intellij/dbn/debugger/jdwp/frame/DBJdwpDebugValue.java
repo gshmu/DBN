@@ -6,14 +6,13 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.debugger.common.frame.DBDebugValue;
 import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
 import com.intellij.debugger.engine.JavaValue;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XCompositeNode;
-import com.intellij.xdebugger.frame.XNamedValue;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValue;
 import com.intellij.xdebugger.frame.XValueChildrenList;
@@ -25,45 +24,13 @@ import com.sun.jdi.Value;
 import com.sun.tools.jdi.ClassTypeImpl;
 import com.sun.tools.jdi.ObjectReferenceImpl;
 
-public class DBJdwpDebugValue extends XNamedValue implements Comparable<DBJdwpDebugValue>{
+public class DBJdwpDebugValue extends DBDebugValue<DBJdwpDebugStackFrame> {
     private DBJdwpDebugValueModifier modifier;
-    private String value;
-    private String errorMessage;
-    private Icon icon;
-    private int frameIndex;
-    private DBJdwpDebugValue parentValue;
-    private Set<String> childVariableNames;
     private DBJdwpDebugStackFrame stackFrame;
 
-    public DBJdwpDebugValue(DBJdwpDebugStackFrame stackFrame, DBJdwpDebugValue parentValue, String variableName, @Nullable Set<String> childVariableNames, Icon icon, int frameIndex) {
-        super(variableName);
+    public DBJdwpDebugValue(DBJdwpDebugStackFrame stackFrame, DBJdwpDebugValue parentValue, String variableName, @Nullable Set<String> childVariableNames, Icon icon) {
+        super(stackFrame, variableName, childVariableNames, parentValue, icon);
         this.stackFrame = stackFrame;
-        if (icon == null) {
-            icon = parentValue == null ?
-                    Icons.DBO_VARIABLE :
-                    Icons.DBO_ATTRIBUTE;
-        }
-        this.icon = icon;
-        this.parentValue = parentValue;
-
-        this.frameIndex = frameIndex;
-        this.childVariableNames = childVariableNames;
-    }
-
-    public DBJdwpDebugProcess getDebugProcess() {
-        return stackFrame.getDebugProcess();
-    }
-
-    public String getVariableName() {
-        return getName();
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     @Override
@@ -74,6 +41,7 @@ public class DBJdwpDebugValue extends XNamedValue implements Comparable<DBJdwpDe
             protected void execute() {
                 try {
                     String variableName = getVariableName();
+                    DBDebugValue parentValue = getParentValue();
                     String databaseVariableName = parentValue == null ? variableName : parentValue.getVariableName() + "." + variableName;
 
                     XStackFrame underlyingFrame = stackFrame.getUnderlyingFrame();
@@ -156,6 +124,11 @@ public class DBJdwpDebugValue extends XNamedValue implements Comparable<DBJdwpDe
     }
 
     @Override
+    public DBJdwpDebugProcess getDebugProcess() {
+        return (DBJdwpDebugProcess) super.getDebugProcess();
+    }
+
+    @Override
     public XValueModifier getModifier() {
         if (modifier == null) modifier = new DBJdwpDebugValueModifier(this);
         return modifier;
@@ -171,7 +144,7 @@ public class DBJdwpDebugValue extends XNamedValue implements Comparable<DBJdwpDe
             for (String childVariableName : childVariableNames) {
                 childVariableName = childVariableName.substring(getVariableName().length() + 1);
                 XValueChildrenList debugValueChildren = new XValueChildrenList();
-                DBJdwpDebugValue value = new DBJdwpDebugValue(stackFrame, this, childVariableName, null, null, frameIndex);
+                DBJdwpDebugValue value = new DBJdwpDebugValue(stackFrame, this, childVariableName, null, null);
                 debugValueChildren.add(value);
                 node.addChildren(debugValueChildren, true);
             }
@@ -180,18 +153,4 @@ public class DBJdwpDebugValue extends XNamedValue implements Comparable<DBJdwpDe
         }
 
     }
-
-/*    private List<DBObject> getChildObjects() {
-        DBObject object = DBObjectRef.get(objectRef);
-        if (object instanceof DBVirtualObject) {
-            DBObjectListContainer childObjectsContainer = object.getChildObjects();
-            if (childObjectsContainer != null) {
-                List<DBObjectList<DBObject>> objectLists = childObjectsContainer.getAllObjectLists();
-                if (objectLists.size() > 0) {
-                    return objectLists.get(0).getObjects();
-                }
-            }
-        }
-        return null;
-    }*/
 }

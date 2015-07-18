@@ -1,18 +1,18 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
+import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.debug.BasicOperationInfo;
 import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.intellij.xdebugger.frame.XValueModifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
+public class DBJdbcDebugValueModifier extends XValueModifier {
+    private DBJdbcDebugValue value;
 
-public class DBProgramDebugValueModifier extends XValueModifier {
-    private DBProgramDebugValue value;
-
-    public DBProgramDebugValueModifier(DBProgramDebugValue value) {
+    public DBJdbcDebugValueModifier(DBJdbcDebugValue value) {
         this.value = value;
     }
 

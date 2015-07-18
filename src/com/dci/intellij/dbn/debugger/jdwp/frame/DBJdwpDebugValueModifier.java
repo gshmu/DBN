@@ -45,6 +45,8 @@ public class DBJdwpDebugValueModifier extends XValueModifier {
         }
     }
 
+
+
     @Nullable
     @Override
     public String getInitialValueEditorText() {
