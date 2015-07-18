@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
+import com.dci.intellij.dbn.debugger.common.evaluation.DBDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -42,10 +43,10 @@ import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import gnu.trove.THashMap;
 
-public abstract class DBDebugStackFrame<T extends DBDebugProcess> extends XStackFrame {
-    private T debugProcess;
+public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDebugValue> extends XStackFrame {
+    private P debugProcess;
     private int frameIndex;
-    private Map<String, DBDebugValue> valuesMap;
+    private Map<String, V> valuesMap;
 
     private LazyValue<XSourcePosition> sourcePosition = new SimpleLazyValue<XSourcePosition>() {
         @Override
@@ -83,12 +84,16 @@ public abstract class DBDebugStackFrame<T extends DBDebugProcess> extends XStack
         }
     };
 
-    public DBDebugStackFrame(T debugProcess, int frameIndex) {
+    public DBDebugStackFrame(P debugProcess, int frameIndex) {
         this.debugProcess = debugProcess;
         this.frameIndex = frameIndex;
     }
 
     protected abstract XSourcePosition computeSourcePosition();
+
+    @NotNull
+    @Override
+    public abstract DBDebuggerEvaluator<? extends DBDebugStackFrame, V> getEvaluator();
 
     @Nullable
     @Override
@@ -100,7 +105,7 @@ public abstract class DBDebugStackFrame<T extends DBDebugProcess> extends XStack
         return subject.get();
     }
 
-    public T getDebugProcess() {
+    public P getDebugProcess() {
         return debugProcess;
     }
 
@@ -109,13 +114,13 @@ public abstract class DBDebugStackFrame<T extends DBDebugProcess> extends XStack
     }
 
 
-    public DBDebugValue getValue(String variableName) {
+    public V getValue(String variableName) {
         return valuesMap == null ? null : valuesMap.get(variableName.toLowerCase());
     }
 
-    public void setValue(String variableName, DBDebugValue value) {
+    public void setValue(String variableName, V value) {
         if (valuesMap == null) {
-            valuesMap = new THashMap<String, DBDebugValue>();
+            valuesMap = new THashMap<String, V>();
         }
         valuesMap.put(variableName.toLowerCase(), value);
     }
@@ -123,17 +128,17 @@ public abstract class DBDebugStackFrame<T extends DBDebugProcess> extends XStack
     protected abstract VirtualFile getVirtualFile();
 
     @Nullable
-    protected abstract DBDebugValue createSuspendReasonDebugValue();
+    protected abstract V createSuspendReasonDebugValue();
 
     @NotNull
-    protected abstract DBDebugValue createDebugValue(String variableName, Set<String> childVariableNames, Icon icon);
+    public abstract V createDebugValue(String variableName, V parentValue, Set<String> childVariableNames, Icon icon);
 
     @Override
     public void computeChildren(@NotNull XCompositeNode node) {
-        valuesMap = new THashMap<String, DBDebugValue>();
+        valuesMap = new THashMap<String, V>();
         List<DBDebugValue> values = new ArrayList<DBDebugValue>();
 
-        DBDebugValue frameInfoValue = createSuspendReasonDebugValue();
+        V frameInfoValue = createSuspendReasonDebugValue();
         if (frameInfoValue != null) {
             values.add(frameInfoValue);
             valuesMap.put(frameInfoValue.getName(), frameInfoValue);
@@ -174,7 +179,7 @@ public abstract class DBDebugStackFrame<T extends DBDebugProcess> extends XStack
 
                     if (!valuesMap.containsKey(variableName.toLowerCase())) {
                         Icon icon = basePsiElement.getIcon(true);
-                        DBDebugValue value = createDebugValue(variableName, childVariableNames, icon);
+                        V value = createDebugValue(variableName, null, childVariableNames, icon);
                         values.add(value);
                         valuesMap.put(variableName.toLowerCase(), value);
                     }

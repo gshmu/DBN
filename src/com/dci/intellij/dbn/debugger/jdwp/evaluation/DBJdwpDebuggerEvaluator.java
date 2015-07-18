@@ -1,89 +1,73 @@
 package com.dci.intellij.dbn.debugger.jdwp.evaluation;
 
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.debugger.common.evaluation.DBDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugValue;
 import com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugStackFrame;
 import com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugValue;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-import com.dci.intellij.dbn.language.common.psi.PsiUtil;
-import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.xdebugger.XSourcePosition;
+import com.intellij.debugger.engine.JavaValue;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
+import com.intellij.xdebugger.frame.XStackFrame;
+import com.intellij.xdebugger.frame.XValue;
+import com.intellij.xdebugger.frame.XValueNode;
+import com.intellij.xdebugger.frame.XValuePlace;
+import com.sun.jdi.Field;
+import com.sun.jdi.Value;
+import com.sun.tools.jdi.ClassTypeImpl;
+import com.sun.tools.jdi.ObjectReferenceImpl;
 
-public class DBJdwpDebuggerEvaluator extends XDebuggerEvaluator {
-    private DBJdwpDebugStackFrame frame;
-
+public class DBJdwpDebuggerEvaluator extends DBDebuggerEvaluator<DBJdwpDebugStackFrame, DBJdwpDebugValue> {
     public DBJdwpDebuggerEvaluator(DBJdwpDebugStackFrame frame) {
-        this.frame = frame;
-    }
-
-    public boolean evaluateCondition(@NotNull String expression) {
-        return false;
-    }
-
-    public String evaluateMessage(@NotNull String expression) {
-        return null;
+        super(frame);
     }
 
     @Override
-    public void evaluate(@NotNull String expression, @NotNull XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition) {
-        evaluate(expression, callback);
-    }
+    public void computePresentation(@NotNull final DBJdwpDebugValue debugValue, @NotNull final XValueNode node, @NotNull XValuePlace place) {
+        String variableName = debugValue.getVariableName();
+        DBDebugValue parentValue = debugValue.getParentValue();
+        String databaseVariableName = parentValue == null ? variableName : parentValue.getVariableName() + "." + variableName;
 
-    public void evaluate(@NotNull String expression, XEvaluationCallback callback) {
-        DBDebugValue value = frame.getValue(expression);
-        if (value == null) {
-            value = new DBJdwpDebugValue(frame, null, expression, null, null);
-            frame.setValue(expression, value);
-        }
+        XStackFrame underlyingFrame = debugValue.getStackFrame().getUnderlyingFrame();
+        XDebuggerEvaluator evaluator = underlyingFrame.getEvaluator();
+        //node.setPresentation(icon, null, "", childVariableNames != null);
+        if (evaluator != null) {
+            XDebuggerEvaluator.XEvaluationCallback evaluationCallback = new XDebuggerEvaluator.XEvaluationCallback() {
+                @Override
+                public void evaluated(@NotNull XValue result) {
+                    ObjectReferenceImpl value = (ObjectReferenceImpl) ((JavaValue) result).getDescriptor().getValue();
+                    final List<Field> fields = ((ClassTypeImpl) value.type()).fields();
+                    String stringValue = "null";
+                    if (fields.size() > 0) {
+                        final Value value1 = value.getValue(fields.get(0));
+                        if  (value1 != null) {
+                            stringValue = value1.toString();
+                        }
+                    }
+                    debugValue.setValue(stringValue);
+                    debugValue.setType(null);
 
-        String errorMessage = value.getErrorMessage();
-        if (errorMessage != null) {
-            callback.errorOccurred(errorMessage);
-        } else {
-            callback.evaluated(value);
-        }
-
-    }
-
-    @Nullable
-    public TextRange getExpressionRangeAtOffset(Project project, Document document, int offset) {
-        PsiFile psiFile = PsiUtil.getPsiFile(project, document);
-        if (psiFile != null) {
-            PsiElement psiElement = psiFile.findElementAt(offset);
-            if (psiElement != null && psiElement.getParent() instanceof IdentifierPsiElement) {
-                return psiElement.getTextRange();
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public TextRange getExpressionRangeAtOffset(Project project, Document document, int offset, boolean sideEffectsAllowed) {
-        PsiFile psiFile = PsiUtil.getPsiFile(project, document);
-        if (psiFile != null) {
-            PsiElement psiElement = psiFile.findElementAt(offset);
-            if (psiElement != null && psiElement.getParent() instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement.getParent();
-                QualifiedIdentifierPsiElement qualifiedIdentifier = identifierPsiElement.getParentQualifiedIdentifier();
-                if (qualifiedIdentifier == null) {
-                    return identifierPsiElement.getTextRange();
-                } else {
-                    int startOffset = qualifiedIdentifier.getTextRange().getStartOffset();
-                    int endOffset = identifierPsiElement.getTextRange().getEndOffset();
-                    return new TextRange(startOffset, endOffset);
+                    node.setPresentation(
+                            debugValue.getIcon(),
+                            debugValue.getType(),
+                            CommonUtil.nvl(debugValue.getValue(), "null"),
+                            debugValue.getChildVariableNames() != null);
                 }
 
-            }
+                @Override
+                public void errorOccurred(@NotNull String errorMessage) {
+                    debugValue.setValue("");
+                    debugValue.setType("could not resolve variable");
+                    node.setPresentation(
+                            debugValue.getIcon(),
+                            debugValue.getType(),
+                            CommonUtil.nvl(debugValue.getValue(), "null"),
+                            debugValue.getChildVariableNames() != null);
+                }
+            };
+            evaluator.evaluate(databaseVariableName.toUpperCase(), evaluationCallback, null);
         }
-        return null;
     }
 }

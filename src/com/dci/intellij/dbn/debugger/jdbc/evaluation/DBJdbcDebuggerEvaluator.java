@@ -1,89 +1,67 @@
 package com.dci.intellij.dbn.debugger.jdbc.evaluation;
 
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.database.common.debug.VariableInfo;
+import com.dci.intellij.dbn.debugger.common.evaluation.DBDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugValue;
+import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.dci.intellij.dbn.debugger.jdbc.frame.DBJdbcDebugStackFrame;
 import com.dci.intellij.dbn.debugger.jdbc.frame.DBJdbcDebugValue;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-import com.dci.intellij.dbn.language.common.psi.PsiUtil;
-import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.xdebugger.XSourcePosition;
-import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
+import com.intellij.xdebugger.frame.XValueNode;
+import com.intellij.xdebugger.frame.XValuePlace;
 
-public class DBJdbcDebuggerEvaluator extends XDebuggerEvaluator {
-    private DBJdbcDebugStackFrame frame;
+public class DBJdbcDebuggerEvaluator extends DBDebuggerEvaluator<DBJdbcDebugStackFrame, DBJdbcDebugValue> {
 
     public DBJdbcDebuggerEvaluator(DBJdbcDebugStackFrame frame) {
-        this.frame = frame;
-    }
-
-    public boolean evaluateCondition(@NotNull String expression) {
-        return false;
-    }
-
-    public String evaluateMessage(@NotNull String expression) {
-        return null;
+        super(frame);
     }
 
     @Override
-    public void evaluate(@NotNull String expression, @NotNull XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition) {
-        evaluate(expression, callback);
-    }
+    public void computePresentation(@NotNull DBJdbcDebugValue debugValue, @NotNull final XValueNode node, @NotNull XValuePlace place) {
+        Set<String> childVariableNames = debugValue.getChildVariableNames();
+        try {
+            DBJdbcDebugProcess debugProcess = debugValue.getDebugProcess();
+            String variableName = debugValue.getVariableName();
+            DBDebugValue parentValue = debugValue.getParentValue();
+            String databaseVariableName = parentValue == null ? variableName : parentValue.getVariableName() + "." + variableName;
+            VariableInfo variableInfo = debugProcess.getDebuggerInterface().getVariableInfo(
+                    databaseVariableName.toUpperCase(),
+                    debugValue.getStackFrame().getFrameIndex(),
+                    debugProcess.getDebugConnection());
+            String value = variableInfo.getValue();
+            String type = variableInfo.getError();
 
-    public void evaluate(@NotNull String expression, XEvaluationCallback callback) {
-        DBDebugValue value = frame.getValue(expression);
-        if (value == null) {
-            value = new DBJdbcDebugValue(frame, null, expression, null, null);
-            frame.setValue(expression, value);
-        }
-
-        String errorMessage = value.getErrorMessage();
-        if (errorMessage != null) {
-            callback.errorOccurred(errorMessage);
-        } else {
-            callback.evaluated(value);
-        }
-
-    }
-
-    @Nullable
-    public TextRange getExpressionRangeAtOffset(Project project, Document document, int offset) {
-        PsiFile psiFile = PsiUtil.getPsiFile(project, document);
-        if (psiFile != null) {
-            PsiElement psiElement = psiFile.findElementAt(offset);
-            if (psiElement != null && psiElement.getParent() instanceof IdentifierPsiElement) {
-                return psiElement.getTextRange();
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public TextRange getExpressionRangeAtOffset(Project project, Document document, int offset, boolean sideEffectsAllowed) {
-        PsiFile psiFile = PsiUtil.getPsiFile(project, document);
-        if (psiFile != null) {
-            PsiElement psiElement = psiFile.findElementAt(offset);
-            if (psiElement != null && psiElement.getParent() instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement.getParent();
-                QualifiedIdentifierPsiElement qualifiedIdentifier = identifierPsiElement.getParentQualifiedIdentifier();
-                if (qualifiedIdentifier == null) {
-                    return identifierPsiElement.getTextRange();
-                } else {
-                    int startOffset = qualifiedIdentifier.getTextRange().getStartOffset();
-                    int endOffset = identifierPsiElement.getTextRange().getEndOffset();
-                    return new TextRange(startOffset, endOffset);
+            if (value == null) {
+                value = childVariableNames != null ? "" : "null";
+            } else {
+                if (!StringUtil.isNumber(value)) {
+                    value = '\'' + value + '\'';
                 }
-
             }
+
+            if (type != null) {
+                type = type.toLowerCase();
+                value = "";
+            }
+            if (childVariableNames != null) {
+                type = "record";
+            }
+
+            debugValue.setValue(value);
+            debugValue.setType(type);
+        } catch (Exception e) {
+            debugValue.setValue("");
+            debugValue.setType(e.getMessage());
+        } finally {
+            node.setPresentation(
+                    debugValue.getIcon(),
+                    debugValue.getType(),
+                    CommonUtil.nvl(debugValue.getValue(), "null"),
+                    childVariableNames != null);
         }
-        return null;
     }
 }
