@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBJdbcDebuggerEvaluator;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.impl.XSourcePositionImpl;
@@ -75,7 +76,9 @@ public class DBJdbcDebugStackFrame extends DBDebugStackFrame<DBJdbcDebugProcess,
     @Override
     public Object getEqualityObject() {
         DebuggerRuntimeInfo runtimeInfo = getDebugProcess().getRuntimeInfo();
-        return runtimeInfo == null ? null : runtimeInfo.getOwnerName() + "." + runtimeInfo.getProgramName();
+        IdentifierPsiElement subject = getSubject();
+        String subjectString = subject == null ? null : subject.getText();
+        return runtimeInfo == null ? null : (runtimeInfo.getOwnerName() + "." + runtimeInfo.getProgramName() + "." + subjectString).toLowerCase();
     }
 }
 

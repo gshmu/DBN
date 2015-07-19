@@ -229,4 +229,6 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
             component.append(XDebuggerBundle.message("invalid.frame"), SimpleTextAttributes.ERROR_ATTRIBUTES);
         }
     }
+
+
 }

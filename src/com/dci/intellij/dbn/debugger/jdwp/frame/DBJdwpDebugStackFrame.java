@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
 import com.dci.intellij.dbn.debugger.jdwp.evaluation.DBJdwpDebuggerEvaluator;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.debugger.engine.JavaStackFrame;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -102,7 +103,10 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
     @Override
     public Object getEqualityObject() {
         DBSchemaObject object = DBDebugUtil.getObject(getSourcePosition());
-        return object == null ? null : object.getQualifiedName();
+        IdentifierPsiElement subject = getSubject();
+        String subjectString = subject == null ? null : subject.getText();
+
+        return object == null ? null : (object.getQualifiedName() + "." + subjectString).toLowerCase();
     }
 }
 
