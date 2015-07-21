@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.debugger.common.frame;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
@@ -42,6 +32,16 @@ import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDebugValue> extends XStackFrame {
     private P debugProcess;
@@ -62,24 +62,28 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
             Project project = getDebugProcess().getProject();
             XSourcePosition sourcePosition = getSourcePosition();
             VirtualFile virtualFile = getVirtualFile();
-            Document document = DocumentUtil.getDocument(virtualFile);
-            DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, document);
 
-            if (sourcePosition != null && psiFile != null && document != null) {
-                int offset = document.getLineEndOffset(sourcePosition.getLine());
-                PsiElement elementAtOffset = psiFile.findElementAt(offset);
-                while (elementAtOffset instanceof PsiWhiteSpace || elementAtOffset instanceof PsiComment) {
-                    elementAtOffset = elementAtOffset.getNextSibling();
-                }
+            if (virtualFile != null) {
+                Document document = DocumentUtil.getDocument(virtualFile);
+                DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, document);
 
-                if (elementAtOffset instanceof BasePsiElement) {
-                    BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
-                    BasePsiElement objectDeclarationPsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
-                    if (objectDeclarationPsiElement != null) {
-                        return (IdentifierPsiElement) objectDeclarationPsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                if (sourcePosition != null && psiFile != null && document != null) {
+                    int offset = document.getLineEndOffset(sourcePosition.getLine());
+                    PsiElement elementAtOffset = psiFile.findElementAt(offset);
+                    while (elementAtOffset instanceof PsiWhiteSpace || elementAtOffset instanceof PsiComment) {
+                        elementAtOffset = elementAtOffset.getNextSibling();
+                    }
+
+                    if (elementAtOffset instanceof BasePsiElement) {
+                        BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
+                        BasePsiElement objectDeclarationPsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
+                        if (objectDeclarationPsiElement != null) {
+                            return (IdentifierPsiElement) objectDeclarationPsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                        }
                     }
                 }
             }
+
             return null;
         }
     };
@@ -125,6 +129,7 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
         valuesMap.put(variableName.toLowerCase(), value);
     }
 
+    @Nullable
     protected abstract VirtualFile getVirtualFile();
 
     @Nullable
