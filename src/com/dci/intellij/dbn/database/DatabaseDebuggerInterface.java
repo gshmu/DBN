@@ -13,10 +13,15 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
+import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public interface DatabaseDebuggerInterface extends DatabaseInterface{
 
     DebuggerSessionInfo initializeSession(Connection connection) throws SQLException;
+
+    void initializeJdwpSession(Connection connection, String host, String port) throws SQLException;
+    void disconnectJdwpSession(Connection connection) throws SQLException;
 
     DebuggerVersionInfo getDebuggerVersion(Connection connection) throws SQLException;
 
@@ -67,4 +72,8 @@ public interface DatabaseDebuggerInterface extends DatabaseInterface{
     String getDebugConsoleTemplate(CodeStyleCaseSettings settings);
 
     String getRuntimeEventReason(int code);
+
+    String getJdwpProgramIdentifier(DBObjectType objectType, DBContentType contentType, String qualifiedObjectName);
+
+    String getJdwpTypeName(String typeIdentifier);
 }

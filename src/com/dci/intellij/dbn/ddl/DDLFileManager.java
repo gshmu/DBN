@@ -41,24 +41,22 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     private DDLFileManager(Project project) {
         super(project);
     }
-    private boolean isRegisteringFileTypes = false;
+    private static boolean isRegisteringFileTypes = false;
 
-    public void registerExtensions() {
+    public static void registerExtensions(final DDLFileExtensionSettings settings) {
         new WriteActionRunner() {
             public void run() {
-                if (!isDisposed()) {
-                    try {
-                        isRegisteringFileTypes = true;
-                        FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-                        List<DDLFileType> ddlFileTypeList = getExtensionSettings().getDDLFileTypes();
-                        for (DDLFileType ddlFileType : ddlFileTypeList) {
-                            for (String extension : ddlFileType.getExtensions()) {
-                                fileTypeManager.associateExtension(ddlFileType.getLanguageFileType(), extension);
-                            }
+                try {
+                    isRegisteringFileTypes = true;
+                    FileTypeManager fileTypeManager = FileTypeManager.getInstance();
+                    List<DDLFileType> ddlFileTypeList = settings.getDDLFileTypes();
+                    for (DDLFileType ddlFileType : ddlFileTypeList) {
+                        for (String extension : ddlFileType.getExtensions()) {
+                            fileTypeManager.associateExtension(ddlFileType.getLanguageFileType(), extension);
                         }
-                    } finally {
-                        isRegisteringFileTypes = false;
                     }
+                } finally {
+                    isRegisteringFileTypes = false;
                 }
             }
         }.start();
@@ -165,7 +163,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
-                registerExtensions();
+                registerExtensions(getExtensionSettings());
             }
         }.start();
     }

@@ -57,7 +57,7 @@ public class ConnectionPool implements Disposable {
                         standaloneConnection = new ConnectionWrapper(connection);
                         NotificationUtil.sendInfoNotification(
                                 getProject(),
-                                Constants.DBN_TITLE_PREFIX + "Connected",
+                                Constants.DBN_TITLE_PREFIX + "Connection",
                                 "Connected to database \"{0}\"",
                                 connectionHandler.getName());
                     } finally {
@@ -330,7 +330,7 @@ public class ConnectionPool implements Disposable {
         }
 
         public boolean isClosed() throws SQLException {
-            return connection.isClosed();
+            return ConnectionUtil.isClosed(connection);
         }
 
         public boolean isBusy() {
