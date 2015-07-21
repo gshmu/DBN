@@ -74,4 +74,6 @@ public interface DatabaseDebuggerInterface extends DatabaseInterface{
     String getRuntimeEventReason(int code);
 
     String getJdwpProgramIdentifier(DBObjectType objectType, DBContentType contentType, String qualifiedObjectName);
+
+    String getJdwpTypeName(String typeIdentifier);
 }

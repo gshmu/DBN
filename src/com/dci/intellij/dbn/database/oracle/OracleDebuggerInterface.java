@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.database.oracle;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.StringTokenizer;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
@@ -207,5 +208,22 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
             case TYPE: objectTypeName = contentType == DBContentType.CODE_SPEC ? "TypeSpec" : "TypeBody"; break;
         }
         return "$Oracle." + objectTypeName + "." + qualifiedObjectName;
+    }
+
+    @Override
+    public String getJdwpTypeName(String typeIdentifier) {
+        StringTokenizer tokenizer = new StringTokenizer(typeIdentifier, "\\.");
+        if (tokenizer.countTokens() > 2) {
+            String signature = tokenizer.nextToken();
+            String programType = tokenizer.nextToken();
+            StringBuilder typeName = new StringBuilder();
+            while (tokenizer.hasMoreTokens()) {
+                if (typeName.length() > 0) typeName.append(".");
+                typeName.append(tokenizer.nextToken());
+            }
+            return typeName.toString().toLowerCase();
+        }
+
+        return typeIdentifier;
     }
 }
