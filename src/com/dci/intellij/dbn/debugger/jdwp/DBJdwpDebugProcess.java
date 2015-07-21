@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
-import java.net.Inet4Address;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.StringTokenizer;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -56,6 +49,13 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import com.sun.jdi.Location;
+import org.jetbrains.annotations.NotNull;
+
+import java.net.Inet4Address;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.StringTokenizer;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     protected Connection targetConnection;
@@ -310,6 +310,11 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     DBProgram program = schema.getProgram(programName);
                     if (program != null) {
                         return program.getVirtualFile();
+                    } else {
+                        DBMethod method = schema.getMethod(programName, 0);
+                        if (method != null) {
+                            return method.getVirtualFile();
+                        }
                     }
                 }
             }
