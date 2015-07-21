@@ -218,7 +218,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
                         new SimpleTask() {
                             @Override
                             protected boolean canExecute() {
-                                return getOption() == 0;
+                                return getHandle() == 0;
                             }
 
                             @Override

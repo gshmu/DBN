@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.database.oracle;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.StringTokenizer;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
@@ -17,12 +18,26 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
+import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import static com.dci.intellij.dbn.editor.code.GuardedBlockMarker.END_OFFSET_IDENTIFIER;
 import static com.dci.intellij.dbn.editor.code.GuardedBlockMarker.START_OFFSET_IDENTIFIER;
 
 public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl implements DatabaseDebuggerInterface {
     public OracleDebuggerInterface(DatabaseInterfaceProvider provider) {
         super("oracle_debug_interface.xml", provider);
+    }
+
+    @Override
+    public void initializeJdwpSession(Connection connection, String host, String port) throws SQLException {
+        executeCall(connection, null, "initialize-session-debugging");
+        executeCall(connection, null, "initialize-session-compiler-flags");
+        executeCall(connection, null, "connect-jdwp-session", host, port);
+    }
+
+    @Override
+    public void disconnectJdwpSession(Connection connection) throws SQLException {
+        executeCall(connection, null, "disconnect-jdwp-session");
     }
 
     public DebuggerSessionInfo initializeSession(Connection connection) throws SQLException {
@@ -179,5 +194,36 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
         }
 
         return null;
+    }
+
+    @Override
+    public String getJdwpProgramIdentifier(DBObjectType objectType, DBContentType contentType, String qualifiedObjectName) {
+        String objectTypeName = "Unknown";
+        switch (objectType) {
+            case PACKAGE: objectTypeName = contentType == DBContentType.CODE_SPEC ? "PackageSpec" : "PackageBody"; break;
+            case FUNCTION: objectTypeName = "Function"; break;
+            case PROCEDURE: objectTypeName = "Procedure"; break;
+            case DATABASE_TRIGGER: objectTypeName = "Trigger"; break;
+            case DATASET_TRIGGER: objectTypeName = "Trigger"; break;
+            case TYPE: objectTypeName = contentType == DBContentType.CODE_SPEC ? "TypeSpec" : "TypeBody"; break;
+        }
+        return "$Oracle." + objectTypeName + "." + qualifiedObjectName;
+    }
+
+    @Override
+    public String getJdwpTypeName(String typeIdentifier) {
+        StringTokenizer tokenizer = new StringTokenizer(typeIdentifier, "\\.");
+        if (tokenizer.countTokens() > 2) {
+            String signature = tokenizer.nextToken();
+            String programType = tokenizer.nextToken();
+            StringBuilder typeName = new StringBuilder();
+            while (tokenizer.hasMoreTokens()) {
+                if (typeName.length() > 0) typeName.append(".");
+                typeName.append(tokenizer.nextToken());
+            }
+            return typeName.toString().toLowerCase();
+        }
+
+        return typeIdentifier;
     }
 }

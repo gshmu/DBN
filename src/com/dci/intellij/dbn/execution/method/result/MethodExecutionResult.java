@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.execution.method.result;
 
-import javax.swing.Icon;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -18,6 +7,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionResult;
+import com.dci.intellij.dbn.execution.ExecutionType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
 import com.dci.intellij.dbn.execution.method.ArgumentValueHolder;
@@ -32,20 +22,31 @@ import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MethodExecutionResult implements ExecutionResult, Disposable {
     private MethodExecutionInput executionInput;
     private MethodExecutionResultForm resultPanel;
     private List<ArgumentValue> argumentValues = new ArrayList<ArgumentValue>();
     private Map<DBObjectRef<DBArgument>, ResultSetDataModel> cursorModels;
-    private boolean debug;
+    private ExecutionType executionType;
     private String logOutput;
     private int executionDuration;
 
-    public MethodExecutionResult(MethodExecutionInput executionInput, MethodExecutionResultForm resultPanel, boolean debug) {
+    public MethodExecutionResult(MethodExecutionInput executionInput, MethodExecutionResultForm resultPanel, ExecutionType executionType) {
         this.executionInput = executionInput;
         executionInput.setExecutionResult(this);
-        this.debug = debug;
+        this.executionType = executionType;
         this.resultPanel = resultPanel;
     }
 
@@ -171,8 +172,8 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         this.resultPanel = resultPanel;
     }
 
-    public boolean isDebug() {
-        return debug;
+    public ExecutionType getExecutionType() {
+        return executionType;
     }
 
     public ResultSetDataModel getTableModel(DBArgument argument) {

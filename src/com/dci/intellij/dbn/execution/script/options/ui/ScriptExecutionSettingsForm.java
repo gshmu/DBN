@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.execution.script.options.ui;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -23,6 +19,11 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.awt.RelativePoint;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptExecutionSettings> {
     private JPanel mainPanel;
@@ -102,8 +103,8 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
                 ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
                 scriptExecutionManager.createCmdLineInterface(databaseType, cmdLineInterfacesTable.getNames(), new SimpleCallback<CmdLineInterface>() {
                     @Override
-                    public void start(CmdLineInterface value) {
-                        cmdLineInterfacesTable.addInterface(value);
+                    public void start(@Nullable CmdLineInterface inputValue) {
+                        cmdLineInterfacesTable.addInterface(inputValue);
                     }
                 });
             }

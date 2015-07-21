@@ -26,6 +26,7 @@ public class ConnectionActionGroup extends DefaultActionGroup {
         add(new DisconnectAction(connectionHandler));
         add(new TestConnectivityAction(connectionHandler));
         add(new LoadAllObjectsAction(connectionHandler));
+        add(new DevTestConnectionAction(connectionHandler));
         addSeparator();
         add(new ShowDatabaseInformationAction(connectionHandler));
         add(new OpenConnectionSettingsAction(connectionHandler));

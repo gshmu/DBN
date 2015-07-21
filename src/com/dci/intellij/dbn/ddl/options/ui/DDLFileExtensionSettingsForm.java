@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.ddl.options.ui;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
@@ -9,15 +18,6 @@ import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
 import com.intellij.openapi.options.ConfigurationException;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFileExtensionSettings> {
     private JPanel mainPanel;
@@ -106,7 +106,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         applySetting(typeBodyTextField, DDLFileTypeId.TYPE_BODY, changed);
 
         if (changed.get()) {
-            DDLFileManager.getInstance(getConfiguration().getProject()).registerExtensions();
+            DDLFileManager.registerExtensions(getConfiguration());
         }
     }
 

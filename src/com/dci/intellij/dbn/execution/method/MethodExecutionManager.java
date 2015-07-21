@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
+import com.dci.intellij.dbn.execution.ExecutionType;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
 import com.dci.intellij.dbn.execution.method.history.ui.MethodExecutionHistoryDialog;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionDialog;
@@ -160,7 +161,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                 public void execute(@NotNull ProgressIndicator progressIndicator) {
                     try {
                         initProgressIndicator(progressIndicator, true, "Executing " + method.getQualifiedNameWithType());
-                        executionProcessor.execute(executionInput, false);
+                        executionProcessor.execute(executionInput, ExecutionType.RUN);
                         if (!executionContext.isExecutionCancelled()) {
                             ExecutionManager executionManager = ExecutionManager.getInstance(project);
                             executionManager.addExecutionResult(executionInput.getExecutionResult());
@@ -196,14 +197,16 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void debugExecute(final MethodExecutionInput executionInput, final Connection connection) throws SQLException {
+    public void debugExecute(final MethodExecutionInput executionInput, final Connection connection, ExecutionType executionType) throws SQLException {
         final DBMethod method = executionInput.getMethod();
         if (method != null) {
             ConnectionHandler connectionHandler = method.getConnectionHandler();
             DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
-            final MethodExecutionProcessor executionProcessor = executionInterface.createDebugExecutionProcessor(method);
+            final MethodExecutionProcessor executionProcessor = executionType == ExecutionType.DEBUG_JWDP ?
+                    executionInterface.createExecutionProcessor(method) :
+                    executionInterface.createDebugExecutionProcessor(method);
 
-            executionProcessor.execute(executionInput, connection, true);
+            executionProcessor.execute(executionInput, connection, executionType);
             ExecutionContext executionContext = executionInput.getExecutionContext();
             if (!executionContext.isExecutionCancelled()) {
                 ExecutionManager executionManager = ExecutionManager.getInstance(method.getProject());

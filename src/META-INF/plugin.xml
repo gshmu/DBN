@@ -29,6 +29,11 @@
         <ul>
             <li><b>3.0.4705</b>
             <ul>
+                - Oracle JDWP debug interface<br>
+                - Bug fixes<br>
+            </ul>
+            <li><b>3.0.4705</b>
+            <ul>
                 - Compatibility with latest IntelliJ EAP (15.0)<br>
                 - Oracle statement debugging (early preview)<br>
                 - Dedicated debugger console (Oracle)<br>
@@ -376,7 +381,7 @@
             <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementEditorAction" text="Script Editor - Execute Statement" icon="/img/action/ExecuteStatement.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl ENTER"/>
             </action>
-            <action id="DBNavigator.Actions.DebugStatement" class="com.dci.intellij.dbn.debugger.execution.statement.action.DebugStatementEditorAction" text="Script Editor - Debug Statement" icon="/img/action/DebugStatement.png"/>
+            <action id="DBNavigator.Actions.DebugStatement" class="com.dci.intellij.dbn.debugger.common.action.DebugStatementEditorAction" text="Script Editor - Debug Statement" icon="/img/action/DebugStatement.png"/>
             <action id="DBNavigator.Actions.ExplainPlan" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanEditorAction" text="Script Editor - Explain plan" icon="/img/action/ExplainStatement.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift ENTER"/>
             </action>
@@ -617,13 +622,15 @@
 
         <elementSignatureProvider order="last" implementation="com.dci.intellij.dbn.language.common.DBLanguageElementSignatureProvider"/>
 
-        <xdebugger.settings implementation="com.dci.intellij.dbn.debugger.settings.DBProgramDebuggerSettings"/>
-        <xdebugger.breakpointType implementation="com.dci.intellij.dbn.debugger.breakpoint.DBProgramBreakpointType"/>
-        <programRunner implementation="com.dci.intellij.dbn.debugger.execution.method.DBMethodRunner"/>
-        <programRunner implementation="com.dci.intellij.dbn.debugger.execution.statement.DBStatementRunner"/>
-        <!--<executionTargetProvider implementation="com.dci.intellij.dbn.debugger.execution.common.DBExecutionTargetProvider"/>-->
-        <configurationType implementation="com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfigurationType"/>
-        <configurationType implementation="com.dci.intellij.dbn.debugger.execution.statement.DBStatementRunConfigurationType"/>
+        <xdebugger.settings implementation="com.dci.intellij.dbn.debugger.common.settings.DBProgramDebuggerSettings"/>
+        <xdebugger.breakpointType implementation="com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointType"/>
+        <programRunner implementation="com.dci.intellij.dbn.debugger.jdbc.process.DBMethodRunner"/>
+        <programRunner implementation="com.dci.intellij.dbn.debugger.jdbc.process.DBStatementRunner"/>
+        <programRunner implementation="com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner"/>
+        <!--<executionTargetProvider implementation="com.dci.intellij.dbn.debugger.jdbc.execution.common.DBExecutionTargetProvider"/>-->
+        <configurationType implementation="com.dci.intellij.dbn.debugger.jdbc.config.DBMethodRunConfigType"/>
+        <configurationType implementation="com.dci.intellij.dbn.debugger.jdbc.config.DBStatementRunConfigType"/>
+        <configurationType implementation="com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfigType"/>
         <navbar order="last" implementation="com.dci.intellij.dbn.navigation.NavigationBarExtension"/>
         <editorTabColorProvider order="first" implementation="com.dci.intellij.dbn.editor.DBEditorTabColorProvider"/>
 

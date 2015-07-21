@@ -377,9 +377,11 @@ public class Icons {
     public static final Icon DBO_VIEW_SYNONYM                    = load("/img/object/ViewSynonym.png");
     public static final Icon DBO_VIEWS                           = load("/img/object/Views.png");
     public static final Icon DBO_VARIABLE                        = load("/img/object/Variable.png");
+    public static final Icon DBO_CURSOR                          = load("/img/object/Cursor.png");
     public static final Icon DBO_LABEL_PK_FK                     = load("/img/object/PrimaryKeyForeignKey.png");
     public static final Icon DBO_LABEL_PK                        = load("/img/object/PrimaryKey.png");
     public static final Icon DBO_LABEL_FK                        = load("/img/object/ForeignKey.png");
+
 
     public static final Icon DBO_OUTGOING_REF                    = load("/img/object/OutgoingReference.png");
     public static final Icon DBO_INCOMING_REF                    = load("/img/object/IncomingReference.png");

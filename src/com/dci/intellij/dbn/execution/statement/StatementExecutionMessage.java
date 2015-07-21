@@ -34,7 +34,7 @@ public class StatementExecutionMessage extends ConsoleMessage {
 
     @Override
     public boolean isNew() {
-        return super.isNew() && !isOrphan();
+        return super.isNew()/* && !isOrphan()*/;
     }
 
     public String getCauseMessage() {
