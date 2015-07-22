@@ -96,7 +96,7 @@ public class TreeUtil {
                             case STRUCTURE_CHANGED: treeModelListener.treeStructureChanged(event); break;
                         }
                     }
-                } catch (ProcessCanceledException e) {
+                } catch (ProcessCanceledException ignore) {
 
                 } catch (Exception e) {
                     LOGGER.warn("Error notifying tree model listeners", e);
