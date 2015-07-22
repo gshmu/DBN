@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -78,8 +77,15 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             } else if (suspendContext != lastSuspendContext){
                 lastSuspendContext = suspendContext;
                 final DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
-                session.positionReached(dbSuspendContext);
-                throw AlreadyDisposedException.INSTANCE;
+
+
+                new DebugCommandRunner(getDebuggerSession().getProcess()) {
+                    @Override
+                    protected void action() throws Exception {
+                        session.positionReached(dbSuspendContext);
+                    }
+                }.invoke();
+                //throw AlreadyDisposedException.INSTANCE;
             }
         }
     };
