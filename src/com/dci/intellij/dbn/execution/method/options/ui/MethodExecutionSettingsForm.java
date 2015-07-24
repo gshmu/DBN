@@ -28,8 +28,8 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
 
     public void applyFormChanges() throws ConfigurationException {
         MethodExecutionSettings settings = getConfiguration();
-        int executionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 300, "\nUse value 0 for no timeout");
-        int debugExecutionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(debugExecutionTimeoutTextField, "Debug execution timeout", true, 0, 3000, "\nUse value 0 for no timeout");
+        int executionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
+        int debugExecutionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(debugExecutionTimeoutTextField, "Debug execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
         int parameterHistorySize = ConfigurationEditorUtil.validateIntegerInputValue(parameterHistorySizeTextField, "Parameter history size", true, 0, 3000, null);
         settings.setExecutionTimeout(executionTimeout);
         settings.setDebugExecutionTimeout(debugExecutionTimeout);
