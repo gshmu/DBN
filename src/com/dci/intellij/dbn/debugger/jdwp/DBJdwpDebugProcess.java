@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
+import java.net.Inet4Address;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.StringTokenizer;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -48,13 +55,6 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import com.sun.jdi.Location;
-import org.jetbrains.annotations.NotNull;
-
-import java.net.Inet4Address;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.StringTokenizer;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     protected Connection targetConnection;
@@ -79,7 +79,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 final DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
 
 
-                new DebugCommandRunner(getDebuggerSession().getProcess()) {
+                new ManagedThreadCommand(getDebuggerSession().getProcess()) {
                     @Override
                     protected void action() throws Exception {
                         session.positionReached(dbSuspendContext);

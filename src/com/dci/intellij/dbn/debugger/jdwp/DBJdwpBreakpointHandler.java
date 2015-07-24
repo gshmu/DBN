@@ -46,7 +46,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
 
     @Override
     public void registerBreakpoint(@NotNull final XLineBreakpoint<DBBreakpointProperties> breakpoint) {
-        getManagerThread().invoke(new DebuggerCommandImpl() {
+        new ManagedThreadCommand(getJdiDebugProcess()) {
             @Override
             protected void action() throws Exception {
                 //EventRequestManager eventRequestManager = virtualMachineProxy.eventRequestManager();
@@ -77,12 +77,12 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                     }
                 }
             }
-        });
+        }.invoke();
     }
 
     @Override
     public void unregisterBreakpoint(@NotNull final XLineBreakpoint<DBBreakpointProperties> breakpoint, final boolean temporary) {
-        getManagerThread().invoke(new DebuggerCommandImpl() {
+        new ManagedThreadCommand(getJdiDebugProcess()) {
             @Override
             protected void action() throws Exception {
                 RequestManagerImpl requestsManager = getRequestsManager();
@@ -97,7 +97,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                     requestsManager.deleteRequest(lineBreakpoint);
                 }
             }
-        });
+        }.invoke();
     }
 
     private void initializeResources(@NotNull final XLineBreakpoint<DBBreakpointProperties> breakpoint) {
