@@ -196,8 +196,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
             final DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
             try {
-                executeTargetTask.start();
-                Thread.sleep(1000);
+                startTargetProgram();
                 if (!status.TARGET_EXECUTION_THREW_EXCEPTION && !status.TARGET_EXECUTION_TERMINATED) {
                     runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
                     runtimeInfo = debuggerInterface.stepOver(debugConnection);
@@ -216,34 +215,36 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         }
     }
 
-    private DBDebugOperationTask executeTargetTask = new DBDebugOperationTask(getProject(), "execute target program") {
-        @Override
-        public void execute() throws Exception {
-            if (status.PROCESS_IS_TERMINATING) return;
-            if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
-            try {
-                status.TARGET_EXECUTION_STARTED = true;
-                console.system("Target program execution started: " + getExecutionInput().getExecutionContext().getTargetName());
-                executeTarget();
-                console.system("Target program execution ended");
-            } catch (SQLException e) {
-                status.TARGET_EXECUTION_THREW_EXCEPTION = true;
-                console.error("Target program execution failed. " + e.getMessage());
-                // if the method execution threw exception, the debugger-off statement is not reached,
-                // hence the session will hag as debuggable. To avoid this, disable debugging has
-                // to explicitly be called here
+    private void startTargetProgram() {
+        new BackgroundTask(getProject(), "Running debugger target program", true, true) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                if (status.PROCESS_IS_TERMINATING) return;
+                if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
+                try {
+                    status.TARGET_EXECUTION_STARTED = true;
+                    console.system("Target program execution started: " + getExecutionInput().getExecutionContext().getTargetName());
+                    executeTarget();
+                    console.system("Target program execution ended");
+                } catch (SQLException e) {
+                    status.TARGET_EXECUTION_THREW_EXCEPTION = true;
+                    console.error("Target program execution failed. " + e.getMessage());
+                    // if the method execution threw exception, the debugger-off statement is not reached,
+                    // hence the session will hag as debuggable. To avoid this, disable debugging has
+                    // to explicitly be called here
 
-                // TODO: is this required? the target connection will be dropped anyways
-                //DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                //debuggerInterface.disableDebugging(targetConnection);
+                    // TODO: is this required? the target connection will be dropped anyways
+                    //DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                    //debuggerInterface.disableDebugging(targetConnection);
 
-                MessageUtil.showErrorDialog(getProject(), "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
-            } finally {
-                status.TARGET_EXECUTION_TERMINATED = true;
-                getSession().stop();
+                    MessageUtil.showErrorDialog(getProject(), "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
+                } finally {
+                    status.TARGET_EXECUTION_TERMINATED = true;
+                    getSession().stop();
+                }
             }
-        }
-    };
+        }.start();
+    }
 
     protected abstract void executeTarget() throws SQLException;
 
