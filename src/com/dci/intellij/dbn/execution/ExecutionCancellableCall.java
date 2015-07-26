@@ -102,6 +102,11 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
             }
 
         } catch (TimeoutException e)  {
+            try {
+                ExecutionCancellableCall.this.cancel();
+            } catch (Exception ce) {
+                LOGGER.warn("Error cancelling operation", ce);
+            }
             throw new SQLTimeoutException("Operation has timed out (" + timeout + "s). Check timeout settings");
         }
 

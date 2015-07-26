@@ -12,7 +12,7 @@ import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.openapi.project.Project;
 
-public class DBMethodRunner extends DBProgramRunner<MethodExecutionInput> {
+public class DBMethodJdbcRunner extends DBProgramRunner<MethodExecutionInput> {
     public static final String RUNNER_ID = "DBNMethodRunner";
 
     @NotNull
@@ -30,7 +30,7 @@ public class DBMethodRunner extends DBProgramRunner<MethodExecutionInput> {
 
     @Override
     protected DBDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler) {
-        return new DBMethodProcessStarter(connectionHandler);
+        return new DBMethodJdbcProcessStarter(connectionHandler);
     }
 
     @Override

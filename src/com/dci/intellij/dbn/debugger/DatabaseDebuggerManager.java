@@ -26,13 +26,13 @@ import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigType;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigurationFactory;
-import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodJdbcRunConfig;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodJdbcRunConfigType;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementRunConfig;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementRunConfigType;
-import com.dci.intellij.dbn.debugger.jdbc.process.DBMethodRunner;
+import com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementRunner;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfigType;
+import com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner;
 import com.dci.intellij.dbn.debugger.options.DebuggerSettings;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
@@ -217,7 +217,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         if (true) {
             runConfigurationSetting = getDefaultConfig(configurationType);
             MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-            DBMethodJdbcRunConfig runConfiguration = (DBMethodJdbcRunConfig) runConfigurationSetting.getConfiguration();
+            DBMethodRunConfig runConfiguration = (DBMethodRunConfig) runConfigurationSetting.getConfiguration();
 
             MethodExecutionInput executionInput = executionManager.getExecutionInput(method);
             runConfiguration.setExecutionInput(executionInput);
@@ -226,7 +226,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(project);
             List<RunnerAndConfigurationSettings> configurationSettings = runManager.getConfigurationSettingsList(configurationType);
             for (RunnerAndConfigurationSettings configurationSetting : configurationSettings) {
-                DBMethodJdbcRunConfig availableRunConfiguration = (DBMethodJdbcRunConfig) configurationSetting.getConfiguration();
+                DBMethodRunConfig availableRunConfiguration = (DBMethodRunConfig) configurationSetting.getConfiguration();
                 if (method.equals(availableRunConfiguration.getMethod())) {
                     runConfigurationSetting = configurationSetting;
                     break;
@@ -245,7 +245,11 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             runManager.setSelectedConfiguration(runConfigurationSetting);
         }
 
-        ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(DBMethodRunner.RUNNER_ID);
+        String runnerId =
+                debuggerType == DBDebuggerType.JDBC ? DBMethodJdbcRunner.RUNNER_ID :
+                debuggerType == DBDebuggerType.JDWP ? DBMethodJdwpRunner.RUNNER_ID : null;
+
+        ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(runnerId);
         if (programRunner != null) {
             try {
                 Executor executorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
