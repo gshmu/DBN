@@ -16,7 +16,7 @@ public class DebuggerSettingsForm extends ConfigurationEditorForm<DebuggerSettin
         super(settings);
 
         debuggerTypeComboBox.setValues(
-                DBDebuggerType.JDBC, DBDebuggerType.JWDP);
+                DBDebuggerType.JDBC, DBDebuggerType.JDWP);
 
         updateBorderTitleForeground(mainPanel);
         resetFormChanges();

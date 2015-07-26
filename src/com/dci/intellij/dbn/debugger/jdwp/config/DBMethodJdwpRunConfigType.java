@@ -4,12 +4,11 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.debugger.jdbc.config.DBProgramRunConfigurationType;
-import com.intellij.execution.configurations.ConfigurationFactory;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
 
-public class DBMethodJdwpRunConfigType extends DBProgramRunConfigurationType {
+public class DBMethodJdwpRunConfigType extends DBMethodRunConfigType<DBMethodJdwpRunConfigFactory> {
     public static final String DEFAULT_RUNNER_NAME = "DB Method Runner (JDWP)";
-    private ConfigurationFactory[] configurationFactories = new ConfigurationFactory[]{new DBMethodJdwpRunConfigFactory(this)};
+    private DBMethodJdwpRunConfigFactory[] configurationFactories = new DBMethodJdwpRunConfigFactory[]{new DBMethodJdwpRunConfigFactory(this)};
 
 
     public String getDisplayName() {
@@ -29,13 +28,8 @@ public class DBMethodJdwpRunConfigType extends DBProgramRunConfigurationType {
         return "DBNMethodJdwpRunConfiguration";
     }
 
-    public ConfigurationFactory[] getConfigurationFactories() {
+    public DBMethodJdwpRunConfigFactory[] getConfigurationFactories() {
         return configurationFactories;
-    }
-
-    @Override
-    public DBMethodJdwpRunConfigFactory getConfigurationFactory() {
-        return (DBMethodJdwpRunConfigFactory) configurationFactories[0];
     }
 
     @Override

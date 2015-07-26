@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigurationEdit
 import com.dci.intellij.dbn.debugger.jdwp.config.ui.DBMethodJdwpRunConfigEditorForm;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 
-public class DBMethodJdwpRunConfigEditor extends DBProgramRunConfigurationEditor<DBMethodJdwpRunConfig, DBMethodJdwpRunConfigEditorForm> {
+public class DBMethodJdwpRunConfigEditor extends DBProgramRunConfigurationEditor<DBMethodJdwpRunConfig, DBMethodJdwpRunConfigEditorForm, MethodExecutionInput> {
     public DBMethodJdwpRunConfigEditor(DBMethodJdwpRunConfig configuration) {
         super(configuration);
     }

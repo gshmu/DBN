@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger.jdwp.config;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.debugger.jdbc.config.DBProgramRunProfileState;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunProfileState;
 import com.intellij.debugger.engine.RemoteDebugProcessHandler;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;

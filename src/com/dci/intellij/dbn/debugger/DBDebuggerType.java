@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 
 public enum DBDebuggerType implements Presentable {
     JDBC("Classic"),
-    JWDP("JWDP");
+    JDWP("JWDP");
 
     private String name;
 

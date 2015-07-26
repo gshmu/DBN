@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.debugger.jdbc.config;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunProfileState;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;

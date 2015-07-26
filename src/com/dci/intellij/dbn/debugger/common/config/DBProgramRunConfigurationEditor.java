@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.debugger.jdbc.config.ui.DBProgramRunConfigurationEditorForm;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SettingsEditor;
+import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComponent;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.debugger.jdbc.config.ui.DBProgramRunConfigurationEditorForm;
+import com.dci.intellij.dbn.execution.ExecutionInput;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SettingsEditor;
 
-public abstract class DBProgramRunConfigurationEditor<T extends DBProgramRunConfiguration, F extends DBProgramRunConfigurationEditorForm<T>> extends SettingsEditor<T> {
+public abstract class DBProgramRunConfigurationEditor<T extends DBProgramRunConfiguration, F extends DBProgramRunConfigurationEditorForm<T>, I extends ExecutionInput> extends SettingsEditor<T> {
     private T configuration;
     private F configurationEditorForm;
 
@@ -51,4 +52,6 @@ public abstract class DBProgramRunConfigurationEditor<T extends DBProgramRunConf
         configurationEditorForm = getConfigurationEditorForm(true);
         return configurationEditorForm.getComponent();
     }
+
+    public abstract void setExecutionInput(I executionInput);
 }

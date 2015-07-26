@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.database.common.execution;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -8,6 +16,7 @@ import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.execution.ExecutionCancellableCall;
 import com.dci.intellij.dbn.execution.ExecutionType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
@@ -20,13 +29,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
 
 public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implements MethodExecutionProcessor<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -71,13 +73,13 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         execute(executionInput, connection, executionType);
     }
 
-    public void execute(MethodExecutionInput executionInput, Connection connection, ExecutionType executionType) throws SQLException {
+    public void execute(final MethodExecutionInput executionInput, final Connection connection, ExecutionType executionType) throws SQLException {
         executionInput.initExecution(executionType);
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        final ConnectionHandler connectionHandler = getConnectionHandler();
         boolean usePoolConnection = false;
         boolean loggingEnabled = executionType != ExecutionType.DEBUG && executionInput.isEnableLogging();
         Project project = getProject();
-        DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
+        final DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
         Counter runningMethods = connectionHandler.getLoadMonitor().getRunningMethods();
         runningMethods.increment();
         try {
@@ -89,7 +91,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
             }
 
-            PreparedStatement preparedStatement = isQuery() ?
+            final PreparedStatement preparedStatement = isQuery() ?
                     connection.prepareStatement(command) :
                     connection.prepareCall(command);
 
@@ -101,9 +103,19 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                     methodExecutionSettings.getExecutionTimeout();
 
             preparedStatement.setQueryTimeout(timeout);
-            preparedStatement.execute();
+            MethodExecutionResult executionResult = new ExecutionCancellableCall<MethodExecutionResult>(timeout, TimeUnit.SECONDS) {
+                @Override
+                public MethodExecutionResult execute() throws Exception{
+                    preparedStatement.execute();
+                    return executionInput.getExecutionResult();
+                }
 
-            MethodExecutionResult executionResult = executionInput.getExecutionResult();
+                @Override
+                public void cancel() throws Exception {
+                    preparedStatement.cancel();
+                }
+            }.start();
+
             if (executionResult != null) {
                 loadValues(executionResult, preparedStatement);
                 executionResult.calculateExecDuration();

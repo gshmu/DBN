@@ -113,7 +113,8 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 new BackgroundTask(project, "Executing database script", true, false) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        new SimpleTimeoutCall<Object>(100, TimeUnit.SECONDS, null) {
+                        // TODO make script execution timeout configurable
+                        new SimpleTimeoutCall<Object>(10000, TimeUnit.SECONDS, null) {
                             @Override
                             public Object call() throws Exception {
                                 doExecuteScript(executionInput);

@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdwp.config;
+package com.dci.intellij.dbn.debugger.jdbc.config;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -11,21 +11,21 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
 
-public class DBMethodJdwpRunConfig extends DBMethodRunConfig<DBMethodJdwpRunConfigEditor> {
-
-    public DBMethodJdwpRunConfig(Project project, ConfigurationFactory factory, String name, boolean generic) {
+public class DBMethodJdbcRunConfig extends DBMethodRunConfig<DBMethodJdbcRunConfigEditor> {
+    public DBMethodJdbcRunConfig(Project project, ConfigurationFactory factory, String name, boolean generic) {
         super(project, factory, name, generic);
     }
 
     @Override
-    protected DBMethodJdwpRunConfigEditor createConfigurationEditor() {
-        return new DBMethodJdwpRunConfigEditor(this);
+    protected DBMethodJdbcRunConfigEditor createConfigurationEditor() {
+        return new DBMethodJdbcRunConfigEditor(this);
     }
 
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-        return new DBMethodJdwpRunProfileState(env);
+        return new DBMethodJdbcRunProfileState(env);
     }
 
+    @Override
     public String createSuggestedName() {
         MethodExecutionInput executionInput = getExecutionInput();
         if (executionInput == null) {
@@ -34,5 +34,4 @@ public class DBMethodJdwpRunConfig extends DBMethodRunConfig<DBMethodJdwpRunConf
             return executionInput.getMethodRef().getObjectName();
         }
     }
-
 }

@@ -1,56 +1,66 @@
-package com.dci.intellij.dbn.debugger.jdbc.config;
-
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
-import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RuntimeConfigurationError;
-import com.intellij.execution.configurations.RuntimeConfigurationException;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
-import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+package com.dci.intellij.dbn.debugger.common.config;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
 
-public class DBMethodRunConfig extends DBProgramRunConfiguration<MethodExecutionInput> {
-    private Set<MethodExecutionInput> methodSelectionHistory = new THashSet<MethodExecutionInput>();
-    private DBMethodRunConfigEditor configurationEditor;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
+import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.execution.configurations.RuntimeConfigurationException;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.WriteExternalException;
+import gnu.trove.THashSet;
+
+public abstract class DBMethodRunConfig<T extends DBProgramRunConfigurationEditor> extends DBProgramRunConfiguration<MethodExecutionInput> {
+    private T configurationEditor;
     private boolean isGeneratedName = true;
+    private Set<MethodExecutionInput> methodSelectionHistory = new THashSet<MethodExecutionInput>();
 
     public DBMethodRunConfig(Project project, ConfigurationFactory factory, String name, boolean generic) {
         super(project, factory, name, generic);
     }
 
-    @NotNull
-    public DBMethodRunConfigEditor getConfigurationEditor() {
-        if (configurationEditor == null )
-            configurationEditor = new DBMethodRunConfigEditor(this);
+    public Set<MethodExecutionInput> getMethodSelectionHistory() {
+        return methodSelectionHistory;
+    }
+
+    public T getConfigurationEditor() {
+        if (configurationEditor == null) {
+            configurationEditor = createConfigurationEditor();
+        }
         return configurationEditor;
     }
 
-    public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-        return new DBMethodRunProfileState(env);
+    protected abstract T createConfigurationEditor();
+
+    public boolean isGeneratedName() {
+        return isGeneratedName;
     }
 
-    public Set<MethodExecutionInput> getMethodSelectionHistory() {
-        return methodSelectionHistory;
+    public void setExecutionInput(MethodExecutionInput executionInput) {
+        MethodExecutionInput currentExecutionInput = getExecutionInput();
+        if (currentExecutionInput != null && !currentExecutionInput.equals(executionInput)) {
+            methodSelectionHistory.add(currentExecutionInput);
+        }
+        super.setExecutionInput(executionInput);
+        getConfigurationEditor().setExecutionInput(executionInput);
+    }
+
+    @Override
+    public MethodExecutionInput getExecutionInput() {
+        return super.getExecutionInput();
     }
 
     public void checkConfiguration() throws RuntimeConfigurationException {
@@ -96,33 +106,6 @@ public class DBMethodRunConfig extends DBProgramRunConfiguration<MethodExecution
         return methods;
     }
 
-    public boolean isGeneratedName() {
-        return isGeneratedName;
-    }
-
-    public String suggestedName() {
-        return createSuggestedName();
-    }
-
-    public String createSuggestedName() {
-        MethodExecutionInput executionInput = getExecutionInput();
-        if (executionInput == null) {
-            return "<unnamed>";
-        } else {
-            return executionInput.getMethodRef().getObjectName();
-        }
-    }
-
-    public void setExecutionInput(MethodExecutionInput executionInput) {
-        MethodExecutionInput currentExecutionInput = getExecutionInput();
-        if (currentExecutionInput != null && !currentExecutionInput.equals(executionInput)) {
-            methodSelectionHistory.add(currentExecutionInput);
-        }
-        super.setExecutionInput(executionInput);
-        getConfigurationEditor().setExecutionInput(executionInput);
-    }
-
-
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
@@ -141,11 +124,6 @@ public class DBMethodRunConfig extends DBProgramRunConfiguration<MethodExecution
             }
             element.addContent(methodIdentifierHistoryElement);
         }
-    }
-
-    @Override
-    public boolean excludeCompileBeforeLaunchOption() {
-        return true;
     }
 
     @Override
@@ -181,7 +159,18 @@ public class DBMethodRunConfig extends DBProgramRunConfiguration<MethodExecution
         runConfiguration.configurationEditor = null;
         MethodExecutionInput executionInput = getExecutionInput();
         runConfiguration.setExecutionInput(executionInput == null ? null : executionInput.clone());
-        runConfiguration.methodSelectionHistory = new HashSet<MethodExecutionInput>(methodSelectionHistory);
+        runConfiguration.methodSelectionHistory = new HashSet<MethodExecutionInput>(getMethodSelectionHistory());
         return runConfiguration;
+    }
+
+    public String suggestedName() {
+        return createSuggestedName();
+    }
+
+    protected abstract String createSuggestedName();
+
+    @Override
+    public boolean excludeCompileBeforeLaunchOption() {
+        return true;
     }
 }

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.session.model;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,9 +42,13 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
         checkDisposed();
 
         ConnectionUtil.closeResultSet(resultSet);
-        newResultSet = loadResultSet();
 
-        if (newResultSet != null) {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+        Connection connection = null;
+        try {
+            connection = connectionHandler.getPoolConnection();
+            newResultSet =  metadataInterface.loadSessions(connection);
             checkDisposed();
 
             resultSet = newResultSet;
@@ -52,7 +57,10 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
             fetchNextRecords(10000, true);
             ConnectionUtil.closeResultSet(resultSet);
             resultSet = null;
+        } finally {
+            connectionHandler.freePoolConnection(connection);
         }
+
     }
 
     public String getLoadError() {
@@ -71,12 +79,6 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
     @Override
     public SessionBrowserFilterState getFilter() {
         return (SessionBrowserFilterState) super.getFilter();
-    }
-
-    private ResultSet loadResultSet() throws SQLException {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-        return metadataInterface.loadSessions(connectionHandler.getStandaloneConnection());
     }
 
     @Override

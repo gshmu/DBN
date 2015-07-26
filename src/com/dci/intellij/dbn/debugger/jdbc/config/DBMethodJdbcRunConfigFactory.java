@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdwp.config;
+package com.dci.intellij.dbn.debugger.jdbc.config;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -12,24 +12,25 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 
-public class DBMethodJdwpRunConfigFactory extends DBMethodRunConfigFactory<DBMethodJdwpRunConfig> {
-    protected DBMethodJdwpRunConfigFactory(@NotNull ConfigurationType type) {
+public class DBMethodJdbcRunConfigFactory extends DBMethodRunConfigFactory<DBMethodJdbcRunConfig> {
+    protected DBMethodJdbcRunConfigFactory(@NotNull ConfigurationType type) {
         super(type);
     }
 
     @Override
     public RunConfiguration createTemplateConfiguration(Project project) {
-        return new DBMethodJdwpRunConfig(project, this, "", false);
+        return new DBMethodJdbcRunConfig(project, this, "", false);
     }
 
     @Override
-    public DBMethodJdwpRunConfig createConfiguration(Project project, String name, boolean generic) {
-        return new DBMethodJdwpRunConfig(project, this, name, generic);
+    public DBMethodJdbcRunConfig createConfiguration(Project project, String name, boolean generic) {
+        return new DBMethodJdbcRunConfig(project, this, name, generic);
     }
 
-    public DBMethodJdwpRunConfig createConfiguration(DBMethod method) {
-        String name = DatabaseDebuggerManager.createMethodConfigurationName(method, DBDebuggerType.JDWP);
-        DBMethodJdwpRunConfig runConfiguration = new DBMethodJdwpRunConfig(method.getProject(), this, name, false);
+    @Override
+    public DBMethodJdbcRunConfig createConfiguration(DBMethod method) {
+        String name = DatabaseDebuggerManager.createMethodConfigurationName(method, DBDebuggerType.JDBC);
+        DBMethodJdbcRunConfig runConfiguration = new DBMethodJdbcRunConfig(method.getProject(), this, name, false);
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(method.getProject());
         MethodExecutionInput executionInput = executionManager.getExecutionInput(method);
         runConfiguration.setExecutionInput(executionInput);
