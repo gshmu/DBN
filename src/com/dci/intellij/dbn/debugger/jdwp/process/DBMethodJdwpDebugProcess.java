@@ -54,7 +54,7 @@ public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecution
     }
 
     @Override
-    protected void doExecuteTarget() throws SQLException {
+    protected void executeTarget() throws SQLException {
         MethodExecutionInput methodExecutionInput = getExecutionInput();
         MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
         methodExecutionManager.debugExecute(methodExecutionInput, getTargetConnection(), ExecutionType.DEBUG_JWDP);
