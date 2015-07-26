@@ -15,8 +15,8 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.xdebugger.XDebugSession;
 
-public class DBMethodDebugProcess extends DBJdbcDebugProcess<MethodExecutionInput> {
-    public DBMethodDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
+public class DBMethodJdbcDebugProcess extends DBJdbcDebugProcess<MethodExecutionInput> {
+    public DBMethodJdbcDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
         super(session, connectionHandler);
     }
 

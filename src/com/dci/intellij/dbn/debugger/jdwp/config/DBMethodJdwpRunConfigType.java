@@ -4,6 +4,7 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
 
 public class DBMethodJdwpRunConfigType extends DBMethodRunConfigType<DBMethodJdwpRunConfigFactory> {
@@ -35,5 +36,10 @@ public class DBMethodJdwpRunConfigType extends DBMethodRunConfigType<DBMethodJdw
     @Override
     public String getDefaultRunnerName() {
         return DEFAULT_RUNNER_NAME;
+    }
+
+    @Override
+    public DBDebuggerType getDebuggerType() {
+        return DBDebuggerType.JDWP;
     }
 }

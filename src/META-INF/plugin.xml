@@ -625,7 +625,7 @@
 
         <xdebugger.settings implementation="com.dci.intellij.dbn.debugger.common.settings.DBProgramDebuggerSettings"/>
         <xdebugger.breakpointType implementation="com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointType"/>
-        <programRunner implementation="com.dci.intellij.dbn.debugger.jdbc.process.DBMethodRunner"/>
+        <programRunner implementation="com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner"/>
         <programRunner implementation="com.dci.intellij.dbn.debugger.jdbc.process.DBStatementRunner"/>
         <programRunner implementation="com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner"/>
         <!--<executionTargetProvider implementation="com.dci.intellij.dbn.debugger.jdbc.execution.common.DBExecutionTargetProvider"/>-->
