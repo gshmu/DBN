@@ -4,11 +4,11 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.intellij.execution.configurations.ConfigurationFactory;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigType;
 
-public class DBStatementRunConfigType extends DBProgramRunConfigurationType {
+public class DBStatementRunConfigType extends DBProgramRunConfigType<DBStatementRunConfigFactory> {
     public static final String DEFAULT_RUNNER_NAME = "DB Statement Runner";
-    private ConfigurationFactory[] configurationFactories = new ConfigurationFactory[]{new DBStatementRunConfigFactory(this)};
+    private DBStatementRunConfigFactory[] configurationFactories = new DBStatementRunConfigFactory[]{new DBStatementRunConfigFactory(this)};
 
 
     public String getDisplayName() {
@@ -28,12 +28,8 @@ public class DBStatementRunConfigType extends DBProgramRunConfigurationType {
         return "DBNStatementRunConfiguration";
     }
 
-    public ConfigurationFactory[] getConfigurationFactories() {
+    public DBStatementRunConfigFactory[] getConfigurationFactories() {
         return configurationFactories;
-    }
-
-    public DBStatementRunConfigFactory getConfigurationFactory() {
-        return (DBStatementRunConfigFactory) configurationFactories[0];
     }
 
     @Override

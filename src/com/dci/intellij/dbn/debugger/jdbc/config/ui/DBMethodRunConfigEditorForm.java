@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodRunConfig;
+import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodJdbcRunConfig;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
@@ -32,7 +32,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.UIUtil;
 
-public class DBMethodRunConfigEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodRunConfig>{
+public class DBMethodRunConfigEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodJdbcRunConfig>{
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JPanel methodArgumentsPanel;
@@ -42,7 +42,7 @@ public class DBMethodRunConfigEditorForm extends DBProgramRunConfigurationEditor
     private MethodExecutionForm methodExecutionForm;
     private MethodExecutionInput executionInput;
 
-    public DBMethodRunConfigEditorForm(final DBMethodRunConfig configuration) {
+    public DBMethodRunConfigEditorForm(final DBMethodJdbcRunConfig configuration) {
         super(configuration);
         if (configuration.isGeneric()) {
             selectMethodActionPanel.setVisible(false);
@@ -85,7 +85,7 @@ public class DBMethodRunConfigEditorForm extends DBProgramRunConfigurationEditor
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {
                         final MethodBrowserSettings settings = MethodExecutionManager.getInstance(project).getBrowserSettings();
-                        final DBMethodRunConfig configuration = getConfiguration();
+                        final DBMethodJdbcRunConfig configuration = getConfiguration();
                         DBMethod currentMethod = configuration.getExecutionInput() == null ? null : configuration.getExecutionInput().getMethod();
                         if (currentMethod != null) {
                             settings.setConnectionHandler(currentMethod.getConnectionHandler());
@@ -127,7 +127,7 @@ public class DBMethodRunConfigEditorForm extends DBProgramRunConfigurationEditor
             Project project = ActionUtil.getProject(e);
             if (project != null) {
                 MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                DBMethodRunConfig configuration = getConfiguration();
+                DBMethodJdbcRunConfig configuration = getConfiguration();
                 MethodExecutionInput currentInput = configuration.getExecutionInput();
                 MethodExecutionInput methodExecutionInput = methodExecutionManager.selectHistoryMethodExecutionInput(currentInput);
                 if (methodExecutionInput != null) {
@@ -167,7 +167,7 @@ public class DBMethodRunConfigEditorForm extends DBProgramRunConfigurationEditor
         return executionInput;
     }
 
-    public void writeConfiguration(DBMethodRunConfig configuration) {
+    public void writeConfiguration(DBMethodJdbcRunConfig configuration) {
         if (methodExecutionForm != null) {
             methodExecutionForm.setExecutionInput(configuration.getExecutionInput());
             methodExecutionForm.updateExecutionInput();
@@ -177,7 +177,7 @@ public class DBMethodRunConfigEditorForm extends DBProgramRunConfigurationEditor
         //selectMethodAction.setConfiguration(configuration);
     }
 
-    public void readConfiguration(DBMethodRunConfig configuration) {
+    public void readConfiguration(DBMethodJdbcRunConfig configuration) {
         setExecutionInput(configuration.getExecutionInput(), false);
         compileDependenciesCheckBox.setSelected(configuration.isCompileDependencies());
     }

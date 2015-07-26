@@ -58,7 +58,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         } else {
             while (count < records) {
                 checkDisposed();
-                if (resultSet.next()) {
+                if (resultSet != null && resultSet.next()) {
                     count++;
                     T row = createRow(initialIndex + count);
                     newRows.add(row);

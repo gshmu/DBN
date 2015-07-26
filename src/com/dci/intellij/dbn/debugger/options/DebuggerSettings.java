@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.options.ui.DebuggerSettingsForm;
 
 public class DebuggerSettings extends Configuration<DebuggerSettingsForm>{
-    private DBDebuggerType debuggerType = DBDebuggerType.JWDP;
+    private DBDebuggerType debuggerType = DBDebuggerType.JDWP;
 
     public String getDisplayName() {
         return "Data editor general settings";

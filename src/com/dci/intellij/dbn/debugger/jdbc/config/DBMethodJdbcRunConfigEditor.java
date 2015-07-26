@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigurationEdit
 import com.dci.intellij.dbn.debugger.jdbc.config.ui.DBMethodRunConfigEditorForm;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 
-public class DBMethodRunConfigEditor extends DBProgramRunConfigurationEditor<DBMethodRunConfig, DBMethodRunConfigEditorForm> {
-    public DBMethodRunConfigEditor(DBMethodRunConfig configuration) {
+public class DBMethodJdbcRunConfigEditor extends DBProgramRunConfigurationEditor<DBMethodJdbcRunConfig, DBMethodRunConfigEditorForm, MethodExecutionInput> {
+    public DBMethodJdbcRunConfigEditor(DBMethodJdbcRunConfig configuration) {
         super(configuration);
     }
 
