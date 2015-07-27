@@ -5,6 +5,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -55,6 +56,8 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
     private JCheckBox enableLoggingCheckBox;
     private JLabel debuggerVersionLabel;
     private JPanel versionPanel;
+    private JTextField executionTimeoutTextField;
+    private JLabel errorLabel;
 
 
     private List<MethodExecutionArgumentForm> argumentForms = new ArrayList<MethodExecutionArgumentForm>();
@@ -62,11 +65,14 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
     private Set<ChangeListener> changeListeners = new HashSet<ChangeListener>();
     private boolean debug;
 
-    public MethodExecutionForm(DisposableProjectComponent parentComponent, MethodExecutionInput executionInput, boolean showHeader, boolean debug) {
+    public MethodExecutionForm(DisposableProjectComponent parentComponent, final MethodExecutionInput executionInput, boolean showHeader, final boolean debug) {
         super(parentComponent);
         this.executionInput = executionInput;
         this.debug = debug;
         DBMethod method = executionInput.getMethod();
+
+        errorLabel.setIcon(Icons.COMMON_ERROR);
+        errorLabel.setVisible(false);
 
         final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
         if (debug) {
@@ -89,6 +95,26 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
         connectionLabel.setText(connectionHandler.getPresentableText());
         connectionLabel.setIcon(connectionHandler.getIcon());
         autoCommitLabel.setConnectionHandler(connectionHandler);
+        executionTimeoutTextField.setText(String.valueOf(debug ?
+                executionInput.getDebugExecutionTimeout() :
+                executionInput.getExecutionTimeout()));
+        executionTimeoutTextField.getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            protected void textChanged(DocumentEvent e) {
+                String text = executionTimeoutTextField.getText();
+                try {
+                    int timeout = Integer.parseInt(text);
+                    if (debug)
+                        executionInput.setDebugExecutionTimeout(timeout); else
+                        executionInput.setExecutionTimeout(timeout);
+
+                    errorLabel.setVisible(false);
+                } catch (NumberFormatException e1) {
+                    errorLabel.setText("Execution Timeout must be an integer");
+                    errorLabel.setVisible(true);
+                }
+            }
+        });
 
         //objectPanel.add(new ObjectDetailsPanel(method).getComponent(), BorderLayout.NORTH);
 

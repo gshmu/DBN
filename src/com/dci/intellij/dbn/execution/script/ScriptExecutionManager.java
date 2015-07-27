@@ -99,6 +99,10 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             executionInput.setSchema(currentSchema);
             executionInput.setSourceFile(virtualFile);
             executionInput.setClearOutput(clearOutputOption);
+            ScriptExecutionSettings scriptExecutionSettings = ExecutionEngineSettings.getInstance(project).getScriptExecutionSettings();
+            int timeout = scriptExecutionSettings.getExecutionTimeout();
+            executionInput.setExecutionTimeout(timeout);
+
             ScriptExecutionInputDialog inputDialog = new ScriptExecutionInputDialog(project,executionInput);
 
             inputDialog.show();
@@ -114,8 +118,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 new BackgroundTask(project, "Executing database script", true, false) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        ScriptExecutionSettings scriptExecutionSettings = ExecutionEngineSettings.getInstance(project).getScriptExecutionSettings();
-                        int timeout = scriptExecutionSettings.getExecutionTimeout();
+                        int timeout = executionInput.getExecutionTimeout();
                         new SimpleTimeoutCall<Object>(timeout, TimeUnit.SECONDS, null) {
                             @Override
                             public Object call() throws Exception {

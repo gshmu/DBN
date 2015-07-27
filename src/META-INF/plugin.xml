@@ -30,7 +30,8 @@
             <li><b>3.0.4705</b>
             <ul>
                 - Oracle JDWP debug interface<br>
-                - Cancellable long running operations<br>
+                - Cancellable long running operations (method / statement execution)<br>
+                - Ad-hoc timeout options for method and script executions<br>
                 - Bug fixes<br>
             </ul>
             <li><b>3.0.4705</b>
