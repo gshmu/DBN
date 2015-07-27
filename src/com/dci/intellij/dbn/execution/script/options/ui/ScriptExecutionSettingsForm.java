@@ -1,6 +1,13 @@
 package com.dci.intellij.dbn.execution.script.options.ui;
 
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
@@ -19,15 +26,11 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.awt.RelativePoint;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 
 public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptExecutionSettings> {
     private JPanel mainPanel;
     private JPanel cmdLineInterfacesTablePanel;
+    private JTextField executionTimeoutTextField;
     private CmdLineInterfacesTable cmdLineInterfacesTable;
 
     public ScriptExecutionSettingsForm(ScriptExecutionSettings settings) {
@@ -117,6 +120,7 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
     
     public void applyFormChanges() throws ConfigurationException {
         ScriptExecutionSettings settings = getConfiguration();
+        settings.setExecutionTimeout(ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout"));
         CmdLineInterfacesTableModel model = cmdLineInterfacesTable.getModel();
         model.validate();
         CmdLineInterfaceBundle executorBundle = model.getBundle();
@@ -125,6 +129,7 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
 
     public void resetFormChanges() {
         ScriptExecutionSettings settings = getConfiguration();
+        executionTimeoutTextField.setText(Integer.toString(settings.getExecutionTimeout()));
         cmdLineInterfacesTable.getModel().setBundle(settings.getCommandLineInterfaces());
     }
 }
