@@ -110,7 +110,7 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
 
                     errorLabel.setVisible(false);
                 } catch (NumberFormatException e1) {
-                    errorLabel.setText("Execution Timeout must be an integer");
+                    errorLabel.setText("Timeout must be an integer");
                     errorLabel.setVisible(true);
                 }
             }
