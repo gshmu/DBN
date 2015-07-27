@@ -35,6 +35,7 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
+import com.dci.intellij.dbn.execution.script.options.ScriptExecutionSettings;
 import com.dci.intellij.dbn.execution.script.ui.CmdLineInterfaceInputDialog;
 import com.dci.intellij.dbn.execution.script.ui.ScriptExecutionInputDialog;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -113,8 +114,9 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 new BackgroundTask(project, "Executing database script", true, false) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        // TODO make script execution timeout configurable
-                        new SimpleTimeoutCall<Object>(10000, TimeUnit.SECONDS, null) {
+                        ScriptExecutionSettings scriptExecutionSettings = ExecutionEngineSettings.getInstance(project).getScriptExecutionSettings();
+                        int timeout = scriptExecutionSettings.getExecutionTimeout();
+                        new SimpleTimeoutCall<Object>(timeout, TimeUnit.SECONDS, null) {
                             @Override
                             public Object call() throws Exception {
                                 doExecuteScript(executionInput);
@@ -123,7 +125,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
                             @Override
                             protected Object handleException(Exception e) {
-                                String causeMessage = e instanceof TimeoutException ? "Operation has timed out" : e.getMessage();
+                                String causeMessage = e instanceof TimeoutException ? "Operation has timed out" : e.getMessage() + ". Check timeout settings.";
                                 MessageUtil.showErrorDialog(project,
                                         "Script execution error",
                                         "Error executing SQL script \"" + virtualFile.getPath() + "\". \nDetails: " + causeMessage,
