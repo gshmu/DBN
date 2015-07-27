@@ -11,6 +11,7 @@ public class ScriptExecutionExecutionInput {
     private VirtualFile sourceFile;
     private ConnectionHandlerRef connectionHandlerRef;
     private DBObjectRef<DBSchema> schemaRef;
+    private int executionTimeout;
     private boolean clearOutput;
 
     public CmdLineInterface getCmdLineInterface() {
@@ -51,5 +52,13 @@ public class ScriptExecutionExecutionInput {
 
     public void setClearOutput(boolean clearOutput) {
         this.clearOutput = clearOutput;
+    }
+
+    public int getExecutionTimeout() {
+        return executionTimeout;
+    }
+
+    public void setExecutionTimeout(int executionTimeout) {
+        this.executionTimeout = executionTimeout;
     }
 }

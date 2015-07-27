@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.execution.method;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -11,6 +20,8 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.ExecutionType;
+import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -21,14 +32,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 public class MethodExecutionInput implements ExecutionInput, PersistentConfiguration, Comparable<MethodExecutionInput> {
     private DBObjectRef<DBMethod> methodRef;
@@ -37,6 +40,9 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
     private boolean usePoolConnection = true;
     private boolean commitAfterExecution = true;
     private boolean enableLogging = false;
+    private int executionTimeout = 30   ;
+    private int debugExecutionTimeout = 600;
+    private ProjectRef projectRef;
 
     private transient MethodExecutionResult executionResult;
     private transient List<ArgumentValue> inputArgumentValues = new ArrayList<ArgumentValue>();
@@ -65,18 +71,27 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
         }
     };
 
-    public MethodExecutionInput() {
+    public MethodExecutionInput(Project project) {
+        projectRef = new ProjectRef(project);
         methodRef = new DBObjectRef<DBMethod>();
         executionSchema = new DBObjectRef<DBSchema>();
+
+        MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
+        executionTimeout = methodExecutionSettings.getExecutionTimeout();
+        debugExecutionTimeout = methodExecutionSettings.getDebugExecutionTimeout();
     }
 
-    public MethodExecutionInput(DBMethod method) {
+    public MethodExecutionInput(Project project, DBMethod method) {
+        projectRef = new ProjectRef(project);
         this.methodRef = new DBObjectRef<DBMethod>(method);
         this.executionSchema = method.getSchema().getRef();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
             enableLogging = FailsafeUtil.get(method.getConnectionHandler()).isLoggingEnabled();
         }
+        MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
+        executionTimeout = methodExecutionSettings.getExecutionTimeout();
+        debugExecutionTimeout = methodExecutionSettings.getDebugExecutionTimeout();
     }
 
     public void initExecution(ExecutionType executionType) {
@@ -236,8 +251,24 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
         this.enableLogging = enableLogging;
     }
 
+    public int getExecutionTimeout() {
+        return executionTimeout;
+    }
+
+    public void setExecutionTimeout(int executionTimeout) {
+        this.executionTimeout = executionTimeout;
+    }
+
+    public int getDebugExecutionTimeout() {
+        return debugExecutionTimeout;
+    }
+
+    public void setDebugExecutionTimeout(int debugExecutionTimeout) {
+        this.debugExecutionTimeout = debugExecutionTimeout;
+    }
+
     public Project getProject() {
-        return getMethod().getProject();
+        return projectRef.get();
     }
 
     /*********************************************************
@@ -250,6 +281,8 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
         usePoolConnection = SettingsUtil.getBooleanAttribute(element, "use-pool-connection", true);
         commitAfterExecution = SettingsUtil.getBooleanAttribute(element, "commit-after-execution", true);
         enableLogging = SettingsUtil.getBooleanAttribute(element, "enable-logging", true);
+        executionTimeout = SettingsUtil.getIntegerAttribute(element, "execution-timeout", executionTimeout);
+        debugExecutionTimeout = SettingsUtil.getIntegerAttribute(element, "debug-execution-timeout", debugExecutionTimeout);
         Element argumentsElement = element.getChild("argument-list");
         for (Object object : argumentsElement.getChildren()) {
             Element argumentElement = (Element) object;
@@ -264,6 +297,8 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
         SettingsUtil.setBooleanAttribute(element, "use-pool-connection", usePoolConnection);
         SettingsUtil.setBooleanAttribute(element, "commit-after-execution", commitAfterExecution);
         SettingsUtil.setBooleanAttribute(element, "enable-logging", enableLogging);
+        SettingsUtil.setIntegerAttribute(element, "execution-timeout", executionTimeout);
+        SettingsUtil.setIntegerAttribute(element, "debug-execution-timeout", debugExecutionTimeout);
 
         Element argumentsElement = new Element("argument-list");
         element.addContent(argumentsElement);
@@ -296,7 +331,7 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
     }
 
     public MethodExecutionInput clone() {
-        MethodExecutionInput executionInput = new MethodExecutionInput();
+        MethodExecutionInput executionInput = new MethodExecutionInput(getProject());
         executionInput.methodRef = methodRef;
         executionInput.executionSchema = executionSchema;
         executionInput.usePoolConnection = usePoolConnection;

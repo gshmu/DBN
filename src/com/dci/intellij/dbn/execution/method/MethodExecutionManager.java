@@ -46,7 +46,7 @@ import com.intellij.openapi.util.Disposer;
 )
 public class MethodExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private MethodBrowserSettings browserSettings = new MethodBrowserSettings();
-    private MethodExecutionHistory executionHistory = new MethodExecutionHistory();
+    private MethodExecutionHistory executionHistory = new MethodExecutionHistory(getProject());
     private MethodExecutionArgumentValuesCache argumentValuesCache = new MethodExecutionArgumentValuesCache();
 
     private MethodExecutionManager(Project project) {
