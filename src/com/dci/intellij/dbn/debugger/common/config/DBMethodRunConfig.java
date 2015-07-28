@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
@@ -23,30 +22,15 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import gnu.trove.THashSet;
 
-public abstract class DBMethodRunConfig<T extends DBProgramRunConfigurationEditor> extends DBProgramRunConfiguration<MethodExecutionInput> {
-    private T configurationEditor;
-    private boolean isGeneratedName = true;
+public abstract class DBMethodRunConfig extends DBProgramRunConfig<MethodExecutionInput> {
     private Set<MethodExecutionInput> methodSelectionHistory = new THashSet<MethodExecutionInput>();
 
-    public DBMethodRunConfig(Project project, ConfigurationFactory factory, String name, boolean generic) {
-        super(project, factory, name, generic);
+    public DBMethodRunConfig(Project project, DBProgramRunConfigType configType, String name, boolean generic) {
+        super(project, configType, name, generic);
     }
 
     public Set<MethodExecutionInput> getMethodSelectionHistory() {
         return methodSelectionHistory;
-    }
-
-    public T getConfigurationEditor() {
-        if (configurationEditor == null) {
-            configurationEditor = createConfigurationEditor();
-        }
-        return configurationEditor;
-    }
-
-    protected abstract T createConfigurationEditor();
-
-    public boolean isGeneratedName() {
-        return isGeneratedName;
     }
 
     public void setExecutionInput(MethodExecutionInput executionInput) {
@@ -156,21 +140,24 @@ public abstract class DBMethodRunConfig<T extends DBProgramRunConfigurationEdito
     @Override
     public RunConfiguration clone() {
         DBMethodRunConfig runConfiguration = (DBMethodRunConfig) super.clone();
-        runConfiguration.configurationEditor = null;
+        runConfiguration.resetConfigurationEditor();
         MethodExecutionInput executionInput = getExecutionInput();
         runConfiguration.setExecutionInput(executionInput == null ? null : executionInput.clone());
         runConfiguration.methodSelectionHistory = new HashSet<MethodExecutionInput>(getMethodSelectionHistory());
         return runConfiguration;
     }
 
-    public String suggestedName() {
-        return createSuggestedName();
-    }
-
-    protected abstract String createSuggestedName();
-
     @Override
-    public boolean excludeCompileBeforeLaunchOption() {
-        return true;
+    public String suggestedName() {
+        if (isGeneric()) {
+            return getConfigType().getDefaultRunnerName();
+        } else {
+            MethodExecutionInput executionInput = getExecutionInput();
+            if (executionInput != null) {
+                setGeneratedName(true);
+                return executionInput.getMethodRef().getObjectName();
+            }
+        }
+        return null;
     }
 }

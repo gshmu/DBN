@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.debugger.jdwp.config.ui;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import org.jetbrains.annotations.NotNull;
@@ -27,10 +28,12 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.util.Range;
 import com.intellij.util.ui.UIUtil;
 
 public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodJdwpRunConfig>{
@@ -39,6 +42,8 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
     private JPanel methodArgumentsPanel;
     private JCheckBox compileDependenciesCheckBox;
     private JPanel selectMethodActionPanel;
+    private JTextField fromPortTextField;
+    private JTextField toPortTextField;
 
     private MethodExecutionForm methodExecutionForm;
     private MethodExecutionInput executionInput;
@@ -168,19 +173,31 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         return executionInput;
     }
 
-    public void writeConfiguration(DBMethodJdwpRunConfig configuration) {
+    public void writeConfiguration(DBMethodJdwpRunConfig configuration) throws ConfigurationException {
         if (methodExecutionForm != null) {
             methodExecutionForm.setExecutionInput(configuration.getExecutionInput());
             methodExecutionForm.updateExecutionInput();
             Disposer.register(this, methodExecutionForm);
         }
         configuration.setCompileDependencies(compileDependenciesCheckBox.isSelected());
+
+        int fromPort = 0;
+        int toPort = 0;
+        try {
+            fromPort = Integer.parseInt(fromPortTextField.getText());
+            toPort = Integer.parseInt(toPortTextField.getText());
+        } catch (NumberFormatException e) {
+            throw new ConfigurationException("TCP Port Range inputs must me numeric");
+        }
+        configuration.setTcpPortRange(new Range<Integer>(fromPort, toPort));
         //selectMethodAction.setConfiguration(configuration);
     }
 
     public void readConfiguration(DBMethodJdwpRunConfig configuration) {
         setExecutionInput(configuration.getExecutionInput(), false);
         compileDependenciesCheckBox.setSelected(configuration.isCompileDependencies());
+        fromPortTextField.setText(String.valueOf(configuration.getTcpPortRange().getFrom()));
+        toPortTextField.setText(String.valueOf(configuration.getTcpPortRange().getTo()));
     }
 
     public void setExecutionInput(MethodExecutionInput executionInput, boolean touchForm) {

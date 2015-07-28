@@ -9,11 +9,11 @@ import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 
-public abstract class DBProgramRunConfigurationEditor<T extends DBProgramRunConfiguration, F extends DBProgramRunConfigurationEditorForm<T>, I extends ExecutionInput> extends SettingsEditor<T> {
+public abstract class DBProgramRunConfigEditor<T extends DBProgramRunConfig, F extends DBProgramRunConfigurationEditorForm<T>, I extends ExecutionInput> extends SettingsEditor<T> {
     private T configuration;
     private F configurationEditorForm;
 
-    public DBProgramRunConfigurationEditor(T configuration) {
+    public DBProgramRunConfigEditor(T configuration) {
         this.configuration = configuration;
     }
 

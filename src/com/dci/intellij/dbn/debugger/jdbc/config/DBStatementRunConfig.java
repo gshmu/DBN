@@ -1,8 +1,17 @@
 package com.dci.intellij.dbn.debugger.jdbc.config;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
@@ -11,7 +20,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
@@ -19,28 +27,17 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-public class DBStatementRunConfig extends DBProgramRunConfiguration<StatementExecutionInput> {
+public class DBStatementRunConfig extends DBProgramRunConfig<StatementExecutionInput> {
     private StatementExecutionInput executionInput;
-    private DBStatementRunConfigEditor configurationEditor;
 
-    public DBStatementRunConfig(Project project, ConfigurationFactory factory, String name, boolean generic) {
-        super(project, factory, name, generic);
+    public DBStatementRunConfig(Project project, DBProgramRunConfigType configType, String name, boolean generic) {
+        super(project, configType, name, generic);
     }
 
-    @NotNull
-    public DBStatementRunConfigEditor getConfigurationEditor() {
-        if (configurationEditor == null )
-            configurationEditor = new DBStatementRunConfigEditor(this);
-        return configurationEditor;
+    @Override
+    protected DBStatementRunConfigEditor createConfigurationEditor() {
+        return new DBStatementRunConfigEditor(this);
     }
 
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
@@ -102,12 +99,12 @@ public class DBStatementRunConfig extends DBProgramRunConfiguration<StatementExe
         }*/
     }
 
-    public boolean isGeneratedName() {
-        return false;
-    }
-
+    @Nullable
     public String suggestedName() {
-        return "DBN - Statement Runner";
+        if (isGeneric()) {
+             getConfigType().getDefaultRunnerName();
+        }
+        return null;
     }
 
     public StatementExecutionInput getExecutionInput() {
@@ -126,11 +123,6 @@ public class DBStatementRunConfig extends DBProgramRunConfiguration<StatementExe
     }
 
     @Override
-    public boolean excludeCompileBeforeLaunchOption() {
-        return true;
-    }
-
-    @Override
     public void readExternal(Element element) throws InvalidDataException {
         super.readExternal(element);
         setCompileDependencies(SettingsUtil.getBoolean(element, "compile-dependencies", true));
@@ -139,7 +131,7 @@ public class DBStatementRunConfig extends DBProgramRunConfiguration<StatementExe
     @Override
     public RunConfiguration clone() {
         DBStatementRunConfig runConfiguration = (DBStatementRunConfig) super.clone();
-        runConfiguration.configurationEditor = null;
+        runConfiguration.resetConfigurationEditor();
         return runConfiguration;
     }
 }

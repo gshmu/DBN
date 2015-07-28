@@ -3,17 +3,16 @@ package com.dci.intellij.dbn.debugger.jdbc.config;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfig;
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
 
-public class DBMethodJdbcRunConfig extends DBMethodRunConfig<DBMethodJdbcRunConfigEditor> {
-    public DBMethodJdbcRunConfig(Project project, ConfigurationFactory factory, String name, boolean generic) {
-        super(project, factory, name, generic);
+public class DBMethodJdbcRunConfig extends DBMethodRunConfig {
+    public DBMethodJdbcRunConfig(Project project, DBMethodRunConfigType configType, String name, boolean generic) {
+        super(project, configType, name, generic);
     }
 
     @Override
@@ -23,15 +22,5 @@ public class DBMethodJdbcRunConfig extends DBMethodRunConfig<DBMethodJdbcRunConf
 
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
         return new DBMethodJdbcRunProfileState(env);
-    }
-
-    @Override
-    public String createSuggestedName() {
-        MethodExecutionInput executionInput = getExecutionInput();
-        if (executionInput == null) {
-            return "<unnamed>";
-        } else {
-            return executionInput.getMethodRef().getObjectName();
-        }
     }
 }

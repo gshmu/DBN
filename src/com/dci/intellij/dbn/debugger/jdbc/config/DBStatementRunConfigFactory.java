@@ -1,23 +1,21 @@
 package com.dci.intellij.dbn.debugger.jdbc.config;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationType;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.openapi.project.Project;
+import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigFactory;
+import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.openapi.project.Project;
 
-public class DBStatementRunConfigFactory extends DBProgramRunConfigurationFactory {
-    protected DBStatementRunConfigFactory(@NotNull ConfigurationType type) {
+public class DBStatementRunConfigFactory extends DBProgramRunConfigFactory<DBStatementRunConfigType, DBStatementRunConfig> {
+    protected DBStatementRunConfigFactory(@NotNull DBStatementRunConfigType type) {
         super(type);
     }
 
     @Override
-    public DBProgramRunConfiguration createConfiguration(Project project, String name, boolean generic) {
-        return new DBStatementRunConfig(project, this, name, generic);
+    public DBStatementRunConfig createConfiguration(Project project, String name, boolean generic) {
+        return new DBStatementRunConfig(project, getType(), name, generic);
     }
 
     @Override
@@ -27,6 +25,6 @@ public class DBStatementRunConfigFactory extends DBProgramRunConfigurationFactor
 
     @Override
     public RunConfiguration createTemplateConfiguration(Project project) {
-        return new DBStatementRunConfig(project, this, "", false);
+        return new DBStatementRunConfig(project, getType(), "", false);
     }
 }

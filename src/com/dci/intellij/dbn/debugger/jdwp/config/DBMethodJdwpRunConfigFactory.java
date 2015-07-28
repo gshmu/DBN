@@ -8,28 +8,27 @@ import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 
-public class DBMethodJdwpRunConfigFactory extends DBMethodRunConfigFactory<DBMethodJdwpRunConfig> {
-    protected DBMethodJdwpRunConfigFactory(@NotNull ConfigurationType type) {
+public class DBMethodJdwpRunConfigFactory extends DBMethodRunConfigFactory<DBMethodJdwpRunConfigType, DBMethodJdwpRunConfig> {
+    protected DBMethodJdwpRunConfigFactory(@NotNull DBMethodJdwpRunConfigType type) {
         super(type);
     }
 
     @Override
     public RunConfiguration createTemplateConfiguration(Project project) {
-        return new DBMethodJdwpRunConfig(project, this, "", false);
+        return new DBMethodJdwpRunConfig(project, getType(), "", false);
     }
 
     @Override
     public DBMethodJdwpRunConfig createConfiguration(Project project, String name, boolean generic) {
-        return new DBMethodJdwpRunConfig(project, this, name, generic);
+        return new DBMethodJdwpRunConfig(project, getType(), name, generic);
     }
 
     public DBMethodJdwpRunConfig createConfiguration(DBMethod method) {
         String name = DatabaseDebuggerManager.createMethodConfigurationName(method, DBDebuggerType.JDWP);
-        DBMethodJdwpRunConfig runConfiguration = new DBMethodJdwpRunConfig(method.getProject(), this, name, false);
+        DBMethodJdwpRunConfig runConfiguration = new DBMethodJdwpRunConfig(method.getProject(), getType(), name, false);
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(method.getProject());
         MethodExecutionInput executionInput = executionManager.getExecutionInput(method);
         runConfiguration.setExecutionInput(executionInput);

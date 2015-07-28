@@ -1,21 +1,21 @@
 package com.dci.intellij.dbn.debugger.jdbc.config.ui;
 
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfig;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDependenciesForm> {
-    private DBProgramRunConfiguration runConfiguration;
+    private DBProgramRunConfig runConfiguration;
     private List<DBSchemaObject> selection = Collections.emptyList();
 
-    public CompileDebugDependenciesDialog(DBProgramRunConfiguration runConfiguration, List<DBSchemaObject> compileList) {
+    public CompileDebugDependenciesDialog(DBProgramRunConfig runConfiguration, List<DBSchemaObject> compileList) {
         super(runConfiguration.getProject(), "Compile Object Dependencies", true);
         this.runConfiguration = runConfiguration;
         this.component = new CompileDebugDependenciesForm(this, runConfiguration, compileList);
