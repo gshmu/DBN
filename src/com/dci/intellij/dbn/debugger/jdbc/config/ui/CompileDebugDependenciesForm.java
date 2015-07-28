@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfig;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -27,7 +27,7 @@ public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDepend
     private JPanel headerPanel;
     private JPanel hintPanel;
 
-    public CompileDebugDependenciesForm(CompileDebugDependenciesDialog parentComponent, DBProgramRunConfiguration runConfiguration, List<DBSchemaObject> compileList) {
+    public CompileDebugDependenciesForm(CompileDebugDependenciesDialog parentComponent, DBProgramRunConfig runConfiguration, List<DBSchemaObject> compileList) {
         super(parentComponent);
         String hintText = "The program you are trying to debug or some of its dependencies are not compiled with debug information." +
                 "This may result in breakpoints being ignored during the debug execution, as well as missing information about execution stacks and variables.\n" +

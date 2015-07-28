@@ -6,17 +6,16 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 
-public abstract class DBMethodRunConfigFactory<T extends DBMethodRunConfig> extends DBProgramRunConfigurationFactory<T>{
-    protected DBMethodRunConfigFactory(ConfigurationType type) {
+public abstract class DBMethodRunConfigFactory<T extends DBProgramRunConfigType, C extends DBMethodRunConfig> extends DBProgramRunConfigFactory<T, C> {
+    protected DBMethodRunConfigFactory(T type) {
         super(type);
     }
 
     @Override
     public Icon getIcon(@NotNull RunConfiguration configuration) {
-        T runConfiguration = (T) configuration;
+        C runConfiguration = (C) configuration;
         MethodExecutionInput executionInput = runConfiguration.getExecutionInput();
         if (runConfiguration.isGeneric() || executionInput == null) {
             return getIcon();
