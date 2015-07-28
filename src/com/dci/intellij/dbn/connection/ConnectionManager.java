@@ -128,6 +128,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         try {
             databaseSettings.checkConfiguration();
             connectionHandler.getStandaloneConnection();
+            ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
+            connectionStatus.setValid(true);
+            connectionStatus.setConnected(true);
             if (showSuccessMessage) {
                 showSuccessfulConnectionMessage(project, connectionName);
             }
