@@ -3,9 +3,7 @@ package com.dci.intellij.dbn.database.common;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -17,23 +15,6 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
 
     public DatabaseMetadataInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
         super(fileName, provider);
-    }
-
-    protected void executeStatement(Connection connection, String statementText) throws SQLException {
-        if (SettingsUtil.isDebugEnabled)
-            logger.info("[DBN-INFO] Executing statement: " + statementText);
-
-        Statement statement = connection.createStatement();
-        statement.setQueryTimeout(20);
-        try {
-            statement.execute(statementText);
-            ConnectionUtil.closeStatement(statement);
-        } catch (SQLException exception) {
-            if (SettingsUtil.isDebugEnabled)
-                logger.info("[DBN-ERROR] Error executing statement: " + statementText +
-                                "\nCause: " + exception.getMessage());
-            throw exception;
-        }
     }
 
     public ResultSet getDistinctValues(String ownerName, String datasetName, String columnName, Connection connection) throws SQLException {
