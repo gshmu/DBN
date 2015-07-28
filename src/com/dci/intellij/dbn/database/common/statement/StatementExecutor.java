@@ -49,6 +49,7 @@ public abstract class StatementExecutor<T> implements Callable<T>{
             return future.get(timeoutSeconds, TimeUnit.SECONDS);
         } catch (Exception e) {
             if (e instanceof InterruptedException || e instanceof TimeoutException) {
+                handleTimeout();
                 throw new SQLTimeoutException("Operation timed out (timeout = " + timeoutSeconds + "s)", e);
             }
 
@@ -63,4 +64,6 @@ public abstract class StatementExecutor<T> implements Callable<T>{
             throw new SQLException("Error processing request: " + e.getMessage(), e);
         }
     }
+
+    protected abstract void handleTimeout();
 }
