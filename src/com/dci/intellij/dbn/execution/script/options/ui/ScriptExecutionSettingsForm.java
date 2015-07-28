@@ -69,6 +69,7 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
         JPanel panel = decorator.createPanel();
         cmdLineInterfacesTablePanel.add(panel, BorderLayout.CENTER);
         cmdLineInterfacesTable.getParent().setBackground(cmdLineInterfacesTable.getBackground());
+        executionTimeoutTextField.setText(String.valueOf(settings.getExecutionTimeout()));
         registerComponents(mainPanel);
         updateBorderTitleForeground(mainPanel);
     }
