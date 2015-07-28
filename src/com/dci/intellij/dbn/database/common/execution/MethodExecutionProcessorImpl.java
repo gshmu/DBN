@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.execution.ExecutionCancellableCall;
 import com.dci.intellij.dbn.execution.ExecutionType;
@@ -82,6 +83,8 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         final DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
         Counter runningMethods = connectionHandler.getLoadMonitor().getRunningMethods();
         runningMethods.increment();
+        PreparedStatement closeOnErrorStatement = null;
+
         try {
             String command = buildExecutionCommand(executionInput);
             T method = getMethod();
@@ -91,33 +94,34 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
             }
 
-            final PreparedStatement preparedStatement = isQuery() ?
+            final PreparedStatement statement = isQuery() ?
                     connection.prepareStatement(command) :
                     connection.prepareCall(command);
+            closeOnErrorStatement = statement;
 
-            bindParameters(executionInput, preparedStatement);
+            bindParameters(executionInput, statement);
 
             MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
             int timeout = executionType.isDebug() ?
                     methodExecutionSettings.getDebugExecutionTimeout() :
                     methodExecutionSettings.getExecutionTimeout();
 
-            preparedStatement.setQueryTimeout(timeout);
+            statement.setQueryTimeout(timeout);
             MethodExecutionResult executionResult = new ExecutionCancellableCall<MethodExecutionResult>(timeout, TimeUnit.SECONDS) {
                 @Override
-                public MethodExecutionResult execute() throws Exception{
-                    preparedStatement.execute();
+                public MethodExecutionResult execute() throws Exception {
+                    statement.execute();
                     return executionInput.getExecutionResult();
                 }
 
                 @Override
                 public void cancel() throws Exception {
-                    preparedStatement.cancel();
+                    ConnectionUtil.cancelStatement(statement);
                 }
             }.start();
 
             if (executionResult != null) {
-                loadValues(executionResult, preparedStatement);
+                loadValues(executionResult, statement);
                 executionResult.calculateExecDuration();
 
                 if (loggingEnabled) {
@@ -127,7 +131,9 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             }
 
             if (!usePoolConnection) connectionHandler.notifyChanges(method.getVirtualFile());
-
+        } catch (SQLException e) {
+            ConnectionUtil.closeStatement(closeOnErrorStatement);
+            throw e;
         } finally {
             runningMethods.decrement();
             if (loggingEnabled) {
