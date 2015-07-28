@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodJdbcRunConfig;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
@@ -32,7 +33,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.UIUtil;
 
-public class DBMethodRunConfigEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodJdbcRunConfig>{
+public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodJdbcRunConfig>{
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JPanel methodArgumentsPanel;
@@ -42,7 +43,7 @@ public class DBMethodRunConfigEditorForm extends DBProgramRunConfigurationEditor
     private MethodExecutionForm methodExecutionForm;
     private MethodExecutionInput executionInput;
 
-    public DBMethodRunConfigEditorForm(final DBMethodJdbcRunConfig configuration) {
+    public DBMethodJdbcRunConfigEditorForm(final DBMethodJdbcRunConfig configuration) {
         super(configuration);
         if (configuration.isGeneric()) {
             selectMethodActionPanel.setVisible(false);
@@ -195,7 +196,7 @@ public class DBMethodRunConfigEditorForm extends DBProgramRunConfigurationEditor
             headerIcon = methodRef.getObjectType().getIcon();
             DBMethod method = executionInput.getMethod();
             if (method != null) {
-                methodExecutionForm = new MethodExecutionForm(this, executionInput, false, true);
+                methodExecutionForm = new MethodExecutionForm(this, executionInput, false, DBDebuggerType.JDBC);
                 methodArgumentsPanel.add(methodExecutionForm.getComponent(), BorderLayout.CENTER);
                 if (touchForm) methodExecutionForm.touch();
                 headerIcon = method.getOriginalIcon();

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.method.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
@@ -22,7 +23,7 @@ public class PromptMethodExecutionAction extends MethodExecutionResultAction {
             if (executionResult != null) {
                 MethodExecutionInput executionInput = executionResult.getExecutionInput();
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-                if (executionManager.promptExecutionDialog(executionInput, false)) {
+                if (executionManager.promptExecutionDialog(executionInput, DBDebuggerType.NONE)) {
                     executionManager.execute(executionInput);
                 }
             }
@@ -36,7 +37,7 @@ public class PromptMethodExecutionAction extends MethodExecutionResultAction {
         presentation.setText("Open Execution Dialog");
         presentation.setEnabled(
                 executionResult != null &&
-                        !executionResult.getExecutionType().isDebug() &&
+                        !executionResult.getDebuggerType().isActive() &&
                         !executionResult.getExecutionContext().isExecuting());
     }    
 }

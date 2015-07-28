@@ -19,9 +19,9 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
-import com.dci.intellij.dbn.execution.ExecutionType;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
 import com.dci.intellij.dbn.execution.method.history.ui.MethodExecutionHistoryDialog;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionDialog;
@@ -77,12 +77,12 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         return argumentValuesCache;
     }
 
-    public boolean promptExecutionDialog(DBMethod method, boolean debug) {
+    public boolean promptExecutionDialog(DBMethod method, @NotNull DBDebuggerType debuggerType) {
         MethodExecutionInput executionInput = getExecutionInput(method);
-        return promptExecutionDialog(executionInput, debug);
+        return promptExecutionDialog(executionInput, debuggerType);
     }
 
-    public boolean promptExecutionDialog(final MethodExecutionInput executionInput, final boolean debug) {
+    public boolean promptExecutionDialog(final MethodExecutionInput executionInput, final @NotNull DBDebuggerType debuggerType) {
         final AtomicBoolean result = new AtomicBoolean(false);
         new ConnectionAction("the method execution", executionInput) {
             @Override
@@ -97,7 +97,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                                         executionInput.getMethodRef().getPath() + ".\nMethod not found!";
                         MessageUtil.showErrorDialog(project, message);
                     } else {
-                        MethodExecutionDialog executionDialog = new MethodExecutionDialog(executionInput, debug);
+                        MethodExecutionDialog executionDialog = new MethodExecutionDialog(executionInput, debuggerType);
                         executionDialog.show();
 
                         result.set(executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE);
@@ -161,7 +161,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                 public void execute(@NotNull ProgressIndicator progressIndicator) {
                     try {
                         initProgressIndicator(progressIndicator, true, "Executing " + method.getQualifiedNameWithType());
-                        executionProcessor.execute(executionInput, ExecutionType.RUN);
+                        executionProcessor.execute(executionInput, DBDebuggerType.NONE);
                         if (!executionContext.isExecutionCancelled()) {
                             ExecutionManager executionManager = ExecutionManager.getInstance(project);
                             executionManager.addExecutionResult(executionInput.getExecutionResult());
@@ -175,7 +175,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                             new SimpleLaterInvocator() {
                                 protected void execute() {
                                     MessageUtil.showErrorDialog(project, "Error executing " + method.getTypeName() + ".", e);
-                                    if (promptExecutionDialog(executionInput, false)) {
+                                    if (promptExecutionDialog(executionInput, DBDebuggerType.NONE)) {
                                         MethodExecutionManager.this.execute(executionInput);
                                     }
                                 }
@@ -197,16 +197,16 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void debugExecute(final MethodExecutionInput executionInput, final Connection connection, ExecutionType executionType) throws SQLException {
+    public void debugExecute(final MethodExecutionInput executionInput, final Connection connection, DBDebuggerType debuggerType) throws SQLException {
         final DBMethod method = executionInput.getMethod();
         if (method != null) {
             ConnectionHandler connectionHandler = method.getConnectionHandler();
             DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
-            final MethodExecutionProcessor executionProcessor = executionType == ExecutionType.DEBUG_JWDP ?
+            final MethodExecutionProcessor executionProcessor = debuggerType == DBDebuggerType.JDWP ?
                     executionInterface.createExecutionProcessor(method) :
                     executionInterface.createDebugExecutionProcessor(method);
 
-            executionProcessor.execute(executionInput, connection, executionType);
+            executionProcessor.execute(executionInput, connection, debuggerType);
             ExecutionContext executionContext = executionInput.getExecutionContext();
             if (!executionContext.isExecutionCancelled()) {
                 ExecutionManager executionManager = ExecutionManager.getInstance(method.getProject());

@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
-import com.dci.intellij.dbn.execution.ExecutionType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -24,7 +24,7 @@ public class DBMethodJdbcDebugProcess extends DBJdbcDebugProcess<MethodExecution
     protected void executeTarget() throws SQLException {
         MethodExecutionInput methodExecutionInput = getExecutionInput();
         MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
-        methodExecutionManager.debugExecute(methodExecutionInput, getTargetConnection(), ExecutionType.DEBUG);
+        methodExecutionManager.debugExecute(methodExecutionInput, getTargetConnection(), DBDebuggerType.JDBC);
     }
 
     @Override

@@ -17,8 +17,8 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionCancellableCall;
-import com.dci.intellij.dbn.execution.ExecutionType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -59,8 +59,8 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
     }
 
 
-    public void execute(MethodExecutionInput executionInput, ExecutionType executionType) throws SQLException {
-        executionInput.initExecution(executionType);
+    public void execute(MethodExecutionInput executionInput, DBDebuggerType debuggerType) throws SQLException {
+        executionInput.initExecution(debuggerType);
         boolean usePoolConnection = executionInput.isUsePoolConnection();
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBSchema executionSchema = executionInput.getExecutionSchema();
@@ -71,14 +71,14 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             connection.setAutoCommit(false);
         }
 
-        execute(executionInput, connection, executionType);
+        execute(executionInput, connection, debuggerType);
     }
 
-    public void execute(final MethodExecutionInput executionInput, final Connection connection, ExecutionType executionType) throws SQLException {
-        executionInput.initExecution(executionType);
+    public void execute(final MethodExecutionInput executionInput, final Connection connection, DBDebuggerType debuggerType) throws SQLException {
+        executionInput.initExecution(debuggerType);
         final ConnectionHandler connectionHandler = getConnectionHandler();
         boolean usePoolConnection = false;
-        boolean loggingEnabled = executionType != ExecutionType.DEBUG && executionInput.isEnableLogging();
+        boolean loggingEnabled = debuggerType != DBDebuggerType.JDBC && executionInput.isEnableLogging();
         Project project = getProject();
         final DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
         Counter runningMethods = connectionHandler.getLoadMonitor().getRunningMethods();
@@ -102,7 +102,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             bindParameters(executionInput, statement);
 
             MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
-            int timeout = executionType.isDebug() ?
+            int timeout = debuggerType.isActive() ?
                     methodExecutionSettings.getDebugExecutionTimeout() :
                     methodExecutionSettings.getExecutionTimeout();
 
@@ -152,7 +152,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 }
             }
 
-            if (executionType == ExecutionType.DEBUG)
+            if (debuggerType == DBDebuggerType.JDBC)
                 connectionHandler.dropPoolConnection(connection); else
                 connectionHandler.freePoolConnection(connection);
         }
