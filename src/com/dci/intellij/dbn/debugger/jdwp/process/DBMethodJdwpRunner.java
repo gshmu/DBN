@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.debugger.jdwp.process;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfig;
@@ -39,7 +40,7 @@ public class DBMethodJdwpRunner extends DBProgramRunner<MethodExecutionInput> {
     protected boolean promptExecutionDialog(MethodExecutionInput executionInput) {
         Project project = executionInput.getProject();
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-        return executionManager.promptExecutionDialog(executionInput, true);
+        return executionManager.promptExecutionDialog(executionInput, DBDebuggerType.JDWP);
     }
 }
 

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.codeInsight.intention.HighPriorityAction;
@@ -37,7 +38,7 @@ public class RunMethodIntentionAction extends AbstractMethodExecutionIntentionAc
         DBMethod method = resolveMethod(editor, psiFile);
         if (method != null) {
             MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-            if (executionManager.promptExecutionDialog(method, false)) {
+            if (executionManager.promptExecutionDialog(method, DBDebuggerType.NONE)) {
                 executionManager.execute(method);
             }
         }

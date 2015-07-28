@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.jdbc.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfig;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -213,7 +214,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
             headerIcon = methodRef.getObjectType().getIcon();
             DBMethod method = executionInput.getMethod();
             if (method != null) {
-                methodExecutionForm = new MethodExecutionForm(this, executionInput, false, true);
+                methodExecutionForm = new MethodExecutionForm(this, executionInput, false, DBDebuggerType.JDWP);
                 methodArgumentsPanel.add(methodExecutionForm.getComponent(), BorderLayout.CENTER);
                 if (touchForm) methodExecutionForm.touch();
                 headerIcon = method.getOriginalIcon();

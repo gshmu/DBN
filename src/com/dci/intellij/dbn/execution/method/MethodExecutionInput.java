@@ -17,9 +17,9 @@ import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
-import com.dci.intellij.dbn.execution.ExecutionType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
@@ -94,9 +94,9 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
         debugExecutionTimeout = methodExecutionSettings.getDebugExecutionTimeout();
     }
 
-    public void initExecution(ExecutionType executionType) {
+    public void initExecution(DBDebuggerType debuggerType) {
         MethodExecutionResultForm resultForm = executionResult == null ? null : executionResult.getForm(false);
-        executionResult = new MethodExecutionResult(this, resultForm, executionType);
+        executionResult = new MethodExecutionResult(this, resultForm, debuggerType);
         getExecutionContext().setExecutionTimestamp(System.currentTimeMillis());
     }
 

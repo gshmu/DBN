@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionForm;
@@ -88,7 +89,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         if (executionInput != null && !executionInput.isObsolete()) {
             MethodExecutionForm methodExecutionForm = methodExecutionForms.get(executionInput);
             if (methodExecutionForm == null) {
-                methodExecutionForm = new MethodExecutionForm(this, executionInput, true, false);
+                methodExecutionForm = new MethodExecutionForm(this, executionInput, true, DBDebuggerType.NONE);
                 methodExecutionForm.addChangeListener(getChangeListener());
                 methodExecutionForms.put(executionInput, methodExecutionForm);
             }

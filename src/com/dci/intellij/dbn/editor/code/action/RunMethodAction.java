@@ -1,7 +1,10 @@
 package com.dci.intellij.dbn.editor.code.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -12,7 +15,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class RunMethodAction extends AbstractSourceCodeEditorAction {
     public RunMethodAction() {
@@ -27,7 +29,7 @@ public class RunMethodAction extends AbstractSourceCodeEditorAction {
             if (project != null) {
                 DBMethod method = (DBMethod) virtualFile.getObject();
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-                if (executionManager.promptExecutionDialog(method, false)) {
+                if (executionManager.promptExecutionDialog(method, DBDebuggerType.NONE)) {
                     executionManager.execute(method);
                 }
             }

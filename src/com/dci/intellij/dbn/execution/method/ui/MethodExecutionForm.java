@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
@@ -33,6 +34,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -58,29 +60,31 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
     private JPanel versionPanel;
     private JTextField executionTimeoutTextField;
     private JLabel errorLabel;
+    private JLabel debuggerTypeLabel;
 
 
     private List<MethodExecutionArgumentForm> argumentForms = new ArrayList<MethodExecutionArgumentForm>();
     private MethodExecutionInput executionInput;
     private Set<ChangeListener> changeListeners = new HashSet<ChangeListener>();
-    private boolean debug;
+    private DBDebuggerType debuggerType;
 
-    public MethodExecutionForm(DisposableProjectComponent parentComponent, final MethodExecutionInput executionInput, boolean showHeader, final boolean debug) {
+    public MethodExecutionForm(DisposableProjectComponent parentComponent, final MethodExecutionInput executionInput, boolean showHeader, @NotNull DBDebuggerType debuggerType) {
         super(parentComponent);
         this.executionInput = executionInput;
-        this.debug = debug;
+        this.debuggerType = debuggerType;
         DBMethod method = executionInput.getMethod();
 
         errorLabel.setIcon(Icons.COMMON_ERROR);
         errorLabel.setVisible(false);
 
         final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-        if (debug) {
+        if (debuggerType.isActive()) {
             versionPanel.setVisible(true);
             versionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
             DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
             String debuggerVersion = debuggerManager.getDebuggerVersion(connectionHandler);
             debuggerVersionLabel.setText(debuggerVersion);
+            debuggerTypeLabel.setText(debuggerType.name());
         } else {
             versionPanel.setVisible(false);
         }
@@ -95,7 +99,7 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
         connectionLabel.setText(connectionHandler.getPresentableText());
         connectionLabel.setIcon(connectionHandler.getIcon());
         autoCommitLabel.setConnectionHandler(connectionHandler);
-        executionTimeoutTextField.setText(String.valueOf(debug ?
+        executionTimeoutTextField.setText(String.valueOf(debuggerType.isActive() ?
                 executionInput.getDebugExecutionTimeout() :
                 executionInput.getExecutionTimeout()));
         executionTimeoutTextField.getDocument().addDocumentListener(new DocumentAdapter() {
@@ -104,7 +108,7 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
                 String text = executionTimeoutTextField.getText();
                 try {
                     int timeout = Integer.parseInt(text);
-                    if (debug)
+                    if (MethodExecutionForm.this.debuggerType.isActive())
                         executionInput.setDebugExecutionTimeout(timeout); else
                         executionInput.setExecutionTimeout(timeout);
 
@@ -160,10 +164,10 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
         }
         commitCheckBox.addActionListener(actionListener);
         usePoolConnectionCheckBox.addActionListener(actionListener);
-        usePoolConnectionCheckBox.setEnabled(!debug);
+        usePoolConnectionCheckBox.setEnabled(debuggerType.isActive());
 
-        enableLoggingCheckBox.setEnabled(!debug);
-        enableLoggingCheckBox.setSelected(!debug && executionInput.isEnableLogging());
+        enableLoggingCheckBox.setEnabled(debuggerType.isActive());
+        enableLoggingCheckBox.setSelected(debuggerType.isActive() && executionInput.isEnableLogging());
         enableLoggingCheckBox.setVisible(DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler));
         DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
         String databaseLogName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();

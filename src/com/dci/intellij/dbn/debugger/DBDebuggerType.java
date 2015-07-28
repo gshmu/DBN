@@ -7,8 +7,9 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.ui.Presentable;
 
 public enum DBDebuggerType implements Presentable {
-    JDBC("Classic"),
-    JDWP("JWDP");
+    JDBC("Classic (over JDBC)"),
+    JDWP("JDWP (over TCP)"),
+    NONE("None");
 
     private String name;
 
@@ -28,6 +29,9 @@ public enum DBDebuggerType implements Presentable {
         return null;
     }
 
+    public boolean isActive() {
+        return this != NONE;
+    }
 
     @Nullable
     @Override
