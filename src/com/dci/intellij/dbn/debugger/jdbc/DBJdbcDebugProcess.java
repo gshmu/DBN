@@ -64,6 +64,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointId;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.setBreakpointId;
@@ -140,6 +141,11 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     @Override
     public void sessionInitialized() {
         final Project project = getProject();
+        final XDebugSession session = getSession();
+        if (session instanceof XDebugSessionImpl) {
+            XDebugSessionImpl sessionImpl = (XDebugSessionImpl) session;
+            sessionImpl.getSessionData().setBreakpointsMuted(false);
+        }
         new BackgroundTask(project, "Initialize debug environment", true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
@@ -164,7 +170,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 } catch (SQLException e) {
                     status.SESSION_INITIALIZATION_THREW_EXCEPTION = true;
                     NotificationUtil.sendErrorNotification(getProject(), "Error initializing debug environment.", e.getMessage());
-                    getSession().stop();
+                    session.stop();
                 }
             }
         }.start();

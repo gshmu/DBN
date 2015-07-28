@@ -54,6 +54,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XSuspendContext;
+import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.sun.jdi.Location;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
@@ -160,6 +161,10 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     @Override
     public void sessionInitialized() {
         final XDebugSession session = getSession();
+        if (session instanceof XDebugSessionImpl) {
+            XDebugSessionImpl sessionImpl = (XDebugSessionImpl) session;
+            sessionImpl.getSessionData().setBreakpointsMuted(false);
+        }
         session.addSessionListener(suspendContextOverwriteListener);
         getDebuggerSession().getProcess().setXDebugProcess(this);
 
