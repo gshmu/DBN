@@ -70,6 +70,18 @@ public class ConnectionUtil {
         }
     }
 
+    public static void cancelStatement(final Statement statement) {
+        if (statement != null) {
+            try {
+                statement.cancel();
+            } catch (Throwable e) {
+                LOGGER.warn("Error cancelling statement: " + e.getMessage());
+            } finally {
+                closeStatement(statement);
+            }
+        }
+    }
+
     public static void closeConnection(final Connection connection) {
         if (connection != null) {
             if (ApplicationManager.getApplication().isDispatchThread()) {

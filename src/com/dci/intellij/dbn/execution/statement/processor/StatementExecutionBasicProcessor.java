@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.ExecutionCancellableCall;
@@ -222,6 +223,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         resultName = null;
         ConnectionHandler activeConnection = getConnectionHandler();
         DBSchema currentSchema = getCurrentSchema();
+        Statement closeOnErrorStatement = null;
 
         boolean continueExecution = true;
 
@@ -260,6 +262,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
                 }
                 final PreparedStatement statement = connection.prepareStatement(executableStatementText);
+                closeOnErrorStatement = statement;
 
                 statement.setQueryTimeout(timeout);
                 executionResult = new ExecutionCancellableCall<StatementExecutionResult>(timeout, TimeUnit.SECONDS) {
@@ -271,7 +274,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
                     @Override
                     public void cancel() throws Exception {
-                        statement.cancel();
+                        ConnectionUtil.cancelStatement(statement);
                     }
                 }.start();
 
@@ -306,6 +309,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     }
                 }
             } catch (SQLException e) {
+                ConnectionUtil.closeStatement(closeOnErrorStatement);
                 executionResult = createErrorExecutionResult(e.getMessage());
                 executionException = e;
             } finally {
