@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.code.common.lookup;
 
-import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
-import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
-
 import javax.swing.Icon;
+
+import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 
 public class VariableLookupItemBuilder extends LookupItemBuilder {
 
@@ -17,11 +16,6 @@ public class VariableLookupItemBuilder extends LookupItemBuilder {
 
     public String getTextHint() {
         return isDefinition ? "variable def" : "variable ref";
-    }
-
-    @Override
-    public CodeCompletionLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
-        return super.createLookupItem(source, consumer);
     }
 
     public boolean isBold() {

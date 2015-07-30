@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.code.common.lookup;
 
+import javax.swing.Icon;
+
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingSettings;
 
-import javax.swing.Icon;
-
 public abstract class LookupItemBuilder {
-    public CodeCompletionLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
+    public void createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
         CodeCompletionContext context = consumer.getContext();
 
         CharSequence text = getText(context);
@@ -25,17 +25,17 @@ public abstract class LookupItemBuilder {
             } else {
                 lookupItem = new CodeCompletionLookupItem(source, icon, text.toString(), textHint, bold);
             }
+            adjustLookupItem(lookupItem);
             context.getResult().addElement(lookupItem);
-            return lookupItem;
         }
-
-        return null;
     }
 
 
     public abstract boolean isBold();
 
     public abstract CharSequence getText(CodeCompletionContext completionContext);
+
+    protected void adjustLookupItem(CodeCompletionLookupItem lookupItem){}
 
     public abstract String getTextHint();
 
