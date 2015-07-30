@@ -5,12 +5,12 @@ import javax.swing.JPanel;
 
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementRunConfig;
 
-public class DBStatementRunConfigurationEditorForm extends DBProgramRunConfigurationEditorForm<DBStatementRunConfig>{
+public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfigurationEditorForm<DBStatementRunConfig>{
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JCheckBox compileDependenciesCheckBox;
 
-    public DBStatementRunConfigurationEditorForm(final DBStatementRunConfig configuration) {
+    public DBStatementJdbcRunConfigurationEditorForm(final DBStatementRunConfig configuration) {
         super(configuration);
     }
 

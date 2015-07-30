@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.intellij.execution.configurations.RunProfile;
 
-public class DBStatementRunner extends DBProgramRunner<StatementExecutionInput> {
+public class DBStatementJdbcRunner extends DBProgramRunner<StatementExecutionInput> {
     public static final String RUNNER_ID = "DBNStatementRunner";
 
     @NotNull
@@ -22,7 +22,7 @@ public class DBStatementRunner extends DBProgramRunner<StatementExecutionInput> 
 
     @Override
     protected DBDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler) {
-        return new DBStatementProcessStarter(connectionHandler);
+        return new DBStatementJdbcProcessStarter(connectionHandler);
     }
 
     @Override

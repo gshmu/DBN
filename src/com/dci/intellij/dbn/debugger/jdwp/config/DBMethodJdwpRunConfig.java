@@ -15,7 +15,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.Range;
 
-public class DBMethodJdwpRunConfig extends DBMethodRunConfig {
+public class DBMethodJdwpRunConfig extends DBMethodRunConfig implements DBProgramJdwpRunConfig{
     private Range<Integer> tcpPortRange = new Range<Integer>(4000, 4999);
 
     public DBMethodJdwpRunConfig(Project project, DBMethodRunConfigType configType, String name, boolean generic) {
@@ -31,6 +31,7 @@ public class DBMethodJdwpRunConfig extends DBMethodRunConfig {
         return new DBMethodJdwpRunProfileState(env);
     }
 
+    @Override
     public Range<Integer> getTcpPortRange() {
         return tcpPortRange;
     }

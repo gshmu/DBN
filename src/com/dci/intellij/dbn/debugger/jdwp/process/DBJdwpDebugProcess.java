@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdwp;
+package com.dci.intellij.dbn.debugger.jdwp.process;
 
 import java.net.Inet4Address;
 import java.sql.Connection;
@@ -25,6 +25,8 @@ import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointType;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfig;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
+import com.dci.intellij.dbn.debugger.jdwp.DBJdwpBreakpointHandler;
+import com.dci.intellij.dbn.debugger.jdwp.ManagedThreadCommand;
 import com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugSuspendContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
