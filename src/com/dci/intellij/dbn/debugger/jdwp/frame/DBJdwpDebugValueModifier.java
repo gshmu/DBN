@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
+import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.intellij.xdebugger.frame.XValueModifier;
 
 public class DBJdwpDebugValueModifier extends XValueModifier {

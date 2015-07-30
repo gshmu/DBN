@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdbc.process;
+package com.dci.intellij.dbn.debugger.jdwp.process;
 
 import javax.swing.Icon;
 import java.sql.SQLException;
@@ -7,27 +7,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
-import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementRunConfig;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.xdebugger.XDebugSession;
 
-public class DBStatementDebugProcess extends DBJdbcDebugProcess<StatementExecutionInput> {
-    public DBStatementDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
-        super(session, connectionHandler);
+public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExecutionInput> {
+    public DBStatementJdwpDebugProcess(@NotNull XDebugSession session, @NotNull DebuggerSession debuggerSession, ConnectionHandler connectionHandler) {
+        super(session, debuggerSession, connectionHandler);
     }
 
     @Override
     protected void executeTarget() throws SQLException {
         StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(getProject());
         statementExecutionManager.debugExecute(getExecutionProcessor(), getTargetConnection());
-
     }
 
     @Override
@@ -41,12 +37,6 @@ public class DBStatementDebugProcess extends DBJdbcDebugProcess<StatementExecuti
         }
     }
 
-    public VirtualFile getRuntimeInfoFile(DebuggerRuntimeInfo runtimeInfo) {
-        DBSchemaObject schemaObject = getDatabaseObject(runtimeInfo);
-        return schemaObject == null ?
-            getExecutionProcessor().getVirtualFile() :
-            schemaObject.getVirtualFile();
-    }
     private StatementExecutionProcessor getExecutionProcessor() {
         return getExecutionInput().getExecutionProcessor();
     }
@@ -56,6 +46,13 @@ public class DBStatementDebugProcess extends DBJdbcDebugProcess<StatementExecuti
     public String getName() {
         return getExecutionProcessor().getPsiFile().getName();
     }
+
+    @Nullable
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
     @Nullable
     @Override
     public Icon getIcon() {

@@ -30,7 +30,7 @@ import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodJdbcRunConfigType;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementRunConfig;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementRunConfigType;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner;
-import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementRunner;
+import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfigType;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner;
 import com.dci.intellij.dbn.debugger.options.DebuggerSettings;
@@ -275,7 +275,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
         runConfiguration.setExecutionInput(executionProcessor.getExecutionInput());
 
-        ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(DBStatementRunner.RUNNER_ID);
+        ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(DBStatementJdbcRunner.RUNNER_ID);
         if (programRunner != null) {
             try {
                 Executor executorInstance = DefaultDebugExecutor.getDebugExecutorInstance();

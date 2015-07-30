@@ -51,12 +51,12 @@ public class DBJdwpDebuggerEvaluator extends DBDebuggerEvaluator<DBJdwpDebugStac
                                 if  (fieldValue != null) {
                                     stringValue = fieldValue.toString();
                                 }
-                            } else if (field.name().equals("_maxLength")) {
+                            }/* else if (field.name().equals("_maxLength")) {
                                 Value fieldValue = value.getValue(field);
                                 if  (fieldValue != null) {
                                     typeLength = fieldValue.toString();
                                 }
-                            }
+                            }*/
                             else if (field.name().equals("_type")) {
                                 Value fieldValue = value.getValue(field);
                                 if  (fieldValue != null) {
