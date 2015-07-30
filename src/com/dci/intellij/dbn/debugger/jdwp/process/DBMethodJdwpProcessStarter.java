@@ -1,8 +1,13 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
+import java.net.ServerSocket;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
+import com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfig;
 import com.intellij.debugger.DebugEnvironment;
 import com.intellij.debugger.DebuggerManagerEx;
 import com.intellij.debugger.DefaultDebugEnvironment;
@@ -15,12 +20,9 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
+import com.intellij.util.Range;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.net.ServerSocket;
 
 public class DBMethodJdwpProcessStarter extends DBDebugProcessStarter {
     public DBMethodJdwpProcessStarter(ConnectionHandler connectionHandler) {
@@ -35,8 +37,9 @@ public class DBMethodJdwpProcessStarter extends DBDebugProcessStarter {
         assertNotNull(runProfile, "Invalid run profile");
 
         ExecutionEnvironment environment = ExecutionEnvironmentBuilder.create(session.getProject(), executor, runProfile).build();
-
-        int freePort = findFreePort(4000, 4999);
+        DBMethodJdwpRunConfig methodRunConfig = (DBMethodJdwpRunConfig) runProfile;
+        Range<Integer> portRange = methodRunConfig.getTcpPortRange();
+        int freePort = findFreePort(portRange.getFrom(), portRange.getTo());
         RemoteConnection remoteConnection = new RemoteConnection(true, "localhost", Integer.toString(freePort), true);
         RunProfileState state = FailsafeUtil.get(runProfile.getState(executor, environment));
 
