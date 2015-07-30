@@ -16,8 +16,8 @@ import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.xdebugger.XDebugSession;
 
 public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExecutionInput> {
-    public DBStatementJdwpDebugProcess(@NotNull XDebugSession session, @NotNull DebuggerSession debuggerSession, ConnectionHandler connectionHandler) {
-        super(session, debuggerSession, connectionHandler);
+    public DBStatementJdwpDebugProcess(@NotNull XDebugSession session, @NotNull DebuggerSession debuggerSession, ConnectionHandler connectionHandler, int tcpPort) {
+        super(session, debuggerSession, connectionHandler, tcpPort);
     }
 
     @Override
