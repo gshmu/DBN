@@ -60,15 +60,6 @@ public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecution
     }
 
     @Override
-    protected void registerDefaultBreakpoint() {
-        MethodExecutionInput methodExecutionInput = getExecutionInput();
-        DBMethod method = methodExecutionInput.getMethod();
-        if (method != null) {
-            getBreakpointHandler().registerDefaultBreakpoint(method);
-        }
-    }
-
-    @Override
     protected void releaseTargetConnection() {
         targetConnection = null;
     }
