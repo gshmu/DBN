@@ -64,6 +64,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     private T executionInput;
     private ConnectionHandlerRef connectionHandlerRef;
     private DBDebugProcessStatus status = new DBDebugProcessStatus();
+    private int localTcpPort = 4000;
 
     private DBBreakpointHandler<DBJdwpDebugProcess>[] breakpointHandlers;
     private DBDebugConsoleLogger console;
@@ -94,7 +95,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     };
 
 
-    protected DBJdwpDebugProcess(@NotNull final XDebugSession session, DebuggerSession debuggerSession, ConnectionHandler connectionHandler) {
+    protected DBJdwpDebugProcess(@NotNull final XDebugSession session, DebuggerSession debuggerSession, ConnectionHandler connectionHandler, int tcpPort) {
         super(session, debuggerSession);
         console = new DBDebugConsoleLogger(session);
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
@@ -114,6 +115,11 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 //System.out.println();
             }
         });
+        localTcpPort = tcpPort;
+    }
+
+    public int getLocalTcpPort() {
+        return localTcpPort;
     }
 
     public ConnectionHandler getConnectionHandler() {
@@ -176,9 +182,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionContext().getTargetSchema());
                     targetConnection.setAutoCommit(false);
-
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                    debuggerInterface.initializeJdwpSession(targetConnection, Inet4Address.getLocalHost().getHostAddress(), "4000");
+                    debuggerInterface.initializeJdwpSession(targetConnection, Inet4Address.getLocalHost().getHostAddress(), String.valueOf(localTcpPort));
                     console.system("Debug session initialized (JDWP)");
 
                     status.CAN_SET_BREAKPOINTS = true;

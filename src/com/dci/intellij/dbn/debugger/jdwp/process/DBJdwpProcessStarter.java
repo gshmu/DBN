@@ -20,11 +20,15 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
+import com.intellij.openapi.util.Key;
 import com.intellij.util.Range;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
 
 public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
+
+    public static final Key<Integer> JDWP_DEBUGGER_PORT = new Key<Integer>("JDWP_DEBUGGER_PORT");
+
     public DBJdwpProcessStarter(ConnectionHandler connectionHandler) {
         super(connectionHandler);
     }
@@ -66,10 +70,10 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
         DebuggerSession debuggerSession = debuggerManagerEx.attachVirtualMachine(debugEnvironment);
         assertNotNull(debuggerSession, "Could not initialize JDWP listener");
 
-        return createDebugProcess(session, debuggerSession);
+        return createDebugProcess(session, debuggerSession, freePort);
     }
 
-    protected abstract DBJdwpDebugProcess createDebugProcess(@NotNull XDebugSession session, DebuggerSession debuggerSession);
+    protected abstract DBJdwpDebugProcess createDebugProcess(@NotNull XDebugSession session, DebuggerSession debuggerSession, int tcpPort);
 
     private @NotNull <T> T assertNotNull(@Nullable T object, String message) throws ExecutionException {
         if (object == null) {
