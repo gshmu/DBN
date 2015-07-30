@@ -3,14 +3,14 @@ package com.dci.intellij.dbn.debugger.jdbc.config.ui;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementRunConfig;
+import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementJdbcRunConfig;
 
-public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfigurationEditorForm<DBStatementRunConfig>{
+public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfigurationEditorForm<DBStatementJdbcRunConfig>{
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JCheckBox compileDependenciesCheckBox;
 
-    public DBStatementJdbcRunConfigurationEditorForm(final DBStatementRunConfig configuration) {
+    public DBStatementJdbcRunConfigurationEditorForm(final DBStatementJdbcRunConfig configuration) {
         super(configuration);
     }
 
@@ -18,12 +18,12 @@ public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfi
         return mainPanel;
     }
 
-    public void writeConfiguration(DBStatementRunConfig configuration) {
+    public void writeConfiguration(DBStatementJdbcRunConfig configuration) {
         configuration.setCompileDependencies(compileDependenciesCheckBox.isSelected());
         //selectMethodAction.setConfiguration(configuration);
     }
 
-    public void readConfiguration(DBStatementRunConfig configuration) {
+    public void readConfiguration(DBStatementJdbcRunConfig configuration) {
         compileDependenciesCheckBox.setSelected(configuration.isCompileDependencies());
     }
 

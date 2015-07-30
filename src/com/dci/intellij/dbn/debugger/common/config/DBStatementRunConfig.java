@@ -1,47 +1,30 @@
-package com.dci.intellij.dbn.debugger.jdbc.config;
+package com.dci.intellij.dbn.debugger.common.config;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfig;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
-import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 
-public class DBStatementRunConfig extends DBProgramRunConfig<StatementExecutionInput> {
+public abstract class DBStatementRunConfig extends DBProgramRunConfig<StatementExecutionInput> {
     private StatementExecutionInput executionInput;
 
     public DBStatementRunConfig(Project project, DBProgramRunConfigType configType, String name, boolean generic) {
         super(project, configType, name, generic);
-    }
-
-    @Override
-    protected DBStatementRunConfigEditor createConfigurationEditor() {
-        return new DBStatementRunConfigEditor(this);
-    }
-
-    public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-        return new DBStatementRunProfileState(env);
     }
 
     @Nullable
@@ -81,32 +64,6 @@ public class DBStatementRunConfig extends DBProgramRunConfig<StatementExecutionI
         return Collections.emptyList();
     }
 
-    public void checkConfiguration() throws RuntimeConfigurationException {
-/*        if (executionInput == null) {
-            throw new RuntimeConfigurationError("No or invalid method selected. The database connection is down, obsolete or method has been dropped.");
-        }
-
-        if (executionInput.isObsolete()) {
-            throw new RuntimeConfigurationError(
-                    "Method " + executionInput.getMethodRef().getQualifiedName() + " could not be resolved. " +
-                    "The database connection is down or method has been dropped.");
-        }
-
-        ConnectionHandler connectionHandler = getMethod().getConnectionHandler();
-        if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
-            throw new RuntimeConfigurationError(
-                    "Debugging is not supported for " + connectionHandler.getDatabaseType().getDisplayName() +" databases.");
-        }*/
-    }
-
-    @Nullable
-    public String suggestedName() {
-        if (isGeneric()) {
-             getConfigType().getDefaultRunnerName();
-        }
-        return null;
-    }
-
     public StatementExecutionInput getExecutionInput() {
         return executionInput;
     }
@@ -114,7 +71,6 @@ public class DBStatementRunConfig extends DBProgramRunConfig<StatementExecutionI
     public void setExecutionInput(StatementExecutionInput executionInput) {
         this.executionInput = executionInput;
     }
-
 
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
@@ -128,10 +84,16 @@ public class DBStatementRunConfig extends DBProgramRunConfig<StatementExecutionI
         setCompileDependencies(SettingsUtil.getBoolean(element, "compile-dependencies", true));
     }
 
+    @Nullable
+    public String suggestedName() {
+        if (isGeneric()) {
+             getConfigType().getDefaultRunnerName();
+        }
+        return null;
+    }
+
     @Override
-    public RunConfiguration clone() {
-        DBStatementRunConfig runConfiguration = (DBStatementRunConfig) super.clone();
-        runConfiguration.resetConfigurationEditor();
-        return runConfiguration;
+    public void checkConfiguration() throws RuntimeConfigurationException {
+
     }
 }

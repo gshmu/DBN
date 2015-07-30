@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
-import com.dci.intellij.dbn.debugger.jdwp.config.DBProgramJdwpRunConfig;
+import com.dci.intellij.dbn.debugger.jdwp.config.DBJdwpRunConfig;
 import com.intellij.debugger.DebugEnvironment;
 import com.intellij.debugger.DebuggerManagerEx;
 import com.intellij.debugger.DefaultDebugEnvironment;
@@ -55,7 +55,7 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
         assertNotNull(runProfile, "Invalid run profile");
 
         ExecutionEnvironment environment = ExecutionEnvironmentBuilder.create(session.getProject(), executor, runProfile).build();
-        DBProgramJdwpRunConfig jdwpRunConfig = (DBProgramJdwpRunConfig) runProfile;
+        DBJdwpRunConfig jdwpRunConfig = (DBJdwpRunConfig) runProfile;
         Range<Integer> portRange = jdwpRunConfig.getTcpPortRange();
         int freePort = findFreePort(portRange.getFrom(), portRange.getTo());
         RemoteConnection remoteConnection = new RemoteConnection(true, "localhost", Integer.toString(freePort), true);

@@ -255,7 +255,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                         }
 
                     } catch (ExecutionException e) {
-                        NotificationUtil.sendErrorNotification(project, "Debugger", "Error initializing debug environment");
+                        NotificationUtil.sendErrorNotification(project, "Debugger", "Error initializing debug environment: " + e.getMessage());
                     }
                 }
 

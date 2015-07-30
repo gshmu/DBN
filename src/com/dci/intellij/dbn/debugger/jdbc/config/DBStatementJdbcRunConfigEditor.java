@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigEditor;
 import com.dci.intellij.dbn.debugger.jdbc.config.ui.DBStatementJdbcRunConfigurationEditorForm;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 
-public class DBStatementRunConfigEditor extends DBProgramRunConfigEditor<DBStatementRunConfig, DBStatementJdbcRunConfigurationEditorForm, StatementExecutionInput> {
-    public DBStatementRunConfigEditor(DBStatementRunConfig configuration) {
+public class DBStatementJdbcRunConfigEditor extends DBProgramRunConfigEditor<DBStatementJdbcRunConfig, DBStatementJdbcRunConfigurationEditorForm, StatementExecutionInput> {
+    public DBStatementJdbcRunConfigEditor(DBStatementJdbcRunConfig configuration) {
         super(configuration);
     }
 

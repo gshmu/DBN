@@ -629,10 +629,12 @@
         <programRunner implementation="com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner"/>
         <programRunner implementation="com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner"/>
         <programRunner implementation="com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner"/>
+        <programRunner implementation="com.dci.intellij.dbn.debugger.jdwp.process.DBStatementJdwpRunner"/>
         <!--<executionTargetProvider implementation="com.dci.intellij.dbn.debugger.jdbc.execution.common.DBExecutionTargetProvider"/>-->
         <configurationType implementation="com.dci.intellij.dbn.debugger.jdbc.config.DBMethodJdbcRunConfigType"/>
-        <configurationType implementation="com.dci.intellij.dbn.debugger.jdbc.config.DBStatementRunConfigType"/>
+        <configurationType implementation="com.dci.intellij.dbn.debugger.jdbc.config.DBStatementJdbcRunConfigType"/>
         <configurationType implementation="com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfigType"/>
+        <configurationType implementation="com.dci.intellij.dbn.debugger.jdwp.config.DBStatementJdwpRunConfigType"/>
         <navbar order="last" implementation="com.dci.intellij.dbn.navigation.NavigationBarExtension"/>
         <editorTabColorProvider order="first" implementation="com.dci.intellij.dbn.editor.DBEditorTabColorProvider"/>
 

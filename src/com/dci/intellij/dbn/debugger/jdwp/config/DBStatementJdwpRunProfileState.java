@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdbc.config;
+package com.dci.intellij.dbn.debugger.jdwp.config;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -12,8 +12,8 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 
 
-public class DBStatementRunProfileState extends DBProgramRunProfileState {
-    public DBStatementRunProfileState(ExecutionEnvironment environment) {
+public class DBStatementJdwpRunProfileState extends DBProgramRunProfileState {
+    public DBStatementJdwpRunProfileState(ExecutionEnvironment environment) {
         super(environment);
     }
 

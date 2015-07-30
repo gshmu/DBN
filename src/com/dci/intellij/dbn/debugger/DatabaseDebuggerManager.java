@@ -26,13 +26,16 @@ import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigFactory;
 import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodJdbcRunConfigType;
-import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementRunConfig;
-import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementRunConfigType;
+import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementJdbcRunConfigType;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfigType;
+import com.dci.intellij.dbn.debugger.jdwp.config.DBStatementJdwpRunConfigType;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner;
+import com.dci.intellij.dbn.debugger.jdwp.process.DBStatementJdwpRunner;
 import com.dci.intellij.dbn.debugger.options.DebuggerSettings;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
@@ -113,9 +116,14 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         return ContainerUtil.findInstance(configurationTypes, configTypeClass);
     }
 
-    public static DBStatementRunConfigType getStatementConfigurationType() {
+    public static DBStatementRunConfigType getStatementConfigurationType(DBDebuggerType debuggerType) {
         ConfigurationType[] configurationTypes = Extensions.getExtensions(ConfigurationType.CONFIGURATION_TYPE_EP);
-        return ContainerUtil.findInstance(configurationTypes, DBStatementRunConfigType.class);
+
+        Class<? extends DBStatementRunConfigType> configTypeClass =
+                debuggerType == DBDebuggerType.JDBC ? DBStatementJdbcRunConfigType.class :
+                debuggerType == DBDebuggerType.JDWP ? DBStatementJdwpRunConfigType.class : null;
+
+        return ContainerUtil.findInstance(configurationTypes, configTypeClass);
     }
 
     public static String createMethodConfigurationName(DBMethod method, DBDebuggerType debuggerType) {
@@ -163,7 +171,8 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     private void createDefaultConfigs() {
         createDefaultConfig(getMethodConfigurationType(DBDebuggerType.JDWP));
         createDefaultConfig(getMethodConfigurationType(DBDebuggerType.JDBC));
-        createDefaultConfig(getStatementConfigurationType());
+        createDefaultConfig(getStatementConfigurationType(DBDebuggerType.JDWP));
+        createDefaultConfig(getStatementConfigurationType(DBDebuggerType.JDBC));
     }
 
     @NotNull
@@ -268,14 +277,22 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     }
 
     public void startStatementDebugger(@NotNull StatementExecutionProcessor executionProcessor) {
-        DBStatementRunConfigType configurationType = getStatementConfigurationType();
+        Project project = getProject();
+        DebuggerSettings debuggerSettings = OperationSettings.getInstance(project).getDebuggerSettings();
+        DBDebuggerType debuggerType = debuggerSettings.getDebuggerType();
+
+        DBStatementRunConfigType configurationType = getStatementConfigurationType(debuggerType);
         RunnerAndConfigurationSettings runConfigurationSetting;
         runConfigurationSetting = getDefaultConfig(configurationType);
         DBStatementRunConfig runConfiguration = (DBStatementRunConfig) runConfigurationSetting.getConfiguration();
 
         runConfiguration.setExecutionInput(executionProcessor.getExecutionInput());
 
-        ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(DBStatementJdbcRunner.RUNNER_ID);
+        String runnerId =
+                debuggerType == DBDebuggerType.JDBC ? DBStatementJdbcRunner.RUNNER_ID :
+                debuggerType == DBDebuggerType.JDWP ? DBStatementJdwpRunner.RUNNER_ID : null;
+
+        ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(runnerId);
         if (programRunner != null) {
             try {
                 Executor executorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
@@ -283,11 +300,11 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                     throw new ExecutionException("Could not resolve debug executor");
                 }
 
-                ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executorInstance, programRunner, runConfigurationSetting, getProject());
+                ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executorInstance, programRunner, runConfigurationSetting, project);
                 programRunner.execute(executionEnvironment);
             } catch (ExecutionException e) {
                 MessageUtil.showErrorDialog(
-                        getProject(), "Could not start statement debugger. \n" +
+                        project, "Could not start statement debugger. \n" +
                                 "Reason: " + e.getMessage());
             }
         }
