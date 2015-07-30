@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.code.common.lookup;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
-import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.completion.options.general.CodeCompletionFormatSettings;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
@@ -17,8 +19,6 @@ import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 
-import javax.swing.Icon;
-
 public class ObjectLookupItemBuilder extends LookupItemBuilder {
     private DBLanguage language;
     private DBObjectRef objectRef;
@@ -29,10 +29,9 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
     }
 
     @Override
-    public CodeCompletionLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
-        CodeCompletionLookupItem lookupItem = super.createLookupItem(source, consumer);
+    protected void adjustLookupItem(@NotNull CodeCompletionLookupItem lookupItem) {
         DBObject object = getObject();
-        if (object != null && !object.isDisposed() && lookupItem != null) {
+        if (object != null && !object.isDisposed()) {
             if (object.needsNameQuoting()) {
                 DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(object);
                 String lookupString = object.getName();
@@ -49,7 +48,6 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
 */
 
         }
-        return lookupItem;
     }
 
     public DBObject getObject() {
