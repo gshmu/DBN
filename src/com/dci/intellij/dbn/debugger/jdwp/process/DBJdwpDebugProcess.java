@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.DBDebugOperationTask;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
 import com.dci.intellij.dbn.debugger.jdwp.DBJdwpBreakpointHandler;
@@ -106,7 +106,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
         debuggerManager.registerDebugSession(connectionHandler);
 
-        DBProgramRunConfig<T> runProfile = (DBProgramRunConfig<T>) session.getRunProfile();
+        DBRunConfig<T> runProfile = (DBRunConfig<T>) session.getRunProfile();
         executionInput = runProfile.getExecutionInput();
 
         DBJdwpBreakpointHandler breakpointHandler = new DBJdwpBreakpointHandler(session, this);

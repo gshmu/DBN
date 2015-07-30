@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.execution.configurations.RunConfiguration;
 
-public abstract class DBMethodRunConfigFactory<T extends DBProgramRunConfigType, C extends DBMethodRunConfig> extends DBProgramRunConfigFactory<T, C> {
+public abstract class DBMethodRunConfigFactory<T extends DBRunConfigType, C extends DBMethodRunConfig> extends DBRunConfigFactory<T, C> {
     protected DBMethodRunConfigFactory(T type) {
         super(type);
     }

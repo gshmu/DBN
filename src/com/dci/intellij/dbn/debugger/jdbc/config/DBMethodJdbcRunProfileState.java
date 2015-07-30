@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger.jdbc.config;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunProfileState;
+import com.dci.intellij.dbn.debugger.common.config.DBRunProfileState;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
@@ -12,7 +12,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 
 
-public class DBMethodJdbcRunProfileState extends DBProgramRunProfileState {
+public class DBMethodJdbcRunProfileState extends DBRunProfileState {
     public DBMethodJdbcRunProfileState(ExecutionEnvironment environment) {
         super(environment);
     }

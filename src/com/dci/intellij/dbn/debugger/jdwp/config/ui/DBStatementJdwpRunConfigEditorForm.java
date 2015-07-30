@@ -4,7 +4,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.dci.intellij.dbn.debugger.jdbc.config.ui.DBProgramRunConfigurationEditorForm;
+import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBStatementJdwpRunConfig;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.intellij.openapi.options.ConfigurationException;

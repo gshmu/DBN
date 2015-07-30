@@ -23,9 +23,9 @@ import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEd
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfig;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigFactory;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigFactory;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigType;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodJdbcRunConfigType;
@@ -176,19 +176,19 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     }
 
     @NotNull
-    public RunnerAndConfigurationSettings getDefaultConfig(DBProgramRunConfigType configurationType){
+    public RunnerAndConfigurationSettings getDefaultConfig(DBRunConfigType configurationType){
         return FailsafeUtil.get(getDefaultConfig(configurationType, true));
     }
 
     @Nullable
-    public RunnerAndConfigurationSettings getDefaultConfig(DBProgramRunConfigType configurationType, boolean create){
+    public RunnerAndConfigurationSettings getDefaultConfig(DBRunConfigType configurationType, boolean create){
         Project project = getProject();
         RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(project);
         List<RunnerAndConfigurationSettings> configurationSettings = runManager.getConfigurationSettingsList(configurationType);
         for (RunnerAndConfigurationSettings configurationSetting : configurationSettings) {
             RunConfiguration configuration = configurationSetting.getConfiguration();
-            if (configuration instanceof DBProgramRunConfig) {
-                DBProgramRunConfig dbRunConfiguration = (DBProgramRunConfig) configuration;
+            if (configuration instanceof DBRunConfig) {
+                DBRunConfig dbRunConfiguration = (DBRunConfig) configuration;
                 if (dbRunConfiguration.isGeneric()) {
                     return configurationSetting;
                 }
@@ -200,13 +200,13 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         return null;
     }
 
-    private RunnerAndConfigurationSettings createDefaultConfig(DBProgramRunConfigType configurationType) {
+    private RunnerAndConfigurationSettings createDefaultConfig(DBRunConfigType configurationType) {
         RunnerAndConfigurationSettings defaultRunnerConfig = getDefaultConfig(configurationType, false);
         if (defaultRunnerConfig == null) {
             Project project = getProject();
             RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(project);
-            DBProgramRunConfigFactory configurationFactory = configurationType.getConfigurationFactory();
-            DBProgramRunConfig runConfiguration = configurationFactory.createConfiguration(project, configurationType.getDefaultRunnerName(), true);
+            DBRunConfigFactory configurationFactory = configurationType.getConfigurationFactory();
+            DBRunConfig runConfiguration = configurationFactory.createConfiguration(project, configurationType.getDefaultRunnerName(), true);
             RunnerAndConfigurationSettings configuration = runManager.createConfiguration(runConfiguration, configurationFactory);
             runManager.addConfiguration(configuration, false);
             //runManager.setTemporaryConfiguration(configuration);

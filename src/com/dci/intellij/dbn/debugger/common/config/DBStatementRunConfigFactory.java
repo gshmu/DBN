@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.intellij.openapi.project.Project;
 
-public abstract class DBStatementRunConfigFactory<T extends DBStatementRunConfigType, C extends DBStatementRunConfig> extends DBProgramRunConfigFactory<T, C> {
+public abstract class DBStatementRunConfigFactory<T extends DBStatementRunConfigType, C extends DBStatementRunConfig> extends DBRunConfigFactory<T, C> {
     protected DBStatementRunConfigFactory(T type) {
         super(type);
     }

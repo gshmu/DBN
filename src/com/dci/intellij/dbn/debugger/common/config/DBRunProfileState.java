@@ -3,10 +3,10 @@ package com.dci.intellij.dbn.debugger.common.config;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.runners.ExecutionEnvironment;
 
-public abstract class DBProgramRunProfileState implements RunProfileState {
+public abstract class DBRunProfileState implements RunProfileState {
     private ExecutionEnvironment environment;
 
-    public DBProgramRunProfileState(ExecutionEnvironment environment) {
+    public DBRunProfileState(ExecutionEnvironment environment) {
         this.environment = environment;
     }
 
