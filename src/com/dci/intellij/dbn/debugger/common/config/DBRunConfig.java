@@ -16,25 +16,25 @@ import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction;
 import com.intellij.openapi.project.Project;
 
-public abstract class DBProgramRunConfig<I extends ExecutionInput> extends RunConfigurationBase implements RunConfigurationWithSuppressedDefaultRunAction, LocatableConfiguration {
-    private LazyValue<DBProgramRunConfigEditor> configurationEditor = new SimpleLazyValue<DBProgramRunConfigEditor>() {
+public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigurationBase implements RunConfigurationWithSuppressedDefaultRunAction, LocatableConfiguration {
+    private LazyValue<DBRunConfigEditor> configurationEditor = new SimpleLazyValue<DBRunConfigEditor>() {
         @Override
-        protected DBProgramRunConfigEditor load() {
+        protected DBRunConfigEditor load() {
             return createConfigurationEditor();
         }
     };
-    private DBProgramRunConfigType configType;
+    private DBRunConfigType configType;
     private boolean isGeneratedName = true;
     private boolean compileDependencies = true;
     private boolean generic;
     private I executionInput;
 
-    protected DBProgramRunConfig(Project project, DBProgramRunConfigType configType, String name, boolean generic) {
+    protected DBRunConfig(Project project, DBRunConfigType configType, String name, boolean generic) {
         super(project, configType.getConfigurationFactory(), name);
         this.generic = generic;
     }
 
-    public DBProgramRunConfigType getConfigType() {
+    public DBRunConfigType getConfigType() {
         return configType;
     }
 
@@ -42,10 +42,10 @@ public abstract class DBProgramRunConfig<I extends ExecutionInput> extends RunCo
         configurationEditor.set(null);
     }
 
-    public DBProgramRunConfigEditor getConfigurationEditor() {
+    public DBRunConfigEditor getConfigurationEditor() {
         return configurationEditor.get();
     }
-    protected abstract DBProgramRunConfigEditor createConfigurationEditor();
+    protected abstract DBRunConfigEditor createConfigurationEditor();
 
     @Override
     public boolean canRunOn(@NotNull ExecutionTarget target) {

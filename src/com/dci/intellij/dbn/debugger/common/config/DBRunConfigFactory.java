@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.openapi.project.Project;
 
-public abstract class DBProgramRunConfigFactory<T extends DBProgramRunConfigType, C extends DBProgramRunConfig> extends ConfigurationFactory {
-    protected DBProgramRunConfigFactory(T type) {
+public abstract class DBRunConfigFactory<T extends DBRunConfigType, C extends DBRunConfig> extends ConfigurationFactory {
+    protected DBRunConfigFactory(T type) {
         super(type);
     }
 

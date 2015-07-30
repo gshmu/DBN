@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.jdbc.config.ui;
+package com.dci.intellij.dbn.debugger.common.config.ui;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;

@@ -20,10 +20,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 
-public abstract class DBStatementRunConfig extends DBProgramRunConfig<StatementExecutionInput> {
+public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutionInput> {
     private StatementExecutionInput executionInput;
 
-    public DBStatementRunConfig(Project project, DBProgramRunConfigType configType, String name, boolean generic) {
+    public DBStatementRunConfig(Project project, DBRunConfigType configType, String name, boolean generic) {
         super(project, configType, name, generic);
     }
 

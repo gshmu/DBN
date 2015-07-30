@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger.jdbc.config;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigType;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
@@ -14,7 +14,7 @@ import com.intellij.openapi.project.Project;
 
 public class DBStatementJdbcRunConfig extends DBStatementRunConfig {
 
-    public DBStatementJdbcRunConfig(Project project, DBProgramRunConfigType configType, String name, boolean generic) {
+    public DBStatementJdbcRunConfig(Project project, DBRunConfigType configType, String name, boolean generic) {
         super(project, configType, name, generic);
     }
 

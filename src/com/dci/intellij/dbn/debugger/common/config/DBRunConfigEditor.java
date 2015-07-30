@@ -4,16 +4,16 @@ import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.debugger.jdbc.config.ui.DBProgramRunConfigurationEditorForm;
+import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 
-public abstract class DBProgramRunConfigEditor<T extends DBProgramRunConfig, F extends DBProgramRunConfigurationEditorForm<T>, I extends ExecutionInput> extends SettingsEditor<T> {
+public abstract class DBRunConfigEditor<T extends DBRunConfig, F extends DBProgramRunConfigurationEditorForm<T>, I extends ExecutionInput> extends SettingsEditor<T> {
     private T configuration;
     private F configurationEditorForm;
 
-    public DBProgramRunConfigEditor(T configuration) {
+    public DBRunConfigEditor(T configuration) {
         this.configuration = configuration;
     }
 

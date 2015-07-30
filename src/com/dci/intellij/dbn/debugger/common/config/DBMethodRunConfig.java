@@ -22,10 +22,10 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import gnu.trove.THashSet;
 
-public abstract class DBMethodRunConfig extends DBProgramRunConfig<MethodExecutionInput> {
+public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput> {
     private Set<MethodExecutionInput> methodSelectionHistory = new THashSet<MethodExecutionInput>();
 
-    public DBMethodRunConfig(Project project, DBProgramRunConfigType configType, String name, boolean generic) {
+    public DBMethodRunConfig(Project project, DBRunConfigType configType, String name, boolean generic) {
         super(project, configType, name, generic);
     }
 

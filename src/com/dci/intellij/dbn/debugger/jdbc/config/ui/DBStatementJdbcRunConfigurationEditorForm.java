@@ -3,9 +3,10 @@ package com.dci.intellij.dbn.debugger.jdbc.config.ui;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementJdbcRunConfig;
 
-public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfigurationEditorForm<DBStatementJdbcRunConfig>{
+public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfigurationEditorForm<DBStatementJdbcRunConfig> {
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JCheckBox compileDependenciesCheckBox;

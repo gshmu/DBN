@@ -13,8 +13,8 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfig;
-import com.dci.intellij.dbn.debugger.jdbc.config.ui.CompileDebugDependenciesDialog;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.ui.CompileDebugDependenciesDialog;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
@@ -53,7 +53,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             RunContentDescriptor contentToReuse,
             final ExecutionEnvironment environment) throws ExecutionException {
 
-        final DBProgramRunConfig runProfile = (DBProgramRunConfig) environment.getRunProfile();
+        final DBRunConfig runProfile = (DBRunConfig) environment.getRunProfile();
         new ConnectionAction("the debug execution", runProfile.getConnectionHandler(), new TaskInstructions("Checking debug privileges", false, true)) {
             @Override
             protected boolean canExecute() {
@@ -80,7 +80,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             final T executionInput,
             final ExecutionEnvironment environment,
             final Callback callback) {
-        final DBProgramRunConfig runProfile = (DBProgramRunConfig) environment.getRunProfile();
+        final DBRunConfig runProfile = (DBRunConfig) environment.getRunProfile();
         final ConnectionHandler connectionHandler = runProfile.getConnectionHandler();
         if (connectionHandler == null) {
 
@@ -129,7 +129,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             @NotNull final T executionInput,
             @NotNull final ExecutionEnvironment environment,
             final Callback callback) {
-        final DBProgramRunConfig runProfile = (DBProgramRunConfig) environment.getRunProfile();
+        final DBRunConfig runProfile = (DBRunConfig) environment.getRunProfile();
         if (runProfile.isCompileDependencies()) {
             final Project project = connectionHandler.getProject();
 
@@ -173,7 +173,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             @Override
             protected void execute() {
                 final Project project = connectionHandler.getProject();
-                DBProgramRunConfig runConfiguration = (DBProgramRunConfig) environment.getRunProfile();
+                DBRunConfig runConfiguration = (DBRunConfig) environment.getRunProfile();
                 CompileDebugDependenciesDialog dependenciesDialog = new CompileDebugDependenciesDialog(runConfiguration, dependencies);
                 dependenciesDialog.show();
                 final List<DBSchemaObject> selectedDependencies =  dependenciesDialog.getSelection();

@@ -35,7 +35,7 @@ import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointType;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBJdbcDebuggerEditorsProvider;
@@ -89,7 +89,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         Project project = session.getProject();
         DatabaseDebuggerManager.getInstance(project).registerDebugSession(connectionHandler);
 
-        DBProgramRunConfig<T> runProfile = (DBProgramRunConfig) session.getRunProfile();
+        DBRunConfig<T> runProfile = (DBRunConfig) session.getRunProfile();
         executionInput = runProfile.getExecutionInput();
 
         DBJdbcBreakpointHandler breakpointHandler = new DBJdbcBreakpointHandler(session, this);
