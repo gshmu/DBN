@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.debugger.common.config.DBProgramRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
 
-public class DBStatementRunConfigType extends DBProgramRunConfigType<DBStatementRunConfigFactory> {
+public class DBStatementJdbcRunConfigType extends DBStatementRunConfigType<DBStatementJdbcRunConfigFactory> {
     public static final String DEFAULT_RUNNER_NAME = "DB Statement Runner";
-    private DBStatementRunConfigFactory[] configurationFactories = new DBStatementRunConfigFactory[]{new DBStatementRunConfigFactory(this)};
+    private DBStatementJdbcRunConfigFactory[] configurationFactories = new DBStatementJdbcRunConfigFactory[]{new DBStatementJdbcRunConfigFactory(this)};
 
 
     public String getDisplayName() {
@@ -29,7 +29,7 @@ public class DBStatementRunConfigType extends DBProgramRunConfigType<DBStatement
         return "DBNStatementRunConfiguration";
     }
 
-    public DBStatementRunConfigFactory[] getConfigurationFactories() {
+    public DBStatementJdbcRunConfigFactory[] getConfigurationFactories() {
         return configurationFactories;
     }
 

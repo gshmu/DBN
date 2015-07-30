@@ -5,8 +5,10 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
+import com.dci.intellij.dbn.debugger.jdwp.config.DBStatementJdwpRunConfig;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.intellij.execution.configurations.RunProfile;
+import com.intellij.execution.executors.DefaultDebugExecutor;
 
 public class DBStatementJdwpRunner extends DBProgramRunner<StatementExecutionInput> {
     public static final String RUNNER_ID = "DBNStatementJdwpRunner";
@@ -17,6 +19,12 @@ public class DBStatementJdwpRunner extends DBProgramRunner<StatementExecutionInp
     }
 
     public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
+        if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
+            if (profile instanceof DBStatementJdwpRunConfig) {
+                DBStatementJdwpRunConfig runConfiguration = (DBStatementJdwpRunConfig) profile;
+                return runConfiguration.getExecutionInput() != null;
+            }
+        }
         return false;
     }
 
