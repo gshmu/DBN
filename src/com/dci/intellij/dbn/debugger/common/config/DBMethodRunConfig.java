@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -150,7 +151,11 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
     @Override
     public String suggestedName() {
         if (isGeneric()) {
-            return getType().getDefaultRunnerName();
+            String defaultRunnerName = getType().getDefaultRunnerName();
+            if (getDebuggerType() == DBDebuggerType.JDWP) {
+                defaultRunnerName = defaultRunnerName + " (JDWP)";
+            }
+            return defaultRunnerName;
         } else {
             MethodExecutionInput executionInput = getExecutionInput();
             if (executionInput != null) {
