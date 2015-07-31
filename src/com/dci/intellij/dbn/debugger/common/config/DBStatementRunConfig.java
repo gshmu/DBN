@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -18,8 +16,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 
 public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutionInput> {
     private StatementExecutionInput executionInput;
@@ -71,18 +67,6 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
 
     public void setExecutionInput(StatementExecutionInput executionInput) {
         this.executionInput = executionInput;
-    }
-
-    @Override
-    public void writeExternal(Element element) throws WriteExternalException {
-        super.writeExternal(element);
-        SettingsUtil.setBoolean(element, "compile-dependencies", isCompileDependencies());
-    }
-
-    @Override
-    public void readExternal(Element element) throws InvalidDataException {
-        super.readExternal(element);
-        setCompileDependencies(SettingsUtil.getBoolean(element, "compile-dependencies", true));
     }
 
     @Nullable

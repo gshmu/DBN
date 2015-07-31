@@ -12,8 +12,10 @@ import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodJdbcRunConfig;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -40,6 +42,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
     private JPanel methodArgumentsPanel;
     private JCheckBox compileDependenciesCheckBox;
     private JPanel selectMethodActionPanel;
+    private JPanel hintPanel;
 
     private MethodExecutionForm methodExecutionForm;
     private MethodExecutionInput executionInput;
@@ -50,9 +53,13 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
             selectMethodActionPanel.setVisible(false);
             methodArgumentsPanel.setVisible(false);
             headerPanel.setVisible(false);
+            hintPanel.setVisible(true);
+            DBNHintForm hintForm = new DBNHintForm(DatabaseDebuggerManager.GENERIC_METHOD_RUNNER_HINT, null, true);
+            hintPanel.add(hintForm.getComponent());
         } else {
             ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SelectMethodAction());
             selectMethodActionPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
+            hintPanel.setVisible(false);
         }
     }
 

@@ -113,7 +113,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         getDebuggerSession().getContextManager().addListener(new DebuggerContextListener() {
             @Override
             public void changeEvent(DebuggerContextImpl newContext, int event) {
-                //System.out.println();
+                System.out.println();
             }
         });
         localTcpPort = tcpPort;
@@ -176,12 +176,6 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         }
         session.addSessionListener(suspendContextOverwriteListener);
         getDebuggerSession().getProcess().setXDebugProcess(this);
-        getDebuggerSession().getContextManager().addListener(new DebuggerContextListener() {
-            @Override
-            public void changeEvent(DebuggerContextImpl newContext, int event) {
-                System.out.println(newContext);
-            }
-        });
 
         new DBDebugOperationTask(getProject(), "initialize debug environment") {
             public void execute() {

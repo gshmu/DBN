@@ -7,7 +7,6 @@ import java.util.Set;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -94,9 +93,8 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
-        SettingsUtil.setBoolean(element, "compile-dependencies", isCompileDependencies());
         MethodExecutionInput executionInput = getExecutionInput();
-        if (executionInput != null) {
+        if (executionInput != null && !isGeneric()) {
             Element methodIdentifierElement = new Element("method-identifier");
             executionInput.getMethodRef().writeState(methodIdentifierElement);
             element.addContent(methodIdentifierElement);
@@ -114,26 +112,27 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
     @Override
     public void readExternal(Element element) throws InvalidDataException {
         super.readExternal(element);
-        setCompileDependencies(SettingsUtil.getBoolean(element, "compile-dependencies", true));
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(getProject());
-        Element methodIdentifierElement = element.getChild("method-identifier");
-        if (methodIdentifierElement != null) {
-            DBObjectRef<DBMethod> methodRef = new DBObjectRef<DBMethod>();
-            methodRef.readState(methodIdentifierElement);
-
-            MethodExecutionInput executionInput = executionManager.getExecutionInput(methodRef);
-            setExecutionInput(executionInput);
-        }
-
-        Element methodIdentifierHistoryElement = element.getChild("method-identifier-history");
-        if (methodIdentifierHistoryElement != null) {
-            for (Object o : methodIdentifierHistoryElement.getChildren()) {
-                methodIdentifierElement = (Element) o;
+        if (!isGeneric()) {
+            Element methodIdentifierElement = element.getChild("method-identifier");
+            if (methodIdentifierElement != null) {
                 DBObjectRef<DBMethod> methodRef = new DBObjectRef<DBMethod>();
                 methodRef.readState(methodIdentifierElement);
 
                 MethodExecutionInput executionInput = executionManager.getExecutionInput(methodRef);
-                methodSelectionHistory.add(executionInput);
+                setExecutionInput(executionInput);
+            }
+
+            Element methodIdentifierHistoryElement = element.getChild("method-identifier-history");
+            if (methodIdentifierHistoryElement != null) {
+                for (Object o : methodIdentifierHistoryElement.getChildren()) {
+                    methodIdentifierElement = (Element) o;
+                    DBObjectRef<DBMethod> methodRef = new DBObjectRef<DBMethod>();
+                    methodRef.readState(methodIdentifierElement);
+
+                    MethodExecutionInput executionInput = executionManager.getExecutionInput(methodRef);
+                    methodSelectionHistory.add(executionInput);
+                }
             }
         }
     }

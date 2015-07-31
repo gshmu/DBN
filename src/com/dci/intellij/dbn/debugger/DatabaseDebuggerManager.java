@@ -77,6 +77,9 @@ import gnu.trove.THashSet;
         @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class DatabaseDebuggerManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+    public static final String GENERIC_METHOD_RUNNER_HINT = "This is the generic Database Method debug runner. This is used when debugging is invoked on a given method. No specific method information can be specified here.";
+    public static final String GENERIC_STATEMENT_RUNNER_HINT = "This is the generic Database Statement debug runner. This is used when debugging is invoked on a given SQL statement. No specific statement information can be specified here.";
+
     private Set<ConnectionHandler> activeDebugSessions = new THashSet<ConnectionHandler>();
 
     private DatabaseDebuggerManager(Project project) {
