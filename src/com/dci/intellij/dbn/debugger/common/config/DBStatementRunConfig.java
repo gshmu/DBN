@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
@@ -87,7 +88,11 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
     @Nullable
     public String suggestedName() {
         if (isGeneric()) {
-             getType().getDefaultRunnerName();
+            String defaultRunnerName = getType().getDefaultRunnerName();
+            if (getDebuggerType() == DBDebuggerType.JDWP) {
+                defaultRunnerName = defaultRunnerName + " (JDWP)";
+            }
+            return defaultRunnerName;
         }
         return null;
     }

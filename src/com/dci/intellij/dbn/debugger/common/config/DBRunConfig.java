@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.execution.ExecutionTarget;
@@ -96,5 +97,10 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
     @Override
     public boolean excludeCompileBeforeLaunchOption() {
         return true;
+    }
+
+    public DBDebuggerType getDebuggerType() {
+        DBRunConfigFactory factory = (DBRunConfigFactory) getFactory();
+        return factory.getDebuggerType();
     }
 }

@@ -169,7 +169,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             RunConfiguration configuration = configurationSetting.getConfiguration();
             if (configuration instanceof DBRunConfig) {
                 DBRunConfig dbRunConfiguration = (DBRunConfig) configuration;
-                if (dbRunConfiguration.isGeneric()) {
+                if (dbRunConfiguration.isGeneric() && dbRunConfiguration.getDebuggerType() == debuggerType) {
                     return configurationSetting;
                 }
             }
@@ -186,7 +186,12 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             Project project = getProject();
             RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(project);
             DBRunConfigFactory configurationFactory = configurationType.getConfigurationFactory(debuggerType);
-            DBRunConfig runConfiguration = configurationFactory.createConfiguration(project, configurationType.getDefaultRunnerName(), true);
+            String defaultRunnerName = configurationType.getDefaultRunnerName();
+            if (debuggerType == DBDebuggerType.JDWP) {
+                defaultRunnerName = defaultRunnerName + " (JDWP)";
+            }
+
+            DBRunConfig runConfiguration = configurationFactory.createConfiguration(project, defaultRunnerName, true);
             RunnerAndConfigurationSettings configuration = runManager.createConfiguration(runConfiguration, configurationFactory);
             runManager.addConfiguration(configuration, false);
             //runManager.setTemporaryConfiguration(configuration);
