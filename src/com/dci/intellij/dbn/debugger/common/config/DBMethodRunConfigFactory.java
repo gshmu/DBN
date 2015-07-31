@@ -3,14 +3,15 @@ package com.dci.intellij.dbn.debugger.common.config;
 import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.execution.configurations.RunConfiguration;
 
-public abstract class DBMethodRunConfigFactory<T extends DBRunConfigType, C extends DBMethodRunConfig> extends DBRunConfigFactory<T, C> {
-    protected DBMethodRunConfigFactory(T type) {
-        super(type);
+public abstract class DBMethodRunConfigFactory<T extends DBMethodRunConfigType, C extends DBMethodRunConfig> extends DBRunConfigFactory<T, C> {
+    protected DBMethodRunConfigFactory(T type, DBDebuggerType debuggerType) {
+        super(type, debuggerType);
     }
 
     @Override

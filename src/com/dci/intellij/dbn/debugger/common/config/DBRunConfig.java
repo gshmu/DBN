@@ -23,19 +23,20 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
             return createConfigurationEditor();
         }
     };
-    private DBRunConfigType configType;
     private boolean isGeneratedName = true;
     private boolean compileDependencies = true;
     private boolean generic;
     private I executionInput;
 
-    protected DBRunConfig(Project project, DBRunConfigType configType, String name, boolean generic) {
-        super(project, configType.getConfigurationFactory(), name);
+    protected DBRunConfig(Project project, DBRunConfigFactory factory, String name, boolean generic) {
+        super(project, factory, name);
         this.generic = generic;
     }
 
-    public DBRunConfigType getConfigType() {
-        return configType;
+    @NotNull
+    @Override
+    public DBRunConfigType getType() {
+        return (DBRunConfigType) super.getType();
     }
 
     protected void resetConfigurationEditor() {

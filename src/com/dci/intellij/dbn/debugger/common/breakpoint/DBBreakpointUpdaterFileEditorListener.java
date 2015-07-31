@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.breakpoints.XBreakpoint;
@@ -25,16 +26,20 @@ public class DBBreakpointUpdaterFileEditorListener implements FileEditorManagerL
         if (file instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
             XBreakpointManagerImpl breakpointManager = (XBreakpointManagerImpl) XDebuggerManager.getInstance(source.getProject()).getBreakpointManager();
-            for (XBreakpoint breakpoint : breakpointManager.getAllBreakpoints()) {
-                if (breakpoint instanceof XLineBreakpoint) {
-                    XLineBreakpoint lineBreakpoint = (XLineBreakpoint) breakpoint;
-                    setBreakpointId(lineBreakpoint, null);
-                    VirtualFile virtualFile = getVirtualFile(lineBreakpoint);
-                    if (databaseFile.equals(virtualFile)) {
-                        XLineBreakpointManager lineBreakpointManager = breakpointManager.getLineBreakpointManager();
-                        lineBreakpointManager.registerBreakpoint((XLineBreakpointImpl) lineBreakpoint, true);
+            try {
+                for (XBreakpoint breakpoint : breakpointManager.getAllBreakpoints()) {
+                    if (breakpoint instanceof XLineBreakpoint) {
+                        XLineBreakpoint lineBreakpoint = (XLineBreakpoint) breakpoint;
+                        setBreakpointId(lineBreakpoint, null);
+                        VirtualFile virtualFile = getVirtualFile(lineBreakpoint);
+                        if (databaseFile.equals(virtualFile)) {
+                            XLineBreakpointManager lineBreakpointManager = breakpointManager.getLineBreakpointManager();
+                            lineBreakpointManager.registerBreakpoint((XLineBreakpointImpl) lineBreakpoint, true);
+                        }
                     }
                 }
+            } catch (ProcessCanceledException ignore) {
+
             }
         }
     }
