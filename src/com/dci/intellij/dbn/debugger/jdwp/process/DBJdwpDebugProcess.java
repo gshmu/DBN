@@ -67,8 +67,6 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 if (shouldSuspend(suspendContext)) {
                     lastSuspendContext = suspendContext;
                     final DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
-
-
                     new ManagedThreadCommand(getDebuggerSession().getProcess()) {
                         @Override
                         protected void action() throws Exception {
@@ -178,6 +176,12 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         }
         session.addSessionListener(suspendContextOverwriteListener);
         getDebuggerSession().getProcess().setXDebugProcess(this);
+        getDebuggerSession().getContextManager().addListener(new DebuggerContextListener() {
+            @Override
+            public void changeEvent(DebuggerContextImpl newContext, int event) {
+                System.out.println(newContext);
+            }
+        });
 
         new DBDebugOperationTask(getProject(), "initialize debug environment") {
             public void execute() {

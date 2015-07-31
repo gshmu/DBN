@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
-import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfileState;
@@ -18,8 +17,8 @@ import com.intellij.util.Range;
 public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DBJdwpRunConfig {
     private Range<Integer> tcpPortRange = new Range<Integer>(4000, 4999);
 
-    public DBStatementJdwpRunConfig(Project project, DBStatementRunConfigType configType, String name, boolean generic) {
-        super(project, configType, name, generic);
+    public DBStatementJdwpRunConfig(Project project, DBStatementJdwpRunConfigFactory factory, String name, boolean generic) {
+        super(project, factory, name, generic);
     }
 
     @Override

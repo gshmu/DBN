@@ -13,24 +13,24 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 
 public class DBMethodJdbcRunConfigFactory extends DBMethodRunConfigFactory<DBMethodRunConfigType, DBMethodJdbcRunConfig> {
-    protected DBMethodJdbcRunConfigFactory(@NotNull DBMethodRunConfigType type) {
-        super(type);
+    public DBMethodJdbcRunConfigFactory(@NotNull DBMethodRunConfigType type) {
+        super(type, DBDebuggerType.JDBC);
     }
 
     @Override
     public RunConfiguration createTemplateConfiguration(Project project) {
-        return new DBMethodJdbcRunConfig(project, getType(), "", false);
+        return new DBMethodJdbcRunConfig(project, this, "", false);
     }
 
     @Override
     public DBMethodJdbcRunConfig createConfiguration(Project project, String name, boolean generic) {
-        return new DBMethodJdbcRunConfig(project, getType(), name, generic);
+        return new DBMethodJdbcRunConfig(project, this, name, generic);
     }
 
     @Override
     public DBMethodJdbcRunConfig createConfiguration(DBMethod method) {
-        String name = DatabaseDebuggerManager.createMethodConfigurationName(method, DBDebuggerType.JDBC);
-        DBMethodJdbcRunConfig runConfiguration = new DBMethodJdbcRunConfig(method.getProject(), getType(), name, false);
+        String name = DatabaseDebuggerManager.createMethodConfigurationName(method);
+        DBMethodJdbcRunConfig runConfiguration = new DBMethodJdbcRunConfig(method.getProject(), this, name, false);
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(method.getProject());
         MethodExecutionInput executionInput = executionManager.getExecutionInput(method);
         runConfiguration.setExecutionInput(executionInput);

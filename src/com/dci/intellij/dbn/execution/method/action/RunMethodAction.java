@@ -10,7 +10,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 
 public class RunMethodAction extends AnObjectAction<DBMethod> {
     public RunMethodAction(DBMethod method) {
-        super("Run", Icons.METHOD_EXECUTION_RUN, method);
+        super("Run...", Icons.METHOD_EXECUTION_RUN, method);
     }
 
     public RunMethodAction(DBProgram program, DBMethod method) {

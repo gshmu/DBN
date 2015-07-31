@@ -1,9 +1,12 @@
 package com.dci.intellij.dbn.object.action;
 
+import java.util.List;
+
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.compiler.action.CompileActionGroup;
-import com.dci.intellij.dbn.execution.method.action.ExecuteActionGroup;
+import com.dci.intellij.dbn.execution.method.action.DebugMethodAction;
+import com.dci.intellij.dbn.execution.method.action.DebugProgramMethodAction;
 import com.dci.intellij.dbn.execution.method.action.RunMethodAction;
 import com.dci.intellij.dbn.execution.method.action.RunProgramMethodAction;
 import com.dci.intellij.dbn.generator.action.GenerateStatementActionGroup;
@@ -16,8 +19,6 @@ import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.dependency.action.ObjectDependencyTreeAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-
-import java.util.List;
 
 public class ObjectActionGroup extends DefaultActionGroup {
 
@@ -44,31 +45,31 @@ public class ObjectActionGroup extends DefaultActionGroup {
             if (properties.is(DBObjectProperty.DISABLEABLE) && DatabaseFeature.OBJECT_DISABLING.isSupported(object)) {
                 add(new EnableDisableAction(schemaObject));
             }
-        }
 
-        if (object instanceof DBMethod ) {
-            if (DatabaseFeature.DEBUGGING.isSupported(object)) {
-                add(new ExecuteActionGroup((DBSchemaObject) object));
-            } else {
-                add(new RunMethodAction((DBMethod) object));
-            }
-        }
-
-        if (object instanceof DBProgram && properties.is(DBObjectProperty.SCHEMA_OBJECT)) {
-            if (DatabaseFeature.DEBUGGING.isSupported(object)) {
-                add(new ExecuteActionGroup((DBSchemaObject) object));
-            } else {
-                add(new RunProgramMethodAction((DBProgram) object));
-            }
-        }
-
-        if(object instanceof DBSchemaObject) {
             if (properties.is(DBObjectProperty.SCHEMA_OBJECT)) {
                 add(new DropObjectAction((DBSchemaObject) object));
 
                 //add(new TestAction(object));
             }
+        }
 
+        if (object instanceof DBMethod ) {
+            addSeparator();
+            add(new RunMethodAction((DBMethod) object));
+            if (DatabaseFeature.DEBUGGING.isSupported(object)) {
+                add(new DebugMethodAction((DBMethod) object));
+            }
+        }
+
+        if (object instanceof DBProgram && properties.is(DBObjectProperty.SCHEMA_OBJECT)) {
+            addSeparator();
+            add(new RunProgramMethodAction((DBProgram) object));
+            if (DatabaseFeature.DEBUGGING.isSupported(object)) {
+                add(new DebugProgramMethodAction((DBProgram) object));
+            }
+        }
+
+        if(object instanceof DBSchemaObject) {
             if(properties.is(DBObjectProperty.REFERENCEABLE) && DatabaseFeature.OBJECT_DEPENDENCIES.isSupported(object)) {
                 addSeparator();
                 add (new ObjectDependencyTreeAction((DBSchemaObject) object));

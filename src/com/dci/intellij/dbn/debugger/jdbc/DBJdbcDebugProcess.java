@@ -455,13 +455,14 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     private void suspendSession() {
         if (status.PROCESS_IS_TERMINATING) return;
         Project project = getProject();
+        XDebugSession session = getSession();
         if (isTerminated()) {
             int reasonCode = runtimeInfo.getReason();
             String message = "Session terminated with code :" + reasonCode + " (" + getDebuggerInterface().getRuntimeEventReason(reasonCode) + ")";
             NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Debugger", message);
 
             status.PROCESS_STOPPED_NORMALLY = true;
-            getSession().stop();
+            session.stop();
         } else {
             try {
                 backtraceInfo = getDebuggerInterface().getExecutionBacktraceInfo(debugConnection);
@@ -485,7 +486,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             }
             VirtualFile virtualFile = getRuntimeInfoFile(runtimeInfo);
             DBJdbcDebugSuspendContext suspendContext = new DBJdbcDebugSuspendContext(this);
-            getSession().positionReached(suspendContext);
+            session.positionReached(suspendContext);
             navigateInEditor(virtualFile, runtimeInfo.getLineNumber());
         }
     }

@@ -25,8 +25,8 @@ import gnu.trove.THashSet;
 public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput> {
     private Set<MethodExecutionInput> methodSelectionHistory = new THashSet<MethodExecutionInput>();
 
-    public DBMethodRunConfig(Project project, DBRunConfigType configType, String name, boolean generic) {
-        super(project, configType, name, generic);
+    public DBMethodRunConfig(Project project, DBMethodRunConfigFactory factory, String name, boolean generic) {
+        super(project, factory, name, generic);
     }
 
     public Set<MethodExecutionInput> getMethodSelectionHistory() {
@@ -150,7 +150,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
     @Override
     public String suggestedName() {
         if (isGeneric()) {
-            return getConfigType().getDefaultRunnerName();
+            return getType().getDefaultRunnerName();
         } else {
             MethodExecutionInput executionInput = getExecutionInput();
             if (executionInput != null) {

@@ -23,8 +23,8 @@ import com.intellij.openapi.util.WriteExternalException;
 public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutionInput> {
     private StatementExecutionInput executionInput;
 
-    public DBStatementRunConfig(Project project, DBRunConfigType configType, String name, boolean generic) {
-        super(project, configType, name, generic);
+    public DBStatementRunConfig(Project project, DBStatementRunConfigFactory factory, String name, boolean generic) {
+        super(project, factory, name, generic);
     }
 
     @Nullable
@@ -87,7 +87,7 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
     @Nullable
     public String suggestedName() {
         if (isGeneric()) {
-             getConfigType().getDefaultRunnerName();
+             getType().getDefaultRunnerName();
         }
         return null;
     }

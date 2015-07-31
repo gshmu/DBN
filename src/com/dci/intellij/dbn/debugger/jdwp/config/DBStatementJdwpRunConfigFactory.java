@@ -4,18 +4,21 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigFactory;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 
-public class DBStatementJdwpRunConfigFactory extends DBStatementRunConfigFactory<DBStatementJdwpRunConfigType, DBStatementJdwpRunConfig> {
-    protected DBStatementJdwpRunConfigFactory(@NotNull DBStatementJdwpRunConfigType type) {
-        super(type);
+public class DBStatementJdwpRunConfigFactory extends DBStatementRunConfigFactory<DBStatementRunConfigType, DBStatementRunConfig> {
+    public DBStatementJdwpRunConfigFactory(@NotNull DBStatementRunConfigType type) {
+        super(type, DBDebuggerType.JDWP);
     }
 
     @Override
     public DBStatementJdwpRunConfig createConfiguration(Project project, String name, boolean generic) {
-        return new DBStatementJdwpRunConfig(project, getType(), name, generic);
+        return new DBStatementJdwpRunConfig(project, this, name, generic);
     }
 
     @Override
@@ -25,6 +28,12 @@ public class DBStatementJdwpRunConfigFactory extends DBStatementRunConfigFactory
 
     @Override
     public RunConfiguration createTemplateConfiguration(Project project) {
-        return new DBStatementJdwpRunConfig(project, getType(), "", false);
+        return new DBStatementJdwpRunConfig(project, this, "", false);
     }
+
+    @Override
+    public String getName() {
+        return super.getName() + "(JDWP)";
+    }
+
 }
