@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
 import java.util.List;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -16,6 +18,8 @@ import com.intellij.execution.configurations.LocatableConfiguration;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.WriteExternalException;
 
 public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigurationBase implements RunConfigurationWithSuppressedDefaultRunAction, LocatableConfiguration {
     private LazyValue<DBRunConfigEditor> configurationEditor = new SimpleLazyValue<DBRunConfigEditor>() {
@@ -52,6 +56,20 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
     @Override
     public boolean canRunOn(@NotNull ExecutionTarget target) {
         return super.canRunOn(target);
+    }
+
+    @Override
+    public void writeExternal(Element element) throws WriteExternalException {
+        super.writeExternal(element);
+        SettingsUtil.setBoolean(element, "is-generic", generic);
+        SettingsUtil.setBoolean(element, "compile-dependencies", compileDependencies);
+    }
+
+    @Override
+    public void readExternal(Element element) throws InvalidDataException {
+        super.readExternal(element);
+        generic = SettingsUtil.getBoolean(element, "is-generic", generic);
+        compileDependencies = SettingsUtil.getBoolean(element, "compile-dependencies", compileDependencies);
     }
 
     public boolean isGeneric() {
