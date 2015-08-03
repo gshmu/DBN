@@ -22,12 +22,13 @@ public class DBMethodJdbcRunner extends DBProgramRunner<MethodExecutionInput> {
     }
 
     public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-        if (profile instanceof DBMethodJdbcRunConfig) {
-            DBMethodJdbcRunConfig runConfiguration = (DBMethodJdbcRunConfig) profile;
-            return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) && runConfiguration.getMethod() != null;
+        if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
+            if (profile instanceof DBMethodJdbcRunConfig) {
+                DBMethodJdbcRunConfig runConfiguration = (DBMethodJdbcRunConfig) profile;
+                return !runConfiguration.isGeneric() && runConfiguration.getMethod() != null;
+            }
         }
-        return false;
-    }
+        return false;    }
 
     @Override
     protected DBDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler) {
