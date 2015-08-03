@@ -25,7 +25,7 @@ public class DBMethodJdwpRunner extends DBProgramRunner<MethodExecutionInput> {
         if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
             if (profile instanceof DBMethodJdwpRunConfig) {
                 DBMethodJdwpRunConfig runConfiguration = (DBMethodJdwpRunConfig) profile;
-                return runConfiguration.getMethod() != null;
+                return !runConfiguration.isGeneric() && runConfiguration.getMethod() != null;
             }
         }
         return false;
