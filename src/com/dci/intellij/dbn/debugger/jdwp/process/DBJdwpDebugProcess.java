@@ -52,7 +52,6 @@ import com.sun.jdi.Location;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     protected Connection targetConnection;
-    private T executionInput;
     private ConnectionHandlerRef connectionHandlerRef;
     private DBDebugProcessStatus status = new DBDebugProcessStatus();
     private int localTcpPort = 4000;
@@ -69,9 +68,6 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         Project project = session.getProject();
         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
         debuggerManager.registerDebugSession(connectionHandler);
-
-        DBRunConfig<T> runProfile = (DBRunConfig<T>) session.getRunProfile();
-        executionInput = runProfile.getExecutionInput();
 
         DBJdwpBreakpointHandler breakpointHandler = new DBJdwpBreakpointHandler(session, this);
         breakpointHandlers = new DBBreakpointHandler[]{breakpointHandler};
@@ -126,8 +122,14 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         return connectionHandlerRef.get();
     }
 
+    @Nullable
     public T getExecutionInput() {
-        return executionInput;
+        DBRunConfig<T> runProfile = getRunProfile();
+        return runProfile == null ? null : runProfile.getExecutionInput();
+    }
+
+    DBRunConfig<T> getRunProfile() {
+        return (DBRunConfig<T>) getSession().getRunProfile();
     }
 
     @NotNull
@@ -173,7 +175,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             XDebugSessionImpl sessionImpl = (XDebugSessionImpl) session;
             sessionImpl.getSessionData().setBreakpointsMuted(false);
         }
-        DBRunConfig<T> runProfile = (DBRunConfig<T>) session.getRunProfile();
+        DBRunConfig<T> runProfile = getRunProfile();
         List<DBMethod> methods = runProfile.getMethods();
         if (methods.size() > 0) {
             getBreakpointHandler().registerDefaultBreakpoint(methods.get(0));
@@ -207,15 +209,18 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         new DBDebugOperationTask(project, "initialize debug environment") {
             public void execute() {
                 try {
-                    ConnectionHandler connectionHandler = getConnectionHandler();
-                    targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionContext().getTargetSchema());
-                    targetConnection.setAutoCommit(false);
-                    DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                    debuggerInterface.initializeJdwpSession(targetConnection, Inet4Address.getLocalHost().getHostAddress(), String.valueOf(localTcpPort));
-                    console.system("Debug session initialized (JDWP)");
+                    T executionInput = getExecutionInput();
+                    if (executionInput != null) {
+                        ConnectionHandler connectionHandler = getConnectionHandler();
+                        targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionContext().getTargetSchema());
+                        targetConnection.setAutoCommit(false);
+                        DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                        debuggerInterface.initializeJdwpSession(targetConnection, Inet4Address.getLocalHost().getHostAddress(), String.valueOf(localTcpPort));
+                        console.system("Debug session initialized (JDWP)");
 
-                    status.CAN_SET_BREAKPOINTS = true;
-                    startTargetProgram();
+                        status.CAN_SET_BREAKPOINTS = true;
+                        startTargetProgram();
+                    }
                 } catch (Exception e) {
                     status.SESSION_INITIALIZATION_THREW_EXCEPTION = true;
                     session.stop();
@@ -237,7 +242,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     executeTarget();
                 } catch (SQLException e){
                     status.TARGET_EXECUTION_THREW_EXCEPTION = true;
-                    MessageUtil.showErrorDialog(getProject(), "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
+                    T executionInput = getExecutionInput();
+                    MessageUtil.showErrorDialog(getProject(), executionInput == null ? "Error executing target program" : "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
                 } finally {
                     status.TARGET_EXECUTION_TERMINATED = true;
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
@@ -278,6 +284,11 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     //showErrorDialog(e);
                 } finally {
                     status.PROCESS_IS_TERMINATED = true;
+                    DBRunConfig<T> runProfile = getRunProfile();
+                    if (runProfile != null && runProfile.isGeneric()) {
+                        runProfile.setCanRun(false);
+                    }
+
                     DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
                     releaseTargetConnection();
                 }
