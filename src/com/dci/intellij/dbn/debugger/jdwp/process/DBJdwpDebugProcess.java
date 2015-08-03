@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.debugger.jdwp.process;
 import java.net.Inet4Address;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.StringTokenizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -172,6 +173,12 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             XDebugSessionImpl sessionImpl = (XDebugSessionImpl) session;
             sessionImpl.getSessionData().setBreakpointsMuted(false);
         }
+        DBRunConfig<T> runProfile = (DBRunConfig<T>) session.getRunProfile();
+        List<DBMethod> methods = runProfile.getMethods();
+        if (methods.size() > 0) {
+            getBreakpointHandler().registerDefaultBreakpoint(methods.get(0));
+        }
+
 
         DebuggerSession debuggerSession = getDebuggerSession();
         final Project project = getProject();
