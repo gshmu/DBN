@@ -34,7 +34,7 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
     private LazyValue<Location> location = new SimpleLazyValue<Location>() {
         @Override
         protected Location load() {
-            return ((JavaStackFrame) underlyingFrame).getDescriptor().getLocation();
+            return underlyingFrame == null ? null : ((JavaStackFrame) underlyingFrame).getDescriptor().getLocation();
         }
     };
 
@@ -78,6 +78,7 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
     }
 
 
+    @Nullable
     public Location getLocation() {
         return location.get();
     }

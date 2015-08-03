@@ -31,7 +31,7 @@ public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExe
     @Override
     public VirtualFile getVirtualFile(XStackFrame stackFrame) {
         try {
-            Location location = ((JavaStackFrame) stackFrame).getDescriptor().getLocation();
+            Location location = stackFrame == null ? null : ((JavaStackFrame) stackFrame).getDescriptor().getLocation();
             if (location != null) {
                 int lineNumber = location.lineNumber();
                 String sourcePath = location.sourcePath();
