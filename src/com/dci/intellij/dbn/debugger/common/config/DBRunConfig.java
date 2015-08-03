@@ -30,12 +30,21 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
     };
     private boolean isGeneratedName = true;
     private boolean compileDependencies = true;
+    private boolean canRun = false;
     private boolean generic;
     private I executionInput;
 
     protected DBRunConfig(Project project, DBRunConfigFactory factory, String name, boolean generic) {
         super(project, factory, name);
         this.generic = generic;
+    }
+
+    public boolean canRun() {
+        return !generic || canRun;
+    }
+
+    public void setCanRun(boolean canRun) {
+        this.canRun = canRun;
     }
 
     @NotNull

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -74,7 +75,6 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     protected Connection debugConnection;
     private ConnectionHandlerRef connectionHandlerRef;
     private DBBreakpointHandler[] breakpointHandlers;
-    private T executionInput;
     private DBDebugProcessStatus status = new DBDebugProcessStatus();
 
     private transient DebuggerRuntimeInfo runtimeInfo;
@@ -88,9 +88,6 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
         Project project = session.getProject();
         DatabaseDebuggerManager.getInstance(project).registerDebugSession(connectionHandler);
-
-        DBRunConfig<T> runProfile = (DBRunConfig) session.getRunProfile();
-        executionInput = runProfile.getExecutionInput();
 
         DBJdbcBreakpointHandler breakpointHandler = new DBJdbcBreakpointHandler(session, this);
         breakpointHandlers = new DBBreakpointHandler[]{breakpointHandler};
@@ -129,8 +126,11 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         return DBJdbcDebuggerEditorsProvider.INSTANCE;
     }
 
+    @NotNull
     public T getExecutionInput() {
-        return executionInput;
+        DBRunConfig<T> runProfile = (DBRunConfig) getSession().getRunProfile();
+        if (runProfile == null) throw AlreadyDisposedException.INSTANCE;
+        return runProfile.getExecutionInput();
     }
 
     @Override
@@ -150,6 +150,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 try {
+                    T executionInput = getExecutionInput();
                     console.system("Initializing debug environment...");
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionContext().getTargetSchema());
@@ -227,9 +228,11 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                 if (status.PROCESS_IS_TERMINATING) return;
                 if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
+                T executionInput = getExecutionInput();
                 try {
                     status.TARGET_EXECUTION_STARTED = true;
-                    console.system("Target program execution started: " + getExecutionInput().getExecutionContext().getTargetName());
+
+                    console.system("Target program execution started: " + executionInput.getExecutionContext().getTargetName());
                     executeTarget();
                     console.system("Target program execution ended");
                 } catch (SQLException e) {
@@ -318,6 +321,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         if (!status.PROCESS_IS_TERMINATED && !status.PROCESS_IS_TERMINATING) {
             status.PROCESS_IS_TERMINATING = true;
             console.system("Stopping debugger...");
+            T executionInput = getExecutionInput();
             executionInput.getExecutionContext().setExecutionCancelled(!status.PROCESS_STOPPED_NORMALLY);
             stopDebugger();
         }
@@ -347,6 +351,10 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                     status.PROCESS_IS_TERMINATED = true;
                     releaseDebugConnection();
                     releaseTargetConnection();
+                    DBRunConfig<T> runProfile = (DBRunConfig<T>) getSession().getRunProfile();
+                    if (runProfile != null && runProfile.isGeneric()) {
+                        runProfile.setCanRun(false);
+                    }
                     DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
                     console.system("Debugger stopped");
                 }
