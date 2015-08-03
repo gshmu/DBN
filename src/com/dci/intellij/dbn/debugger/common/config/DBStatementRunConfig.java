@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
@@ -47,7 +48,10 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
                             for (DBObject object : objects) {
                                 if (object instanceof DBMethod && !methods.contains(object)) {
                                     DBMethod method = (DBMethod) object;
-                                    methods.add(method);
+                                    DBSchema schema = method.getSchema();
+                                    if (schema != null && !schema.isSystemSchema() && !schema.isPublicSchema()) {
+                                        methods.add(method);
+                                    }
                                 }
                             }
                             return methods;
