@@ -95,22 +95,33 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
             throw new ProcessCanceledException();
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
-            if (cause instanceof SQLException) {
-                throw (SQLException) cause;
+            if (cause instanceof SQLTimeoutException) {
+                handleTimeout();
             } else {
-                throw new SQLException(cause.getMessage(), cause);
+                handleException(cause);
             }
 
         } catch (TimeoutException e)  {
-            try {
-                ExecutionCancellableCall.this.cancel();
-            } catch (Exception ce) {
-                LOGGER.warn("Error cancelling operation", ce);
-            }
-            throw new SQLTimeoutException("Operation has timed out (" + timeout + "s). Check timeout settings");
+            handleTimeout();
         }
+        return null;
+    }
 
+    public void handleTimeout() throws SQLTimeoutException {
+        try {
+            ExecutionCancellableCall.this.cancel();
+        } catch (Exception ce) {
+            LOGGER.warn("Error cancelling operation", ce);
+        }
+        throw new SQLTimeoutException("Operation has timed out (" + timeout + "s). Check timeout settings");
+    }
 
+    public void handleException(Throwable e) throws SQLException{
+        if (e instanceof SQLException) {
+            throw (SQLException) e;
+        } else {
+            throw new SQLException(e.getMessage(), e);
+        }
     }
 
     public abstract void cancel() throws Exception;
