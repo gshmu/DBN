@@ -6,9 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.method.options.ui.MethodExecutionSettingsForm;
 
-public class MethodExecutionSettings extends Configuration{
+public class MethodExecutionSettings extends Configuration implements ExecutionTimeoutSettings {
     private int executionTimeout = 30;
     private int debugExecutionTimeout = 600;
     private int parameterHistorySize = 10;

@@ -6,9 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.statement.options.ui.StatementExecutionSettingsForm;
 
-public class StatementExecutionSettings extends Configuration{
+public class StatementExecutionSettings extends Configuration implements ExecutionTimeoutSettings {
     private int resultSetFetchBlockSize = 100;
     private int executionTimeout = 20;
     private int debugExecutionTimeout = 600;

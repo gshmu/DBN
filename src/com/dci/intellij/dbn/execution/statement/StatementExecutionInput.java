@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
+import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -76,9 +76,9 @@ public class StatementExecutionInput implements ExecutionInput {
         this.originalStatementText = originalStatementText;
         this.executableStatementText = executableStatementText;
 
-        StatementExecutionSettings statementExecutionSettings = ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
-        executionTimeout = statementExecutionSettings.getExecutionTimeout();
-        debugExecutionTimeout = statementExecutionSettings.getDebugExecutionTimeout();
+        ExecutionTimeoutSettings timeoutSettings = getExecutionTimeoutSettings();
+        executionTimeout = timeoutSettings.getExecutionTimeout();
+        debugExecutionTimeout = timeoutSettings.getDebugExecutionTimeout();
     }
 
     public int getExecutableLineNumber() {
@@ -100,6 +100,11 @@ public class StatementExecutionInput implements ExecutionInput {
 
     public void setDebugExecutionTimeout(int debugExecutionTimeout) {
         this.debugExecutionTimeout = debugExecutionTimeout;
+    }
+
+    @Override
+    public ExecutionTimeoutSettings getExecutionTimeoutSettings() {
+        return ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
     }
 
     @NotNull

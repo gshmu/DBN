@@ -94,11 +94,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             ConnectionHandler activeConnection = connectionMappingManager.getActiveConnection(virtualFile);
             DBSchema currentSchema = connectionMappingManager.getCurrentSchema(virtualFile);
 
-            final ScriptExecutionExecutionInput executionInput = new ScriptExecutionExecutionInput();
-            executionInput.setConnectionHandler(activeConnection);
-            executionInput.setSchema(currentSchema);
-            executionInput.setSourceFile(virtualFile);
-            executionInput.setClearOutput(clearOutputOption);
+            final ScriptExecutionInput executionInput = new ScriptExecutionInput(getProject(), virtualFile, activeConnection, currentSchema, clearOutputOption);
             ScriptExecutionSettings scriptExecutionSettings = ExecutionEngineSettings.getInstance(project).getScriptExecutionSettings();
             int timeout = scriptExecutionSettings.getExecutionTimeout();
             executionInput.setExecutionTimeout(timeout);
@@ -112,7 +108,9 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 final CmdLineInterface cmdLineExecutable = executionInput.getCmdLineInterface();
                 connectionMappingManager.setActiveConnection(virtualFile, connectionHandler);
                 connectionMappingManager.setCurrentSchema(virtualFile, schema);
-                recentlyUsedInterfaces.put(connectionHandler.getDatabaseType(), cmdLineExecutable.getId());
+                if (connectionHandler != null) {
+                    recentlyUsedInterfaces.put(connectionHandler.getDatabaseType(), cmdLineExecutable.getId());
+                }
                 clearOutputOption = executionInput.isClearOutput();
 
                 new BackgroundTask(project, "Executing database script", true, false) {
@@ -204,7 +202,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         return null;
     }
 
-    private void doExecuteScript(ScriptExecutionExecutionInput input) throws Exception{
+    private void doExecuteScript(ScriptExecutionInput input) throws Exception{
         VirtualFile sourceFile = input.getSourceFile();
         ConnectionHandler connectionHandler = input.getConnectionHandler();
         CmdLineInterface cmdLineInterface = input.getCmdLineInterface();

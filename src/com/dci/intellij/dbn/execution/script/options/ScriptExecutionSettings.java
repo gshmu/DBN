@@ -6,11 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
 import com.dci.intellij.dbn.execution.script.options.ui.ScriptExecutionSettingsForm;
 
-public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettingsForm> {
+public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettingsForm> implements ExecutionTimeoutSettings{
     private ExecutionEngineSettings parent;
     private CmdLineInterfaceBundle commandLineInterfaces = new CmdLineInterfaceBundle();
     private int executionTimeout = 300;
@@ -42,12 +43,22 @@ public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettin
         this.commandLineInterfaces = commandLineInterfaces;
     }
 
+    @Override
+    public int getDebugExecutionTimeout() {
+        throw new UnsupportedOperationException();
+    }
+
     public int getExecutionTimeout() {
         return executionTimeout;
     }
 
     public void setExecutionTimeout(int executionTimeout) {
         this.executionTimeout = executionTimeout;
+    }
+
+    @Override
+    public void setDebugExecutionTimeout(int timeout) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

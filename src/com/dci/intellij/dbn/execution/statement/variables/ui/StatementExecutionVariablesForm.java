@@ -102,7 +102,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecut
         ExecutionTimeoutForm executionTimeoutForm = new ExecutionTimeoutForm(executionProcessor.getExecutionInput(), DBDebuggerType.NONE) {
             @Override
             protected void handleChange(boolean hasError) {
-                parentComponent.updateExecuteAction(!hasError);
+                parentComponent.setActionEnabled(!hasError);
             }
         };
         this.executionTimeoutForm.add(executionTimeoutForm.getComponent());

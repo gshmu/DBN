@@ -41,7 +41,7 @@ public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecut
         };
     }
 
-    public void updateExecuteAction(boolean enabled) {
+    public void setActionEnabled(boolean enabled) {
         executeAction.setEnabled(enabled);
     }
 
