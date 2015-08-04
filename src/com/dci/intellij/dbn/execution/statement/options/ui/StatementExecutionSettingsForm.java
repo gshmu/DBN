@@ -15,6 +15,7 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
     private JTextField executionTimeoutTextField;
     private JCheckBox focusResultCheckBox;
     private JTextField debugExecutionTimeoutTextField;
+    private JCheckBox promptExecutionCheckBox;
 
     public StatementExecutionSettingsForm(StatementExecutionSettings settings) {
         super(settings);
@@ -34,6 +35,7 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
         settings.setExecutionTimeout(ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout"));
         settings.setDebugExecutionTimeout(ConfigurationEditorUtil.validateIntegerInputValue(debugExecutionTimeoutTextField, "Debug execution timeout", true, 0, 6000, "\nUse value 0 for no timeout"));
         settings.setFocusResult(focusResultCheckBox.isSelected());
+        settings.setPromptExecution(promptExecutionCheckBox.isSelected());
     }
 
     public void resetFormChanges() {
@@ -42,5 +44,6 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
         executionTimeoutTextField.setText(Integer.toString(settings.getExecutionTimeout()));
         debugExecutionTimeoutTextField.setText(Integer.toString(settings.getDebugExecutionTimeout()));
         focusResultCheckBox.setSelected(settings.isFocusResult());
+        promptExecutionCheckBox.setSelected(settings.isPromptExecution());
     }
 }

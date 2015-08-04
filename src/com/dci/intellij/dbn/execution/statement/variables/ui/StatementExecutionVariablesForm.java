@@ -19,8 +19,11 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.execution.common.ui.ExecutionTimeoutForm;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
@@ -48,51 +51,74 @@ public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecut
     private JPanel previewPanel;
     private JPanel headerSeparatorPanel;
     private JCheckBox reuseVariablesCheckBox;
+    private JPanel executionTimeoutForm;
+    private JPanel headerPanel;
     private Document previewDocument;
     private EditorEx viewer;
     private String statementText;
 
-    public StatementExecutionVariablesForm(StatementExecutionVariablesDialog parentComponent, StatementExecutionProcessor executionProcessor, String statementText, boolean isBulkExecution) {
+    public StatementExecutionVariablesForm(final StatementExecutionVariablesDialog parentComponent, final StatementExecutionProcessor executionProcessor, String statementText, boolean isBulkExecution) {
         super(parentComponent);
         this.executionProcessor = executionProcessor;
         this.statementText = statementText;
 
         variablesPanel.setLayout(new BoxLayout(variablesPanel, BoxLayout.Y_AXIS));
         headerSeparatorPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
+        headerSeparatorPanel.setVisible(false);
 
-        List<StatementExecutionVariable> variables = new ArrayList<StatementExecutionVariable>(executionProcessor.getExecutionVariables().getVariables());
-        Collections.sort(variables, StatementExecutionVariablesBundle.OFFSET_COMPARATOR);
+        DBLanguagePsiFile psiFile = executionProcessor.getPsiFile();
+        DBNHeaderForm headerForm = new DBNHeaderForm(psiFile.getName(), psiFile.getIcon(), psiFile.getEnvironmentType().getColor());
+        headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        for (StatementExecutionVariable variable: variables) {
-            StatementExecutionVariableValueForm variableValueForm = new StatementExecutionVariableValueForm(this, variable);
-            variableValueForms.add(variableValueForm);
-            variablesPanel.add(variableValueForm.getComponent());
-            variableValueForm.addDocumentListener(new DocumentAdapter() {
-                protected void textChanged(DocumentEvent e) {
-                    updatePreview();
-                }
-            });
+        StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
+        if (executionVariables != null) {
+            List<StatementExecutionVariable> variables = new ArrayList<StatementExecutionVariable>(executionVariables.getVariables());
+            Collections.sort(variables, StatementExecutionVariablesBundle.OFFSET_COMPARATOR);
+
+
+            for (StatementExecutionVariable variable: variables) {
+                StatementExecutionVariableValueForm variableValueForm = new StatementExecutionVariableValueForm(this, variable);
+                variableValueForms.add(variableValueForm);
+                variablesPanel.add(variableValueForm.getComponent());
+                variableValueForm.addDocumentListener(new DocumentAdapter() {
+                    protected void textChanged(DocumentEvent e) {
+                        updatePreview();
+                    }
+                });
+            }
+
+            int[] metrics = new int[]{0, 0};
+            for (StatementExecutionVariableValueForm variableValueForm : variableValueForms) {
+                metrics = variableValueForm.getMetrics(metrics);
+            }
+
+            for (StatementExecutionVariableValueForm variableValueForm : variableValueForms) {
+                variableValueForm.adjustMetrics(metrics);
+            }
+        } else {
+            headerSeparatorPanel.setVisible(false);
         }
 
-        int[] metrics = new int[]{0, 0};
-        for (StatementExecutionVariableValueForm variableValueForm : variableValueForms) {
-            metrics = variableValueForm.getMetrics(metrics);
-        }
-
-        for (StatementExecutionVariableValueForm variableValueForm : variableValueForms) {
-            variableValueForm.adjustMetrics(metrics);
-        }
+        ExecutionTimeoutForm executionTimeoutForm = new ExecutionTimeoutForm(executionProcessor.getExecutionInput(), DBDebuggerType.NONE) {
+            @Override
+            protected void handleChange(boolean hasError) {
+                parentComponent.updateExecuteAction(!hasError);
+            }
+        };
+        this.executionTimeoutForm.add(executionTimeoutForm.getComponent());
         updatePreview();
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
 
-        reuseVariablesCheckBox.setVisible(isBulkExecution);
-        if (isBulkExecution) {
+        if (isBulkExecution && executionVariables != null) {
+            reuseVariablesCheckBox.setVisible(true);
             reuseVariablesCheckBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     getParentComponent().setReuseVariables(reuseVariablesCheckBox.isSelected());
                 }
             });
+        } else {
+            reuseVariablesCheckBox.setVisible(false);
         }
     }
 
@@ -128,16 +154,20 @@ public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecut
         ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
         DBSchema currentSchema = executionProcessor.getCurrentSchema();
         Project project = connectionHandler.getProject();
+        String previewText = this.statementText;
 
         StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
-        String previewText = executionVariables.prepareStatementText(connectionHandler, this.statementText, true);
+        if (executionVariables != null) {
+            previewText = executionVariables.prepareStatementText(connectionHandler, this.statementText, true);
 
-        for (StatementExecutionVariableValueForm variableValueForm : variableValueForms) {
-            String errorText = executionVariables.getError(variableValueForm.getVariable());
-            if (errorText == null)
-                variableValueForm.hideErrorLabel(); else
-                variableValueForm.showErrorLabel(errorText);
+            for (StatementExecutionVariableValueForm variableValueForm : variableValueForms) {
+                String errorText = executionVariables.getError(variableValueForm.getVariable());
+                if (errorText == null)
+                    variableValueForm.hideErrorLabel(); else
+                    variableValueForm.showErrorLabel(errorText);
+            }
         }
+
 
         if (previewDocument == null) {
             DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);

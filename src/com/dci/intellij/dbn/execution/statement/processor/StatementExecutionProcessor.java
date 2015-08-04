@@ -52,6 +52,7 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     void execute(@Nullable Connection connection, boolean debug) throws SQLException;
 
+    @Nullable
     StatementExecutionVariablesBundle getExecutionVariables();
 
     void bind(ExecutablePsiElement executablePsiElement);
