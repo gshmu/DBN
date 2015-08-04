@@ -109,8 +109,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
         @Override
         public void update(AnActionEvent e) {
             Presentation presentation = e.getPresentation();
-            presentation.setEnabled(!hasErrors && timeout != getSettingsTimeout());
-            presentation.setVisible(true);
+            presentation.setVisible(!hasErrors && timeout != getSettingsTimeout());
         }
     }
 
