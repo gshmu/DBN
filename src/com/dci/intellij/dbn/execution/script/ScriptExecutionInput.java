@@ -1,7 +1,10 @@
 package com.dci.intellij.dbn.execution.script;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionContext;
@@ -21,6 +24,32 @@ public class ScriptExecutionInput implements ExecutionInput{
     private DBObjectRef<DBSchema> schemaRef;
     private int executionTimeout;
     private boolean clearOutput;
+
+    private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
+        @Override
+        protected ExecutionContext load() {
+            return new ExecutionContext() {
+                @NotNull
+                @Override
+                public String getTargetName() {
+                    return sourceFile.getPath();
+                }
+
+                @Nullable
+                @Override
+                public ConnectionHandler getTargetConnection() {
+                    return getConnectionHandler();
+                }
+
+                @Nullable
+                @Override
+                public DBSchema getTargetSchema() {
+                    return getSchema();
+                }
+            };
+        }
+    };
+
 
     public ScriptExecutionInput(Project project, VirtualFile sourceFile, ConnectionHandler connectionHandler, DBSchema schema, boolean clearOutput) {
         this.project = project;
@@ -83,7 +112,7 @@ public class ScriptExecutionInput implements ExecutionInput{
     @NotNull
     @Override
     public ExecutionContext getExecutionContext() {
-        return null;
+        return executionContext.get();
     }
 
     public int getExecutionTimeout() {

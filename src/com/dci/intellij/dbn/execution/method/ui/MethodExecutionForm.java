@@ -5,7 +5,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -36,6 +35,7 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.execution.common.ui.ExecutionTimeoutForm;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -58,9 +58,8 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
     private JCheckBox enableLoggingCheckBox;
     private JLabel debuggerVersionLabel;
     private JPanel versionPanel;
-    private JTextField executionTimeoutTextField;
-    private JLabel errorLabel;
     private JLabel debuggerTypeLabel;
+    private JPanel timeoutPanel;
 
 
     private List<MethodExecutionArgumentForm> argumentForms = new ArrayList<MethodExecutionArgumentForm>();
@@ -73,9 +72,6 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
         this.executionInput = executionInput;
         this.debuggerType = debuggerType;
         DBMethod method = executionInput.getMethod();
-
-        errorLabel.setIcon(Icons.COMMON_ERROR);
-        errorLabel.setVisible(false);
 
         final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
         if (debuggerType.isActive()) {
@@ -99,27 +95,15 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
         connectionLabel.setText(connectionHandler.getPresentableText());
         connectionLabel.setIcon(connectionHandler.getIcon());
         autoCommitLabel.setConnectionHandler(connectionHandler);
-        executionTimeoutTextField.setText(String.valueOf(debuggerType.isActive() ?
-                executionInput.getDebugExecutionTimeout() :
-                executionInput.getExecutionTimeout()));
-        executionTimeoutTextField.getDocument().addDocumentListener(new DocumentAdapter() {
+
+        ExecutionTimeoutForm timeoutForm = new ExecutionTimeoutForm(executionInput, debuggerType) {
             @Override
-            protected void textChanged(DocumentEvent e) {
-                String text = executionTimeoutTextField.getText();
-                try {
-                    int timeout = Integer.parseInt(text);
-                    if (MethodExecutionForm.this.debuggerType.isActive())
-                        executionInput.setDebugExecutionTimeout(timeout); else
-                        executionInput.setExecutionTimeout(timeout);
-
-                    errorLabel.setVisible(false);
-                } catch (NumberFormatException e1) {
-                    errorLabel.setText("Timeout must be an integer");
-                    errorLabel.setVisible(true);
-                }
+            protected void handleChange(boolean hasError) {
+                super.handleChange(hasError);
             }
-        });
+        };
 
+        timeoutPanel.add(timeoutForm.getComponent(), BorderLayout.CENTER);
         //objectPanel.add(new ObjectDetailsPanel(method).getComponent(), BorderLayout.NORTH);
 
         if (showHeader) {
