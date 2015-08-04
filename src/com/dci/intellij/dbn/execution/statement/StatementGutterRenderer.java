@@ -4,8 +4,10 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.execution.statement.action.StatementGutterAction;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.intellij.codeInsight.daemon.impl.ShowIntentionsPass;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 
@@ -26,7 +28,8 @@ public class StatementGutterRenderer extends GutterIconRenderer {
 
     @Nullable
     public AnAction getClickAction() {
-        return action;
+        // TODO workaround for Idea 15 bug (showing gutter actions as intentions)
+        return CommonUtil.isCalledThrough(ShowIntentionsPass.class) ? null : action;
     }
 
     @Nullable
@@ -48,5 +51,9 @@ public class StatementGutterRenderer extends GutterIconRenderer {
         return action.hashCode();
     }
 
-    
+    @NotNull
+    @Override
+    public Alignment getAlignment() {
+        return super.getAlignment();
+    }
 }
