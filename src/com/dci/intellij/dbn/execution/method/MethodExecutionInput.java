@@ -21,7 +21,7 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
+import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -76,9 +76,7 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
         methodRef = new DBObjectRef<DBMethod>();
         executionSchema = new DBObjectRef<DBSchema>();
 
-        MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
-        executionTimeout = methodExecutionSettings.getExecutionTimeout();
-        debugExecutionTimeout = methodExecutionSettings.getDebugExecutionTimeout();
+        updateExecutionTimeouts();
     }
 
     public MethodExecutionInput(Project project, DBMethod method) {
@@ -89,9 +87,14 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
             enableLogging = FailsafeUtil.get(method.getConnectionHandler()).isLoggingEnabled();
         }
-        MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
-        executionTimeout = methodExecutionSettings.getExecutionTimeout();
-        debugExecutionTimeout = methodExecutionSettings.getDebugExecutionTimeout();
+
+        updateExecutionTimeouts();
+    }
+
+    void updateExecutionTimeouts() {
+        ExecutionTimeoutSettings timeoutSettings = getExecutionTimeoutSettings();
+        executionTimeout = timeoutSettings.getExecutionTimeout();
+        debugExecutionTimeout = timeoutSettings.getDebugExecutionTimeout();
     }
 
     public void initExecution(DBDebuggerType debuggerType) {
@@ -265,6 +268,11 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
 
     public void setDebugExecutionTimeout(int debugExecutionTimeout) {
         this.debugExecutionTimeout = debugExecutionTimeout;
+    }
+
+    @Override
+    public ExecutionTimeoutSettings getExecutionTimeoutSettings() {
+        return ExecutionEngineSettings.getInstance(getProject()).getMethodExecutionSettings();
     }
 
     public Project getProject() {

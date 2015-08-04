@@ -3,10 +3,7 @@ package com.dci.intellij.dbn.execution.script.ui;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +11,6 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -27,14 +23,15 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.execution.common.ui.ExecutionTimeoutForm;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
-import com.dci.intellij.dbn.execution.script.ScriptExecutionExecutionInput;
+import com.dci.intellij.dbn.execution.script.ScriptExecutionInput;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.DocumentAdapter;
 
 public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDialog>{
     private JPanel headerPanel;
@@ -44,12 +41,12 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
     private DBNComboBox<CmdLineInterface> cmdLineExecutableComboBox;
     private JCheckBox clearOutputCheckBox;
     private JPanel hintPanel;
-    private JTextField executionTimeoutTextField;
-    private JLabel errorLabel;
+    private JPanel executionTimeoutPanel;
 
     private DBNHeaderForm headerForm;
+    private ExecutionTimeoutForm executionTimeoutForm;
 
-    public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull final ScriptExecutionExecutionInput executionInput) {
+    public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull final ScriptExecutionInput executionInput) {
         super(parentComponent);
 
         VirtualFile sourceFile = executionInput.getSourceFile();
@@ -62,8 +59,6 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
 
         headerForm = new DBNHeaderForm(headerTitle, headerIcon, null);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
-        errorLabel.setIcon(Icons.COMMON_ERROR);
-        errorLabel.setVisible(false);
 
         String hintText =
                 "Script execution uses the Command-Line Interface executable supplied with your database client. " +
@@ -89,8 +84,14 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
                 }
             }
         });
-        executionTimeoutTextField.setText(String.valueOf(executionInput.getExecutionTimeout()));
         clearOutputCheckBox.setSelected(executionInput.isClearOutput());
+        executionTimeoutForm = new ExecutionTimeoutForm(executionInput, DBDebuggerType.NONE) {
+            @Override
+            protected void handleChange(boolean hasError) {
+                updateButtons();
+            }
+        };
+        executionTimeoutPanel.add(executionTimeoutForm.getComponent());
 
         updateControls(executionInput);
         clearOutputCheckBox.addActionListener(new ActionListener() {
@@ -122,20 +123,6 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
                 updateButtons();
             }
         });
-        executionTimeoutTextField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(DocumentEvent e) {
-                String text = executionTimeoutTextField.getText();
-                try {
-                    int timeout = Integer.parseInt(text);
-                    executionInput.setExecutionTimeout(timeout);
-                    errorLabel.setVisible(false);
-                } catch (NumberFormatException e1) {
-                    errorLabel.setText("Execution Timeout must be an integer");
-                    errorLabel.setVisible(true);
-                }
-            }
-        });
     }
 
     @Nullable
@@ -144,7 +131,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         return connectionComboBox;
     }
 
-    private void updateControls(ScriptExecutionExecutionInput executionInput) {
+    private void updateControls(ScriptExecutionInput executionInput) {
         ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
         DBSchema schema = executionInput.getSchema();
         CmdLineInterface cmdLineInterface;
@@ -184,7 +171,8 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         parentComponent.setActionEnabled(
                 connectionComboBox.getSelectedValue() != null &&
                 schemaComboBox.getSelectedValue() != null &&
-                cmdLineExecutableComboBox.getSelectedValue() != null);
+                cmdLineExecutableComboBox.getSelectedValue() != null &&
+                !executionTimeoutForm.hasErrors());
     }
 
     @Override
