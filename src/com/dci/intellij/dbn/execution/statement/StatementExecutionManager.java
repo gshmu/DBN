@@ -34,6 +34,8 @@ import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
+import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -334,13 +336,14 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         executionVariables.initialize(bucket);
                     }
 
+                    StatementExecutionSettings executionSettings = ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
+                    boolean isBulkExecution = executionProcessors.size() > 1;
                     if (executionVariables != null) {
                         if (reuseVariables) {
                             executionVariables.populate(variableCache, true);
                         }
 
                         if (!(reuseVariables && executionVariables.isProvided())) {
-                            boolean isBulkExecution = executionProcessors.size() > 1;
                             String executableStatementText = executionInput.getExecutableStatementText();
                             StatementExecutionVariablesDialog dialog = new StatementExecutionVariablesDialog(executionProcessor, executableStatementText, isBulkExecution);
                             dialog.show();
@@ -357,6 +360,13 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                     variableCache.clear();
                                 }
                             }
+                        }
+                    } else if (executionSettings.isPromptExecution()) {
+                        String executableStatementText = executionInput.getExecutableStatementText();
+                        StatementExecutionVariablesDialog dialog = new StatementExecutionVariablesDialog(executionProcessor, executableStatementText, isBulkExecution);
+                        dialog.show();
+                        if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
+                            return;
                         }
                     }
                 }

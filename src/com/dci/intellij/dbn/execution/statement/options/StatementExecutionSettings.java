@@ -13,6 +13,7 @@ public class StatementExecutionSettings extends Configuration{
     private int executionTimeout = 20;
     private int debugExecutionTimeout = 600;
     private boolean focusResult = false;
+    private boolean promptExecution = false;
 
     public String getDisplayName() {
         return "Statement execution settings";
@@ -58,6 +59,14 @@ public class StatementExecutionSettings extends Configuration{
         return focusResult;
     }
 
+    public boolean isPromptExecution() {
+        return promptExecution;
+    }
+
+    public void setPromptExecution(boolean promptExecution) {
+        this.promptExecution = promptExecution;
+    }
+
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
@@ -76,6 +85,7 @@ public class StatementExecutionSettings extends Configuration{
         executionTimeout = SettingsUtil.getInteger(element, "execution-timeout", executionTimeout);
         debugExecutionTimeout = SettingsUtil.getInteger(element, "debug-execution-timeout", debugExecutionTimeout);
         focusResult = SettingsUtil.getBoolean(element, "focus-result", focusResult);
+        promptExecution = SettingsUtil.getBoolean(element, "prompt-execution", promptExecution);
 
     }
 
@@ -83,6 +93,6 @@ public class StatementExecutionSettings extends Configuration{
         SettingsUtil.setInteger(element, "fetch-block-size", resultSetFetchBlockSize);
         SettingsUtil.setInteger(element, "execution-timeout", executionTimeout);
         SettingsUtil.setInteger(element, "debug-execution-timeout", debugExecutionTimeout);
-        SettingsUtil.setBoolean(element, "focus-result", focusResult);
+        SettingsUtil.setBoolean(element, "prompt-execution", promptExecution);
     }
 }

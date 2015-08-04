@@ -15,12 +15,14 @@ import com.intellij.openapi.project.Project;
 public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecutionVariablesForm> {
     private StatementExecutionProcessor executionProcessor;
     private boolean reuseVariables = false;
+    private ExecuteAction executeAction;
 
     public StatementExecutionVariablesDialog(StatementExecutionProcessor executionProcessor, String statementText, boolean isBulkExecution) {
-        super(executionProcessor.getProject(), "Execution Variables", true);
+        super(executionProcessor.getProject(), "Statement Execution", true);
         this.executionProcessor = executionProcessor;
         setModal(true);
         setResizable(true);
+        executeAction = new ExecuteAction();
         component = new StatementExecutionVariablesForm(this, executionProcessor, statementText, isBulkExecution);
         init();
     }
@@ -33,10 +35,14 @@ public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecut
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
-                new ExecuteAction(),
+                executeAction,
                 getCancelAction(),
                 getHelpAction()
         };
+    }
+
+    public void updateExecuteAction(boolean enabled) {
+        executeAction.setEnabled(enabled);
     }
 
     private class ExecuteAction extends AbstractAction {
@@ -49,20 +55,24 @@ public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecut
             component.saveValues();
             StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
             Project project = getProject();
-            if (!executionVariables.isProvided()) {
-                MessageUtil.showErrorDialog(
-                        project,
-                        "Statement execution",
-                        "You didn't specify values for all the variables. \n" +
-                            "Please enter values for all the listed variables and try again."
-                );
-            } else if (executionVariables.hasErrors()) {
-                MessageUtil.showErrorDialog(
-                        project,
-                        "Statement execution",
-                        "You provided invalid/unsupported variable values. \n" +
-                            "Please correct your input and try again."
-                );
+            if (executionVariables != null) {
+                if (!executionVariables.isProvided()) {
+                    MessageUtil.showErrorDialog(
+                            project,
+                            "Statement execution",
+                            "You didn't specify values for all the variables. \n" +
+                                    "Please enter values for all the listed variables and try again."
+                    );
+                } else if (executionVariables.hasErrors()) {
+                    MessageUtil.showErrorDialog(
+                            project,
+                            "Statement execution",
+                            "You provided invalid/unsupported variable values. \n" +
+                                    "Please correct your input and try again."
+                    );
+                } else {
+                    doOKAction();
+                }
             } else {
                 doOKAction();
             }

@@ -247,10 +247,9 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
             activeConnection = FailsafeUtil.get(activeConnection);
             Counter runningStatements = activeConnection.getLoadMonitor().getRunningStatements();
 
-            StatementExecutionSettings executionSettings = getStatementExecutionSettings();
             int timeout = debug ?
-                    executionSettings.getDebugExecutionTimeout() :
-                    executionSettings.getExecutionTimeout();
+                    executionInput.getDebugExecutionTimeout() :
+                    executionInput.getExecutionTimeout();
 
             try {
                 runningStatements.increment();
@@ -328,6 +327,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         }
     }
 
+    @Nullable
     public StatementExecutionVariablesBundle getExecutionVariables() {
         return executionInput.getExecutionVariables();
     }

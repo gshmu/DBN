@@ -27,11 +27,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.0.4705</b>
+            <li><b>3.0.NEXT</b>
             <ul>
                 - Oracle JDWP debug interface<br>
                 - Cancellable long running operations (method / statement execution)<br>
-                - Ad-hoc timeout options for method and script executions<br>
+                - Ad-hoc timeout options for method, statement and script executions<br>
+                - Option to prompt statement executions<br>
                 - Bug fixes<br>
             </ul>
             <li><b>3.0.4705</b>

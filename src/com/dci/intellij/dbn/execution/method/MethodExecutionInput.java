@@ -40,7 +40,7 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
     private boolean usePoolConnection = true;
     private boolean commitAfterExecution = true;
     private boolean enableLogging = false;
-    private int executionTimeout = 30   ;
+    private int executionTimeout = 30;
     private int debugExecutionTimeout = 600;
     private ProjectRef projectRef;
 

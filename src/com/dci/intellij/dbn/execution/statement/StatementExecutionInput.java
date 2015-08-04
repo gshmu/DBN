@@ -13,6 +13,8 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
+import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -38,6 +40,8 @@ public class StatementExecutionInput implements ExecutionInput {
     private ExecutablePsiElement executablePsiElement;
     private boolean isBulkExecution = false;
     private boolean isDisposed;
+    private int executionTimeout = 30;
+    private int debugExecutionTimeout = 600;
 
     private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
         @Override
@@ -71,10 +75,31 @@ public class StatementExecutionInput implements ExecutionInput {
         this.currentSchemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
         this.originalStatementText = originalStatementText;
         this.executableStatementText = executableStatementText;
+
+        StatementExecutionSettings statementExecutionSettings = ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
+        executionTimeout = statementExecutionSettings.getExecutionTimeout();
+        debugExecutionTimeout = statementExecutionSettings.getDebugExecutionTimeout();
     }
 
     public int getExecutableLineNumber() {
         return executionProcessor == null ? 0 : executionProcessor.getExecutableLineNumber();
+    }
+
+    public int getExecutionTimeout() {
+        return executionTimeout;
+    }
+
+    public void setExecutionTimeout(int executionTimeout) {
+        this.executionTimeout = executionTimeout;
+    }
+
+    @Override
+    public int getDebugExecutionTimeout() {
+        return debugExecutionTimeout;
+    }
+
+    public void setDebugExecutionTimeout(int debugExecutionTimeout) {
+        this.debugExecutionTimeout = debugExecutionTimeout;
     }
 
     @NotNull
