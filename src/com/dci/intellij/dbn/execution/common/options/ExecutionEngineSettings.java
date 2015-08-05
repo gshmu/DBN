@@ -1,7 +1,10 @@
 package com.dci.intellij.dbn.execution.common.options;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.common.options.ui.ExecutionEngineSettingsForm;
 import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.dci.intellij.dbn.execution.script.options.ScriptExecutionSettings;
@@ -10,12 +13,11 @@ import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class ExecutionEngineSettings extends CompositeProjectConfiguration<ExecutionEngineSettingsForm> implements TopLevelConfig {
-    private StatementExecutionSettings statementExecutionSettings = new StatementExecutionSettings();
+    private StatementExecutionSettings statementExecutionSettings = new StatementExecutionSettings(this);
     private ScriptExecutionSettings scriptExecutionSettings = new ScriptExecutionSettings(this);
-    private MethodExecutionSettings methodExecutionSettings = new MethodExecutionSettings();
+    private MethodExecutionSettings methodExecutionSettings = new MethodExecutionSettings(this);
 
     public ExecutionEngineSettings(Project project) {
         super(project);
@@ -23,6 +25,16 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
 
     public static ExecutionEngineSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getExecutionEngineSettings();
+    }
+
+    @NotNull
+    public ExecutionTimeoutSettings getExecutionTimeoutSettings(@NotNull ExecutionTarget executionTarget) {
+        switch (executionTarget) {
+            case STATEMENT: return getStatementExecutionSettings();
+            case SCRIPT: return getScriptExecutionSettings();
+            case METHOD: return getMethodExecutionSettings();
+        }
+        throw new IllegalArgumentException("Invalid execution type " + executionTarget);
     }
 
     @NotNull

@@ -45,21 +45,23 @@ public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettin
 
     @Override
     public int getDebugExecutionTimeout() {
-        throw new UnsupportedOperationException();
+        return 0;
     }
 
     public int getExecutionTimeout() {
         return executionTimeout;
     }
 
-    public void setExecutionTimeout(int executionTimeout) {
-        this.executionTimeout = executionTimeout;
+    public boolean setExecutionTimeout(int executionTimeout) {
+        if (this.executionTimeout != executionTimeout) {
+            this.executionTimeout = executionTimeout;
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void setDebugExecutionTimeout(int timeout) {
-        throw new UnsupportedOperationException();
-    }
+    public boolean setDebugExecutionTimeout(int timeout) {return false;}
 
     @Override
     public String getConfigElementName() {

@@ -9,20 +9,17 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
-import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class ScriptExecutionInput implements ExecutionInput{
-    private Project project;
+public class ScriptExecutionInput extends ExecutionInput{
     private CmdLineInterface cmdLineInterface;
     private VirtualFile sourceFile;
     private ConnectionHandlerRef connectionHandlerRef;
     private DBObjectRef<DBSchema> schemaRef;
-    private int executionTimeout;
     private boolean clearOutput;
 
     private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
@@ -52,7 +49,7 @@ public class ScriptExecutionInput implements ExecutionInput{
 
 
     public ScriptExecutionInput(Project project, VirtualFile sourceFile, ConnectionHandler connectionHandler, DBSchema schema, boolean clearOutput) {
-        this.project = project;
+        super(project, ExecutionTarget.SCRIPT);
         this.sourceFile = sourceFile;
         setConnectionHandler(connectionHandler);
         setSchema(schema);
@@ -99,38 +96,10 @@ public class ScriptExecutionInput implements ExecutionInput{
         this.clearOutput = clearOutput;
     }
 
-    @Override
-    public Project getProject() {
-        return project;
-    }
-
-    @Override
-    public int getDebugExecutionTimeout() {
-        return 0;
-    }
-
     @NotNull
     @Override
     public ExecutionContext getExecutionContext() {
         return executionContext.get();
-    }
-
-    public int getExecutionTimeout() {
-        return executionTimeout;
-    }
-
-    public void setExecutionTimeout(int executionTimeout) {
-        this.executionTimeout = executionTimeout;
-    }
-
-    @Override
-    public void setDebugExecutionTimeout(int timeout) {
-
-    }
-
-    @Override
-    public ExecutionTimeoutSettings getExecutionTimeoutSettings() {
-        return ExecutionEngineSettings.getInstance(getProject()).getScriptExecutionSettings();
     }
 
     @Override

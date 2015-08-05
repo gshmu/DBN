@@ -6,13 +6,19 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.method.options.ui.MethodExecutionSettingsForm;
 
 public class MethodExecutionSettings extends Configuration implements ExecutionTimeoutSettings {
+    private ExecutionEngineSettings parent;
     private int executionTimeout = 30;
     private int debugExecutionTimeout = 600;
     private int parameterHistorySize = 10;
+
+    public MethodExecutionSettings(ExecutionEngineSettings parent) {
+        this.parent = parent;
+    }
 
     public String getDisplayName() {
         return "Method execution settings";
@@ -30,16 +36,24 @@ public class MethodExecutionSettings extends Configuration implements ExecutionT
         return executionTimeout;
     }
 
-    public void setExecutionTimeout(int executionTimeout) {
-        this.executionTimeout = executionTimeout;
-    }
-
     public int getDebugExecutionTimeout() {
         return debugExecutionTimeout;
     }
 
-    public void setDebugExecutionTimeout(int debugExecutionTimeout) {
-        this.debugExecutionTimeout = debugExecutionTimeout;
+    public boolean setExecutionTimeout(int executionTimeout) {
+        if (this.executionTimeout != executionTimeout) {
+            this.executionTimeout = executionTimeout;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean setDebugExecutionTimeout(int debugExecutionTimeout) {
+        if (this.debugExecutionTimeout != debugExecutionTimeout) {
+            this.debugExecutionTimeout = debugExecutionTimeout;
+            return true;
+        }
+        return false;
     }
 
     public int getParameterHistorySize() {

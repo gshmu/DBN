@@ -11,14 +11,17 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
+import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.ui.UIUtil;
 
 public abstract class ExecutionTimeoutForm extends DBNFormImpl{
     private JTextField executionTimeoutTextField;
@@ -38,6 +41,10 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
 
         timeout = getInputTimeout();
         executionTimeoutTextField.setText(String.valueOf(timeout));
+        executionTimeoutTextField.setForeground(timeout == getSettingsTimeout() ?
+                UIUtil.getLabelDisabledForeground() :
+                UIUtil.getTextFieldForeground());
+
 
         executionTimeoutTextField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
@@ -45,6 +52,9 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
                 String text = executionTimeoutTextField.getText();
                 try {
                     timeout = Integer.parseInt(text);
+                    executionTimeoutTextField.setForeground(timeout == getSettingsTimeout() ?
+                            UIUtil.getLabelDisabledForeground() :
+                            UIUtil.getTextFieldForeground());
 
                     if (debuggerType.isActive())
                         executionInput.setDebugExecutionTimeout(timeout); else
@@ -65,7 +75,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
                 "DBNavigator.Place.ExecutionTimeoutForm.Settings", true,
-                new DatasetEditorOptionsAction());
+                new SettingsAction());
 
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
     }
@@ -94,8 +104,8 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
         return hasErrors;
     }
 
-    public class DatasetEditorOptionsAction extends GroupPopupAction {
-        public DatasetEditorOptionsAction() {
+    public class SettingsAction extends GroupPopupAction {
+        public SettingsAction() {
             super("Settings", null, Icons.ACTION_OPTIONS);
         }
         @Override
@@ -109,7 +119,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
         @Override
         public void update(AnActionEvent e) {
             Presentation presentation = e.getPresentation();
-            presentation.setVisible(!hasErrors && timeout != getSettingsTimeout());
+            presentation.setEnabled(!hasErrors && timeout != getSettingsTimeout());
         }
     }
 
@@ -124,9 +134,13 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
             String text = executionTimeoutTextField.getText();
             int timeout = Integer.parseInt(text);
 
-            if (debuggerType.isActive())
-                timeoutSettings.setDebugExecutionTimeout(timeout); else
-                timeoutSettings.setExecutionTimeout(timeout);
+            boolean settingsChanged = debuggerType.isActive() ?
+                        timeoutSettings.setDebugExecutionTimeout(timeout) :
+                        timeoutSettings.setExecutionTimeout(timeout);
+
+            if (settingsChanged) {
+                EventUtil.notify(getProject(), TimeoutSettingsListener.TOPIC).settingsChanged(executionInput.getExecutionTarget());
+            }
         }
 
         @Override

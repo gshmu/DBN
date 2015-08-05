@@ -191,10 +191,10 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         DBNumberFormat numberFormat = numberFormatComboBox.getSelectedValue();
         regionalSettings.setNumberFormatOption(numberFormat);
         
-        regionalSettings.getUseCustomFormats().applyChanges(customPatternsRadioButton);
-        regionalSettings.getCustomDateFormat().applyChanges(customDateFormatTextField);
-        regionalSettings.getCustomTimeFormat().applyChanges(customTimeFormatTextField);
-        regionalSettings.getCustomNumberFormat().applyChanges(customNumberFormatTextField);
+        regionalSettings.getUseCustomFormats().to(customPatternsRadioButton);
+        regionalSettings.getCustomDateFormat().to(customDateFormatTextField);
+        regionalSettings.getCustomTimeFormat().to(customTimeFormatTextField);
+        regionalSettings.getCustomNumberFormat().to(customNumberFormatTextField);
 
         if (modified) {
             EventUtil.notify(regionalSettings.getProject(), RegionalSettingsListener.TOPIC).settingsChanged();
@@ -210,9 +210,9 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         customPatternsRadioButton.setSelected(useCustomFormats);
         presetPatternsRadioButton.setSelected(!useCustomFormats);
         if (customPatternsRadioButton.isSelected()) {
-            regionalSettings.getCustomDateFormat().resetChanges(customDateFormatTextField);
-            regionalSettings.getCustomTimeFormat().resetChanges(customTimeFormatTextField);
-            regionalSettings.getCustomNumberFormat().resetChanges(customNumberFormatTextField);
+            regionalSettings.getCustomDateFormat().from(customDateFormatTextField);
+            regionalSettings.getCustomTimeFormat().from(customTimeFormatTextField);
+            regionalSettings.getCustomNumberFormat().from(customNumberFormatTextField);
         }
 
         DBDateFormat dateFormat = regionalSettings.getDateFormatOption();

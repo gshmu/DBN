@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.common.options.setting;
 
-import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import javax.swing.JToggleButton;
 import org.jdom.Element;
 
-import javax.swing.JToggleButton;
+import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 
 public class BooleanSetting extends Setting<Boolean, JToggleButton> implements PersistentConfiguration {
     public BooleanSetting(String name, Boolean value) {
@@ -29,11 +29,11 @@ public class BooleanSetting extends Setting<Boolean, JToggleButton> implements P
     }
 
 
-    public boolean applyChanges(JToggleButton checkBox) {
+    public boolean to(JToggleButton checkBox) {
         return setValue(checkBox.isSelected());
     }
     
-    public void resetChanges(JToggleButton checkBox) {
+    public void from(JToggleButton checkBox) {
         checkBox.setSelected(value());
     }
 }

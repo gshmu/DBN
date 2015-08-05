@@ -5,7 +5,7 @@ public interface ExecutionTimeoutSettings {
 
     int getExecutionTimeout();
 
-    void setExecutionTimeout(int timeout);
+    boolean setExecutionTimeout(int timeout);
 
-    void setDebugExecutionTimeout(int timeout);
+    boolean setDebugExecutionTimeout(int timeout);
 }

@@ -6,15 +6,24 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
+import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
+import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.execution.statement.options.ui.StatementExecutionSettingsForm;
 
 public class StatementExecutionSettings extends Configuration implements ExecutionTimeoutSettings {
+    private ExecutionEngineSettings parent;
     private int resultSetFetchBlockSize = 100;
     private int executionTimeout = 20;
     private int debugExecutionTimeout = 600;
     private boolean focusResult = false;
     private boolean promptExecution = false;
+
+    public StatementExecutionSettings(ExecutionEngineSettings parent) {
+        this.parent = parent;
+    }
 
     public String getDisplayName() {
         return "Statement execution settings";
@@ -40,16 +49,28 @@ public class StatementExecutionSettings extends Configuration implements Executi
         return executionTimeout;
     }
 
-    public void setExecutionTimeout(int executionTimeout) {
-        this.executionTimeout = executionTimeout;
-    }
-
     public int getDebugExecutionTimeout() {
         return debugExecutionTimeout;
     }
 
-    public void setDebugExecutionTimeout(int debugExecutionTimeout) {
-        this.debugExecutionTimeout = debugExecutionTimeout;
+    public boolean setExecutionTimeout(int executionTimeout) {
+        if (this.executionTimeout != executionTimeout) {
+            this.executionTimeout = executionTimeout;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean setDebugExecutionTimeout(int debugExecutionTimeout) {
+        if (this.debugExecutionTimeout != debugExecutionTimeout) {
+            this.debugExecutionTimeout = debugExecutionTimeout;
+            return true;
+        }
+        return false;
+    }
+
+    void notifyTimeoutChanges() {
+        EventUtil.notify(parent.getProject(), TimeoutSettingsListener.TOPIC).settingsChanged(ExecutionTarget.STATEMENT);
     }
 
     public void setFocusResult(boolean focusResult) {
