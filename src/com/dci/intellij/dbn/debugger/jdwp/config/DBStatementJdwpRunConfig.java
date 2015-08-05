@@ -4,11 +4,14 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
@@ -17,12 +20,13 @@ import com.intellij.util.Range;
 public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DBJdwpRunConfig {
     private Range<Integer> tcpPortRange = new Range<Integer>(4000, 4999);
 
-    public DBStatementJdwpRunConfig(Project project, DBStatementJdwpRunConfigFactory factory, String name, boolean generic) {
-        super(project, factory, name, generic);
+    public DBStatementJdwpRunConfig(Project project, DBStatementJdwpRunConfigFactory factory, String name, DBRunConfigCategory category) {
+        super(project, factory, name, category);
     }
 
+    @NotNull
     @Override
-    protected DBStatementJdwpRunConfigEditor createConfigurationEditor() {
+    public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
         return new DBStatementJdwpRunConfigEditor(this);
     }
 

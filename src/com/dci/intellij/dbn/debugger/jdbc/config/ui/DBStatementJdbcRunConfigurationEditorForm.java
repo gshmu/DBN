@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementJdbcRunConfig;
 
@@ -15,8 +16,8 @@ public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfi
     private JPanel hintPanel;
 
     public DBStatementJdbcRunConfigurationEditorForm(final DBStatementJdbcRunConfig configuration) {
-        super(configuration);
-        if (configuration.isGeneric()) {
+        super(configuration.getProject());
+        if (configuration.getCategory() != DBRunConfigCategory.CUSTOM) {
             headerPanel.setVisible(false);
             DBNHintForm hintForm = new DBNHintForm(DatabaseDebuggerManager.GENERIC_STATEMENT_RUNNER_HINT, null, true);
             hintPanel.setVisible(true);

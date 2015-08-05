@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentListener;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -19,19 +30,8 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-public class MethodExecutionTypeAttributeForm extends DBNFormImpl<MethodExecutionArgumentForm> {
+public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExecutionInputArgumentForm> {
     private JLabel attributeTypeLabel;
     private JLabel attributeLabel;
     private JPanel mainPanel;
@@ -44,7 +44,7 @@ public class MethodExecutionTypeAttributeForm extends DBNFormImpl<MethodExecutio
     private DBObjectRef<DBArgument> argumentRef;
     private DBObjectRef<DBTypeAttribute> typeAttributeRef;
 
-    public MethodExecutionTypeAttributeForm(MethodExecutionArgumentForm parentForm, DBArgument argument, DBTypeAttribute typeAttribute) {
+    public MethodExecutionInputTypeAttributeForm(MethodExecutionInputArgumentForm parentForm, DBArgument argument, DBTypeAttribute typeAttribute) {
         super(parentForm);
         this.argumentRef = DBObjectRef.from(argument);
         this.typeAttributeRef = DBObjectRef.from(typeAttribute);

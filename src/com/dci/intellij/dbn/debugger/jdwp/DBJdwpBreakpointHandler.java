@@ -73,38 +73,44 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
 
     @Override
     public void registerBreakpoint(@NotNull final XLineBreakpoint<DBBreakpointProperties> breakpoint) {
-        new ManagedThreadCommand(getJdiDebugProcess()) {
-            @Override
-            protected void action() throws Exception {
-                //EventRequestManager eventRequestManager = virtualMachineProxy.eventRequestManager();
+        DBBreakpointProperties properties = breakpoint.getProperties();
+        if (properties != null && properties.getConnectionHandler() == getConnectionHandler()) {
+            new ManagedThreadCommand(getJdiDebugProcess()) {
 
-                VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
-                RequestManagerImpl requestsManager = getRequestsManager();
+                @Override
+                protected void action() throws Exception {
+                    //EventRequestManager eventRequestManager = virtualMachineProxy.eventRequestManager();
 
-                String programIdentifier = getProgramIdentifier(breakpoint);
-                LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
-                Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
-                if (requests.size() > 0) {
-                    for (EventRequest request : requests) {
-                        request.enable();
-                    }
-                } else {
-                    List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
-                    if (referenceTypes.size() > 0) {
-                        ReferenceType referenceType = referenceTypes.get(0);
-                        List<Location> locations = referenceType.locationsOfLine(breakpoint.getLine() + 1);
-                        if (locations.size() > 0) {
-                            Location location = locations.get(0);
-                            BreakpointRequest breakpointRequest = requestsManager.createBreakpointRequest(lineBreakpoint, location);
-                            breakpointRequest.addThreadFilter(getMainThread());
-                            requestsManager.enableRequest(breakpointRequest);
+                    VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
+                    RequestManagerImpl requestsManager = getRequestsManager();
+
+                    String programIdentifier = getProgramIdentifier(breakpoint);
+                    LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
+                    if (lineBreakpoint != null) {
+                        Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
+                        if (requests.size() > 0) {
+                            for (EventRequest request : requests) {
+                                request.enable();
+                            }
+                        } else {
+                            List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
+                            if (referenceTypes.size() > 0) {
+                                ReferenceType referenceType = referenceTypes.get(0);
+                                List<Location> locations = referenceType.locationsOfLine(breakpoint.getLine() + 1);
+                                if (locations.size() > 0) {
+                                    Location location = locations.get(0);
+                                    BreakpointRequest breakpointRequest = requestsManager.createBreakpointRequest(lineBreakpoint, location);
+                                    breakpointRequest.addThreadFilter(getMainThread());
+                                    requestsManager.enableRequest(breakpointRequest);
+                                }
+                            } else {
+                                requestsManager.callbackOnPrepareClasses(lineBreakpoint, programIdentifier);
+                            }
                         }
-                    } else {
-                        requestsManager.callbackOnPrepareClasses(lineBreakpoint, programIdentifier);
                     }
                 }
-            }
-        }.invoke();
+            }.invoke();
+        }
     }
 
     @Override

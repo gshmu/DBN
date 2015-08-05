@@ -43,7 +43,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.DocumentAdapter;
 
-public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent> {
+public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectComponent> {
     private JPanel mainPanel;
     private JPanel argumentsPanel;
     private JPanel headerPanel;
@@ -62,12 +62,12 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
     private JPanel timeoutPanel;
 
 
-    private List<MethodExecutionArgumentForm> argumentForms = new ArrayList<MethodExecutionArgumentForm>();
+    private List<MethodExecutionInputArgumentForm> argumentForms = new ArrayList<MethodExecutionInputArgumentForm>();
     private MethodExecutionInput executionInput;
     private Set<ChangeListener> changeListeners = new HashSet<ChangeListener>();
     private DBDebuggerType debuggerType;
 
-    public MethodExecutionForm(DisposableProjectComponent parentComponent, final MethodExecutionInput executionInput, boolean showHeader, @NotNull DBDebuggerType debuggerType) {
+    public MethodExecutionInputForm(DisposableProjectComponent parentComponent, final MethodExecutionInput executionInput, boolean showHeader, @NotNull DBDebuggerType debuggerType) {
         super(parentComponent);
         this.executionInput = executionInput;
         this.debuggerType = debuggerType;
@@ -126,7 +126,7 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
             }
         }
 
-        for (MethodExecutionArgumentForm component : argumentForms) {
+        for (MethodExecutionInputArgumentForm component : argumentForms) {
             component.adjustMetrics(metrics);
         }
 
@@ -143,7 +143,7 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
         commitCheckBox.setEnabled(!connectionHandler.isAutoCommit());
         usePoolConnectionCheckBox.setSelected(executionInput.isUsePoolConnection());
 
-        for (MethodExecutionArgumentForm argumentComponent : argumentForms){
+        for (MethodExecutionInputArgumentForm argumentComponent : argumentForms){
             argumentComponent.addDocumentListener(documentListener);
         }
         commitCheckBox.addActionListener(actionListener);
@@ -182,9 +182,6 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
     }
 
     public void setExecutionInput(MethodExecutionInput executionInput) {
-        if (!executionInput.equals(this.executionInput)) {
-            System.out.println("");
-        }
         this.executionInput = executionInput;
     }
 
@@ -197,14 +194,14 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
     }
 
     private int[] addArgumentPanel(DBArgument argument, int[] gridMetrics) {
-        MethodExecutionArgumentForm argumentComponent = new MethodExecutionArgumentForm(this, argument);
+        MethodExecutionInputArgumentForm argumentComponent = new MethodExecutionInputArgumentForm(this, argument);
         argumentsPanel.add(argumentComponent.getComponent());
         argumentForms.add(argumentComponent);
         return argumentComponent.getMetrics(gridMetrics);
    }
 
     public void updateExecutionInput() {
-        for (MethodExecutionArgumentForm argumentComponent : argumentForms) {
+        for (MethodExecutionInputArgumentForm argumentComponent : argumentForms) {
             argumentComponent.updateExecutionInput();
         }
 

@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodJdbcRunConfig;
@@ -25,7 +26,7 @@ public class DBMethodJdbcRunner extends DBProgramRunner<MethodExecutionInput> {
         if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
             if (profile instanceof DBMethodJdbcRunConfig) {
                 DBMethodJdbcRunConfig runConfiguration = (DBMethodJdbcRunConfig) profile;
-                return !runConfiguration.isGeneric() && runConfiguration.getMethod() != null;
+                return runConfiguration.getCategory() == DBRunConfigCategory.CUSTOM && runConfiguration.getMethod() != null;
             }
         }
         return false;    }

@@ -10,15 +10,15 @@ import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 
-public class MethodExecutionDialog extends DBNDialog<MethodExecutionForm> {
+public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputForm> {
     private DBDebuggerType debuggerType;
 
-    public MethodExecutionDialog(MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
+    public MethodExecutionInputDialog(MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
         super(executionInput.getProject(), (debuggerType.isActive() ? "Debug" : "Execute") + " Method", true);
         this.debuggerType = debuggerType;
         setModal(true);
         setResizable(true);
-        component = new MethodExecutionForm(this, executionInput, true, debuggerType);
+        component = new MethodExecutionInputForm(this, executionInput, true, debuggerType);
         init();
     }
 

@@ -16,5 +16,5 @@ public abstract class DBStatementRunConfigFactory<T extends DBStatementRunConfig
         return (T) super.getType();
     }
 
-    public abstract C createConfiguration(Project project, String name, boolean generic);
+    public abstract C createConfiguration(Project project, String name, DBRunConfigCategory category);
 }

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigFactory;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
@@ -17,8 +18,8 @@ public class DBStatementJdwpRunConfigFactory extends DBStatementRunConfigFactory
     }
 
     @Override
-    public DBStatementJdwpRunConfig createConfiguration(Project project, String name, boolean generic) {
-        return new DBStatementJdwpRunConfig(project, this, name, generic);
+    public DBStatementJdwpRunConfig createConfiguration(Project project, String name, DBRunConfigCategory category) {
+        return new DBStatementJdwpRunConfig(project, this, name, category);
     }
 
     @Override
@@ -28,7 +29,7 @@ public class DBStatementJdwpRunConfigFactory extends DBStatementRunConfigFactory
 
     @Override
     public RunConfiguration createTemplateConfiguration(Project project) {
-        return new DBStatementJdwpRunConfig(project, this, "", false);
+        return new DBStatementJdwpRunConfig(project, this, "", DBRunConfigCategory.TEMPLATE);
     }
 
     @Override

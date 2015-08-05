@@ -6,6 +6,7 @@ import javax.swing.JTextField;
 
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBStatementJdwpRunConfig;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -23,8 +24,8 @@ public class DBStatementJdwpRunConfigEditorForm extends DBProgramRunConfiguratio
     private StatementExecutionInput executionInput;
 
     public DBStatementJdwpRunConfigEditorForm(final DBStatementJdwpRunConfig configuration) {
-        super(configuration);
-        if (configuration.isGeneric()) {
+        super(configuration.getProject());
+        if (configuration.getCategory() != DBRunConfigCategory.CUSTOM) {
             headerPanel.setVisible(false);
             DBNHintForm hintForm = new DBNHintForm(DatabaseDebuggerManager.GENERIC_STATEMENT_RUNNER_HINT, null, true);
             hintPanel.setVisible(true);

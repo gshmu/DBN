@@ -21,8 +21,8 @@ import com.intellij.openapi.project.Project;
 public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutionInput> {
     private StatementExecutionInput executionInput;
 
-    public DBStatementRunConfig(Project project, DBStatementRunConfigFactory factory, String name, boolean generic) {
-        super(project, factory, name, generic);
+    public DBStatementRunConfig(Project project, DBStatementRunConfigFactory factory, String name, DBRunConfigCategory category) {
+        super(project, factory, name, category);
     }
 
     @Nullable
@@ -75,7 +75,7 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
 
     @Nullable
     public String suggestedName() {
-        if (isGeneric()) {
+        if (getCategory() == DBRunConfigCategory.GENERIC) {
             String defaultRunnerName = getType().getDefaultRunnerName();
             if (getDebuggerType() == DBDebuggerType.JDWP) {
                 defaultRunnerName = defaultRunnerName + " (JDWP)";
