@@ -39,7 +39,7 @@ public class DBMethodJdwpRunConfigFactory extends DBMethodRunConfigFactory<DBMet
 
     @Override
     public String getName() {
-        return super.getName() + "(JDWP)";
+        return super.getName() + " (JDWP)";
     }
 
 }

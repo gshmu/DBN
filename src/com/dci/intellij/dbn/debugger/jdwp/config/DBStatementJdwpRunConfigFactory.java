@@ -34,7 +34,7 @@ public class DBStatementJdwpRunConfigFactory extends DBStatementRunConfigFactory
 
     @Override
     public String getName() {
-        return super.getName() + "(JDWP)";
+        return super.getName() + " (JDWP)";
     }
 
 }
