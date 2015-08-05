@@ -522,7 +522,6 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             changesBundle = null;
             loadMonitor = null;
             sessionBrowserFile = null;
-            objectBundle = null;
             psiCache = null;
         }
     }

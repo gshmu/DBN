@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.debugger.DBDebugOperationTask;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
 import com.dci.intellij.dbn.debugger.jdwp.DBJdwpBreakpointHandler;
@@ -285,7 +286,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 } finally {
                     status.PROCESS_IS_TERMINATED = true;
                     DBRunConfig<T> runProfile = getRunProfile();
-                    if (runProfile != null && runProfile.isGeneric()) {
+                    if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
                         runProfile.setCanRun(false);
                     }
 

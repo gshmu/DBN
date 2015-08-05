@@ -6,8 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -22,25 +20,19 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 
 public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigurationBase implements RunConfigurationWithSuppressedDefaultRunAction, LocatableConfiguration {
-    private LazyValue<DBRunConfigEditor> configurationEditor = new SimpleLazyValue<DBRunConfigEditor>() {
-        @Override
-        protected DBRunConfigEditor load() {
-            return createConfigurationEditor();
-        }
-    };
     private boolean isGeneratedName = true;
     private boolean compileDependencies = true;
     private boolean canRun = false;
-    private boolean generic;
+    private DBRunConfigCategory category;
     private I executionInput;
 
-    protected DBRunConfig(Project project, DBRunConfigFactory factory, String name, boolean generic) {
+    protected DBRunConfig(Project project, DBRunConfigFactory factory, String name, DBRunConfigCategory category) {
         super(project, factory, name);
-        this.generic = generic;
+        this.category = category;
     }
 
     public boolean canRun() {
-        return !generic || canRun;
+        return category == DBRunConfigCategory.CUSTOM || canRun;
     }
 
     public void setCanRun(boolean canRun) {
@@ -53,15 +45,6 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
         return (DBRunConfigType) super.getType();
     }
 
-    protected void resetConfigurationEditor() {
-        configurationEditor.set(null);
-    }
-
-    public DBRunConfigEditor getConfigurationEditor() {
-        return configurationEditor.get();
-    }
-    protected abstract DBRunConfigEditor createConfigurationEditor();
-
     @Override
     public boolean canRunOn(@NotNull ExecutionTarget target) {
         return super.canRunOn(target);
@@ -70,19 +53,23 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
-        SettingsUtil.setBoolean(element, "is-generic", generic);
+        SettingsUtil.setEnum(element, "category", category);
         SettingsUtil.setBoolean(element, "compile-dependencies", compileDependencies);
     }
 
     @Override
     public void readExternal(Element element) throws InvalidDataException {
         super.readExternal(element);
-        generic = SettingsUtil.getBoolean(element, "is-generic", generic);
+        category = SettingsUtil.getEnum(element, "category", category);
         compileDependencies = SettingsUtil.getBoolean(element, "compile-dependencies", compileDependencies);
     }
 
-    public boolean isGeneric() {
-        return generic;
+    public DBRunConfigCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(DBRunConfigCategory category) {
+        this.category = category;
     }
 
     public boolean isCompileDependencies() {

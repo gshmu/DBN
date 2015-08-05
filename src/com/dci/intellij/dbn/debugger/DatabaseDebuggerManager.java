@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigFactory;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigType;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
@@ -172,7 +173,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             RunConfiguration configuration = configurationSetting.getConfiguration();
             if (configuration instanceof DBRunConfig) {
                 DBRunConfig dbRunConfiguration = (DBRunConfig) configuration;
-                if (dbRunConfiguration.isGeneric() && dbRunConfiguration.getDebuggerType() == debuggerType) {
+                if (dbRunConfiguration.getCategory() == DBRunConfigCategory.GENERIC && dbRunConfiguration.getDebuggerType() == debuggerType) {
                     return configurationSetting;
                 }
             }
@@ -194,7 +195,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                 defaultRunnerName = defaultRunnerName + " (JDWP)";
             }
 
-            DBRunConfig runConfiguration = configurationFactory.createConfiguration(project, defaultRunnerName, true);
+            DBRunConfig runConfiguration = configurationFactory.createConfiguration(project, defaultRunnerName, DBRunConfigCategory.GENERIC);
             RunnerAndConfigurationSettings configuration = runManager.createConfiguration(runConfiguration, configurationFactory);
             runManager.addConfiguration(configuration, false);
             //runManager.setTemporaryConfiguration(configuration);

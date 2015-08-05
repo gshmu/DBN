@@ -4,6 +4,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -23,7 +24,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     private boolean editable;
     private MethodExecutionInput selectedExecutionInput;
 
-    public MethodExecutionHistoryDialog(Project project, MethodExecutionHistory executionHistory, MethodExecutionInput selectedExecutionInput, boolean editable) {
+    public MethodExecutionHistoryDialog(Project project, MethodExecutionHistory executionHistory, @Nullable MethodExecutionInput selectedExecutionInput, boolean editable) {
         super(project, "Method Execution History", true);
         this.editable = editable;
         setModal(true);

@@ -24,8 +24,8 @@ import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
 import com.dci.intellij.dbn.execution.method.history.ui.MethodExecutionHistoryDialog;
-import com.dci.intellij.dbn.execution.method.ui.MethodExecutionDialog;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
+import com.dci.intellij.dbn.execution.method.ui.MethodExecutionInputDialog;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -97,7 +97,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                                         executionInput.getMethodRef().getPath() + ".\nMethod not found!";
                         MessageUtil.showErrorDialog(project, message);
                     } else {
-                        MethodExecutionDialog executionDialog = new MethodExecutionDialog(executionInput, debuggerType);
+                        MethodExecutionInputDialog executionDialog = new MethodExecutionInputDialog(executionInput, debuggerType);
                         executionDialog.show();
 
                         result.set(executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE);
@@ -127,7 +127,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         return executionHistoryDialog;
     }
 
-    public MethodExecutionInput selectHistoryMethodExecutionInput(MethodExecutionInput selectedExecutionInput) {
+    public MethodExecutionInput selectHistoryMethodExecutionInput(@Nullable MethodExecutionInput selectedExecutionInput) {
         MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, selectedExecutionInput, false);
         executionHistoryDialog.show();
         if (executionHistoryDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {

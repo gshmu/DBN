@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.ref.WeakReference;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 
 public class ConnectionHandlerRef{
     private WeakReference<ConnectionHandler> reference;
@@ -12,6 +12,10 @@ public class ConnectionHandlerRef{
     public ConnectionHandlerRef(ConnectionHandler connectionHandler) {
         reference = new WeakReference<ConnectionHandler>(connectionHandler);
         connectionId = connectionHandler == null ? null : connectionHandler.getId();
+    }
+
+    public ConnectionHandlerRef(String connectionId) {
+        this.connectionId = connectionId;
     }
 
     public String getConnectionId() {

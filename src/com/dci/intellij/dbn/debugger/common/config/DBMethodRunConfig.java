@@ -25,8 +25,8 @@ import gnu.trove.THashSet;
 public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput> {
     private Set<MethodExecutionInput> methodSelectionHistory = new THashSet<MethodExecutionInput>();
 
-    public DBMethodRunConfig(Project project, DBMethodRunConfigFactory factory, String name, boolean generic) {
-        super(project, factory, name, generic);
+    public DBMethodRunConfig(Project project, DBMethodRunConfigFactory factory, String name,DBRunConfigCategory category) {
+        super(project, factory, name, category);
     }
 
     public Set<MethodExecutionInput> getMethodSelectionHistory() {
@@ -39,7 +39,6 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
             methodSelectionHistory.add(currentExecutionInput);
         }
         super.setExecutionInput(executionInput);
-        getConfigurationEditor().setExecutionInput(executionInput);
     }
 
     @Override
@@ -48,7 +47,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
     }
 
     public void checkConfiguration() throws RuntimeConfigurationException {
-        if (!isGeneric()) {
+        if (getCategory() == DBRunConfigCategory.CUSTOM) {
             MethodExecutionInput executionInput = getExecutionInput();
             if (executionInput == null) {
                 throw new RuntimeConfigurationError("No or invalid method selected. The database connection is down, obsolete or method has been dropped.");
@@ -94,7 +93,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
         MethodExecutionInput executionInput = getExecutionInput();
-        if (executionInput != null && !isGeneric()) {
+        if (executionInput != null && getCategory() == DBRunConfigCategory.CUSTOM) {
             Element methodIdentifierElement = new Element("method-identifier");
             executionInput.getMethodRef().writeState(methodIdentifierElement);
             element.addContent(methodIdentifierElement);
@@ -113,7 +112,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
     public void readExternal(Element element) throws InvalidDataException {
         super.readExternal(element);
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(getProject());
-        if (!isGeneric()) {
+        if (getCategory() == DBRunConfigCategory.CUSTOM) {
             Element methodIdentifierElement = element.getChild("method-identifier");
             if (methodIdentifierElement != null) {
                 DBObjectRef<DBMethod> methodRef = new DBObjectRef<DBMethod>();
@@ -140,7 +139,6 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
     @Override
     public RunConfiguration clone() {
         DBMethodRunConfig runConfiguration = (DBMethodRunConfig) super.clone();
-        runConfiguration.resetConfigurationEditor();
         MethodExecutionInput executionInput = getExecutionInput();
         runConfiguration.setExecutionInput(executionInput == null ? null : executionInput.clone());
         runConfiguration.methodSelectionHistory = new HashSet<MethodExecutionInput>(getMethodSelectionHistory());
@@ -149,7 +147,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
 
     @Override
     public String suggestedName() {
-        if (isGeneric()) {
+        if (getCategory() == DBRunConfigCategory.GENERIC) {
             String defaultRunnerName = getType().getDefaultRunnerName();
             if (getDebuggerType() == DBDebuggerType.JDWP) {
                 defaultRunnerName = defaultRunnerName + " (JDWP)";

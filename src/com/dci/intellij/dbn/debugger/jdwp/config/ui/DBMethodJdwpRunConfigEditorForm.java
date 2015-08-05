@@ -7,9 +7,11 @@ import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -17,20 +19,20 @@ import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfig;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
 import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserDialog;
-import com.dci.intellij.dbn.execution.method.ui.MethodExecutionForm;
+import com.dci.intellij.dbn.execution.method.ui.MethodExecutionInputForm;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -49,12 +51,12 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
     private JTextField toPortTextField;
     private JPanel hintPanel;
 
-    private MethodExecutionForm methodExecutionForm;
-    private MethodExecutionInput executionInput;
+    private MethodExecutionInputForm methodExecutionInputForm;
 
     public DBMethodJdwpRunConfigEditorForm(final DBMethodJdwpRunConfig configuration) {
-        super(configuration);
-        if (configuration.isGeneric()) {
+        super(configuration.getProject());
+        readConfiguration(configuration);
+        if (configuration.getCategory() != DBRunConfigCategory.CUSTOM) {
             selectMethodActionPanel.setVisible(false);
             methodArgumentsPanel.setVisible(false);
             headerPanel.setVisible(false);
@@ -99,8 +101,8 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {
                         final MethodBrowserSettings settings = MethodExecutionManager.getInstance(project).getBrowserSettings();
-                        final DBMethodJdwpRunConfig configuration = getConfiguration();
-                        DBMethod currentMethod = configuration.getExecutionInput() == null ? null : configuration.getExecutionInput().getMethod();
+                        MethodExecutionInput executionInput = getExecutionInput();
+                        DBMethod currentMethod = executionInput == null ? null : executionInput.getMethod();
                         if (currentMethod != null) {
                             settings.setConnectionHandler(currentMethod.getConnectionHandler());
                             settings.setSchema(currentMethod.getSchema());
@@ -119,7 +121,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
                                     MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
                                     MethodExecutionInput methodExecutionInput = methodExecutionManager.getExecutionInput(method);
                                     if (methodExecutionInput != null) {
-                                        configuration.setExecutionInput(methodExecutionInput);
+                                        setExecutionInput(methodExecutionInput, true);
                                     }
                                 }
                             }
@@ -141,51 +143,23 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
             Project project = ActionUtil.getProject(e);
             if (project != null) {
                 MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                DBMethodJdwpRunConfig configuration = getConfiguration();
-                MethodExecutionInput currentInput = configuration.getExecutionInput();
-                MethodExecutionInput methodExecutionInput = methodExecutionManager.selectHistoryMethodExecutionInput(currentInput);
+                MethodExecutionInput methodExecutionInput = methodExecutionManager.selectHistoryMethodExecutionInput(getExecutionInput());
                 if (methodExecutionInput != null) {
-                    configuration.setExecutionInput(methodExecutionInput);
+                    setExecutionInput(methodExecutionInput, true);
                 }
             }
         }
     }
-    public class SelectHistoryMethodAction extends AnAction{
-        private MethodExecutionInput executionInput;
 
-        public SelectHistoryMethodAction(MethodExecutionInput executionInput) {
-            super("");
-            this.executionInput = executionInput;
-        }
-
-        @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            getConfiguration().setExecutionInput(executionInput);
-        }
-
-        @Override
-        public void update(@NotNull AnActionEvent e) {
-            Presentation presentation = e.getPresentation();
-            DBMethod method = executionInput.getMethod();
-            if (method == null) {
-                presentation.setIcon(Icons.DBO_METHOD);
-            } else {
-                presentation.setIcon(method.getOriginalIcon());
-            }
-            presentation.setText(executionInput.getMethodRef().getPath(), false);
-        }
-    }
-
-
+    @Nullable
     public MethodExecutionInput getExecutionInput() {
-        return executionInput;
+        return methodExecutionInputForm == null ? null : methodExecutionInputForm.getExecutionInput();
     }
 
     public void writeConfiguration(DBMethodJdwpRunConfig configuration) throws ConfigurationException {
-        if (methodExecutionForm != null) {
-            methodExecutionForm.setExecutionInput(configuration.getExecutionInput());
-            methodExecutionForm.updateExecutionInput();
-            Disposer.register(this, methodExecutionForm);
+        if (methodExecutionInputForm != null) {
+            methodExecutionInputForm.updateExecutionInput();
+            configuration.setExecutionInput(getExecutionInput());
         }
         configuration.setCompileDependencies(compileDependenciesCheckBox.isSelected());
 
@@ -209,21 +183,24 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
     }
 
     public void setExecutionInput(MethodExecutionInput executionInput, boolean touchForm) {
-        this.executionInput = executionInput;
+        methodArgumentsPanel.removeAll();
+        DisposerUtil.dispose(methodExecutionInputForm);
+        methodExecutionInputForm = null;
+
         String headerTitle = "No method selected";
         Icon headerIcon = null;
         Color headerBackground = UIUtil.getPanelBackground();
 
-        methodArgumentsPanel.removeAll();
         if (executionInput != null) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             headerTitle = methodRef.getPath();
             headerIcon = methodRef.getObjectType().getIcon();
             DBMethod method = executionInput.getMethod();
             if (method != null) {
-                methodExecutionForm = new MethodExecutionForm(this, executionInput, false, DBDebuggerType.JDWP);
-                methodArgumentsPanel.add(methodExecutionForm.getComponent(), BorderLayout.CENTER);
-                if (touchForm) methodExecutionForm.touch();
+                methodExecutionInputForm = new MethodExecutionInputForm(this, executionInput, false, DBDebuggerType.JDWP);
+                Disposer.register(this, methodExecutionInputForm);
+                methodArgumentsPanel.add(methodExecutionInputForm.getComponent(), BorderLayout.CENTER);
+                if (touchForm) methodExecutionInputForm.touch();
                 headerIcon = method.getOriginalIcon();
                 if (getEnvironmentSettings(method.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
                     headerBackground = method.getEnvironmentType().getColor();
@@ -244,8 +221,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
 
     public void dispose() {
         super.dispose();
-        methodExecutionForm = null;
-        executionInput = null;
+        methodExecutionInputForm = null;
     }
 
     @Override
