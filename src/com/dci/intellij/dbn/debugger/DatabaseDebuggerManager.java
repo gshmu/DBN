@@ -211,8 +211,8 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
         DBMethodRunConfigType configurationType = getMethodConfigurationType();
 
-        RunnerAndConfigurationSettings runConfigurationSetting;
-        if (true) {
+        RunnerAndConfigurationSettings runConfigurationSetting = null;
+        if (debuggerSettings.isUseGenericRunners()) {
             runConfigurationSetting = getDefaultConfig(configurationType, debuggerType);
             MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
             DBMethodRunConfig runConfiguration = (DBMethodRunConfig) runConfigurationSetting.getConfiguration();
@@ -225,7 +225,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             List<RunnerAndConfigurationSettings> configurationSettings = runManager.getConfigurationSettingsList(configurationType);
             for (RunnerAndConfigurationSettings configurationSetting : configurationSettings) {
                 DBMethodRunConfig availableRunConfiguration = (DBMethodRunConfig) configurationSetting.getConfiguration();
-                if (method.equals(availableRunConfiguration.getMethod())) {
+                if (availableRunConfiguration.getCategory() == DBRunConfigCategory.CUSTOM && method.equals(availableRunConfiguration.getMethod())) {
                     runConfigurationSetting = configurationSetting;
                     break;
                 }
