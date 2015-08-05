@@ -51,8 +51,8 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         configuration.setDisplayMode(displayMode);
 
 
-        configuration.getNavigationHistorySize().applyChanges(navigationHistorySizeTextField);
-        configuration.getShowObjectDetails().applyChanges(showObjectDetailsCheckBox);
+        configuration.getNavigationHistorySize().to(navigationHistorySizeTextField);
+        configuration.getShowObjectDetails().to(showObjectDetailsCheckBox);
 
         final Project project = configuration.getProject();
 
@@ -74,8 +74,8 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         DatabaseBrowserGeneralSettings configuration = getConfiguration();
         browserTypeComboBox.setSelectedValue(configuration.getDisplayMode());
 
-        configuration.getNavigationHistorySize().resetChanges(navigationHistorySizeTextField);
-        configuration.getShowObjectDetails().resetChanges(showObjectDetailsCheckBox);
+        configuration.getNavigationHistorySize().from(navigationHistorySizeTextField);
+        configuration.getShowObjectDetails().from(showObjectDetailsCheckBox);
     }
 
 }

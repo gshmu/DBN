@@ -6,10 +6,14 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
+import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
@@ -121,11 +125,21 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
     
     public void applyFormChanges() throws ConfigurationException {
         ScriptExecutionSettings settings = getConfiguration();
-        settings.setExecutionTimeout(ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout"));
+        int executionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
         CmdLineInterfacesTableModel model = cmdLineInterfacesTable.getModel();
         model.validate();
         CmdLineInterfaceBundle executorBundle = model.getBundle();
         settings.setCommandLineInterfaces(executorBundle);
+
+        boolean timeoutSettingsChanged = settings.setExecutionTimeout(executionTimeout);
+        if (timeoutSettingsChanged) {
+            new SettingsChangeNotifier() {
+                @Override
+                public void notifyChanges() {
+                    EventUtil.notify(getProject(), TimeoutSettingsListener.TOPIC).settingsChanged(ExecutionTarget.SCRIPT);
+                }
+            };
+        }
     }
 
     public void resetFormChanges() {

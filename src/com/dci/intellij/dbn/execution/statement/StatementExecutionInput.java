@@ -13,8 +13,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
-import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -25,11 +24,10 @@ import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
-public class StatementExecutionInput implements ExecutionInput {
+public class StatementExecutionInput extends ExecutionInput {
     private StatementExecutionProcessor executionProcessor;
     private StatementExecutionVariablesBundle executionVariables;
     private ConnectionHandlerRef connectionHandlerRef;
@@ -40,8 +38,6 @@ public class StatementExecutionInput implements ExecutionInput {
     private ExecutablePsiElement executablePsiElement;
     private boolean isBulkExecution = false;
     private boolean isDisposed;
-    private int executionTimeout = 30;
-    private int debugExecutionTimeout = 600;
 
     private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
         @Override
@@ -70,41 +66,16 @@ public class StatementExecutionInput implements ExecutionInput {
     };
 
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
+        super(executionProcessor.getProject(), ExecutionTarget.STATEMENT);
         this.executionProcessor = executionProcessor;
         this.connectionHandlerRef = ConnectionHandlerRef.from(executionProcessor.getConnectionHandler());
         this.currentSchemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
         this.originalStatementText = originalStatementText;
         this.executableStatementText = executableStatementText;
-
-        ExecutionTimeoutSettings timeoutSettings = getExecutionTimeoutSettings();
-        executionTimeout = timeoutSettings.getExecutionTimeout();
-        debugExecutionTimeout = timeoutSettings.getDebugExecutionTimeout();
     }
 
     public int getExecutableLineNumber() {
         return executionProcessor == null ? 0 : executionProcessor.getExecutableLineNumber();
-    }
-
-    public int getExecutionTimeout() {
-        return executionTimeout;
-    }
-
-    public void setExecutionTimeout(int executionTimeout) {
-        this.executionTimeout = executionTimeout;
-    }
-
-    @Override
-    public int getDebugExecutionTimeout() {
-        return debugExecutionTimeout;
-    }
-
-    public void setDebugExecutionTimeout(int debugExecutionTimeout) {
-        this.debugExecutionTimeout = debugExecutionTimeout;
-    }
-
-    @Override
-    public ExecutionTimeoutSettings getExecutionTimeoutSettings() {
-        return ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
     }
 
     @NotNull
@@ -183,10 +154,6 @@ public class StatementExecutionInput implements ExecutionInput {
 
     public StatementExecutionProcessor getExecutionProcessor() {
         return executionProcessor;
-    }
-
-    public Project getProject() {
-        return executionProcessor == null ? null : executionProcessor.getProject();
     }
 
     @Nullable
