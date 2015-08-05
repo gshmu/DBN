@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -147,19 +148,38 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
 
     @Override
     public String suggestedName() {
-        if (getCategory() == DBRunConfigCategory.GENERIC) {
+        if (getCategory() == DBRunConfigCategory.CUSTOM) {
+            MethodExecutionInput executionInput = getExecutionInput();
+            if (executionInput != null) {
+                setGeneratedName(true);
+                String runnerName = executionInput.getMethodRef().getObjectName();
+                if (getDebuggerType() == DBDebuggerType.JDWP) {
+                    runnerName = runnerName + " (JDWP)";
+                }
+                return runnerName;
+            }
+        } else {
             String defaultRunnerName = getType().getDefaultRunnerName();
             if (getDebuggerType() == DBDebuggerType.JDWP) {
                 defaultRunnerName = defaultRunnerName + " (JDWP)";
             }
             return defaultRunnerName;
-        } else {
-            MethodExecutionInput executionInput = getExecutionInput();
-            if (executionInput != null) {
-                setGeneratedName(true);
-                return executionInput.getMethodRef().getObjectName();
-            }
         }
         return null;
+    }
+
+    @Override
+    public Icon getIcon() {
+        if (getCategory() == DBRunConfigCategory.CUSTOM) {
+            MethodExecutionInput executionInput = getExecutionInput();
+            if (executionInput != null) {
+                DBMethod method = executionInput.getMethod();
+                if (method != null) {
+                    return method.getIcon();
+                }
+            }
+
+        }
+        return super.getIcon();
     }
 }
