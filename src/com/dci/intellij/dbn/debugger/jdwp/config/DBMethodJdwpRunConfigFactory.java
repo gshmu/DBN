@@ -30,6 +30,7 @@ public class DBMethodJdwpRunConfigFactory extends DBMethodRunConfigFactory<DBMet
 
     public DBMethodJdwpRunConfig createConfiguration(DBMethod method) {
         String name = DatabaseDebuggerManager.createMethodConfigurationName(method);
+        name = name + " (JDWP)";
         DBMethodJdwpRunConfig runConfiguration = new DBMethodJdwpRunConfig(method.getProject(), this, name, DBRunConfigCategory.CUSTOM);
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(method.getProject());
         MethodExecutionInput executionInput = executionManager.getExecutionInput(method);
