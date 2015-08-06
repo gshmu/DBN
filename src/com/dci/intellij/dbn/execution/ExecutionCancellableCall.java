@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.execution;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.util.Timer;
@@ -13,14 +21,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 
 public abstract class ExecutionCancellableCall<T> implements Callable<T> {
     private static final ExecutorService POOL = Executors.newCachedThreadPool(new ThreadFactory() {
@@ -72,15 +72,17 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
                                 }
                                 if (future != null) future.cancel(true);
                                 cancelCheckTimer.cancel();
-                            } else {
+                            } else if (timeout > 0) {
                                 String text = progressIndicator.getText();
                                 int index = text.indexOf(" (timing out in ");
                                 if (index > -1) {
                                     text = text.substring(0, index);
                                 }
 
-                                int runningForSeconds = (int) ((System.currentTimeMillis() - startTimestamp) / 1000);
-                                text = text + " (timing out in " + (timeout - runningForSeconds) + "s) ";
+                                long runningForSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTimestamp);
+                                long timeoutSeconds = timeUnit.toSeconds(timeout);
+                                long timingOutIn = timeoutSeconds - runningForSeconds;
+                                text = text + " (timing out in " + timingOutIn + "s) ";
 
                                 progressIndicator.setText(text);
                             }
