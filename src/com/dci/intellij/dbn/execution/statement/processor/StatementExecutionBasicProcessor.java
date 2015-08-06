@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
@@ -11,8 +22,10 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.execution.ExecutionCancellableCall;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
@@ -45,19 +58,8 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
-
     protected WeakReference<FileEditor> fileEditorRef;
     protected DBLanguagePsiFile psiFile;
     protected ExecutablePsiElement cachedExecutable;
@@ -221,6 +223,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         resultName = null;
         ConnectionHandler activeConnection = getConnectionHandler();
         DBSchema currentSchema = getCurrentSchema();
+        Statement closeOnErrorStatement = null;
 
         boolean continueExecution = true;
 
@@ -243,6 +246,11 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
             DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
             activeConnection = FailsafeUtil.get(activeConnection);
             Counter runningStatements = activeConnection.getLoadMonitor().getRunningStatements();
+
+            int timeout = debug ?
+                    executionInput.getDebugExecutionTimeout() :
+                    executionInput.getExecutionTimeout();
+
             try {
                 runningStatements.increment();
                 if (connection == null) {
@@ -252,15 +260,23 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                 if (!debug && activeConnection.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
                     loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
                 }
-                PreparedStatement statement = connection.prepareStatement(executableStatementText);
+                final PreparedStatement statement = connection.prepareStatement(executableStatementText);
+                closeOnErrorStatement = statement;
 
-                StatementExecutionSettings executionSettings = getStatementExecutionSettings();
-                int timeout = debug ?
-                        executionSettings.getDebugExecutionTimeout() :
-                        executionSettings.getExecutionTimeout();
                 statement.setQueryTimeout(timeout);
-                statement.execute();
-                executionResult = createExecutionResult(statement, executionInput);
+                executionResult = new ExecutionCancellableCall<StatementExecutionResult>(timeout, TimeUnit.SECONDS) {
+                    @Override
+                    public StatementExecutionResult execute() throws Exception{
+                        statement.execute();
+                        return createExecutionResult(statement, executionInput);
+                    }
+
+                    @Override
+                    public void cancel() throws Exception {
+                        ConnectionUtil.cancelStatement(statement);
+                    }
+                }.start();
+
                 ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
                 VirtualFile virtualFile = getPsiFile().getVirtualFile();
                 if (executablePsiElement != null) {
@@ -292,6 +308,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     }
                 }
             } catch (SQLException e) {
+                ConnectionUtil.closeStatement(closeOnErrorStatement);
                 executionResult = createErrorExecutionResult(e.getMessage());
                 executionException = e;
             } finally {
@@ -310,6 +327,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         }
     }
 
+    @Nullable
     public StatementExecutionVariablesBundle getExecutionVariables() {
         return executionInput.getExecutionVariables();
     }

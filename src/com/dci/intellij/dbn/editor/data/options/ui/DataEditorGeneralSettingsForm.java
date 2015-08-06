@@ -36,23 +36,23 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
         ConfigurationEditorUtil.validateIntegerInputValue(fetchTimeoutTextField, "Fetch timeout", true, 0, 300, "\nUse value 0 for no timeout");
 
         DataEditorGeneralSettings settings = getConfiguration();
-        settings.getFetchBlockSize().applyChanges(fetchBlockSizeTextField);
-        settings.getFetchTimeout().applyChanges(fetchTimeoutTextField);
-        settings.getTrimWhitespaces().applyChanges(trimWhitespacesCheckBox);
-        settings.getConvertEmptyStringsToNull().applyChanges(convertEmptyToNullCheckBox);
-        settings.getSelectContentOnCellEdit().applyChanges(selectContentOnEditCheckBox);
-        settings.getLargeValuePreviewActive().applyChanges(largeValuePreviewActiveCheckBox);
-        settings.getLoadViewDataActive().applyChanges(loadViewDataActiveCheckBox);
+        settings.getFetchBlockSize().to(fetchBlockSizeTextField);
+        settings.getFetchTimeout().to(fetchTimeoutTextField);
+        settings.getTrimWhitespaces().to(trimWhitespacesCheckBox);
+        settings.getConvertEmptyStringsToNull().to(convertEmptyToNullCheckBox);
+        settings.getSelectContentOnCellEdit().to(selectContentOnEditCheckBox);
+        settings.getLargeValuePreviewActive().to(largeValuePreviewActiveCheckBox);
+        settings.getLoadViewDataActive().to(loadViewDataActiveCheckBox);
     }
 
     public void resetFormChanges() {
         DataEditorGeneralSettings settings = getConfiguration();
-        settings.getFetchBlockSize().resetChanges(fetchBlockSizeTextField);
-        settings.getFetchTimeout().resetChanges(fetchTimeoutTextField);
-        settings.getTrimWhitespaces().resetChanges(trimWhitespacesCheckBox);
-        settings.getConvertEmptyStringsToNull().resetChanges(convertEmptyToNullCheckBox);
-        settings.getSelectContentOnCellEdit().resetChanges(selectContentOnEditCheckBox);
-        settings.getLargeValuePreviewActive().resetChanges(largeValuePreviewActiveCheckBox);
-        settings.getLoadViewDataActive().resetChanges(loadViewDataActiveCheckBox);
+        settings.getFetchBlockSize().from(fetchBlockSizeTextField);
+        settings.getFetchTimeout().from(fetchTimeoutTextField);
+        settings.getTrimWhitespaces().from(trimWhitespacesCheckBox);
+        settings.getConvertEmptyStringsToNull().from(convertEmptyToNullCheckBox);
+        settings.getSelectContentOnCellEdit().from(selectContentOnEditCheckBox);
+        settings.getLargeValuePreviewActive().from(largeValuePreviewActiveCheckBox);
+        settings.getLoadViewDataActive().from(loadViewDataActiveCheckBox);
     }
 }

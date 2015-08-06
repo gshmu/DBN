@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.options.setting;
 
-import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.intellij.openapi.options.ConfigurationException;
+import javax.swing.text.JTextComponent;
 import org.jdom.Element;
 
-import javax.swing.text.JTextComponent;
+import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import com.intellij.openapi.options.ConfigurationException;
 
 public class EnumSetting extends Setting<String, JTextComponent> implements PersistentConfiguration {
     public EnumSetting(String name, String value) {
@@ -22,12 +22,12 @@ public class EnumSetting extends Setting<String, JTextComponent> implements Pers
     }
 
     @Override
-    public boolean applyChanges(JTextComponent component) throws ConfigurationException {
+    public boolean to(JTextComponent component) throws ConfigurationException {
         return setValue(component.getText());
     }
 
     @Override
-    public void resetChanges(JTextComponent component) {
+    public void from(JTextComponent component) {
         component.setText(value());
     }
 

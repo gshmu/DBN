@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBJdbcDebuggerEditorsProvider;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
@@ -81,7 +82,17 @@ public class DBBreakpointType extends XLineBreakpointType<DBBreakpointProperties
 
     @Override
     public DBBreakpointProperties createBreakpointProperties(@NotNull VirtualFile file, int line) {
-        return null;//new DBBreakpointProperties(file, line);
+        if (file instanceof ConnectionProvider) {
+            ConnectionProvider connectionProvider = (ConnectionProvider) file;
+            return new DBBreakpointProperties(connectionProvider.getConnectionHandler());
+        }
+        return new DBBreakpointProperties(null);
+    }
+
+    @Nullable
+    @Override
+    public DBBreakpointProperties createProperties() {
+        return new DBBreakpointProperties();
     }
 
     @Override

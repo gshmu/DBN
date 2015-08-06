@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.options.setting;
 
-import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.intellij.openapi.options.ConfigurationException;
+import javax.swing.JTextField;
 import org.jdom.Element;
 
-import javax.swing.JTextField;
+import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import com.intellij.openapi.options.ConfigurationException;
 
 public class IntegerSetting extends Setting<Integer, JTextField> implements PersistentConfiguration {
     public IntegerSetting(String name, Integer value) {
@@ -22,12 +22,12 @@ public class IntegerSetting extends Setting<Integer, JTextField> implements Pers
     }
 
     @Override
-    public boolean applyChanges(JTextField component) throws ConfigurationException {
+    public boolean to(JTextField component) throws ConfigurationException {
         return setValue(Integer.parseInt(component.getText()));
     }
 
     @Override
-    public void resetChanges(JTextField component) {
+    public void from(JTextField component) {
         component.setText(value().toString());
     }
 

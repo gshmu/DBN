@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -23,11 +24,10 @@ import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
-public class StatementExecutionInput implements ExecutionInput {
+public class StatementExecutionInput extends ExecutionInput {
     private StatementExecutionProcessor executionProcessor;
     private StatementExecutionVariablesBundle executionVariables;
     private ConnectionHandlerRef connectionHandlerRef;
@@ -66,6 +66,7 @@ public class StatementExecutionInput implements ExecutionInput {
     };
 
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
+        super(executionProcessor.getProject(), ExecutionTarget.STATEMENT);
         this.executionProcessor = executionProcessor;
         this.connectionHandlerRef = ConnectionHandlerRef.from(executionProcessor.getConnectionHandler());
         this.currentSchemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
@@ -153,10 +154,6 @@ public class StatementExecutionInput implements ExecutionInput {
 
     public StatementExecutionProcessor getExecutionProcessor() {
         return executionProcessor;
-    }
-
-    public Project getProject() {
-        return executionProcessor == null ? null : executionProcessor.getProject();
     }
 
     @Nullable

@@ -27,8 +27,7 @@ public abstract class SynchronizedTask extends SimpleTask {
             } else {
                 cancel();
             }
-        } catch (ProcessCanceledException e) {
-            // do nothing
+        } catch (ProcessCanceledException ignore) {
         }
     }
 }

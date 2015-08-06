@@ -4,13 +4,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
 import org.jdesktop.swingx.util.OS;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -21,9 +23,9 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
-import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -31,10 +33,13 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
+import com.dci.intellij.dbn.execution.ExecutionCancellableCall;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
+import com.dci.intellij.dbn.execution.script.options.ScriptExecutionSettings;
 import com.dci.intellij.dbn.execution.script.ui.CmdLineInterfaceInputDialog;
 import com.dci.intellij.dbn.execution.script.ui.ScriptExecutionInputDialog;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -45,6 +50,7 @@ import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -93,11 +99,11 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             ConnectionHandler activeConnection = connectionMappingManager.getActiveConnection(virtualFile);
             DBSchema currentSchema = connectionMappingManager.getCurrentSchema(virtualFile);
 
-            final ScriptExecutionExecutionInput executionInput = new ScriptExecutionExecutionInput();
-            executionInput.setConnectionHandler(activeConnection);
-            executionInput.setSchema(currentSchema);
-            executionInput.setSourceFile(virtualFile);
-            executionInput.setClearOutput(clearOutputOption);
+            final ScriptExecutionInput executionInput = new ScriptExecutionInput(getProject(), virtualFile, activeConnection, currentSchema, clearOutputOption);
+            ScriptExecutionSettings scriptExecutionSettings = ExecutionEngineSettings.getInstance(project).getScriptExecutionSettings();
+            int timeout = scriptExecutionSettings.getExecutionTimeout();
+            executionInput.setExecutionTimeout(timeout);
+
             ScriptExecutionInputDialog inputDialog = new ScriptExecutionInputDialog(project,executionInput);
 
             inputDialog.show();
@@ -107,39 +113,157 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 final CmdLineInterface cmdLineExecutable = executionInput.getCmdLineInterface();
                 connectionMappingManager.setActiveConnection(virtualFile, connectionHandler);
                 connectionMappingManager.setCurrentSchema(virtualFile, schema);
-                recentlyUsedInterfaces.put(connectionHandler.getDatabaseType(), cmdLineExecutable.getId());
+                if (connectionHandler != null) {
+                    recentlyUsedInterfaces.put(connectionHandler.getDatabaseType(), cmdLineExecutable.getId());
+                }
                 clearOutputOption = executionInput.isClearOutput();
 
-                new BackgroundTask(project, "Executing database script", true, false) {
+                new BackgroundTask(project, "Executing database script", true, true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        new SimpleTimeoutCall<Object>(100, TimeUnit.SECONDS, null) {
-                            @Override
-                            public Object call() throws Exception {
-                                doExecuteScript(executionInput);
-                                return null;
-                            }
-
-                            @Override
-                            protected Object handleException(Exception e) {
-                                String causeMessage = e instanceof TimeoutException ? "Operation has timed out" : e.getMessage();
-                                MessageUtil.showErrorDialog(project,
-                                        "Script execution error",
-                                        "Error executing SQL script \"" + virtualFile.getPath() + "\". \nDetails: " + causeMessage,
-                                        new String[]{"Retry", "Cancel"}, 0,
-                                        new SimpleTask() {
-                                            @Override
-                                            protected void execute() {
-                                                if (getHandle() == 0) {
-                                                    executeScript(virtualFile);
-                                                }
-                                            }
-                                        });
-                                return super.handleException(e);
-                            }
-                        }.start();
+                        try {
+                            doExecuteScript(executionInput);
+                        } catch (Exception e) {
+                            MessageUtil.showErrorDialog(getProject(), "Error", "Error executing SQL Script \"" + virtualFile.getPath() + "\". " + e.getMessage());
+                        }
                     }
                 }.start();
+            }
+        }
+    }
+
+    private void doExecuteScript(final ScriptExecutionInput input) throws Exception {
+        ExecutionContext executionContext = input.getExecutionContext();
+        executionContext.setExecuting(true);
+        ConnectionHandler connectionHandler = FailsafeUtil.get(input.getConnectionHandler());
+        final VirtualFile sourceFile = input.getSourceFile();
+        activeProcesses.put(sourceFile, null);
+
+        final AtomicReference<File> tempScriptFile = new AtomicReference<File>();
+        final AtomicReference<BufferedReader> logReader = new AtomicReference<BufferedReader>();
+        final LogOutputContext outputContext = new LogOutputContext(connectionHandler, sourceFile, null);
+        final ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
+        int timeout = input.getExecutionTimeout();
+
+        try {
+            new ExecutionCancellableCall<Object>(timeout, TimeUnit.SECONDS) {
+                @Override
+                public Object execute() throws Exception {
+                    ConnectionHandler connectionHandler = FailsafeUtil.get(input.getConnectionHandler());
+                    DBSchema schema = input.getSchema();
+
+                    String content = new String(sourceFile.contentsToByteArray());
+                    File temporaryScriptFile = createTempScriptFile();
+                    tempScriptFile.set(temporaryScriptFile);
+
+                    DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
+                    CmdLineInterface cmdLineInterface = input.getCmdLineInterface();
+                    CmdLineExecutionInput executionInput = executionInterface.createScriptExecutionInput(cmdLineInterface,
+                            temporaryScriptFile.getPath(),
+                            content,
+                            schema == null ? null : schema.getName(),
+                            connectionHandler.getDatabaseInfo(),
+                            connectionHandler.getAuthenticationInfo()
+                    );
+
+                    FileUtil.writeToFile(temporaryScriptFile, executionInput.getTextContent());
+
+                    ProcessBuilder processBuilder = new ProcessBuilder(executionInput.getCommand());
+                    processBuilder.environment().putAll(executionInput.getEnvironmentVars());
+                    processBuilder.redirectErrorStream(true);
+                    Process process = processBuilder.start();
+
+                    outputContext.setProcess(process);
+                    activeProcesses.put(sourceFile, process);
+
+                    outputContext.setHideEmptyLines(false);
+                    outputContext.start();
+                    String line;
+                    executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution started", input.isClearOutput()));
+
+                    BufferedReader consoleReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    logReader.set(consoleReader);
+                    while ((line = consoleReader.readLine()) != null) {
+                        if (outputContext.isActive()) {
+                            LogOutput stdOutput = LogOutput.createStdOutput(line);
+                            executionManager.writeLogOutput(outputContext, stdOutput);
+                        } else {
+                            break;
+                        }
+                    }
+
+                    LogOutput logOutput = LogOutput.createSysOutput(outputContext,
+                            outputContext.isStopped() ?
+                                    " - Script execution interrupted by user" :
+                                    " - Script execution finished", false);
+                    executionManager.writeLogOutput(outputContext, logOutput);
+                    return null;
+                }
+
+                @Override
+                public void cancel() throws Exception {
+                    outputContext.stop();
+                }
+
+                @Override
+                public void handleTimeout() throws SQLTimeoutException {
+                    new SimpleBackgroundTask("handling script execution timeout") {
+                        @Override
+                        protected void execute() {
+                            MessageUtil.showErrorDialog(getProject(),
+                                    "Script execution timeout",
+                                    "The script execution has timed out",
+                                    new String[]{"Retry", "Cancel"}, 0,
+                                    new SimpleTask() {
+                                        @Override
+                                        protected void execute() {
+                                            if (getHandle() == 0) {
+                                                executeScript(sourceFile);
+                                            }
+                                        }
+                                    });
+                        }
+                    }.start();
+                }
+
+                @Override
+                public void handleException(final Throwable e) throws SQLException {
+                    new SimpleBackgroundTask("handling script execution exception") {
+                        @Override
+                        protected void execute() {
+                            MessageUtil.showErrorDialog(getProject(),
+                                    "Script execution error",
+                                    "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),
+                                    new String[]{"Retry", "Cancel"}, 0,
+                                    new SimpleTask() {
+                                        @Override
+                                        protected void execute() {
+                                            if (getHandle() == 0) {
+                                                executeScript(sourceFile);
+                                            }
+                                        }
+                                    });
+                        }
+                    }.start();
+                }
+            }.start();
+        } catch (Exception e) {
+            if (e instanceof ProcessCanceledException) {
+                //executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution cancelled by user", false));
+            } else {
+                executionManager.writeLogOutput(outputContext, LogOutput.createErrOutput(e.getMessage()));
+                executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution finished with errors", false));
+                throw e;
+            }
+        } finally {
+            executionContext.setExecuting(false);
+            outputContext.finish();
+            BufferedReader consoleReader = logReader.get();
+            if (consoleReader != null) consoleReader.close();
+            activeProcesses.remove(sourceFile);
+            File temporaryScriptFile = tempScriptFile.get();
+            if (temporaryScriptFile != null && temporaryScriptFile.exists()) {
+                temporaryScriptFile.delete();
             }
         }
     }
@@ -196,73 +320,6 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
         }
         return null;
-    }
-
-    private void doExecuteScript(ScriptExecutionExecutionInput input) throws Exception{
-        VirtualFile sourceFile = input.getSourceFile();
-        ConnectionHandler connectionHandler = input.getConnectionHandler();
-        CmdLineInterface cmdLineInterface = input.getCmdLineInterface();
-        DBSchema schema = input.getSchema();
-        activeProcesses.put(sourceFile, null);
-        File tempScriptFile = null;
-        BufferedReader logReader = null;
-        LogOutputContext context = new LogOutputContext(connectionHandler, sourceFile, null);
-        ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
-        try {
-            String content = new String(sourceFile.contentsToByteArray());
-            tempScriptFile = createTempScriptFile();
-
-            DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
-            CmdLineExecutionInput executionInput = executionInterface.createScriptExecutionInput(cmdLineInterface,
-                    tempScriptFile.getPath(),
-                    content,
-                    schema == null ? null : schema.getName(),
-                    connectionHandler.getDatabaseInfo(),
-                    connectionHandler.getAuthenticationInfo()
-            );
-
-            FileUtil.writeToFile(tempScriptFile, executionInput.getTextContent());
-
-            ProcessBuilder processBuilder = new ProcessBuilder(executionInput.getCommand());
-            processBuilder.environment().putAll(executionInput.getEnvironmentVars());
-            processBuilder.redirectErrorStream(true);
-            Process process = processBuilder.start();
-
-/*
-                Runtime runtime = Runtime.getRuntime();
-                process = runtime.exec(executionInput.getLineCommand());
-*/
-            context.setProcess(process);
-            activeProcesses.put(sourceFile, process);
-
-            context.setHideEmptyLines(false);
-            context.start();
-            String line;
-            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, " - Script execution started", input.isClearOutput()));
-
-            logReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            while ((line = logReader.readLine()) != null) {
-                if (context.isActive()) {
-                    LogOutput stdOutput = LogOutput.createStdOutput(line);
-                    executionManager.writeLogOutput(context, stdOutput);
-                } else {
-                    break;
-                }
-            }
-            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, context.isStopped() ? " - Script execution interrupted by user" : " - Script execution finished", false));
-
-        } catch (Exception e) {
-            executionManager.writeLogOutput(context, LogOutput.createErrOutput(e.getMessage()));
-            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, " - Script execution finished with errors", false));
-            throw e;
-        } finally {
-            context.finish();
-            if (logReader != null) logReader.close();
-            activeProcesses.remove(sourceFile);
-            if (tempScriptFile != null && tempScriptFile.exists()) {
-                tempScriptFile.delete();
-            }
-        }
     }
 
     public boolean getClearOutputOption() {

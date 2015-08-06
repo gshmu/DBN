@@ -1,16 +1,24 @@
 package com.dci.intellij.dbn.execution.method;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
-import com.dci.intellij.dbn.execution.ExecutionType;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -21,16 +29,8 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-public class MethodExecutionInput implements ExecutionInput, PersistentConfiguration, Comparable<MethodExecutionInput> {
+public class MethodExecutionInput extends ExecutionInput implements Comparable<MethodExecutionInput> {
     private DBObjectRef<DBMethod> methodRef;
     private DBObjectRef<DBSchema> executionSchema;
     private Set<MethodExecutionArgumentValue> argumentValues = new THashSet<MethodExecutionArgumentValue>();
@@ -65,12 +65,14 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
         }
     };
 
-    public MethodExecutionInput() {
+    public MethodExecutionInput(Project project) {
+        super(project, ExecutionTarget.METHOD);
         methodRef = new DBObjectRef<DBMethod>();
         executionSchema = new DBObjectRef<DBSchema>();
     }
 
-    public MethodExecutionInput(DBMethod method) {
+    public MethodExecutionInput(Project project, DBMethod method) {
+        super(project, ExecutionTarget.METHOD);
         this.methodRef = new DBObjectRef<DBMethod>(method);
         this.executionSchema = method.getSchema().getRef();
 
@@ -79,9 +81,9 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
         }
     }
 
-    public void initExecution(ExecutionType executionType) {
+    public void initExecution(DBDebuggerType debuggerType) {
         MethodExecutionResultForm resultForm = executionResult == null ? null : executionResult.getForm(false);
-        executionResult = new MethodExecutionResult(this, resultForm, executionType);
+        executionResult = new MethodExecutionResult(this, resultForm, debuggerType);
         getExecutionContext().setExecutionTimestamp(System.currentTimeMillis());
     }
 
@@ -236,14 +238,11 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
         this.enableLogging = enableLogging;
     }
 
-    public Project getProject() {
-        return getMethod().getProject();
-    }
-
     /*********************************************************
      *                 PersistentConfiguration               *
      *********************************************************/
     public void readConfiguration(Element element) {
+        super.readConfiguration(element);
         methodRef.readState(element);
         String schemaName = element.getAttributeValue("execution-schema");
         executionSchema = new DBObjectRef<DBSchema>(methodRef.getConnectionId(), DBObjectType.SCHEMA, schemaName);
@@ -259,6 +258,7 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
     }
 
     public void writeConfiguration(Element element) {
+        super.writeConfiguration(element);
         methodRef.writeState(element);
         element.setAttribute("execution-schema", CommonUtil.nvl(executionSchema.getPath(), ""));
         SettingsUtil.setBooleanAttribute(element, "use-pool-connection", usePoolConnection);
@@ -296,7 +296,7 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
     }
 
     public MethodExecutionInput clone() {
-        MethodExecutionInput executionInput = new MethodExecutionInput();
+        MethodExecutionInput executionInput = new MethodExecutionInput(getProject());
         executionInput.methodRef = methodRef;
         executionInput.executionSchema = executionSchema;
         executionInput.usePoolConnection = usePoolConnection;

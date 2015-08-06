@@ -53,7 +53,7 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
         } else {
             mainPanel.setBorder(null);
         }
-        configuration.getUseMasterSettings().resetChanges(useMasterSettingsCheckBox);
+        configuration.getUseMasterSettings().from(useMasterSettingsCheckBox);
         boolean enabled = !masterSettingsAvailable || !useMasterSettingsCheckBox.isSelected();
         visibleObjectsList.setEnabled(enabled);
         visibleObjectsList.setBackground(enabled ? UIUtil.getListBackground() : UIUtil.getComboBoxDisabledBackground());
@@ -76,7 +76,7 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
         final ObjectTypeFilterSettings objectFilterSettings = getConfiguration();
         final boolean notifyFilterListeners = objectFilterSettings.isModified();
         visibleObjectsList.applyChanges();
-        objectFilterSettings.getUseMasterSettings().applyChanges(useMasterSettingsCheckBox);
+        objectFilterSettings.getUseMasterSettings().to(useMasterSettingsCheckBox);
 
          new SettingsChangeNotifier() {
             @Override

@@ -40,11 +40,11 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         updateBorderTitleForeground(environmentApplicabilityPanel);
 
         EnvironmentVisibilitySettings visibilitySettings = settings.getVisibilitySettings();
-        visibilitySettings.getConnectionTabs().resetChanges(connectionTabsCheckBox);
-        visibilitySettings.getObjectEditorTabs().resetChanges(objectEditorTabsCheckBox);
-        visibilitySettings.getScriptEditorTabs().resetChanges(scriptEditorTabsCheckBox);
-        visibilitySettings.getDialogHeaders().resetChanges(dialogHeadersCheckBox);
-        visibilitySettings.getExecutionResultTabs().resetChanges(executionResultTabsCheckBox);
+        visibilitySettings.getConnectionTabs().from(connectionTabsCheckBox);
+        visibilitySettings.getObjectEditorTabs().from(objectEditorTabsCheckBox);
+        visibilitySettings.getScriptEditorTabs().from(scriptEditorTabsCheckBox);
+        visibilitySettings.getDialogHeaders().from(dialogHeadersCheckBox);
+        visibilitySettings.getExecutionResultTabs().from(executionResultTabsCheckBox);
 
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(environmentTypesTable);
         decorator.setAddAction(new AnActionButtonRunnable() {
@@ -102,11 +102,11 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
 
         EnvironmentVisibilitySettings visibilitySettings = settings.getVisibilitySettings();
         final boolean visibilityChanged =
-            visibilitySettings.getConnectionTabs().applyChanges(connectionTabsCheckBox) ||
-            visibilitySettings.getObjectEditorTabs().applyChanges(objectEditorTabsCheckBox) ||
-            visibilitySettings.getScriptEditorTabs().applyChanges(scriptEditorTabsCheckBox)||
-            visibilitySettings.getDialogHeaders().applyChanges(dialogHeadersCheckBox)||
-            visibilitySettings.getExecutionResultTabs().applyChanges(executionResultTabsCheckBox);
+            visibilitySettings.getConnectionTabs().to(connectionTabsCheckBox) ||
+            visibilitySettings.getObjectEditorTabs().to(objectEditorTabsCheckBox) ||
+            visibilitySettings.getScriptEditorTabs().to(scriptEditorTabsCheckBox)||
+            visibilitySettings.getDialogHeaders().to(dialogHeadersCheckBox)||
+            visibilitySettings.getExecutionResultTabs().to(executionResultTabsCheckBox);
 
         new SettingsChangeNotifier() {
             @Override
@@ -124,10 +124,10 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         environmentTypesTable.getModel().setEnvironmentTypes(settings.getEnvironmentTypes());
 
         EnvironmentVisibilitySettings visibilitySettings = settings.getVisibilitySettings();
-        visibilitySettings.getConnectionTabs().resetChanges(connectionTabsCheckBox);
-        visibilitySettings.getObjectEditorTabs().resetChanges(objectEditorTabsCheckBox);
-        visibilitySettings.getScriptEditorTabs().resetChanges(scriptEditorTabsCheckBox);
-        visibilitySettings.getDialogHeaders().resetChanges(dialogHeadersCheckBox);
-        visibilitySettings.getExecutionResultTabs().resetChanges(executionResultTabsCheckBox);
+        visibilitySettings.getConnectionTabs().from(connectionTabsCheckBox);
+        visibilitySettings.getObjectEditorTabs().from(objectEditorTabsCheckBox);
+        visibilitySettings.getScriptEditorTabs().from(scriptEditorTabsCheckBox);
+        visibilitySettings.getDialogHeaders().from(dialogHeadersCheckBox);
+        visibilitySettings.getExecutionResultTabs().from(executionResultTabsCheckBox);
     }
 }

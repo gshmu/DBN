@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -381,5 +382,11 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         if (!disposed) {
             disposed = true;
         }
+    }
+
+    @NotNull
+    public EnvironmentType getEnvironmentType() {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        return connectionHandler == null ? EnvironmentType.DEFAULT :  connectionHandler.getEnvironmentType();
     }
 }

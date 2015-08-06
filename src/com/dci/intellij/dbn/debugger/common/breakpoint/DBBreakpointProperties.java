@@ -1,32 +1,50 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties;
 
-public class DBBreakpointProperties extends XBreakpointProperties<DBBreakpointState> {
-    private VirtualFile file;
-    private int line;
-    private DBBreakpointState state = new DBBreakpointState(true);
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.intellij.util.xmlb.annotations.Attribute;
 
-    public DBBreakpointProperties(VirtualFile file, int line) {
-        this.file = file;
-        this.line = line;
+public class DBBreakpointProperties extends JavaBreakpointProperties<DBBreakpointProperties> {
+    @Attribute("connection-id")
+    private String connectionId;
+
+    private ConnectionHandlerRef connectionHandlerRef;
+
+    public DBBreakpointProperties() {
+        System.out.println();
     }
 
-    public VirtualFile getFile() {
-        return file;
+    public DBBreakpointProperties(ConnectionHandler connectionHandler) {
+        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        if (connectionHandler != null) {
+            connectionId = connectionHandler.getId();
+        }
     }
 
-    public int getLine() {
-        return line;
+    public String getConnectionId() {
+        return connectionId;
     }
 
-
-    public DBBreakpointState getState() {
-        return state;
+    public ConnectionHandler getConnectionHandler() {
+        if (connectionHandlerRef == null && connectionId != null) {
+            connectionHandlerRef = new ConnectionHandlerRef(connectionId);
+        }
+        return ConnectionHandlerRef.get(connectionHandlerRef);
     }
 
-    public void loadState(DBBreakpointState state) {
-        this.state = state;
+    @Nullable
+    @Override
+    public DBBreakpointProperties getState() {
+        return super.getState();
+    }
+
+    @Override
+    public void loadState(DBBreakpointProperties state) {
+        super.loadState(state);
+        connectionId = state.connectionId;
+        connectionHandlerRef = state.connectionHandlerRef;
     }
 }

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.session.model;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.model.DataModelState;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
@@ -40,19 +40,26 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
 
         checkDisposed();
 
-        ConnectionUtil.closeResultSet(resultSet);
-        newResultSet = loadResultSet();
+        closeResultSet();
 
-        if (newResultSet != null) {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+        Connection connection = null;
+        try {
+            connection = connectionHandler.getPoolConnection();
+            newResultSet =  metadataInterface.loadSessions(connection);
             checkDisposed();
 
-            resultSet = newResultSet;
-            resultSetExhausted = false;
+            setResultSet(newResultSet);
+            setResultSetExhausted(false);
 
             fetchNextRecords(10000, true);
-            ConnectionUtil.closeResultSet(resultSet);
-            resultSet = null;
+            closeResultSet();
+            setResultSet(null);
+        } finally {
+            connectionHandler.freePoolConnection(connection);
         }
+
     }
 
     public String getLoadError() {
@@ -71,12 +78,6 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
     @Override
     public SessionBrowserFilterState getFilter() {
         return (SessionBrowserFilterState) super.getFilter();
-    }
-
-    private ResultSet loadResultSet() throws SQLException {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-        return metadataInterface.loadSessions(connectionHandler.getStandaloneConnection());
     }
 
     @Override
@@ -107,7 +108,7 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
 
     @Override
     protected SessionBrowserModelRow createRow(int resultSetRowIndex) throws SQLException {
-        return new SessionBrowserModelRow(this, resultSet);
+        return new SessionBrowserModelRow(this, getResultSet());
     }
 
     public List<String> getDistinctValues(SessionBrowserFilterType filterType, String selectedValue) {

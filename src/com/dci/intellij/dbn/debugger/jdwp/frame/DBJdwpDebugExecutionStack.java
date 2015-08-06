@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
-import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
+import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 

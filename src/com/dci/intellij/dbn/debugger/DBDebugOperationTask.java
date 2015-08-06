@@ -17,6 +17,7 @@ public abstract class DBDebugOperationTask<T> implements RunnableTask<T> {
         public Thread newThread(@NotNull Runnable runnable) {
             Thread thread = new Thread(runnable, "DBN - Database Debug Thread");
             thread.setPriority(Thread.MIN_PRIORITY);
+            thread.setDaemon(true);
             return thread;
         }
     });

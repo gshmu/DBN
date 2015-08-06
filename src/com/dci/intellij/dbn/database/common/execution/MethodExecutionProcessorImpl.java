@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.database.common.execution;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -7,8 +15,10 @@ import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.execution.ExecutionType;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.execution.ExecutionCancellableCall;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -20,13 +30,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
 
 public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implements MethodExecutionProcessor<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -56,8 +59,8 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
     }
 
 
-    public void execute(MethodExecutionInput executionInput, ExecutionType executionType) throws SQLException {
-        executionInput.initExecution(executionType);
+    public void execute(MethodExecutionInput executionInput, DBDebuggerType debuggerType) throws SQLException {
+        executionInput.initExecution(debuggerType);
         boolean usePoolConnection = executionInput.isUsePoolConnection();
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBSchema executionSchema = executionInput.getExecutionSchema();
@@ -68,18 +71,20 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             connection.setAutoCommit(false);
         }
 
-        execute(executionInput, connection, executionType);
+        execute(executionInput, connection, debuggerType);
     }
 
-    public void execute(MethodExecutionInput executionInput, Connection connection, ExecutionType executionType) throws SQLException {
-        executionInput.initExecution(executionType);
-        ConnectionHandler connectionHandler = getConnectionHandler();
+    public void execute(final MethodExecutionInput executionInput, final Connection connection, DBDebuggerType debuggerType) throws SQLException {
+        executionInput.initExecution(debuggerType);
+        final ConnectionHandler connectionHandler = getConnectionHandler();
         boolean usePoolConnection = false;
-        boolean loggingEnabled = executionType != ExecutionType.DEBUG && executionInput.isEnableLogging();
+        boolean loggingEnabled = debuggerType != DBDebuggerType.JDBC && executionInput.isEnableLogging();
         Project project = getProject();
-        DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
+        final DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
         Counter runningMethods = connectionHandler.getLoadMonitor().getRunningMethods();
         runningMethods.increment();
+        PreparedStatement closeOnErrorStatement = null;
+
         try {
             String command = buildExecutionCommand(executionInput);
             T method = getMethod();
@@ -89,23 +94,34 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
             }
 
-            PreparedStatement preparedStatement = isQuery() ?
+            final PreparedStatement statement = isQuery() ?
                     connection.prepareStatement(command) :
                     connection.prepareCall(command);
+            closeOnErrorStatement = statement;
 
-            bindParameters(executionInput, preparedStatement);
+            bindParameters(executionInput, statement);
 
             MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
-            int timeout = executionType.isDebug() ?
+            int timeout = debuggerType.isDebug() ?
                     methodExecutionSettings.getDebugExecutionTimeout() :
                     methodExecutionSettings.getExecutionTimeout();
 
-            preparedStatement.setQueryTimeout(timeout);
-            preparedStatement.execute();
+            statement.setQueryTimeout(timeout);
+            MethodExecutionResult executionResult = new ExecutionCancellableCall<MethodExecutionResult>(timeout, TimeUnit.SECONDS) {
+                @Override
+                public MethodExecutionResult execute() throws Exception {
+                    statement.execute();
+                    return executionInput.getExecutionResult();
+                }
 
-            MethodExecutionResult executionResult = executionInput.getExecutionResult();
+                @Override
+                public void cancel() throws Exception {
+                    ConnectionUtil.cancelStatement(statement);
+                }
+            }.start();
+
             if (executionResult != null) {
-                loadValues(executionResult, preparedStatement);
+                loadValues(executionResult, statement);
                 executionResult.calculateExecDuration();
 
                 if (loggingEnabled) {
@@ -115,7 +131,9 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             }
 
             if (!usePoolConnection) connectionHandler.notifyChanges(method.getVirtualFile());
-
+        } catch (SQLException e) {
+            ConnectionUtil.closeStatement(closeOnErrorStatement);
+            throw e;
         } finally {
             runningMethods.decrement();
             if (loggingEnabled) {
@@ -134,7 +152,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 }
             }
 
-            if (executionType == ExecutionType.DEBUG)
+            if (debuggerType == DBDebuggerType.JDBC)
                 connectionHandler.dropPoolConnection(connection); else
                 connectionHandler.freePoolConnection(connection);
         }

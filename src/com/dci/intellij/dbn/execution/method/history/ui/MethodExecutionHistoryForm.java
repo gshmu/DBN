@@ -14,10 +14,11 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
-import com.dci.intellij.dbn.execution.method.ui.MethodExecutionForm;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
+import com.dci.intellij.dbn.execution.method.ui.MethodExecutionInputForm;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.Disposable;
@@ -40,7 +41,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     private MethodExecutionHistory executionHistory;
     private ChangeListener changeListener;
 
-    private Map<MethodExecutionInput, MethodExecutionForm> methodExecutionForms;
+    private Map<MethodExecutionInput, MethodExecutionInputForm> methodExecutionForms;
 
     public MethodExecutionHistoryForm(MethodExecutionHistoryDialog parentComponent, MethodExecutionHistory executionHistory) {
         super(parentComponent);
@@ -51,7 +52,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
                 ActionUtil.SEPARATOR,
                 new OpenSettingsAction());
         actionsPanel.add(actionToolbar.getComponent());
-        methodExecutionForms = new HashMap<MethodExecutionInput, MethodExecutionForm>();
+        methodExecutionForms = new HashMap<MethodExecutionInput, MethodExecutionInputForm>();
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(contentPanel);
         JBSplitter splitter = (JBSplitter) contentPanel.getComponent(0);
@@ -86,13 +87,13 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     public void showMethodExecutionPanel(MethodExecutionInput executionInput) {
         argumentsPanel.removeAll();
         if (executionInput != null && !executionInput.isObsolete()) {
-            MethodExecutionForm methodExecutionForm = methodExecutionForms.get(executionInput);
-            if (methodExecutionForm == null) {
-                methodExecutionForm = new MethodExecutionForm(this, executionInput, true, false);
-                methodExecutionForm.addChangeListener(getChangeListener());
-                methodExecutionForms.put(executionInput, methodExecutionForm);
+            MethodExecutionInputForm methodExecutionInputForm = methodExecutionForms.get(executionInput);
+            if (methodExecutionInputForm == null) {
+                methodExecutionInputForm = new MethodExecutionInputForm(this, executionInput, true, DBDebuggerType.NONE);
+                methodExecutionInputForm.addChangeListener(getChangeListener());
+                methodExecutionForms.put(executionInput, methodExecutionInputForm);
             }
-            argumentsPanel.add(methodExecutionForm.getComponent(), BorderLayout.CENTER);
+            argumentsPanel.add(methodExecutionInputForm.getComponent(), BorderLayout.CENTER);
         }
         argumentsPanel.revalidate();
         argumentsPanel.repaint();
@@ -110,7 +111,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     }
 
     public void updateMethodExecutionInputs() {
-        for (MethodExecutionForm methodExecutionComponent : methodExecutionForms.values()) {
+        for (MethodExecutionInputForm methodExecutionComponent : methodExecutionForms.values()) {
             methodExecutionComponent.updateExecutionInput();
         }
     }

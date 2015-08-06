@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.jdom.Element;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
@@ -13,11 +14,21 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
 
 public class MethodExecutionHistory implements PersistentStateElement<Element>, Disposable{
     private List<MethodExecutionInput> executionInputs = new ArrayList<MethodExecutionInput>();
     private boolean groupEntries = true;
     private DBObjectRef<DBMethod> selection;
+    private ProjectRef projectRef;
+
+    public MethodExecutionHistory(Project project) {
+        this.projectRef = new ProjectRef(project);
+    }
+
+    public Project getProject() {
+        return projectRef.get();
+    }
 
     public List<MethodExecutionInput> getExecutionInputs() {
         return executionInputs;
@@ -60,7 +71,7 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
                 return executionInput;
             }
         }
-        MethodExecutionInput executionInput = new MethodExecutionInput(method);
+        MethodExecutionInput executionInput = new MethodExecutionInput(getProject(), method);
         executionInputs.add(executionInput);
         Collections.sort(executionInputs);
         selection = DBObjectRef.from(method);
@@ -76,7 +87,7 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
 
         DBMethod method = methodRef.get();
         if (method != null) {
-            MethodExecutionInput executionInput = new MethodExecutionInput(method);
+            MethodExecutionInput executionInput = new MethodExecutionInput(getProject(), method);
             executionInputs.add(executionInput);
             Collections.sort(executionInputs);
             selection = methodRef;
@@ -115,7 +126,7 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
             Element executionInputsElement = historyElement.getChild("execution-inputs");
             for (Object object : executionInputsElement.getChildren()) {
                 Element configElement = (Element) object;
-                MethodExecutionInput executionInput = new MethodExecutionInput();
+                MethodExecutionInput executionInput = new MethodExecutionInput(getProject());
                 executionInput.readConfiguration(configElement);
                 executionInputs.add(executionInput);
             }

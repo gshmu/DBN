@@ -37,39 +37,45 @@ public class DBJdwpDebuggerEvaluator extends DBDebuggerEvaluator<DBJdwpDebugStac
             XDebuggerEvaluator.XEvaluationCallback evaluationCallback = new XDebuggerEvaluator.XEvaluationCallback() {
                 @Override
                 public void evaluated(@NotNull XValue result) {
-                    ObjectReferenceImpl value = (ObjectReferenceImpl) ((JavaValue) result).getDescriptor().getValue();
-                    List<Field> fields = ((ClassTypeImpl) value.type()).fields();
-                    String stringValue = "null";
-                    String typeIdentifier = value.type().name();
-                    String typeName = debugValue.getDebugProcess().getDebuggerInterface().getJdwpTypeName(typeIdentifier);
+                    try {
+                        ObjectReferenceImpl value = (ObjectReferenceImpl) ((JavaValue) result).getDescriptor().getValue();
+                        List<Field> fields = ((ClassTypeImpl) value.type()).fields();
+                        String stringValue = "null";
+                        String typeIdentifier = value.type().name();
+                        String typeName = debugValue.getDebugProcess().getDebuggerInterface().getJdwpTypeName(typeIdentifier);
 
-                    String typeLength = null;
-                    for (Field field : fields) {
-                        if (field.name().equals("_value")) {
-                            Value fieldValue = value.getValue(field);
-                            if  (fieldValue != null) {
-                                stringValue = fieldValue.toString();
-                            }
-                        } else if (field.name().equals("_maxLength")) {
-                            Value fieldValue = value.getValue(field);
-                            if  (fieldValue != null) {
-                                typeLength = fieldValue.toString();
+                        String typeLength = null;
+                        for (Field field : fields) {
+                            if (field.name().equals("_value")) {
+                                Value fieldValue = value.getValue(field);
+                                if  (fieldValue != null) {
+                                    stringValue = fieldValue.toString();
+                                }
+                            }/* else if (field.name().equals("_maxLength")) {
+                                Value fieldValue = value.getValue(field);
+                                if  (fieldValue != null) {
+                                    typeLength = fieldValue.toString();
+                                }
+                            }*/
+                            else if (field.name().equals("_type")) {
+                                Value fieldValue = value.getValue(field);
+                                if  (fieldValue != null) {
+                                    typeName = fieldValue.toString();
+                                }
+                                stringValue = "";
                             }
                         }
-                        else if (field.name().equals("_type")) {
-                            Value fieldValue = value.getValue(field);
-                            if  (fieldValue != null) {
-                                typeName = fieldValue.toString();
-                            }
-                            stringValue = "";
-                        }
-                    }
-                    debugValue.setValue(stringValue);
+                        debugValue.setValue(stringValue);
 
-                    if (typeLength != null) {
-                        typeName = typeName + "(" + typeLength + ")";
+                        if (typeLength != null) {
+                            typeName = typeName + "(" + typeLength + ")";
+                        }
+                        debugValue.setType(typeName);
+                    }catch (Exception e) {
+                        debugValue.setValue("");
+                        debugValue.setType("Error: " + e.getMessage());
                     }
-                    debugValue.setType(typeName);
+
 
                     node.setPresentation(
                             debugValue.getIcon(),

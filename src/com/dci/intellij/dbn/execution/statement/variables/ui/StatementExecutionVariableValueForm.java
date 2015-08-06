@@ -39,7 +39,7 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 
 
-public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementExecutionVariablesForm> {
+public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementExecutionInputForm> {
     private JPanel mainPanel;
     private JLabel variableNameLabel;
     private JPanel valueFieldPanel;
@@ -52,7 +52,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
     private StatementExecutionVariable variable;
     private TextFieldWithPopup editorComponent;
 
-    public StatementExecutionVariableValueForm(StatementExecutionVariablesForm parentComponent, final StatementExecutionVariable variable) {
+    public StatementExecutionVariableValueForm(StatementExecutionInputForm parentComponent, final StatementExecutionVariable variable) {
         super(parentComponent);
         this.variable = variable;
         errorLabel.setVisible(false);

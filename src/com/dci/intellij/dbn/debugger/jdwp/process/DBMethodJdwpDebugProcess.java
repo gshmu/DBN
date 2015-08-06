@@ -6,8 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
-import com.dci.intellij.dbn.execution.ExecutionType;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -16,8 +15,8 @@ import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.xdebugger.XDebugSession;
 
 public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecutionInput> {
-    public DBMethodJdwpDebugProcess(@NotNull XDebugSession session, @NotNull DebuggerSession debuggerSession, ConnectionHandler connectionHandler) {
-        super(session, debuggerSession, connectionHandler);
+    public DBMethodJdwpDebugProcess(@NotNull XDebugSession session, @NotNull DebuggerSession debuggerSession, ConnectionHandler connectionHandler, int tcpPort) {
+        super(session, debuggerSession, connectionHandler, tcpPort);
     }
 
     @NotNull
@@ -54,19 +53,10 @@ public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecution
     }
 
     @Override
-    protected void doExecuteTarget() throws SQLException {
+    protected void executeTarget() throws SQLException {
         MethodExecutionInput methodExecutionInput = getExecutionInput();
         MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
-        methodExecutionManager.debugExecute(methodExecutionInput, getTargetConnection(), ExecutionType.DEBUG_JWDP);
-    }
-
-    @Override
-    protected void registerDefaultBreakpoint() {
-        MethodExecutionInput methodExecutionInput = getExecutionInput();
-        DBMethod method = methodExecutionInput.getMethod();
-        if (method != null) {
-            getBreakpointHandler().registerDefaultBreakpoint(method);
-        }
+        methodExecutionManager.debugExecute(methodExecutionInput, getTargetConnection(), DBDebuggerType.JDWP);
     }
 
     @Override

@@ -51,20 +51,6 @@ public class DBNHintForm extends DBNFormImpl{
 
     }
 
-    public static Color adjust(Color color, double shift) {
-        if (isDarkLookAndFeel()) {
-            shift = -shift;
-        }
-        int red = (int) Math.round(Math.min(255, color.getRed() + 255 * shift));
-        int green = (int) Math.round(Math.min(255, color.getGreen() + 255 * shift));
-        int blue = (int) Math.round(Math.min(255, color.getBlue() + 255 * shift));
-
-        int alpha = color.getAlpha();
-
-        return new Color(red, green, blue, alpha);
-
-    }
-
     @Override
     public JComponent getComponent() {
         return mainPanel;
