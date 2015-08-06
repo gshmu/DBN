@@ -36,6 +36,7 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private int timeout;
+    private long startTimestamp = System.currentTimeMillis();
     private TimeUnit timeUnit;
 
     private transient ProgressIndicator progressIndicator;
@@ -62,14 +63,27 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
                 TimerTask cancelCheckTask = new TimerTask() {
                     @Override
                     public void run() {
-                        if (progressIndicator != null && progressIndicator.isCanceled()) {
-                            try {
-                                ExecutionCancellableCall.this.cancel();
-                            } catch (Exception e) {
-                                LOGGER.warn("Error cancelling operation", e);
+                        if (progressIndicator != null) {
+                            if (progressIndicator.isCanceled()) {
+                                try {
+                                    ExecutionCancellableCall.this.cancel();
+                                } catch (Exception e) {
+                                    LOGGER.warn("Error cancelling operation", e);
+                                }
+                                if (future != null) future.cancel(true);
+                                cancelCheckTimer.cancel();
+                            } else {
+                                String text = progressIndicator.getText();
+                                int index = text.indexOf(" (timing out in ");
+                                if (index > -1) {
+                                    text = text.substring(0, index);
+                                }
+
+                                int runningForSeconds = (int) ((System.currentTimeMillis() - startTimestamp) / 1000);
+                                text = text + " (timing out in " + (timeout - runningForSeconds) + "s) ";
+
+                                progressIndicator.setText(text);
                             }
-                            if (future != null) future.cancel(true);
-                            cancelCheckTimer.cancel();
                         }
                     }
                 };
