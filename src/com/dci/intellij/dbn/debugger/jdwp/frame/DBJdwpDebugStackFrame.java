@@ -1,11 +1,16 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
+import javax.swing.Icon;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugStackFrame;
-import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
 import com.dci.intellij.dbn.debugger.jdwp.evaluation.DBJdwpDebuggerEvaluator;
+import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
@@ -16,11 +21,6 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.impl.XSourcePositionImpl;
 import com.sun.jdi.Location;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.Set;
 
 public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess, DBJdwpDebugValue>{
     private XStackFrame underlyingFrame;
@@ -34,7 +34,7 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
     private LazyValue<Location> location = new SimpleLazyValue<Location>() {
         @Override
         protected Location load() {
-            return ((JavaStackFrame) underlyingFrame).getDescriptor().getLocation();
+            return underlyingFrame == null ? null : ((JavaStackFrame) underlyingFrame).getDescriptor().getLocation();
         }
     };
 
@@ -78,6 +78,7 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
     }
 
 
+    @Nullable
     public Location getLocation() {
         return location.get();
     }

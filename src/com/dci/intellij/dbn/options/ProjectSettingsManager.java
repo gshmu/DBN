@@ -45,6 +45,7 @@ import com.intellij.openapi.project.ProjectManager;
 public class ProjectSettingsManager implements ProjectComponent, PersistentStateComponent<Element> {
     private Project project;
     private ProjectSettings projectSettings;
+    private ConfigId lastConfigId;
 
     private ProjectSettingsManager(Project project) {
         this.project = project;
@@ -61,6 +62,14 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
         } else {
             return ProjectSettingsManager.getInstance(project).getProjectSettings();
         }
+    }
+
+    public ConfigId getLastConfigId() {
+        return lastConfigId;
+    }
+
+    public void setLastConfigId(ConfigId lastConfigId) {
+        this.lastConfigId = lastConfigId;
     }
 
     public ProjectSettings getProjectSettings() {

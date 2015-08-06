@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.code.common.lookup;
 
+import javax.swing.Icon;
+
 import com.dci.intellij.dbn.code.common.completion.BasicInsertHandler;
 import com.dci.intellij.dbn.code.common.completion.BracketsInsertHandler;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
-import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
@@ -14,8 +15,6 @@ import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.project.Project;
-
-import javax.swing.Icon;
 
 public class TokenChainLookupItemBuilder extends LookupItemBuilder {
 
@@ -78,11 +77,6 @@ public class TokenChainLookupItemBuilder extends LookupItemBuilder {
                 tokenType.isParameter() ? "parameter" :
                 tokenType.isDataType() ? "datatype" :null;
 */
-    }
-
-    @Override
-    public CodeCompletionLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
-        return super.createLookupItem(source, consumer);
     }
 
     private void createLookupItem(CompletionResultSet resultSet, String presentation, CodeCompletionContext completionContext, boolean insertParenthesis) {

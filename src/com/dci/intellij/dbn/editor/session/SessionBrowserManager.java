@@ -44,6 +44,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -222,26 +223,30 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                 new ReadActionRunner() {
                     @Override
                     protected Object run() {
-                        Project project = getProject();
-                        if (project != null && !project.isDisposed()) {
-                            final List<SessionBrowser> sessionBrowsers = new ArrayList<SessionBrowser>();
-                            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                            FileEditor[] editors = fileEditorManager.getAllEditors();
-                            for (FileEditor editor : editors) {
-                                if (editor instanceof SessionBrowser) {
-                                    SessionBrowser sessionBrowser = (SessionBrowser) editor;
-                                    sessionBrowsers.add(sessionBrowser);
-                                }
-                            }
-
-                            new SimpleLaterInvocator() {
-                                @Override
-                                protected void execute() {
-                                    for (SessionBrowser sessionBrowser : sessionBrowsers) {
-                                        sessionBrowser.refreshLoadTimestamp();
+                        try {
+                            Project project = getProject();
+                            if (!project.isDisposed()) {
+                                final List<SessionBrowser> sessionBrowsers = new ArrayList<SessionBrowser>();
+                                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                                FileEditor[] editors = fileEditorManager.getAllEditors();
+                                for (FileEditor editor : editors) {
+                                    if (editor instanceof SessionBrowser) {
+                                        SessionBrowser sessionBrowser = (SessionBrowser) editor;
+                                        sessionBrowsers.add(sessionBrowser);
                                     }
                                 }
-                            }.start();
+
+                                new SimpleLaterInvocator() {
+                                    @Override
+                                    protected void execute() {
+                                        for (SessionBrowser sessionBrowser : sessionBrowsers) {
+                                            sessionBrowser.refreshLoadTimestamp();
+                                        }
+                                    }
+                                }.start();
+                            }
+                        } catch (ProcessCanceledException ignore) {
+
                         }
                         return null;
                     }

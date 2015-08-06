@@ -225,7 +225,7 @@ public class DBObjectListContainer implements Disposable {
             DynamicContentType sourceContentType,
             boolean indexed) {
         if (isSupported(objectType)) {
-            if (sourceContentHolder.getDynamicContent(sourceContentType) != null) {
+            if (sourceContentHolder != null && sourceContentHolder.getDynamicContent(sourceContentType) != null) {
                 ContentDependencyAdapter dependencyAdapter =
                         new SubcontentDependencyAdapterImpl(
                                 sourceContentHolder,
@@ -310,7 +310,7 @@ public class DBObjectListContainer implements Disposable {
         }
         if (hiddenObjectLists != null)  {
             for (DBObjectList objectList : hiddenObjectLists.values()) {
-                if (objectList.getObjectType() != DBObjectType.ANY) {
+                if (!objectList.getObjectType().isOneOf(DBObjectType.ANY, DBObjectType.OUTGOING_DEPENDENCY, DBObjectType.INCOMING_DEPENDENCY)) {
                     objectList.load(false);
                 }
             }

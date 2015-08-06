@@ -35,7 +35,7 @@ public abstract class Setting<T, E> {
         return "[" + getClass().getSimpleName() + "] " + name + " = " + value;
     }
 
-    public abstract boolean applyChanges(E component) throws ConfigurationException;
+    public abstract boolean to(E component) throws ConfigurationException;
 
-    public abstract void resetChanges(E component);
+    public abstract void from(E component);
 }

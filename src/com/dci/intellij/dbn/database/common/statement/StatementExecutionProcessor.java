@@ -102,11 +102,10 @@ public class StatementExecutionProcessor {
     private ResultSet executeQuery(final StatementDefinition statementDefinition, final Connection connection, boolean forceExecution, final Object... arguments) throws SQLException {
         if (forceExecution || statementDefinition.canExecute(connection)) {
             return new StatementExecutor<ResultSet>(timeout) {
-
+                private Statement statement;
                 @Override
                 public ResultSet execute() throws Exception {
                     String statementText = null;
-                    Statement statement = null;
                     boolean executionSuccessful = true;
                     try {
                         if (SettingsUtil.isDebugEnabled) {
@@ -146,7 +145,13 @@ public class StatementExecutionProcessor {
                         throw exception;
                     } finally {
                         statementDefinition.updateExecutionStatus(executionSuccessful);
-                    }                }
+                    }
+                }
+
+                @Override
+                protected void handleTimeout() {
+                    ConnectionUtil.closeStatement(statement);
+                }
             }.start();
         } else {
             if (lastException == null) {
@@ -175,17 +180,18 @@ public class StatementExecutionProcessor {
 
     private <T extends CallableStatementOutput> T executeCall(final StatementDefinition statementDefinition, final Connection connection, @Nullable final T outputReader, final Object... arguments) throws SQLException {
         return new StatementExecutor<T>(timeout) {
+            CallableStatement statement;
             @Override
             public T execute() throws Exception {
                 String statementText = statementDefinition.prepareStatementText(arguments);
                 if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
-                CallableStatement callableStatement = connection.prepareCall(statementText);
+                statement = connection.prepareCall(statementText);
                 try {
-                    if (outputReader != null) outputReader.registerParameters(callableStatement);
-                    callableStatement.setQueryTimeout(timeout);
-                    callableStatement.execute();
-                    if (outputReader != null) outputReader.read(callableStatement);
+                    if (outputReader != null) outputReader.registerParameters(statement);
+                    statement.setQueryTimeout(timeout);
+                    statement.execute();
+                    if (outputReader != null) outputReader.read(statement);
                     return outputReader;
                 } catch (SQLException exception) {
                     if (SettingsUtil.isDebugEnabled)
@@ -195,8 +201,13 @@ public class StatementExecutionProcessor {
 
                     throw exception;
                 } finally {
-                    ConnectionUtil.closeStatement(callableStatement);
+                    ConnectionUtil.closeStatement(statement);
                 }
+            }
+
+            @Override
+            protected void handleTimeout() {
+                ConnectionUtil.closeStatement(statement);
             }
         }.start();
     }
@@ -220,12 +231,13 @@ public class StatementExecutionProcessor {
 
     private void executeUpdate(final StatementDefinition statementDefinition, final Connection connection, final Object... arguments) throws SQLException {
         new StatementExecutor(timeout) {
+            private Statement statement;
             @Override
             public Object execute() throws Exception {
                 String statementText = statementDefinition.prepareStatementText(arguments);
                 if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
-                Statement statement = connection.createStatement();
+                statement = connection.createStatement();
                 try {
                     statement.setQueryTimeout(timeout);
                     statement.executeUpdate(statementText);
@@ -240,6 +252,11 @@ public class StatementExecutionProcessor {
                     ConnectionUtil.closeStatement(statement);
                 }
                 return null;
+            }
+
+            @Override
+            protected void handleTimeout() {
+                ConnectionUtil.closeStatement(statement);
             }
         }.start();
     }
@@ -262,13 +279,13 @@ public class StatementExecutionProcessor {
 
     private boolean executeStatement(final StatementDefinition statementDefinition, final Connection connection, final Object... arguments) throws SQLException {
         return new StatementExecutor<Boolean>(timeout) {
-
+            private Statement statement;
             @Override
             public Boolean execute() throws Exception {
                 String statementText = statementDefinition.prepareStatementText(arguments);
                 if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
-                Statement statement = connection.createStatement();
+                statement = connection.createStatement();
                 try {
                     statement.setQueryTimeout(timeout);
                     return statement.execute(statementText);
@@ -282,6 +299,11 @@ public class StatementExecutionProcessor {
                 } finally {
                     ConnectionUtil.closeStatement(statement);
                 }
+            }
+
+            @Override
+            protected void handleTimeout() {
+                ConnectionUtil.closeStatement(statement);
             }
         }.start();
     }

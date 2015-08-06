@@ -5,7 +5,7 @@ import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugValue;
-import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugProcess;
+import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.intellij.xdebugger.frame.XValueModifier;
 
 public class DBJdwpDebugValue extends DBDebugValue<DBJdwpDebugStackFrame> {

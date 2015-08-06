@@ -4,14 +4,17 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
 import com.dci.intellij.dbn.execution.script.options.ui.ScriptExecutionSettingsForm;
 
-public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettingsForm> {
+public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettingsForm> implements ExecutionTimeoutSettings{
     private ExecutionEngineSettings parent;
     private CmdLineInterfaceBundle commandLineInterfaces = new CmdLineInterfaceBundle();
+    private int executionTimeout = 300;
 
     public ScriptExecutionSettings(ExecutionEngineSettings parent) {
         this.parent = parent;
@@ -41,6 +44,26 @@ public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettin
     }
 
     @Override
+    public int getDebugExecutionTimeout() {
+        return 0;
+    }
+
+    public int getExecutionTimeout() {
+        return executionTimeout;
+    }
+
+    public boolean setExecutionTimeout(int executionTimeout) {
+        if (this.executionTimeout != executionTimeout) {
+            this.executionTimeout = executionTimeout;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean setDebugExecutionTimeout(int timeout) {return false;}
+
+    @Override
     public String getConfigElementName() {
         return "script-execution";
     }
@@ -49,6 +72,7 @@ public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettin
     public void readConfiguration(Element element) {
         Element executorsElement = element.getChild("command-line-interfaces");
         commandLineInterfaces.readConfiguration(executorsElement);
+        executionTimeout = SettingsUtil.getInteger(element, "execution-timeout", executionTimeout);
     }
 
     @Override
@@ -56,5 +80,6 @@ public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettin
         Element executorsElement = new Element("command-line-interfaces");
         commandLineInterfaces.writeConfiguration(executorsElement);
         element.addContent(executorsElement);
+        SettingsUtil.setInteger(element, "execution-timeout", executionTimeout);
     }
 }

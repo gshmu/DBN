@@ -14,6 +14,7 @@ public abstract class SimpleTimeoutCall<T> implements Callable<T>{
         public Thread newThread(@NotNull Runnable runnable) {
             Thread thread = new Thread(runnable, "DBN - Timed-out Execution Thread");
             thread.setPriority(Thread.MIN_PRIORITY);
+            thread.setDaemon(true);
             return thread;
         }
     });

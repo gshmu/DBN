@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 
-public abstract class DisposableLazyValue<T> implements  LazyValue<T>, Disposable{
+public abstract class DisposableLazyValue<T> implements LazyValue<T>, Disposable{
 
     private T value;
     private boolean loaded = false;

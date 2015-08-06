@@ -128,6 +128,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         try {
             databaseSettings.checkConfiguration();
             connectionHandler.getStandaloneConnection();
+            ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
+            connectionStatus.setValid(true);
+            connectionStatus.setConnected(true);
             if (showSuccessMessage) {
                 showSuccessfulConnectionMessage(project, connectionName);
             }
@@ -354,6 +357,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             }
         }
         private void resolveIdleStatus(final ConnectionHandler connectionHandler) {
+            FailsafeUtil.check(connectionHandler);
             final DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
             final ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
             if (connectionHandler.getLoadMonitor().isIdle() && !connectionStatus.isResolvingIdleStatus()) {

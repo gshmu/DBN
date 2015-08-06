@@ -28,8 +28,8 @@ public class DebugMethodAction extends AbstractSourceCodeEditorAction {
             Project project = virtualFile.getProject();
             if (project != null) {
                 DBMethod method = (DBMethod) virtualFile.getObject();
-                DatabaseDebuggerManager executionManager = DatabaseDebuggerManager.getInstance(project);
-                executionManager.startMethodDebugger(method);
+                DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
+                debuggerManager.startMethodDebugger(method);
             }
         }
     }

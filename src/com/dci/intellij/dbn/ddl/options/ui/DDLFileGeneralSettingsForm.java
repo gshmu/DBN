@@ -64,11 +64,11 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
 
     public void applyFormChanges() throws ConfigurationException {
         final DDLFileGeneralSettings settings = getConfiguration();
-        settings.getLookupDDLFilesEnabled().applyChanges(lookupDDLFilesCheckBox);
-        settings.getCreateDDLFilesEnabled().applyChanges(createDDLFileCheckBox);
-        final boolean settingChanged = settings.getSynchronizeDDLFilesEnabled().applyChanges(synchronizeDDLFilesCheckBox);
-        settings.getUseQualifiedObjectNames().applyChanges(useQualifiedObjectNamesCheckBox);
-        settings.getMakeScriptsRerunnable().applyChanges(makeScriptsRerunnableCheckBox);
+        settings.getLookupDDLFilesEnabled().to(lookupDDLFilesCheckBox);
+        settings.getCreateDDLFilesEnabled().to(createDDLFileCheckBox);
+        final boolean settingChanged = settings.getSynchronizeDDLFilesEnabled().to(synchronizeDDLFilesCheckBox);
+        settings.getUseQualifiedObjectNames().to(useQualifiedObjectNamesCheckBox);
+        settings.getMakeScriptsRerunnable().to(makeScriptsRerunnableCheckBox);
 
         new SettingsChangeNotifier(){
             @Override
@@ -84,10 +84,10 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
 
     public void resetFormChanges() {
         DDLFileGeneralSettings settings = getConfiguration();
-        settings.getLookupDDLFilesEnabled().resetChanges(lookupDDLFilesCheckBox);
-        settings.getCreateDDLFilesEnabled().resetChanges(createDDLFileCheckBox);
-        settings.getSynchronizeDDLFilesEnabled().resetChanges(synchronizeDDLFilesCheckBox);
-        settings.getUseQualifiedObjectNames().resetChanges(useQualifiedObjectNamesCheckBox);
-        settings.getMakeScriptsRerunnable().resetChanges(makeScriptsRerunnableCheckBox);
+        settings.getLookupDDLFilesEnabled().from(lookupDDLFilesCheckBox);
+        settings.getCreateDDLFilesEnabled().from(createDDLFileCheckBox);
+        settings.getSynchronizeDDLFilesEnabled().from(synchronizeDDLFilesCheckBox);
+        settings.getUseQualifiedObjectNames().from(useQualifiedObjectNamesCheckBox);
+        settings.getMakeScriptsRerunnable().from(makeScriptsRerunnableCheckBox);
     }
 }

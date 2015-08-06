@@ -443,7 +443,7 @@ public enum DBObjectType implements DynamicContentType {
         OUTGOING_DEPENDENCY.setGenericType(ANY);
     }
 
-    public boolean isOneOf(DBObjectType[] objectTypes) {
+    public boolean isOneOf(DBObjectType ... objectTypes) {
         for (DBObjectType objectType : objectTypes) {
             if (objectType.matches(this)) {
                 return true;

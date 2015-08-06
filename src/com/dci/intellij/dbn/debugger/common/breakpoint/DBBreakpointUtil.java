@@ -54,7 +54,8 @@ public class DBBreakpointUtil {
         }
         return breakpointFile;
     }
-    @NotNull
+
+    @Nullable
     public static LineBreakpoint getLineBreakpoint(Project project, @NotNull XLineBreakpoint breakpoint) {
         LineBreakpoint lineBreakpoint = breakpoint.getUserData(LINE_BREAKPOINT_KEY);
         if (lineBreakpoint == null) {

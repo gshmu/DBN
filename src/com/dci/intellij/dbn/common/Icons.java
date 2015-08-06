@@ -59,11 +59,15 @@ public class Icons {
     public static final Icon ACTION_RERUN = load("/img/action/Rerun.png");
     public static final Icon ACTION_PIN = load("/img/action/Pin.png");
     public static final Icon ACTION_REVERT_CHANGES = load("/img/action/RevertChanges.png");
+    public static final Icon ACTION_SAVE_CHANGES = load("/img/action/Save.png");
     public static final Icon ACTION_SELECT_ALL = load("/img/action/SelectAll.png");
     public static final Icon ACTION_OPTIONS = load("/img/action/Options.png");
     public static final Icon ACTION_NAVIGATE = load("/img/action/Navigate.png");
     public static final Icon ACTION_DISCONNECT_SESSION = load("/img/action/DisconnectSession.png");
     public static final Icon ACTION_KILL_SESSION = load("/img/action/KillSession.png");
+
+    public static final Icon ACTION_SAVE_TO_SETTINGS = load("/img/action/SaveToSettings.png");
+    public static final Icon ACTION_REVERT_FROM_SETTINGS = load("/img/action/RevertFromSettings.png");
 
 
     public static final Icon DATABASE_NAVIGATOR = load("/img/project/DatabaseNavigator.png");

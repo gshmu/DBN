@@ -16,6 +16,11 @@ public abstract class SimpleLazyValue<T> implements LazyValue<T> {
     }
 
     @Override
+    public void set(T value) {
+        this.value = value;
+    }
+
+    @Override
     public boolean isLoaded() {
         return value != null;
     }

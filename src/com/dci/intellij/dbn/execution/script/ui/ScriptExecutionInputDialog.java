@@ -4,13 +4,13 @@ import javax.swing.Action;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.execution.script.ScriptExecutionExecutionInput;
+import com.dci.intellij.dbn.execution.script.ScriptExecutionInput;
 import com.intellij.openapi.project.Project;
 
 public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputForm> {
-    private ScriptExecutionExecutionInput executionInput = new ScriptExecutionExecutionInput();
+    private ScriptExecutionInput executionInput;
 
-    public ScriptExecutionInputDialog(Project project, ScriptExecutionExecutionInput executionInput) {
+    public ScriptExecutionInputDialog(Project project, ScriptExecutionInput executionInput) {
         super(project, "Execute SQL Script", true);
         this.executionInput = executionInput;
         setModal(true);
