@@ -16,9 +16,9 @@ import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.intellij.openapi.util.Disposer;
 
 public class ResultSetDataModel<T extends ResultSetDataModelRow> extends SortableDataModel<T> {
-    protected ResultSet resultSet;
-    protected ConnectionHandler connectionHandler;
-    protected boolean resultSetExhausted = false;
+    private ResultSet resultSet;
+    private ConnectionHandler connectionHandler;
+    private boolean resultSetExhausted = false;
 
     public ResultSetDataModel(ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject());
@@ -35,11 +35,16 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     }
 
     protected T createRow(int resultSetRowIndex) throws SQLException {
-        return (T) new ResultSetDataModelRow(this, resultSet);
+        return (T) new ResultSetDataModelRow(this, getResultSet());
     }
 
+    @NotNull
     public ResultSet getResultSet() {
-        return resultSet;
+        return FailsafeUtil.get(resultSet);
+    }
+
+    public void setResultSet(ResultSet resultSet) {
+        this.resultSet = resultSet;
     }
 
     public int fetchNextRecords(int records, boolean reset) throws SQLException {
@@ -109,6 +114,10 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
 
     public boolean isResultSetExhausted() {
         return resultSetExhausted;
+    }
+
+    public void setResultSetExhausted(boolean resultSetExhausted) {
+        this.resultSetExhausted = resultSetExhausted;
     }
 
     public void closeResultSet() {

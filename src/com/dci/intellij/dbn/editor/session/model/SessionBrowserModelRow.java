@@ -28,10 +28,6 @@ public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowser
         return new SessionBrowserModelCell(this, resultSet, (ResultSetColumnInfo) columnInfo);
     }
 
-    public ResultSet getResultSet() {
-        return getModel().getResultSet();
-    }
-
     public String getUser() {
         return (String) getCellValue("USER");
     }
@@ -58,11 +54,8 @@ public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowser
 
     public SessionStatus getSessionStatus() {
         ConnectionHandler connectionHandler = getModel().getConnectionHandler();
-        if (connectionHandler != null) {
-            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-            return compatibilityInterface.getSessionStatus(getStatus());
-        }
-        return SessionStatus.INACTIVE;
+        DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+        return compatibilityInterface.getSessionStatus(getStatus());
     }
 
 }
