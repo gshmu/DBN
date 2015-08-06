@@ -428,6 +428,8 @@
             <separator/>
             <action id="DBNavigator.Actions.CodeEditor.RunMethod" class="com.dci.intellij.dbn.editor.code.action.RunMethodAction" text="Code Editor - Run Method" icon="/img/action/ExecuteMethod.png"/>
             <action id="DBNavigator.Actions.CodeEditor.DebugMethod" class="com.dci.intellij.dbn.editor.code.action.DebugMethodAction" text="Code Editor - Debug Method" icon="/img/action/DebugMethod.png"/>
+            <action id="DBNavigator.Actions.CodeEditor.RunProgramMethod" class="com.dci.intellij.dbn.editor.code.action.RunProgramMethodAction" text="Code Editor - Run Method" icon="/img/action/ExecuteMethod.png"/>
+            <action id="DBNavigator.Actions.CodeEditor.DebugProgramMethod" class="com.dci.intellij.dbn.editor.code.action.DebugProgramMethodAction" text="Code Editor - Run Method" icon="/img/action/DebugMethod.png"/>
             <separator/>
             <action id="DBNavigator.Actions.CodeEditor.LinkDdlFile" class="com.dci.intellij.dbn.editor.code.action.DDLFileAction" text="Code Editor - DDL Files"/>
             <separator/>
