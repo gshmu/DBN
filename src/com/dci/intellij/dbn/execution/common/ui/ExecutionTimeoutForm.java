@@ -56,7 +56,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
                             UIUtil.getLabelDisabledForeground() :
                             UIUtil.getTextFieldForeground());
 
-                    if (debuggerType.isActive())
+                    if (debuggerType.isDebug())
                         executionInput.setDebugExecutionTimeout(timeout); else
                         executionInput.setExecutionTimeout(timeout);
                     hintLabel.setIcon(null);
@@ -81,14 +81,14 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
     }
 
     private int getInputTimeout() {
-        return debuggerType.isActive() ?
+        return debuggerType.isDebug() ?
                     executionInput.getDebugExecutionTimeout() :
                     executionInput.getExecutionTimeout();
     }
 
     private int getSettingsTimeout() {
         ExecutionTimeoutSettings timeoutSettings = executionInput.getExecutionTimeoutSettings();
-        return debuggerType.isActive() ?
+        return debuggerType.isDebug() ?
                 timeoutSettings.getDebugExecutionTimeout() :
                 timeoutSettings.getExecutionTimeout();
     }
@@ -134,7 +134,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
             String text = executionTimeoutTextField.getText();
             int timeout = Integer.parseInt(text);
 
-            boolean settingsChanged = debuggerType.isActive() ?
+            boolean settingsChanged = debuggerType.isDebug() ?
                         timeoutSettings.setDebugExecutionTimeout(timeout) :
                         timeoutSettings.setExecutionTimeout(timeout);
 

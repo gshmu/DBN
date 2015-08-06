@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -159,6 +160,20 @@ public class GUIUtil{
         popupContent.setPreferredSize(new Dimension(width, height));
 
         popup.show(new RelativePoint(sourceComponent, new Point(0, sourceComponent.getHeight() + verticalShift)));
+    }
+
+    public static Color adjust(Color color, double shift) {
+        if (isDarkLookAndFeel()) {
+            shift = -shift;
+        }
+        int red = (int) Math.round(Math.min(255, color.getRed() + 255 * shift));
+        int green = (int) Math.round(Math.min(255, color.getGreen() + 255 * shift));
+        int blue = (int) Math.round(Math.min(255, color.getBlue() + 255 * shift));
+
+        int alpha = color.getAlpha();
+
+        return new Color(red, green, blue, alpha);
+
     }
 
 }

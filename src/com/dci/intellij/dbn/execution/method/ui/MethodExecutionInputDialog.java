@@ -14,7 +14,7 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
     private DBDebuggerType debuggerType;
 
     public MethodExecutionInputDialog(MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
-        super(executionInput.getProject(), (debuggerType.isActive() ? "Debug" : "Execute") + " Method", true);
+        super(executionInput.getProject(), (debuggerType.isDebug() ? "Debug" : "Execute") + " Method", true);
         this.debuggerType = debuggerType;
         setModal(true);
         setResizable(true);
@@ -43,8 +43,8 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
 
     private class ExecuteAction extends AbstractAction {
         public ExecuteAction() {
-            super(debuggerType.isActive() ? "Debug" : "Execute",
-                    debuggerType.isActive() ? Icons.METHOD_EXECUTION_DEBUG : Icons.METHOD_EXECUTION_RUN);
+            super(debuggerType.isDebug() ? "Debug" : "Execute",
+                    debuggerType.isDebug() ? Icons.METHOD_EXECUTION_DEBUG : Icons.METHOD_EXECUTION_RUN);
             putValue(FOCUSED_ACTION, Boolean.TRUE);
         }
 

@@ -37,7 +37,7 @@ public class PromptMethodExecutionAction extends MethodExecutionResultAction {
         presentation.setText("Open Execution Dialog");
         presentation.setEnabled(
                 executionResult != null &&
-                        !executionResult.getDebuggerType().isActive() &&
+                        !executionResult.getDebuggerType().isDebug() &&
                         !executionResult.getExecutionContext().isExecuting());
     }    
 }
