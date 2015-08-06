@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.options.ConfigId;
-import com.dci.intellij.dbn.options.action.SettingsGroupAction;
+import com.dci.intellij.dbn.options.action.OpenSettingsAction;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -45,10 +45,7 @@ public class EditorOptionsAction extends GroupPopupAction {
             }
         }
         actions.add(Separator.getInstance());
-        actions.add(new SettingsGroupAction(
-                ConfigId.CODE_EDITOR,
-                ConfigId.CODE_COMPLETION,
-                ConfigId.EXECUTION_ENGINE));
+        actions.add(new OpenSettingsAction(ConfigId.CODE_EDITOR, false));
 
         return actions.toArray(new AnAction[actions.size()]);
     }
@@ -56,9 +53,7 @@ public class EditorOptionsAction extends GroupPopupAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-/*
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         presentation.setVisible(virtualFile instanceof DBConsoleVirtualFile);
-*/
     }
 }

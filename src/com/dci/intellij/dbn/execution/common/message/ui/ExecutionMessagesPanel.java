@@ -11,8 +11,8 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.common.message.action.CloseMessagesWindowAction;
 import com.dci.intellij.dbn.execution.common.message.action.CollapseMessagesTreeAction;
+import com.dci.intellij.dbn.execution.common.message.action.ExecutionEngineSettingsAction;
 import com.dci.intellij.dbn.execution.common.message.action.ExpandMessagesTreeAction;
-import com.dci.intellij.dbn.execution.common.message.action.OpenSettingsAction;
 import com.dci.intellij.dbn.execution.common.message.action.ViewExecutedStatementAction;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
@@ -44,7 +44,7 @@ public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
                 new ExpandMessagesTreeAction(messagesTree),
                 new CollapseMessagesTreeAction(messagesTree),
                 ActionUtil.SEPARATOR,
-                new OpenSettingsAction(messagesTree));
+                new ExecutionEngineSettingsAction(messagesTree));
         actionsPanel.add(actionToolbar.getComponent());
 
         Disposer.register(this, messagesTree);

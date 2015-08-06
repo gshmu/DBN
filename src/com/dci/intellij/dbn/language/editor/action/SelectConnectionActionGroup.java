@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.language.editor.action;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.options.action.OpenSettingsDialogAction;
 import com.intellij.openapi.actionSystem.Anchor;
 import com.intellij.openapi.actionSystem.Constraints;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -13,7 +12,7 @@ public class SelectConnectionActionGroup extends DefaultActionGroup {
     private static SelectConnectionAction NO_CONNECTION = new SelectConnectionAction(null);
 
     public SelectConnectionActionGroup(Project project) {
-        add(new OpenSettingsDialogAction(), new Constraints(Anchor.FIRST, null));
+        add(new ConnectionSettingsAction(), new Constraints(Anchor.FIRST, null));
         addSeparator();
         add(NO_CONNECTION);
 

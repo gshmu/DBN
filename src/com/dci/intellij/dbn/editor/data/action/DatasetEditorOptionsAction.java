@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.options.ConfigId;
-import com.dci.intellij.dbn.options.action.SettingsGroupAction;
+import com.dci.intellij.dbn.options.action.OpenSettingsAction;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
@@ -18,9 +18,7 @@ public class DatasetEditorOptionsAction extends GroupPopupAction {
                 new OpenSortingDialogAction(),
                 new OpenColumnSetupDialogAction(),
                 ActionUtil.SEPARATOR,
-                new SettingsGroupAction(
-                        ConfigId.DATA_GRID,
-                        ConfigId.DATA_EDITOR)
+                new OpenSettingsAction(ConfigId.DATA_EDITOR, false)
         };
     }
 }

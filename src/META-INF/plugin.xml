@@ -393,12 +393,8 @@
             <separator/>
             <action id="DBNavigator.Actions.ExecuteAsScript" class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptEditorAction" text="Script Editor - Execute as Script" icon="/img/action/ExecuteAsScript.png"/>
             <separator/>
-            <action id="DBNavigator.Actions.ConsoleOptions" class="com.dci.intellij.dbn.language.editor.action.EditorOptionsAction" text="Script Editor - Local Settings" icon="/img/action/Options.png"/>
-            <!--
-                        <action id="DBNavigator.Actions.DeleteConsole" class="com.dci.intellij.dbn.language.editor.action.DeleteConsoleEditorAction" text="Console - Delete" icon="/img/action/Delete.png"/>
-            <separator/>
-            <action id="DBNavigator.Actions.OpenSettings" class="com.dci.intellij.dbn.language.editor.action.OpenSettingsAction" text="Script Editor - Settings"/>
-            -->
+            <action id="DBNavigator.Actions.EditorOptions" class="com.dci.intellij.dbn.language.editor.action.EditorOptionsAction" text="Script Editor - Local Settings" icon="/img/action/Options.png" />
+            <action id="DBNavigator.Actions.EditorSettings" class="com.dci.intellij.dbn.language.editor.action.EditorSettingsAction" text="Script Editor - Settings"/>
         </group>
         <group id="DBNavigator.Actions.MainMenu" text="_DB Navigator">
             <action class="com.dci.intellij.dbn.menu.action.OpenSQLConsoleAction" text="Open SQL Console..." id="DBNavigator.Actions.MainMenu.OpenSQLConsole" icon="/img/file/SQLConsole.png"/>
@@ -435,7 +431,7 @@
             <separator/>
             <action id="DBNavigator.Actions.CodeEditor.LinkDdlFile" class="com.dci.intellij.dbn.editor.code.action.DDLFileAction" text="Code Editor - DDL Files"/>
             <separator/>
-            <action id="DBNavigator.Actions.CodeEditor.OpenSettings" class="com.dci.intellij.dbn.editor.code.action.OpenSettingsAction" text="Code Editor - Settings"/>
+            <action id="DBNavigator.Actions.CodeEditor.OpenSettings" class="com.dci.intellij.dbn.editor.code.action.EditorSettingsAction" text="Code Editor - Settings"/>
         </group>
         <group id="DBNavigator.ActionGroup.SessionBrowser" text="Session Browser Controls">
             <action id="DBNavigator.Actions.SessionBrowser.Find" class="com.dci.intellij.dbn.editor.session.action.DataFindAction" text="Session Browser - Find..." icon="/img/action/Find.png">
@@ -453,7 +449,7 @@
             <action id="DBNavigator.Actions.SessionBrowser.DisconnectSessions" class="com.dci.intellij.dbn.editor.session.action.DisconnectSessionsAction" text="Session Browser - Disconnect Sessions"/>
             <action id="DBNavigator.Actions.SessionBrowser.KillSessions" class="com.dci.intellij.dbn.editor.session.action.KillSessionsAction" text="Session Browser - Kill Sessions"/>
             <separator/>
-            <action id="DBNavigator.Actions.SessionBrowser.OpenSettings" class="com.dci.intellij.dbn.editor.session.action.OpenSettingsAction" text="Session Browser - Settings"/>
+            <action id="DBNavigator.Actions.SessionBrowser.OpenSettings" class="com.dci.intellij.dbn.editor.session.action.SessionBrowserSettingsAction" text="Session Browser - Settings"/>
         </group>
         <group id="DBNavigator.ActionGroup.DataEditor" text="Data Editor Controls">
             <action id="DBNavigator.Actions.DataEditor.SwitchEditableStatus" class="com.dci.intellij.dbn.editor.data.action.LockUnlockDataEditing" text="Data Editor - Lock / Unlock Editing"/>
@@ -507,7 +503,7 @@
             <action id="DBNavigator.Actions.MethodExecutionResult.ExecuteAgain" class="com.dci.intellij.dbn.execution.method.result.action.StartMethodExecutionAction" text="Method Execution Result - Execute Again" icon="/img/RerunMethodExecution.png"/>
             <action id="DBNavigator.Actions.MethodExecutionResult.OpenExecutionDialog" class="com.dci.intellij.dbn.execution.method.result.action.PromptMethodExecutionAction" text="Method Execution Result - Open Execution Dialog" icon="/img/ExecuteMethodDialog.png"/>
             <separator/>
-            <action id="DBNavigator.Actions.MethodExecutionResult.Settings" class="com.dci.intellij.dbn.execution.method.result.action.OpenSettingsAction" text="Method Execution Result - Open Execution Dialog" icon="/img/action/Properties.png"/>
+            <action id="DBNavigator.Actions.MethodExecutionResult.Settings" class="com.dci.intellij.dbn.execution.method.result.action.ExecutionEngineSettingsAction" text="Method Execution Result - Open Execution Dialog" icon="/img/action/Properties.png"/>
         </group>
         <group id="DBNavigator.ActionGroup.MethodExecutionCursorResult">
             <action id="DBNavigator.Actions.MethodExecutionCursorResult.Find" class="com.dci.intellij.dbn.execution.method.result.action.CursorResultFindAction" text="Method Execution Cursor Result - Find Data" icon="/img/action/Find.png">

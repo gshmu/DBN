@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.options.action;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.options.ConfigId;
@@ -12,11 +13,11 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
-public class SettingsAction extends DumbAwareAction {
+public class OpenSettingsAction extends DumbAwareAction {
     private ConfigId configId;
 
-    public SettingsAction(ConfigId configId) {
-        super(configId.getName() + "...");
+    public OpenSettingsAction(ConfigId configId, boolean showIcon) {
+        super("Settings...", null, showIcon ? Icons.ACTION_SETTINGS : null);
         this.configId = configId;
     }
 
@@ -39,9 +40,7 @@ public class SettingsAction extends DumbAwareAction {
 
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-/*
-        presentation.setIcon(Icons.ACTION_SETTINGS);
-        presentation.setText("Settings");
-*/
+        //presentation.setIcon(Icons.ACTION_SETTINGS);
+        presentation.setText("Settings...");
     }
 }
