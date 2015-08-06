@@ -32,6 +32,7 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
@@ -42,7 +43,7 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProc
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesCache;
-import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionVariablesDialog;
+import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionInputsDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement.MatchType;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
@@ -272,7 +273,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         }
                     };
 
-                    promptVariablesDialog(executionProcessors, executionCallback);
+                    promptExecutionDialog(executionProcessors, DBDebuggerType.NONE, executionCallback);
                 }
             };
 
@@ -309,71 +310,82 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     }
 
-    public void promptVariablesDialog(@NotNull final List<StatementExecutionProcessor> executionProcessors, @NotNull final RunnableTask callback) {
+    public void promptExecutionDialog(@NotNull final List<StatementExecutionProcessor> executionProcessors, final DBDebuggerType debuggerType, @NotNull final RunnableTask callback) {
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
-                Map<String, StatementExecutionVariable> variableCache = new HashMap<String, StatementExecutionVariable>();
-                boolean reuseVariables = false;
-                for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-                    executionProcessor.initExecutionInput(true);
-                    StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-                    Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
-                    ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-                    if (executablePsiElement != null) {
-                        executablePsiElement.collectExecVariablePsiElements(bucket);
-                    }
+                if (promptExecutionDialog(executionProcessors, debuggerType)) {
+                    callback.start();
+                }
+            }
+        }.start();
+    }
 
-                    StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();
-                    if (bucket.isEmpty()) {
-                        executionVariables = null;
-                        executionInput.setExecutionVariables(null);
+    public boolean promptExecutionDialog(@NotNull StatementExecutionProcessor executionProcessor, DBDebuggerType debuggerType) {
+        ArrayList<StatementExecutionProcessor> processors = new ArrayList<>();
+        processors.add(executionProcessor);
+        return promptExecutionDialog(processors, debuggerType);
+    }
+
+    public boolean promptExecutionDialog(@NotNull List<StatementExecutionProcessor> executionProcessors, DBDebuggerType debuggerType) {
+        Map<String, StatementExecutionVariable> variableCache = new HashMap<String, StatementExecutionVariable>();
+        boolean reuseVariables = false;
+        for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+            executionProcessor.initExecutionInput(true);
+            StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
+            Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
+            ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+            if (executablePsiElement != null) {
+                executablePsiElement.collectExecVariablePsiElements(bucket);
+            }
+
+            StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();
+            if (bucket.isEmpty()) {
+                executionVariables = null;
+                executionInput.setExecutionVariables(null);
+            } else {
+                if (executionVariables == null){
+                    executionVariables = new StatementExecutionVariablesBundle(bucket);
+                    executionInput.setExecutionVariables(executionVariables);
+                }
+                executionVariables.initialize(bucket);
+            }
+
+            StatementExecutionSettings executionSettings = ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
+            boolean isBulkExecution = executionProcessors.size() > 1;
+            if (executionVariables != null) {
+                if (reuseVariables) {
+                    executionVariables.populate(variableCache, true);
+                }
+
+                if (!(reuseVariables && executionVariables.isProvided())) {
+                    String executableStatementText = executionInput.getExecutableStatementText();
+                    StatementExecutionInputsDialog dialog = new StatementExecutionInputsDialog(executionProcessor, executableStatementText, debuggerType, isBulkExecution);
+                    dialog.show();
+                    if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
+                        return false;
                     } else {
-                        if (executionVariables == null){
-                            executionVariables = new StatementExecutionVariablesBundle(bucket);
-                            executionInput.setExecutionVariables(executionVariables);
-                        }
-                        executionVariables.initialize(bucket);
-                    }
-
-                    StatementExecutionSettings executionSettings = ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
-                    boolean isBulkExecution = executionProcessors.size() > 1;
-                    if (executionVariables != null) {
+                        reuseVariables = dialog.isReuseVariables();
                         if (reuseVariables) {
-                            executionVariables.populate(variableCache, true);
-                        }
-
-                        if (!(reuseVariables && executionVariables.isProvided())) {
-                            String executableStatementText = executionInput.getExecutableStatementText();
-                            StatementExecutionVariablesDialog dialog = new StatementExecutionVariablesDialog(executionProcessor, executableStatementText, isBulkExecution);
-                            dialog.show();
-                            if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
-                                return;
-                            } else {
-                                reuseVariables = dialog.isReuseVariables();
-                                if (reuseVariables) {
-                                    Set<StatementExecutionVariable> variables = executionVariables.getVariables();
-                                    for (StatementExecutionVariable variable : variables) {
-                                        variableCache.put(variable.getName().toUpperCase(), variable);
-                                    }
-                                } else {
-                                    variableCache.clear();
-                                }
+                            Set<StatementExecutionVariable> variables = executionVariables.getVariables();
+                            for (StatementExecutionVariable variable : variables) {
+                                variableCache.put(variable.getName().toUpperCase(), variable);
                             }
-                        }
-                    } else if (executionSettings.isPromptExecution()) {
-                        String executableStatementText = executionInput.getExecutableStatementText();
-                        StatementExecutionVariablesDialog dialog = new StatementExecutionVariablesDialog(executionProcessor, executableStatementText, isBulkExecution);
-                        dialog.show();
-                        if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
-                            return;
+                        } else {
+                            variableCache.clear();
                         }
                     }
                 }
-
-                callback.start();
+            } else if (executionSettings.isPromptExecution() || debuggerType.isDebug()) {
+                String executableStatementText = executionInput.getExecutableStatementText();
+                StatementExecutionInputsDialog dialog = new StatementExecutionInputsDialog(executionProcessor, executableStatementText, debuggerType, isBulkExecution);
+                dialog.show();
+                if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
+                    return false;
+                }
             }
-        }.start();
+        }
+        return true;
     }
 
     @Nullable

@@ -102,7 +102,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             bindParameters(executionInput, statement);
 
             MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
-            int timeout = debuggerType.isActive() ?
+            int timeout = debuggerType.isDebug() ?
                     methodExecutionSettings.getDebugExecutionTimeout() :
                     methodExecutionSettings.getExecutionTimeout();
 

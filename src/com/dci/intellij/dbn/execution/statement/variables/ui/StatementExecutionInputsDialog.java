@@ -8,22 +8,25 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.intellij.openapi.project.Project;
 
-public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecutionVariablesForm> {
+public class StatementExecutionInputsDialog extends DBNDialog<StatementExecutionInputForm> {
     private StatementExecutionProcessor executionProcessor;
-    private boolean reuseVariables = false;
     private ExecuteAction executeAction;
+    private DBDebuggerType debuggerType;
+    private boolean reuseVariables = false;
 
-    public StatementExecutionVariablesDialog(StatementExecutionProcessor executionProcessor, String statementText, boolean isBulkExecution) {
-        super(executionProcessor.getProject(), "Statement Execution", true);
+    public StatementExecutionInputsDialog(StatementExecutionProcessor executionProcessor, String statementText, DBDebuggerType debuggerType, boolean isBulkExecution) {
+        super(executionProcessor.getProject(), (debuggerType.isDebug() ? "Debug" : "Execute") + " Statement", true);
         this.executionProcessor = executionProcessor;
+        this.debuggerType = debuggerType;
         setModal(true);
         setResizable(true);
         executeAction = new ExecuteAction();
-        component = new StatementExecutionVariablesForm(this, executionProcessor, statementText, isBulkExecution);
+        component = new StatementExecutionInputForm(this, executionProcessor, statementText, isBulkExecution);
         init();
     }
 
@@ -47,7 +50,7 @@ public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecut
 
     private class ExecuteAction extends AbstractAction {
         public ExecuteAction() {
-            super("Execute", Icons.STMT_EXECUTION_RUN);
+            super(debuggerType.isDebug() ? "Debug" : "Execute", debuggerType.isDebug() ? Icons.STMT_EXECUTION_DEBUG : Icons.STMT_EXECUTION_RUN);
             putValue(DEFAULT_ACTION, Boolean.TRUE);
         }
 

@@ -29,7 +29,7 @@ public enum DBDebuggerType implements Presentable {
         return null;
     }
 
-    public boolean isActive() {
+    public boolean isDebug() {
         return this != NONE;
     }
 

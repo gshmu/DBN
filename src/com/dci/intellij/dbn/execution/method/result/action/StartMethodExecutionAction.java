@@ -32,7 +32,7 @@ public class StartMethodExecutionAction extends MethodExecutionResultAction {
         presentation.setText("Execute Again");
         presentation.setEnabled(
                 executionResult != null &&
-                        !executionResult.getDebuggerType().isActive() &&
+                        !executionResult.getDebuggerType().isDebug() &&
                         !executionResult.getExecutionContext().isExecuting());
     }
 }

@@ -74,7 +74,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         DBMethod method = executionInput.getMethod();
 
         final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-        if (debuggerType.isActive()) {
+        if (debuggerType.isDebug()) {
             versionPanel.setVisible(true);
             versionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
             DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
@@ -148,10 +148,10 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         }
         commitCheckBox.addActionListener(actionListener);
         usePoolConnectionCheckBox.addActionListener(actionListener);
-        usePoolConnectionCheckBox.setEnabled(debuggerType.isActive());
+        usePoolConnectionCheckBox.setEnabled(debuggerType.isDebug());
 
-        enableLoggingCheckBox.setEnabled(debuggerType.isActive());
-        enableLoggingCheckBox.setSelected(debuggerType.isActive() && executionInput.isEnableLogging());
+        enableLoggingCheckBox.setEnabled(debuggerType.isDebug());
+        enableLoggingCheckBox.setSelected(debuggerType.isDebug() && executionInput.isEnableLogging());
         enableLoggingCheckBox.setVisible(DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler));
         DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
         String databaseLogName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();

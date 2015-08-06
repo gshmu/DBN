@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -35,7 +36,6 @@ import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
-import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
@@ -43,7 +43,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.GuiUtils;
 
-public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecutionVariablesDialog> {
+public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionInputsDialog> {
     private List<StatementExecutionVariableValueForm> variableValueForms = new ArrayList<StatementExecutionVariableValueForm>();
     private StatementExecutionProcessor executionProcessor;
     private JPanel mainPanel;
@@ -57,7 +57,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecut
     private EditorEx viewer;
     private String statementText;
 
-    public StatementExecutionVariablesForm(final StatementExecutionVariablesDialog parentComponent, final StatementExecutionProcessor executionProcessor, String statementText, boolean isBulkExecution) {
+    public StatementExecutionInputForm(final StatementExecutionInputsDialog parentComponent, final StatementExecutionProcessor executionProcessor, String statementText, boolean isBulkExecution) {
         super(parentComponent);
         this.executionProcessor = executionProcessor;
         this.statementText = statementText;
@@ -180,7 +180,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecut
             SyntaxHighlighter syntaxHighlighter = languageDialect.getSyntaxHighlighter();
             EditorColorsScheme colorsScheme = viewer.getColorsScheme();
             viewer.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
-            viewer.setBackgroundColor(colorsScheme.getColor(ColorKey.find("CARET_ROW_COLOR")));
+            viewer.setBackgroundColor(GUIUtil.adjust(viewer.getBackgroundColor(), -0.01));
             viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
             //viewerScrollPane.setBorder(null);
