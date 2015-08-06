@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -51,15 +51,13 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     public void load(boolean useCurrentFilter, boolean keepChanges) throws SQLException {
         ResultSet newResultSet;
         checkDisposed();
-
-        ConnectionUtil.closeResultSet(resultSet);
+        closeResultSet();
         newResultSet = loadResultSet(useCurrentFilter);
 
         if (newResultSet != null) {
             checkDisposed();
-
-            resultSet = newResultSet;
-            resultSetExhausted = false;
+            setResultSet(newResultSet);
+            setResultSetExhausted(false);
             if (keepChanges) snapshotChanges(); else clearChanges();
             
             int rowCount = computeRowCount();
@@ -84,6 +82,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     }
 
     private ResultSet loadResultSet(boolean useCurrentFilter) throws SQLException {
+        ConnectionHandler connectionHandler = getConnectionHandler();
         Connection connection = connectionHandler.getStandaloneConnection();
         DBDataset dataset = getDataset();
         Project project = dataset.getProject();
@@ -174,7 +173,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     @Override
     protected DatasetEditorModelRow createRow(int resultSetRowIndex) throws SQLException {
-        return new DatasetEditorModelRow(this, resultSet, resultSetRowIndex);
+        return new DatasetEditorModelRow(this, getResultSet(), resultSetRowIndex);
     }
 
     @NotNull
@@ -262,7 +261,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         try {
             isInserting = true;
             editorTable.stopCellEditing();
-            resultSet.moveToInsertRow();
+            getResultSet().moveToInsertRow();
             DatasetEditorModelRow newRow = createRow(getRowCount()+1);
             newRow.setInsert(true);
             addRowAtIndex(rowIndex, newRow);
@@ -283,7 +282,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             isInserting = true;
             editorTable.stopCellEditing();
             int insertIndex = rowIndex + 1;
-            resultSet.moveToInsertRow();
+            getResultSet().moveToInsertRow();
             DatasetEditorModelRow oldRow = getRowAtIndex(rowIndex);
             DatasetEditorModelRow newRow = createRow(getRowCount() + 1);
             newRow.setInsert(true);
@@ -304,6 +303,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         if (row != null) {
             try {
                 editorTable.stopCellEditing();
+                ResultSet resultSet = getResultSet();
                 resultSet.insertRow();
                 resultSet.moveToCurrentRow();
                 row.setInsert(false);
@@ -333,7 +333,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 removeRowAtIndex(rowIndex);
                 if (notifyListeners) notifyRowsDeleted(rowIndex, rowIndex);
             }
-            resultSet.moveToCurrentRow();
+            getResultSet().moveToCurrentRow();
             isInserting = false;
 
         } catch (SQLException e) {
