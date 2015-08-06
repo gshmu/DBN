@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.options.action;
+package com.dci.intellij.dbn.execution.method.result.action;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -10,20 +10,23 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
-public class OpenSettingsDialogAction extends DumbAwareAction {
+public class ExecutionEngineSettingsAction extends DumbAwareAction {
 
+    public ExecutionEngineSettingsAction() {
+        super("Settings", null, Icons.EXEC_RESULT_OPTIONS);
+    }
+
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
             ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-            settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
+            settingsManager.openProjectSettings(ConfigId.EXECUTION_ENGINE);
         }
     }
 
-    public void update(@NotNull AnActionEvent e) {
-        e.getPresentation().setText("Setup Connections...");
-        e.getPresentation().setIcon(Icons.ACTION_EDIT);
-
+    @Override
+    public void update(AnActionEvent e) {
+        e.getPresentation().setText("Settings");
     }
-
 }
