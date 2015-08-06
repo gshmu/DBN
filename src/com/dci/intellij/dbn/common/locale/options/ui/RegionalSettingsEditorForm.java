@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.locale.DBNumberFormat;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
@@ -179,7 +180,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
     }
 
     public void applyFormChanges() throws ConfigurationException {
-        RegionalSettings regionalSettings = getConfiguration();
+        final RegionalSettings regionalSettings = getConfiguration();
         boolean modified = regionalSettings.isModified();
 
         Locale locale = getSelectedLocale();
@@ -197,7 +198,12 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         regionalSettings.getCustomNumberFormat().to(customNumberFormatTextField);
 
         if (modified) {
-            EventUtil.notify(regionalSettings.getProject(), RegionalSettingsListener.TOPIC).settingsChanged();
+            new SettingsChangeNotifier() {
+                @Override
+                public void notifyChanges() {
+                    EventUtil.notify(regionalSettings.getProject(), RegionalSettingsListener.TOPIC).settingsChanged();
+                }
+            };
         }
 
     }
