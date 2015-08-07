@@ -41,6 +41,7 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
 
     private transient ProgressIndicator progressIndicator;
     private transient Future<T> future;
+    private transient boolean cancelled = false;
     private Timer cancelCheckTimer;
 
     public ExecutionCancellableCall(int timeout, TimeUnit timeUnit) {
@@ -65,6 +66,7 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
                     public void run() {
                         if (progressIndicator != null) {
                             if (progressIndicator.isCanceled()) {
+                                cancelled = true;
                                 try {
                                     ExecutionCancellableCall.this.cancel();
                                 } catch (Exception e) {
@@ -126,6 +128,9 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
     }
 
     public void handleTimeout() throws SQLTimeoutException {
+        if (cancelled) {
+            throw new ProcessCanceledException();
+        }
         try {
             ExecutionCancellableCall.this.cancel();
         } catch (Exception ce) {
