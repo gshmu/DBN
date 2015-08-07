@@ -73,15 +73,6 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         DBJdwpBreakpointHandler breakpointHandler = new DBJdwpBreakpointHandler(session, this);
         breakpointHandlers = new DBBreakpointHandler[]{breakpointHandler};
         localTcpPort = tcpPort;
-        debuggerSession.getContextManager().addListener(new DebuggerContextListener() {
-            @Override
-            public void changeEvent(DebuggerContextImpl newContext, DebuggerSession.Event event) {
-                SuspendContextImpl suspendContext = newContext.getSuspendContext();
-                if (suspendContext != null) {
-                    overwriteSuspendContext(suspendContext);
-                }
-            }
-        });
     }
 
 
@@ -200,7 +191,19 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             public void sessionPaused() {
                 XDebugSession session = getSession();
                 XSuspendContext suspendContext = session.getSuspendContext();
-                //overwriteSuspendContext(suspendContext);
+                if (suspendContext != null) {
+                    overwriteSuspendContext(suspendContext);
+                }
+            }
+        });
+
+        debuggerSession.getContextManager().addListener(new DebuggerContextListener() {
+            @Override
+            public void changeEvent(DebuggerContextImpl newContext, DebuggerSession.Event event) {
+                SuspendContextImpl suspendContext = newContext.getSuspendContext();
+                if (suspendContext != null) {
+                    //overwriteSuspendContext(suspendContext);
+                }
             }
         });
 
@@ -234,6 +237,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         new BackgroundTask(getProject(), "Running debugger target program", true, true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                T executionInput = getExecutionInput();
+                progressIndicator.setText("Executing " + (executionInput == null ? " target program" : executionInput.getExecutionContext().getTargetName()));
                 console.system("Executing target program");
                 if (status.PROCESS_IS_TERMINATING) return;
                 if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
@@ -242,7 +247,6 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     executeTarget();
                 } catch (SQLException e){
                     status.TARGET_EXECUTION_THREW_EXCEPTION = true;
-                    T executionInput = getExecutionInput();
                     MessageUtil.showErrorDialog(getProject(), executionInput == null ? "Error executing target program" : "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
                 } finally {
                     status.TARGET_EXECUTION_TERMINATED = true;
