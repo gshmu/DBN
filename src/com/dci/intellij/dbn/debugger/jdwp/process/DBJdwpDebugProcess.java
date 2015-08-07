@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
+import java.net.Inet4Address;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.StringTokenizer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -16,7 +24,6 @@ import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
 import com.dci.intellij.dbn.debugger.jdwp.DBJdwpBreakpointHandler;
-import com.dci.intellij.dbn.debugger.jdwp.ManagedThreadCommand;
 import com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugSuspendContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -27,6 +34,10 @@ import com.intellij.debugger.engine.DebugProcessAdapter;
 import com.intellij.debugger.engine.JavaDebugProcess;
 import com.intellij.debugger.engine.JavaStackFrame;
 import com.intellij.debugger.engine.SuspendContext;
+import com.intellij.debugger.engine.SuspendContextImpl;
+import com.intellij.debugger.engine.events.SuspendContextCommandImpl;
+import com.intellij.debugger.impl.DebuggerContextImpl;
+import com.intellij.debugger.impl.DebuggerContextListener;
 import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -39,14 +50,6 @@ import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.sun.jdi.Location;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.net.Inet4Address;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.StringTokenizer;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     protected Connection targetConnection;
@@ -70,6 +73,15 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         DBJdwpBreakpointHandler breakpointHandler = new DBJdwpBreakpointHandler(session, this);
         breakpointHandlers = new DBBreakpointHandler[]{breakpointHandler};
         localTcpPort = tcpPort;
+        debuggerSession.getContextManager().addListener(new DebuggerContextListener() {
+            @Override
+            public void changeEvent(DebuggerContextImpl newContext, DebuggerSession.Event event) {
+                SuspendContextImpl suspendContext = newContext.getSuspendContext();
+                if (suspendContext != null) {
+                    overwriteSuspendContext(suspendContext);
+                }
+            }
+        });
     }
 
 
@@ -81,13 +93,13 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 @Override
                 protected void execute() {
                     if (shouldSuspend(suspendContext)) {
-                        new ManagedThreadCommand(getDebuggerSession().getProcess()) {
+                        getDebuggerSession().getProcess().getManagerThread().schedule(new SuspendContextCommandImpl((SuspendContextImpl) suspendContext) {
                             @Override
-                            protected void action() throws Exception {
+                            public void contextAction() throws Exception {
                                 DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
                                 session.positionReached(dbSuspendContext);
                             }
-                        }.invoke();
+                        });
                     } else {
                         session.resume();
                     }
@@ -188,7 +200,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             public void sessionPaused() {
                 XDebugSession session = getSession();
                 XSuspendContext suspendContext = session.getSuspendContext();
-                overwriteSuspendContext(suspendContext);
+                //overwriteSuspendContext(suspendContext);
             }
         });
 
