@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.execution;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import org.jetbrains.annotations.NotNull;
-
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.util.Timer;
@@ -21,6 +13,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 
 public abstract class ExecutionCancellableCall<T> implements Callable<T> {
     private static final ExecutorService POOL = Executors.newCachedThreadPool(new ThreadFactory() {
@@ -82,7 +82,9 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
                                 long runningForSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTimestamp);
                                 long timeoutSeconds = timeUnit.toSeconds(timeout);
                                 long timingOutIn = timeoutSeconds - runningForSeconds;
-                                text = text + " (timing out in " + timingOutIn + "s) ";
+                                if (timingOutIn < 60)
+                                    text = text + " (timing out in " + timingOutIn + " seconds) "; else
+                                    text = text + " (timing out in " + TimeUnit.SECONDS.toMinutes(timingOutIn) + " minutes) ";
 
                                 progressIndicator.setText(text);
                             }
