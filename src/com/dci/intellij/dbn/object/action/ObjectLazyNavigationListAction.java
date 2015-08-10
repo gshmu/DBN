@@ -17,7 +17,7 @@ public class ObjectLazyNavigationListAction extends ObjectListShowAction {
         this.parentObjectRef = DBObjectRef.from(parentObject);
     }
 
-    public List<DBObject> getObjectList() {
+    public List<? extends DBObject> getObjectList() {
         List<DBObject> objects = navigationList.getObjects();
         if (objects == null) objects = navigationList.getObjectsProvider().getObjects();
         return objects;

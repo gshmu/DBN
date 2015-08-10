@@ -2,8 +2,11 @@ package com.dci.intellij.dbn.execution.method.action;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
+import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.action.ObjectListShowAction;
@@ -15,6 +18,16 @@ public class RunProgramMethodAction extends ObjectListShowAction {
         super("Run...", program);
         getTemplatePresentation().setIcon(Icons.METHOD_EXECUTION_RUN);
     }
+
+    @Nullable
+    @Override
+    public List<? extends DBObject> getRecentObjectList() {
+        DBProgram program = (DBProgram) getSourceObject();
+        MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(program.getProject());
+        MethodExecutionHistory executionHistory = methodExecutionManager.getExecutionHistory();
+        return executionHistory.getRecentlyExecutedMethods(program);
+    }
+
 
     public List<DBObject> getObjectList() {
         DBProgram program = (DBProgram) getSourceObject();

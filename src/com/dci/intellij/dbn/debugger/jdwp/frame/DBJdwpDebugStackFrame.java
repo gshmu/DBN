@@ -18,12 +18,13 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.debugger.engine.JavaStackFrame;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
-import com.intellij.xdebugger.frame.XStackFrame;
+import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.impl.XSourcePositionImpl;
 import com.sun.jdi.Location;
 
 public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess, DBJdwpDebugValue>{
-    private XStackFrame underlyingFrame;
+    private long childrenComputed = 0;
+    private JavaStackFrame underlyingFrame;
     private LazyValue<DBJdwpDebuggerEvaluator> evaluator = new SimpleLazyValue<DBJdwpDebuggerEvaluator>() {
         @Override
         protected DBJdwpDebuggerEvaluator load() {
@@ -34,20 +35,33 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
     private LazyValue<Location> location = new SimpleLazyValue<Location>() {
         @Override
         protected Location load() {
-            return underlyingFrame == null ? null : ((JavaStackFrame) underlyingFrame).getDescriptor().getLocation();
+            return underlyingFrame == null ? null : underlyingFrame.getDescriptor().getLocation();
         }
     };
 
     private LazyValue<VirtualFile> virtualFile = new SimpleLazyValue<VirtualFile>() {
         @Override
         protected VirtualFile load() {
-            return getDebugProcess().getVirtualFile(underlyingFrame);
+            Location location = getLocation();
+            return getDebugProcess().getVirtualFile(location);
         }
     };
 
-    public DBJdwpDebugStackFrame(DBJdwpDebugProcess debugProcess, XStackFrame underlyingFrame, int index) {
+    public DBJdwpDebugStackFrame(DBJdwpDebugProcess debugProcess, JavaStackFrame underlyingFrame, int index) {
         super(debugProcess, index);
         this.underlyingFrame = underlyingFrame;
+    }
+
+    @Override
+    public void computeChildren(@NotNull XCompositeNode node) {
+        underlyingFrame.computeChildren(node);
+/*
+        if (System.currentTimeMillis() - childrenComputed > 0){
+            System.out.println(System.currentTimeMillis() - childrenComputed);
+            underlyingFrame.computeChildren(node);
+            childrenComputed = System.currentTimeMillis();
+        }
+*/
     }
 
     @Override
@@ -56,7 +70,7 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
         int lineNumber = location == null ? 0 : location.lineNumber() - 1;
 
         DBJdwpDebugProcess debugProcess = getDebugProcess();
-        String ownerName = debugProcess.getOwnerName(underlyingFrame);
+        String ownerName = debugProcess.getOwnerName(location);
         if (ownerName == null) {
             ExecutionInput executionInput = debugProcess.getExecutionInput();
             if (executionInput instanceof StatementExecutionInput) {
@@ -67,9 +81,9 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
         return XSourcePositionImpl.create(getVirtualFile(), lineNumber);
     }
 
-    public XStackFrame getUnderlyingFrame() {
-    return underlyingFrame;
-}
+    public JavaStackFrame getUnderlyingFrame() {
+        return underlyingFrame;
+    }
 
     @Override
     @NotNull
@@ -109,6 +123,7 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
         String subjectString = subject == null ? null : subject.getText();
 
         return object == null ? null : (object.getQualifiedName() + "." + subjectString).toLowerCase();
+        //return underlyingFrame.getEqualityObject();
     }
 }
 

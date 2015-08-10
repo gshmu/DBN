@@ -47,7 +47,7 @@ public class MethodExecutionInput extends ExecutionInput implements Comparable<M
                 @NotNull
                 @Override
                 public String getTargetName() {
-                    return methodRef.getQualifiedNameWithType();
+                    return methodRef.getObjectType().getName() + " " + methodRef.getObjectName();
                 }
 
                 @Nullable

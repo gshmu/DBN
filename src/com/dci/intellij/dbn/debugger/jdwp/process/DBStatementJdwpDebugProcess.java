@@ -7,14 +7,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.intellij.debugger.engine.JavaStackFrame;
 import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.frame.XStackFrame;
 import com.sun.jdi.Location;
 
 public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExecutionInput> {
@@ -24,39 +23,50 @@ public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExe
 
     @Override
     protected void executeTarget() throws SQLException {
-        StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(getProject());
-        statementExecutionManager.debugExecute(getExecutionProcessor(), getTargetConnection());
+        StatementExecutionProcessor executionProcessor = getExecutionProcessor();
+        if (executionProcessor != null) {
+            StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(getProject());
+            statementExecutionManager.debugExecute(executionProcessor, getTargetConnection());
+        }
     }
 
     @Override
-    public VirtualFile getVirtualFile(XStackFrame stackFrame) {
+    @Nullable
+    public VirtualFile getVirtualFile(Location location) {
         try {
-            Location location = stackFrame == null ? null : ((JavaStackFrame) stackFrame).getDescriptor().getLocation();
             if (location != null) {
-                int lineNumber = location.lineNumber();
                 String sourcePath = location.sourcePath();
                 StringTokenizer tokenizer = new StringTokenizer(sourcePath, "\\.");
-                String signature = tokenizer.nextToken();
+                tokenizer.nextToken(); // signature
                 String programType = tokenizer.nextToken();
                 if (programType.equals("Block")) {
-                    return getExecutionProcessor().getVirtualFile();
+                    StatementExecutionProcessor executionProcessor = getExecutionProcessor();
+                    if (executionProcessor != null) {
+                        return executionProcessor.getVirtualFile();
+                    }
                 }
             }
         } catch (Exception e) {
-            getConsole().error("Error evaluating susped position: " + e.getMessage());
+            getConsole().error("Error evaluating suspend position: " + e.getMessage());
         }
 
-        return super.getVirtualFile(stackFrame);
+        return super.getVirtualFile(location);
     }
 
+    @Nullable
     private StatementExecutionProcessor getExecutionProcessor() {
-        return getExecutionInput().getExecutionProcessor();
+        StatementExecutionInput executionInput = getExecutionInput();
+        return executionInput == null ? null : executionInput.getExecutionProcessor();
     }
 
     @NotNull
     @Override
     public String getName() {
-        return getExecutionProcessor().getPsiFile().getName();
+        StatementExecutionProcessor executionProcessor = getExecutionProcessor();
+        if (executionProcessor != null) {
+            return executionProcessor.getPsiFile().getName();
+        }
+        return "Debug Process";
     }
 
     @Nullable
@@ -68,6 +78,15 @@ public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExe
     @Nullable
     @Override
     public Icon getIcon() {
-        return getExecutionProcessor().getPsiFile().getIcon();
+        StatementExecutionProcessor executionProcessor = getExecutionProcessor();
+        if (executionProcessor != null) {
+            return executionProcessor.getPsiFile().getIcon();
+        }
+        return null;
+    }
+
+    @Override
+    public ExecutionTarget getExecutionTarget() {
+        return ExecutionTarget.STATEMENT;
     }
 }

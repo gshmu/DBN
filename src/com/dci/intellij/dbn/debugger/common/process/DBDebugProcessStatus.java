@@ -9,6 +9,7 @@ public class DBDebugProcessStatus {
     public boolean PROCESS_IS_TERMINATING;
     public boolean PROCESS_STOPPED_NORMALLY;
     public boolean PROCESS_IS_TERMINATED;
+    public boolean DEBUGGER_IS_STOPPING;
 
 
 }
