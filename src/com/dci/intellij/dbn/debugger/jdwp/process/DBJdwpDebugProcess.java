@@ -80,12 +80,16 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     }
 
     protected boolean shouldSuspend(XSuspendContext suspendContext) {
-        XExecutionStack executionStack = suspendContext.getActiveExecutionStack();
-        if (executionStack != null) {
-            XStackFrame topFrame = executionStack.getTopFrame();
-            Location location = getLocation(topFrame);
-            VirtualFile virtualFile = getVirtualFile(location);
-            return virtualFile != null;
+        if (status.TARGET_EXECUTION_TERMINATED) {
+            return false;
+        } else {
+            XExecutionStack executionStack = suspendContext.getActiveExecutionStack();
+            if (executionStack != null) {
+                XStackFrame topFrame = executionStack.getTopFrame();
+                Location location = getLocation(topFrame);
+                VirtualFile virtualFile = getVirtualFile(location);
+                return virtualFile != null;
+            }
         }
         return true;
     }
