@@ -13,7 +13,7 @@ public class ReferencedObjectsListShowAction extends ObjectListShowAction {
         super("Referenced objects", object);
     }
 
-    public List<DBObject> getObjectList() {
+    public List<? extends DBObject> getObjectList() {
         return ((DBSchemaObject) getSourceObject()).getReferencedObjects();
     }
 

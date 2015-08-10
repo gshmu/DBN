@@ -7,9 +7,13 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
+import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -30,14 +34,30 @@ public class DebugProgramMethodAction extends GroupPopupAction {
     @Override
     protected AnAction[] getActions(AnActionEvent e) {
         List<AnAction> actions = new ArrayList<AnAction>();
+        Project project = e.getProject();
         DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
-        if (virtualFile != null) {
+        if (project != null && virtualFile != null) {
             DBSchemaObject schemaObject = virtualFile.getObject();
             if (schemaObject.getObjectType().matches(DBObjectType.PROGRAM)) {
-                List<DBObject> objects = schemaObject.getChildObjects(DBObjectType.METHOD);
+
+                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+                MethodExecutionHistory executionHistory = methodExecutionManager.getExecutionHistory();
+                List<DBMethod> recentMethods = executionHistory.getRecentlyExecutedMethods((DBProgram) schemaObject);
+
+                if (recentMethods != null) {
+                    for (DBMethod method : recentMethods) {
+                        RunMethodAction action = new RunMethodAction(method);
+                        actions.add(action);
+                    }
+                    actions.add(ActionUtil.SEPARATOR);
+                }
+
+                List<? extends DBObject> objects = schemaObject.getChildObjects(DBObjectType.METHOD);
                 for (DBObject object : objects) {
-                    RunMethodAction action = new RunMethodAction((DBMethod) object);
-                    actions.add(action);
+                    if (recentMethods == null || !recentMethods.contains(object)) {
+                        RunMethodAction action = new RunMethodAction((DBMethod) object);
+                        actions.add(action);
+                    }
                 }
             }
         }

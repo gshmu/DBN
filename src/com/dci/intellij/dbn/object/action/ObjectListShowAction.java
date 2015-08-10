@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Point;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
@@ -39,11 +40,13 @@ public abstract class ObjectListShowAction extends AnAction {
         this.popupLocation = popupLocation;
     }
 
-    public abstract List<DBObject> getObjectList();
+    public @Nullable List<? extends DBObject> getRecentObjectList() {return null;}
+    public abstract List<? extends DBObject> getObjectList();
     public abstract String getTitle();
     public abstract String getEmptyListMessage();
     public abstract String getListName();
 
+    @NotNull
     public DBObject getSourceObject() {
         return DBObjectRef.getnn(sourceObjectRef);
     }
@@ -54,13 +57,14 @@ public abstract class ObjectListShowAction extends AnAction {
         new ConnectionAction("loading " + getListName(), sourceObject, taskInstructions) {
             @Override
             protected void execute() {
-                final List<DBObject> objects = getObjectList();
                 if (!isCanceled()) {
                     new SimpleLaterInvocator() {
                         @Override
                         protected void execute() {
+                            List<? extends DBObject> recentObjectList = getRecentObjectList();
+                            List<? extends DBObject> objects = getObjectList();
                             if (objects.size() > 0) {
-                                ObjectListActionGroup actionGroup = new ObjectListActionGroup(ObjectListShowAction.this, objects);
+                                ObjectListActionGroup actionGroup = new ObjectListActionGroup(ObjectListShowAction.this, objects, recentObjectList);
                                 JBPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
                                         ObjectListShowAction.this.getTitle(),
                                         actionGroup,
