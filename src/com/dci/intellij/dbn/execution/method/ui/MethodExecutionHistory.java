@@ -5,13 +5,19 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import com.dci.intellij.dbn.object.DBFunction;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.DBProcedure;
+import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
@@ -62,20 +68,49 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
                 iterator.remove();
             }
         }
-
     }
 
+    @Nullable
+    public List<DBMethod> getRecentlyExecutedMethods(DBProgram program) {
+        List<DBMethod> recentObjects = new ArrayList<DBMethod>();
+        List<DBProcedure> procedures = program.getProcedures();
+        List<DBFunction> functions = program.getFunctions();
+        for (DBProcedure procedure : procedures) {
+            MethodExecutionInput executionInput = getExecutionInput(procedure, false);
+            if (executionInput != null) {
+                recentObjects.add(procedure);
+            }
+        }
+        for (DBFunction function : functions) {
+            MethodExecutionInput executionInput = getExecutionInput(function, false);
+            if (executionInput != null) {
+                recentObjects.add(function);
+            }
+        }
+        return recentObjects.isEmpty() ? null : recentObjects;
+    }
+
+    @NotNull
     public MethodExecutionInput getExecutionInput(DBMethod method) {
+        MethodExecutionInput executionInput = getExecutionInput(method, true);
+        return FailsafeUtil.get(executionInput);
+    }
+
+    @Nullable
+    public MethodExecutionInput getExecutionInput(DBMethod method, boolean create) {
         for (MethodExecutionInput executionInput : executionInputs) {
             if (executionInput.getMethodRef().is(method)) {
                 return executionInput;
             }
         }
-        MethodExecutionInput executionInput = new MethodExecutionInput(getProject(), method);
-        executionInputs.add(executionInput);
-        Collections.sort(executionInputs);
-        selection = DBObjectRef.from(method);
-        return executionInput;
+        if (create) {
+            MethodExecutionInput executionInput = new MethodExecutionInput(getProject(), method);
+            executionInputs.add(executionInput);
+            Collections.sort(executionInputs);
+            selection = DBObjectRef.from(method);
+            return executionInput;
+        }
+        return null;
     }
 
     public MethodExecutionInput getExecutionInput(DBObjectRef<DBMethod> methodRef) {
