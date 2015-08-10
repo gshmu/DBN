@@ -184,11 +184,12 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
                         }
                     }
 
-                    if (!valuesMap.containsKey(variableName.toLowerCase())) {
+                    String valueCacheKey = variableName.toUpperCase();
+                    if (!valuesMap.containsKey(valueCacheKey)) {
                         Icon icon = basePsiElement.getIcon(true);
                         V value = createDebugValue(variableName, null, childVariableNames, icon);
                         values.add(value);
-                        valuesMap.put(variableName.toLowerCase(), value);
+                        valuesMap.put(valueCacheKey, value);
                     }
                 }
             }
