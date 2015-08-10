@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
 import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -60,5 +61,10 @@ public class DBStatementJdbcDebugProcess extends DBJdbcDebugProcess<StatementExe
     @Override
     public Icon getIcon() {
         return getExecutionProcessor().getPsiFile().getIcon();
+    }
+
+    @Override
+    public ExecutionTarget getExecutionTarget() {
+        return ExecutionTarget.STATEMENT;
     }
 }

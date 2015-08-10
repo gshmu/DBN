@@ -57,8 +57,12 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         dataGridSettings = DataGridSettings.getInstance(project);
         cellRenderer = createCellRenderer();
         DataGridTextAttributes displayAttributes = cellRenderer.getAttributes();
-        setSelectionForeground(displayAttributes.getSelection().getFgColor());
-        setSelectionBackground(displayAttributes.getSelection().getBgColor());
+        Color selectionFgColor = displayAttributes.getSelection().getFgColor();
+        Color selectionBgColor = displayAttributes.getSelection().getBgColor();
+        if (selectionFgColor != null && selectionBgColor != null) {
+            setSelectionForeground(selectionFgColor);
+            setSelectionBackground(selectionBgColor);
+        }
         EditorColorsManager.getInstance().addEditorColorsListener(this, this);
         Color bgColor = displayAttributes.getPlainData(false, false).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);

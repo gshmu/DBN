@@ -1,17 +1,21 @@
 package com.dci.intellij.dbn.object.action;
 
+import java.util.List;
+
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import java.util.List;
 
 public class ObjectListActionGroup extends DefaultActionGroup {
 
     private ObjectListShowAction listShowAction;
     private List<? extends DBObject> objects;
+    private List<? extends DBObject> recentObjects;
 
-    public ObjectListActionGroup(ObjectListShowAction listShowAction, List<? extends DBObject> objects) {
+    public ObjectListActionGroup(ObjectListShowAction listShowAction, List<? extends DBObject> objects, List<? extends DBObject> recentObjects) {
         super("", true);
         this.objects = objects;
+        this.recentObjects = recentObjects;
         this.listShowAction = listShowAction;
 
         if (objects != null) {
@@ -20,11 +24,15 @@ public class ObjectListActionGroup extends DefaultActionGroup {
     }
 
     private void buildNavigationActions() {
-        for (int i=0; i<objects.size(); i++) {
-            if (i == objects.size()) {
-                return;
+        if (recentObjects != null) {
+            for (DBObject object : recentObjects) {
+                add(listShowAction.createObjectAction(object));
             }
-            DBObject object = objects.get(i);
+            add(ActionUtil.SEPARATOR);
+        }
+
+        for (DBObject object : objects) {
+            if (recentObjects == null || !recentObjects.contains(object))
             add(listShowAction.createObjectAction(object));
         }
     }

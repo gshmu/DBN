@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -22,10 +23,13 @@ public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecution
     @NotNull
     @Override
     public String getName() {
-        DBMethod method = getExecutionInput().getMethod();
-        DBSchemaObject object = getMainDatabaseObject(method);
-        if (object != null) {
-            return object.getQualifiedName();
+        MethodExecutionInput executionInput = getExecutionInput();
+        if (executionInput != null) {
+            DBMethod method = executionInput.getMethod();
+            DBSchemaObject object = getMainDatabaseObject(method);
+            if (object != null) {
+                return object.getQualifiedName();
+            }
         }
         return "Debug Process";
     }
@@ -39,10 +43,13 @@ public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecution
     @Nullable
     @Override
     public Icon getIcon() {
-        DBMethod method = getExecutionInput().getMethod();
-        DBSchemaObject object = getMainDatabaseObject(method);
-        if (object != null) {
-            return object.getIcon();
+        MethodExecutionInput executionInput = getExecutionInput();
+        if (executionInput != null) {
+            DBMethod method = executionInput.getMethod();
+            DBSchemaObject object = getMainDatabaseObject(method);
+            if (object != null) {
+                return object.getIcon();
+            }
         }
         return null;
     }
@@ -54,13 +61,20 @@ public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecution
 
     @Override
     protected void executeTarget() throws SQLException {
-        MethodExecutionInput methodExecutionInput = getExecutionInput();
-        MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
-        methodExecutionManager.debugExecute(methodExecutionInput, getTargetConnection(), DBDebuggerType.JDWP);
+        MethodExecutionInput executionInput = getExecutionInput();
+        if (executionInput != null) {
+            MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
+            methodExecutionManager.debugExecute(executionInput, getTargetConnection(), DBDebuggerType.JDWP);
+        }
     }
 
     @Override
     protected void releaseTargetConnection() {
         targetConnection = null;
+    }
+
+    @Override
+    public ExecutionTarget getExecutionTarget() {
+        return ExecutionTarget.METHOD;
     }
 }
