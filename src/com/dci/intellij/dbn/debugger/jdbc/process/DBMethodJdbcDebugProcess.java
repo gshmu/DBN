@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -69,5 +70,10 @@ public class DBMethodJdbcDebugProcess extends DBJdbcDebugProcess<MethodExecution
             return object.getIcon();
         }
         return null;
+    }
+
+    @Override
+    public ExecutionTarget getExecutionTarget() {
+        return ExecutionTarget.METHOD;
     }
 }

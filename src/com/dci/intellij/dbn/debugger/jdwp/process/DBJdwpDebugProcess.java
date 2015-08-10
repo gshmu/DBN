@@ -280,40 +280,40 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
     @Override
     public synchronized void stop() {
-        if (!status.DEBUGGER_IS_STOPPING) {
-            status.DEBUGGER_IS_STOPPING = true;
-            super.stop();
-            stopDebugger();
-        }
+        super.stop();
+        stopDebugger();
     }
 
     private void stopDebugger() {
-        final Project project = getProject();
-        new BackgroundTask(project, "Stopping debugger", true) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                progressIndicator.setText("Stopping debug environment.");
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                try {
-                    status.CAN_SET_BREAKPOINTS = false;
-                    DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                    debuggerInterface.disconnectJdwpSession(targetConnection);
+        if (!status.DEBUGGER_IS_STOPPING) {
+            status.DEBUGGER_IS_STOPPING = true;
+            final Project project = getProject();
+            new BackgroundTask(project, "Stopping debugger", true) {
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                    progressIndicator.setText("Stopping debug environment.");
+                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    try {
+                        status.CAN_SET_BREAKPOINTS = false;
+                        DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                        debuggerInterface.disconnectJdwpSession(targetConnection);
 
-                } catch (final SQLException e) {
-                    NotificationUtil.sendErrorNotification(getProject(), "Error stopping debugger.", e.getMessage());
-                    //showErrorDialog(e);
-                } finally {
-                    status.PROCESS_IS_TERMINATED = true;
-                    DBRunConfig<T> runProfile = getRunProfile();
-                    if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
-                        runProfile.setCanRun(false);
+                    } catch (final SQLException e) {
+                        NotificationUtil.sendErrorNotification(getProject(), "Error stopping debugger.", e.getMessage());
+                        //showErrorDialog(e);
+                    } finally {
+                        status.PROCESS_IS_TERMINATED = true;
+                        DBRunConfig<T> runProfile = getRunProfile();
+                        if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
+                            runProfile.setCanRun(false);
+                        }
+
+                        DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
+                        releaseTargetConnection();
                     }
-
-                    DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
-                    releaseTargetConnection();
                 }
-            }
-        }.start();
+            }.start();
+        }
     }
 
 

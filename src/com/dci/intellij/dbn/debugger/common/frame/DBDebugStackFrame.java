@@ -13,11 +13,13 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -230,6 +232,9 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
             component.setIcon(frameIcon);
             component.append(virtualFile.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
             component.append(" (line " + (sourcePosition.getLine() + 1) + ") ", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
+        } else if (getDebugProcess().getExecutionTarget() == ExecutionTarget.METHOD) {
+            component.append("Anonymous block (method runner)", SimpleTextAttributes.GRAY_ATTRIBUTES);
+            component.setIcon(Icons.FILE_SQL_DEBUG_CONSOLE);
         } else {
             component.append(XDebuggerBundle.message("invalid.frame"), SimpleTextAttributes.ERROR_ATTRIBUTES);
         }
