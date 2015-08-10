@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.debugger.common.evaluation.DBDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
+import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XNamedValue;
 import com.intellij.xdebugger.frame.XValueChildrenList;
@@ -44,7 +45,8 @@ public abstract class DBDebugValue<T extends DBDebugStackFrame> extends XNamedVa
         new SimpleBackgroundTask("load variable value") {
             @Override
             protected void execute() {
-                DBDebuggerEvaluator<? extends DBDebugStackFrame, DBDebugValue> evaluator = getStackFrame().getEvaluator();
+                XDebuggerEvaluator evaluator1 = getStackFrame().getEvaluator();
+                DBDebuggerEvaluator<? extends DBDebugStackFrame, DBDebugValue> evaluator = (DBDebuggerEvaluator<? extends DBDebugStackFrame, DBDebugValue>) evaluator1;
                 evaluator.computePresentation(DBDebugValue.this, node, place);
             }
         }.start();

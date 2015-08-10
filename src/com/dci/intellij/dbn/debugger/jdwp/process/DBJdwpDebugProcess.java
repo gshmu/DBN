@@ -8,6 +8,7 @@ import java.util.StringTokenizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -35,13 +36,14 @@ import com.intellij.debugger.engine.JavaDebugProcess;
 import com.intellij.debugger.engine.JavaStackFrame;
 import com.intellij.debugger.engine.SuspendContext;
 import com.intellij.debugger.engine.SuspendContextImpl;
-import com.intellij.debugger.engine.events.SuspendContextCommandImpl;
+import com.intellij.debugger.engine.events.DebuggerCommandImpl;
 import com.intellij.debugger.impl.DebuggerContextImpl;
 import com.intellij.debugger.impl.DebuggerContextListener;
 import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionAdapter;
@@ -52,6 +54,7 @@ import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.sun.jdi.Location;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
+    public static final Key<DBJdwpDebugProcess> KEY = new Key<>("DBNavigator.JdwpDebugProcess");
     protected Connection targetConnection;
     private ConnectionHandlerRef connectionHandlerRef;
     private DBDebugProcessStatus status = new DBDebugProcessStatus();
@@ -73,37 +76,15 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         DBJdwpBreakpointHandler breakpointHandler = new DBJdwpBreakpointHandler(session, this);
         breakpointHandlers = new DBBreakpointHandler[]{breakpointHandler};
         localTcpPort = tcpPort;
-    }
-
-
-    void overwriteSuspendContext(final XSuspendContext suspendContext) {
-        final XDebugSession session = getSession();
-        if (!(suspendContext instanceof DBJdwpDebugSuspendContext) && suspendContext != lastSuspendContext){
-            lastSuspendContext = suspendContext;
-            new SimpleLaterInvocator() {
-                @Override
-                protected void execute() {
-                    if (shouldSuspend(suspendContext)) {
-                        getDebuggerSession().getProcess().getManagerThread().schedule(new SuspendContextCommandImpl((SuspendContextImpl) suspendContext) {
-                            @Override
-                            public void contextAction() throws Exception {
-                                DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
-                                session.positionReached(dbSuspendContext);
-                            }
-                        });
-                    } else {
-                        session.resume();
-                    }
-
-                }
-            }.start();
-        }
+        debuggerSession.getProcess().putUserData(KEY, this);
     }
 
     protected boolean shouldSuspend(XSuspendContext suspendContext) {
         XExecutionStack executionStack = suspendContext.getActiveExecutionStack();
         if (executionStack != null) {
-            VirtualFile virtualFile = getVirtualFile(executionStack.getTopFrame());
+            XStackFrame topFrame = executionStack.getTopFrame();
+            Location location = getLocation(topFrame);
+            VirtualFile virtualFile = getVirtualFile(location);
             return virtualFile != null;
         }
         return true;
@@ -181,7 +162,10 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             @Override
             public void paused(SuspendContext suspendContext) {
                 if (suspendContext instanceof XSuspendContext) {
-                    //overwriteSuspendContext((XSuspendContext) suspendContext);
+/*
+                    overwriteSuspendContext((XSuspendContext) suspendContext);
+                    throw new ProcessCanceledException();
+*/
                 }
             }
         });
@@ -191,9 +175,12 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             public void sessionPaused() {
                 XDebugSession session = getSession();
                 XSuspendContext suspendContext = session.getSuspendContext();
-                if (suspendContext != null) {
-                    overwriteSuspendContext(suspendContext);
-                }
+                XExecutionStack activeExecutionStack = suspendContext.getActiveExecutionStack();
+
+/*
+                overwriteSuspendContext(suspendContext);
+                throw new ProcessCanceledException();
+*/
             }
         });
 
@@ -201,9 +188,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             @Override
             public void changeEvent(DebuggerContextImpl newContext, DebuggerSession.Event event) {
                 SuspendContextImpl suspendContext = newContext.getSuspendContext();
-                if (suspendContext != null) {
-                    //overwriteSuspendContext(suspendContext);
-                }
+                overwriteSuspendContext(suspendContext);
             }
         });
 
@@ -233,6 +218,33 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         }.start();
     }
 
+    void overwriteSuspendContext(final @Nullable XSuspendContext suspendContext) {
+        if (suspendContext != null && suspendContext != lastSuspendContext && !(suspendContext instanceof DBJdwpDebugSuspendContext)) {
+            lastSuspendContext = suspendContext;
+            final XDebugSession session = getSession();
+            if (shouldSuspend(suspendContext)) {
+                getDebuggerSession().getProcess().getManagerThread().schedule(
+                        new DebuggerCommandImpl() {
+                            @Override
+                            protected void action() throws Exception {
+                                DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
+                                session.positionReached(dbSuspendContext);
+
+                            }
+                        });
+                throw AlreadyDisposedException.INSTANCE;
+            } else {
+                new SimpleLaterInvocator() {
+                    @Override
+                    protected void execute() {
+                        session.resume();
+                    }
+                }.start();
+
+            }
+        }
+    }
+
     private void startTargetProgram() {
         new BackgroundTask(getProject(), "Running debugger target program", true, true) {
             @Override
@@ -250,12 +262,15 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     MessageUtil.showErrorDialog(getProject(), executionInput == null ? "Error executing target program" : "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
                 } finally {
                     status.TARGET_EXECUTION_TERMINATED = true;
+/*
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                     try {
                         debuggerInterface.disconnectJdwpSession(targetConnection);
                     } catch (SQLException e) {
                         console.error("Error disconnecting session: " + e.getMessage());
                     }
+*/
+                    stop();
                 }
             }
         }.start();
@@ -264,9 +279,12 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     protected abstract void executeTarget() throws SQLException;
 
     @Override
-    public void stop() {
-        super.stop();
-        stopDebugger();
+    public synchronized void stop() {
+        if (!status.DEBUGGER_IS_STOPPING) {
+            status.DEBUGGER_IS_STOPPING = true;
+            super.stop();
+            stopDebugger();
+        }
     }
 
     private void stopDebugger() {
@@ -278,10 +296,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 try {
                     status.CAN_SET_BREAKPOINTS = false;
-                    if (!status.TARGET_EXECUTION_TERMINATED) {
-                        DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                        debuggerInterface.disconnectJdwpSession(targetConnection);
-                    }
+                    DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                    debuggerInterface.disconnectJdwpSession(targetConnection);
 
                 } catch (final SQLException e) {
                     NotificationUtil.sendErrorNotification(getProject(), "Error stopping debugger.", e.getMessage());
@@ -307,15 +323,14 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         targetConnection = null;
     }
 
-    public VirtualFile getVirtualFile(XStackFrame stackFrame) {
+    @Nullable
+    public VirtualFile getVirtualFile(Location location) {
         try {
-            Location location = getLocation(stackFrame);
             if (location != null) {
-                int lineNumber = location.lineNumber();
                 String sourcePath = location.sourcePath();
                 StringTokenizer tokenizer = new StringTokenizer(sourcePath, "\\.");
-                String signature = tokenizer.nextToken();
-                String programType = tokenizer.nextToken();
+                tokenizer.nextToken(); // signature
+                tokenizer.nextToken(); // program type
                 String schemaName = tokenizer.nextToken();
                 String programName = tokenizer.nextToken();
                 DBSchema schema = getConnectionHandler().getObjectBundle().getSchema(schemaName);
@@ -339,13 +354,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     }
 
     @Nullable
-    Location getLocation(@Nullable XStackFrame stackFrame) {
-        return stackFrame == null ? null : ((JavaStackFrame) stackFrame).getDescriptor().getLocation();
-    }
-
-    public String getOwnerName(XStackFrame stackFrame) {
+    public String getOwnerName(@Nullable Location location) {
         try {
-            Location location = getLocation(stackFrame);
             if (location != null) {
                 String sourcePath = location.sourcePath();
                 StringTokenizer tokenizer = new StringTokenizer(sourcePath, "\\.");
@@ -358,5 +368,10 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         }
 
         return null;
+    }
+
+    @Nullable
+    Location getLocation(@Nullable XStackFrame stackFrame) {
+        return stackFrame == null ? null : ((JavaStackFrame) stackFrame).getDescriptor().getLocation();
     }
 }
