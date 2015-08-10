@@ -266,15 +266,12 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     MessageUtil.showErrorDialog(getProject(), executionInput == null ? "Error executing target program" : "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
                 } finally {
                     status.TARGET_EXECUTION_TERMINATED = true;
-/*
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                     try {
                         debuggerInterface.disconnectJdwpSession(targetConnection);
                     } catch (SQLException e) {
                         console.error("Error disconnecting session: " + e.getMessage());
                     }
-*/
-                    stop();
                 }
             }
         }.start();
