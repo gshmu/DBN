@@ -22,10 +22,13 @@ public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecution
     @NotNull
     @Override
     public String getName() {
-        DBMethod method = getExecutionInput().getMethod();
-        DBSchemaObject object = getMainDatabaseObject(method);
-        if (object != null) {
-            return object.getQualifiedName();
+        MethodExecutionInput executionInput = getExecutionInput();
+        if (executionInput != null) {
+            DBMethod method = executionInput.getMethod();
+            DBSchemaObject object = getMainDatabaseObject(method);
+            if (object != null) {
+                return object.getQualifiedName();
+            }
         }
         return "Debug Process";
     }
@@ -39,10 +42,13 @@ public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecution
     @Nullable
     @Override
     public Icon getIcon() {
-        DBMethod method = getExecutionInput().getMethod();
-        DBSchemaObject object = getMainDatabaseObject(method);
-        if (object != null) {
-            return object.getIcon();
+        MethodExecutionInput executionInput = getExecutionInput();
+        if (executionInput != null) {
+            DBMethod method = executionInput.getMethod();
+            DBSchemaObject object = getMainDatabaseObject(method);
+            if (object != null) {
+                return object.getIcon();
+            }
         }
         return null;
     }
@@ -54,9 +60,11 @@ public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecution
 
     @Override
     protected void executeTarget() throws SQLException {
-        MethodExecutionInput methodExecutionInput = getExecutionInput();
-        MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
-        methodExecutionManager.debugExecute(methodExecutionInput, getTargetConnection(), DBDebuggerType.JDWP);
+        MethodExecutionInput executionInput = getExecutionInput();
+        if (executionInput != null) {
+            MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
+            methodExecutionManager.debugExecute(executionInput, getTargetConnection(), DBDebuggerType.JDWP);
+        }
     }
 
     @Override
