@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -82,5 +83,10 @@ public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExe
             return executionProcessor.getPsiFile().getIcon();
         }
         return null;
+    }
+
+    @Override
+    public ExecutionTarget getExecutionTarget() {
+        return ExecutionTarget.STATEMENT;
     }
 }

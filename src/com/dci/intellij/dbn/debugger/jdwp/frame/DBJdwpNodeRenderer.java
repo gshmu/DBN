@@ -86,7 +86,7 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
     public String calcLabel(ValueDescriptor descriptor, EvaluationContext evaluationContext, DescriptorLabelListener listener) throws EvaluateException {
         ObjectReferenceImpl value = (ObjectReferenceImpl) descriptor.getValue();
         List<Field> fields = ((ReferenceType) value.type()).fields();
-        String stringValue = "null";
+        String stringValue = "";
         String typeIdentifier = value.type().name();
         DBJdwpDebugProcess debugProcess = evaluationContext.getDebugProcess().getUserData(DBJdwpDebugProcess.KEY);
         String typeName = debugProcess.getDebuggerInterface().getJdwpTypeName(typeIdentifier);
@@ -95,9 +95,8 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
         for (Field field : fields) {
             if (field.name().equals("_value")) {
                 Value fieldValue = value.getValue(field);
-                if  (fieldValue != null) {
-                    stringValue = fieldValue.toString();
-                }
+                stringValue = fieldValue == null ? " null" : fieldValue.toString();
+
             }/* else if (field.name().equals("_maxLength")) {
                                 Value fieldValue = value.getValue(field);
                                 if  (fieldValue != null) {

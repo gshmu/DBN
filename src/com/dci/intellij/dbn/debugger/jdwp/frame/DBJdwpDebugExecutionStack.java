@@ -55,13 +55,8 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
 
         DBJdwpDebugProcess debugProcess = suspendContext.getDebugProcess();
         DBJdwpDebugStackFrame stackFrame = new DBJdwpDebugStackFrame(debugProcess, underlyingFrame, stackFrames.size());
-        if (stackFrame.getVirtualFile() != null) {
-            stackFrames.add(stackFrame);
-            return stackFrame;
-        }
-        else {
-            return null;
-        }
+        stackFrames.add(stackFrame);
+        return stackFrame;
     }
 
     @Override
