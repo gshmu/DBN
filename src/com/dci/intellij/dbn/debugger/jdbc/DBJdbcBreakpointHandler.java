@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
-import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointType;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
@@ -33,6 +32,7 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XBreakpointManager;
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.*;
 
@@ -45,7 +45,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
     }
 
     @Override
-    public void registerBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) {
+    public void registerBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
         DBDebugProcess debugProcess = getDebugProcess();
         DBDebugConsoleLogger console = debugProcess.getConsole();
 
@@ -99,7 +99,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
     }
 
     @Override
-    public void unregisterBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, boolean temporary) {
+    public void unregisterBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, boolean temporary) {
         DBDebugProcess debugProcess = getDebugProcess();
 
         if (!debugProcess.getStatus().CAN_SET_BREAKPOINTS) return;
@@ -176,7 +176,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
         return debugProcess.getDebugConnection();
     }
 
-    private BreakpointInfo addBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) throws Exception {
+    private BreakpointInfo addBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) throws Exception {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
         Connection debugConnection = getDebugConnection();
@@ -204,7 +204,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
         }
     }
 
-    private void enableBreakpoint(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) throws Exception {
+    private void enableBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) throws Exception {
         Integer breakpointId = getBreakpointId(breakpoint);
         if (breakpointId != null) {
             ConnectionHandler connectionHandler = getConnectionHandler();

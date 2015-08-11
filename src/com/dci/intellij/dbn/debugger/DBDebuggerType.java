@@ -33,6 +33,22 @@ public enum DBDebuggerType implements Presentable {
         return this != NONE;
     }
 
+    public boolean isSupported() {
+        switch (this) {
+            case JDWP: {
+                try {
+                    Class.forName("com.intellij.debugger.engine.DebugProcessImpl");
+                    return false;
+                } catch (ClassNotFoundException e) {
+                    return false;
+                }
+            }
+            case JDBC: return true;
+            case NONE: return true;
+        }
+        return false;
+    }
+
     @Nullable
     @Override
     public Icon getIcon() {
@@ -46,4 +62,5 @@ public enum DBDebuggerType implements Presentable {
             }
         }
         return null;
-    }}
+    }
+}

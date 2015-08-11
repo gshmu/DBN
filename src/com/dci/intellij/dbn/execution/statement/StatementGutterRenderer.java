@@ -54,6 +54,6 @@ public class StatementGutterRenderer extends GutterIconRenderer {
     @NotNull
     @Override
     public Alignment getAlignment() {
-        return super.getAlignment();
+        return Alignment.RIGHT;
     }
 }

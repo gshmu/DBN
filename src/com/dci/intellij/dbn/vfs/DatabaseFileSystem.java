@@ -101,31 +101,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                         DBEditableObjectVirtualFile virtualFile = findDatabaseFile((DBSchemaObject) object);
                         return virtualFile.getContentFile(contentType);
                     }
-                } /*else {
-                    // TODO remove this backward compatibility
-                    StringTokenizer path = new StringTokenizer(objectPath, ".");
-                    DBObject object = connectionHandler.getObjectBundle().getSchema(path.nextToken());
-                    if (object != null) {
-                        while (path.hasMoreElements() && object != null) {
-                            String token = path.nextToken();
-                            if (path.hasMoreTokens()) {
-                                int idx = token.indexOf('#');
-                                if (idx > -1) {
-                                    String type = token.substring(0, idx);
-                                    String name = token.substring(idx + 1);
-                                    DBObjectType objectType = DBObjectType.getObjectType(type);
-                                    object = object.getChildObject(objectType, name, 0, false);
-                                } else {
-                                    object = object.getChildObject(token, 0, false);
-                                }
-                            }
-                        }
-                        // object may have been deleted by another party
-                        if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
-                            return findDatabaseFile((DBSchemaObject) object);
-                        }
-                    }
-                }*/
+                }
             }
         }
         return null;
