@@ -34,7 +34,6 @@ import com.dci.intellij.dbn.debugger.DBDebugTabLayouter;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
-import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointType;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
@@ -63,6 +62,7 @@ import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointManager;
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
@@ -264,13 +264,13 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
      */
     private void registerBreakpoints(final RunnableTask callback) {
         console.system("Registering breakpoints...");
-        final Collection<XLineBreakpoint<DBBreakpointProperties>> breakpoints = new ReadActionRunner<Collection<XLineBreakpoint<DBBreakpointProperties>>>() {
+        final Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints = new ReadActionRunner<Collection<XLineBreakpoint<XBreakpointProperties>>>() {
             @Override
-            protected Collection<XLineBreakpoint<DBBreakpointProperties>> run() {
+            protected Collection<XLineBreakpoint<XBreakpointProperties>> run() {
                 DBBreakpointType localXBreakpointType = (DBBreakpointType) XDebuggerUtil.getInstance().findBreakpointType(DBBreakpointType.class);
                 Project project = getProject();
                 XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
-                return (Collection<XLineBreakpoint<DBBreakpointProperties>>) breakpointManager.getBreakpoints(localXBreakpointType);
+                return (Collection<XLineBreakpoint<XBreakpointProperties>>) breakpointManager.getBreakpoints(localXBreakpointType);
             }
         }.start();
 
