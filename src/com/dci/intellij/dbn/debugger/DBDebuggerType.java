@@ -38,7 +38,7 @@ public enum DBDebuggerType implements Presentable {
             case JDWP: {
                 try {
                     Class.forName("com.intellij.debugger.engine.DebugProcessImpl");
-                    return false;
+                    return true;
                 } catch (ClassNotFoundException e) {
                     return false;
                 }
