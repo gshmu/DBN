@@ -55,10 +55,12 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.RunnerRegistry;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.UnknownConfigurationType;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -145,6 +147,13 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             return consoleVirtualFile.getType() == DBConsoleType.DEBUG;
         }
         return false;
+    }
+
+    public static void checkJdwpConfiguration() throws RuntimeConfigurationError {
+        if (!DBDebuggerType.JDWP.isSupported()) {
+            ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
+            throw new RuntimeConfigurationError("JDWP debugging is not supported in \"" + applicationInfo.getVersionName() + " " + applicationInfo.getFullVersion()+ "\". Please use Classic debugger over JDBC instead.");
+        }
     }
 
     @Override
@@ -247,7 +256,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
                 String runnerId =
                         debuggerType == DBDebuggerType.JDBC ? DBMethodJdbcRunner.RUNNER_ID :
-                                debuggerType == DBDebuggerType.JDWP ? DBMethodJdwpRunner.RUNNER_ID : null;
+                        debuggerType == DBDebuggerType.JDWP ? DBMethodJdwpRunner.RUNNER_ID : null;
 
                 ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(runnerId);
                 if (programRunner != null) {
@@ -311,10 +320,11 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     public void startDebugger(DebuggerStarter runner) {
         DBDebuggerType debuggerType = getDebuggerSettings().getDebuggerType();
         if (!debuggerType.isSupported()) {
-            MessageUtil.showWarningDialog(
+            ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
+            MessageUtil.showErrorDialog(
                     getProject(), "Unsupported Debugger",
-                    "The " + debuggerType.name() + " debugger type is not supported in your IDE. Using Classic debugger over JDBC instead.",
-                    new String[]{"Ok", "Cancel"}, 0,
+                    debuggerType.name() + " debugging is not supported in \"" + applicationInfo.getVersionName() + " " + applicationInfo.getFullVersion()+ "\".\nDo you want to use classic debugger over JDBC instead?",
+                    new String[]{"Yes", "No"}, 0,
                     runner);
         } else {
             runner.setHandle(0);

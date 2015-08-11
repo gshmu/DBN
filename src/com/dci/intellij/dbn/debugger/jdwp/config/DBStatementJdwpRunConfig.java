@@ -5,13 +5,13 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.options.SettingsEditor;
@@ -44,14 +44,8 @@ public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DB
 
     @Override
     public void checkConfiguration() throws RuntimeConfigurationException {
-        if (!DBDebuggerType.JDWP.isSupported()) throw new RuntimeConfigurationError("JDWP debugging is not supported with your IDE");
+        DatabaseDebuggerManager.checkJdwpConfiguration();
         super.checkConfiguration();
-    }
-
-    @Override
-    public void checkSettingsBeforeRun() throws RuntimeConfigurationException {
-        if (!DBDebuggerType.JDWP.isSupported()) throw new RuntimeConfigurationError("JDWP debugging is not supported with your IDE");
-        super.checkSettingsBeforeRun();
     }
 
     @Override
