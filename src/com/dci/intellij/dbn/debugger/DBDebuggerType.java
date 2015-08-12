@@ -37,7 +37,7 @@ public enum DBDebuggerType implements Presentable {
         switch (this) {
             case JDWP: {
                 try {
-                    Class.forName("org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties");
+                    Class.forName("com.intellij.debugger.engine.JavaStackFrame");
                     return true;
                 } catch (ClassNotFoundException e) {
                     return false;
