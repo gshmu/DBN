@@ -26,7 +26,7 @@ public class StatementExecutionInputsDialog extends DBNDialog<StatementExecution
         setModal(true);
         setResizable(true);
         executeAction = new ExecuteAction();
-        component = new StatementExecutionInputForm(this, executionProcessor, statementText, isBulkExecution);
+        component = new StatementExecutionInputForm(this, executionProcessor, statementText, debuggerType, isBulkExecution);
         init();
     }
 

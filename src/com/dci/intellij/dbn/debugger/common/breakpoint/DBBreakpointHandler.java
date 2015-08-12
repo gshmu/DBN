@@ -11,10 +11,11 @@ import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointDesc;
 
-public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBreakpointHandler<XLineBreakpoint<DBBreakpointProperties>> {
+public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>> {
     private XDebugSession session;
     private T debugProcess;
 
@@ -33,13 +34,13 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
     }
 
 
-    public void registerBreakpoints(Collection<XLineBreakpoint<DBBreakpointProperties>> breakpoints) {
-        for (XLineBreakpoint<DBBreakpointProperties> breakpoint : breakpoints) {
+    public void registerBreakpoints(Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints) {
+        for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
             registerBreakpoint(breakpoint);
         }
     }
 
-    protected void handleBreakpointError(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, String error) {
+    protected void handleBreakpointError(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, String error) {
         DBDebugConsoleLogger console = getConsole();
         XDebugSession session = getSession();
         String breakpointDesc = getBreakpointDesc(breakpoint);

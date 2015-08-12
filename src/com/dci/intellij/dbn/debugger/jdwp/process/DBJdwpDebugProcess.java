@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
 import com.dci.intellij.dbn.debugger.jdwp.DBJdwpBreakpointHandler;
+import com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugStackFrame;
 import com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugSuspendContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -86,6 +87,9 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             XExecutionStack executionStack = suspendContext.getActiveExecutionStack();
             if (executionStack != null) {
                 XStackFrame topFrame = executionStack.getTopFrame();
+                if (topFrame instanceof DBJdwpDebugStackFrame) {
+                    return true;
+                }
                 Location location = getLocation(topFrame);
                 VirtualFile virtualFile = getVirtualFile(location);
                 return virtualFile != null;
@@ -177,14 +181,16 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         session.addSessionListener(new XDebugSessionAdapter() {
             @Override
             public void sessionPaused() {
-                XDebugSession session = getSession();
                 XSuspendContext suspendContext = session.getSuspendContext();
-                XExecutionStack activeExecutionStack = suspendContext.getActiveExecutionStack();
+                if (!shouldSuspend(suspendContext)) {
+                    new SimpleLaterInvocator() {
+                        @Override
+                        protected void execute() {
+                            session.resume();
+                        }
+                    }.start();
 
-/*
-                overwriteSuspendContext(suspendContext);
-                throw new ProcessCanceledException();
-*/
+                }
             }
         });
 
@@ -237,14 +243,6 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                             }
                         });
                 throw AlreadyDisposedException.INSTANCE;
-            } else {
-                new SimpleLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        session.resume();
-                    }
-                }.start();
-
             }
         }
     }
@@ -373,6 +371,9 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
     @Nullable
     Location getLocation(@Nullable XStackFrame stackFrame) {
-        return stackFrame == null ? null : ((JavaStackFrame) stackFrame).getDescriptor().getLocation();
+        if (stackFrame instanceof JavaStackFrame) {
+            return ((JavaStackFrame) stackFrame).getDescriptor().getLocation();
+        }
+        return null;
     }
 }

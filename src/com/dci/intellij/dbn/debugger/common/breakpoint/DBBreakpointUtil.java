@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.debugger.common.breakpoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -11,18 +12,17 @@ import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.intellij.debugger.ui.breakpoints.LineBreakpoint;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 
 public class DBBreakpointUtil {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
     private static final Key<Integer> BREAKPOINT_ID_KEY = new Key<Integer>("BREAKPOINT_ID");
     private static final Key<VirtualFile> BREAKPOINT_FILE_KEY = Key.create("DBNavigator.BreakpointFile");
-    private static final Key<LineBreakpoint> LINE_BREAKPOINT_KEY = Key.create("DBNavigator.LineBreakpoint");
-
 
     public static Integer getBreakpointId(@NotNull XLineBreakpoint breakpoint) {
         return breakpoint.getUserData(DBBreakpointUtil.BREAKPOINT_ID_KEY);
@@ -56,16 +56,6 @@ public class DBBreakpointUtil {
     }
 
     @Nullable
-    public static LineBreakpoint getLineBreakpoint(Project project, @NotNull XLineBreakpoint breakpoint) {
-        LineBreakpoint lineBreakpoint = breakpoint.getUserData(LINE_BREAKPOINT_KEY);
-        if (lineBreakpoint == null) {
-            lineBreakpoint = LineBreakpoint.create(project, breakpoint);
-            breakpoint.putUserData(LINE_BREAKPOINT_KEY, lineBreakpoint);
-        }
-        return lineBreakpoint;
-    }
-
-    @Nullable
     public static DBSchemaObject getDatabaseObject(@NotNull XLineBreakpoint breakpoint) {
         VirtualFile virtualFile = getVirtualFile(breakpoint);
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
@@ -85,7 +75,7 @@ public class DBBreakpointUtil {
         return contentType;
     }
 
-    public static String getProgramIdentifier(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) {
+    public static String getProgramIdentifier(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
         DBSchemaObject object = getDatabaseObject(breakpoint);
         if (object != null) {
             DatabaseDebuggerInterface debuggerInterface = object.getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
@@ -96,12 +86,11 @@ public class DBBreakpointUtil {
     }
 
     @NotNull
-    public static String getBreakpointDesc(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint) {
+    public static String getBreakpointDesc(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
         DBSchemaObject object = getDatabaseObject(breakpoint);
         final VirtualFile virtualFile = getVirtualFile(breakpoint);
         return object == null ?
                 virtualFile == null ? "unknown" : virtualFile.getName() + ":" + (breakpoint.getLine() + 1) :
                 object.getQualifiedName() + ":" + (breakpoint.getLine() + 1);
     }
-
 }
