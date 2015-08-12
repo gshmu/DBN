@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.options.ui.DebuggerSettingsForm;
 
 public class DebuggerSettings extends Configuration<DebuggerSettingsForm>{
-    private DBDebuggerType debuggerType = DBDebuggerType.JDWP;
+    private DBDebuggerType debuggerType = DBDebuggerType.JDWP.isSupported() ? DBDebuggerType.JDWP : DBDebuggerType.JDBC;
     private boolean useGenericRunners = true;
 
     public String getDisplayName() {
