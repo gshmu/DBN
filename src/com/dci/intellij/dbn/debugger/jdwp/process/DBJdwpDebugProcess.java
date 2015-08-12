@@ -177,14 +177,16 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         session.addSessionListener(new XDebugSessionAdapter() {
             @Override
             public void sessionPaused() {
-                XDebugSession session = getSession();
                 XSuspendContext suspendContext = session.getSuspendContext();
-                XExecutionStack activeExecutionStack = suspendContext.getActiveExecutionStack();
+                if (!shouldSuspend(suspendContext)) {
+                    new SimpleLaterInvocator() {
+                        @Override
+                        protected void execute() {
+                            session.resume();
+                        }
+                    }.start();
 
-/*
-                overwriteSuspendContext(suspendContext);
-                throw new ProcessCanceledException();
-*/
+                }
             }
         });
 
@@ -237,14 +239,6 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                             }
                         });
                 throw AlreadyDisposedException.INSTANCE;
-            } else {
-                new SimpleLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        session.resume();
-                    }
-                }.start();
-
             }
         }
     }
