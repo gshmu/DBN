@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.statement.variables.ui;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
@@ -24,6 +25,7 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionTimeoutForm;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
@@ -53,11 +55,14 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     private JCheckBox reuseVariablesCheckBox;
     private JPanel executionTimeoutForm;
     private JPanel headerPanel;
+    private JPanel debuggerVversionPanel;
+    private JLabel debuggerVersionLabel;
+    private JLabel debuggerTypeLabel;
     private Document previewDocument;
     private EditorEx viewer;
     private String statementText;
 
-    public StatementExecutionInputForm(final StatementExecutionInputsDialog parentComponent, final StatementExecutionProcessor executionProcessor, String statementText, boolean isBulkExecution) {
+    public StatementExecutionInputForm(final StatementExecutionInputsDialog parentComponent, final StatementExecutionProcessor executionProcessor, String statementText, DBDebuggerType debuggerType, boolean isBulkExecution) {
         super(parentComponent);
         this.executionProcessor = executionProcessor;
         this.statementText = statementText;
@@ -65,6 +70,18 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         variablesPanel.setLayout(new BoxLayout(variablesPanel, BoxLayout.Y_AXIS));
         headerSeparatorPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
         headerSeparatorPanel.setVisible(false);
+
+        ConnectionHandler connectionHandler = executionProcessor.getConnectionHandler();
+        if (debuggerType.isDebug()) {
+            debuggerVversionPanel.setVisible(true);
+            debuggerVversionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
+            DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
+            String debuggerVersion = debuggerManager.getDebuggerVersion(connectionHandler);
+            debuggerVersionLabel.setText(debuggerVersion);
+            debuggerTypeLabel.setText(debuggerType.name());
+        } else {
+            debuggerVversionPanel.setVisible(false);
+        }
 
         DBLanguagePsiFile psiFile = executionProcessor.getPsiFile();
         DBNHeaderForm headerForm = new DBNHeaderForm(psiFile.getName(), psiFile.getIcon(), psiFile.getEnvironmentType().getColor());
