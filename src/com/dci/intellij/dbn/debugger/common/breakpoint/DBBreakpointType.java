@@ -1,10 +1,15 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
+import java.lang.reflect.Constructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.debugger.jdbc.DBJdbcBreakpointProperties;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBJdbcDebuggerEditorsProvider;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
@@ -13,6 +18,7 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -20,11 +26,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.xdebugger.XDebuggerBundle;
 import com.intellij.xdebugger.XSourcePosition;
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 
-public class DBBreakpointType extends XLineBreakpointType<DBBreakpointProperties> {
+public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties> {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     public DBBreakpointType() {
         super("db-program", "DB-Program Breakpoint");
     }
@@ -81,18 +90,20 @@ public class DBBreakpointType extends XLineBreakpointType<DBBreakpointProperties
     }
 
     @Override
-    public DBBreakpointProperties createBreakpointProperties(@NotNull VirtualFile file, int line) {
+    public XBreakpointProperties createBreakpointProperties(@NotNull VirtualFile file, int line) {
+        ConnectionHandler connectionHandler = null;
         if (file instanceof ConnectionProvider) {
             ConnectionProvider connectionProvider = (ConnectionProvider) file;
-            return new DBBreakpointProperties(connectionProvider.getConnectionHandler());
+            connectionHandler = connectionProvider.getConnectionHandler();
         }
-        return new DBBreakpointProperties(null);
+
+        return createBreakpointProperties(connectionHandler);
     }
 
     @Nullable
     @Override
-    public DBBreakpointProperties createProperties() {
-        return new DBBreakpointProperties();
+    public XBreakpointProperties createProperties() {
+        return createBreakpointProperties(null);
     }
 
     @Override
@@ -102,7 +113,7 @@ public class DBBreakpointType extends XLineBreakpointType<DBBreakpointProperties
 
     @Nullable
     @Override
-    public XDebuggerEditorsProvider getEditorsProvider(@NotNull XLineBreakpoint<DBBreakpointProperties> breakpoint, @NotNull Project project) {
+    public XDebuggerEditorsProvider getEditorsProvider(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, @NotNull Project project) {
         return DBJdbcDebuggerEditorsProvider.INSTANCE;
     }
 
@@ -117,4 +128,19 @@ public class DBBreakpointType extends XLineBreakpointType<DBBreakpointProperties
         }
         return "unknown";
     }
+
+    private static XBreakpointProperties createBreakpointProperties(ConnectionHandler connectionHandler) {
+        if (DBDebuggerType.JDWP.isSupported()) {
+            try {
+                Class propertiesClass = Class.forName("com.dci.intellij.dbn.debugger.jdwp.DBJdwpBreakpointProperties");
+                Constructor constructor = propertiesClass.getConstructor(ConnectionHandler.class);
+                return (XBreakpointProperties) constructor.newInstance(connectionHandler);
+            } catch (Exception e) {
+                LOGGER.error("Error creating JDWP breakpoints properties", e);
+            }
+        }
+
+        return new DBJdbcBreakpointProperties(connectionHandler);
+    }
+
 }

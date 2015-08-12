@@ -1,0 +1,53 @@
+package com.dci.intellij.dbn.debugger.jdwp;
+
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties;
+
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
+import com.intellij.util.xmlb.annotations.Attribute;
+
+public class DBJdwpBreakpointProperties extends JavaBreakpointProperties<DBJdwpBreakpointProperties> implements DBBreakpointProperties {
+    @Attribute("connection-id")
+    private String connectionId;
+
+    private ConnectionHandlerRef connectionHandlerRef;
+
+    public DBJdwpBreakpointProperties() {
+        System.out.println();
+    }
+
+    public DBJdwpBreakpointProperties(ConnectionHandler connectionHandler) {
+        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        if (connectionHandler != null) {
+            connectionId = connectionHandler.getId();
+        }
+    }
+
+    @Override
+    public String getConnectionId() {
+        return connectionId;
+    }
+
+    @Override
+    public ConnectionHandler getConnectionHandler() {
+        if (connectionHandlerRef == null && connectionId != null) {
+            connectionHandlerRef = new ConnectionHandlerRef(connectionId);
+        }
+        return ConnectionHandlerRef.get(connectionHandlerRef);
+    }
+
+    @Nullable
+    @Override
+    public DBJdwpBreakpointProperties getState() {
+        return super.getState();
+    }
+
+    @Override
+    public void loadState(DBJdwpBreakpointProperties state) {
+        super.loadState(state);
+        connectionId = state.connectionId;
+        connectionHandlerRef = state.connectionHandlerRef;
+    }
+}

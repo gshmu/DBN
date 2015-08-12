@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.debugger;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.ui.Presentable;
+import javax.swing.Icon;
 
 public enum DBDebuggerType implements Presentable {
     JDBC("Classic (over JDBC)"),
@@ -33,6 +33,22 @@ public enum DBDebuggerType implements Presentable {
         return this != NONE;
     }
 
+    public boolean isSupported() {
+        switch (this) {
+            case JDWP: {
+                try {
+                    Class.forName("com.intellij.debugger.engine.DebugProcessImpl");
+                    return true;
+                } catch (ClassNotFoundException e) {
+                    return false;
+                }
+            }
+            case JDBC: return true;
+            case NONE: return true;
+        }
+        return false;
+    }
+
     @Nullable
     @Override
     public Icon getIcon() {
@@ -46,4 +62,5 @@ public enum DBDebuggerType implements Presentable {
             }
         }
         return null;
-    }}
+    }
+}

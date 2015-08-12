@@ -99,21 +99,13 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public void deserialize(String connectionId, String objectIdentifier) {
-        // TODO remove this backward compatibility
-        boolean isNewImpl = objectIdentifier.contains("/");
-        String tokenizerChar = isNewImpl ? "/" : ".";
-
         int typeEndIndex = objectIdentifier.indexOf("]");
-        StringTokenizer objectTypes = new StringTokenizer(objectIdentifier.substring(1, typeEndIndex), tokenizerChar);
+        StringTokenizer objectTypes = new StringTokenizer(objectIdentifier.substring(1, typeEndIndex), "/");
 
-        // TODO remove this backward compatibility
-        int objectStartIndex = isNewImpl ? typeEndIndex + 2 : typeEndIndex + 1;
-        int objectEndIndex = isNewImpl ? objectIdentifier.lastIndexOf("]") : objectIdentifier.length();
-        if (isNewImpl && objectIdentifier.length() > objectEndIndex + 1 && objectIdentifier.charAt(objectEndIndex + 1) == '#') {
+        int objectStartIndex = typeEndIndex + 2;
+        int objectEndIndex = objectIdentifier.lastIndexOf("]");
 
-        }
-
-        StringTokenizer objectNames = new StringTokenizer(objectIdentifier.substring(objectStartIndex, objectEndIndex), tokenizerChar);
+        StringTokenizer objectNames = new StringTokenizer(objectIdentifier.substring(objectStartIndex, objectEndIndex), "/");
 
         DBObjectRef objectRef = null;
         while (objectTypes.hasMoreTokens()) {

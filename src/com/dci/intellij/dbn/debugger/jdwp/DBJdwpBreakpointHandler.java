@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
@@ -26,8 +27,10 @@ import com.intellij.debugger.jdi.VirtualMachineProxyImpl;
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerUtil;
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
@@ -35,9 +38,11 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
-import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.*;
+import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getDatabaseObject;
+import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getProgramIdentifier;
 
 public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProcess> {
+    private static final Key<LineBreakpoint> LINE_BREAKPOINT_KEY = Key.create("DBNavigator.LineBreakpoint");
     private Set<String> initRequestCache = new HashSet<String>();
 
     public DBJdwpBreakpointHandler(XDebugSession session, DBJdwpDebugProcess debugProcess) {
@@ -72,49 +77,53 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
     }
 
     @Override
-    public void registerBreakpoint(@NotNull final XLineBreakpoint<DBBreakpointProperties> breakpoint) {
-        DBBreakpointProperties properties = breakpoint.getProperties();
-        if (properties != null && properties.getConnectionHandler() == getConnectionHandler()) {
-            new ManagedThreadCommand(getJdiDebugProcess()) {
+    public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
+        XBreakpointProperties properties = breakpoint.getProperties();
+        if (properties instanceof DBBreakpointProperties) {
+            DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
+            if (breakpointProperties.getConnectionHandler() == getConnectionHandler()) {
+                new ManagedThreadCommand(getJdiDebugProcess()) {
 
-                @Override
-                protected void action() throws Exception {
-                    //EventRequestManager eventRequestManager = virtualMachineProxy.eventRequestManager();
+                    @Override
+                    protected void action() throws Exception {
+                        //EventRequestManager eventRequestManager = virtualMachineProxy.eventRequestManager();
 
-                    VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
-                    RequestManagerImpl requestsManager = getRequestsManager();
+                        VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
+                        RequestManagerImpl requestsManager = getRequestsManager();
 
-                    String programIdentifier = getProgramIdentifier(breakpoint);
-                    LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
-                    if (lineBreakpoint != null) {
-                        Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
-                        if (requests.size() > 0) {
-                            for (EventRequest request : requests) {
-                                request.enable();
-                            }
-                        } else {
-                            List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
-                            if (referenceTypes.size() > 0) {
-                                ReferenceType referenceType = referenceTypes.get(0);
-                                List<Location> locations = referenceType.locationsOfLine(breakpoint.getLine() + 1);
-                                if (locations.size() > 0) {
-                                    Location location = locations.get(0);
-                                    BreakpointRequest breakpointRequest = requestsManager.createBreakpointRequest(lineBreakpoint, location);
-                                    breakpointRequest.addThreadFilter(getMainThread());
-                                    requestsManager.enableRequest(breakpointRequest);
+                        String programIdentifier = getProgramIdentifier(breakpoint);
+                        LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
+                        if (lineBreakpoint != null) {
+                            Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
+                            if (requests.size() > 0) {
+                                for (EventRequest request : requests) {
+                                    request.enable();
                                 }
                             } else {
-                                requestsManager.callbackOnPrepareClasses(lineBreakpoint, programIdentifier);
+                                List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
+                                if (referenceTypes.size() > 0) {
+                                    ReferenceType referenceType = referenceTypes.get(0);
+                                    List<Location> locations = referenceType.locationsOfLine(breakpoint.getLine() + 1);
+                                    if (locations.size() > 0) {
+                                        Location location = locations.get(0);
+                                        BreakpointRequest breakpointRequest = requestsManager.createBreakpointRequest(lineBreakpoint, location);
+                                        breakpointRequest.addThreadFilter(getMainThread());
+                                        requestsManager.enableRequest(breakpointRequest);
+                                    }
+                                } else {
+                                    requestsManager.callbackOnPrepareClasses(lineBreakpoint, programIdentifier);
+                                }
                             }
                         }
                     }
-                }
-            }.invoke();
+                }.invoke();
+            }
         }
+
     }
 
     @Override
-    public void unregisterBreakpoint(@NotNull final XLineBreakpoint<DBBreakpointProperties> breakpoint, final boolean temporary) {
+    public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
         new ManagedThreadCommand(getJdiDebugProcess()) {
             @Override
             protected void action() throws Exception {
@@ -133,7 +142,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
         }.invoke();
     }
 
-    private void initializeResources(@NotNull final XLineBreakpoint<DBBreakpointProperties> breakpoint) {
+    private void initializeResources(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
         DBSchemaObject object = getDatabaseObject(breakpoint);
         if (object != null) {
             getManagerThread().invokeAndWait(new DebuggerCommandImpl() {
@@ -159,6 +168,16 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                 }
             });
         }
+    }
+
+    @Nullable
+    public static LineBreakpoint getLineBreakpoint(Project project, @NotNull XLineBreakpoint breakpoint) {
+        LineBreakpoint lineBreakpoint = breakpoint.getUserData(LINE_BREAKPOINT_KEY);
+        if (lineBreakpoint == null) {
+            lineBreakpoint = LineBreakpoint.create(project, breakpoint);
+            breakpoint.putUserData(LINE_BREAKPOINT_KEY, lineBreakpoint);
+        }
+        return lineBreakpoint;
     }
 
     private ThreadReference getMainThread() {
