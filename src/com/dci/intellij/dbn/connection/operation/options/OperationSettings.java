@@ -48,8 +48,9 @@ public class OperationSettings extends CompositeProjectConfiguration<OperationsS
         return ConfigId.OPERATIONS;
     }
 
+    @NotNull
     @Override
-    protected Configuration<OperationsSettingsForm> getOriginalSettings() {
+    public Configuration<OperationsSettingsForm> getOriginalSettings() {
         return getInstance(getProject());
     }
 

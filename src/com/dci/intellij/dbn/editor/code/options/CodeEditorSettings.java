@@ -41,8 +41,9 @@ public class CodeEditorSettings extends CompositeProjectConfiguration<CodeEditor
         return ConfigId.CODE_EDITOR;
     }
 
+    @NotNull
     @Override
-    protected Configuration<CodeEditorSettingsForm> getOriginalSettings() {
+    public Configuration<CodeEditorSettingsForm> getOriginalSettings() {
         return getInstance(getProject());
     }
 

@@ -85,8 +85,9 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
         }
     }
 
+    @NotNull
     @Override
-    protected Configuration<ConnectionBundleSettingsForm> getOriginalSettings() {
+    public Configuration<ConnectionBundleSettingsForm> getOriginalSettings() {
         return getInstance(getProject());
     }
 
