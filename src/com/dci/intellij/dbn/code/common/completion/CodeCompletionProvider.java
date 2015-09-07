@@ -285,23 +285,26 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     public static String[] buildAliasDefinitionNames(BasePsiElement aliasElement) {
         IdentifierPsiElement aliasedObject = PsiUtil.lookupObjectPriorTo(aliasElement, DBObjectType.ANY);
         if (aliasedObject != null && aliasedObject.isObject()) {
-            String[] aliasNames = NamingUtil.createAliasNames(aliasedObject.getUnquotedText());
+            CharSequence unquotedText = aliasedObject.getUnquotedText();
+            if (unquotedText.length() > 0) {
+                String[] aliasNames = NamingUtil.createAliasNames(unquotedText);
 
-            BasePsiElement scope = aliasElement.getEnclosingScopePsiElement();
+                BasePsiElement scope = aliasElement.getEnclosingScopePsiElement();
 
-            for (int i = 0; i< aliasNames.length; i++) {
-                while (true) {
-                    PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(null, DBObjectType.ANY, aliasNames[i]);
-                    boolean isExisting = lookupAdapter.findInScope(scope) != null;
-                    boolean isKeyword = aliasElement.getLanguageDialect().isReservedWord(aliasNames[i]);
-                    if (isKeyword || isExisting) {
-                        aliasNames[i] = NamingUtil.getNextNumberedName(aliasNames[i], false);
-                    } else {
-                        break;
+                for (int i = 0; i< aliasNames.length; i++) {
+                    while (true) {
+                        PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(null, DBObjectType.ANY, aliasNames[i]);
+                        boolean isExisting = lookupAdapter.findInScope(scope) != null;
+                        boolean isKeyword = aliasElement.getLanguageDialect().isReservedWord(aliasNames[i]);
+                        if (isKeyword || isExisting) {
+                            aliasNames[i] = NamingUtil.getNextNumberedName(aliasNames[i], false);
+                        } else {
+                            break;
+                        }
                     }
                 }
+                return aliasNames;
             }
-            return aliasNames;
         }
         return new String[0];
     }
