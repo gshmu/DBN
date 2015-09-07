@@ -260,6 +260,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     protected void updateIndex() {
         if (indexed) {
+            List<T> elements = this.elements;
+            if (elements instanceof FiltrableList) {
+                elements = ((FiltrableList) elements).getFullList();
+            }
             if (elements.size() > 30) {
                 if (index == null)
                     index = new THashMap<String, T>(); else
