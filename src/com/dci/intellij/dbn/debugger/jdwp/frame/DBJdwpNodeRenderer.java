@@ -122,7 +122,7 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
 
     @Override
     public boolean isApplicable(Type type) {
-        return type.name().startsWith("$Oracle");
+        return type != null && type.name().startsWith("$Oracle");
     }
 
     @Override
