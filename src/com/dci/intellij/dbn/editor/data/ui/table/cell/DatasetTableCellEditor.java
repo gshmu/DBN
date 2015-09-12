@@ -225,9 +225,11 @@
                 if (cell.isNavigable()) {
                     DatasetEditorTable table = getTable();
                     DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
-                    DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(table.getProject());
-                    datasetEditorManager.navigateToRecord(filterInput, event);
-                    event.consume();
+                    if (filterInput != null) {
+                        DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(table.getProject());
+                        datasetEditorManager.navigateToRecord(filterInput, event);
+                        event.consume();
+                    }
                 }
             }
         }

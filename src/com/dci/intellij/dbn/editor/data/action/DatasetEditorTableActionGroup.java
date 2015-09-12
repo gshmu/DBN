@@ -93,7 +93,9 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         if (columnValue != null) {
             if (column.isForeignKey()) {
                 DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
-                add(new ShowReferencedRecordAction(filterInput));
+                if (filterInput != null) {
+                    add(new ShowReferencedRecordAction(filterInput));
+                }
             }
             if (column.isPrimaryKey()) {
                 ShowReferencingRecordsAction action = new ShowReferencingRecordsAction(column, columnValue);

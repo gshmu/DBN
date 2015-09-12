@@ -87,6 +87,12 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
         return new CodeCompletionSettingsForm(this);
     }
 
+    @NotNull
+    @Override
+    public Configuration<CodeCompletionSettingsForm> getOriginalSettings() {
+        return CodeCompletionSettings.getInstance(getProject());
+    }
+
     @Override
     public String getConfigElementName() {
         return "code-completion-settings";

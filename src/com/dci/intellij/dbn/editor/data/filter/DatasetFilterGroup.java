@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Set;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
@@ -188,7 +188,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
         return datasetName;
     }
 
-    @Nullable
+    @NotNull
     public DBDataset lookupDataset() {
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
@@ -201,7 +201,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
                 return schema.getDataset(name);
             }
         }
-        return null;
+        throw AlreadyDisposedException.INSTANCE;
     }
 
     public boolean equals(Object obj) {

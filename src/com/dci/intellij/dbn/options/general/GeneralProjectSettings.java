@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.options.general;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
@@ -9,7 +11,6 @@ import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.dci.intellij.dbn.options.general.ui.GeneralProjectSettingsForm;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class GeneralProjectSettings extends CompositeProjectConfiguration<GeneralProjectSettingsForm> implements TopLevelConfig {
     private RegionalSettings regionalSettings;
@@ -40,8 +41,9 @@ public class GeneralProjectSettings extends CompositeProjectConfiguration<Genera
         return ConfigId.GENERAL;
     }
 
+    @NotNull
     @Override
-    protected Configuration<GeneralProjectSettingsForm> getOriginalSettings() {
+    public Configuration<GeneralProjectSettingsForm> getOriginalSettings() {
         return getInstance(getProject());
     }
 

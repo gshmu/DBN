@@ -41,8 +41,9 @@ public class NavigationSettings extends CompositeProjectConfiguration<Navigation
         return ConfigId.NAVIGATION;
     }
 
+    @NotNull
     @Override
-    protected Configuration<NavigationSettingsForm> getOriginalSettings() {
+    public Configuration<NavigationSettingsForm> getOriginalSettings() {
         return getInstance(getProject());
     }
 

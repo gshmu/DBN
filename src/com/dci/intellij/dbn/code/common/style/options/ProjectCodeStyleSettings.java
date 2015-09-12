@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.code.common.style.options;
 
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.code.common.style.options.ui.CodeStyleSettingsForm;
@@ -10,14 +9,12 @@ import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
 import com.dci.intellij.dbn.code.sql.style.options.SQLCustomCodeStyleSettings;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
-import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 
-public class ProjectCodeStyleSettings extends CompositeProjectConfiguration<CodeStyleSettingsForm> implements TopLevelConfig {
+public class ProjectCodeStyleSettings extends CompositeProjectConfiguration<CodeStyleSettingsForm> {
     public ProjectCodeStyleSettings(Project project){
         super(project);
     }
@@ -34,11 +31,6 @@ public class ProjectCodeStyleSettings extends CompositeProjectConfiguration<Code
 
     public String getDisplayName() {
         return "Code Style";
-    }
-
-    @Override
-    public ConfigId getConfigId() {
-        return ConfigId.CODE_STYLE;
     }
 
     @NotNull
@@ -80,13 +72,4 @@ public class ProjectCodeStyleSettings extends CompositeProjectConfiguration<Code
                 getSQLCodeStyleSettings(),
                 getPSQLCodeStyleSettings()};
     }
-
-    public void readConfiguration(Element element) {
-
-    }
-
-    public void writeConfiguration(Element element) {
-
-    }
-
 }

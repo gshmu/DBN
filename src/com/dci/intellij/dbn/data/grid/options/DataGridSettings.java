@@ -45,8 +45,9 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
         return ConfigId.DATA_GRID;
     }
 
+    @NotNull
     @Override
-    protected Configuration<DataGridSettingsForm> getOriginalSettings() {
+    public Configuration<DataGridSettingsForm> getOriginalSettings() {
         return getInstance(getProject());
     }
 
