@@ -51,8 +51,9 @@ public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSetting
         return ConfigId.DDL_FILES;
     }
 
+    @NotNull
     @Override
-    protected Configuration<DDFileSettingsForm> getOriginalSettings() {
+    public Configuration<DDFileSettingsForm> getOriginalSettings() {
         return getInstance(getProject());
     }
 

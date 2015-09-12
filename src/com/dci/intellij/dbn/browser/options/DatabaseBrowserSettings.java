@@ -51,8 +51,9 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
         return ConfigId.BROWSER;
     }
 
+    @NotNull
     @Override
-    protected Configuration<DatabaseBrowserSettingsForm> getOriginalSettings() {
+    public Configuration<DatabaseBrowserSettingsForm> getOriginalSettings() {
         return getInstance(getProject());
     }
 

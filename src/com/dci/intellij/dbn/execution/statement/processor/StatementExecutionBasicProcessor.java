@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.execution.statement.processor;
 
 import java.lang.ref.WeakReference;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -260,14 +259,15 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                 if (!debug && activeConnection.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
                     loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
                 }
-                final PreparedStatement statement = connection.prepareStatement(executableStatementText);
+                final Statement statement = connection.createStatement();
                 closeOnErrorStatement = statement;
 
                 statement.setQueryTimeout(timeout);
+                final String executable = executableStatementText;
                 executionResult = new ExecutionCancellableCall<StatementExecutionResult>(timeout, TimeUnit.SECONDS) {
                     @Override
                     public StatementExecutionResult execute() throws Exception{
-                        statement.execute();
+                        statement.execute(executable);
                         return createExecutionResult(statement, executionInput);
                     }
 

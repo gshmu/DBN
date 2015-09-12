@@ -93,15 +93,16 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
         }
         isModified = false;
 
-        Configuration<T> settings = getOriginalSettings();
-        if (this instanceof TopLevelConfig && settings != null && settings != this) {
-            Element settingsElement = new Element("settings");
-            writeConfiguration(settingsElement);
-            settings.readConfiguration(settingsElement);
-        }
-
         if (this instanceof TopLevelConfig) {
-           // Notify only when all changes are set
+            TopLevelConfig topLevelConfig = (TopLevelConfig) this;
+            Configuration originalSettings = topLevelConfig.getOriginalSettings();
+            if (originalSettings != this ) {
+                Element settingsElement = new Element("settings");
+                writeConfiguration(settingsElement);
+                originalSettings.readConfiguration(settingsElement);
+            }
+
+            // Notify only when all changes are set
             notifyChanges();
         }
         onApply();
@@ -125,10 +126,6 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
 
     @Deprecated
     protected void onApply() {}
-
-    protected Configuration<T> getOriginalSettings() {
-        return null;
-    }
 
     public void reset() {
         new ConditionalLaterInvocator() {

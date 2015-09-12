@@ -56,8 +56,9 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
         return ConfigId.EXECUTION_ENGINE;
     }
 
+    @NotNull
     @Override
-    protected Configuration<ExecutionEngineSettingsForm> getOriginalSettings() {
+    public Configuration<ExecutionEngineSettingsForm> getOriginalSettings() {
         return getInstance(getProject());
     }
 

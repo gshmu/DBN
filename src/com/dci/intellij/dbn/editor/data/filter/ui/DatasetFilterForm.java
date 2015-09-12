@@ -9,6 +9,7 @@ import java.awt.CardLayout;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -40,7 +41,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
 
     private DBDataset dataset;
 
-    public DatasetFilterForm(DatasetFilterGroup filterGroup, DBDataset dataset) {
+    public DatasetFilterForm(DatasetFilterGroup filterGroup, @NotNull DBDataset dataset) {
         super(filterGroup);
         filtersList.setModel(filterGroup);
         filtersList.setFont(UIUtil.getLabelFont());

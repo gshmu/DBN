@@ -14,6 +14,8 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
+import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -97,6 +99,12 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
                     }
 
                     isDisposed = object.isDisposed();
+                }
+
+                if (!showGrey && treeNode instanceof DBColumn) {
+                    DBColumn column = (DBColumn) treeNode;
+                    DataGridSettings dataGridSettings = DataGridSettings.getInstance(treeNode.getProject());
+                    showGrey = dataGridSettings.getTrackingColumnSettings().isTrackingColumn(column.getName());
                 }
 
                 SimpleTextAttributes textAttributes =
