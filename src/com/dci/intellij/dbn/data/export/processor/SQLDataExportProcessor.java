@@ -46,6 +46,11 @@ public class SQLDataExportProcessor extends DataExportProcessor{
         return false;
     }
 
+    @Override
+    public boolean supportsFileEncoding() {
+        return true;
+    }
+
 
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         Project project = connectionHandler.getProject();

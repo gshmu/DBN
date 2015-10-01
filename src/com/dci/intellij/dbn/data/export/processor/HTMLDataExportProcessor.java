@@ -47,6 +47,11 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
+    public boolean supportsFileEncoding() {
+        return true;
+    }
+
+    @Override
     public Transferable createClipboardContent(String content) {
         return new HtmlContent(content);
     }

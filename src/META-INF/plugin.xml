@@ -27,6 +27,11 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Data export - support for file encoding selection<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.4880</b>
             <ul>
                 - Oracle JDWP debug interface (early preview)<br>

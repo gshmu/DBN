@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.export;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -17,6 +18,7 @@ public class DataExportInstructions extends SettingsUtil implements PersistentSt
     private Destination destination = Destination.FILE;
     private DataExportFormat format = DataExportFormat.EXCEL;
     private String baseName;
+    private Charset charset = Charset.defaultCharset();
 
     public boolean createHeader() {
         return createHeader;
@@ -102,6 +104,14 @@ public class DataExportInstructions extends SettingsUtil implements PersistentSt
         this.baseName = baseName;
     }
 
+    public Charset getCharset() {
+        return charset;
+    }
+
+    public void setCharset(Charset charset) {
+        this.charset = charset;
+    }
+
     public enum Scope{
         GLOBAL,
         SELECTION
@@ -119,8 +129,7 @@ public class DataExportInstructions extends SettingsUtil implements PersistentSt
 
     /***********************************************
      *            PersistentStateElement           *
-     **********************************************
-     * @param element*/
+     ***********************************************/
     @Override
     public void writeState(Element element) {
         Element child = new Element("export-instructions");
@@ -135,6 +144,7 @@ public class DataExportInstructions extends SettingsUtil implements PersistentSt
         setString(child, "scope", scope.name());
         setString(child, "destination", destination.name());
         setString(child, "format", format.name());
+        setString(child, "charset", charset.name());
     }
 
     @Override
@@ -150,6 +160,7 @@ public class DataExportInstructions extends SettingsUtil implements PersistentSt
             scope = Scope.valueOf(getString(child, "scope", scope.name()));
             destination = Destination.valueOf(getString(child, "destination", destination.name()));
             format = DataExportFormat.valueOf(getString(child, "format", format.name()));
+            charset = Charset.forName(getString(element, "charset", charset.name()));
         }
     }
 }
