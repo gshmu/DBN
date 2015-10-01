@@ -4,9 +4,12 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -25,6 +28,7 @@ public abstract class DataExportProcessor {
     public abstract boolean canCreateHeader();
     public abstract boolean canExportToClipboard();
     public abstract boolean canQuoteValues();
+    public abstract boolean supportsFileEncoding();
     public abstract void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException;
 
     private static DataExportProcessor[] PROCESSORS =  new DataExportProcessor[] {
@@ -76,16 +80,16 @@ public abstract class DataExportProcessor {
         if (instructions.getDestination() == DataExportInstructions.Destination.CLIPBOARD) {
             writeToClipboard(content);
         } else {
-            writeToFile(instructions.getFile(), content);
+            writeToFile(instructions.getFile(), content, instructions.getCharset());
         }
     }
 
-    public void writeToFile(File file, String content) throws DataExportException {
+    public void writeToFile(File file, String content, Charset charset) throws DataExportException {
         try {
-            FileWriter fileWriter = new FileWriter(file);
-            fileWriter.write(content);
-            fileWriter.flush();
-            fileWriter.close();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), charset));
+            writer.write(content);
+            writer.flush();
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
             throw new DataExportException("Could not write file " + file.getPath() + ".\n Reason: " + e.getMessage());
