@@ -238,7 +238,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
             }
         }
 
-        if (getSelectedColumnCount() != 1 || getSelectedColumn() != columnIndex) {
+        if (getColumnCount() > columnIndex && (getSelectedColumnCount() != 1 || getSelectedColumn() != columnIndex)) {
             setColumnSelectionInterval(columnIndex, columnIndex);
         }
     }
