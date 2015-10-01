@@ -125,7 +125,8 @@ public class DocumentUtil {
     public static void removeGuardedBlocks(Document document) {
         if (document instanceof DocumentEx) {
             DocumentEx documentEx = (DocumentEx) document;
-            for (RangeMarker block : documentEx.getGuardedBlocks()) {
+            ArrayList<RangeMarker> guardedBlocks = new ArrayList<>(documentEx.getGuardedBlocks());
+            for (RangeMarker block : guardedBlocks) {
                 document.removeGuardedBlock(block);
             }
             document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);

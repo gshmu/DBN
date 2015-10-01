@@ -65,7 +65,7 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
     @Nullable
     private BasePsiElement findPsiElement(PsiFile psiFile, int line) {
         Document document = DocumentUtil.getDocument(psiFile);
-        if (document != null) {
+        if (document != null && line > -1 && document.getLineCount() > line) {
             int lineOffset = document.getLineStartOffset(line);
             PsiElement element = psiFile.findElementAt(lineOffset);
             while (element != null && !(element instanceof BasePsiElement)) {
