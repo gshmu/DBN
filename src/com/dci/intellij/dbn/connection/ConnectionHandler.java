@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
+import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -48,6 +49,11 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider, Prese
     void setAllowConnection(boolean allowConnection);
 
     void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo);
+
+    @Nullable
+    ConnectionInfo getConnectionInfo();
+
+    void setConnectionInfo(ConnectionInfo connectionInfo);
 
     @NotNull
     AuthenticationInfo getTemporaryAuthenticationInfo();

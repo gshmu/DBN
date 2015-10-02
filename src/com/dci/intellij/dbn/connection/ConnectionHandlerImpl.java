@@ -28,6 +28,7 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
+import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
@@ -69,6 +70,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
     private AuthenticationInfo temporaryAuthenticationInfo = new AuthenticationInfo();
+    private ConnectionInfo connectionInfo;
 
     private LazyValue<NavigationPsiCache> psiCache = new DisposableLazyValue<NavigationPsiCache>(this) {
         @Override
@@ -114,6 +116,17 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     @Override
     public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {
         this.temporaryAuthenticationInfo = temporaryAuthenticationInfo;
+    }
+
+    @Override
+    @Nullable
+    public ConnectionInfo getConnectionInfo() {
+        return connectionInfo;
+    }
+
+    @Override
+    public void setConnectionInfo(ConnectionInfo connectionInfo) {
+        this.connectionInfo = connectionInfo;
     }
 
     @Override

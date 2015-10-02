@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelConnector;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
@@ -121,6 +122,8 @@ public class ConnectionUtil {
 
         try {
             Connection connection = connect(connectionSettings, connectionHandler.getTemporaryAuthenticationInfo(), propertiesSettings.isEnableAutoCommit(), connectionStatus, connectionType);
+            ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
+            connectionHandler.setConnectionInfo(connectionInfo);
             connectionStatus.setAuthenticationError(null);
             return connection;
         } catch (SQLException e) {
