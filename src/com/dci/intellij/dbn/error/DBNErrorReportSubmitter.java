@@ -238,7 +238,7 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
         params.put("login", "autosubmit");
         params.put("password", "autosubmit");
 
-        params.put("project", "DBN");
+        params.put("project", "DBNE");
         params.put("assignee", "Unassigned");
         params.put("summary", summary);
         params.put("description", description);
