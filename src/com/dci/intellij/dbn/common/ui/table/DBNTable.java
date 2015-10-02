@@ -228,19 +228,22 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     }
 
     public void selectCell(int rowIndex, int columnIndex) {
-        Rectangle cellRect = getCellRect(rowIndex, columnIndex, true);
-        if (!getVisibleRect().contains(cellRect)) {
-            scrollRectToVisible(cellRect);
-        }
-        if (getSelectedRowCount() != 1 || getSelectedRow() != rowIndex) {
-            if (rowIndex < getModel().getRowCount()) {
-                setRowSelectionInterval(rowIndex, rowIndex);
+        if (getRowCount() > rowIndex && getColumnCount() > columnIndex) {
+            Rectangle cellRect = getCellRect(rowIndex, columnIndex, true);
+            if (!getVisibleRect().contains(cellRect)) {
+                scrollRectToVisible(cellRect);
+            }
+            if (getSelectedRowCount() != 1 || getSelectedRow() != rowIndex) {
+                if (rowIndex < getModel().getRowCount()) {
+                    setRowSelectionInterval(rowIndex, rowIndex);
+                }
+            }
+
+            if (getSelectedColumnCount() != 1 || getSelectedColumn() != columnIndex) {
+                setColumnSelectionInterval(columnIndex, columnIndex);
             }
         }
 
-        if (getColumnCount() > columnIndex && (getSelectedColumnCount() != 1 || getSelectedColumn() != columnIndex)) {
-            setColumnSelectionInterval(columnIndex, columnIndex);
-        }
     }
 
     private class ScrollTask extends TimerTask {
