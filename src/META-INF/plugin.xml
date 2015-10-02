@@ -30,6 +30,7 @@
             <li><b>3.0.NEXT</b>
             <ul>
                 - Data export - support for file encoding selection<br>
+                - Error reporting - send database and driver info<br>
                 - Bug fixes<br>
             </ul>
             <li><b>3.0.4880</b>

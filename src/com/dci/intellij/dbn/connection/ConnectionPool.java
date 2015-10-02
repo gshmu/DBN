@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -31,19 +30,20 @@ public class ConnectionPool implements Disposable {
     private boolean isDisposed;
 
     protected final Logger log = Logger.getInstance(getClass().getName());
-    private ConnectionHandler connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
 
     private List<ConnectionWrapper> poolConnections = new CopyOnWriteArrayList<ConnectionWrapper>();
     private ConnectionWrapper standaloneConnection;
 
     public ConnectionPool(@NotNull ConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler;
+        this.connectionHandlerRef = connectionHandler.getRef();
         POOL_CLEANER_TASK.registerConnectionPool(this);
     }
 
     public Connection getStandaloneConnection(boolean recover) throws SQLException {
         lastAccessTimestamp = System.currentTimeMillis();
         ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionManager.setLastUsedConnection(connectionHandler);
 
         if (standaloneConnection != null && recover && (standaloneConnection.isClosed() || !standaloneConnection.isValid())) {
             standaloneConnection = null;
@@ -81,7 +81,7 @@ public class ConnectionPool implements Disposable {
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(connectionHandler);
+        return connectionHandlerRef.get();
     }
 
     @NotNull
@@ -91,8 +91,9 @@ public class ConnectionPool implements Disposable {
 
     @NotNull
     public Connection allocateConnection() throws SQLException {
-        ConnectionHandler connectionHandler = getConnectionHandler();
         lastAccessTimestamp = System.currentTimeMillis();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionManager.setLastUsedConnection(connectionHandler);
 
         Connection connectionWrapper = lookupConnection();
         if (connectionWrapper == null)  {
@@ -243,7 +244,6 @@ public class ConnectionPool implements Disposable {
     public void dispose() {
         if (!isDisposed) {
             isDisposed = true;
-            connectionHandler = null;
             closeConnectionsSilently();
         }
     }
