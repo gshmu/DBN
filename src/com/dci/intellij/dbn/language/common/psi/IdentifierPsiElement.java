@@ -317,7 +317,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
      *                      Rersolvers                      *
      ********************************************************/
 
-    private void resolveWithinQualifiedIdentifierElement(QualifiedIdentifierPsiElement qualifiedIdentifier) throws PsiResolvedException {
+    private void resolveWithinQualifiedIdentifierElement(QualifiedIdentifierPsiElement qualifiedIdentifier) {
         int index = qualifiedIdentifier.getIndexOf(this);
 
         BasePsiElement parentObjectElement = null;
@@ -362,7 +362,6 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                         updateReference(parentObjectElement, parseVariantElementType, referencedElement);
 
                     }
-
                 }
                 if (ref.getReferencedElement() != null) {
                     return;
@@ -371,7 +370,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         }
     }
 
-    private void resolveWithScopeParentLookup(DBObjectType objectType, IdentifierElementType substitutionCandidate) throws PsiResolvedException {
+    private void resolveWithScopeParentLookup(DBObjectType objectType, IdentifierElementType substitutionCandidate) {
         if (isPrecededByDot()) {
             LeafPsiElement prevLeaf = getPrevLeaf();
             if (prevLeaf != null) {
@@ -380,7 +379,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                     DBObject object = parentPsiElement.resolveUnderlyingObject();
                     if (object != null) {
                         PsiElement referencedElement = object.getChildObject(ref.getText().toString(), 0, false);
-                        updateReference(null, substitutionCandidate, referencedElement);
+                        if (updateReference(null, substitutionCandidate, referencedElement)) return;
                     }
 
                 }
@@ -394,18 +393,20 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 if (parentObjects != null && parentObjects.size() > 0) {
                     for (DBObject parentObject : parentObjects) {
                         PsiElement referencedElement = parentObject.getChildObject(objectType, ref.getText().toString(), false);
-                        updateReference(null, substitutionCandidate, referencedElement);
+                        if (updateReference(null, substitutionCandidate, referencedElement)) return;
                     }
                 }
 
                 DBObjectBundle objectBundle = activeConnection.getObjectBundle();
                 PsiElement referencedElement = objectBundle.getObject(objectType, ref.getText().toString(), 0);
-                updateReference(null, substitutionCandidate, referencedElement);
+                if (updateReference(null, substitutionCandidate, referencedElement)) {
+                    return;
+                }
 
                 DBSchema schema = getCurrentSchema();
                 if (schema != null && objectType.isSchemaObject()) {
                     referencedElement = schema.getChildObject(objectType, ref.getText().toString(), false);
-                    updateReference(null, substitutionCandidate, referencedElement);
+                    if (updateReference(null, substitutionCandidate, referencedElement)) return;
                 }
             }
 
@@ -424,15 +425,6 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 BasePsiElement referencedElement = lookupAdapter.findInParentScopeOf(this);
                 updateReference(null, substitutionCandidate, referencedElement);
             }
-        }
-    }
-
-    private void updateReference(@Nullable BasePsiElement parent, ElementType elementType, PsiElement referencedElement) throws PsiResolvedException {
-        if (isValidReference(referencedElement)) {
-            ref.setParent(parent);
-            ref.setReferencedElement(referencedElement);
-            setElementType(elementType);
-            throw PsiResolvedException.INSTANCE;
         }
     }
 
@@ -460,6 +452,16 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                     return identifierPsiElement.findEnclosingScopeDemarcationPsiElement() == findEnclosingScopeDemarcationPsiElement();
                 }
             }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean updateReference(@Nullable BasePsiElement parent, ElementType elementType, PsiElement referencedElement) {
+        if (isValidReference(referencedElement)) {
+            ref.setParent(parent);
+            ref.setReferencedElement(referencedElement);
+            setElementType(elementType);
             return true;
         }
         return false;
@@ -505,9 +507,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 } else {
                     resolveWithScopeParentLookup(getObjectType(), getElementType());
                 }
-            } catch (PsiResolvedException ignore) {
-
-            } finally {
+           } finally {
                 ref.postResolve();
                 //DatabaseLoadMonitor.setEnsureDataLoaded(false);
             }
@@ -594,9 +594,5 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
     @Nullable
     public QualifiedIdentifierPsiElement getParentQualifiedIdentifier() {
         return findEnclosingPsiElement(QualifiedIdentifierPsiElement.class);
-    }
-
-    private static class PsiResolvedException extends Exception{
-        public static final PsiResolvedException INSTANCE = new PsiResolvedException();
     }
 }
