@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.database.postgres;
 
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
+
 import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
-
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 
 public class PostgresNativeDataTypes extends DatabaseNativeDataTypes {
     {
@@ -22,7 +22,7 @@ public class PostgresNativeDataTypes extends DatabaseNativeDataTypes {
         createNumericDefinition("INT", Integer.class, Types.INTEGER);
         createNumericDefinition("INT2", Integer.class, Types.INTEGER);
         createNumericDefinition("INT4", Integer.class, Types.INTEGER);
-        createNumericDefinition("INT8", Integer.class, Types.INTEGER);
+        createNumericDefinition("INT8", BigDecimal.class, Types.NUMERIC);
         createNumericDefinition("BIGINT", Long.class, Types.BIGINT);
         createNumericDefinition("SMALLSERIAL", Integer.class, Types.SMALLINT);
         createNumericDefinition("SERIAL", Long.class, Types.INTEGER);
