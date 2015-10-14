@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.4880.3</version>
+    <version>3.0.4912.3</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -27,6 +27,13 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.4912</b>
+            <ul>
+                - Compatibility with latest IntelliJ EAP<br>
+                - Data export - support for file encoding selection<br>
+                - Error reporting - send database and driver info<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.4880</b>
             <ul>
                 - Oracle JDWP debug interface (early preview)<br>

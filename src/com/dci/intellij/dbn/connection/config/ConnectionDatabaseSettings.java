@@ -298,6 +298,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
 
         authenticationInfo.setUser(getString(element, "user", authenticationInfo.getUser()));
         authenticationInfo.setPassword(PasswordUtil.decodePassword(getString(element, "password", authenticationInfo.getPassword())));
+        authenticationInfo.setEmptyPassword(getBoolean(element, "empty-password", authenticationInfo.isEmptyPassword()));
         authenticationInfo.setOsAuthentication(getBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication()));
 
 
@@ -341,6 +342,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         }
 
         setBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication());
+        setBoolean(element, "empty-password", authenticationInfo.isEmptyPassword());
         setString(element, "user", nvl(authenticationInfo.getUser()));
         setString(element, "password", PasswordUtil.encodePassword(authenticationInfo.getPassword()));
     }

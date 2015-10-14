@@ -12,6 +12,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
@@ -198,7 +199,8 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
             DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
             if (schema != null) {
                 String name = datasetName.substring(index + 1);
-                return schema.getDataset(name);
+                DBDataset dataset = schema.getDataset(name);
+                return FailsafeUtil.get(dataset);
             }
         }
         throw AlreadyDisposedException.INSTANCE;

@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.data.type;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.content.DynamicContentElement;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Date;
@@ -8,12 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.data.value.ValueAdapter;
-import com.intellij.openapi.diagnostic.Logger;
 
 public class DBNativeDataType implements DynamicContentElement{
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -93,7 +93,8 @@ public class DBNativeDataType implements DynamicContentElement{
                             resultSet.getObject(columnIndex);
         } catch (SQLException e) {
             Object object = resultSet.getObject(columnIndex);
-            LOGGER.error("Error resolving result set value for '" + object + "'. (data type definition " + dataTypeDefinition + ')', e);
+            String objectClass = object == null ? "" : object.getClass().getName();
+            LOGGER.error("Error resolving result-set value for " + objectClass + " '" + object + "'. (data type definition " + dataTypeDefinition + ')', e);
             return object;
         }
     }

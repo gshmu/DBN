@@ -49,6 +49,11 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
+    public boolean supportsFileEncoding() {
+        return false;
+    }
+
+    @Override
     public String adjustFileName(String fileName) {
         if (!fileName.contains(".xls")) {
             fileName = fileName + ".xls";

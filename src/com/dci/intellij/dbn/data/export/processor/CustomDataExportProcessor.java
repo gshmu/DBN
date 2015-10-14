@@ -12,6 +12,11 @@ public class CustomDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
+    public boolean supportsFileEncoding() {
+        return true;
+    }
+
+    @Override
     public String getFileExtension() {
         return "csv";
     }

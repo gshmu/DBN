@@ -61,6 +61,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 public class ConnectionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private Timer idleConnectionCleaner;
     private ConnectionBundle connectionBundle;
+    private static ConnectionHandlerRef lastUsedConnection;
 
     public static ConnectionManager getInstance(@NotNull Project project) {
         return getComponent(project);
@@ -92,6 +93,21 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         idleConnectionCleaner.cancel();
         idleConnectionCleaner.purge();
         Disposer.dispose(connectionBundle);
+    }
+
+    @Nullable
+    public static ConnectionHandler getLastUsedConnection() {
+        return ConnectionHandlerRef.get(lastUsedConnection);
+    }
+
+    @Nullable
+    public static ConnectionInfo getLastUsedConnectionInfo() {
+        ConnectionHandler lastUsedConnection = getLastUsedConnection();
+        return lastUsedConnection == null ? null : lastUsedConnection.getConnectionInfo();
+    }
+
+    public static void setLastUsedConnection(@NotNull ConnectionHandler lastUsedConnection) {
+        ConnectionManager.lastUsedConnection = lastUsedConnection.getRef();
     }
 
     /*********************************************************

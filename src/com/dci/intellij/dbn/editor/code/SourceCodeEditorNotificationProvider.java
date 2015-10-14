@@ -6,7 +6,9 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeLoadErrorNotificationPanel;
+import com.dci.intellij.dbn.editor.code.ui.SourceCodeOutdatedNotificationPanel;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -17,8 +19,8 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotifications;
 
-public class SourceCodeEditorNotificationProvider extends EditorNotifications.Provider<SourceCodeLoadErrorNotificationPanel> {
-    private static final Key<SourceCodeLoadErrorNotificationPanel> KEY = Key.create("DBNavigator.SourceCodeLoadErrorNotificationPanel");
+public class SourceCodeEditorNotificationProvider extends EditorNotifications.Provider<SourceCodeEditorNotificationPanel> {
+    private static final Key<SourceCodeEditorNotificationPanel> KEY = Key.create("DBNavigator.SourceCodeEditorNotificationPanel");
     private Project project;
 
     public SourceCodeEditorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
@@ -45,13 +47,13 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
 
     @NotNull
     @Override
-    public Key<SourceCodeLoadErrorNotificationPanel> getKey() {
+    public Key<SourceCodeEditorNotificationPanel> getKey() {
         return KEY;
     }
 
     @Nullable
     @Override
-    public SourceCodeLoadErrorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
+    public SourceCodeEditorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             if (fileEditor instanceof SourceCodeEditor) {
                 DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
@@ -60,7 +62,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
                 DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
                 String sourceLoadError = sourceCodeFile.getSourceLoadError();
                 if (StringUtil.isNotEmpty(sourceLoadError)) {
-                    return createPanel(editableObject, sourceLoadError);
+                    return createLoadErrorPanel(editableObject, sourceLoadError);
                 }
 
             }
@@ -68,8 +70,14 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
         return null;
     }
 
-    private static SourceCodeLoadErrorNotificationPanel createPanel(final DBSchemaObject editableObject, String sourceLoadError) {
+    private static SourceCodeEditorNotificationPanel createLoadErrorPanel(final DBSchemaObject editableObject, String sourceLoadError) {
         SourceCodeLoadErrorNotificationPanel panel = new SourceCodeLoadErrorNotificationPanel();
+        panel.setText("Could not load source for " + editableObject.getQualifiedNameWithType() + ". Error details: " + sourceLoadError.replace("\n", " "));
+        return panel;
+    }
+
+    private static SourceCodeEditorNotificationPanel createOutdatedCodePanel(final DBSchemaObject editableObject, String sourceLoadError) {
+        SourceCodeOutdatedNotificationPanel panel = new SourceCodeOutdatedNotificationPanel();
         panel.setText("Could not load source for " + editableObject.getQualifiedNameWithType() + ". Error details: " + sourceLoadError.replace("\n", " "));
         return panel;
     }

@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
+import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -166,6 +167,10 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public boolean isAllowConnection() {return false;}
     @Override public void setAllowConnection(boolean allowConnection) {}
     @Override public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {}
+
+    @Nullable
+    @Override public ConnectionInfo getConnectionInfo() { return null;}
+    @Override public void setConnectionInfo(ConnectionInfo connectionInfo) {}
     @Override public boolean canConnect() {
         return false;
     }

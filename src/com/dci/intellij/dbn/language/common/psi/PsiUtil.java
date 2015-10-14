@@ -52,7 +52,6 @@ public class PsiUtil {
         PsiFile psiFile = null;
         try {
             psiFile = psiElement.getContainingFile().getOriginalFile();
-            if (psiFile == null) psiFile = psiElement.getContainingFile();
         } catch (PsiInvalidElementAccessException e) {
             System.out.println("");
         }
