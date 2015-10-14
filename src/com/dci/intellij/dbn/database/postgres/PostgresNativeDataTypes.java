@@ -22,7 +22,7 @@ public class PostgresNativeDataTypes extends DatabaseNativeDataTypes {
         createNumericDefinition("INT", Integer.class, Types.INTEGER);
         createNumericDefinition("INT2", Integer.class, Types.INTEGER);
         createNumericDefinition("INT4", Integer.class, Types.INTEGER);
-        createNumericDefinition("INT8", BigDecimal.class, Types.NUMERIC);
+        createNumericDefinition("INT8", Long.class, Types.NUMERIC);
         createNumericDefinition("BIGINT", Long.class, Types.BIGINT);
         createNumericDefinition("SMALLSERIAL", Integer.class, Types.SMALLINT);
         createNumericDefinition("SERIAL", Long.class, Types.INTEGER);
