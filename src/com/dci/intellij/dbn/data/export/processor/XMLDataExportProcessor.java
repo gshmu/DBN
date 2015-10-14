@@ -45,6 +45,11 @@ public class XMLDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
+    public boolean supportsFileEncoding() {
+        return true;
+    }
+
+    @Override
     public Transferable createClipboardContent(String content) {
         return ClipboardUtil.createXmlContent(content);
     }

@@ -10,9 +10,12 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 
 public class PsiResolveResult {
+    public static final Key<PsiResolveResult> DATA_KEY = new Key<PsiResolveResult>("DBN_RESOLVE_RESULT");
+
     private ConnectionHandlerRef activeConnection;
     private DBObjectRef<DBSchema> currentSchema;
     private WeakReference<IdentifierPsiElement> element;
@@ -32,6 +35,10 @@ public class PsiResolveResult {
         this.activeConnection = ConnectionHandlerRef.from(element.getActiveConnection());
         this.element = new WeakReference<IdentifierPsiElement>(element);
         this.isNew = true;
+    }
+
+    public void accept(IdentifierPsiElement element) {
+        this.element = new WeakReference<IdentifierPsiElement>(element);
     }
 
     public void preResolve(IdentifierPsiElement psiElement) {

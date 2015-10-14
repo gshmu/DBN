@@ -25,6 +25,8 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.intellij.diagnostic.LogMessage;
 import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.errorreport.bean.ErrorBean;
@@ -107,12 +109,21 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
         final String summary = eventText.substring(0, Math.min(Math.max(80, eventText.length()), 80));
 
         String platformBuild = ApplicationInfo.getInstance().getBuild().asString();
+        ConnectionInfo connectionInfo = ConnectionManager.getLastUsedConnectionInfo();
+        String connectionString = null;
+        String driverString = null;
+        if (connectionInfo != null) {
+            connectionString = connectionInfo.getDatabaseType().getDisplayName() + " " + connectionInfo.getProductVersion();
+            driverString = connectionInfo.getDriverVersion();
+        }
 
         @NonNls final StringBuilder description = new StringBuilder();
         description.append("Java Version: ").append(System.getProperty("java.version")).append('\n');
         description.append("Operating System: ").append(System.getProperty("os.name")).append('\n');
         description.append("IDE Version: ").append(platformBuild).append('\n');
         description.append("DBN Version: ").append(localPluginVersion).append("\n");
+        description.append("Database Version: ").append(connectionString == null ? "NA" : connectionString).append("\n");
+        description.append("Driver Version: ").append(driverString == null ? "NA" : driverString).append("\n");
         description.append("Last Action Id: ").append(IdeaLogger.ourLastActionId).append("\n");
 
         if (StringUtil.isNotEmpty(additionalInfo)) {
@@ -227,7 +238,7 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
         params.put("login", "autosubmit");
         params.put("password", "autosubmit");
 
-        params.put("project", "DBN");
+        params.put("project", "DBNE");
         params.put("assignee", "Unassigned");
         params.put("summary", summary);
         params.put("description", description);

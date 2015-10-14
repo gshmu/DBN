@@ -52,6 +52,7 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.SingleRootFileViewProvider;
@@ -193,7 +194,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     }
 
     public VirtualFile getVirtualFile() {
-        DBLanguagePsiFile originalFile = (DBLanguagePsiFile) getOriginalFile();
+        PsiFile originalFile = getOriginalFile();
         return originalFile == this ?
                 super.getVirtualFile() :
                 originalFile.getVirtualFile();
@@ -209,8 +210,11 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         VirtualFile file = getVirtualFile();
         if (file != null && !getProject().isDisposed()) {
             if (VirtualFileUtil.isVirtualFileSystem(file)) {
-                DBLanguagePsiFile originalFile = (DBLanguagePsiFile) getOriginalFile();
-                return originalFile == this ? activeConnection : originalFile.getActiveConnection();
+                PsiFile originalFile = getOriginalFile();
+                if (originalFile instanceof DBLanguagePsiFile) {
+                    DBLanguagePsiFile databaseFile = (DBLanguagePsiFile) originalFile;
+                    return originalFile == this ? activeConnection : databaseFile.getActiveConnection();
+                }
             } else {
                 return getConnectionMappingManager().getActiveConnection(file);
             }
@@ -234,8 +238,11 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         VirtualFile file = getVirtualFile();
         if (file != null) {
             if (VirtualFileUtil.isVirtualFileSystem(file)) {
-                DBLanguagePsiFile originalFile = (DBLanguagePsiFile) getOriginalFile();
-                return originalFile == this ? currentSchema : originalFile.getCurrentSchema();
+                PsiFile originalFile = getOriginalFile();
+                if (originalFile instanceof DBLanguagePsiFile) {
+                    DBLanguagePsiFile databaseFile = (DBLanguagePsiFile) originalFile;
+                    return originalFile == this ? currentSchema : databaseFile.getCurrentSchema();
+                }
             } else {
                 return getConnectionMappingManager().getCurrentSchema(file);
             }
