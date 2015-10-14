@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import java.util.ArrayList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -34,6 +30,10 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.Range;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 
 public class DocumentUtil {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
@@ -125,7 +125,7 @@ public class DocumentUtil {
     public static void removeGuardedBlocks(Document document) {
         if (document instanceof DocumentEx) {
             DocumentEx documentEx = (DocumentEx) document;
-            ArrayList<RangeMarker> guardedBlocks = new ArrayList<>(documentEx.getGuardedBlocks());
+            ArrayList<RangeMarker> guardedBlocks = new ArrayList<RangeMarker>(documentEx.getGuardedBlocks());
             for (RangeMarker block : guardedBlocks) {
                 document.removeGuardedBlock(block);
             }
