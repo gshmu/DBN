@@ -264,7 +264,6 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
         quoteValuesCheckBox.setEnabled(canQuoteValues);
         quoteAllValuesCheckBox.setEnabled(canQuoteValues);
         createHeaderCheckBox.setEnabled(canCreateHeader);
-        encodingComboBox.setEnabled(supportsFileEncoding);
 
         if (!destinationClipboardRadioButton.isEnabled() && destinationClipboardRadioButton.isSelected()) {
             destinationFileRadioButton.setSelected(true);
@@ -273,6 +272,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
         valueSeparatorTextField.setEnabled(formatCustomRadioButton.isSelected());
         fileNameTextField.setEnabled(destinationFileRadioButton.isSelected());
         fileLocationTextField.setEnabled(destinationFileRadioButton.isSelected());
+        encodingComboBox.setEnabled(destinationFileRadioButton.isSelected() && supportsFileEncoding);
 
         String fileNameBase = sourceObjectRef == null ? instructions.getBaseName() : sourceObjectRef.getObjectName();
         if (fileNameBase != null && processor != null) {
