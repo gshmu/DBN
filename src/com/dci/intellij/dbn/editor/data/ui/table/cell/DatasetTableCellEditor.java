@@ -17,6 +17,7 @@
  import java.awt.event.MouseMotionAdapter;
  import java.awt.event.MouseMotionListener;
 
+ import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
  import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
  import com.dci.intellij.dbn.common.ui.MouseUtil;
  import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
@@ -190,18 +191,27 @@
      ********************************************************/
     private MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
         @Override
-        public void mouseMoved(MouseEvent e) {
-            JTextField textField = getTextField();
-            DatasetEditorModelCell cell = getCell();
+        public void mouseMoved(final MouseEvent e) {
+            final JTextField textField = getTextField();
+            final DatasetEditorModelCell cell = getCell();
             if (e.isControlDown() && cell.isNavigable()) {
-                DBColumn column = cell.getColumnInfo().getColumn();
-                if (column != null) {
-                    DBColumn foreignKeyColumn = column.getForeignKeyColumn();
-                    if (foreignKeyColumn != null) {
-                        textField.setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
-                        textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                new SimpleBackgroundTask("load column details") {
+                    @Override
+                    protected void execute() {
+                        DBColumn column = cell.getColumnInfo().getColumn();
+                        final DBColumn foreignKeyColumn = column.getForeignKeyColumn();
+                        if (foreignKeyColumn != null && !e.isConsumed()) {
+                            new SimpleLaterInvocator() {
+                                @Override
+                                protected void execute() {
+                                    textField.setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
+                                    textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                                }
+                            }.start();
+                        }
+
                     }
-                }
+                }.start();
             } else {
                 textField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
                 textField.setToolTipText(null);
