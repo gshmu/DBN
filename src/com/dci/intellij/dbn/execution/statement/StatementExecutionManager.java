@@ -1,5 +1,20 @@
 package com.dci.intellij.dbn.execution.statement;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -55,21 +70,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 @State(
         name = "DBNavigator.Project.StatementExecutionManager",
@@ -330,8 +330,9 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     public boolean promptExecutionDialog(@NotNull List<StatementExecutionProcessor> executionProcessors, DBDebuggerType debuggerType) {
         Map<String, StatementExecutionVariable> variableCache = new HashMap<String, StatementExecutionVariable>();
         boolean reuseVariables = false;
+        boolean isBulkExecution = executionProcessors.size() > 1;
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-            executionProcessor.initExecutionInput(true);
+            executionProcessor.initExecutionInput(isBulkExecution);
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
             Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
@@ -352,7 +353,6 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             }
 
             StatementExecutionSettings executionSettings = ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
-            boolean isBulkExecution = executionProcessors.size() > 1;
             if (executionVariables != null) {
                 if (reuseVariables) {
                     executionVariables.populate(variableCache, true);
