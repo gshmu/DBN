@@ -24,7 +24,9 @@ import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.dci.intellij.dbn.object.DBMaterializedView;
 import com.dci.intellij.dbn.object.DBTable;
+import com.dci.intellij.dbn.object.DBView;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -38,6 +40,7 @@ import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
+import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -166,13 +169,24 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
                     for (FileEditor fileEditor : fileEditors) {
                         if (fileEditor instanceof DatasetEditor) {
                             DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
-                            DataEditorSettings dataEditorSettings = DataEditorSettings.getInstance(getProject());
-                            if (object instanceof DBTable ||
-                                    editableObjectFile.getSelectedEditorProviderId() == EditorProviderId.DATA ||
-                                    dataEditorSettings.getGeneralSettings().getLoadViewDataActive().getValue()) {
+                            if (object instanceof DBTable || editableObjectFile.getSelectedEditorProviderId() == EditorProviderId.DATA) {
                                 datasetEditor.loadData(INITIAL_LOAD_INSTRUCTIONS);
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+            FileEditor newEditor = event.getNewEditor();
+            if (newEditor instanceof DatasetEditor) {
+                DatasetEditor datasetEditor = (DatasetEditor) newEditor;
+                DBDataset dataset = datasetEditor.getDataset();
+                if (dataset instanceof DBView || dataset instanceof DBMaterializedView) {
+                    if (!datasetEditor.isLoaded() || datasetEditor.isLoading()) {
+                        datasetEditor.loadData(INITIAL_LOAD_INSTRUCTIONS);
                     }
                 }
             }
