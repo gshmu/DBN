@@ -298,18 +298,14 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 if (!isDisposed()) {
                     DatasetEditorModelRow row = getRow();
                     DatasetEditorModel model = row.getModel();
-                    if (model != null) {
-                        DatasetEditorTable editorTable = model.getEditorTable();
-                        if (editorTable != null) {
-                            if (!editorTable.isShowing()) {
-                                DBDataset dataset = getDataset();
-                                DatabaseFileSystem.getInstance().openEditor(dataset, EditorProviderId.DATA, true);
-                            }
-                            if (error != null) {
-                                DatasetEditorErrorForm errorForm = new DatasetEditorErrorForm(DatasetEditorModelCell.this);
-                                errorForm.show();
-                            }
-                        }
+                    DatasetEditorTable editorTable = model.getEditorTable();
+                    if (!editorTable.isShowing()) {
+                        DBDataset dataset = getDataset();
+                        DatabaseFileSystem.getInstance().openEditor(dataset, EditorProviderId.DATA, true);
+                    }
+                    if (error != null) {
+                        DatasetEditorErrorForm errorForm = new DatasetEditorErrorForm(DatasetEditorModelCell.this);
+                        errorForm.show();
                     }
                 }
             }

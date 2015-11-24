@@ -349,6 +349,7 @@
         <component><implementation-class>com.dci.intellij.dbn.debugger.DatabaseDebuggerManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.ddl.DDLFileManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.ddl.DDLFileAttachmentManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.editor.EditorStateManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.code.SourceCodeManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.data.DatasetEditorManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager</implementation-class></component>

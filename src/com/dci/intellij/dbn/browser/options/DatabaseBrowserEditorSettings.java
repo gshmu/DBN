@@ -17,9 +17,9 @@ public class DatabaseBrowserEditorSettings extends ProjectConfiguration<Database
 
     public DatabaseBrowserEditorSettings(Project project) {
         super(project);
-        options.add(new DefaultEditorOption(DBObjectType.VIEW, DefaultEditorType.CODE));
-        options.add(new DefaultEditorOption(DBObjectType.PACKAGE, DefaultEditorType.SPEC));
-        options.add(new DefaultEditorOption(DBObjectType.TYPE, DefaultEditorType.SPEC));
+        options.add(new DefaultEditorOption(DBObjectType.VIEW, DefaultEditorType.SELECTION));
+        options.add(new DefaultEditorOption(DBObjectType.PACKAGE, DefaultEditorType.SELECTION));
+        options.add(new DefaultEditorOption(DBObjectType.TYPE, DefaultEditorType.SELECTION));
     }
 
     @NotNull

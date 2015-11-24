@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.editor.EditorStateManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeMainEditor;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
@@ -333,15 +334,22 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         new ConnectionAction("opening the object editor", object, new TaskInstructions("Opening editor", false, true)) {
             @Override
             protected void execute() {
+                EditorProviderId providerId = editorProviderId;
+                if (editorProviderId == null) {
+                    EditorStateManager editorStateManager = EditorStateManager.getInstance(getProject());
+                    providerId = editorStateManager.getEditorProvider(object.getObjectType());
+                }
+
                 if (object.getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
                     DBObjectListContainer childObjects = object.getChildObjects();
                     if (childObjects != null) childObjects.load();
-                    openSchemaObject((DBSchemaObject) object, editorProviderId, scrollBrowser, focusEditor);
+
+                    openSchemaObject((DBSchemaObject) object, providerId, scrollBrowser, focusEditor);
 
                 } else if (object.getParentObject().getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
                     DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
                     if (childObjects != null) childObjects.load();
-                    openChildObject(object, scrollBrowser, focusEditor, editorProviderId);
+                    openChildObject(object, providerId, scrollBrowser, focusEditor);
                 }
             }
         }.start();
@@ -366,7 +374,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         }
     }
 
-    private void openChildObject(final DBObject object, final boolean scrollBrowser, final boolean focusEditor, final EditorProviderId editorProviderId) {
+    private void openChildObject(final DBObject object, final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
         final DBSchemaObject schemaObject = (DBSchemaObject) object.getParentObject();
         final DBEditableObjectVirtualFile databaseFile = findDatabaseFile(schemaObject);
         if (!BackgroundTask.isProcessCancelled()) {
