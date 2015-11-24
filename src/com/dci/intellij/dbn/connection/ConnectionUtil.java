@@ -45,8 +45,7 @@ public class ConnectionUtil {
                 try {
                     closeStatement(resultSet.getStatement());
                     resultSet.close();
-                } catch (Throwable e) {
-                    LOGGER.warn("Error closing result set: " + e.getMessage());
+                } catch (Throwable ignore) {
                 }
             }
         }
@@ -64,8 +63,7 @@ public class ConnectionUtil {
             } else {
                 try {
                     statement.close();
-                } catch (Throwable e) {
-                    LOGGER.warn("Error closing statement: " + e.getMessage());
+                } catch (Throwable ignore) {
                 }
             }
         }
