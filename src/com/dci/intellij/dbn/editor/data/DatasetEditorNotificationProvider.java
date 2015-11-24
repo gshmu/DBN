@@ -58,7 +58,7 @@ public class DatasetEditorNotificationProvider extends EditorNotifications.Provi
                 DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
 
                 if (!datasetEditor.isLoaded() && !datasetEditor.isLoading()) {
-                    return createNotLoadedPanel(datasetEditor);
+                    //return createNotLoadedPanel(datasetEditor);
                 } else {
                     String sourceLoadError = datasetEditor.getDataLoadError();
                     if (StringUtil.isNotEmpty(sourceLoadError)) {

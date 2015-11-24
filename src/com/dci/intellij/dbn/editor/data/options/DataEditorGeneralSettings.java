@@ -15,8 +15,6 @@ public class DataEditorGeneralSettings extends Configuration<DataEditorGeneralSe
     private BooleanSetting convertEmptyStringsToNull = new BooleanSetting("convert-empty-strings-to-null", true);
     private BooleanSetting selectContentOnCellEdit = new BooleanSetting("select-content-on-cell-edit", true);
     private BooleanSetting largeValuePreviewActive = new BooleanSetting("large-value-preview-active", true);
-    private BooleanSetting loadViewDataActive = new BooleanSetting("load-view-data-active", false);
-    private boolean viewDataLoadEnabled = false;
 
     public String getDisplayName() {
         return "Data editor general settings";
@@ -54,10 +52,6 @@ public class DataEditorGeneralSettings extends Configuration<DataEditorGeneralSe
         return largeValuePreviewActive;
     }
 
-    public BooleanSetting getLoadViewDataActive() {
-        return loadViewDataActive;
-    }
-
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
@@ -78,7 +72,6 @@ public class DataEditorGeneralSettings extends Configuration<DataEditorGeneralSe
         convertEmptyStringsToNull.readConfiguration(element);
         selectContentOnCellEdit.readConfiguration(element);
         largeValuePreviewActive.readConfiguration(element);
-        loadViewDataActive.readConfiguration(element);
     }
 
     public void writeConfiguration(Element element) {
@@ -88,7 +81,6 @@ public class DataEditorGeneralSettings extends Configuration<DataEditorGeneralSe
         convertEmptyStringsToNull.writeConfiguration(element);
         selectContentOnCellEdit.writeConfiguration(element);
         largeValuePreviewActive.writeConfiguration(element);
-        loadViewDataActive.writeConfiguration(element);
     }
 
 }

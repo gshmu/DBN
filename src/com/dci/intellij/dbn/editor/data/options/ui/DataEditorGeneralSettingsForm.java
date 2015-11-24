@@ -17,7 +17,6 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
     private JCheckBox convertEmptyToNullCheckBox;
     private JCheckBox selectContentOnEditCheckBox;
     private JCheckBox largeValuePreviewActiveCheckBox;
-    private JCheckBox loadViewDataActiveCheckBox;
 
     public DataEditorGeneralSettingsForm(DataEditorGeneralSettings settings) {
         super(settings);
@@ -42,7 +41,6 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
         settings.getConvertEmptyStringsToNull().to(convertEmptyToNullCheckBox);
         settings.getSelectContentOnCellEdit().to(selectContentOnEditCheckBox);
         settings.getLargeValuePreviewActive().to(largeValuePreviewActiveCheckBox);
-        settings.getLoadViewDataActive().to(loadViewDataActiveCheckBox);
     }
 
     public void resetFormChanges() {
@@ -53,6 +51,5 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
         settings.getConvertEmptyStringsToNull().from(convertEmptyToNullCheckBox);
         settings.getSelectContentOnCellEdit().from(selectContentOnEditCheckBox);
         settings.getLargeValuePreviewActive().from(largeValuePreviewActiveCheckBox);
-        settings.getLoadViewDataActive().from(loadViewDataActiveCheckBox);
     }
 }
