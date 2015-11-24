@@ -88,7 +88,8 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
         return new Configuration[] {
                 generalSettings,
                 filterSettings,
-                sortingSettings};
+                sortingSettings,
+                editorSettings};
     }
 
     @Override

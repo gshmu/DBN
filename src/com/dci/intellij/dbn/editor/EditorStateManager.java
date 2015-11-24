@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserEditorSettings;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -102,6 +103,7 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
             } else if (newEditor instanceof DatasetEditor) {
                 DatasetEditor datasetEditor = (DatasetEditor) newEditor;
                 newObject = datasetEditor.getDataset();
+                editorProviderId = EditorProviderId.DATA;
             }
 
             if (editorProviderId != null && oldObject != null && newObject != null && newObject.equals(oldObject)) {
@@ -118,16 +120,29 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
     @Override
     public Element getState() {
         Element element = new Element("state");
-/*
-        SettingsUtil.setEnum(element, "record-view-column-sorting-type", recordViewColumnSortingType);
-        SettingsUtil.setBoolean(element, "value-preview-text-wrapping", valuePreviewTextWrapping);
-        SettingsUtil.setBoolean(element, "value-preview-pinned", valuePreviewPinned);
-*/
+        Element editorProvidersElement = new Element("last-used-providers");
+        element.addContent(editorProvidersElement);
+        for (DBObjectType objectType : lastUsedEditorProviders.keySet()) {
+            Element objectTypeElement = new Element("object-type");
+            EditorProviderId editorProviderId = lastUsedEditorProviders.get(objectType);
+            SettingsUtil.setEnumAttribute(objectTypeElement, "object-type", objectType);
+            SettingsUtil.setEnumAttribute(objectTypeElement, "editor-provider", editorProviderId);
+            editorProvidersElement.addContent(objectTypeElement);
+        }
         return element;
     }
 
     @Override
     public void loadState(Element element) {
+        lastUsedEditorProviders.clear();
+        Element editorProvidersElement = element.getChild("last-used-providers");
+        if (editorProvidersElement != null) {
+            for (Element objectTypeElement : editorProvidersElement.getChildren()) {
+                DBObjectType objectType = SettingsUtil.getEnumAttribute(objectTypeElement, "object-type", DBObjectType.class);
+                EditorProviderId editorProviderId = SettingsUtil.getEnumAttribute(objectTypeElement, "editor-provider", EditorProviderId.class);
+                lastUsedEditorProviders.put(objectType, editorProviderId);
+            }
+        }
 /*
         recordViewColumnSortingType = SettingsUtil.getEnum(element, "record-view-column-sorting-type", recordViewColumnSortingType);
         valuePreviewTextWrapping = SettingsUtil.getBoolean(element, "value-preview-text-wrapping", valuePreviewTextWrapping);
