@@ -13,12 +13,14 @@ public class DatabaseBrowserSettingsForm extends CompositeConfigurationEditorFor
     private JPanel generalSettingsPanel;
     private JPanel filterSettingsPanel;
     private JPanel sortingSettingsPanel;
+    private JPanel editorSettingsPanel;
 
     public DatabaseBrowserSettingsForm(DatabaseBrowserSettings settings) {
         super(settings);
         generalSettingsPanel.add(settings.getGeneralSettings().createComponent(), BorderLayout.CENTER);
         filterSettingsPanel.add(settings.getFilterSettings().createComponent(), BorderLayout.CENTER);
         sortingSettingsPanel.add(settings.getSortingSettings().createComponent(), BorderLayout.CENTER);
+        editorSettingsPanel.add(settings.getEditorSettings().createComponent(), BorderLayout.CENTER);
     }
 
     public JComponent getComponent() {
