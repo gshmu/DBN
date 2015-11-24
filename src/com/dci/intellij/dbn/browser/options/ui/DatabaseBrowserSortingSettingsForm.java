@@ -6,6 +6,9 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +62,7 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
 
         public SortingTypeTable(Project project, List<DBObjectComparator> comparators) {
             super(project, new SortingTypeTableModel(comparators), true);
-            setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+            setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             setRowHeight(20);
 
             setDefaultRenderer(DBObjectType.class, new ColoredTableCellRenderer() {
@@ -87,12 +90,30 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
 
             getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent e) {
+                    if (!e.getValueIsAdjusting()) {
+                        editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
+                    }
                 }
             });
         }
 
         public void columnSelectionChanged(ListSelectionEvent e) {
+            if (!e.getValueIsAdjusting()) {
+                editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
+            }
             super.columnSelectionChanged(e);
+        }
+
+        @Override
+        protected void processMouseMotionEvent(MouseEvent e) {
+            Point mouseLocation = e.getPoint();
+            int columnIndex = columnAtPoint(mouseLocation);
+            if (columnIndex == 1) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            } else {
+                setCursor(Cursor.getDefaultCursor());
+            }
+            super.processMouseMotionEvent(e);
         }
     }
 
