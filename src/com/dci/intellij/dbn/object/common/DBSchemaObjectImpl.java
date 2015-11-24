@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -151,11 +150,6 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             connectionHandler.freePoolConnection(connection);
         }
         return schemas;
-    }
-
-    @Override
-    public EditorProviderId getDefaultEditorProviderId() {
-        return null;
     }
 
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
