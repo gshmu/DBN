@@ -30,6 +30,7 @@
             <li><b>3.0.NEXT</b>
             <ul>
                 - Data Editor - Cancel action for unresponsive data loads<br>
+                - Code Editor - Outdated sources notification<br>
                 - Configurable default editors<br>
                 - Bug fixes<br>
             </ul>

@@ -16,6 +16,6 @@ public class ChangeTimestamp {
     }
 
     public boolean isDirty() {
-        return TimeUtil.isOlderThan(captureTime, 20 * TimeUtil.ONE_SECOND);
+        return TimeUtil.isOlderThan(captureTime, 30 * TimeUtil.ONE_SECOND);
     }
 }
