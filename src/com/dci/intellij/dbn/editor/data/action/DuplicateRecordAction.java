@@ -29,7 +29,7 @@ public class DuplicateRecordAction extends AbstractDataEditorAction {
         } else {
             presentation.setEnabled(true);
             presentation.setVisible(!datasetEditor.isReadonlyData());
-            if (datasetEditor.isInserting() || datasetEditor.isLoading() || datasetEditor.isReadonly()) {
+            if (datasetEditor.isInserting() || datasetEditor.isLoading() || datasetEditor.isDirty() || datasetEditor.isReadonly()) {
                 presentation.setEnabled(false);
             } else {
                 DatasetEditorTable editorTable = datasetEditor.getEditorTable();

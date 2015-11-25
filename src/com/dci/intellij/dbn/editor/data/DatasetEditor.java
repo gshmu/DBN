@@ -461,6 +461,10 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return isLoaded;
     }
 
+    public boolean isDirty() {
+        return getTableModel().isDirty();
+    }
+
     /**
      * The dataset is readonly. This can not be changed by the flag isReadonly
      */
