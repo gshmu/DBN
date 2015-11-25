@@ -172,6 +172,7 @@ public class Icons {
     public static final Icon DATA_EDITOR_LOCK_EDITING = load("/img/LockEditing.png");
     public static final Icon DATA_EDITOR_SORT_ASC = load("/img/action/DataEditorSortAscending.png");
     public static final Icon DATA_EDITOR_SORT_DESC = load("/img/action/DataEditorSortDescending.png");
+    public static final Icon DATA_EDITOR_STOP_LOADING = load("/img/action/StopLoading.png");
 
 
     public static final Icon DATA_EDITOR_RELOAD_DATA = load("/img/action/Refresh.png");

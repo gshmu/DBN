@@ -58,6 +58,7 @@ import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
@@ -291,6 +292,8 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                     }
                                 }
                                 dataLoadError = null;
+                            } catch (ProcessCanceledException ignore) {
+
                             } catch (SQLException e) {
                                 dataLoadError = e.getMessage();
                                 handleLoadError(e, instructions);

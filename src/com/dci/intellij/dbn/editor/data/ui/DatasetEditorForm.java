@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
@@ -34,6 +35,8 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
@@ -46,6 +49,8 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     private JPanel loadingIconPanel;
     private JPanel searchPanel;
     private AutoCommitLabel autoCommitLabel;
+    private JPanel loadingActionPanel;
+    private JPanel loadingDataPanel;
 
     private DatasetEditorTable datasetEditorTable;
     private DatasetEditor datasetEditor;
@@ -80,6 +85,10 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
             actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
             loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
             hideLoadingHint();
+
+            ActionToolbar loadingActionToolbar = ActionUtil.createActionToolbar("", true, new CancelLoadingAction());
+            actionToolbar.setTargetComponent(actionsPanel);
+            loadingActionPanel.add(loadingActionToolbar.getComponent(), BorderLayout.CENTER);
 
             ActionUtil.registerDataProvider(mainPanel, datasetEditor);
 
@@ -138,20 +147,25 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         }
     }
 
-    private DBDataset getDataset() {
-        return datasetEditor.getDataset();
-    }
-
     public JPanel getComponent() {
         return mainPanel;
+    }
+
+    @NotNull
+    private DBDataset getDataset() {
+        return getDatasetEditor().getDataset();
+    }
+
+    @NotNull
+    public DatasetEditor getDatasetEditor() {
+        return FailsafeUtil.get(datasetEditor);
     }
 
     public void showLoadingHint() {
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
-                loadingLabel.setVisible(true);
-                loadingIconPanel.setVisible(true);
+                loadingDataPanel.setVisible(true);
             }
         }.start();
     }
@@ -160,12 +174,10 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
-                loadingLabel.setVisible(false);
-                loadingIconPanel.setVisible(false);
+                loadingDataPanel.setVisible(false);
             }
         }.start();
     }
-
 
     @NotNull
     public DatasetEditorTable getEditorTable() {
@@ -193,8 +205,9 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
      *              SearchableDataComponent                  *
      *********************************************************/
     public void showSearchHeader() {
-        datasetEditorTable.cancelEditing();
-        datasetEditorTable.clearSelection();
+        DatasetEditorTable editorTable = getEditorTable();
+        editorTable.cancelEditing();
+        editorTable.clearSelection();
 
         DataSearchComponent dataSearchComponent = this.dataSearchComponent.get();
         dataSearchComponent.initializeFindModel();
@@ -211,19 +224,20 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     public void hideSearchHeader() {
         dataSearchComponent.get().resetFindModel();
         searchPanel.setVisible(false);
-        datasetEditorTable.revalidate();
-        datasetEditorTable.repaint();
-        datasetEditorTable.requestFocus();
+        DatasetEditorTable editorTable = getEditorTable();
+        editorTable.revalidate();
+        editorTable.repaint();
+        editorTable.requestFocus();
     }
 
     @Override
     public void cancelEditActions() {
-        datasetEditorTable.cancelEditing();
+        getEditorTable().cancelEditing();
     }
 
     @Override
     public String getSelectedText() {
-        TableCellEditor cellEditor = datasetEditorTable.getCellEditor();
+        TableCellEditor cellEditor = getEditorTable().getCellEditor();
         if (cellEditor instanceof DatasetTableCellEditor) {
             DatasetTableCellEditor tableCellEditor = (DatasetTableCellEditor) cellEditor;
             return tableCellEditor.getTextField().getSelectedText();
@@ -233,10 +247,26 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     @Override
     public BasicTable getTable() {
-        return datasetEditorTable;
+        return getEditorTable();
     }
 
     private void createUIComponents() {
         datasetTableScrollPane = new BasicTableScrollPane();
+    }
+
+    private class CancelLoadingAction extends AnAction {
+        public CancelLoadingAction() {
+            super("Cancel", null, Icons.DATA_EDITOR_STOP_LOADING);
+        }
+
+        @Override
+        public void actionPerformed(AnActionEvent e) {
+            getDatasetEditor().getTableModel().cancelDataLoad();
+        }
+
+        @Override
+        public void update(AnActionEvent e) {
+            e.getPresentation().setEnabled(!getDatasetEditor().getTableModel().isLoadCancelled());
+        }
     }
 }

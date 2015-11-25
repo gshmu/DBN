@@ -27,6 +27,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Data Editor - Cancel action for unresponsive data loads<br>
+                - Configurable default editors<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.4912</b>
             <ul>
                 - Compatibility with latest IntelliJ EAP<br>
