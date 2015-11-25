@@ -6,12 +6,12 @@ public abstract class SimpleTask implements RunnableTask<Integer>{
     private int option;
 
     @Override
-    public void setHandle(Integer handle) {
+    public void setOption(Integer handle) {
         this.option = handle;
     }
 
     @Override
-    public Integer getHandle() {
+    public Integer getOption() {
         return option;
     }
 

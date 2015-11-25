@@ -327,7 +327,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                     new String[]{"Yes", "No"}, 0,
                     runner);
         } else {
-            runner.setHandle(0);
+            runner.setOption(0);
             runner.start();
         }
     }
@@ -338,7 +338,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         }
         @Override
         protected boolean canExecute() {
-            return getHandle() == 0;
+            return getOption() == 0;
         }
 
     }

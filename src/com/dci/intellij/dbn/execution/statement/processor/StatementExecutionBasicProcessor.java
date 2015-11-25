@@ -23,13 +23,16 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
+import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -51,6 +54,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -336,7 +340,8 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         final StatementExecutionBasicResult executionResult = new StatementExecutionBasicResult(this, getResultName(), statement.getUpdateCount());
         boolean isDdlStatement = isDataDefinitionStatement();
         boolean hasCompilerErrors = false;
-        if (isDdlStatement) {
+        final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+        if (isDdlStatement && DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
             final BasePsiElement compilablePsiElement = getCompilableBlockPsiElement();
             if (compilablePsiElement != null) {
                 hasCompilerErrors = new ReadActionRunner<Boolean>() {
@@ -344,24 +349,38 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     protected Boolean run() {
                         DBContentType contentType = getCompilableContentType();
                         CompilerAction compilerAction = new CompilerAction(CompilerActionSource.DDL, contentType, getVirtualFile(), getFileEditor());
-                        compilerAction.setStartOffset(compilablePsiElement.getTextOffset());
-                        CompilerResult compilerResult = null;
+                        compilerAction.setSourceStartOffset(compilablePsiElement.getTextOffset());
 
-                        DBSchemaObject underlyingObject = getAffectedObject();
-                        if (underlyingObject == null) {
-                            ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+                        DBSchemaObject object = getAffectedObject();
+                        CompilerResult compilerResult = null;
+                        if (object == null) {
                             DBSchema schema = getAffectedSchema();
                             IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
-                            if (connectionHandler != null && schema != null && subjectPsiElement != null) {
+                            if (schema != null && subjectPsiElement != null) {
                                 DBObjectType objectType = subjectPsiElement.getObjectType();
                                 String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
                                 compilerResult = new CompilerResult(compilerAction, connectionHandler, schema, objectType, objectName);
                             }
                         } else {
-                            compilerResult = new CompilerResult(compilerAction, underlyingObject);
+                            compilerResult = new CompilerResult(compilerAction, object);
                         }
 
                         if (compilerResult != null) {
+                            if (object != null) {
+                                DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(getProject());
+                                boolean isCompilable = object.getProperties().is(DBObjectProperty.COMPILABLE);
+                                if (isCompilable) {
+                                    CompileType compileType = compilerManager.getCompileType(object, contentType);
+                                    if (compileType == CompileType.DEBUG) {
+                                        compilerManager.compileObject(object, compileType, compilerAction);
+                                    } else {
+                                        connectionHandler.getObjectBundle().refreshObjectsStatus(object);
+                                    }
+                                }
+
+                                object.reload();
+                            }
+
                             executionResult.setCompilerResult(compilerResult);
                             return compilerResult.hasErrors();
                         }

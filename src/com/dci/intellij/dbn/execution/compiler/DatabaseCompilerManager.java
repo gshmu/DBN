@@ -52,8 +52,18 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         ExecutionManager.getInstance(project).addExecutionResult(compilerResult);
     }
 
-    public void compileObject(final DBSchemaObject object, CompileTypeOption compileType, final CompilerAction compilerAction) {
-        assert compileType != CompileTypeOption.ASK && compileType != CompileTypeOption.KEEP;
+    public CompileType getCompileType(@Nullable DBSchemaObject object, DBContentType contentType) {
+        OperationSettings operationSettings = OperationSettings.getInstance(getProject());
+        CompileType compileType = operationSettings.getCompilerSettings().getCompileType();
+        switch (compileType) {
+            case KEEP: return object != null && object.getStatus().is(contentType, DBObjectStatus.DEBUG) ? CompileType.DEBUG : CompileType.NORMAL;
+            case DEBUG: return CompileType.DEBUG;
+        }
+        return CompileType.NORMAL;
+    }
+
+    public void compileObject(final DBSchemaObject object, CompileType compileType, final CompilerAction compilerAction) {
+        assert compileType != CompileType.KEEP;
         Project project = object.getProject();
         boolean allowed = DatabaseDebuggerManager.getInstance(project).checkForbiddenOperation(object.getConnectionHandler());
         if (allowed) {
@@ -78,7 +88,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }
     }
 
-    public void compileInBackground(final DBSchemaObject object, final CompileTypeOption compileType, final CompilerAction compilerAction) {
+    public void compileInBackground(final DBSchemaObject object, final CompileType compileType, final CompilerAction compilerAction) {
         new ConnectionAction("compiling the object", object) {
             @Override
             protected boolean canExecute() {
@@ -89,11 +99,11 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
 
             @Override
             protected void execute() {
-                BackgroundTask<CompileTypeOption> compileTask = new BackgroundTask<CompileTypeOption>(object.getProject(), "Compiling " + object.getQualifiedNameWithType(), true) {
+                BackgroundTask<CompileType> compileTask = new BackgroundTask<CompileType>(object.getProject(), "Compiling " + object.getQualifiedNameWithType(), true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                        CompileTypeOption compileTypeOption = getHandle();
-                        doCompileObject(object, compileTypeOption, compilerAction);
+                        CompileType compileType = getOption();
+                        doCompileObject(object, compileType, compilerAction);
                         if (DatabaseFileSystem.isFileOpened(object)) {
                             DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
                             DBContentType contentType = compilerAction.getContentType();
@@ -110,7 +120,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }.start();
     }
 
-    private void doCompileObject(DBSchemaObject object, CompileTypeOption compileType, CompilerAction compilerAction) {
+    private void doCompileObject(DBSchemaObject object, CompileType compileType, CompilerAction compilerAction) {
         DBContentType contentType = compilerAction.getContentType();
         object.getStatus().set(contentType, DBObjectStatus.COMPILING, true);
         Connection connection = null;
@@ -121,9 +131,9 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             connection = connectionHandler.getPoolConnection();
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
 
-            boolean isDebug = compileType == CompileTypeOption.DEBUG;
+            boolean isDebug = compileType == CompileType.DEBUG;
 
-            if (compileType == CompileTypeOption.KEEP) {
+            if (compileType == CompileType.KEEP) {
                 isDebug = object.getStatus().is(DBObjectStatus.DEBUG);
             }
 
@@ -168,7 +178,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }
     }
 
-    public void compileInvalidObjects(final DBSchema schema, final CompileTypeOption compileType) {
+    public void compileInvalidObjects(final DBSchema schema, final CompileType compileType) {
         new ConnectionAction("compiling the invalid objects", schema) {
             @Override
             protected boolean canExecute() {
@@ -181,14 +191,14 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             protected void execute() {
                 Project project = getProject();
                 final ConnectionHandler connectionHandler = getConnectionHandler();
-                promptCompileTypeSelection(compileType, null, new BackgroundTask<CompileTypeOption>(project, "Compiling invalid objects", false, true) {
+                promptCompileTypeSelection(compileType, null, new BackgroundTask<CompileType>(project, "Compiling invalid objects", false, true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        CompileTypeOption compileTypeOption = getHandle();
-                        doCompileInvalidObjects(schema.getPackages(), "packages", progressIndicator, compileTypeOption);
-                        doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, compileTypeOption);
-                        doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, compileTypeOption);
-                        doCompileInvalidObjects(schema.getDatasetTriggers(), "triggers", progressIndicator, compileTypeOption);
+                        CompileType compileType = getOption();
+                        doCompileInvalidObjects(schema.getPackages(), "packages", progressIndicator, compileType);
+                        doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, compileType);
+                        doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, compileType);
+                        doCompileInvalidObjects(schema.getDatasetTriggers(), "triggers", progressIndicator, compileType);
                         connectionHandler.getObjectBundle().refreshObjectsStatus(null);
 
                         if (!progressIndicator.isCanceled()) {
@@ -209,7 +219,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }.start();
     }
 
-    private void doCompileInvalidObjects(List<? extends DBSchemaObject> objects, String description, ProgressIndicator progressIndicator, CompileTypeOption compileType) {
+    private void doCompileInvalidObjects(List<? extends DBSchemaObject> objects, String description, ProgressIndicator progressIndicator, CompileType compileType) {
         if (progressIndicator.isCanceled()) return;
 
         progressIndicator.setText("Compiling invalid " + description + "...");
@@ -251,21 +261,21 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }
     }
 
-    private void promptCompileTypeSelection(CompileTypeOption compileType, @Nullable DBSchemaObject program, RunnableTask<CompileTypeOption> callback) {
-        if (compileType == CompileTypeOption.ASK) {
+    private void promptCompileTypeSelection(CompileType compileType, @Nullable DBSchemaObject program, RunnableTask<CompileType> callback) {
+        if (compileType == CompileType.ASK) {
             CompilerTypeSelectionDialog dialog = new CompilerTypeSelectionDialog(getProject(), program);
             dialog.show();
             if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
                 compileType = dialog.getSelection();
                 if (dialog.isRememberSelection()) {
                     OperationSettings operationSettings = OperationSettings.getInstance(getProject());
-                    operationSettings.getCompilerSettings().setCompileTypeOption(compileType);
+                    operationSettings.getCompilerSettings().setCompileType(compileType);
                 }
-                callback.setHandle(compileType);
+                callback.setOption(compileType);
                 callback.start();
             }
         } else {
-            callback.setHandle(compileType);
+            callback.setOption(compileType);
             callback.start();
         }
     }

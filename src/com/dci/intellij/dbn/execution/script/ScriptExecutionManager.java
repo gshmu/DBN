@@ -217,7 +217,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                     new SimpleTask() {
                                         @Override
                                         protected void execute() {
-                                            if (getHandle() == 0) {
+                                            if (getOption() == 0) {
                                                 executeScript(sourceFile);
                                             }
                                         }
@@ -238,7 +238,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                     new SimpleTask() {
                                         @Override
                                         protected void execute() {
-                                            if (getHandle() == 0) {
+                                            if (getOption() == 0) {
                                                 executeScript(sourceFile);
                                             }
                                         }

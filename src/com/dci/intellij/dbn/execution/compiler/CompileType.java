@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.option.InteractiveOption;
 
-public enum CompileTypeOption implements InteractiveOption {
+public enum CompileType implements InteractiveOption {
     NORMAL("Normal", Icons.OBEJCT_COMPILE, true),
     DEBUG("Debug", Icons.OBEJCT_COMPILE_DEBUG, true),
     KEEP("Keep existing", null/*Icons.OBEJCT_COMPILE_KEEP*/, true),
@@ -17,7 +17,7 @@ public enum CompileTypeOption implements InteractiveOption {
     private Icon icon;
     private boolean persistable;
 
-    CompileTypeOption(String name, Icon icon, boolean persistable) {
+    CompileType(String name, Icon icon, boolean persistable) {
         this.name = name;
         this.icon = icon;
         this.persistable = persistable;
@@ -53,8 +53,8 @@ public enum CompileTypeOption implements InteractiveOption {
     }
 
 
-    public static CompileTypeOption get(String name) {
-        for (CompileTypeOption compileType : CompileTypeOption.values()) {
+    public static CompileType get(String name) {
+        for (CompileType compileType : CompileType.values()) {
             if (compileType.name.equals(name) || compileType.name().equals(name)) {
                 return compileType;
             }

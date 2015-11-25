@@ -43,12 +43,12 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
 
 
     @Override
-    public void setHandle(T option) {
+    public void setOption(T option) {
         this.option = option;
     }
 
     @Override
-    public T getHandle() {
+    public T getOption() {
         return option;
     }
 

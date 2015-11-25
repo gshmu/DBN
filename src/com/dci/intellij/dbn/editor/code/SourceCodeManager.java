@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.editor.code.diff.DBSourceFileContent;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
+import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
@@ -320,19 +321,28 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             protected void execute(@NotNull ProgressIndicator indicator) {
                 Project project = getProject();
                 try {
+                    DBContentType contentType = virtualFile.getContentType();
                     virtualFile.updateToDatabase();
 
                     ConnectionHandler connectionHandler = object.getConnectionHandler();
                     if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
-                        connectionHandler.getObjectBundle().refreshObjectsStatus(object);
+                        boolean isCompilable = object.getProperties().is(DBObjectProperty.COMPILABLE);
+
+                        if (isCompilable) {
+                            DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
+                            CompileType compileType = compilerManager.getCompileType(object, contentType);
+
+                            CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, virtualFile, fileEditor);
+                            if (compileType == CompileType.DEBUG) {
+                                compilerManager.compileObject(object, compileType, compilerAction);
+                            } else {
+                                connectionHandler.getObjectBundle().refreshObjectsStatus(object);
+                            }
+
+                            compilerManager.createCompilerResult(object, compilerAction);
+                        }
                     }
 
-                    if (object.getProperties().is(DBObjectProperty.COMPILABLE)) {
-                        DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-                        DBContentType contentType = virtualFile.getContentType();
-                        CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, virtualFile, fileEditor);
-                        compilerManager.createCompilerResult(object, compilerAction);
-                    }
                     object.reload();
                 } catch (SQLException e) {
                     MessageUtil.showErrorDialog(project, "Could not save changes to database.", e);
