@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.ui.CompileDebugDependenciesDialog;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
-import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
+import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
@@ -102,7 +102,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                         new SimpleTask() {
                             @Override
                             protected boolean canExecute() {
-                                return getHandle() == 0;
+                                return getOption() == 0;
                             }
 
                             @Override
@@ -189,7 +189,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                                         progressIndicator.setText("Compiling " + schemaObject.getQualifiedNameWithType());
                                         DBContentType contentType = schemaObject.getContentType();
                                         CompilerAction compilerAction = new CompilerAction(CompilerActionSource.BULK_COMPILE, contentType);
-                                        compilerManager.compileObject(schemaObject, CompileTypeOption.DEBUG, compilerAction);
+                                        compilerManager.compileObject(schemaObject, CompileType.DEBUG, compilerAction);
                                     }
                                 }
                                 connectionHandler.getObjectBundle().refreshObjectsStatus(null);

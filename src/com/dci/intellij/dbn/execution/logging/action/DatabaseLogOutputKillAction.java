@@ -26,7 +26,7 @@ public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction
                 SimpleTask killConsoleTask = new SimpleTask() {
                     @Override
                     protected void execute() {
-                        if (getHandle() == 0) {
+                        if (getOption() == 0) {
                             context.stop();
                         }
                     }

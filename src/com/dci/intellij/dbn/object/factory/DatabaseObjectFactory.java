@@ -106,7 +106,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         ConnectionAction dropObjectAction = new ConnectionAction("dropping the object", object) {
             @Override
             protected boolean canExecute() {
-                return getHandle() == 0;
+                return getOption() == 0;
             }
 
             @Override

@@ -352,7 +352,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                             MessageUtil.showErrorDialog(project, "Error", message, options, 0, new SimpleTask() {
                                 @Override
                                 protected void execute() {
-                                    int option = getHandle();
+                                    int option = getOption();
                                     DatasetLoadInstructions instructions = instr.clone();
                                     instructions.setDeliberateAction(true);
 

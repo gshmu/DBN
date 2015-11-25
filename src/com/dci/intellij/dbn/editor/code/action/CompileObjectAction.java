@@ -1,10 +1,13 @@
 package com.dci.intellij.dbn.editor.code.action;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
+import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
@@ -18,9 +21,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
 
 public class CompileObjectAction extends AbstractSourceCodeEditorAction {
     public CompileObjectAction() {
@@ -37,7 +37,7 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
                 CompilerSettings compilerSettings = getCompilerSettings(project);
                 DBContentType contentType = virtualFile.getContentType();
                 CompilerAction compilerAction = new CompilerAction(CompilerActionSource.COMPILE, contentType, virtualFile, fileEditor);
-                compilerManager.compileInBackground(virtualFile.getObject(), compilerSettings.getCompileTypeOption(), compilerAction);
+                compilerManager.compileInBackground(virtualFile.getObject(), compilerSettings.getCompileType(), compilerAction);
             }
         }
     }
@@ -52,12 +52,12 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
             DBSchemaObject schemaObject = virtualFile.getObject();
             if (schemaObject.getProperties().is(DBObjectProperty.COMPILABLE) && DatabaseFeature.OBJECT_INVALIDATION.isSupported(schemaObject)) {
                 CompilerSettings compilerSettings = getCompilerSettings(schemaObject.getProject());
-                CompileTypeOption compileType = compilerSettings.getCompileTypeOption();
+                CompileType compileType = compilerSettings.getCompileType();
                 DBObjectStatusHolder status = schemaObject.getStatus();
                 DBContentType contentType = virtualFile.getContentType();
 
-                boolean isDebug = compileType == CompileTypeOption.DEBUG;
-                if (compileType == CompileTypeOption.KEEP) {
+                boolean isDebug = compileType == CompileType.DEBUG;
+                if (compileType == CompileType.KEEP) {
                     isDebug = status.is(contentType, DBObjectStatus.DEBUG);
                 }
 
@@ -74,14 +74,14 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
                                 contentType == DBContentType.CODE_BODY ? "Compile body" : "Compile";
 
                 if (isDebug) text = text + " (Debug)";
-                if (compileType == CompileTypeOption.ASK) text = text + "...";
+                if (compileType == CompileType.ASK) text = text + "...";
 
                 presentation.setVisible(true);
                 presentation.setText(text);
 
                 Icon icon = isDebug ?
-                        CompileTypeOption.DEBUG.getIcon() :
-                        CompileTypeOption.NORMAL.getIcon();
+                        CompileType.DEBUG.getIcon() :
+                        CompileType.NORMAL.getIcon();
                 presentation.setIcon(icon);
             } else {
                 presentation.setVisible(false);
