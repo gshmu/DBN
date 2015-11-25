@@ -4,6 +4,7 @@ import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 
 public class CodeStyleCaseOption implements PersistentConfiguration {
     private String name;
@@ -32,9 +33,9 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
     public String format(String string) {
         if (string != null) {
             switch (styleCase) {
-                case UPPER: return string.toUpperCase();
-                case LOWER: return string.toLowerCase();
-                case CAPITALIZED: return NamingUtil.capitalize(string);
+                case UPPER: return StringUtil.isMixedCase(string) ? string : string.toUpperCase();
+                case LOWER: return StringUtil.isMixedCase(string) ? string : string.toLowerCase();
+                case CAPITALIZED: return StringUtil.isMixedCase(string) ? string : NamingUtil.capitalize(string);
                 case PRESERVE: return string;
             }
         }
@@ -59,7 +60,7 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
                 styleCase == CodeStyleCase.UPPER ? "upper" :
                 styleCase == CodeStyleCase.LOWER ? "lower" :
                 styleCase == CodeStyleCase.CAPITALIZED ? "capitalized" :
-                styleCase == CodeStyleCase.PRESERVE ? "preserve" :  null;
+                styleCase == CodeStyleCase.PRESERVE ? "preserve" :  "preserve";
 
         element.setAttribute("name", name);
         element.setAttribute("value", value);
