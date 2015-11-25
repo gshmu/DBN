@@ -24,6 +24,7 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
         if (cell != null && !cell.isDisposed() && !datasetEditorTable.isDisposed() && !datasetEditorTable.getProject().isDisposed()) {
             DatasetEditorModelRow row = cell.getRow();
             DatasetEditorColumnInfo columnInfo = cell.getColumnInfo();
+            boolean isDirty = datasetEditorTable.getModel().isDirty();
             boolean isLoading = datasetEditorTable.isLoading();
             boolean isInserting = datasetEditorTable.isInserting();
 
@@ -40,7 +41,7 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
             if (isSelected) {
                 textAttributes = attributes.getSelection();
             } else {
-                if (isLoading || !isConnected) {
+                if (isLoading || isDirty || !isConnected) {
                     textAttributes = attributes.getLoadingData(isCaretRow);
                 } else if (isDeletedRow) {
                     textAttributes = attributes.getDeletedData();

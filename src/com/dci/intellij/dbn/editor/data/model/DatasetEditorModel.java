@@ -43,6 +43,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     private DBObjectRef<DBDataset> datasetRef;
 
     private CancellableDatabaseCall loaderCall;
+    private boolean isDirty;
 
     private List<DatasetEditorModelRow> changedRows = new ArrayList<DatasetEditorModelRow>();
 
@@ -55,6 +56,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     }
 
     public void load(final boolean useCurrentFilter, final boolean keepChanges) throws SQLException {
+        isDirty = false;
         checkDisposed();
         closeResultSet();
         int timeout = settings.getGeneralSettings().getFetchTimeout().value();
@@ -83,6 +85,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 Statement statement = statementRef.get();
                 ConnectionUtil.cancelStatement(statement);
                 loaderCall = null;
+                isDirty = true;
             }
         };
         loaderCall.start();
@@ -127,6 +130,10 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         }
 
         return statement.executeQuery(selectStatement);
+    }
+
+    public boolean isDirty() {
+        return isDirty;
     }
 
     public void cancelDataLoad() {

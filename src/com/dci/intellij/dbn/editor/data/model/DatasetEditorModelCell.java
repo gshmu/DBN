@@ -51,7 +51,6 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
             try {
                 resultSet = isInsertRow ? row.getResultSet() : row.scrollResultSet();
             } catch (Exception e) {
-                e.printStackTrace();
                 MessageUtil.showErrorDialog(getProject(), "Could not update cell value for " + getColumnInfo().getName() + ".", e);
                 return;
             }

@@ -32,7 +32,8 @@ public class InsertRecordAction extends AbstractDataEditorAction {
                     datasetEditor.getActiveConnection().isConnected() &&
                     !datasetEditor.isReadonly() &&
                     !datasetEditor.isInserting() && 
-                    !datasetEditor.isLoading());
+                    !datasetEditor.isLoading() &&
+                    !datasetEditor.isDirty());
 
         }
     }

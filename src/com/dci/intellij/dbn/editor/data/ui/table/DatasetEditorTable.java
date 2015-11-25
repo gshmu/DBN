@@ -458,7 +458,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     private void startCellEditing(ListSelectionEvent e) {
         DBDataset dataset = getDataset();
-        if (!isLoading() && isEditingEnabled && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1 && !isEditing() && !e.getValueIsAdjusting() && dataset != null && FailsafeUtil.get(dataset.getConnectionHandler()).isConnected()) {
+        DatasetEditorModel model = getModel();
+        if (!isLoading() && !model.isDirty() && isEditingEnabled && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1 && !isEditing() && !e.getValueIsAdjusting() && FailsafeUtil.get(dataset.getConnectionHandler()).isConnected()) {
             editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
         }
     }

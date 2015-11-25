@@ -29,7 +29,7 @@ public class DeleteRecordAction extends AbstractDataEditorAction {
         } else {
             presentation.setVisible(!datasetEditor.isReadonlyData());
             presentation.setEnabled(true);
-            if (datasetEditor.isInserting() || datasetEditor.isLoading() || datasetEditor.isReadonly()) {
+            if (datasetEditor.isInserting() || datasetEditor.isLoading() || datasetEditor.isDirty() || datasetEditor.isReadonly()) {
                 presentation.setEnabled(false);
             } else {
                 DatasetEditorTable editorTable = datasetEditor.getEditorTable();

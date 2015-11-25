@@ -28,7 +28,8 @@ public class EditRecordAction extends AbstractDataEditorAction {
                 datasetEditor.getActiveConnection().isConnected() &&
                 datasetEditor.getEditorTable().getSelectedRow() != -1 &&
                 !datasetEditor.isInserting() &&
-                !datasetEditor.isLoading();
+                !datasetEditor.isLoading() &&
+                !datasetEditor.isDirty();
         presentation.setEnabled(enabled);
 
     }

@@ -47,9 +47,7 @@ public class CreateEditDatasetFilterAction extends AbstractDataEditorAction {
             presentation.setEnabled(false);
         } else {
             DBDataset dataset = datasetEditor.getDataset();
-            boolean enabled =
-                    !datasetEditor.isInserting() &&
-                            !datasetEditor.isLoading();
+            boolean enabled = !datasetEditor.isInserting() && !datasetEditor.isLoading();
 
             presentation.setEnabled(enabled);
 
