@@ -8,11 +8,13 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 
 public class CodeStyleCaseOption implements PersistentConfiguration {
     private String name;
+    private boolean ignoreMixedCase;
     private CodeStyleCase styleCase;
 
-    public CodeStyleCaseOption(String id, CodeStyleCase styleCase) {
+    public CodeStyleCaseOption(String id, CodeStyleCase styleCase, boolean ignoreMixedCase) {
         this.name = id;
         this.styleCase = styleCase;
+        this.ignoreMixedCase = ignoreMixedCase;
     }
 
     public CodeStyleCaseOption() {
@@ -33,13 +35,17 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
     public String format(String string) {
         if (string != null) {
             switch (styleCase) {
-                case UPPER: return StringUtil.isMixedCase(string) ? string : string.toUpperCase();
-                case LOWER: return StringUtil.isMixedCase(string) ? string : string.toLowerCase();
-                case CAPITALIZED: return StringUtil.isMixedCase(string) ? string : NamingUtil.capitalize(string);
+                case UPPER: return ignore(string) ? string : string.toUpperCase();
+                case LOWER: return ignore(string) ? string : string.toLowerCase();
+                case CAPITALIZED: return ignore(string) ? string : NamingUtil.capitalize(string);
                 case PRESERVE: return string;
             }
         }
-        return string;
+        return null;
+    }
+
+    boolean ignore(String string) {
+        return ignoreMixedCase && StringUtil.isMixedCase(string);
     }
 
     /*********************************************************
