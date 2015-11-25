@@ -3,21 +3,23 @@ package com.dci.intellij.dbn.vfs;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -32,6 +34,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.lang.Language;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -46,12 +49,15 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, DocumentListener, ConnectionProvider {
+
+    private static final Logger LOGGER = LoggerFactory.createLogger();
     private static final String EMPTY_CONTENT = "";
 
     private CharSequence originalContent = EMPTY_CONTENT;
     private CharSequence lastSavedContent = EMPTY_CONTENT;
     private CharSequence content = EMPTY_CONTENT;
-    private Timestamp changeTimestamp;
+    private ChangeTimestamp changeTimestamp;
+    private ChangeTimestamp changeTimestampCheck;
     private String sourceLoadError;
     private SourceCodeOffsets offsets;
 
@@ -198,17 +204,31 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     public void updateChangeTimestamp() {
         DBSchemaObject object = getObject();
         try {
-            Timestamp timestamp = object.loadChangeTimestamp(getContentType());
+            ChangeTimestamp timestamp = object.loadChangeTimestamp(getContentType());
             if (timestamp != null) {
                 changeTimestamp = timestamp;
+                changeTimestampCheck = timestamp;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.warn("Error loading object timestamp", e);
         }
     }
 
-    public Timestamp getChangeTimestamp() {
-        return changeTimestamp;
+    public boolean isChangedInDatabase(boolean reload) {
+        DBSchemaObject object = getObject();
+        if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object)) {
+            try {
+                if (changeTimestampCheck == null || changeTimestampCheck.isDirty() || reload) {
+                    changeTimestampCheck = object.loadChangeTimestamp(getContentType());
+                }
+
+                return changeTimestamp != null && changeTimestampCheck != null && changeTimestamp.value().before(changeTimestampCheck.value());
+            } catch (Exception e) {
+                LOGGER.warn("Error loading object timestamp", e);
+            }
+
+        }
+        return false;
     }
 
     @NotNull

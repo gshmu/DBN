@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.code;
 
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -181,9 +180,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     if (editor != null) {
                         String content = editor.getDocument().getText();
                         if (isValidObjectTypeAndName(content, object, contentType)) {
-                            Timestamp lastUpdated = object.loadChangeTimestamp(contentType);
-                            if (lastUpdated != null && lastUpdated.after(virtualFile.getChangeTimestamp())) {
-
+                            boolean isChangedInDatabase = virtualFile.isChangedInDatabase(true);
+                            if (isChangedInDatabase) {
                                 String message =
                                         "The " + object.getQualifiedNameWithType() +
                                                 " has been changed by another user. \nYou will be prompted to merge the changes";

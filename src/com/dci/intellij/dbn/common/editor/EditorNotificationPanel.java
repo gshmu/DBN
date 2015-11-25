@@ -44,6 +44,11 @@ public class EditorNotificationPanel extends JPanel{
                 background = HintUtil.INFORMATION_COLOR;
                 break;
             }
+            case WARNING:{
+                icon = AllIcons.General.Warning;
+                background = HintUtil.INFORMATION_COLOR;
+                break;
+            }
             case ERROR:{
                 icon = AllIcons.General.Error;
                 background = HintUtil.ERROR_COLOR;
