@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -33,7 +34,6 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
-import com.dci.intellij.dbn.execution.ExecutionCancellableCall;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
@@ -146,7 +146,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         int timeout = input.getExecutionTimeout();
 
         try {
-            new ExecutionCancellableCall<Object>(timeout, TimeUnit.SECONDS) {
+            new CancellableDatabaseCall<Object>(timeout, TimeUnit.SECONDS) {
                 @Override
                 public Object execute() throws Exception {
                     ConnectionHandler connectionHandler = FailsafeUtil.get(input.getConnectionHandler());

@@ -13,12 +13,12 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.execution.ExecutionCancellableCall;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -107,7 +107,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                     methodExecutionSettings.getExecutionTimeout();
 
             statement.setQueryTimeout(timeout);
-            MethodExecutionResult executionResult = new ExecutionCancellableCall<MethodExecutionResult>(timeout, TimeUnit.SECONDS) {
+            MethodExecutionResult executionResult = new CancellableDatabaseCall<MethodExecutionResult>(timeout, TimeUnit.SECONDS) {
                 @Override
                 public MethodExecutionResult execute() throws Exception {
                     statement.execute();

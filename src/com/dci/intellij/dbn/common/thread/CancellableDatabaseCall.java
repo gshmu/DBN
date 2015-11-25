@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.execution;
+package com.dci.intellij.dbn.common.thread;
 
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
@@ -16,17 +16,16 @@ import java.util.concurrent.TimeoutException;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 
-public abstract class ExecutionCancellableCall<T> implements Callable<T> {
+public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     private static final ExecutorService POOL = Executors.newCachedThreadPool(new ThreadFactory() {
         @Override
         public Thread newThread(@NotNull Runnable runnable) {
-            Thread thread = new Thread(runnable, "DBN - Execution Processor Thread");
+            Thread thread = new Thread(runnable, "DBN - Cancellable Call Thread");
             thread.setPriority(Thread.MIN_PRIORITY);
             thread.setDaemon(true);
             return thread;
@@ -42,12 +41,17 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
     private transient ProgressIndicator progressIndicator;
     private transient Future<T> future;
     private transient boolean cancelled = false;
+    private transient boolean cancelRequested = false;
     private Timer cancelCheckTimer;
 
-    public ExecutionCancellableCall(int timeout, TimeUnit timeUnit) {
+    public CancellableDatabaseCall(int timeout, TimeUnit timeUnit) {
         this.timeout = timeout;
         this.timeUnit = timeUnit;
         progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+    }
+
+    public void requestCancellation() {
+        cancelRequested = true;
     }
 
     @Override
@@ -57,44 +61,46 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
 
     public abstract T execute() throws Exception;
 
+    public boolean isCancelRequested() {
+        return cancelRequested || (progressIndicator != null && progressIndicator.isCanceled());
+    }
+
+
     public final T start() throws SQLException {
         try {
-            if (progressIndicator != null) {
-                cancelCheckTimer = new Timer("DBN - Connection Pool Cleaner");
-                TimerTask cancelCheckTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (progressIndicator != null) {
-                            if (progressIndicator.isCanceled()) {
-                                cancelled = true;
-                                try {
-                                    ExecutionCancellableCall.this.cancel();
-                                } catch (Exception e) {
-                                    LOGGER.warn("Error cancelling operation", e);
-                                }
-                                if (future != null) future.cancel(true);
-                                cancelCheckTimer.cancel();
-                            } else if (timeout > 0) {
-                                String text = progressIndicator.getText();
-                                int index = text.indexOf(" (timing out in ");
-                                if (index > -1) {
-                                    text = text.substring(0, index);
-                                }
-
-                                long runningForSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTimestamp);
-                                long timeoutSeconds = timeUnit.toSeconds(timeout);
-                                long timingOutIn = timeoutSeconds - runningForSeconds;
-                                if (timingOutIn < 60)
-                                    text = text + " (timing out in " + timingOutIn + " seconds) "; else
-                                    text = text + " (timing out in " + TimeUnit.SECONDS.toMinutes(timingOutIn) + " minutes) ";
-
-                                progressIndicator.setText(text);
-                            }
+            cancelCheckTimer = new Timer("DBN - Execution Cancel Watcher");
+            TimerTask cancelCheckTask = new TimerTask() {
+                @Override
+                public void run() {
+                    if (!cancelled && isCancelRequested()) {
+                        cancelled = true;
+                        if (future != null) future.cancel(true);
+                        try {
+                            CancellableDatabaseCall.this.cancel();
+                        } catch (Exception e) {
+                            LOGGER.warn("Error cancelling operation", e);
                         }
+                        cancelCheckTimer.cancel();
+                    } else if (progressIndicator != null && timeout > 0) {
+                        String text = progressIndicator.getText();
+                        int index = text.indexOf(" (timing out in ");
+                        if (index > -1) {
+                            text = text.substring(0, index);
+                        }
+
+                        long runningForSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTimestamp);
+                        long timeoutSeconds = timeUnit.toSeconds(timeout);
+                        long timingOutIn = timeoutSeconds - runningForSeconds;
+                        if (timingOutIn < 60)
+                            text = text + " (timing out in " + timingOutIn + " seconds) "; else
+                            text = text + " (timing out in " + TimeUnit.SECONDS.toMinutes(timingOutIn) + " minutes) ";
+
+                        progressIndicator.setText(text);
                     }
-                };
-                cancelCheckTimer.schedule(cancelCheckTask, TimeUtil.ONE_SECOND, TimeUtil.ONE_SECOND);
-            }
+                }
+            };
+
+            cancelCheckTimer.schedule(cancelCheckTask, 100, 100);
 
             T result = null;
             try {
@@ -132,7 +138,7 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
             throw new ProcessCanceledException();
         }
         try {
-            ExecutionCancellableCall.this.cancel();
+            cancel();
         } catch (Exception ce) {
             LOGGER.warn("Error cancelling operation", ce);
         }
@@ -148,4 +154,5 @@ public abstract class ExecutionCancellableCall<T> implements Callable<T> {
     }
 
     public abstract void cancel() throws Exception;
+
 }

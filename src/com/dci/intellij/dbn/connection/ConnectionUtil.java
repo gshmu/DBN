@@ -52,12 +52,16 @@ public class ConnectionUtil {
     }
 
     public static void closeStatement(final Statement statement) {
+        closeStatement(statement, false);
+    }
+
+    public static void closeStatement(final Statement statement, boolean background) {
         if (statement != null) {
-            if (ApplicationManager.getApplication().isDispatchThread()) {
+            if (ApplicationManager.getApplication().isDispatchThread() || background) {
                 new SimpleBackgroundTask("close statement") {
                     @Override
                     protected void execute() {
-                        closeStatement(statement);
+                        closeStatement(statement, false);
                     }
                 }.start();
             } else {
@@ -76,7 +80,7 @@ public class ConnectionUtil {
             } catch (Throwable e) {
                 LOGGER.warn("Error cancelling statement: " + e.getMessage());
             } finally {
-                closeStatement(statement);
+                closeStatement(statement, true);
             }
         }
     }

@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -24,7 +25,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.execution.ExecutionCancellableCall;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
@@ -264,7 +264,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
                 statement.setQueryTimeout(timeout);
                 final String executable = executableStatementText;
-                executionResult = new ExecutionCancellableCall<StatementExecutionResult>(timeout, TimeUnit.SECONDS) {
+                executionResult = new CancellableDatabaseCall<StatementExecutionResult>(timeout, TimeUnit.SECONDS) {
                     @Override
                     public StatementExecutionResult execute() throws Exception{
                         statement.execute(executable);
