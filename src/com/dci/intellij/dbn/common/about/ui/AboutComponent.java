@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.common.about.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Cursor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -12,13 +19,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.Cursor;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class AboutComponent extends DBNFormImpl{
     private JPanel mainPanel;
@@ -43,7 +43,7 @@ public class AboutComponent extends DBNFormImpl{
         donateLabel.setCursor(handCursor);
         donateLabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                BrowserUtil.launchBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3QAPZFCCARA4J");
+                BrowserUtil.browse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3QAPZFCCARA4J");
             }
 
             public void mouseEntered(MouseEvent e) {
@@ -60,7 +60,7 @@ public class AboutComponent extends DBNFormImpl{
         downloadPageLinkLabel.setCursor(handCursor);
         downloadPageLinkLabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                BrowserUtil.launchBrowser("http://plugins.jetbrains.com/plugin/?id=1800");
+                BrowserUtil.browse("http://plugins.jetbrains.com/plugin/?id=1800");
             }
         });
 
@@ -68,7 +68,7 @@ public class AboutComponent extends DBNFormImpl{
         supportPageLinkLabel.setCursor(handCursor);
         supportPageLinkLabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                BrowserUtil.launchBrowser("http://confluence.jetbrains.com/display/CONTEST/Database+Navigator");
+                BrowserUtil.browse("http://confluence.jetbrains.com/display/CONTEST/Database+Navigator");
             }
         });
 
@@ -76,7 +76,7 @@ public class AboutComponent extends DBNFormImpl{
         requestTrackerPageLinkLabel.setCursor(handCursor);
         requestTrackerPageLinkLabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                BrowserUtil.launchBrowser("http://dci.myjetbrains.com/youtrack/issues");
+                BrowserUtil.browse("http://dci.myjetbrains.com/youtrack/issues");
             }
         });
         IdeaPluginDescriptor ideaPluginDescriptor = PluginManager.getPlugin(PluginId.getId("DBN"));
