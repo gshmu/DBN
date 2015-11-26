@@ -58,7 +58,7 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
 
     private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile) {
+        public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {
             Project project = getProject();
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
             FileEditor[] allEditors = fileEditorManager.getAllEditors(sourceCodeFile.getMainDatabaseFile());

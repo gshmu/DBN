@@ -50,12 +50,13 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
         if (sourceCodeFile == null) {
             presentation.setEnabled(false);
         } else {
+            DBContentType contentType = sourceCodeFile.getContentType();
             String text =
-                    sourceCodeFile.getContentType() == DBContentType.CODE_SPEC ? "Save spec" :
-                    sourceCodeFile.getContentType() == DBContentType.CODE_BODY ? "Save body" : "Save";
+                    contentType == DBContentType.CODE_SPEC ? "Save spec" :
+                    contentType == DBContentType.CODE_BODY ? "Save body" : "Save";
 
             DBSchemaObject object = sourceCodeFile.getObject();
-            presentation.setEnabled(!object.getStatus().is(DBObjectStatus.SAVING) && sourceCodeFile.isModified());
+            presentation.setEnabled(!object.getStatus().is(contentType, DBObjectStatus.SAVING) && sourceCodeFile.isModified());
             presentation.setText(text);
         }
     }

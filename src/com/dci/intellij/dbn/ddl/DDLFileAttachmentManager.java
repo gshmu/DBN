@@ -75,8 +75,10 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
     SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerListener() {
         @Override
-        public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile) {
-            updateDDLFiles(sourceCodeFile.getMainDatabaseFile());
+        public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {
+            if (!isInitialLoad) {
+                updateDDLFiles(sourceCodeFile.getMainDatabaseFile());
+            }
         }
 
         @Override

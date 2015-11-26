@@ -8,7 +8,7 @@ import com.intellij.util.messages.Topic;
 public interface SourceCodeManagerListener extends EventListener {
     Topic<SourceCodeManagerListener> TOPIC = Topic.create("Source Code Manager Event", SourceCodeManagerListener.class);
 
-    void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile);
+    void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad);
 
     void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor);
 }

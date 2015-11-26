@@ -53,19 +53,19 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
             if (schemaObject.getProperties().is(DBObjectProperty.COMPILABLE) && DatabaseFeature.OBJECT_INVALIDATION.isSupported(schemaObject)) {
                 CompilerSettings compilerSettings = getCompilerSettings(schemaObject.getProject());
                 CompileType compileType = compilerSettings.getCompileType();
-                DBObjectStatusHolder status = schemaObject.getStatus();
+                DBObjectStatusHolder objectStatus = schemaObject.getStatus();
                 DBContentType contentType = sourceCodeFile.getContentType();
 
                 boolean isDebug = compileType == CompileType.DEBUG;
                 if (compileType == CompileType.KEEP) {
-                    isDebug = status.is(contentType, DBObjectStatus.DEBUG);
+                    isDebug = objectStatus.is(contentType, DBObjectStatus.DEBUG);
                 }
 
-                boolean isPresent = status.is(contentType, DBObjectStatus.PRESENT);
-                boolean isValid = status.is(contentType, DBObjectStatus.VALID);
+                boolean isPresent = objectStatus.is(contentType, DBObjectStatus.PRESENT);
+                boolean isValid = objectStatus.is(contentType, DBObjectStatus.VALID);
                 boolean isModified = sourceCodeFile.isModified();
 
-                boolean isCompiling = status.is(contentType, DBObjectStatus.COMPILING);
+                boolean isCompiling = objectStatus.is(contentType, DBObjectStatus.COMPILING);
                 boolean isEnabled = !isModified && isPresent && !isCompiling && (compilerSettings.alwaysShowCompilerControls() || !isValid /*|| isDebug != isDebugActive*/);
 
                 presentation.setEnabled(isEnabled);
