@@ -212,23 +212,26 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         final DBSchemaObject object = sourceCodeFile.getObject();
         final DBObjectStatusHolder objectStatus = sourceCodeFile.getObject().getStatus();
         if (!objectStatus.is(contentType, DBObjectStatus.LOADING)) {
+            final Project project = FailsafeUtil.get(getProject());
+            final SourceCodeManagerListener sourceCodeManagerListener = EventUtil.notify(project, SourceCodeManagerListener.TOPIC);
+            sourceCodeManagerListener.sourceCodeLoadStarted(sourceCodeFile);
             objectStatus.set(contentType, DBObjectStatus.LOADING, true);
 
-            TaskInstructions taskInstructions = new TaskInstructions("Loading source code", false, false);
+            TaskInstructions taskInstructions = new TaskInstructions("Loading source code", true, false);
             new ConnectionAction("loading source code", sourceCodeFile, taskInstructions) {
                 @Override
                 protected void execute() {
-                    Project project = FailsafeUtil.get(getProject());
                     try {
                         boolean isInitialLoad = !sourceCodeFile.isLoaded();
                         sourceCodeFile.loadSourceFromDatabase();
                         sourceCodeFile.updateChangeTimestamp();
-                        EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoaded(sourceCodeFile, isInitialLoad);
+                        sourceCodeManagerListener.sourceCodeLoaded(sourceCodeFile, isInitialLoad);
 
                     } catch (SQLException e) {
                         MessageUtil.showErrorDialog(project, "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
                     } finally {
                         objectStatus.set(contentType, DBObjectStatus.LOADING, false);
+                        sourceCodeManagerListener.sourceCodeLoadFinished(sourceCodeFile);
                     }
                 }
             }.start();

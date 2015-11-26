@@ -9,11 +9,10 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorActionsPanel;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
-import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -44,12 +43,12 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
 */
 
         String editorName = getName();
-        BasicTextEditor textEditor = isMainEditor ?
+        SourceCodeEditor sourceCodeEditor = isMainEditor ?
                 new SourceCodeMainEditor(project, sourceCodeFile, editorName, getEditorProviderId()) :
                 new SourceCodeEditor(project, sourceCodeFile, editorName, getEditorProviderId());
 
-        updateEditorActions(textEditor);
-        Document document = textEditor.getEditor().getDocument();
+        updateEditorActions(sourceCodeEditor);
+        Document document = sourceCodeEditor.getEditor().getDocument();
 
         int documentTracking = document.hashCode();
         if (document.hashCode() != sourceCodeFile.getDocumentHashCode()) {
@@ -59,9 +58,9 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
 
         Icon icon = getIcon();
         if (icon != null) {
-            updateTabIcon(databaseFile, textEditor, icon);
+            updateTabIcon(databaseFile, sourceCodeEditor, icon);
         }
-        return textEditor;
+        return sourceCodeEditor;
     }
 
     @Override
@@ -99,13 +98,13 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
 
     public abstract Icon getIcon();
 
-    private static void updateEditorActions(BasicTextEditor fileEditor) {
-        Editor editor = fileEditor.getEditor();
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.SourceEditor");
+    private static void updateEditorActions(SourceCodeEditor sourceCodeEditor) {
+        Editor editor = sourceCodeEditor.getEditor();
         JComponent editorComponent = editor.getComponent();
-        actionToolbar.setTargetComponent(editorComponent);
+        SourceCodeEditorActionsPanel actionsPanel = new SourceCodeEditorActionsPanel(sourceCodeEditor);
         //FileEditorManager.getInstance(editor.getProject()).addTopComponent(fileEditor, actionToolbar.getComponent());
-        editorComponent.getParent().add(actionToolbar.getComponent(), BorderLayout.NORTH);
+        editorComponent.getParent().add(actionsPanel.getComponent(), BorderLayout.NORTH);
+        Disposer.register(sourceCodeEditor, actionsPanel);
     }
 
     public void disposeEditor(@NotNull FileEditor editor) {
