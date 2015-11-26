@@ -142,8 +142,8 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                     CodeEditorChangesOption option = optionHandler.resolve(object.getQualifiedNameWithType());
 
                     switch (option) {
-                        case SAVE: databaseFile.saveChanges(); break;
-                        case DISCARD: databaseFile.revertChanges(); break;
+                        case SAVE: databaseFile.saveChanges(null); break;
+                        case DISCARD: databaseFile.revertChanges(null); break;
                         case SHOW: {
                             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
                             List<DBContentVirtualFile> contentFiles = databaseFile.getContentFiles();

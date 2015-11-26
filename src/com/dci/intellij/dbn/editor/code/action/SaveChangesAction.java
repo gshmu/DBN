@@ -36,7 +36,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
                     public void run() {
                         FileDocumentManager.getInstance().saveAllDocuments();
                         SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                        sourceCodeManager.updateSourceToDatabase(fileEditor);
+                        sourceCodeManager.updateSourceToDatabase(fileEditor, null);
                     }
                 }.start();
             }

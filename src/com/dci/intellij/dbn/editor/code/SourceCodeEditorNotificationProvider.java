@@ -1,10 +1,12 @@
 package com.dci.intellij.dbn.editor.code;
 
+import java.sql.Timestamp;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeLoadErrorNotificationPanel;
@@ -21,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotifications;
+import com.intellij.util.text.DateFormatUtil;
 
 public class SourceCodeEditorNotificationProvider extends EditorNotifications.Provider<SourceCodeEditorNotificationPanel> {
     private static final Key<SourceCodeEditorNotificationPanel> KEY = Key.create("DBNavigator.SourceCodeEditorNotificationPanel");
@@ -81,7 +84,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
                 if (StringUtil.isNotEmpty(sourceLoadError)) {
                     return createLoadErrorPanel(editableObject, sourceLoadError);
                 } else if (sourceCodeFile.isChangedInDatabase(false)) {
-                    return createOutdatedCodePanel(editableObject);
+                    return createOutdatedCodePanel(editableObject, sourceCodeFile, sourceCodeEditor);
                 }
 
             }
@@ -95,9 +98,48 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
         return panel;
     }
 
-    private static SourceCodeEditorNotificationPanel createOutdatedCodePanel(final DBSchemaObject editableObject) {
+    private SourceCodeEditorNotificationPanel createOutdatedCodePanel(final DBSchemaObject editableObject, final DBSourceCodeVirtualFile virtualFile, final SourceCodeEditor sourceCodeEditor) {
         SourceCodeOutdatedNotificationPanel panel = new SourceCodeOutdatedNotificationPanel();
-        panel.setText("Outdated version. The " + editableObject.getQualifiedNameWithType() + " has been changed by another user.");
+        Timestamp timestamp = virtualFile.getChangedInDatabaseTimestamp();
+        panel.setText("Outdated version. The " + editableObject.getQualifiedNameWithType() + " was modified by another user (" + DateFormatUtil.formatPrettyDateTime(timestamp).toLowerCase() + ")");
+        panel.createActionLabel("Show Diff", new Runnable() {
+            @Override
+            public void run() {
+                if (!project.isDisposed()) {
+                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                    sourceCodeManager.showChangesAgainstDatabase(virtualFile);
+                }
+            }
+        });
+
+        if (virtualFile.isModified()) {
+            panel.createActionLabel("Merge", new Runnable() {
+                @Override
+                public void run() {
+                    if (!project.isDisposed()) {
+                        try {
+                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                            CharSequence databaseContent = sourceCodeManager.loadSourceCodeFromDatabase(editableObject, sourceCodeEditor.getContentType());
+                            sourceCodeManager.showSourceMergeDialog(databaseContent.toString(), virtualFile, sourceCodeEditor);
+                        }catch (Exception e) {
+                            MessageUtil.showErrorDialog(project, "Could not load sources from database.", e);
+
+                        }
+                    }
+                }
+            });
+        }
+
+        panel.createActionLabel(virtualFile.isModified() ? "Revert local changes" : "Reload", new Runnable() {
+            @Override
+            public void run() {
+                if (!project.isDisposed()) {
+                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                    sourceCodeManager.loadSourceFromDatabase(sourceCodeEditor);
+                }
+            }
+        });
+
         return panel;
     }
 

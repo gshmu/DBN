@@ -298,9 +298,9 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         return false;
     }
 
-    public void saveChanges() {
+    public void saveChanges(Runnable successCallback) {
         FileDocumentManager.getInstance().saveAllDocuments();
-        Project project = getProject();
+        final Project project = getProject();
         if (project != null) {
             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
@@ -310,7 +310,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                     for (FileEditor fileEditor : fileEditors) {
                         if (fileEditor instanceof SourceCodeEditor) {
                             SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                            sourceCodeManager.updateSourceToDatabase(sourceCodeEditor);
+                            sourceCodeManager.updateSourceToDatabase(sourceCodeEditor, successCallback);
                             break;
                         }
                     }
@@ -319,15 +319,21 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         }
     }
 
-    public void revertChanges() {
-        List<DBContentVirtualFile> contentFiles = getContentFiles();
-        for (DBContentVirtualFile contentFile : contentFiles) {
-            if (contentFile instanceof DBSourceCodeVirtualFile) {
-                DBSourceCodeVirtualFile sourceCodeVirtualFile = (DBSourceCodeVirtualFile) contentFile;
-                sourceCodeVirtualFile.reloadFromDatabase();
+    public void revertChanges(Runnable successCallback) {
+        Project project = getProject();
+        if (project != null) {
+            List<DBContentVirtualFile> contentFiles = getContentFiles();
+            for (DBContentVirtualFile contentFile : contentFiles) {
+                if (contentFile instanceof DBSourceCodeVirtualFile) {
+                    DBSourceCodeVirtualFile sourceCodeVirtualFile = (DBSourceCodeVirtualFile) contentFile;
+                    sourceCodeVirtualFile.reloadFromDatabase();
+                }
+            }
+
+            if (successCallback != null) {
+                successCallback.run();
             }
         }
-
     }
 }
 
