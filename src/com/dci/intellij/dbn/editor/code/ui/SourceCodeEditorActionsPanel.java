@@ -38,7 +38,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
         loadingDataPanel.setVisible(false);
 
-        EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        EventUtil.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
     SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
