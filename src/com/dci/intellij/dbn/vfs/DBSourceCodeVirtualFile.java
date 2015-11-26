@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.vfs;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -207,7 +208,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             ChangeTimestamp timestamp = object.loadChangeTimestamp(getContentType());
             if (timestamp != null) {
                 changeTimestamp = timestamp;
-                changeTimestampCheck = timestamp;
+                changeTimestampCheck = null;
             }
         } catch (Exception e) {
             LOGGER.warn("Error loading object timestamp", e);
@@ -229,6 +230,10 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
         }
         return false;
+    }
+
+    public Timestamp getChangedInDatabaseTimestamp() {
+        return changeTimestampCheck == null ? new Timestamp(System.currentTimeMillis() - 100) : changeTimestampCheck.value();
     }
 
     @NotNull

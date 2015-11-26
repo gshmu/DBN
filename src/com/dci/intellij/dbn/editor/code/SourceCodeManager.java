@@ -68,6 +68,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -158,7 +159,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }.start();
     }
 
-    public void updateSourceToDatabase(@NotNull final SourceCodeEditor fileEditor) {
+    public void updateSourceToDatabase(@NotNull final SourceCodeEditor fileEditor, @Nullable final Runnable successCallback) {
         final DBSourceCodeVirtualFile virtualFile = fileEditor.getVirtualFile();
         final DBSchemaObject object = virtualFile.getObject();
         final DBObjectStatusHolder objectStatus = object.getStatus();
@@ -188,9 +189,9 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                 MessageUtil.showErrorDialog(project, "Version conflict", message);
 
                                 CharSequence databaseContent = loadSourceCodeFromDatabase(object, contentType);
-                                showSourceDiffDialog(databaseContent.toString(), virtualFile, fileEditor);
+                                showSourceMergeDialog(databaseContent.toString(), virtualFile, fileEditor);
                             } else {
-                                doUpdateSourceToDatabase(object, virtualFile, fileEditor);
+                                doUpdateSourceToDatabase(object, virtualFile, fileEditor, successCallback);
                                 //sourceCodeEditor.afterSave();
                             }
 
@@ -271,7 +272,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         return true;
     }
 
-    private void showSourceDiffDialog(final String databaseContent, final DBSourceCodeVirtualFile virtualFile, final FileEditor fileEditor) {
+    public void showSourceMergeDialog(final String databaseContent, final DBSourceCodeVirtualFile virtualFile, final FileEditor fileEditor) {
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
@@ -294,18 +295,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
                     int result = mergeRequest.getResult();
                     if (result == 0) {
-                        doUpdateSourceToDatabase(object, virtualFile, fileEditor);
-                        //sourceCodeEditor.afterSave();
+
                     } else if (result == 1) {
-                        new WriteActionRunner() {
-                            public void run() {
-                                Editor editor = EditorUtil.getEditor(fileEditor);
-                                if (editor != null) {
-                                    editor.getDocument().setText(virtualFile.getContent());
-                                    object.getStatus().set(DBObjectStatus.SAVING, false);
-                                }
-                            }
-                        }.start();
                     }
                 }
             }
@@ -313,7 +304,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
 
-    private void doUpdateSourceToDatabase(final DBSchemaObject object, final DBSourceCodeVirtualFile virtualFile, final FileEditor fileEditor) {
+    private void doUpdateSourceToDatabase(final DBSchemaObject object, final DBSourceCodeVirtualFile virtualFile, final FileEditor fileEditor, @Nullable final Runnable successCallback) {
         new BackgroundTask(object.getProject(), "Saving " + object.getQualifiedNameWithType() + " to database", false) {
             @Override
             protected void execute(@NotNull ProgressIndicator indicator) {
@@ -347,6 +338,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 } finally {
                      object.getStatus().set(DBObjectStatus.SAVING, false);
                 }
+                if (successCallback != null) successCallback.run();
 
             }
         }.start();
@@ -381,7 +373,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     @Override
-    public boolean canCloseProject(Project project) {
+    public boolean canCloseProject(final Project project) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
 
@@ -391,27 +383,38 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         for (VirtualFile openFile : openFiles) {
             if (openFile instanceof DBEditableObjectVirtualFile) {
                 DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) openFile;
-
                 if (databaseFile.isModified()) {
                     DBSchemaObject object = databaseFile.getObject();
-                    CodeEditorChangesOption option = optionHandler.resolve(object.getQualifiedNameWithType());
-
-                    switch (option) {
-                        case SAVE: databaseFile.saveChanges(); break;
-                        case SHOW: {
-                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                            List<DBContentVirtualFile> contentFiles = databaseFile.getContentFiles();
-                            for (DBContentVirtualFile contentFile : contentFiles) {
-                                if (contentFile instanceof DBSourceCodeVirtualFile) {
-                                    DBSourceCodeVirtualFile sourcecodeFile = (DBSourceCodeVirtualFile) contentFile;
-                                    if (sourcecodeFile.isModified()) {
-                                        sourceCodeManager.showChangesAgainstDatabase(sourcecodeFile);
-                                    }
-                                }
+                    List<DBContentVirtualFile> contentFiles = databaseFile.getContentFiles();
+                    for (DBContentVirtualFile contentFile : contentFiles) {
+                        if (contentFile instanceof DBSourceCodeVirtualFile && contentFile.isModified()) {
+                            if (object.getStatus().is(DBObjectStatus.SAVING)) {
+                                return false;
                             }
-                            return false;
+
+                            DBSourceCodeVirtualFile sourcecodeFile = (DBSourceCodeVirtualFile) contentFile;
+                            CodeEditorChangesOption option = optionHandler.resolve(object.getQualifiedNameWithType());
+                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                            Runnable closeProjectRunnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    new SimpleLaterInvocator() {
+                                        @Override
+                                        protected void execute() {
+                                            ProjectManager.getInstance().closeProject(project);
+                                        }
+                                    }.start();
+
+                                }
+                            };
+
+                            switch (option) {
+                                case SAVE: databaseFile.saveChanges(closeProjectRunnable); break;
+                                case DISCARD: databaseFile.revertChanges(closeProjectRunnable); break;
+                                case SHOW: sourceCodeManager.showChangesAgainstDatabase(sourcecodeFile); return false;
+                                case CANCEL: return false;
+                            }
                         }
-                        case CANCEL: return false;
                     }
                 }
             }

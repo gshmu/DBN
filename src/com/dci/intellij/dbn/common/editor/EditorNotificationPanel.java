@@ -61,7 +61,7 @@ public class EditorNotificationPanel extends JPanel{
             }
         }
 
-        label.setIcon(icon);
+        //label.setIcon(icon);
         setBackground(background);
 
         linksPanel = new JPanel(new FlowLayout());
