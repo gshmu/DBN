@@ -72,13 +72,15 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
                     }
                 }
             }
-            new WriteActionRunner() {
-                public void run() {
-                    for (Document document : documents) {
-                        document.setText(sourceCodeFile.getContent());
+            if (documents.size() > 0) {
+                new WriteActionRunner() {
+                    public void run() {
+                        for (Document document : documents) {
+                            document.setText(sourceCodeFile.getContent());
+                        }
                     }
-                }
-            }.start();
+                }.start();
+            }
         }
     };
 
