@@ -32,14 +32,14 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
     public SourceCodeEditorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
 
-        EventUtil.subscribe(project, project, SourceCodeLoadListener.TOPIC, sourceCodeLoadListener);
+        EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
         EventUtil.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
-    SourceCodeLoadListener sourceCodeLoadListener = new SourceCodeLoadListener() {
+    SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeLoaded(final VirtualFile virtualFile) {
-            updateEditorNotification(virtualFile);
+        public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile) {
+            updateEditorNotification(sourceCodeFile);
         }
     };
 
@@ -47,22 +47,23 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
             VirtualFile virtualFile = event.getNewFile();
-            updateEditorNotification(virtualFile);
+            if (virtualFile instanceof DBSourceCodeVirtualFile) {
+                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+                updateEditorNotification(sourceCodeFile);
+            }
         }
     };
 
-    void updateEditorNotification(final VirtualFile virtualFile) {
-        if (virtualFile instanceof DBEditableObjectVirtualFile) {
-            new ConditionalLaterInvocator() {
-                @Override
-                protected void execute() {
-                    if (!project.isDisposed()) {
-                        EditorNotifications notifications = EditorNotifications.getInstance(project);
-                        notifications.updateNotifications(virtualFile);
-                    }
+    void updateEditorNotification(final DBSourceCodeVirtualFile sourceCodeFile) {
+        new ConditionalLaterInvocator() {
+            @Override
+            protected void execute() {
+                if (!project.isDisposed()) {
+                    EditorNotifications notifications = EditorNotifications.getInstance(project);
+                    notifications.updateNotifications(sourceCodeFile.getMainDatabaseFile());
                 }
-            }.start();
-        }
+            }
+        }.start();
     }
 
     @NotNull
@@ -98,21 +99,21 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
         return panel;
     }
 
-    private SourceCodeEditorNotificationPanel createOutdatedCodePanel(final DBSchemaObject editableObject, final DBSourceCodeVirtualFile virtualFile, final SourceCodeEditor sourceCodeEditor) {
+    private SourceCodeEditorNotificationPanel createOutdatedCodePanel(final DBSchemaObject editableObject, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor sourceCodeEditor) {
         SourceCodeOutdatedNotificationPanel panel = new SourceCodeOutdatedNotificationPanel();
-        Timestamp timestamp = virtualFile.getChangedInDatabaseTimestamp();
+        Timestamp timestamp = sourceCodeFile.getChangedInDatabaseTimestamp();
         panel.setText("Outdated version. The " + editableObject.getQualifiedNameWithType() + " was modified by another user (" + DateFormatUtil.formatPrettyDateTime(timestamp).toLowerCase() + ")");
         panel.createActionLabel("Show Diff", new Runnable() {
             @Override
             public void run() {
                 if (!project.isDisposed()) {
                     SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                    sourceCodeManager.showChangesAgainstDatabase(virtualFile);
+                    sourceCodeManager.opedDatabaseDiffWindow(sourceCodeFile);
                 }
             }
         });
 
-        if (virtualFile.isModified()) {
+        if (sourceCodeFile.isModified()) {
             panel.createActionLabel("Merge", new Runnable() {
                 @Override
                 public void run() {
@@ -120,7 +121,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
                         try {
                             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
                             CharSequence databaseContent = sourceCodeManager.loadSourceCodeFromDatabase(editableObject, sourceCodeEditor.getContentType());
-                            sourceCodeManager.showSourceMergeDialog(databaseContent.toString(), virtualFile, sourceCodeEditor);
+                            sourceCodeManager.openCodeMergeDialog(databaseContent.toString(), sourceCodeFile, sourceCodeEditor, false);
                         }catch (Exception e) {
                             MessageUtil.showErrorDialog(project, "Could not load sources from database.", e);
 
@@ -130,12 +131,12 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
             });
         }
 
-        panel.createActionLabel(virtualFile.isModified() ? "Revert local changes" : "Reload", new Runnable() {
+        panel.createActionLabel(sourceCodeFile.isModified() ? "Revert local changes" : "Reload", new Runnable() {
             @Override
             public void run() {
                 if (!project.isDisposed()) {
                     SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                    sourceCodeManager.loadSourceFromDatabase(sourceCodeEditor);
+                    sourceCodeManager.loadSourceFromDatabase(sourceCodeFile);
                 }
             }
         });

@@ -31,12 +31,12 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
     public DDLMappedNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
 
-        EventUtil.subscribe(project, project, DDLMappingListener.TOPIC, ddlMappingListener);
-        EventUtil.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerAdapter);
+        EventUtil.subscribe(project, project, DDLFileAttachmentManagerListener.TOPIC, ddlFileAttachmentManagerListener);
+        EventUtil.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListner);
         EventUtil.subscribe(project, project, DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener);
     }
 
-    DDLMappingListener ddlMappingListener = new DDLMappingListener() {
+    DDLFileAttachmentManagerListener ddlFileAttachmentManagerListener = new DDLFileAttachmentManagerListener() {
         @Override
         public void ddlFileDetached(VirtualFile virtualFile) {
             if (!project.isDisposed()) {
@@ -54,7 +54,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
         }
     };
 
-    FileEditorManagerAdapter fileEditorManagerAdapter = new FileEditorManagerAdapter() {
+    FileEditorManagerListener fileEditorManagerListner = new FileEditorManagerAdapter() {
         @Override
         public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
             updateDdlFileHeaders(file);

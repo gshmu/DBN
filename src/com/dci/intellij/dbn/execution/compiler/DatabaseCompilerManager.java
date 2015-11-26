@@ -13,16 +13,22 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
+import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
+import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.compiler.ui.CompilerTypeSelectionDialog;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -34,11 +40,47 @@ import com.intellij.openapi.ui.DialogWrapper;
 public class DatabaseCompilerManager extends AbstractProjectComponent {
     private DatabaseCompilerManager(Project project) {
         super(project);
+        EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
     public static DatabaseCompilerManager getInstance(@NotNull Project project) {
         return FailsafeUtil.getComponent(project, DatabaseCompilerManager.class);
     }
+
+    private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+        @Override
+        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor) {
+            sourceCodeFile.updateChangeTimestamp();
+
+            Project project = getProject();
+            DBSchemaObject object = sourceCodeFile.getObject();
+            DBContentType contentType = sourceCodeFile.getContentType();
+            ConnectionHandler connectionHandler = object.getConnectionHandler();
+
+            if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
+                boolean isCompilable = object.getProperties().is(DBObjectProperty.COMPILABLE);
+
+                if (isCompilable) {
+                    DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
+                    CompileType compileType = compilerManager.getCompileType(object, contentType);
+
+                    CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, sourceCodeFile, fileEditor);
+                    if (compileType == CompileType.DEBUG) {
+                        compilerManager.compileObject(object, compileType, compilerAction);
+                    } else {
+                        connectionHandler.getObjectBundle().refreshObjectsStatus(object);
+                    }
+
+                    compilerManager.createCompilerResult(object, compilerAction);
+                }
+            }
+        }
+
+        @Override
+        public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile) {
+            sourceCodeFile.updateChangeTimestamp();
+        }
+    };
 
     public void createCompilerResult(DBSchemaObject object, CompilerAction compilerAction) {
         Project project = object.getProject();
@@ -69,19 +111,21 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         if (allowed) {
             doCompileObject(object, compileType, compilerAction);
             if (DatabaseFileSystem.isFileOpened(object)) {
-                DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
-                DBContentType contentType = compilerAction.getContentType();
-                if (contentType.isBundle()) {
-                    for (DBContentType subContentType : contentType.getSubContentTypes()) {
-                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
+                DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
+                if (databaseFile != null) {
+                    DBContentType contentType = compilerAction.getContentType();
+                    if (contentType.isBundle()) {
+                        for (DBContentType subContentType : contentType.getSubContentTypes()) {
+                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
+                            if (sourceCodeFile != null) {
+                                sourceCodeFile.updateChangeTimestamp();
+                            }
+                        }
+                    } else {
+                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
                         if (sourceCodeFile != null) {
                             sourceCodeFile.updateChangeTimestamp();
                         }
-                    }
-                } else {
-                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                    if (sourceCodeFile != null) {
-                        sourceCodeFile.updateChangeTimestamp();
                     }
                 }
             }
@@ -105,11 +149,13 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                         CompileType compileType = getOption();
                         doCompileObject(object, compileType, compilerAction);
                         if (DatabaseFileSystem.isFileOpened(object)) {
-                            DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
-                            DBContentType contentType = compilerAction.getContentType();
-                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                            if (sourceCodeFile != null) {
-                                sourceCodeFile.updateChangeTimestamp();
+                            DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
+                            if (databaseFile != null) {
+                                DBContentType contentType = compilerAction.getContentType();
+                                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                                if (sourceCodeFile != null) {
+                                    sourceCodeFile.updateChangeTimestamp();
+                                }
                             }
                         }
                     }

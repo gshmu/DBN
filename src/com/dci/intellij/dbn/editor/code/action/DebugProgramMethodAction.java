@@ -35,9 +35,9 @@ public class DebugProgramMethodAction extends GroupPopupAction {
     protected AnAction[] getActions(AnActionEvent e) {
         List<AnAction> actions = new ArrayList<AnAction>();
         Project project = e.getProject();
-        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
-        if (project != null && virtualFile != null) {
-            DBSchemaObject schemaObject = virtualFile.getObject();
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
+        if (project != null && sourceCodeFile != null) {
+            DBSchemaObject schemaObject = sourceCodeFile.getObject();
             if (schemaObject.getObjectType().matches(DBObjectType.PROGRAM)) {
 
                 MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
@@ -72,11 +72,11 @@ public class DebugProgramMethodAction extends GroupPopupAction {
     }
 
     public void update(@NotNull AnActionEvent e) {
-        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         boolean visible = false;
-        if (virtualFile != null) {
-            DBSchemaObject schemaObject = virtualFile.getObject();
+        if (sourceCodeFile != null) {
+            DBSchemaObject schemaObject = sourceCodeFile.getObject();
             if (schemaObject.getObjectType().matches(DBObjectType.PROGRAM) && DatabaseFeature.DEBUGGING.isSupported(schemaObject)) {
                 visible = true;
             }

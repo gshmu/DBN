@@ -29,15 +29,15 @@ public class RevertChangesAction extends AbstractSourceCodeEditorAction {
 
             if (canContinue) {
                 SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                sourceCodeManager.loadSourceFromDatabase(fileEditor);
+                sourceCodeManager.loadSourceFromDatabase(fileEditor.getVirtualFile());
             }
         }
     }
 
     public void update(@NotNull AnActionEvent e) {
-        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
-        presentation.setEnabled(virtualFile!= null && virtualFile.isModified());
+        presentation.setEnabled(sourceCodeFile!= null && sourceCodeFile.isModified());
         presentation.setText("Revert Changes");
     }
 }

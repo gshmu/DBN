@@ -35,5 +35,8 @@ public interface DBSchemaObject extends DBObject {
     @NotNull
     DBEditableObjectVirtualFile getVirtualFile();
 
+    @Nullable
+    DBEditableObjectVirtualFile getCachedVirtualFile();
+
     List<DBSchema> getReferencingSchemas() throws SQLException;
 }

@@ -5,8 +5,8 @@ import java.util.EventListener;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.messages.Topic;
 
-public interface DDLMappingListener extends EventListener {
-    Topic<DDLMappingListener> TOPIC = Topic.create("DDL Mappings changed", DDLMappingListener.class);
+public interface DDLFileAttachmentManagerListener extends EventListener {
+    Topic<DDLFileAttachmentManagerListener> TOPIC = Topic.create("DDL File Attachment Event", DDLFileAttachmentManagerListener.class);
 
     void ddlFileDetached(VirtualFile virtualFile);
 

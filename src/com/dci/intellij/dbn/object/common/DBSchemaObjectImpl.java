@@ -126,6 +126,12 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
 
     @NotNull
     public DBEditableObjectVirtualFile getVirtualFile() {
+        return DatabaseFileSystem.getInstance().findOrCreateDatabaseFile(this);
+    }
+
+    @Nullable
+    @Override
+    public DBEditableObjectVirtualFile getCachedVirtualFile() {
         return DatabaseFileSystem.getInstance().findDatabaseFile(this);
     }
 

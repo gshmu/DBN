@@ -149,9 +149,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                             List<DBContentVirtualFile> contentFiles = databaseFile.getContentFiles();
                             for (DBContentVirtualFile contentFile : contentFiles) {
                                 if (contentFile instanceof DBSourceCodeVirtualFile) {
-                                    DBSourceCodeVirtualFile sourcecodeFile = (DBSourceCodeVirtualFile) contentFile;
-                                    if (sourcecodeFile.isModified()) {
-                                        sourceCodeManager.showChangesAgainstDatabase(sourcecodeFile);
+                                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
+                                    if (sourceCodeFile.isModified()) {
+                                        sourceCodeManager.opedDatabaseDiffWindow(sourceCodeFile);
                                     }
                                 }
                             }

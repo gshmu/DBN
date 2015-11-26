@@ -12,17 +12,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 
 public class ObjectToDDLContentSynchronizer implements Runnable {
     DBEditableObjectVirtualFile databaseFile;
-    private DBContentType sourceContentType;
 
-    public ObjectToDDLContentSynchronizer(DBContentType sourceContentType, DBEditableObjectVirtualFile databaseFile) {
-        this.sourceContentType = sourceContentType;
+    public ObjectToDDLContentSynchronizer(DBEditableObjectVirtualFile databaseFile) {
         this.databaseFile = databaseFile;
     }
 
     public void run() {
-        assert !sourceContentType.isBundle();
-        Project project = databaseFile.getProject();
 
+        Project project = databaseFile.getProject();
         if (project != null) {
             DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
             List<VirtualFile> ddlFiles = databaseFile.getAttachedDDLFiles();
@@ -36,9 +33,9 @@ public class ObjectToDDLContentSynchronizer implements Runnable {
                     if (fileContentType.isBundle()) {
                         DBContentType[] contentTypes = fileContentType.getSubContentTypes();
                         for (DBContentType contentType : contentTypes) {
-                            DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                            if (virtualFile != null) {
-                                String statement = ddlFileManager.createDDLStatement(virtualFile, contentType);
+                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                            if (sourceCodeFile != null) {
+                                String statement = ddlFileManager.createDDLStatement(sourceCodeFile, contentType);
                                 if (statement.trim().length() > 0) {
                                     buffer.append(statement);
                                     buffer.append('\n');
@@ -47,9 +44,9 @@ public class ObjectToDDLContentSynchronizer implements Runnable {
                             }
                         }
                     } else {
-                        DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(fileContentType);
-                        if (virtualFile != null) {
-                            buffer.append(ddlFileManager.createDDLStatement(virtualFile, fileContentType));
+                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(fileContentType);
+                        if (sourceCodeFile != null) {
+                            buffer.append(ddlFileManager.createDDLStatement(sourceCodeFile, fileContentType));
                             buffer.append('\n');
                         }
                     }
