@@ -22,22 +22,22 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
         SourceCodeEditor fileEditor = getFileEditor(e);
         if (project != null && fileEditor != null) {
             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            sourceCodeManager.loadSourceFromDatabase(fileEditor);
+            sourceCodeManager.loadSourceFromDatabase(fileEditor.getVirtualFile());
         }
     }
 
     public void update(AnActionEvent e) {
-        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
-        if (virtualFile == null) {
+        if (sourceCodeFile == null) {
             presentation.setEnabled(false);
         } else {
             String text =
-                virtualFile.getContentType() == DBContentType.CODE_SPEC ? "Reload spec" :
-                virtualFile.getContentType() == DBContentType.CODE_BODY ? "Reload body" : "Reload";
+                sourceCodeFile.getContentType() == DBContentType.CODE_SPEC ? "Reload spec" :
+                sourceCodeFile.getContentType() == DBContentType.CODE_BODY ? "Reload body" : "Reload";
 
             presentation.setText(text);
-            presentation.setEnabled(!virtualFile.isModified());
+            presentation.setEnabled(!sourceCodeFile.isModified());
         }
     }
 }

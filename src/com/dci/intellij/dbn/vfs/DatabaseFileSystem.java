@@ -89,7 +89,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                     DBObject object = objectRef.get();
 
                     if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
-                        return findDatabaseFile((DBSchemaObject) object);
+                        return findOrCreateDatabaseFile((DBSchemaObject) object);
                     }
                 } else if (objectPath.startsWith("object_")) {
                     int typeEndIndex = objectPath.indexOf("#");
@@ -99,7 +99,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                     DBObjectRef objectRef = new DBObjectRef(connectionId, identifier);
                     DBObject object = objectRef.get();
                     if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
-                        DBEditableObjectVirtualFile virtualFile = findDatabaseFile((DBSchemaObject) object);
+                        DBEditableObjectVirtualFile virtualFile = findOrCreateDatabaseFile((DBSchemaObject) object);
                         return virtualFile.getContentFile(contentType);
                     }
                 }
@@ -117,8 +117,14 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         }.start();
     }
 
-    @NotNull
+    @Nullable
     public DBEditableObjectVirtualFile findDatabaseFile(DBSchemaObject object) {
+        DBObjectRef objectRef = object.getRef();
+        return filesCache.get(objectRef);
+    }
+
+    @NotNull
+    public DBEditableObjectVirtualFile findOrCreateDatabaseFile(DBSchemaObject object) {
         DBObjectRef objectRef = object.getRef();
         DBEditableObjectVirtualFile databaseFile = filesCache.get(objectRef);
         if (databaseFile == null || databaseFile.isDisposed()){
@@ -356,7 +362,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     }
 
     private void openSchemaObject(final DBSchemaObject object, final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
-        final DBEditableObjectVirtualFile databaseFile = findDatabaseFile(object);
+        final DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(object);
         databaseFile.setSelectedEditorProviderId(editorProviderId);
         if (!BackgroundTask.isProcessCancelled()) {
             new SimpleLaterInvocator() {
@@ -376,7 +382,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
 
     private void openChildObject(final DBObject object, final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
         final DBSchemaObject schemaObject = (DBSchemaObject) object.getParentObject();
-        final DBEditableObjectVirtualFile databaseFile = findDatabaseFile(schemaObject);
+        final DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(schemaObject);
         if (!BackgroundTask.isProcessCancelled()) {
             new SimpleLaterInvocator() {
                 @Override
@@ -403,13 +409,15 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
 
     public void closeEditor(DBSchemaObject object) {
         VirtualFile virtualFile = findDatabaseFile(object);
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());
-        fileEditorManager.closeFile(virtualFile);
+        if (virtualFile != null) {
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());
+            fileEditorManager.closeFile(virtualFile);
+        }
     }
 
     public void reopenEditor(DBSchemaObject object) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());
-        VirtualFile virtualFile = findDatabaseFile(object);
+        VirtualFile virtualFile = findOrCreateDatabaseFile(object);
         if (fileEditorManager.isFileOpen(virtualFile)) {
             fileEditorManager.closeFile(virtualFile);
             fileEditorManager.openFile(virtualFile, false);

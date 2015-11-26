@@ -28,33 +28,33 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         FileEditor fileEditor = getFileEditor(e);
-        if (virtualFile != null && fileEditor != null) {
-            Project project = virtualFile.getProject();
+        if (sourceCodeFile != null && fileEditor != null) {
+            Project project = sourceCodeFile.getProject();
             if (project != null) {
                 DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
                 CompilerSettings compilerSettings = getCompilerSettings(project);
-                DBContentType contentType = virtualFile.getContentType();
-                CompilerAction compilerAction = new CompilerAction(CompilerActionSource.COMPILE, contentType, virtualFile, fileEditor);
-                compilerManager.compileInBackground(virtualFile.getObject(), compilerSettings.getCompileType(), compilerAction);
+                DBContentType contentType = sourceCodeFile.getContentType();
+                CompilerAction compilerAction = new CompilerAction(CompilerActionSource.COMPILE, contentType, sourceCodeFile, fileEditor);
+                compilerManager.compileInBackground(sourceCodeFile.getObject(), compilerSettings.getCompileType(), compilerAction);
             }
         }
     }
 
     public void update(@NotNull AnActionEvent e) {
-        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
-        if (virtualFile == null) {
+        if (sourceCodeFile == null) {
             presentation.setEnabled(false);
         } else {
 
-            DBSchemaObject schemaObject = virtualFile.getObject();
+            DBSchemaObject schemaObject = sourceCodeFile.getObject();
             if (schemaObject.getProperties().is(DBObjectProperty.COMPILABLE) && DatabaseFeature.OBJECT_INVALIDATION.isSupported(schemaObject)) {
                 CompilerSettings compilerSettings = getCompilerSettings(schemaObject.getProject());
                 CompileType compileType = compilerSettings.getCompileType();
                 DBObjectStatusHolder status = schemaObject.getStatus();
-                DBContentType contentType = virtualFile.getContentType();
+                DBContentType contentType = sourceCodeFile.getContentType();
 
                 boolean isDebug = compileType == CompileType.DEBUG;
                 if (compileType == CompileType.KEEP) {
@@ -63,7 +63,7 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
 
                 boolean isPresent = status.is(contentType, DBObjectStatus.PRESENT);
                 boolean isValid = status.is(contentType, DBObjectStatus.VALID);
-                boolean isModified = virtualFile.isModified();
+                boolean isModified = sourceCodeFile.isModified();
 
                 boolean isCompiling = status.is(contentType, DBObjectStatus.COMPILING);
                 boolean isEnabled = !isModified && isPresent && !isCompiling && (compilerSettings.alwaysShowCompilerControls() || !isValid /*|| isDebug != isDebugActive*/);

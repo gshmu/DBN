@@ -16,6 +16,6 @@ public class AttachDDLFileAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
         Project project = object.getProject();
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-        fileAttachmentManager.bindDDLFiles(object);
+        fileAttachmentManager.attachDDLFiles(object);
     }
 }

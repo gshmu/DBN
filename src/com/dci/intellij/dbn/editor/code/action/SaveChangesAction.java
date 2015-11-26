@@ -36,7 +36,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
                     public void run() {
                         FileDocumentManager.getInstance().saveAllDocuments();
                         SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                        sourceCodeManager.updateSourceToDatabase(fileEditor, null);
+                        sourceCodeManager.saveSourceToDatabase(fileEditor, null);
                     }
                 }.start();
             }
@@ -45,17 +45,17 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
     }
 
     public void update(@NotNull AnActionEvent e) {
-        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
-        if (virtualFile == null) {
+        if (sourceCodeFile == null) {
             presentation.setEnabled(false);
         } else {
             String text =
-                    virtualFile.getContentType() == DBContentType.CODE_SPEC ? "Save spec" :
-                    virtualFile.getContentType() == DBContentType.CODE_BODY ? "Save body" : "Save";
+                    sourceCodeFile.getContentType() == DBContentType.CODE_SPEC ? "Save spec" :
+                    sourceCodeFile.getContentType() == DBContentType.CODE_BODY ? "Save body" : "Save";
 
-            DBSchemaObject object = virtualFile.getObject();
-            presentation.setEnabled(!object.getStatus().is(DBObjectStatus.SAVING) && virtualFile.isModified());
+            DBSchemaObject object = sourceCodeFile.getObject();
+            presentation.setEnabled(!object.getStatus().is(DBObjectStatus.SAVING) && sourceCodeFile.isModified());
             presentation.setText(text);
         }
     }
