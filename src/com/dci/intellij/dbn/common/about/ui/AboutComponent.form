@@ -187,7 +187,7 @@
             </constraints>
             <properties>
               <font style="1"/>
-              <text value="Oracle, MySQL"/>
+              <text value="Oracle, MySQL, PostgreSQL"/>
             </properties>
           </component>
         </children>
