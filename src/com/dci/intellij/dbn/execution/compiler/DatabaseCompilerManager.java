@@ -50,8 +50,6 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor) {
-            sourceCodeFile.updateChangeTimestamp();
-
             Project project = getProject();
             DBSchemaObject object = sourceCodeFile.getObject();
             DBContentType contentType = sourceCodeFile.getContentType();
@@ -77,8 +75,8 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }
 
         @Override
-        public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile) {
-            sourceCodeFile.updateChangeTimestamp();
+        public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {
+
         }
     };
 

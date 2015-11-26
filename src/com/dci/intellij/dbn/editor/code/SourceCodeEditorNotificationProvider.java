@@ -38,7 +38,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
 
     SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile) {
+        public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {
             updateEditorNotification(sourceCodeFile);
         }
     };

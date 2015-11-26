@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 
 public abstract class SourceCodeManagerAdapter implements SourceCodeManagerListener {
     @Override
-    public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile) {}
+    public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {}
 
     @Override
     public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor) {}
