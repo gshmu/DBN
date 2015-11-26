@@ -30,6 +30,7 @@ import com.dci.intellij.dbn.ddl.ui.AttachDDLFileDialog;
 import com.dci.intellij.dbn.ddl.ui.DDLFileNameListCellRenderer;
 import com.dci.intellij.dbn.ddl.ui.DetachDDLFileDialog;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
+import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -73,7 +74,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
-    SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerListener() {
+    SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {
             if (!isInitialLoad) {
