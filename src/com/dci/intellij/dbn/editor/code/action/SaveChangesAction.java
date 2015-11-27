@@ -50,6 +50,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
         if (sourceCodeFile == null) {
             presentation.setEnabled(false);
         } else {
+            presentation.setVisible(sourceCodeFile.getEnvironmentType().isCodeEditable());
             DBContentType contentType = sourceCodeFile.getContentType();
             String text =
                     contentType == DBContentType.CODE_SPEC ? "Save spec" :

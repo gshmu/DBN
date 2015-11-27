@@ -56,6 +56,8 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
             sourceCodeFile.setDocumentHashCode(documentTracking);
         }
 
+        document.setReadOnly(!databaseFile.getEnvironmentType().isCodeEditable());
+
         Icon icon = getIcon();
         if (icon != null) {
             updateTabIcon(databaseFile, sourceCodeEditor, icon);

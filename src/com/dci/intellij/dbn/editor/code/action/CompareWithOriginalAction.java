@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.code.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 
 public class CompareWithOriginalAction extends AbstractDiffAction {
     public CompareWithOriginalAction() {
@@ -20,6 +21,8 @@ public class CompareWithOriginalAction extends AbstractDiffAction {
     public void update(AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         e.getPresentation().setText("Compare with Original");
-        e.getPresentation().setEnabled(sourceCodeFile != null && sourceCodeFile.isModified());
+        Presentation presentation = e.getPresentation();
+        presentation.setEnabled(sourceCodeFile != null && sourceCodeFile.isModified());
+        presentation.setVisible(sourceCodeFile != null && sourceCodeFile.getEnvironmentType().isCodeEditable());
     }
 }

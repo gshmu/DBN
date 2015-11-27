@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilderProvider;
 import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -28,7 +28,7 @@ import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.intellij.psi.PsiNamedElement;
 
-public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicContentElement, LookupItemBuilderProvider, Referenceable, PresentableConnectionProvider {
+public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicContentElement, LookupItemBuilderProvider, Referenceable, EnvironmentTypeProvider, PresentableConnectionProvider {
     DBObjectType getObjectType();
     boolean isOfType(DBObjectType objectType);
 
@@ -91,7 +91,6 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
     @NotNull
     DBObjectVirtualFile getVirtualFile();
     List<PresentableProperty> getPresentableProperties();
-    EnvironmentType getEnvironmentType();
     DBObjectRef getRef();
 
     boolean isParentOf(DBObject object);
