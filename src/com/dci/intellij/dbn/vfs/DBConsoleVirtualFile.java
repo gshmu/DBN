@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.editor.code.GuardedBlockType;
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -78,8 +79,8 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
                 @Override
                 public void run() {
                     document.setText(content.getText());
-                    DocumentUtil.removeGuardedBlocks(document);
-                    DocumentUtil.createGuardedBlocks(document, content.getOffsets().getGuardedBlocks(), null);
+                    DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
+                    DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, content.getOffsets().getGuardedBlocks(), null);
                 }
             }.start();
         }

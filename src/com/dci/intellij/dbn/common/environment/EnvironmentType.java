@@ -30,11 +30,11 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         JBColor NONE = new JBColor(new Color(0xffffff), Color.DARK_GRAY);
     }
 
-    public static final EnvironmentType DEFAULT     = new EnvironmentType("default", "", "", null, null, true, true);
-    public static final EnvironmentType DEVELOPMENT = new EnvironmentType("development", "Development", "Development environment", new Color(-2430209), new Color(0x445F80), true, true);
-    public static final EnvironmentType INTEGRATION = new EnvironmentType("integration", "Integration", "Integration environment", new Color(-2621494), new Color(0x466646), false, true);
-    public static final EnvironmentType PRODUCTION  = new EnvironmentType("production", "Production", "Productive environment", new Color(-11574), new Color(0x634544), false, false);
-    public static final EnvironmentType OTHER       = new EnvironmentType("other", "Other", "", new Color(-1576), new Color(0x5C5B41), true, true);
+    public static final EnvironmentType DEFAULT     = new EnvironmentType("default", "", "", null, null, false, false);
+    public static final EnvironmentType DEVELOPMENT = new EnvironmentType("development", "Development", "Development environment", new Color(-2430209), new Color(0x445F80), false, false);
+    public static final EnvironmentType INTEGRATION = new EnvironmentType("integration", "Integration", "Integration environment", new Color(-2621494), new Color(0x466646), true, false);
+    public static final EnvironmentType PRODUCTION  = new EnvironmentType("production", "Production", "Productive environment", new Color(-11574), new Color(0x634544), true, true);
+    public static final EnvironmentType OTHER       = new EnvironmentType("other", "Other", "", new Color(-1576), new Color(0x5C5B41), false, false);
     public static final EnvironmentType[] DEFAULT_ENVIRONMENT_TYPES = new EnvironmentType[] {
             DEVELOPMENT,
             INTEGRATION,
@@ -47,8 +47,8 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
     private Color regularColor;
     private Color darkColor;
     private JBColor color;
-    private boolean codeEditable;
-    private boolean dataEditable;
+    private boolean readonlyCode = false;
+    private boolean readonlyData = false;
     private boolean isDarkScheme = UIUtil.isUnderDarcula();
 
     public static EnvironmentType forName(String name) {
@@ -64,14 +64,14 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         id = UUID.randomUUID().toString();
     }
 
-    public EnvironmentType(String id, String name, String description, Color regularColor, Color darkColor, boolean codeEditable, boolean dataEditable) {
+    public EnvironmentType(String id, String name, String description, Color regularColor, Color darkColor, boolean readonlyCode, boolean dataEditable) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.regularColor = regularColor;
         this.darkColor = darkColor;
-        this.codeEditable = codeEditable;
-        this.dataEditable = dataEditable;
+        this.readonlyCode = readonlyCode;
+        this.readonlyData = dataEditable;
     }
 
     public String getId() {
@@ -129,24 +129,24 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         this.color = null;
     }
 
-    public boolean isCodeEditable() {
-        return codeEditable;
+    public boolean isReadonlyCode() {
+        return readonlyCode;
     }
 
-    public void setCodeEditable(boolean codeEditable) {
-        this.codeEditable = codeEditable;
+    public void setReadonlyCode(boolean readonlyCode) {
+        this.readonlyCode = readonlyCode;
     }
 
-    public boolean isDataEditable() {
-        return dataEditable;
+    public boolean isReadonlyData() {
+        return readonlyData;
     }
 
-    public void setDataEditable(boolean dataEditable) {
-        this.dataEditable = dataEditable;
+    public void setReadonlyData(boolean readonlyData) {
+        this.readonlyData = readonlyData;
     }
 
     public EnvironmentType clone() {
-        return new EnvironmentType(id, name, description, regularColor, darkColor, codeEditable, dataEditable);
+        return new EnvironmentType(id, name, description, regularColor, darkColor, readonlyCode, readonlyData);
     }
     
     @Override
@@ -177,8 +177,8 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
             id = defaultEnvironmentType.id;
         }
         if (id == null) id = name.toLowerCase();
-        codeEditable = ConfigurationUtil.getBooleanAttribute(element, "edit-code", codeEditable);
-        dataEditable = ConfigurationUtil.getBooleanAttribute(element, "edit-data", dataEditable);
+        readonlyCode = ConfigurationUtil.getBooleanAttribute(element, "readonly-code", readonlyCode);
+        readonlyData = ConfigurationUtil.getBooleanAttribute(element, "readonly-data", readonlyData);
 
     }
 
@@ -190,7 +190,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         element.setAttribute("color",
                 (regularColor != null ? regularColor.getRGB() : "") + "/" +
                 (darkColor != null ? darkColor.getRGB() : ""));
-        ConfigurationUtil.setBooleanAttribute(element, "edit-code", codeEditable);
-        ConfigurationUtil.setBooleanAttribute(element, "edit-data", dataEditable);
+        ConfigurationUtil.setBooleanAttribute(element, "readonly-code", readonlyCode);
+        ConfigurationUtil.setBooleanAttribute(element, "readonly-data", readonlyData);
     }
 }

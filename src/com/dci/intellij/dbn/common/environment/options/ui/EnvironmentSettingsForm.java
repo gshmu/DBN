@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -112,7 +112,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
             @Override
             public void notifyChanges() {
                 if (settingsChanged || visibilityChanged) {
-                    EnvironmentChangeListener listener = EventUtil.notify(getConfiguration().getProject(), EnvironmentChangeListener.TOPIC);
+                    EnvironmentManagerListener listener = EventUtil.notify(getConfiguration().getProject(), EnvironmentManagerListener.TOPIC);
                     listener.configurationChanged();
                 }
             }

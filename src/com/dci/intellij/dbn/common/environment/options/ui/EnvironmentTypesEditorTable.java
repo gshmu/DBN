@@ -8,6 +8,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -40,20 +41,23 @@ public class EnvironmentTypesEditorTable extends DBNTable<EnvironmentTypesTableM
         setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
         setDefaultEditor(Boolean.class, new BooleanTableCellEditor());
 
-        columnModel.getColumn(0).setPreferredWidth(80);
-        columnModel.getColumn(2).setMaxWidth(80);
-        columnModel.getColumn(3).setMaxWidth(80);
-        columnModel.getColumn(4).setMaxWidth(50);
+        setFixedWidth(columnModel.getColumn(2), 100);
+        setFixedWidth(columnModel.getColumn(3), 100);
+        setFixedWidth(columnModel.getColumn(4), 60);
 
         addMouseListener(mouseListener);
     }
 
     public void setEnvironmentTypes(EnvironmentTypeBundle environmentTypes) {
         super.setModel(new EnvironmentTypesTableModel(getProject(), environmentTypes));
-        columnModel.getColumn(0).setPreferredWidth(80);
-        columnModel.getColumn(2).setMaxWidth(80);
-        columnModel.getColumn(3).setMaxWidth(80);
-        columnModel.getColumn(4).setMaxWidth(50);
+        setFixedWidth(columnModel.getColumn(2), 100);
+        setFixedWidth(columnModel.getColumn(3), 100);
+        setFixedWidth(columnModel.getColumn(4), 60);
+    }
+
+    void setFixedWidth(TableColumn tableColumn, int width) {
+        tableColumn.setMaxWidth(width);
+        tableColumn.setMinWidth(width);
     }
 
     MouseListener mouseListener = new MouseAdapter() {

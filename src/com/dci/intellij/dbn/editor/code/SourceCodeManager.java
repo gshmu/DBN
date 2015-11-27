@@ -226,7 +226,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         sourceCodeFile.loadSourceFromDatabase();
                         sourceCodeFile.updateChangeTimestamp();
                         sourceCodeManagerListener.sourceCodeLoaded(sourceCodeFile, isInitialLoad);
-
                     } catch (SQLException e) {
                         MessageUtil.showErrorDialog(project, "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
                     } finally {

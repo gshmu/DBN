@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.code.action;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -47,10 +48,13 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
     public void update(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
-        if (sourceCodeFile == null) {
+        Project project = e.getProject();
+        if (project == null || sourceCodeFile == null) {
             presentation.setEnabled(false);
         } else {
-            presentation.setVisible(sourceCodeFile.getEnvironmentType().isCodeEditable());
+            EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+            boolean readonly = environmentManager.isReadonly(sourceCodeFile);
+            presentation.setVisible(!readonly);
             DBContentType contentType = sourceCodeFile.getContentType();
             String text =
                     contentType == DBContentType.CODE_SPEC ? "Save spec" :
