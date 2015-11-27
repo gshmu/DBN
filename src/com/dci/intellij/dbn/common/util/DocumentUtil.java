@@ -165,7 +165,8 @@ public class DocumentUtil {
         }
     }
 
-    public static void setReadonly(Document document, boolean readonly) {
+    public static void setReadonly(Document document, Project project, boolean readonly) {
+        //document.setReadOnly(readonly);
         DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT);
         if (readonly) {
             DocumentUtil.createGuardedBlock(document, GuardedBlockType.READONLY_DOCUMENT, null, false);

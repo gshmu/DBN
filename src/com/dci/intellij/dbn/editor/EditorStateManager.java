@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManag
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
@@ -81,8 +82,7 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
                     EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
                     boolean readonly = environmentManager.isReadonly(sourceCodeFile);
                     DocumentUtil.setText(document, sourceCodeFile.getContent());
-                    DocumentUtil.setReadonly(document, readonly);
-
+                    EditorUtil.setEditorsReadonly(sourceCodeFile, readonly);
                 }
             }
         }
@@ -97,10 +97,9 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
             for (FileEditor fileEditor : allEditors) {
                 if (fileEditor instanceof SourceCodeEditor) {
                     SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                    Document document = sourceCodeEditor.getEditor().getDocument();
                     EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-                    boolean isReadonly = environmentManager.isReadonly(sourceCodeEditor.getVirtualFile());
-                    DocumentUtil.setReadonly(document, isReadonly);
+                    boolean readonly = environmentManager.isReadonly(sourceCodeEditor.getVirtualFile());
+                    EditorUtil.setEditorsReadonly(sourceCodeEditor.getVirtualFile(), readonly);
                 }
             }
         }
