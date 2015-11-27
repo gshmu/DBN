@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -377,16 +377,12 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                             storeSourceToDatabase(sourceCodeFile, fileEditor, null);
                             //sourceCodeEditor.afterSave();
                         } else if (result == 1) {
-                            new WriteActionRunner() {
-                                public void run() {
-                                    Editor editor = EditorUtil.getEditor(fileEditor);
-                                    if (editor != null) {
-                                        editor.getDocument().setText(sourceCodeFile.getContent());
-                                        DBContentType contentType = sourceCodeFile.getContentType();
-                                        object.getStatus().set(contentType, DBObjectStatus.SAVING, false);
-                                    }
-                                }
-                            }.start();
+                            Editor editor = EditorUtil.getEditor(fileEditor);
+                            if (editor != null) {
+                                DocumentUtil.setText(editor.getDocument(), sourceCodeFile.getContent());
+                                DBContentType contentType = sourceCodeFile.getContentType();
+                                object.getStatus().set(contentType, DBObjectStatus.SAVING, false);
+                            }
                         }
                     }
                 }

@@ -20,7 +20,6 @@ import java.util.List;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -172,7 +171,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
         DBDataset dataset = this.getDataset();
         if (dataset != null) {
             updateGeneratedName();
-            final StringBuilder selectStatement = new StringBuilder("select * from ");
+            StringBuilder selectStatement = new StringBuilder("select * from ");
             selectStatement.append(dataset.getSchema().getQuotedName(false)).append('.');
             selectStatement.append(dataset.getQuotedName(false));
             selectStatement.append(" where\n    ");
@@ -221,11 +220,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
                 previewPanel.add(viewer.getComponent(), BorderLayout.CENTER);
 
             } else {
-                new WriteActionRunner() {
-                    public void run() {
-                        previewDocument.setText(selectStatement);
-                    }
-                }.start();
+                DocumentUtil.setText(previewDocument, selectStatement);
             }
         }
 

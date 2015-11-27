@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
+import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.code.GuardedBlockMarkers;
 import com.dci.intellij.dbn.editor.code.GuardedBlockType;
@@ -169,5 +170,16 @@ public class DocumentUtil {
         if (readonly) {
             DocumentUtil.createGuardedBlock(document, GuardedBlockType.READONLY_DOCUMENT, null, false);
         }
+    }
+
+    public static void setText(final Document document, final CharSequence text) {
+        new WriteActionRunner() {
+            public void run() {
+                boolean isReadonly = !document.isWritable();
+                document.setReadOnly(false);
+                document.setText(text);
+                document.setReadOnly(isReadonly);
+            }
+        }.start();
     }
 }

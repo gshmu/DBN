@@ -102,6 +102,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
     @Nullable
     @Override
     public SourceCodeEditorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
+        SourceCodeEditorNotificationPanel notificationPanel = null;
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             if (fileEditor instanceof SourceCodeEditor) {
                 DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
@@ -110,29 +111,18 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
                 DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
                 String sourceLoadError = sourceCodeFile.getSourceLoadError();
                 if (StringUtil.isNotEmpty(sourceLoadError)) {
-                    return createLoadErrorPanel(editableObject, sourceLoadError);
+                    notificationPanel = new SourceCodeLoadErrorNotificationPanel(editableObject, sourceLoadError);
+
                 } else if (sourceCodeFile.getEnvironmentType().isReadonlyCode()) {
-                    return createReadonlyCodePanel(editableObject, sourceCodeFile, sourceCodeEditor);
+                    notificationPanel = new SourceCodeReadonlyNotificationPanel(editableObject, sourceCodeEditor);
+
                 } else if (sourceCodeFile.isChangedInDatabase(false)) {
-                    return createOutdatedCodePanel(editableObject, sourceCodeFile, sourceCodeEditor);
+                    notificationPanel = new SourceCodeOutdatedNotificationPanel(sourceCodeFile, sourceCodeEditor);
+
                 }
 
             }
         }
-        return null;
+        return notificationPanel;
     }
-
-    private static SourceCodeEditorNotificationPanel createLoadErrorPanel(final DBSchemaObject editableObject, String sourceLoadError) {
-        return new SourceCodeLoadErrorNotificationPanel(editableObject, sourceLoadError);
-    }
-
-    private SourceCodeReadonlyNotificationPanel createReadonlyCodePanel(final DBSchemaObject editableObject, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor sourceCodeEditor) {
-        return new SourceCodeReadonlyNotificationPanel(editableObject, sourceCodeEditor);
-    }
-
-    private SourceCodeEditorNotificationPanel createOutdatedCodePanel(final DBSchemaObject editableObject, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor sourceCodeEditor) {
-        return new SourceCodeOutdatedNotificationPanel(editableObject, sourceCodeFile, sourceCodeEditor);
-    }
-
-
 }

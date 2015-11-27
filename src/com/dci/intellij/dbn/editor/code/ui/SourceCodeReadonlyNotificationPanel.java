@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 
 public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotificationPanel{
     public SourceCodeReadonlyNotificationPanel(final DBSchemaObject schemaObject, final SourceCodeEditor sourceCodeEditor) {
-        super(isReadonly(sourceCodeEditor) ? MessageType.WARNING : MessageType.ERROR);
+        super(isReadonly(sourceCodeEditor) ? MessageType.WARNING : MessageType.WARNING);
         final DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
         String environmentName = sourceCodeFile.getEnvironmentType().getName();
 
@@ -20,7 +20,7 @@ public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotific
         final DBContentType contentType = sourceCodeEditor.getContentType();
 
         if (isReadonly(sourceCodeEditor)) {
-            setText("Readonly view - Code editing is disabled by default for \"" + environmentName + "\" environments (check environment settings)");
+            setText("Readonly view - Code editing is disabled by default for \"" + environmentName + "\" environments (see configuration)");
             createActionLabel("Edit Mode", new Runnable() {
                 @Override
                 public void run() {
@@ -37,7 +37,7 @@ public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotific
                 }
             });
         } else {
-            setText("Edit mode active! - Code editing is disabled by default for \"" + environmentName + "\" environments (check environment settings)");
+            setText("Edit mode active (NOTE: the environment \"" + environmentName + "\" is configured to disable editing by default)");
             createActionLabel("Cancel Edit Mode", new Runnable() {
                 @Override
                 public void run() {

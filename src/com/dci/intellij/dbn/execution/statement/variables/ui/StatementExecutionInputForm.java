@@ -17,7 +17,6 @@ import java.util.List;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -214,13 +213,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
             previewPanel.add(viewer.getComponent(), BorderLayout.CENTER);
 
         } else {
-            final String finalPreviewText = previewText;
-
-            new WriteActionRunner() {
-                public void run() {
-                    previewDocument.setText(finalPreviewText);
-                }
-            }.start();
+            DocumentUtil.setText(previewDocument, previewText);
         }
     }
 }
