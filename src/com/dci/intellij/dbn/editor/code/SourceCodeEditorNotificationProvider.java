@@ -1,16 +1,15 @@
 package com.dci.intellij.dbn.editor.code;
 
-import java.sql.Timestamp;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeLoadErrorNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeOutdatedNotificationPanel;
+import com.dci.intellij.dbn.editor.code.ui.SourceCodeReadonlyNotificationPanel;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -23,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotifications;
-import com.intellij.util.text.DateFormatUtil;
 
 public class SourceCodeEditorNotificationProvider extends EditorNotifications.Provider<SourceCodeEditorNotificationPanel> {
     private static final Key<SourceCodeEditorNotificationPanel> KEY = Key.create("DBNavigator.SourceCodeEditorNotificationPanel");
@@ -94,54 +92,15 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
     }
 
     private static SourceCodeEditorNotificationPanel createLoadErrorPanel(final DBSchemaObject editableObject, String sourceLoadError) {
-        SourceCodeLoadErrorNotificationPanel panel = new SourceCodeLoadErrorNotificationPanel();
-        panel.setText("Could not load source for " + editableObject.getQualifiedNameWithType() + ". Error details: " + sourceLoadError.replace("\n", " "));
-        return panel;
+        return new SourceCodeLoadErrorNotificationPanel(editableObject, sourceLoadError);
+    }
+
+    private SourceCodeReadonlyNotificationPanel createReadonlyCodePanel(final DBSchemaObject editableObject, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor sourceCodeEditor) {
+        return new SourceCodeReadonlyNotificationPanel(sourceCodeEditor);
     }
 
     private SourceCodeEditorNotificationPanel createOutdatedCodePanel(final DBSchemaObject editableObject, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor sourceCodeEditor) {
-        SourceCodeOutdatedNotificationPanel panel = new SourceCodeOutdatedNotificationPanel();
-        Timestamp timestamp = sourceCodeFile.getChangedInDatabaseTimestamp();
-        panel.setText("Outdated version. The " + editableObject.getQualifiedNameWithType() + " was modified by another user (" + DateFormatUtil.formatPrettyDateTime(timestamp).toLowerCase() + ")");
-        panel.createActionLabel("Show Diff", new Runnable() {
-            @Override
-            public void run() {
-                if (!project.isDisposed()) {
-                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                    sourceCodeManager.opedDatabaseDiffWindow(sourceCodeFile);
-                }
-            }
-        });
-
-        if (sourceCodeFile.isModified()) {
-            panel.createActionLabel("Merge", new Runnable() {
-                @Override
-                public void run() {
-                    if (!project.isDisposed()) {
-                        try {
-                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                            CharSequence databaseContent = sourceCodeManager.loadSourceCodeFromDatabase(editableObject, sourceCodeEditor.getContentType());
-                            sourceCodeManager.openCodeMergeDialog(databaseContent.toString(), sourceCodeFile, sourceCodeEditor, false);
-                        }catch (Exception e) {
-                            MessageUtil.showErrorDialog(project, "Could not load sources from database.", e);
-
-                        }
-                    }
-                }
-            });
-        }
-
-        panel.createActionLabel(sourceCodeFile.isModified() ? "Revert local changes" : "Reload", new Runnable() {
-            @Override
-            public void run() {
-                if (!project.isDisposed()) {
-                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                    sourceCodeManager.loadSourceFromDatabase(sourceCodeFile);
-                }
-            }
-        });
-
-        return panel;
+        return new SourceCodeOutdatedNotificationPanel(editableObject, sourceCodeFile, sourceCodeEditor);
     }
 
 

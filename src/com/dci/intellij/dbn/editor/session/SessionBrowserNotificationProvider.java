@@ -59,9 +59,7 @@ public class SessionBrowserNotificationProvider extends EditorNotifications.Prov
     }
 
     private static SessionBrowserErrorNotificationPanel createPanel(ConnectionHandler connectionHandler, String sourceLoadError) {
-        SessionBrowserErrorNotificationPanel panel = new SessionBrowserErrorNotificationPanel();
-        panel.setText("Could not load sessions for " + connectionHandler.getName() + ". Error details: " + sourceLoadError.replace("\n", " "));
-        return panel;
+        return new SessionBrowserErrorNotificationPanel(connectionHandler, sourceLoadError);
     }
 
 

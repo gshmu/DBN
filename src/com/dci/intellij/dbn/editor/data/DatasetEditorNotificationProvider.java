@@ -88,6 +88,4 @@ public class DatasetEditorNotificationProvider extends EditorNotifications.Provi
         panel.setText("Could not load data for " + editableObject.getQualifiedNameWithType() + ". Error details: " + sourceLoadError.replace("\n", " "));
         return panel;
     }
-
-
 }
