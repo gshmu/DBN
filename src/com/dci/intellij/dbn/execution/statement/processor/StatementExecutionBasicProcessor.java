@@ -28,6 +28,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
@@ -367,15 +368,15 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
                         if (compilerResult != null) {
                             if (object != null) {
-                                DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(getProject());
+                                Project project = getProject();
+                                DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
                                 boolean isCompilable = object.getProperties().is(DBObjectProperty.COMPILABLE);
                                 if (isCompilable) {
                                     CompileType compileType = compilerManager.getCompileType(object, contentType);
                                     if (compileType == CompileType.DEBUG) {
                                         compilerManager.compileObject(object, compileType, compilerAction);
-                                    } else {
-                                        connectionHandler.getObjectBundle().refreshObjectsStatus(object);
                                     }
+                                    EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
                                 }
 
                                 object.reload();

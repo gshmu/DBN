@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,6 +18,7 @@ import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.ui.CompileDebugDependenciesDialog;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
+import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
@@ -192,7 +194,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                                         compilerManager.compileObject(schemaObject, CompileType.DEBUG, compilerAction);
                                     }
                                 }
-                                connectionHandler.getObjectBundle().refreshObjectsStatus(null);
+                                EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, null);
                                 if (!progressIndicator.isCanceled()) {
                                     performExecution(
                                             executionInput,
