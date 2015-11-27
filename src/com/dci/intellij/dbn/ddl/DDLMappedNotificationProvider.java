@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.ddl.ui.DDLMappedNotificationPanel;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.FrameStateManager;
@@ -127,22 +126,6 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
     }
 
     private DDLMappedNotificationPanel createPanel(@NotNull final VirtualFile virtualFile, final DBSchemaObject editableObject) {
-        final DBObjectRef<DBSchemaObject> editableObjectRef = DBObjectRef.from(editableObject);
-        DDLMappedNotificationPanel panel = new DDLMappedNotificationPanel();
-        panel.setText("This DDL file is attached to the database " + editableObject.getQualifiedNameWithType() + ". Changes done to the " + editableObject.getObjectType().getName() + " are automatically mirrored to this DDL file, overwriting any changes you may do to it.");
-        panel.createActionLabel("Detach", new Runnable() {
-            @Override
-            public void run() {
-                if (!project.isDisposed()) {
-                    DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
-                    attachmentManager.detachDDLFile(virtualFile);
-                    DBSchemaObject editableObject = DBObjectRef.get(editableObjectRef);
-                    if (editableObject != null) {
-                        DatabaseFileSystem.getInstance().reopenEditor(editableObject);
-                    }
-                }
-            }
-        });
-        return panel;
+        return new DDLMappedNotificationPanel(virtualFile, editableObject);
     }
 }

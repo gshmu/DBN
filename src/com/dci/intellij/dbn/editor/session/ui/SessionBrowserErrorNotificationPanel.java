@@ -4,11 +4,13 @@ import javax.swing.JLabel;
 
 import com.dci.intellij.dbn.common.editor.EditorNotificationPanel;
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 
 public class SessionBrowserErrorNotificationPanel extends EditorNotificationPanel{
     protected final JLabel label = new JLabel();
 
-    public SessionBrowserErrorNotificationPanel() {
+    public SessionBrowserErrorNotificationPanel(ConnectionHandler connectionHandler, String sourceLoadError) {
         super(MessageType.ERROR);
+        setText("Could not load sessions for " + connectionHandler.getName() + ". Error details: " + sourceLoadError.replace("\n", " "));
     }
 }
