@@ -11,8 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
+import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -22,6 +24,7 @@ import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -192,6 +195,29 @@ public class EditorUtil {
             }
         }
         return null;
+    }
+
+    public static void setEditorsReadonly(final DBSourceCodeVirtualFile sourceCodeFile, final boolean readonly) {
+        new ReadActionRunner() {
+            @Override
+            protected Object run() {
+                Project project = sourceCodeFile.getProject();
+                if (project != null) {
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                    FileEditor[] allEditors = fileEditorManager.getAllEditors();
+                    for (FileEditor fileEditor : allEditors) {
+                        if (fileEditor instanceof SourceCodeEditor) {
+                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                            if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
+                                EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
+                                editor.setViewer(readonly);
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+        }.start();
     }
 
     @Nullable

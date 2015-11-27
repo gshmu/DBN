@@ -28,16 +28,8 @@ public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotific
                     environmentManager.enableEditing(schemaObject, contentType);
                 }
             });
-
-            createActionLabel("Settings", new Runnable() {
-                @Override
-                public void run() {
-                    ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-                    settingsManager.openProjectSettings(ConfigId.GENERAL);
-                }
-            });
         } else {
-            setText("Edit mode active (NOTE: the environment \"" + environmentName + "\" is configured to disable editing by default)");
+            setText("Edit mode active (NOTE: the environment \"" + environmentName + "\" is configured with readonly code by default)");
             createActionLabel("Cancel Edit Mode", new Runnable() {
                 @Override
                 public void run() {
@@ -46,6 +38,14 @@ public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotific
                 }
             });
         }
+
+        createActionLabel("Settings", new Runnable() {
+            @Override
+            public void run() {
+                ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+                settingsManager.openProjectSettings(ConfigId.GENERAL);
+            }
+        });
     }
 
     private static boolean isReadonly(SourceCodeEditor sourceCodeEditor) {

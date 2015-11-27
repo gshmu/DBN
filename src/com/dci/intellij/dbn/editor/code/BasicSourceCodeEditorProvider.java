@@ -9,12 +9,14 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
+import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorActionsPanel;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbAware;
@@ -37,11 +39,6 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
         DBSourceCodeVirtualFile sourceCodeFile = FailsafeUtil.get(getSourceCodeFile(databaseFile));
         boolean isMainEditor = sourceCodeFile.getContentType() == databaseFile.getMainContentType();
 
-/*
-        BasicTextEditor openEditor = lookupExistingEditor(project, databaseFile);
-        if (openEditor != null) return openEditor;
-*/
-
         String editorName = getName();
         SourceCodeEditor sourceCodeEditor = isMainEditor ?
                 new SourceCodeMainEditor(project, sourceCodeFile, editorName, getEditorProviderId()) :
@@ -49,6 +46,13 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
 
         updateEditorActions(sourceCodeEditor);
         Document document = sourceCodeEditor.getEditor().getDocument();
+
+        EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+        boolean readonly = environmentManager.isReadonly(sourceCodeFile);
+        if (readonly) {
+            EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
+            editor.setViewer(true);
+        }
 
         int documentTracking = document.hashCode();
         if (document.hashCode() != sourceCodeFile.getDocumentHashCode()) {
