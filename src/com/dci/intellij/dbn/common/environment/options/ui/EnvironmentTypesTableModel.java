@@ -52,8 +52,8 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     public String getColumnName(int columnIndex) {
         return columnIndex == 0 ? "Name" :
                columnIndex == 1 ? "Description" :
-               columnIndex == 2 ? "Edit Data" :
-               columnIndex == 3 ? "Edit Code" :
+               columnIndex == 2 ? "Readonly Data" :
+               columnIndex == 3 ? "Readonly Code" :
                columnIndex == 4 ? "Color" : null;
     }
 
@@ -74,8 +74,8 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
         return
            columnIndex == 0 ? environmentType.getName() :
            columnIndex == 1 ? environmentType.getDescription() :
-           columnIndex == 2 ? environmentType.isDataEditable() :
-           columnIndex == 3 ? environmentType.isCodeEditable() :
+           columnIndex == 2 ? environmentType.isReadonlyData() :
+           columnIndex == 3 ? environmentType.isReadonlyCode() :
            columnIndex == 4 ? environmentType.getColor() : null;
     }
 
@@ -88,9 +88,9 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
             } else if (columnIndex == 1) {
                 environmentType.setDescription((String) o);
             } else if (columnIndex == 2) {
-                environmentType.setDataEditable((Boolean) o);
+                environmentType.setReadonlyData((Boolean) o);
             } else if (columnIndex == 3) {
-                environmentType.setCodeEditable((Boolean) o);
+                environmentType.setReadonlyCode((Boolean) o);
             } else if (columnIndex == 4) {
                 Color color = (Color) o;
                 environmentType.setColor(color);

@@ -30,7 +30,7 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
                 offsets = new SourceCodeOffsets();
             } else {
                 GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
-                DocumentUtil.createGuardedBlocks(document, guardedBlocks, null);
+                DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
             }
         } else {
             offsets = new SourceCodeOffsets();

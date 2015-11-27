@@ -88,6 +88,9 @@ public class DBObjectStatusHolder {
         }
     }
 
+    public boolean isNot(DBContentType contentType, DBObjectStatus status) {
+        return !is(contentType, status);
+    }
     public boolean is(DBContentType contentType, DBObjectStatus status) {
         DBObjectStatusEntry statusEntry = get(contentType, status);
         return statusEntry == null ?

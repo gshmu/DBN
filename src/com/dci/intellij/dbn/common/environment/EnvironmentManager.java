@@ -1,23 +1,34 @@
 package com.dci.intellij.dbn.common.environment;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @State(
         name = "DBNavigator.Project.EnvironmentManager",
@@ -28,21 +39,61 @@ import org.jetbrains.annotations.Nullable;
 public class EnvironmentManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, Disposable {
     private EnvironmentManager(Project project) {
         super(project);
-        EventUtil.subscribe(project, this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
 
     }
 
     public static EnvironmentManager getInstance(@NotNull Project project) {
         return FailsafeUtil.getComponent(project, EnvironmentManager.class);
     }
-    
+
+    public boolean isReadonly(@NotNull DBSourceCodeVirtualFile sourceCodeFile) {
+        return isReadonly(sourceCodeFile.getObject(), sourceCodeFile.getContentType());
+    }
+
+    public boolean isReadonly(@NotNull DBSchemaObject schemaObject, @NotNull DBContentType contentType) {
+        EnvironmentType environmentType = schemaObject.getEnvironmentType();
+        DBObjectStatusHolder objectStatus = schemaObject.getStatus();
+        if (contentType == DBContentType.DATA) {
+            return environmentType.isReadonlyData() && objectStatus.isNot(contentType, DBObjectStatus.EDITABLE);
+        } else {
+            return environmentType.isReadonlyCode() && objectStatus.isNot(contentType, DBObjectStatus.EDITABLE);
+        }
+    }
+
+    public void enableEditing(@NotNull DBSchemaObject schemaObject, @NotNull DBContentType contentType) {
+        schemaObject.getStatus().set(contentType, DBObjectStatus.EDITABLE, true);
+        DBContentVirtualFile contentFile = schemaObject.getVirtualFile().getContentFile(contentType);
+        if (contentFile != null) {
+            Document document = FileDocumentManager.getInstance().getDocument(contentFile);
+            if (document != null) {
+                DocumentUtil.setReadonly(document, false);
+            }
+            EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
+        }
+    }
+
+    public void disableEditing(@NotNull DBSchemaObject schemaObject, @NotNull DBContentType contentType) {
+        schemaObject.getStatus().set(contentType, DBObjectStatus.EDITABLE, false);
+        boolean readonly = isReadonly(schemaObject, contentType);
+        DBContentVirtualFile contentFile = schemaObject.getVirtualFile().getContentFile(contentType);
+        if (contentFile != null) {
+            Document document = FileDocumentManager.getInstance().getDocument(contentFile);
+            if (document != null) {
+                DocumentUtil.setReadonly(document, readonly);
+            }
+            EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
+        }
+    }
+
+
     @NonNls
     @NotNull
     public String getComponentName() {
         return "DBNavigator.Project.EnvironmentManager";
     }
 
-    private EnvironmentChangeListener environmentChangeListener = new EnvironmentChangeListener() {
+    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerAdapter() {
         @Override
         public void configurationChanged() {
             FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(getProject());

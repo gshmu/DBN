@@ -3,7 +3,8 @@ package com.dci.intellij.dbn.editor.code;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorNotificationPanel;
@@ -11,6 +12,7 @@ import com.dci.intellij.dbn.editor.code.ui.SourceCodeLoadErrorNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeOutdatedNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeReadonlyNotificationPanel;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.ide.FrameStateManager;
@@ -31,13 +33,28 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
         this.project = project;
 
         EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        EventUtil.subscribe(project, project, EnvironmentManagerListener.TOPIC, environmentManagerListener);
         EventUtil.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
-    SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+    private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {
             updateEditorNotification(sourceCodeFile);
+        }
+    };
+
+    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
+        @Override
+        public void configurationChanged() {
+            updateEditorNotification(null);
+        }
+
+        @Override
+        public void editModeChanged(DBContentVirtualFile databaseContentFile) {
+            if (databaseContentFile instanceof DBSourceCodeVirtualFile) {
+                updateEditorNotification((DBSourceCodeVirtualFile) databaseContentFile);
+            }
         }
     };
 
@@ -45,20 +62,32 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
             VirtualFile virtualFile = event.getNewFile();
-            if (virtualFile instanceof DBSourceCodeVirtualFile) {
-                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
-                updateEditorNotification(sourceCodeFile);
+            if (virtualFile instanceof DBEditableObjectVirtualFile) {
+
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
+                for (DBContentVirtualFile contentFile : databaseFile.getContentFiles()) {
+                    if (contentFile instanceof DBSourceCodeVirtualFile) {
+                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
+                        updateEditorNotification(sourceCodeFile);
+                    }
+                }
             }
         }
     };
 
-    void updateEditorNotification(final DBSourceCodeVirtualFile sourceCodeFile) {
-        new ConditionalLaterInvocator() {
+
+
+    public void updateEditorNotification(@Nullable final DBSourceCodeVirtualFile sourceCodeFile) {
+        new SimpleLaterInvocator() {
             @Override
             protected void execute() {
                 if (!project.isDisposed()) {
                     EditorNotifications notifications = EditorNotifications.getInstance(project);
-                    notifications.updateNotifications(sourceCodeFile.getMainDatabaseFile());
+                    if (sourceCodeFile ==  null) {
+                        notifications.updateAllNotifications();
+                    } else {
+                        notifications.updateNotifications(sourceCodeFile.getMainDatabaseFile());
+                    }
                 }
             }
         }.start();
@@ -82,6 +111,8 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
                 String sourceLoadError = sourceCodeFile.getSourceLoadError();
                 if (StringUtil.isNotEmpty(sourceLoadError)) {
                     return createLoadErrorPanel(editableObject, sourceLoadError);
+                } else if (sourceCodeFile.getEnvironmentType().isReadonlyCode()) {
+                    return createReadonlyCodePanel(editableObject, sourceCodeFile, sourceCodeEditor);
                 } else if (sourceCodeFile.isChangedInDatabase(false)) {
                     return createOutdatedCodePanel(editableObject, sourceCodeFile, sourceCodeEditor);
                 }
@@ -96,7 +127,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
     }
 
     private SourceCodeReadonlyNotificationPanel createReadonlyCodePanel(final DBSchemaObject editableObject, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor sourceCodeEditor) {
-        return new SourceCodeReadonlyNotificationPanel(sourceCodeEditor);
+        return new SourceCodeReadonlyNotificationPanel(editableObject, sourceCodeEditor);
     }
 
     private SourceCodeEditorNotificationPanel createOutdatedCodePanel(final DBSchemaObject editableObject, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor sourceCodeEditor) {

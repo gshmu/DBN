@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.code.action;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -41,10 +42,13 @@ public class RevertChangesAction extends AbstractSourceCodeEditorAction {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         presentation.setText("Revert Changes");
-        if (sourceCodeFile == null) {
+        Project project = e.getProject();
+        if (project == null || sourceCodeFile == null) {
             presentation.setEnabled(false);
         } else {
-            presentation.setVisible(sourceCodeFile.getEnvironmentType().isCodeEditable());
+            EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+            boolean readonly = environmentManager.isReadonly(sourceCodeFile);
+            presentation.setVisible(!readonly);
             DBSchemaObject object = sourceCodeFile.getObject();
             DBContentType contentType = sourceCodeFile.getContentType();
             presentation.setEnabled(sourceCodeFile.isModified() && !object.getStatus().is(contentType, DBObjectStatus.LOADING));

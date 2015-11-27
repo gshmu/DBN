@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.common.editor;
 
+import javax.swing.JComponent;
+import java.beans.PropertyChangeListener;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
@@ -14,12 +20,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JComponent;
-import java.beans.PropertyChangeListener;
 
 public abstract class BasicTextEditorImpl<T extends VirtualFile> implements BasicTextEditor<T>{
     protected TextEditor textEditor;
@@ -27,8 +27,10 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
     private String name;
     private EditorProviderId editorProviderId;
     private BasicTextEditorState cachedState;
+    private Project project;
 
     public BasicTextEditorImpl(Project project, T virtualFile, String name, EditorProviderId editorProviderId) {
+        this.project = project;
         this.name = name;
         this.virtualFile = virtualFile;
         this.editorProviderId = editorProviderId;
@@ -141,6 +143,10 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
         //return FailsafeUtil.get(textEditor);
     }
 
+    public Project getProject() {
+        return project;
+    }
+
     @Nullable
     public StructureViewBuilder getStructureViewBuilder() {
         return getTextEditor().getStructureViewBuilder();
@@ -156,6 +162,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
     public void dispose() {
         disposed = true;
         virtualFile = null;
+        project = null;
         //textEditor = null;
     }
 }

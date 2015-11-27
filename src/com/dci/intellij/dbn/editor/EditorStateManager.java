@@ -12,10 +12,12 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserEditorSettings;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
+import com.dci.intellij.dbn.common.environment.EnvironmentManager;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
@@ -52,7 +54,7 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
     private EditorStateManager(Project project) {
         super(project);
         EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
-        EventUtil.subscribe(project, project, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventUtil.subscribe(project, project, EnvironmentManagerListener.TOPIC, environmentManagerListener);
     }
 
     public static EditorStateManager getInstance(@NotNull Project project) {
@@ -62,7 +64,7 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
     private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {
-            Project project = getProject();
+            final Project project = getProject();
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
             FileEditor[] allEditors = fileEditorManager.getAllEditors(sourceCodeFile.getMainDatabaseFile());
             final Set<Document> documents = new HashSet<Document>();
@@ -79,10 +81,11 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
                 new WriteActionRunner() {
                     public void run() {
                         for (Document document : documents) {
-                            boolean isReadonly = !document.isWritable();
-                            if (isReadonly) document.setReadOnly(false);
                             document.setText(sourceCodeFile.getContent());
-                            document.setReadOnly(isReadonly);
+                            EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+                            boolean readonly = environmentManager.isReadonly(sourceCodeFile);
+                            DocumentUtil.setReadonly(document, readonly);
+
                         }
                     }
                 }.start();
@@ -90,7 +93,7 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
         }
     };
 
-    private EnvironmentChangeListener environmentChangeListener = new EnvironmentChangeListener() {
+    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerAdapter() {
         @Override
         public void configurationChanged() {
             Project project = getProject();
@@ -99,9 +102,10 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
             for (FileEditor fileEditor : allEditors) {
                 if (fileEditor instanceof SourceCodeEditor) {
                     SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                    EnvironmentType environmentType = sourceCodeEditor.getObject().getEnvironmentType();
                     Document document = sourceCodeEditor.getEditor().getDocument();
-                    document.setReadOnly(!environmentType.isCodeEditable());
+                    EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+                    boolean isReadonly = environmentManager.isReadonly(sourceCodeEditor.getVirtualFile());
+                    DocumentUtil.setReadonly(document, isReadonly);
                 }
             }
         }
