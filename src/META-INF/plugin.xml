@@ -29,8 +29,9 @@
         <ul>
             <li><b>3.0.NEXT</b>
             <ul>
-                - Data Editor - Cancel action for unresponsive data loads<br>
-                - Code Editor - Outdated sources notification<br>
+                - Environment types - editing control for code and data<br>
+                - "Cancel" action for unresponsive loads in data editors<br>
+                - Outdated sources notification<br>
                 - Configurable default editors<br>
                 - Bug fixes<br>
             </ul>
