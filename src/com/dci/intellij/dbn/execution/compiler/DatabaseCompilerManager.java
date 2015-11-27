@@ -30,6 +30,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -53,7 +54,6 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             Project project = getProject();
             DBSchemaObject object = sourceCodeFile.getObject();
             DBContentType contentType = sourceCodeFile.getContentType();
-            ConnectionHandler connectionHandler = object.getConnectionHandler();
 
             if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
                 boolean isCompilable = object.getProperties().is(DBObjectProperty.COMPILABLE);
@@ -65,9 +65,9 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                     CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, sourceCodeFile, fileEditor);
                     if (compileType == CompileType.DEBUG) {
                         compilerManager.compileObject(object, compileType, compilerAction);
-                    } else {
-                        connectionHandler.getObjectBundle().refreshObjectsStatus(object);
                     }
+                    ConnectionHandler connectionHandler = object.getConnectionHandler();
+                    EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
 
                     compilerManager.createCompilerResult(object, compilerAction);
                 }
@@ -141,11 +141,14 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
 
             @Override
             protected void execute() {
-                BackgroundTask<CompileType> compileTask = new BackgroundTask<CompileType>(object.getProject(), "Compiling " + object.getQualifiedNameWithType(), true) {
+                final Project project = getProject();
+                BackgroundTask<CompileType> compileTask = new BackgroundTask<CompileType>(project, "Compiling " + object.getQualifiedNameWithType(), true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {
                         CompileType compileType = getOption();
                         doCompileObject(object, compileType, compilerAction);
+                        ConnectionHandler connectionHandler = object.getConnectionHandler();
+                        EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
                         if (DatabaseFileSystem.isFileOpened(object)) {
                             DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
                             if (databaseFile != null) {
@@ -166,10 +169,11 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
 
     private void doCompileObject(DBSchemaObject object, CompileType compileType, CompilerAction compilerAction) {
         DBContentType contentType = compilerAction.getContentType();
-        object.getStatus().set(contentType, DBObjectStatus.COMPILING, true);
+        DBObjectStatusHolder objectStatus = object.getStatus();
+        objectStatus.set(contentType, DBObjectStatus.COMPILING, true);
         Connection connection = null;
         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(getProject());
-        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getConnectionHandler());
+        ConnectionHandler connectionHandler = object.getConnectionHandler();
         boolean verbose = compilerAction.getSource() != CompilerActionSource.BULK_COMPILE;
         try {
             connection = connectionHandler.getPoolConnection();
@@ -178,7 +182,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             boolean isDebug = compileType == CompileType.DEBUG;
 
             if (compileType == CompileType.KEEP) {
-                isDebug = object.getStatus().is(DBObjectStatus.DEBUG);
+                isDebug = objectStatus.is(DBObjectStatus.DEBUG);
             }
 
             if (contentType == DBContentType.CODE_SPEC || contentType == DBContentType.CODE) {
@@ -217,8 +221,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             if (verbose) compilerManager.createErrorCompilerResult(compilerAction, object, contentType, e);
         }  finally{
             connectionHandler.freePoolConnection(connection);
-            if (verbose) connectionHandler.getObjectBundle().refreshObjectsStatus(object);
-            object.getStatus().set(contentType, DBObjectStatus.COMPILING, false);
+            objectStatus.set(contentType, DBObjectStatus.COMPILING, false);
         }
     }
 
@@ -233,7 +236,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
 
             @Override
             protected void execute() {
-                Project project = getProject();
+                final Project project = getProject();
                 final ConnectionHandler connectionHandler = getConnectionHandler();
                 promptCompileTypeSelection(compileType, null, new BackgroundTask<CompileType>(project, "Compiling invalid objects", false, true) {
                     @Override
@@ -243,7 +246,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                         doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, compileType);
                         doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, compileType);
                         doCompileInvalidObjects(schema.getDatasetTriggers(), "triggers", progressIndicator, compileType);
-                        connectionHandler.getObjectBundle().refreshObjectsStatus(null);
+                        EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, null);
 
                         if (!progressIndicator.isCanceled()) {
                             List<CompilerResult> compilerErrors = new ArrayList<CompilerResult>();
