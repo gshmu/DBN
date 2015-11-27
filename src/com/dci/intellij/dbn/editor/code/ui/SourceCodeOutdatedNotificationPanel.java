@@ -12,8 +12,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.text.DateFormatUtil;
 
 public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotificationPanel{
-    public SourceCodeOutdatedNotificationPanel(final DBSchemaObject editableObject, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor sourceCodeEditor) {
+    public SourceCodeOutdatedNotificationPanel(final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor sourceCodeEditor) {
         super(MessageType.WARNING);
+        final DBSchemaObject editableObject = sourceCodeFile.getObject();
         final Project project = editableObject.getProject();
         Timestamp timestamp = sourceCodeFile.getChangedInDatabaseTimestamp();
         setText("Outdated version. The " + editableObject.getQualifiedNameWithType() + " was modified by another user (" + DateFormatUtil.formatPrettyDateTime(timestamp).toLowerCase() + ")");
