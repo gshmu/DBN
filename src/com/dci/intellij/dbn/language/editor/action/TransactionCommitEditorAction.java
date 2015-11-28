@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -29,13 +30,8 @@ public class TransactionCommitEditorAction extends TransactionEditorAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
-        e.getPresentation().setText("Commit");
-
-        Project project = ActionUtil.getProject(e);
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
-
-        ConnectionHandler connectionHandler = virtualFile == null ? null : getConnectionHandler(project, virtualFile);
-        e.getPresentation().setVisible(connectionHandler != null && !connectionHandler.isAutoCommit());
+        Presentation presentation = e.getPresentation();
+        presentation.setText("Commit");
     }
 
 }

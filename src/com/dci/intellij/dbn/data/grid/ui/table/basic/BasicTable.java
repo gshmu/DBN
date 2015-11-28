@@ -29,6 +29,7 @@ import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
+import com.dci.intellij.dbn.data.model.DataModelState;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
@@ -263,7 +264,8 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         }
         if (isLargeValuePopupActive() && !isRestoringSelection()) {
             T model = getModel();
-            boolean isReadonly = model.isReadonly() || model.getState().isReadonly();
+            DataModelState modelState = model.getState();
+            boolean isReadonly = model.isReadonly() || modelState.isReadonly() || modelState.isEnvironmentReadonly();
             if (isReadonly && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
                 int rowIndex = getSelectedRow();
                 int columnIndex = getSelectedColumn();

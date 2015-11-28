@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.DBDatasetVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
@@ -234,6 +235,22 @@ public class EditorUtil {
                 GUIUtil.adjust(defaultBackground, -0.02) :
                 EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
 
+    }
+
+    public static void setEditorsReadonly(final DBDatasetVirtualFile datasetFile, final boolean readonly) {
+        Project project = datasetFile.getProject();
+        if (project != null) {
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            FileEditor[] allEditors = fileEditorManager.getAllEditors();
+            for (FileEditor fileEditor : allEditors) {
+                if (fileEditor instanceof DatasetEditor) {
+                    DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
+                    if (datasetEditor.getDatabaseFile().equals(datasetFile.getMainDatabaseFile())) {
+                        datasetEditor.setEnvironmentReadonly(readonly);
+                    }
+                }
+            }
+        }
     }
 
     @Nullable

@@ -26,6 +26,8 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.editor.DefaultEditorOption;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
+import com.dci.intellij.dbn.vfs.DBDatasetVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -101,6 +103,13 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
                     EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
                     boolean readonly = environmentManager.isReadonly(sourceCodeEditor.getVirtualFile());
                     EditorUtil.setEditorsReadonly(sourceCodeEditor.getVirtualFile(), readonly);
+                } else if (fileEditor instanceof DatasetEditor) {
+                    DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
+                    EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+                    boolean readonly = environmentManager.isReadonly(datasetEditor.getDataset(), DBContentType.DATA);
+                    DBEditableObjectVirtualFile databaseFile = datasetEditor.getDatabaseFile();
+                    DBDatasetVirtualFile datasetFile = (DBDatasetVirtualFile) databaseFile.getContentFile(DBContentType.DATA);
+                    EditorUtil.setEditorsReadonly(datasetFile, readonly);
                 }
             }
         }
