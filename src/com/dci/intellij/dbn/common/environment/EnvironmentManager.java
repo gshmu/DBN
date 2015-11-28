@@ -16,8 +16,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
-import com.dci.intellij.dbn.vfs.DBDatasetVirtualFile;
-import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -46,8 +44,8 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         return FailsafeUtil.getComponent(project, EnvironmentManager.class);
     }
 
-    public boolean isReadonly(@NotNull DBSourceCodeVirtualFile sourceCodeFile) {
-        return isReadonly(sourceCodeFile.getObject(), sourceCodeFile.getContentType());
+    public boolean isReadonly(@NotNull DBContentVirtualFile contentFile) {
+        return isReadonly(contentFile.getObject(), contentFile.getContentType());
     }
 
     public boolean isReadonly(@NotNull DBSchemaObject schemaObject, @NotNull DBContentType contentType) {
@@ -63,12 +61,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
     public void enableEditing(@NotNull DBSchemaObject schemaObject, @NotNull DBContentType contentType) {
         schemaObject.getStatus().set(contentType, DBObjectStatus.EDITABLE, true);
         DBContentVirtualFile contentFile = schemaObject.getVirtualFile().getContentFile(contentType);
-        if (contentFile instanceof DBSourceCodeVirtualFile) {
-            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
-            EditorUtil.setEditorsReadonly(sourceCodeFile, false);
-        } else if (contentFile instanceof DBDatasetVirtualFile) {
-            DBDatasetVirtualFile datasetVirtualFile = (DBDatasetVirtualFile) contentFile;
-        }
+        EditorUtil.setEditorsReadonly(contentFile, false);
         EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
     }
 
@@ -76,12 +69,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         schemaObject.getStatus().set(contentType, DBObjectStatus.EDITABLE, false);
         boolean readonly = isReadonly(schemaObject, contentType);
         DBContentVirtualFile contentFile = schemaObject.getVirtualFile().getContentFile(contentType);
-        if (contentFile instanceof DBSourceCodeVirtualFile) {
-            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
-            EditorUtil.setEditorsReadonly(sourceCodeFile, readonly);
-        } else if (contentFile instanceof DBDatasetVirtualFile) {
-            DBDatasetVirtualFile datasetVirtualFile = (DBDatasetVirtualFile) contentFile;
-        }
+        EditorUtil.setEditorsReadonly(contentFile, readonly);
         EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
     }
 

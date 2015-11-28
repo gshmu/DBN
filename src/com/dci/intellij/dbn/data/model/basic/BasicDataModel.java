@@ -42,6 +42,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private Project project;
     private Filter<T> filter;
     private Formatter formatter;
+    private boolean isEnvironmentReadonly;
 
     private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
         @Override
@@ -70,6 +71,14 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
         this.project = project;
         this.formatter = Formatter.getInstance(project).clone();
         EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
+    }
+
+    public boolean isEnvironmentReadonly() {
+        return isEnvironmentReadonly;
+    }
+
+    public void setEnvironmentReadonly(boolean environmentReadonly) {
+        isEnvironmentReadonly = environmentReadonly;
     }
 
     @Override

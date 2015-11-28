@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -30,7 +29,6 @@ import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettingsChangeListener;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterType;
@@ -92,9 +90,6 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         connectionHandlerRef = ConnectionHandlerRef.from(dataset.getConnectionHandler());
         editorForm = new DatasetEditorForm(this);
 
-        EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-        boolean readonly = environmentManager.isReadonly(dataset, DBContentType.DATA);
-        setEnvironmentReadonly(readonly);
 /*
         if (!EditorUtil.hasEditingHistory(databaseFile, project)) {
             load(true, true, false);
@@ -476,7 +471,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public boolean isReadonly() {
-        return editorState.isReadonly() || editorState.isEnvironmentReadonly();
+        return editorState.isReadonly() || getTableModel().isEnvironmentReadonly();
     }
 
     public DatasetColumnSetup getColumnSetup() {
@@ -484,7 +479,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public void setEnvironmentReadonly(boolean readonly) {
-        editorState.setEnvironmentReadonly(readonly);
+        getTableModel().setEnvironmentReadonly(readonly);
     }
 
     public void setReadonly(boolean readonly) {

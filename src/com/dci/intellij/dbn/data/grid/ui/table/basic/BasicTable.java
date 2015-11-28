@@ -265,7 +265,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         if (isLargeValuePopupActive() && !isRestoringSelection()) {
             T model = getModel();
             DataModelState modelState = model.getState();
-            boolean isReadonly = model.isReadonly() || modelState.isReadonly() || modelState.isEnvironmentReadonly();
+            boolean isReadonly = model.isReadonly() || model.isEnvironmentReadonly() || modelState.isReadonly() ;
             if (isReadonly && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
                 int rowIndex = getSelectedRow();
                 int columnIndex = getSelectedColumn();
