@@ -72,7 +72,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
             text = debuggerInterface.getDebugConsoleTemplate(styleCaseSettings);
         }
         content.importContent(text);
-        Document document = DocumentUtil.getDocument(this);
+        final Document document = DocumentUtil.getDocument(this);
         if (document != null) {
             DocumentUtil.setText(document, content.getText());
             DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.code;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditorImpl;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -11,30 +10,15 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 
 public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFile>{
     private DBObjectRef<DBSchemaObject> objectRef;
-    private SourceCodeOffsets offsets;
 
     public SourceCodeEditor(Project project, final DBSourceCodeVirtualFile sourceCodeFile, String name, EditorProviderId editorProviderId) {
         super(project, sourceCodeFile, name, editorProviderId);
-
         objectRef = DBObjectRef.from(sourceCodeFile.getObject());
-        Document document = this.textEditor.getEditor().getDocument();
-        if (document.getTextLength() > 0) {
-            offsets = sourceCodeFile.getOffsets();
-            if (offsets == null) {
-                offsets = new SourceCodeOffsets();
-            } else {
-                GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
-                DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
-            }
-        } else {
-            offsets = new SourceCodeOffsets();
-        }
     }
 
     public DBSchemaObject getObject() {
@@ -42,7 +26,8 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
     }
 
     public int getHeaderEndOffset() {
-        return offsets.getHeaderEndOffset();
+        SourceCodeOffsets offsets = getVirtualFile().getOffsets();
+        return offsets == null ? 0 :offsets.getHeaderEndOffset();
     }
 
     public void navigateTo(DBObject object) {

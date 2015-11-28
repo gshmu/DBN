@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 
 public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotificationPanel{
     public SourceCodeReadonlyNotificationPanel(final DBSchemaObject schemaObject, final SourceCodeEditor sourceCodeEditor) {
-        super(isReadonly(sourceCodeEditor) ? MessageType.WARNING : MessageType.WARNING);
+        super(isReadonly(sourceCodeEditor) ? MessageType.INFO : MessageType.WARNING);
         final DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
         String environmentName = sourceCodeFile.getEnvironmentType().getName();
 
@@ -29,8 +29,8 @@ public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotific
                 }
             });
         } else {
-            setText("Edit mode active (NOTE: the environment \"" + environmentName + "\" is configured with readonly code by default)");
-            createActionLabel("Cancel Edit Mode", new Runnable() {
+            setText("Edit mode active! (the environment \"" + environmentName + "\" is configured with readonly code by default)");
+            createActionLabel("Cancel Editing", new Runnable() {
                 @Override
                 public void run() {
                     EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);

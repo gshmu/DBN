@@ -1,28 +1,24 @@
 package com.dci.intellij.dbn.editor.code.diff;
 
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.intellij.openapi.diff.FileContent;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-public class DBSourceFileContent extends FileContent {
-    private Document document;
-    public DBSourceFileContent(Project project, @NotNull VirtualFile file) {
-        super(project, file);
-    }
+import com.dci.intellij.dbn.common.environment.EnvironmentManager;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.intellij.openapi.diff.SimpleContent;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.Project;
 
-    public Document getDocument() {
-        if (document == null) {
-            document = DocumentUtil.getDocument(getFile());
-        }
-        return document; 
+public class DBSourceFileContent extends SimpleContent {
+    DBSourceCodeVirtualFile sourceCodeFile;
+    public DBSourceFileContent(Project project, @NotNull DBSourceCodeVirtualFile sourceCodeFile) {
+        super(sourceCodeFile.getContent().toString());
+        this.sourceCodeFile = sourceCodeFile;
+        boolean readonly = EnvironmentManager.getInstance(project).isReadonly(sourceCodeFile);
+        setReadOnly(readonly);
     }
 
     @Override
     public FileType getContentType() {
-        return getFile().getFileType();
+        return sourceCodeFile.getFileType();
     }
 }
