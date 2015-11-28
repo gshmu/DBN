@@ -115,6 +115,7 @@ public class StatementExecutionSettings extends Configuration implements Executi
         SettingsUtil.setInteger(element, "fetch-block-size", resultSetFetchBlockSize);
         SettingsUtil.setInteger(element, "execution-timeout", executionTimeout);
         SettingsUtil.setInteger(element, "debug-execution-timeout", debugExecutionTimeout);
+        SettingsUtil.setBoolean(element, "focus-result", focusResult);
         SettingsUtil.setBoolean(element, "prompt-execution", promptExecution);
     }
 }
