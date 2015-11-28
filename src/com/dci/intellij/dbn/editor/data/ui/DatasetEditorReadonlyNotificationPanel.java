@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.options.ConfigId;
@@ -15,16 +17,26 @@ public class DatasetEditorReadonlyNotificationPanel extends DatasetEditorNotific
         final Project project = schemaObject.getProject();
 
         if (isReadonly(schemaObject)) {
-            setText("Readonly data - Editing is disabled by default for \"" + environmentName + "\" environments (see configuration)");
+            setText("Readonly data - This editor is readonly to prevent accidental data changes in \"" + environmentName + "\" environments (check environment settings)");
             createActionLabel("Edit Mode", new Runnable() {
                 @Override
                 public void run() {
-                    EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-                    environmentManager.enableEditing(schemaObject, DBContentType.DATA);
+                    MessageUtil.showQuestionDialog(project,
+                            "Enable edit-mode",
+                            "Are you sure you want to edit the data in " + schemaObject.getQualifiedNameWithType(), new String[]{"Edit", "Cancel"}, 0, new SimpleTask() {
+                                @Override
+                                protected void execute() {
+                                    Integer option = getOption();
+                                    if (option == 0) {
+                                        EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+                                        environmentManager.enableEditing(schemaObject, DBContentType.DATA);
+                                    }
+                                }
+                            });
                 }
             });
         } else {
-            setText("Edit mode active! (the environment \"" + environmentName + "\" is configured with readonly data by default)");
+            setText("Active edit-mode! (the environment \"" + environmentName + "\" is configured with readonly data to prevent accidental changes)");
             createActionLabel("Cancel Editing", new Runnable() {
                 @Override
                 public void run() {
