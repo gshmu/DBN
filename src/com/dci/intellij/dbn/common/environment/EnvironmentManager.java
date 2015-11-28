@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
+import com.dci.intellij.dbn.vfs.DBDatasetVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -65,8 +66,10 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         if (contentFile instanceof DBSourceCodeVirtualFile) {
             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
             EditorUtil.setEditorsReadonly(sourceCodeFile, false);
-            EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
+        } else if (contentFile instanceof DBDatasetVirtualFile) {
+            DBDatasetVirtualFile datasetVirtualFile = (DBDatasetVirtualFile) contentFile;
         }
+        EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
     }
 
     public void disableEditing(@NotNull DBSchemaObject schemaObject, @NotNull DBContentType contentType) {
@@ -76,8 +79,10 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         if (contentFile instanceof DBSourceCodeVirtualFile) {
             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
             EditorUtil.setEditorsReadonly(sourceCodeFile, readonly);
-            EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
+        } else if (contentFile instanceof DBDatasetVirtualFile) {
+            DBDatasetVirtualFile datasetVirtualFile = (DBDatasetVirtualFile) contentFile;
         }
+        EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
     }
 
 

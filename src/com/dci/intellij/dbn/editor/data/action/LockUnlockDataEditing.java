@@ -35,11 +35,8 @@ public class LockUnlockDataEditing extends ToggleAction implements DumbAware {
             presentation.setEnabled(false);
         } else {
             presentation.setVisible(!datasetEditor.isReadonlyData());
-            presentation.setEnabled(datasetEditor.getActiveConnection().isConnected());
             presentation.setText(isSelected(e) ? "Unlock Editing" : "Lock Editing");
-            boolean enabled =
-                    datasetEditor.getEditorTable() != null &&
-                            !datasetEditor.isInserting();
+            boolean enabled = !datasetEditor.isInserting();
             presentation.setEnabled(enabled);
         }
     }
