@@ -11,6 +11,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -22,6 +23,7 @@ import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBDatasetVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -203,28 +205,6 @@ public class EditorUtil {
         return null;
     }
 
-    public static void setEditorsReadonly(final DBSourceCodeVirtualFile sourceCodeFile, final boolean readonly) {
-        new ReadActionRunner() {
-            @Override
-            protected Object run() {
-                Project project = sourceCodeFile.getProject();
-                if (project != null) {
-                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                    FileEditor[] allEditors = fileEditorManager.getAllEditors();
-                    for (FileEditor fileEditor : allEditors) {
-                        if (fileEditor instanceof SourceCodeEditor) {
-                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                            if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
-                                setEditorReadonly(sourceCodeEditor, readonly);
-                            }
-                        }
-                    }
-                }
-                return null;
-            }
-        }.start();
-    }
-
     public static void setEditorReadonly(SourceCodeEditor sourceCodeEditor, boolean readonly) {
         EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
         editor.setViewer(readonly);
@@ -237,15 +217,36 @@ public class EditorUtil {
 
     }
 
-    public static void setEditorsReadonly(final DBDatasetVirtualFile datasetFile, final boolean readonly) {
-        Project project = datasetFile.getProject();
-        if (project != null) {
+    public static void setEditorsReadonly(DBContentVirtualFile contentFile, final boolean readonly) {
+        final Project project = FailsafeUtil.get(contentFile.getProject());
+
+        if (contentFile instanceof DBSourceCodeVirtualFile) {
+            final DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
+            new ReadActionRunner() {
+                @Override
+                protected Object run() {
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                    FileEditor[] allEditors = fileEditorManager.getAllEditors();
+                    for (FileEditor fileEditor : allEditors) {
+                        if (fileEditor instanceof SourceCodeEditor) {
+                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                            if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
+                                setEditorReadonly(sourceCodeEditor, readonly);
+                            }
+                        }
+                    }
+                    return null;
+                }
+            }.start();
+        } else if (contentFile instanceof DBDatasetVirtualFile) {
+            DBDatasetVirtualFile datasetFile = (DBDatasetVirtualFile) contentFile;
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
             FileEditor[] allEditors = fileEditorManager.getAllEditors();
             for (FileEditor fileEditor : allEditors) {
                 if (fileEditor instanceof DatasetEditor) {
                     DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
                     if (datasetEditor.getDatabaseFile().equals(datasetFile.getMainDatabaseFile())) {
+                        datasetEditor.getEditorTable().cancelEditing();
                         datasetEditor.setEnvironmentReadonly(readonly);
                     }
                 }

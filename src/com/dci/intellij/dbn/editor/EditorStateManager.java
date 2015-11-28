@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jdom.Element;
@@ -26,7 +27,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.editor.DefaultEditorOption;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
-import com.dci.intellij.dbn.vfs.DBDatasetVirtualFile;
+import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -42,6 +43,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 
 @State(
@@ -96,20 +98,16 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
         public void configurationChanged() {
             Project project = getProject();
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            FileEditor[] allEditors = fileEditorManager.getAllEditors();
-            for (FileEditor fileEditor : allEditors) {
-                if (fileEditor instanceof SourceCodeEditor) {
-                    SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                    EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-                    boolean readonly = environmentManager.isReadonly(sourceCodeEditor.getVirtualFile());
-                    EditorUtil.setEditorsReadonly(sourceCodeEditor.getVirtualFile(), readonly);
-                } else if (fileEditor instanceof DatasetEditor) {
-                    DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
-                    EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-                    boolean readonly = environmentManager.isReadonly(datasetEditor.getDataset(), DBContentType.DATA);
-                    DBEditableObjectVirtualFile databaseFile = datasetEditor.getDatabaseFile();
-                    DBDatasetVirtualFile datasetFile = (DBDatasetVirtualFile) databaseFile.getContentFile(DBContentType.DATA);
-                    EditorUtil.setEditorsReadonly(datasetFile, readonly);
+            EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+            VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
+            for (VirtualFile virtualFile : openFiles) {
+                if (virtualFile instanceof DBEditableObjectVirtualFile) {
+                    DBEditableObjectVirtualFile editableDatabaseFile = (DBEditableObjectVirtualFile) virtualFile;
+                    List<DBContentVirtualFile> contentFiles = editableDatabaseFile.getContentFiles();
+                    for (DBContentVirtualFile contentFile : contentFiles) {
+                        boolean readonly = environmentManager.isReadonly(contentFile);
+                        EditorUtil.setEditorsReadonly(contentFile, readonly);
+                    }
                 }
             }
         }

@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -49,10 +50,16 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     public DatasetEditorModel(DatasetEditor datasetEditor) throws SQLException {
         super(datasetEditor.getConnectionHandler());
+        Project project = getProject();
         this.datasetEditor = datasetEditor;
-        this.datasetRef = DBObjectRef.from(datasetEditor.getDataset());
-        this.settings =  DataEditorSettings.getInstance(datasetEditor.getProject());
+        DBDataset dataset = datasetEditor.getDataset();
+        this.datasetRef = DBObjectRef.from(dataset);
+        this.settings =  DataEditorSettings.getInstance(project);
         setHeader(new DatasetEditorModelHeader(datasetEditor, null));
+
+        EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+        boolean readonly = environmentManager.isReadonly(dataset, DBContentType.DATA);
+        setEnvironmentReadonly(readonly);
     }
 
     public void load(final boolean useCurrentFilter, final boolean keepChanges) throws SQLException {
@@ -434,7 +441,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         DatasetEditorTable editorTable = getEditorTable();
         DatasetEditorState editorState = getState();
-        if (!isReadonly() && !editorState.isReadonly() && !editorState.isEnvironmentReadonly() && getConnectionHandler().isConnected()) {
+        if (!isReadonly() && !isEnvironmentReadonly() && !editorState.isReadonly() && getConnectionHandler().isConnected()) {
             if (!editorTable.isLoading() && editorTable.getSelectedColumnCount() <= 1 && editorTable.getSelectedRowCount() <= 1) {
                 DatasetEditorModelRow row = getRowAtIndex(rowIndex);
                 return row != null && !(isInserting && !row.isInsert()) && !row.isDeleted();
