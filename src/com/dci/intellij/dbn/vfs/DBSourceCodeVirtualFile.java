@@ -17,6 +17,8 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.code.GuardedBlockMarkers;
+import com.dci.intellij.dbn.editor.code.GuardedBlockType;
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeOffsets;
@@ -53,8 +55,20 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         setCharset(databaseFile.getConnectionHandler().getSettings().getDetailSettings().getCharset());
     }
 
+    @Nullable
     public SourceCodeOffsets getOffsets() {
         return offsets;
+    }
+
+    public void applyContentToDocument(Document document) {
+        DocumentUtil.setText(document, content);
+    }
+
+    public void applyGuardedBlocksToDocument(Document document) {
+        if (offsets != null) {
+            GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
+            DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
+        }
     }
 
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.util;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -24,6 +26,9 @@ import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.colors.EditorColors;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -209,8 +214,7 @@ public class EditorUtil {
                         if (fileEditor instanceof SourceCodeEditor) {
                             SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
                             if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
-                                EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
-                                editor.setViewer(readonly);
+                                setEditorReadonly(sourceCodeEditor, readonly);
                             }
                         }
                     }
@@ -218,6 +222,18 @@ public class EditorUtil {
                 return null;
             }
         }.start();
+    }
+
+    public static void setEditorReadonly(SourceCodeEditor sourceCodeEditor, boolean readonly) {
+        EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
+        editor.setViewer(readonly);
+        EditorColorsScheme scheme = editor.getColorsScheme();
+        Color defaultBackground = scheme.getDefaultBackground();
+        editor.setBackgroundColor(readonly ? GUIUtil.adjust(defaultBackground, -0.02) : defaultBackground);
+        scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
+                GUIUtil.adjust(defaultBackground, -0.02) :
+                EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
+
     }
 
     @Nullable

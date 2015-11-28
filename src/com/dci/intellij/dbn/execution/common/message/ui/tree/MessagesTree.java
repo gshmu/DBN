@@ -288,8 +288,10 @@ public class MessagesTree extends DBNTree implements Disposable {
                         int lineShifting = document.getLineNumber(codeEditor.getHeaderEndOffset());
                         navigateInEditor(editor, compilerMessage, lineShifting);
                         VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
-                        OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
-                        codeEditor.navigateTo(openFileDescriptor);
+                        if (virtualFile != null) {
+                            OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
+                            codeEditor.navigateTo(openFileDescriptor);
+                        }
                     }
                 }
             }

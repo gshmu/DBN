@@ -109,31 +109,40 @@ public class DocumentUtil {
         }
     }
 
-    public static void createGuardedBlocks(Document document, GuardedBlockType type, GuardedBlockMarkers ranges, String reason) {
+    public static void createGuardedBlocks(final Document document, final GuardedBlockType type, final GuardedBlockMarkers ranges, final String reason) {
         for (Range<Integer> range : ranges.getRanges()) {
             DocumentUtil.createGuardedBlock(document, type, range.getFrom(), range.getTo(), reason);
         }
     }
 
-    public static void createGuardedBlock(Document document, GuardedBlockType type, int startOffset, int endOffset, String reason) {
+    public static void createGuardedBlock(final Document document, final GuardedBlockType type, final int startOffset, final int endOffset, final String reason) {
         if (startOffset != endOffset) {
-            RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
-            rangeMarker.setGreedyToLeft(startOffset == 0);
-            rangeMarker.setGreedyToRight(endOffset == document.getTextLength());
-            rangeMarker.putUserData(GuardedBlockType.KEY, type);
-            document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
+            new WriteActionRunner() {
+                @Override
+                public void run() {
+                    RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
+                    rangeMarker.setGreedyToLeft(startOffset == 0);
+                    rangeMarker.setGreedyToRight(endOffset == document.getTextLength());
+                    rangeMarker.putUserData(GuardedBlockType.KEY, type);
+                    document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
+                }
+            }.start();
         }
     }
 
-    public static void removeGuardedBlocks(Document document, GuardedBlockType type) {
+    public static void removeGuardedBlocks(final Document document, GuardedBlockType type) {
         if (document instanceof DocumentEx) {
             DocumentEx documentEx = (DocumentEx) document;
             ArrayList<RangeMarker> guardedBlocks = new ArrayList<RangeMarker>(documentEx.getGuardedBlocks());
-            for (RangeMarker block : guardedBlocks) {
+            for (final RangeMarker block : guardedBlocks) {
                 if (block.getUserData(GuardedBlockType.KEY) == type) {
-                    document.removeGuardedBlock(block);
+                    new WriteActionRunner() {
+                        @Override
+                        public void run() {
+                            document.removeGuardedBlock(block);
+                        }
+                    }.start();
                 }
-
             }
             document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);
         }

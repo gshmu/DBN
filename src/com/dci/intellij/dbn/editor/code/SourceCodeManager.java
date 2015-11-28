@@ -11,6 +11,8 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -90,6 +92,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         EditorActionManager.getInstance().setReadonlyFragmentModificationHandler(OverrideReadonlyFragmentModificationHandler.INSTANCE);
         fileEditorListener = new DBLanguageFileEditorListener();
         EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
+        EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
         EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
@@ -123,6 +126,18 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     reloadAndUpdateEditors(databaseFile, true);
                 }
 
+            }
+        }
+    };
+
+    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerAdapter() {
+        @Override
+        public void editModeChanged(DBContentVirtualFile databaseContentFile) {
+            if (databaseContentFile instanceof DBSourceCodeVirtualFile) {
+                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseContentFile;
+                if (sourceCodeFile.isModified()) {
+                    loadSourceFromDatabase(sourceCodeFile);
+                }
             }
         }
     };
@@ -185,15 +200,15 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }.start();
     }
 
-    public void openDiffWindow(@NotNull final DBSourceCodeVirtualFile virtualFile,  final String referenceText, final String referenceTitle, final String windowTitle) {
-        final Project project = virtualFile.getProject();
+    public void openDiffWindow(@NotNull final DBSourceCodeVirtualFile sourceCodeFile,  final String referenceText, final String referenceTitle, final String windowTitle) {
+        final Project project = sourceCodeFile.getProject();
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
-                SimpleContent originalContent = new SimpleContent(referenceText, virtualFile.getFileType());
-                DBSourceFileContent changedContent = new DBSourceFileContent(project, virtualFile);
+                SimpleContent originalContent = new SimpleContent(referenceText, sourceCodeFile.getFileType());
+                DBSourceFileContent changedContent = new DBSourceFileContent(project, sourceCodeFile);
 
-                DBSchemaObject object = virtualFile.getObject();
+                DBSchemaObject object = sourceCodeFile.getObject();
                 String title =
                         object.getSchema().getName() + "." +
                                 object.getName() + " " +

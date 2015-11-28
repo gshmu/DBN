@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -81,7 +80,9 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
                 for (Document document : documents) {
                     EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
                     boolean readonly = environmentManager.isReadonly(sourceCodeFile);
-                    DocumentUtil.setText(document, sourceCodeFile.getContent());
+                    sourceCodeFile.applyContentToDocument(document);
+                    sourceCodeFile.applyGuardedBlocksToDocument(document);
+
                     EditorUtil.setEditorsReadonly(sourceCodeFile, readonly);
                 }
             }
