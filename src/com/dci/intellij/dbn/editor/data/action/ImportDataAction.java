@@ -3,7 +3,9 @@ package com.dci.intellij.dbn.editor.data.action;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -24,10 +26,13 @@ public class ImportDataAction extends AbstractDataEditorAction {
         Presentation presentation = e.getPresentation();
         presentation.setText("Import Data");
         DatasetEditor datasetEditor = getDatasetEditor(e);
-        if (datasetEditor == null) {
+        Project project = e.getProject();
+        if (project == null || datasetEditor == null) {
             presentation.setEnabled(false);
         } else {
-            presentation.setVisible(!datasetEditor.isReadonlyData());
+            EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+            boolean isEnvironmentReadonlyData = environmentManager.isReadonly(datasetEditor.getDataset(), DBContentType.DATA);
+            presentation.setVisible(!isEnvironmentReadonlyData && !datasetEditor.isReadonlyData());
             boolean enabled =
                     datasetEditor.getActiveConnection().isConnected() &&
                     !datasetEditor.isReadonly() &&

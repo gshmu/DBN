@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.Project;
 
 public class LockUnlockDataEditing extends ToggleAction implements DumbAware {
 
@@ -31,10 +32,12 @@ public class LockUnlockDataEditing extends ToggleAction implements DumbAware {
         super.update(e);
         DatasetEditor datasetEditor = getDatasetEditor(e);
         Presentation presentation = e.getPresentation();
-        if (datasetEditor == null) {
+        Project project = e.getProject();
+        if (project == null || datasetEditor == null) {
             presentation.setEnabled(false);
         } else {
-            presentation.setVisible(!datasetEditor.isReadonlyData());
+            boolean isEnvironmentReadonlyData = datasetEditor.getDataset().getEnvironmentType().isReadonlyData();
+            presentation.setVisible(!datasetEditor.isReadonlyData() && !isEnvironmentReadonlyData);
             presentation.setText(isSelected(e) ? "Unlock Editing" : "Lock Editing");
             boolean enabled = !datasetEditor.isInserting();
             presentation.setEnabled(enabled);

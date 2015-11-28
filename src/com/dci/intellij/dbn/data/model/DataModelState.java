@@ -6,6 +6,7 @@ import java.util.Map;
 public class DataModelState {
     protected Map<String, String> contentTypesMap;
     private boolean isReadonly;
+    private boolean isEnvironmentReadonly;
     private int rowCount;
 
     public void setTextContentType(String columnName, String contentTypeName) {
@@ -26,6 +27,14 @@ public class DataModelState {
 
     public void setReadonly(boolean readonly) {
         isReadonly = readonly;
+    }
+
+    public boolean isEnvironmentReadonly() {
+        return isEnvironmentReadonly;
+    }
+
+    public void setEnvironmentReadonly(boolean environmentReadonly) {
+        isEnvironmentReadonly = environmentReadonly;
     }
 
     public int getRowCount() {

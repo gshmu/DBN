@@ -433,7 +433,8 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         DatasetEditorTable editorTable = getEditorTable();
-        if (!isReadonly() && !getState().isReadonly() && getConnectionHandler().isConnected()) {
+        DatasetEditorState editorState = getState();
+        if (!isReadonly() && !editorState.isReadonly() && !editorState.isEnvironmentReadonly() && getConnectionHandler().isConnected()) {
             if (!editorTable.isLoading() && editorTable.getSelectedColumnCount() <= 1 && editorTable.getSelectedRowCount() <= 1) {
                 DatasetEditorModelRow row = getRowAtIndex(rowIndex);
                 return row != null && !(isInserting && !row.isInsert()) && !row.isDeleted();
