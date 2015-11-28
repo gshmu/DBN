@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.editor.code;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.editor.EditorNotificationProvider;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorNotificationPanel;
@@ -23,15 +23,12 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.EditorNotifications;
 
-public class SourceCodeEditorNotificationProvider extends EditorNotifications.Provider<SourceCodeEditorNotificationPanel> {
+public class SourceCodeEditorNotificationProvider extends EditorNotificationProvider<SourceCodeEditorNotificationPanel> {
     private static final Key<SourceCodeEditorNotificationPanel> KEY = Key.create("DBNavigator.SourceCodeEditorNotificationPanel");
-    private Project project;
 
     public SourceCodeEditorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
-        this.project = project;
-
+        super(project);
         EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
         EventUtil.subscribe(project, project, EnvironmentManagerListener.TOPIC, environmentManagerListener);
         EventUtil.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
@@ -53,7 +50,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
         @Override
         public void editModeChanged(DBContentVirtualFile databaseContentFile) {
             if (databaseContentFile instanceof DBSourceCodeVirtualFile) {
-                updateEditorNotification((DBSourceCodeVirtualFile) databaseContentFile);
+                updateEditorNotification(databaseContentFile);
             }
         }
     };
@@ -74,24 +71,6 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
             }
         }
     };
-
-
-
-    public void updateEditorNotification(@Nullable final DBSourceCodeVirtualFile sourceCodeFile) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                if (!project.isDisposed()) {
-                    EditorNotifications notifications = EditorNotifications.getInstance(project);
-                    if (sourceCodeFile ==  null) {
-                        notifications.updateAllNotifications();
-                    } else {
-                        notifications.updateNotifications(sourceCodeFile.getMainDatabaseFile());
-                    }
-                }
-            }
-        }.start();
-    }
 
     @NotNull
     @Override
