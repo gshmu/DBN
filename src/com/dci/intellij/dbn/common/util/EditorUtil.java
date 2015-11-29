@@ -207,7 +207,7 @@ public class EditorUtil {
 
     public static void setEditorReadonly(SourceCodeEditor sourceCodeEditor, boolean readonly) {
         EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
-        editor.setViewer(readonly);
+        editor.getDocument().setReadOnly(readonly);
         EditorColorsScheme scheme = editor.getColorsScheme();
         Color defaultBackground = scheme.getDefaultBackground();
         editor.setBackgroundColor(readonly ? GUIUtil.adjust(defaultBackground, -0.03) : defaultBackground);
