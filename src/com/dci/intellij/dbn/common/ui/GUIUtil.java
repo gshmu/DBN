@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.common.ui;
 
+import com.dci.intellij.dbn.common.Colors;
+import com.intellij.openapi.ui.Splitter;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.ui.awt.RelativePoint;
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -15,12 +21,6 @@ import java.awt.Point;
 import java.awt.PointerInfo;
 import java.lang.reflect.Method;
 import java.util.EventListener;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.Colors;
-import com.intellij.openapi.ui.Splitter;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.ui.awt.RelativePoint;
 
 public class GUIUtil{
     public static final Font REGULAR_FONT = com.intellij.util.ui.UIUtil.getLabelFont();
@@ -169,6 +169,10 @@ public class GUIUtil{
         int red = (int) Math.round(Math.min(255, color.getRed() + 255 * shift));
         int green = (int) Math.round(Math.min(255, color.getGreen() + 255 * shift));
         int blue = (int) Math.round(Math.min(255, color.getBlue() + 255 * shift));
+
+        red = Math.max(Math.min(255, red), 0);
+        green = Math.max(Math.min(255, green), 0);
+        blue = Math.max(Math.min(255, blue), 0);
 
         int alpha = color.getAlpha();
 
