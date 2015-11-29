@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.code.action;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -36,7 +37,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
                     public void run() {
                         FileDocumentManager.getInstance().saveAllDocuments();
                         SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                        sourceCodeManager.updateSourceToDatabase(fileEditor);
+                        sourceCodeManager.saveSourceToDatabase(fileEditor, null);
                     }
                 }.start();
             }
@@ -45,17 +46,22 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
     }
 
     public void update(@NotNull AnActionEvent e) {
-        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
-        if (virtualFile == null) {
+        Project project = e.getProject();
+        if (project == null || sourceCodeFile == null) {
             presentation.setEnabled(false);
         } else {
+            EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+            boolean readonly = environmentManager.isReadonly(sourceCodeFile);
+            presentation.setVisible(!readonly);
+            DBContentType contentType = sourceCodeFile.getContentType();
             String text =
-                    virtualFile.getContentType() == DBContentType.CODE_SPEC ? "Save spec" :
-                    virtualFile.getContentType() == DBContentType.CODE_BODY ? "Save body" : "Save";
+                    contentType == DBContentType.CODE_SPEC ? "Save spec" :
+                    contentType == DBContentType.CODE_BODY ? "Save body" : "Save";
 
-            DBSchemaObject object = virtualFile.getObject();
-            presentation.setEnabled(!object.getStatus().is(DBObjectStatus.SAVING) && virtualFile.isModified());
+            DBSchemaObject object = sourceCodeFile.getObject();
+            presentation.setEnabled(!object.getStatus().is(contentType, DBObjectStatus.SAVING) && sourceCodeFile.isModified());
             presentation.setText(text);
         }
     }

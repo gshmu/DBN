@@ -18,7 +18,8 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
@@ -84,7 +85,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         resultTabs.setPopupGroup(new ExecutionConsolePopupActionGroup(this), "place", false);
         resultTabs.setTabsPosition(JBTabsPosition.bottom);
         resultTabs.setBorder(null);
-        EventUtil.subscribe(project, this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
         EventUtil.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
 
         Disposer.register(this, resultTabs);
@@ -98,7 +99,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         return getResultTabs().getTabCount();
     }
 
-    private EnvironmentChangeListener environmentChangeListener = new EnvironmentChangeListener() {
+    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerAdapter() {
         @Override
         public void configurationChanged() {
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();

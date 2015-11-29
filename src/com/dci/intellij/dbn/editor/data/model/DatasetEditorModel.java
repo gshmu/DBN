@@ -9,12 +9,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.environment.EnvironmentManager;
+import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -38,32 +43,59 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     private DataEditorSettings settings;
     private DBObjectRef<DBDataset> datasetRef;
 
+    private CancellableDatabaseCall loaderCall;
+    private boolean isDirty;
+
     private List<DatasetEditorModelRow> changedRows = new ArrayList<DatasetEditorModelRow>();
 
     public DatasetEditorModel(DatasetEditor datasetEditor) throws SQLException {
         super(datasetEditor.getConnectionHandler());
+        Project project = getProject();
         this.datasetEditor = datasetEditor;
-        this.datasetRef = DBObjectRef.from(datasetEditor.getDataset());
-        this.settings =  DataEditorSettings.getInstance(datasetEditor.getProject());
+        DBDataset dataset = datasetEditor.getDataset();
+        this.datasetRef = DBObjectRef.from(dataset);
+        this.settings =  DataEditorSettings.getInstance(project);
         setHeader(new DatasetEditorModelHeader(datasetEditor, null));
+
+        EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+        boolean readonly = environmentManager.isReadonly(dataset, DBContentType.DATA);
+        setEnvironmentReadonly(readonly);
     }
 
-    public void load(boolean useCurrentFilter, boolean keepChanges) throws SQLException {
-        ResultSet newResultSet;
+    public void load(final boolean useCurrentFilter, final boolean keepChanges) throws SQLException {
+        isDirty = false;
         checkDisposed();
         closeResultSet();
-        newResultSet = loadResultSet(useCurrentFilter);
+        int timeout = settings.getGeneralSettings().getFetchTimeout().value();
+        final AtomicReference<Statement> statementRef = new AtomicReference<Statement>();
+        loaderCall = new CancellableDatabaseCall(timeout, TimeUnit.SECONDS) {
+            @Override
+            public Object execute() throws Exception {
+                ResultSet newResultSet = loadResultSet(useCurrentFilter, statementRef);
 
-        if (newResultSet != null) {
-            checkDisposed();
-            setResultSet(newResultSet);
-            setResultSetExhausted(false);
-            if (keepChanges) snapshotChanges(); else clearChanges();
-            
-            int rowCount = computeRowCount();
-            fetchNextRecords(rowCount, true);
-            restoreChanges();
-        }
+                if (newResultSet != null && !newResultSet.isClosed()) {
+                    checkDisposed();
+                    setResultSet(newResultSet);
+                    setResultSetExhausted(false);
+                    if (keepChanges) snapshotChanges(); else clearChanges();
+
+                    int rowCount = computeRowCount();
+                    fetchNextRecords(rowCount, true);
+                    restoreChanges();
+                }
+                loaderCall = null;
+                return null;
+            }
+
+            @Override
+            public void cancel() throws Exception {
+                Statement statement = statementRef.get();
+                ConnectionUtil.cancelStatement(statement);
+                loaderCall = null;
+                isDirty = true;
+            }
+        };
+        loaderCall.start();
     }
 
     private int computeRowCount() {
@@ -81,7 +113,8 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         return settings;
     }
 
-    private ResultSet loadResultSet(boolean useCurrentFilter) throws SQLException {
+    private ResultSet loadResultSet(boolean useCurrentFilter, AtomicReference<Statement> statementRef) throws SQLException {
+        int timeout = settings.getGeneralSettings().getFetchTimeout().value();
         ConnectionHandler connectionHandler = getConnectionHandler();
         Connection connection = connectionHandler.getStandaloneConnection();
         DBDataset dataset = getDataset();
@@ -97,12 +130,27 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         Statement statement = isReadonly() ?
                 connection.createStatement() :
                 connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        statementRef.set(statement);
         checkDisposed();
-        int timeout = settings.getGeneralSettings().getFetchTimeout().value();
         if (timeout != -1) {
             statement.setQueryTimeout(timeout);
         }
+
         return statement.executeQuery(selectStatement);
+    }
+
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    public void cancelDataLoad() {
+        if (loaderCall != null) {
+            loaderCall.requestCancellation();
+        }
+    }
+
+    public boolean isLoadCancelled() {
+        return loaderCall != null && loaderCall.isCancelRequested();
     }
 
     private void snapshotChanges() {
@@ -392,7 +440,8 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         DatasetEditorTable editorTable = getEditorTable();
-        if (!isReadonly() && !getState().isReadonly() && getConnectionHandler().isConnected()) {
+        DatasetEditorState editorState = getState();
+        if (!isReadonly() && !isEnvironmentReadonly() && !editorState.isReadonly() && getConnectionHandler().isConnected()) {
             if (!editorTable.isLoading() && editorTable.getSelectedColumnCount() <= 1 && editorTable.getSelectedRowCount() <= 1) {
                 DatasetEditorModelRow row = getRowAtIndex(rowIndex);
                 return row != null && !(isInserting && !row.isInsert()) && !row.isDeleted();

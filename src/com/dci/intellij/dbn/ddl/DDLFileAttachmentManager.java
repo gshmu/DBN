@@ -19,24 +19,32 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.ListUtil;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.ddl.ui.AttachDDLFileDialog;
 import com.dci.intellij.dbn.ddl.ui.DDLFileNameListCellRenderer;
 import com.dci.intellij.dbn.ddl.ui.DetachDDLFileDialog;
+import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
+import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
+import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
@@ -63,7 +71,23 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     private DDLFileAttachmentManager(Project project) {
         super(project);
         VirtualFileManager.getInstance().addVirtualFileListener(this);
+
+        EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
+
+    SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+        @Override
+        public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {
+            if (!isInitialLoad) {
+                updateDDLFiles(sourceCodeFile.getMainDatabaseFile());
+            }
+        }
+
+        @Override
+        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor) {
+            updateDDLFiles(sourceCodeFile.getMainDatabaseFile());
+        }
+    };
 
     @Nullable
     public List<VirtualFile> getAttachedDDLFiles(DBSchemaObject object) {
@@ -140,11 +164,11 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         return dialog.getExitCode();
     }
 
-    public void bindDDLFile(DBSchemaObject object, VirtualFile virtualFile) {
+    public void attachDDLFile(DBSchemaObject object, VirtualFile virtualFile) {
         DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.from(object);
         if (objectRef != null) {
             mappings.put(virtualFile.getPath(), objectRef);
-            EventUtil.notify(getProject(), DDLMappingListener.TOPIC).ddlFileAttached(virtualFile);
+            EventUtil.notify(getProject(), DDLFileAttachmentManagerListener.TOPIC).ddlFileAttached(virtualFile);
         }
     }
 
@@ -164,7 +188,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             }
         }
 
-        EventUtil.notify(getProject(), DDLMappingListener.TOPIC).ddlFileDetached(virtualFile);
+        EventUtil.notify(getProject(), DDLFileAttachmentManagerListener.TOPIC).ddlFileDetached(virtualFile);
     }
 
     private static List<VirtualFile> lookupApplicableDDLFiles(DBSchemaObject object) {
@@ -205,21 +229,6 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false);
             descriptor.setTitle("Select New DDL-File Location");
 
-/*            VirtualFile[] contentRoots;
-
-            Module module = connectionHandler.getModule();
-            if (module == null) {
-                ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
-                contentRoots = rootManager.getContentRoots();
-            } else {
-                ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-                contentRoots = rootManager.getContentRoots();
-            }
-            descriptor.setIsTreeRootVisible(contentRoots.length == 1);
-            for (VirtualFile contentRoot : contentRoots) {
-                descriptor.addRoot(contentRoot);
-            }*/
-
             VirtualFile[] selectedDirectories = FileChooser.chooseFiles(descriptor, project, null);
             if (selectedDirectories.length > 0) {
                 final String fileName = fileNameProvider.getFileName();
@@ -229,9 +238,9 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                     public void run() {
                         try {
                             VirtualFile virtualFile = parentDirectory.createChildData(this, fileName);
-                            bindDDLFile(object, virtualFile);
+                            attachDDLFile(object, virtualFile);
                             DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
-                            databaseFile.updateDDLFiles();
+                            updateDDLFiles(databaseFile);
                             DatabaseFileSystem.getInstance().reopenEditor(object);
                         } catch (IOException e) {
                             MessageUtil.showErrorDialog(project, "Could not create file " + parentDirectory + File.separator + fileName + ".", e);
@@ -242,7 +251,48 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         }                                
     }
 
-    public void bindDDLFiles(final DBSchemaObject object) {
+    public void updateDDLFiles(final DBEditableObjectVirtualFile databaseFile) {
+        Project project = getProject();
+        DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);
+        if (ddlFileSettings.getGeneralSettings().isSynchronizeDDLFilesEnabled()) {
+            DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
+            List<VirtualFile> ddlFiles = databaseFile.getAttachedDDLFiles();
+            if (ddlFiles != null && !ddlFiles.isEmpty()) {
+                for (VirtualFile ddlFile : ddlFiles) {
+                    DDLFileType ddlFileType = ddlFileManager.getDDLFileTypeForExtension(ddlFile.getExtension());
+                    DBContentType fileContentType = ddlFileType.getContentType();
+
+                    StringBuilder buffer = new StringBuilder();
+                    if (fileContentType.isBundle()) {
+                        DBContentType[] contentTypes = fileContentType.getSubContentTypes();
+                        for (DBContentType contentType : contentTypes) {
+                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                            if (sourceCodeFile != null) {
+                                String statement = ddlFileManager.createDDLStatement(sourceCodeFile, contentType);
+                                if (statement.trim().length() > 0) {
+                                    buffer.append(statement);
+                                    buffer.append('\n');
+                                }
+                                if (contentType != contentTypes[contentTypes.length - 1]) buffer.append('\n');
+                            }
+                        }
+                    } else {
+                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(fileContentType);
+                        if (sourceCodeFile != null) {
+                            buffer.append(ddlFileManager.createDDLStatement(sourceCodeFile, fileContentType));
+                            buffer.append('\n');
+                        }
+                    }
+                    Document document = DocumentUtil.getDocument(ddlFile);
+                    if (document != null) {
+                        DocumentUtil.setText(document, buffer);
+                    }
+                }
+            }
+        }
+    }
+
+    public void attachDDLFiles(final DBSchemaObject object) {
         List<VirtualFile> virtualFiles = lookupDetachedDDLFiles(object);
         if (virtualFiles.size() == 0) {
             List<String> attachedFiles = getAttachedFilePaths(object);
@@ -270,7 +320,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                     new SimpleTask() {
                         @Override
                         protected void execute() {
-                            if (getHandle() == 1) {
+                            if (getOption() == 1) {
                                 createDDLFile(object);
                             }
                         }

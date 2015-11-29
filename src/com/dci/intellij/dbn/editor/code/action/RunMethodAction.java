@@ -22,12 +22,12 @@ public class RunMethodAction extends AbstractSourceCodeEditorAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         FileEditor fileEditor = getFileEditor(e);
-        if (virtualFile != null && fileEditor != null) {
-            Project project = virtualFile.getProject();
+        if (sourceCodeFile != null && fileEditor != null) {
+            Project project = sourceCodeFile.getProject();
             if (project != null) {
-                DBMethod method = (DBMethod) virtualFile.getObject();
+                DBMethod method = (DBMethod) sourceCodeFile.getObject();
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
                 if (executionManager.promptExecutionDialog(method, DBDebuggerType.NONE)) {
                     executionManager.execute(method);
@@ -37,11 +37,11 @@ public class RunMethodAction extends AbstractSourceCodeEditorAction {
     }
 
     public void update(@NotNull AnActionEvent e) {
-        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         boolean visible = false;
-        if (virtualFile != null) {
-            DBSchemaObject schemaObject = virtualFile.getObject();
+        if (sourceCodeFile != null) {
+            DBSchemaObject schemaObject = sourceCodeFile.getObject();
             if (schemaObject.getObjectType().matches(DBObjectType.METHOD)) {
                 visible = true;
             }

@@ -21,7 +21,7 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
 
         if (project != null && sourcecodeFile != null) {
             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            sourceCodeManager.showChangesAgainstDatabase(sourcecodeFile);
+            sourceCodeManager.opedDatabaseDiffWindow(sourcecodeFile);
         }
     }
 

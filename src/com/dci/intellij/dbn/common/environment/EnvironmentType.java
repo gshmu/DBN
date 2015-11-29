@@ -7,6 +7,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.options.ConfigurationUtil;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
@@ -29,11 +30,11 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         JBColor NONE = new JBColor(new Color(0xffffff), Color.DARK_GRAY);
     }
 
-    public static final EnvironmentType DEFAULT     = new EnvironmentType("default", "", "", null, null);
-    public static final EnvironmentType DEVELOPMENT = new EnvironmentType("development", "Development", "Development environment", new Color(-2430209), new Color(0x445F80));
-    public static final EnvironmentType INTEGRATION = new EnvironmentType("integration", "Integration", "Integration environment", new Color(-2621494), new Color(0x466646));
-    public static final EnvironmentType PRODUCTION  = new EnvironmentType("production", "Production", "Productive environment", new Color(-11574), new Color(0x634544));
-    public static final EnvironmentType OTHER       = new EnvironmentType("other", "Other", "", new Color(-1576), new Color(0x5C5B41));
+    public static final EnvironmentType DEFAULT     = new EnvironmentType("default", "", "", null, null, false, false);
+    public static final EnvironmentType DEVELOPMENT = new EnvironmentType("development", "Development", "Development environment", new Color(-2430209), new Color(0x445F80), false, false);
+    public static final EnvironmentType INTEGRATION = new EnvironmentType("integration", "Integration", "Integration environment", new Color(-2621494), new Color(0x466646), true, false);
+    public static final EnvironmentType PRODUCTION  = new EnvironmentType("production", "Production", "Productive environment", new Color(-11574), new Color(0x634544), true, true);
+    public static final EnvironmentType OTHER       = new EnvironmentType("other", "Other", "", new Color(-1576), new Color(0x5C5B41), false, false);
     public static final EnvironmentType[] DEFAULT_ENVIRONMENT_TYPES = new EnvironmentType[] {
             DEVELOPMENT,
             INTEGRATION,
@@ -45,7 +46,9 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
     private String description;
     private Color regularColor;
     private Color darkColor;
-    private transient JBColor color;
+    private JBColor color;
+    private boolean readonlyCode = false;
+    private boolean readonlyData = false;
     private boolean isDarkScheme = UIUtil.isUnderDarcula();
 
     public static EnvironmentType forName(String name) {
@@ -61,12 +64,14 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         id = UUID.randomUUID().toString();
     }
 
-    public EnvironmentType(String id, String name, String description, Color regularColor, Color darkColor) {
+    public EnvironmentType(String id, String name, String description, Color regularColor, Color darkColor, boolean readonlyCode, boolean dataEditable) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.regularColor = regularColor;
         this.darkColor = darkColor;
+        this.readonlyCode = readonlyCode;
+        this.readonlyData = dataEditable;
     }
 
     public String getId() {
@@ -124,8 +129,24 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         this.color = null;
     }
 
+    public boolean isReadonlyCode() {
+        return readonlyCode;
+    }
+
+    public void setReadonlyCode(boolean readonlyCode) {
+        this.readonlyCode = readonlyCode;
+    }
+
+    public boolean isReadonlyData() {
+        return readonlyData;
+    }
+
+    public void setReadonlyData(boolean readonlyData) {
+        this.readonlyData = readonlyData;
+    }
+
     public EnvironmentType clone() {
-        return new EnvironmentType(id, name, description, regularColor, darkColor);
+        return new EnvironmentType(id, name, description, regularColor, darkColor, readonlyCode, readonlyData);
     }
     
     @Override
@@ -133,31 +154,6 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         return name;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        EnvironmentType that = (EnvironmentType) o;
-
-        if (darkColor != null ? !darkColor.equals(that.darkColor) : that.darkColor != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (!id.equals(that.id)) return false;
-        if (!name.equals(that.name)) return false;
-        if (regularColor != null ? !regularColor.equals(that.regularColor) : that.regularColor != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (regularColor != null ? regularColor.hashCode() : 0);
-        result = 31 * result + (darkColor != null ? darkColor.hashCode() : 0);
-        return result;
-    }
 
     @Override
     public void readConfiguration(Element element) {
@@ -181,6 +177,9 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
             id = defaultEnvironmentType.id;
         }
         if (id == null) id = name.toLowerCase();
+        readonlyCode = ConfigurationUtil.getBooleanAttribute(element, "readonly-code", readonlyCode);
+        readonlyData = ConfigurationUtil.getBooleanAttribute(element, "readonly-data", readonlyData);
+
     }
 
     @Override
@@ -191,5 +190,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         element.setAttribute("color",
                 (regularColor != null ? regularColor.getRGB() : "") + "/" +
                 (darkColor != null ? darkColor.getRGB() : ""));
+        ConfigurationUtil.setBooleanAttribute(element, "readonly-code", readonlyCode);
+        ConfigurationUtil.setBooleanAttribute(element, "readonly-data", readonlyData);
     }
 }

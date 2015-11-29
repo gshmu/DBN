@@ -11,7 +11,8 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -57,7 +58,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         });
 
         Project project = getProject();
-        EventUtil.subscribe(project, this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
         EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
 
         Disposer.register(this, connectionTabs);
@@ -162,7 +163,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     /********************************************************
      *                       Listeners                      *
      ********************************************************/
-    private EnvironmentChangeListener environmentChangeListener = new EnvironmentChangeListener() {
+    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerAdapter() {
         @Override
         public void configurationChanged() {
             Project project = getProject();

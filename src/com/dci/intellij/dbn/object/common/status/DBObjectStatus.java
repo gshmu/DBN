@@ -4,9 +4,11 @@ public enum DBObjectStatus {
     PRESENT(false, true),
     ENABLED(true, true),
     VALID(true, true),
+    EDITABLE(false, false),
     DEBUG(true, true),
-    COMPILING(false, false),
-    SAVING(false, false);
+    LOADING(false, false),
+    SAVING(false, false),
+    COMPILING(false, false);
 
     private boolean propagable;
     private boolean defaultValue;

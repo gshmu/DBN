@@ -412,68 +412,66 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     public synchronized void refreshObjectsStatus() throws SQLException {
-        final Set<BrowserTreeNode> refreshNodes = resetObjectsStatus();
+        Set<BrowserTreeNode> refreshNodes = resetObjectsStatus();
         Connection connection = null;
         ResultSet resultSet = null;
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            try {
-                connection = connectionHandler.getPoolConnection();
-                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                resultSet = metadataInterface.loadInvalidObjects(getName(), connection);
-                while (resultSet != null && resultSet.next()) {
-                    String objectName = resultSet.getString("OBJECT_NAME");
-                    DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
-                    if (schemaObject != null && schemaObject.getStatus().has(DBObjectStatus.VALID)) {
-                        DBObjectStatusHolder objectStatus = schemaObject.getStatus();
-                        boolean statusChanged;
+        try {
+            connection = connectionHandler.getPoolConnection();
+            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+            resultSet = metadataInterface.loadInvalidObjects(getName(), connection);
+            while (resultSet != null && resultSet.next()) {
+                String objectName = resultSet.getString("OBJECT_NAME");
+                DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
+                if (schemaObject != null && schemaObject.getStatus().has(DBObjectStatus.VALID)) {
+                    DBObjectStatusHolder objectStatus = schemaObject.getStatus();
+                    boolean statusChanged;
 
-                        if (schemaObject.getContentType().isBundle()) {
-                            String objectType = resultSet.getString("OBJECT_TYPE");
-                            statusChanged = objectType.contains("BODY") ?
-                                    objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.VALID, false) :
-                                    objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.VALID, false);
-                        }
-                        else {
-                            statusChanged = objectStatus.set(DBObjectStatus.VALID, false);
-                        }
-                        if (statusChanged) {
-                            refreshNodes.add(schemaObject.getTreeParent());
-                        }
+                    if (schemaObject.getContentType().isBundle()) {
+                        String objectType = resultSet.getString("OBJECT_TYPE");
+                        statusChanged = objectType.contains("BODY") ?
+                                objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.VALID, false) :
+                                objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.VALID, false);
+                    }
+                    else {
+                        statusChanged = objectStatus.set(DBObjectStatus.VALID, false);
+                    }
+                    if (statusChanged) {
+                        refreshNodes.add(schemaObject.getTreeParent());
                     }
                 }
+            }
 
-                resultSet = metadataInterface.loadDebugObjects(getName(), connection);
-                while (resultSet != null && resultSet.next()) {
-                    String objectName = resultSet.getString("OBJECT_NAME");
-                    DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
-                    if (schemaObject != null && schemaObject.getStatus().has(DBObjectStatus.DEBUG)) {
-                        DBObjectStatusHolder objectStatus = schemaObject.getStatus();
-                        boolean statusChanged;
+            resultSet = metadataInterface.loadDebugObjects(getName(), connection);
+            while (resultSet != null && resultSet.next()) {
+                String objectName = resultSet.getString("OBJECT_NAME");
+                DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
+                if (schemaObject != null && schemaObject.getStatus().has(DBObjectStatus.DEBUG)) {
+                    DBObjectStatusHolder objectStatus = schemaObject.getStatus();
+                    boolean statusChanged;
 
-                        if (schemaObject.getContentType().isBundle()) {
-                            String objectType = resultSet.getString("OBJECT_TYPE");
-                            statusChanged = objectType.contains("BODY") ?
-                                    objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.DEBUG, true) :
-                                    objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.DEBUG, true);
-                        }
-                        else {
-                            statusChanged = objectStatus.set(DBObjectStatus.DEBUG, true);
-                        }
-                        if (statusChanged) {
-                            refreshNodes.add(schemaObject.getTreeParent());
-                        }
+                    if (schemaObject.getContentType().isBundle()) {
+                        String objectType = resultSet.getString("OBJECT_TYPE");
+                        statusChanged = objectType.contains("BODY") ?
+                                objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.DEBUG, true) :
+                                objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.DEBUG, true);
+                    }
+                    else {
+                        statusChanged = objectStatus.set(DBObjectStatus.DEBUG, true);
+                    }
+                    if (statusChanged) {
+                        refreshNodes.add(schemaObject.getTreeParent());
                     }
                 }
-
-            } finally {
-                ConnectionUtil.closeResultSet(resultSet);
-                connectionHandler.freePoolConnection(connection);
             }
 
-            for (BrowserTreeNode treeNode : refreshNodes) {
-                EventUtil.notify(getProject(), BrowserTreeChangeListener.TOPIC).nodeChanged(treeNode, TreeEventType.NODES_CHANGED);
-            }
+        } finally {
+            ConnectionUtil.closeResultSet(resultSet);
+            connectionHandler.freePoolConnection(connection);
+        }
+
+        for (BrowserTreeNode treeNode : refreshNodes) {
+            EventUtil.notify(getProject(), BrowserTreeChangeListener.TOPIC).nodeChanged(treeNode, TreeEventType.NODES_CHANGED);
         }
 
     }

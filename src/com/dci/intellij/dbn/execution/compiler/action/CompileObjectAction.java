@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.execution.compiler.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
+import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
@@ -15,14 +17,13 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class CompileObjectAction extends AnAction {
     private DBObjectRef<DBSchemaObject> objectRef;
     private DBContentType contentType;
-    private CompileTypeOption compileType;
+    private CompileType compileType;
 
-    public CompileObjectAction(DBSchemaObject object, DBContentType contentType, CompileTypeOption compileType) {
+    public CompileObjectAction(DBSchemaObject object, DBContentType contentType, CompileType compileType) {
         super("Compile");
         this.objectRef = DBObjectRef.from(object);
         this.contentType = contentType;
@@ -53,7 +54,7 @@ public class CompileObjectAction extends AnAction {
         presentation.setEnabled(isEnabled);
 
         String text = "Compile " + object.getObjectType().getName();
-        if (compileType == CompileTypeOption.DEBUG) {
+        if (compileType == CompileType.DEBUG) {
             text += " (debug)";
         }
         presentation.setText(text);

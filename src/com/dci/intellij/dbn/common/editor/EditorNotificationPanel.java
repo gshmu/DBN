@@ -12,9 +12,9 @@ import java.awt.FlowLayout;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.intellij.codeInsight.hint.HintUtil;
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
@@ -35,22 +35,27 @@ public class EditorNotificationPanel extends JPanel{
         setPreferredSize(new Dimension(-1, 24));
 
         add(label, BorderLayout.CENTER);
-        Icon icon;
+        Icon icon = null;
         Color background;
 
         switch (messageType) {
             case INFO: {
-                icon = AllIcons.General.Information;
+                icon = Icons.COMMON_INFO;
+                background = HintUtil.INFORMATION_COLOR;
+                break;
+            }
+            case WARNING:{
+                icon = Icons.COMMON_WARNING;
                 background = HintUtil.INFORMATION_COLOR;
                 break;
             }
             case ERROR:{
-                icon = AllIcons.General.Error;
+                //icon = AllIcons.General.Error;
                 background = HintUtil.ERROR_COLOR;
                 break;
             }
             default:{
-                icon = AllIcons.General.Information;
+                //icon = AllIcons.General.Information;
                 background = HintUtil.INFORMATION_COLOR;
                 break;
             }

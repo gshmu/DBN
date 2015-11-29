@@ -24,7 +24,7 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputActio
                 SimpleTask closeConsoleTask = new SimpleTask() {
                     @Override
                     protected void execute() {
-                        if (getHandle() == 0) {
+                        if (getOption() == 0) {
                             closeConsole(loggingResult, project);
                         }
                     }

@@ -61,12 +61,12 @@ public abstract class DBDebugOperationTask<T> implements RunnableTask<T> {
     }
 
     @Override
-    public void setHandle(T handle) {
+    public void setOption(T handle) {
         this.handle = handle;
     }
 
     @Override
-    public T getHandle() {
+    public T getOption() {
         return handle;
     }
 }

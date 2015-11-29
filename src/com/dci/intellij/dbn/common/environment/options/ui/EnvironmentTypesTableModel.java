@@ -46,18 +46,23 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     };    
 
     public int getColumnCount() {
-        return 3;
+        return 5;
     }
 
     public String getColumnName(int columnIndex) {
         return columnIndex == 0 ? "Name" :
                columnIndex == 1 ? "Description" :
-               columnIndex == 2 ? "Color" : null;
+               columnIndex == 2 ? "Readonly Data" :
+               columnIndex == 3 ? "Readonly Code" :
+               columnIndex == 4 ? "Color" : null;
     }
 
     public Class<?> getColumnClass(int columnIndex) {
-        return String.class;
-
+        return columnIndex == 0 ? String.class :
+            columnIndex == 1 ? String.class :
+            columnIndex == 2 ? Boolean.class :
+            columnIndex == 3 ? Boolean.class:
+            columnIndex == 4 ? Color.class : String.class;
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -69,7 +74,9 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
         return
            columnIndex == 0 ? environmentType.getName() :
            columnIndex == 1 ? environmentType.getDescription() :
-           columnIndex == 2 ? environmentType.getColor() : null;
+           columnIndex == 2 ? environmentType.isReadonlyData() :
+           columnIndex == 3 ? environmentType.isReadonlyCode() :
+           columnIndex == 4 ? environmentType.getColor() : null;
     }
 
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
@@ -78,10 +85,13 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
             EnvironmentType environmentType = environmentTypes.get(rowIndex);
             if (columnIndex == 0) {
                 environmentType.setName((String) o);
-
             } else if (columnIndex == 1) {
                 environmentType.setDescription((String) o);
             } else if (columnIndex == 2) {
+                environmentType.setReadonlyData((Boolean) o);
+            } else if (columnIndex == 3) {
+                environmentType.setReadonlyCode((Boolean) o);
+            } else if (columnIndex == 4) {
                 Color color = (Color) o;
                 environmentType.setColor(color);
             }

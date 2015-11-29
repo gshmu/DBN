@@ -27,6 +27,14 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Environment types - editing control for code and data<br>
+                - "Cancel" action for unresponsive loads in data editors<br>
+                - Outdated sources notification<br>
+                - Configurable default editors<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.4912</b>
             <ul>
                 - Compatibility with latest IntelliJ EAP<br>
@@ -349,6 +357,7 @@
         <component><implementation-class>com.dci.intellij.dbn.debugger.DatabaseDebuggerManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.ddl.DDLFileManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.ddl.DDLFileAttachmentManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.editor.EditorStateManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.code.SourceCodeManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.data.DatasetEditorManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager</implementation-class></component>

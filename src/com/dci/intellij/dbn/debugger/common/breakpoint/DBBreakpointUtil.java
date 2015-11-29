@@ -69,8 +69,8 @@ public class DBBreakpointUtil {
         DBContentType contentType = DBContentType.CODE;
         VirtualFile virtualFile = getVirtualFile(breakpoint);
         if (virtualFile instanceof DBSourceCodeVirtualFile) {
-            DBSourceCodeVirtualFile sourceCodeVirtualFile = (DBSourceCodeVirtualFile) virtualFile;
-            contentType = sourceCodeVirtualFile.getContentType();
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+            contentType = sourceCodeFile.getContentType();
         }
         return contentType;
     }

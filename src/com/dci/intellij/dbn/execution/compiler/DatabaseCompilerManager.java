@@ -13,17 +13,24 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
+import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
+import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.compiler.ui.CompilerTypeSelectionDialog;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -34,11 +41,44 @@ import com.intellij.openapi.ui.DialogWrapper;
 public class DatabaseCompilerManager extends AbstractProjectComponent {
     private DatabaseCompilerManager(Project project) {
         super(project);
+        EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
     public static DatabaseCompilerManager getInstance(@NotNull Project project) {
         return FailsafeUtil.getComponent(project, DatabaseCompilerManager.class);
     }
+
+    private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+        @Override
+        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor) {
+            Project project = getProject();
+            DBSchemaObject object = sourceCodeFile.getObject();
+            DBContentType contentType = sourceCodeFile.getContentType();
+
+            if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
+                boolean isCompilable = object.getProperties().is(DBObjectProperty.COMPILABLE);
+
+                if (isCompilable) {
+                    DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
+                    CompileType compileType = compilerManager.getCompileType(object, contentType);
+
+                    CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, sourceCodeFile, fileEditor);
+                    if (compileType == CompileType.DEBUG) {
+                        compilerManager.compileObject(object, compileType, compilerAction);
+                    }
+                    ConnectionHandler connectionHandler = object.getConnectionHandler();
+                    EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
+
+                    compilerManager.createCompilerResult(object, compilerAction);
+                }
+            }
+        }
+
+        @Override
+        public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {
+
+        }
+    };
 
     public void createCompilerResult(DBSchemaObject object, CompilerAction compilerAction) {
         Project project = object.getProject();
@@ -52,33 +92,45 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         ExecutionManager.getInstance(project).addExecutionResult(compilerResult);
     }
 
-    public void compileObject(final DBSchemaObject object, CompileTypeOption compileType, final CompilerAction compilerAction) {
-        assert compileType != CompileTypeOption.ASK && compileType != CompileTypeOption.KEEP;
+    public CompileType getCompileType(@Nullable DBSchemaObject object, DBContentType contentType) {
+        OperationSettings operationSettings = OperationSettings.getInstance(getProject());
+        CompileType compileType = operationSettings.getCompilerSettings().getCompileType();
+        switch (compileType) {
+            case KEEP: return object != null && object.getStatus().is(contentType, DBObjectStatus.DEBUG) ? CompileType.DEBUG : CompileType.NORMAL;
+            case DEBUG: return CompileType.DEBUG;
+        }
+        return CompileType.NORMAL;
+    }
+
+    public void compileObject(final DBSchemaObject object, CompileType compileType, final CompilerAction compilerAction) {
+        assert compileType != CompileType.KEEP;
         Project project = object.getProject();
         boolean allowed = DatabaseDebuggerManager.getInstance(project).checkForbiddenOperation(object.getConnectionHandler());
         if (allowed) {
             doCompileObject(object, compileType, compilerAction);
             if (DatabaseFileSystem.isFileOpened(object)) {
-                DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
-                DBContentType contentType = compilerAction.getContentType();
-                if (contentType.isBundle()) {
-                    for (DBContentType subContentType : contentType.getSubContentTypes()) {
-                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
+                DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
+                if (databaseFile != null) {
+                    DBContentType contentType = compilerAction.getContentType();
+                    if (contentType.isBundle()) {
+                        for (DBContentType subContentType : contentType.getSubContentTypes()) {
+                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
+                            if (sourceCodeFile != null) {
+                                sourceCodeFile.updateChangeTimestamp();
+                            }
+                        }
+                    } else {
+                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
                         if (sourceCodeFile != null) {
                             sourceCodeFile.updateChangeTimestamp();
                         }
-                    }
-                } else {
-                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                    if (sourceCodeFile != null) {
-                        sourceCodeFile.updateChangeTimestamp();
                     }
                 }
             }
         }
     }
 
-    public void compileInBackground(final DBSchemaObject object, final CompileTypeOption compileType, final CompilerAction compilerAction) {
+    public void compileInBackground(final DBSchemaObject object, final CompileType compileType, final CompilerAction compilerAction) {
         new ConnectionAction("compiling the object", object) {
             @Override
             protected boolean canExecute() {
@@ -89,17 +141,22 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
 
             @Override
             protected void execute() {
-                BackgroundTask<CompileTypeOption> compileTask = new BackgroundTask<CompileTypeOption>(object.getProject(), "Compiling " + object.getQualifiedNameWithType(), true) {
+                final Project project = getProject();
+                BackgroundTask<CompileType> compileTask = new BackgroundTask<CompileType>(project, "Compiling " + object.getQualifiedNameWithType(), true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                        CompileTypeOption compileTypeOption = getHandle();
-                        doCompileObject(object, compileTypeOption, compilerAction);
+                        CompileType compileType = getOption();
+                        doCompileObject(object, compileType, compilerAction);
+                        ConnectionHandler connectionHandler = object.getConnectionHandler();
+                        EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
                         if (DatabaseFileSystem.isFileOpened(object)) {
-                            DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
-                            DBContentType contentType = compilerAction.getContentType();
-                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                            if (sourceCodeFile != null) {
-                                sourceCodeFile.updateChangeTimestamp();
+                            DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
+                            if (databaseFile != null) {
+                                DBContentType contentType = compilerAction.getContentType();
+                                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                                if (sourceCodeFile != null) {
+                                    sourceCodeFile.updateChangeTimestamp();
+                                }
                             }
                         }
                     }
@@ -110,21 +167,22 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }.start();
     }
 
-    private void doCompileObject(DBSchemaObject object, CompileTypeOption compileType, CompilerAction compilerAction) {
+    private void doCompileObject(DBSchemaObject object, CompileType compileType, CompilerAction compilerAction) {
         DBContentType contentType = compilerAction.getContentType();
-        object.getStatus().set(contentType, DBObjectStatus.COMPILING, true);
+        DBObjectStatusHolder objectStatus = object.getStatus();
+        objectStatus.set(contentType, DBObjectStatus.COMPILING, true);
         Connection connection = null;
         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(getProject());
-        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getConnectionHandler());
+        ConnectionHandler connectionHandler = object.getConnectionHandler();
         boolean verbose = compilerAction.getSource() != CompilerActionSource.BULK_COMPILE;
         try {
             connection = connectionHandler.getPoolConnection();
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
 
-            boolean isDebug = compileType == CompileTypeOption.DEBUG;
+            boolean isDebug = compileType == CompileType.DEBUG;
 
-            if (compileType == CompileTypeOption.KEEP) {
-                isDebug = object.getStatus().is(DBObjectStatus.DEBUG);
+            if (compileType == CompileType.KEEP) {
+                isDebug = objectStatus.is(DBObjectStatus.DEBUG);
             }
 
             if (contentType == DBContentType.CODE_SPEC || contentType == DBContentType.CODE) {
@@ -163,12 +221,11 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             if (verbose) compilerManager.createErrorCompilerResult(compilerAction, object, contentType, e);
         }  finally{
             connectionHandler.freePoolConnection(connection);
-            if (verbose) connectionHandler.getObjectBundle().refreshObjectsStatus(object);
-            object.getStatus().set(contentType, DBObjectStatus.COMPILING, false);
+            objectStatus.set(contentType, DBObjectStatus.COMPILING, false);
         }
     }
 
-    public void compileInvalidObjects(final DBSchema schema, final CompileTypeOption compileType) {
+    public void compileInvalidObjects(final DBSchema schema, final CompileType compileType) {
         new ConnectionAction("compiling the invalid objects", schema) {
             @Override
             protected boolean canExecute() {
@@ -179,17 +236,17 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
 
             @Override
             protected void execute() {
-                Project project = getProject();
+                final Project project = getProject();
                 final ConnectionHandler connectionHandler = getConnectionHandler();
-                promptCompileTypeSelection(compileType, null, new BackgroundTask<CompileTypeOption>(project, "Compiling invalid objects", false, true) {
+                promptCompileTypeSelection(compileType, null, new BackgroundTask<CompileType>(project, "Compiling invalid objects", false, true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        CompileTypeOption compileTypeOption = getHandle();
-                        doCompileInvalidObjects(schema.getPackages(), "packages", progressIndicator, compileTypeOption);
-                        doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, compileTypeOption);
-                        doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, compileTypeOption);
-                        doCompileInvalidObjects(schema.getDatasetTriggers(), "triggers", progressIndicator, compileTypeOption);
-                        connectionHandler.getObjectBundle().refreshObjectsStatus(null);
+                        CompileType compileType = getOption();
+                        doCompileInvalidObjects(schema.getPackages(), "packages", progressIndicator, compileType);
+                        doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, compileType);
+                        doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, compileType);
+                        doCompileInvalidObjects(schema.getDatasetTriggers(), "triggers", progressIndicator, compileType);
+                        EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, null);
 
                         if (!progressIndicator.isCanceled()) {
                             List<CompilerResult> compilerErrors = new ArrayList<CompilerResult>();
@@ -209,7 +266,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }.start();
     }
 
-    private void doCompileInvalidObjects(List<? extends DBSchemaObject> objects, String description, ProgressIndicator progressIndicator, CompileTypeOption compileType) {
+    private void doCompileInvalidObjects(List<? extends DBSchemaObject> objects, String description, ProgressIndicator progressIndicator, CompileType compileType) {
         if (progressIndicator.isCanceled()) return;
 
         progressIndicator.setText("Compiling invalid " + description + "...");
@@ -251,21 +308,21 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }
     }
 
-    private void promptCompileTypeSelection(CompileTypeOption compileType, @Nullable DBSchemaObject program, RunnableTask<CompileTypeOption> callback) {
-        if (compileType == CompileTypeOption.ASK) {
+    private void promptCompileTypeSelection(CompileType compileType, @Nullable DBSchemaObject program, RunnableTask<CompileType> callback) {
+        if (compileType == CompileType.ASK) {
             CompilerTypeSelectionDialog dialog = new CompilerTypeSelectionDialog(getProject(), program);
             dialog.show();
             if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
                 compileType = dialog.getSelection();
                 if (dialog.isRememberSelection()) {
                     OperationSettings operationSettings = OperationSettings.getInstance(getProject());
-                    operationSettings.getCompilerSettings().setCompileTypeOption(compileType);
+                    operationSettings.getCompilerSettings().setCompileType(compileType);
                 }
-                callback.setHandle(compileType);
+                callback.setOption(compileType);
                 callback.start();
             }
         } else {
-            callback.setHandle(compileType);
+            callback.setOption(compileType);
             callback.start();
         }
     }

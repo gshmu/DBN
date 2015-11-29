@@ -8,6 +8,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -20,6 +21,8 @@ import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.BooleanTableCellEditor;
+import com.intellij.ui.BooleanTableCellRenderer;
 import com.intellij.ui.ColorChooser;
 import com.intellij.ui.TableUtil;
 import com.intellij.util.ui.UIUtil;
@@ -33,17 +36,28 @@ public class EnvironmentTypesEditorTable extends DBNTable<EnvironmentTypesTableM
         setSelectionBackground(UIUtil.getTableBackground());
         setSelectionForeground(UIUtil.getTableForeground());
         setCellSelectionEnabled(true);
-        setDefaultRenderer(Object.class, new EnvironmentTypesTableCellRenderer());
-        columnModel.getColumn(0).setPreferredWidth(100);
-        columnModel.getColumn(2).setMaxWidth(50);
+        setDefaultRenderer(String.class, new EnvironmentTypesTableCellRenderer());
+        setDefaultRenderer(Color.class, new EnvironmentTypesTableCellRenderer());
+        setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
+        setDefaultEditor(Boolean.class, new BooleanTableCellEditor());
+
+        setFixedWidth(columnModel.getColumn(2), 100);
+        setFixedWidth(columnModel.getColumn(3), 100);
+        setFixedWidth(columnModel.getColumn(4), 60);
 
         addMouseListener(mouseListener);
     }
 
     public void setEnvironmentTypes(EnvironmentTypeBundle environmentTypes) {
         super.setModel(new EnvironmentTypesTableModel(getProject(), environmentTypes));
-        columnModel.getColumn(0).setPreferredWidth(100);
-        columnModel.getColumn(2).setMaxWidth(50);
+        setFixedWidth(columnModel.getColumn(2), 100);
+        setFixedWidth(columnModel.getColumn(3), 100);
+        setFixedWidth(columnModel.getColumn(4), 60);
+    }
+
+    void setFixedWidth(TableColumn tableColumn, int width) {
+        tableColumn.setMaxWidth(width);
+        tableColumn.setMinWidth(width);
     }
 
     MouseListener mouseListener = new MouseAdapter() {
@@ -52,10 +66,10 @@ public class EnvironmentTypesEditorTable extends DBNTable<EnvironmentTypesTableM
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
                 Point point = e.getPoint();
                 int columnIndex = columnAtPoint(point);
-                if (columnIndex == 2) {
+                if (columnIndex == 4) {
                     int rowIndex = rowAtPoint(point);
                     Color color = (Color) getValueAt(rowIndex, columnIndex);
-                    color = ColorChooser.chooseColor(EnvironmentTypesEditorTable.this, "Select environment color", color);
+                    color = ColorChooser.chooseColor(EnvironmentTypesEditorTable.this, "Select Environment Color", color);
                     if (color != null) {
                         setValueAt(color, rowIndex, columnIndex);
                     }
@@ -95,7 +109,7 @@ public class EnvironmentTypesEditorTable extends DBNTable<EnvironmentTypesTableM
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        return column < 2;
+        return column < 4;
     }
 
     private void startCellEditing() {
@@ -117,19 +131,22 @@ public class EnvironmentTypesEditorTable extends DBNTable<EnvironmentTypesTableM
         model.notifyListeners(0, model.getRowCount(), 0);
     }
 
-    public Component prepareEditor(TableCellEditor editor, int rowIndex, int columnIndex) {
-        final JTextField textField = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
-        textField.setBorder(new EmptyBorder(0,3,0,0));
+    public Component prepareEditor(TableCellEditor editor, final int rowIndex, final int columnIndex) {
+        Component component = super.prepareEditor(editor, rowIndex, columnIndex);
+        if (component instanceof JTextField) {
+            final JTextField textField = (JTextField) component;
+            textField.setBorder(new EmptyBorder(0,3,0,0));
+            new SimpleLaterInvocator() {
+                @Override
+                protected void execute() {
+                    textField.selectAll();
+                    textField.grabFocus();
+                    selectCell(rowIndex, columnIndex);
 
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                textField.selectAll();
-                textField.grabFocus();
-            }
-        }.start();
-        selectCell(rowIndex, columnIndex);
-        return textField;
+                }
+            }.start();
+        }
+        return component;
     }
 
     public void insertRow() {

@@ -1,16 +1,15 @@
 package com.dci.intellij.dbn.object.common;
 
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 
@@ -20,8 +19,8 @@ public interface DBSchemaObject extends DBObject {
     DBContentType getContentType();
     boolean isEditable(DBContentType contentType);
 
-    Timestamp loadChangeTimestamp(DBContentType contentType) throws SQLException;
-    DBObjectTimestampLoader getTimestampLoader(DBContentType contentType);
+    @Nullable
+    ChangeTimestamp loadChangeTimestamp(DBContentType contentType) throws SQLException;
 
     String loadCodeFromDatabase(DBContentType contentType) throws SQLException;
     DBLanguage getCodeLanguage(DBContentType contentType);
@@ -36,7 +35,8 @@ public interface DBSchemaObject extends DBObject {
     @NotNull
     DBEditableObjectVirtualFile getVirtualFile();
 
-    List<DBSchema> getReferencingSchemas() throws SQLException;
+    @Nullable
+    DBEditableObjectVirtualFile getCachedVirtualFile();
 
-    EditorProviderId getDefaultEditorProviderId();
+    List<DBSchema> getReferencingSchemas() throws SQLException;
 }

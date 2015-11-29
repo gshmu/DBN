@@ -21,18 +21,18 @@ public class DDLFileAction extends GroupPopupAction {
     }
 
     public void update(@NotNull AnActionEvent e) {
-        DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         presentation.setIcon(Icons.CODE_EDITOR_DDL_FILE);
         presentation.setText("DDL Files");
-        presentation.setEnabled(sourcecodeFile != null);
+        presentation.setEnabled(sourceCodeFile != null);
     }
 
     @Override
     protected AnAction[] getActions(AnActionEvent e) {
-        DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
-        if (sourcecodeFile != null) {
-            DBSchemaObject object = sourcecodeFile.getObject();
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
+        if (sourceCodeFile != null) {
+            DBSchemaObject object = sourceCodeFile.getObject();
             return new AnAction[]{
                     new CreateDDLFileAction(object),
                     new AttachDDLFileAction(object),
