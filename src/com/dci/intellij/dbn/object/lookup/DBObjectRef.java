@@ -276,15 +276,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     protected final T load(Project project) {
-        T object = reference == null ? null : reference.get();
-        if (isDirty()) {
+        T object = getObject();
+        if (object == null) {
             synchronized (this) {
-                if (isDirty()) {
-                    object = null;
-                    if (reference != null) {
-                        reference.clear();
-                        reference = null;
-                    }
+                object = getObject();
+                if (object == null) {
+                    clearReference();
                     ConnectionHandler connectionHandler =
                             project == null || project.isDisposed() ?
                                     ConnectionCache.findConnectionHandler(getConnectionId()) :
@@ -301,13 +298,25 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return object;
     }
 
-    private boolean isDirty() {
-        if (reference != null) {
-            T object = reference.get();
-            return object != null && !object.isDisposed();
+    private T getObject () {
+        try {
+            return reference == null ? null : reference.get();
+        } catch (Exception e) {
+            return null;
         }
-        return true;
     }
+
+    private void clearReference() {
+        try {
+            if (reference != null) {
+                reference.clear();
+                reference = null;
+            }
+        } catch (Exception ignore) {
+
+        }
+    }
+
 
     @Nullable
     protected T lookup(@NotNull ConnectionHandler connectionHandler) {
