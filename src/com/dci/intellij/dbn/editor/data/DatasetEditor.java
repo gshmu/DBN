@@ -58,6 +58,7 @@ import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
@@ -88,8 +89,6 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
         connectionHandlerRef = ConnectionHandlerRef.from(dataset.getConnectionHandler());
         editorForm = new DatasetEditorForm(this);
-
-
 
 /*
         if (!EditorUtil.hasEditingHistory(databaseFile, project)) {
@@ -291,6 +290,8 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                     }
                                 }
                                 dataLoadError = null;
+                            } catch (ProcessCanceledException ignore) {
+
                             } catch (SQLException e) {
                                 dataLoadError = e.getMessage();
                                 handleLoadError(e, instructions);
@@ -349,7 +350,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                             MessageUtil.showErrorDialog(project, "Error", message, options, 0, new SimpleTask() {
                                 @Override
                                 protected void execute() {
-                                    int option = getHandle();
+                                    int option = getOption();
                                     DatasetLoadInstructions instructions = instr.clone();
                                     instructions.setDeliberateAction(true);
 
@@ -458,6 +459,10 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return isLoaded;
     }
 
+    public boolean isDirty() {
+        return getTableModel().isDirty();
+    }
+
     /**
      * The dataset is readonly. This can not be changed by the flag isReadonly
      */
@@ -466,11 +471,15 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public boolean isReadonly() {
-        return editorState.isReadonly();
+        return editorState.isReadonly() || getTableModel().isEnvironmentReadonly();
     }
 
     public DatasetColumnSetup getColumnSetup() {
         return editorState.getColumnSetup();
+    }
+
+    public void setEnvironmentReadonly(boolean readonly) {
+        getTableModel().setEnvironmentReadonly(readonly);
     }
 
     public void setReadonly(boolean readonly) {

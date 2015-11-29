@@ -14,11 +14,11 @@ public abstract class CodeStyleCaseSettings extends Configuration<CodeStyleCaseS
     private boolean enabled = false;
 
     public CodeStyleCaseSettings() {
-        options.add(new CodeStyleCaseOption("KEYWORD_CASE", CodeStyleCase.LOWER));
-        options.add(new CodeStyleCaseOption("FUNCTION_CASE", CodeStyleCase.LOWER));
-        options.add(new CodeStyleCaseOption("PARAMETER_CASE", CodeStyleCase.LOWER));
-        options.add(new CodeStyleCaseOption("DATATYPE_CASE", CodeStyleCase.LOWER));
-        options.add(new CodeStyleCaseOption("OBJECT_CASE", CodeStyleCase.PRESERVE));
+        options.add(new CodeStyleCaseOption("KEYWORD_CASE", CodeStyleCase.LOWER, false));
+        options.add(new CodeStyleCaseOption("FUNCTION_CASE", CodeStyleCase.LOWER, false));
+        options.add(new CodeStyleCaseOption("PARAMETER_CASE", CodeStyleCase.LOWER, false));
+        options.add(new CodeStyleCaseOption("DATATYPE_CASE", CodeStyleCase.LOWER, false));
+        options.add(new CodeStyleCaseOption("OBJECT_CASE", CodeStyleCase.PRESERVE, true));
     }
 
 

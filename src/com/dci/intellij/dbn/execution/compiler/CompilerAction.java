@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import java.lang.ref.WeakReference;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -7,9 +10,6 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
 
 public class CompilerAction {
     private CompilerActionSource source;
@@ -17,7 +17,7 @@ public class CompilerAction {
     private WeakReference<VirtualFile> virtualFileRef;
     private WeakReference<FileEditor> fileEditorRef;
     private EditorProviderId editorProviderId;
-    private int startOffset;
+    private int sourceStartOffset;
 
     public CompilerAction(CompilerActionSource source, DBContentType contentType) {
         this.source = source;
@@ -48,8 +48,8 @@ public class CompilerAction {
         return contentType;
     }
 
-    public void setStartOffset(int startOffset) {
-        this.startOffset = startOffset;
+    public void setSourceStartOffset(int sourceStartOffset) {
+        this.sourceStartOffset = sourceStartOffset;
     }
 
     public CompilerActionSource getSource() {
@@ -89,7 +89,7 @@ public class CompilerAction {
         return fileEditor;
     }
 
-    public int getStartOffset() {
-        return startOffset;
+    public int getSourceStartOffset() {
+        return sourceStartOffset;
     }
 }

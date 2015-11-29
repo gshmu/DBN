@@ -45,27 +45,29 @@ public class ConnectionUtil {
                 try {
                     closeStatement(resultSet.getStatement());
                     resultSet.close();
-                } catch (Throwable e) {
-                    LOGGER.warn("Error closing result set: " + e.getMessage());
+                } catch (Throwable ignore) {
                 }
             }
         }
     }
 
     public static void closeStatement(final Statement statement) {
+        closeStatement(statement, false);
+    }
+
+    public static void closeStatement(final Statement statement, boolean background) {
         if (statement != null) {
-            if (ApplicationManager.getApplication().isDispatchThread()) {
+            if (ApplicationManager.getApplication().isDispatchThread() || background) {
                 new SimpleBackgroundTask("close statement") {
                     @Override
                     protected void execute() {
-                        closeStatement(statement);
+                        closeStatement(statement, false);
                     }
                 }.start();
             } else {
                 try {
                     statement.close();
-                } catch (Throwable e) {
-                    LOGGER.warn("Error closing statement: " + e.getMessage());
+                } catch (Throwable ignore) {
                 }
             }
         }
@@ -78,7 +80,7 @@ public class ConnectionUtil {
             } catch (Throwable e) {
                 LOGGER.warn("Error cancelling statement: " + e.getMessage());
             } finally {
-                closeStatement(statement);
+                closeStatement(statement, true);
             }
         }
     }

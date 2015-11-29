@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.dci.intellij.dbn.editor.data.options.ui.DataEditorGeneralSettingsForm">
-  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="8" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="7" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="4" left="4" bottom="4" right="4"/>
     <constraints>
-      <xy x="20" y="20" width="515" height="254"/>
+      <xy x="20" y="20" width="515" height="225"/>
     </constraints>
     <properties/>
     <border type="etched" title="General">
@@ -26,7 +26,7 @@
       </hspacer>
       <vspacer id="dfd5e">
         <constraints>
-          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <component id="9249b" class="javax.swing.JLabel">
@@ -109,16 +109,8 @@
         <properties>
           <actionCommand value=""/>
           <label value="Enable large value preview"/>
-          <text value="Enable &amp;large value preview"/>
+          <text value="Enab&amp;le large value preview"/>
           <toolTipText value="&lt;html&gt;Show readonly popup for large values not fitting the &lt;br&gt;table cell or values containing line breaks.&lt;/html&gt; "/>
-        </properties>
-      </component>
-      <component id="a1509" class="javax.swing.JCheckBox" binding="loadViewDataActiveCheckBox">
-        <constraints>
-          <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Load View data when opened in editor"/>
         </properties>
       </component>
     </children>

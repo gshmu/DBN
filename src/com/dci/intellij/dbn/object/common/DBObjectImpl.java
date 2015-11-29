@@ -292,6 +292,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return ConnectionHandlerRef.get(connectionHandlerRef);
     }
 
+    @NotNull
     @Override
     public EnvironmentType getEnvironmentType() {
         ConnectionHandler connectionHandler = getConnectionHandler();

@@ -7,10 +7,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
+import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
@@ -18,7 +20,6 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -90,9 +91,11 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         return new ArrayList<DBObjectNavigationList>();
     }
 
-    public Timestamp loadChangeTimestamp(DBContentType contentType) throws SQLException {
+    @Nullable
+    public ChangeTimestamp loadChangeTimestamp(DBContentType contentType) throws SQLException {
         if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(this)) {
-            return getTimestampLoader(contentType).load(this);
+            Timestamp timestamp = getTimestampLoader(contentType).load(this);
+            return new ChangeTimestamp(timestamp);
         }
         return null;
     }
@@ -123,6 +126,12 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
 
     @NotNull
     public DBEditableObjectVirtualFile getVirtualFile() {
+        return DatabaseFileSystem.getInstance().findOrCreateDatabaseFile(this);
+    }
+
+    @Nullable
+    @Override
+    public DBEditableObjectVirtualFile getCachedVirtualFile() {
         return DatabaseFileSystem.getInstance().findDatabaseFile(this);
     }
 
@@ -151,11 +160,6 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             connectionHandler.freePoolConnection(connection);
         }
         return schemas;
-    }
-
-    @Override
-    public EditorProviderId getDefaultEditorProviderId() {
-        return null;
     }
 
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {

@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
@@ -102,6 +103,12 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     public boolean checkForbiddenOperation(ConnectionHandler connectionHandler) {
         return checkForbiddenOperation(connectionHandler, null);
     }
+
+    public boolean checkForbiddenOperation(ConnectionProvider connectionProvider) {
+        return checkForbiddenOperation(connectionProvider.getConnectionHandler());
+    }
+
+
     public boolean checkForbiddenOperation(ConnectionHandler connectionHandler, String message) {
         if (activeDebugSessions.contains(connectionHandler)) {
             MessageUtil.showErrorDialog(getProject(), message == null ? "Operation not supported during active debug session." : message);
@@ -327,7 +334,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                     new String[]{"Yes", "No"}, 0,
                     runner);
         } else {
-            runner.setHandle(0);
+            runner.setOption(0);
             runner.start();
         }
     }
@@ -338,7 +345,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         }
         @Override
         protected boolean canExecute() {
-            return getHandle() == 0;
+            return getOption() == 0;
         }
 
     }
@@ -376,8 +383,8 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
     private boolean addToCompileList(List<DBSchemaObject> compileList, DBSchemaObject schemaObject) {
         DBSchema schema = schemaObject.getSchema();
-        DBObjectStatusHolder status = schemaObject.getStatus();
-        if (!schema.isPublicSchema() && !schema.isSystemSchema() && status.has(DBObjectStatus.DEBUG) && !status.is(DBObjectStatus.DEBUG)) {
+        DBObjectStatusHolder objectStatus = schemaObject.getStatus();
+        if (!schema.isPublicSchema() && !schema.isSystemSchema() && objectStatus.has(DBObjectStatus.DEBUG) && !objectStatus.is(DBObjectStatus.DEBUG)) {
             compileList.add(schemaObject);
             return true;
         }

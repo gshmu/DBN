@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -26,6 +27,12 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     public DBVirtualFileImpl(Project project) {
         id = ID_STORE.getAndIncrement();
         projectRef = new ProjectRef(project);
+    }
+
+    @NotNull
+    @Override
+    public EnvironmentType getEnvironmentType() {
+        return getConnectionHandler().getEnvironmentType();
     }
 
     public int getDocumentHashCode() {

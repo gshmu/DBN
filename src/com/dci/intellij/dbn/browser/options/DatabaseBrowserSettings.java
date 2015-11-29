@@ -14,12 +14,14 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
     private DatabaseBrowserGeneralSettings generalSettings;
     private DatabaseBrowserFilterSettings filterSettings;
     private DatabaseBrowserSortingSettings sortingSettings;
+    private DatabaseBrowserEditorSettings editorSettings;
 
     public DatabaseBrowserSettings(Project project) {
         super(project);
         filterSettings = new DatabaseBrowserFilterSettings(project);
         generalSettings = new DatabaseBrowserGeneralSettings(project);
         sortingSettings = new DatabaseBrowserSortingSettings(project);
+        editorSettings = new DatabaseBrowserEditorSettings(project);
     }
 
     @NotNull
@@ -73,6 +75,10 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
         return sortingSettings;
     }
 
+    public DatabaseBrowserEditorSettings getEditorSettings() {
+        return editorSettings;
+    }
+
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
@@ -82,7 +88,8 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
         return new Configuration[] {
                 generalSettings,
                 filterSettings,
-                sortingSettings};
+                sortingSettings,
+                editorSettings};
     }
 
     @Override

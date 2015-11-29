@@ -51,7 +51,7 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
             if (upperCaseFound && lowerCaseFound) return true;
         }
 
-        return upperCaseFound == lowerCaseFound;
+        return false;
     }
 
 

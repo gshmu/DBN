@@ -46,6 +46,7 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
+import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.object.DBCharset;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
@@ -138,6 +139,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
         Project project = connectionHandler.getProject();
         EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
+        EventUtil.subscribe(project, this, CompileManagerListener.TOPIC, compileManagerListener);
     }
 
     private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
@@ -174,6 +176,15 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                         }
                     }
                 }
+            }
+        }
+    };
+
+    private CompileManagerListener compileManagerListener = new CompileManagerListener() {
+        @Override
+        public void compileFinished(@NotNull ConnectionHandler connectionHandler, @Nullable DBSchemaObject object) {
+            if (getConnectionHandler().equals(connectionHandler)) {
+                refreshObjectsStatus(object);
             }
         }
     };
@@ -584,7 +595,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         }
     }
 
-    public void refreshObjectsStatus(final DBSchemaObject requester) {
+    public void refreshObjectsStatus(final @Nullable DBSchemaObject requester) {
         if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
             new BackgroundTask(getProject(), "Updating objects status", true) {
                 @Override
@@ -595,8 +606,11 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                         int size = schemas.size();
                         for (int i=0; i<size; i++) {
                             DBSchema schema = schemas.get(i);
+                            if (size > 3) {
+                                progressIndicator.setIndeterminate(false);
+                                progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, size));
+                            }
                             progressIndicator.setText("Updating object status in schema " + schema.getName() + "... ");
-                            progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, size));
                             schema.refreshObjectsStatus();
                         }
                     } catch (SQLException e) {

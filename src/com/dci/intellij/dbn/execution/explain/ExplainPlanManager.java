@@ -84,7 +84,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                     ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
                     executionManager.addExplainPlanResult(explainPlanResult);
                 } else {
-                    callback.setHandle(explainPlanResult);
+                    callback.setOption(explainPlanResult);
                     callback.start();
                 }
             }

@@ -32,23 +32,23 @@ public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTr
     @Nullable
     @Override
     public Icon getIcon() {
-        DBObjectStatusHolder status = getStatus();
-        if (status.is(DBObjectStatus.VALID)) {
-            if (status.is(DBObjectStatus.ENABLED)) {
-                if (status.is(DBObjectStatus.DEBUG)) {
+        DBObjectStatusHolder objectStatus = getStatus();
+        if (objectStatus.is(DBObjectStatus.VALID)) {
+            if (objectStatus.is(DBObjectStatus.ENABLED)) {
+                if (objectStatus.is(DBObjectStatus.DEBUG)) {
                     return Icons.DBO_DATABASE_TRIGGER_DEBUG;
                 } else {
                     return Icons.DBO_DATABASE_TRIGGER;
                 }
             } else {
-                if (status.is(DBObjectStatus.DEBUG)) {
+                if (objectStatus.is(DBObjectStatus.DEBUG)) {
                     return Icons.DBO_DATABASE_TRIGGER_DISABLED_DEBUG;
                 } else {
                     return Icons.DBO_DATABASE_TRIGGER_DISABLED;
                 }
             }
         } else {
-            if (status.is(DBObjectStatus.ENABLED)) {
+            if (objectStatus.is(DBObjectStatus.ENABLED)) {
                 return Icons.DBO_DATABASE_TRIGGER_ERR;
             } else {
                 return Icons.DBO_DATABASE_TRIGGER_ERR_DISABLED;

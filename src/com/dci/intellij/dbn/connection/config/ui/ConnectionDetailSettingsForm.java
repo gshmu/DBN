@@ -13,8 +13,8 @@ import java.util.List;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -138,7 +138,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
             public void notifyChanges() {
                 Project project = configuration.getProject();
                 if (environmentChanged) {
-                    EnvironmentChangeListener listener = EventUtil.notify(project, EnvironmentChangeListener.TOPIC);
+                    EnvironmentManagerListener listener = EventUtil.notify(project, EnvironmentManagerListener.TOPIC);
                     listener.configurationChanged();
                 }
 

@@ -106,7 +106,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         ConnectionAction dropObjectAction = new ConnectionAction("dropping the object", object) {
             @Override
             protected boolean canExecute() {
-                return getHandle() == 0;
+                return getOption() == 0;
             }
 
             @Override
@@ -140,12 +140,12 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
             String objectTypeName = object.getTypeName();
             DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
             if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
-                DBObjectStatusHolder status = object.getStatus();
-                if (status.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
+                DBObjectStatusHolder objectStatus = object.getStatus();
+                if (objectStatus.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
                     ddlInterface.dropObjectBody(objectTypeName, objectName, connection);
                 }
 
-                if (status.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
+                if (objectStatus.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
                     ddlInterface.dropObject(objectTypeName, objectName, connection);
                 }
 

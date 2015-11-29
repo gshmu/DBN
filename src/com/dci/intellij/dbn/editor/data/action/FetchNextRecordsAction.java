@@ -38,6 +38,7 @@ public class FetchNextRecordsAction extends AbstractDataEditorAction {
                 datasetEditor.getActiveConnection().isConnected() &&
                 !datasetEditor.isInserting() &&
                 !datasetEditor.isLoading() &&        
+                !datasetEditor.isDirty() &&
                 !datasetEditor.getEditorTable().getModel().isResultSetExhausted();
         presentation.setEnabled(enabled);
 

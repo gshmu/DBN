@@ -23,12 +23,12 @@ public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>
     }
 
     @Override
-    public void setHandle(T handle) {
+    public void setOption(T handle) {
         this.option = handle;
     }
 
     @Override
-    public T getHandle() {
+    public T getOption() {
         return option;
     }
 

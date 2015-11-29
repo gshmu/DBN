@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.util;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -10,18 +11,28 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
+import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
+import com.dci.intellij.dbn.vfs.DBDatasetVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.colors.EditorColors;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -192,6 +203,55 @@ public class EditorUtil {
             }
         }
         return null;
+    }
+
+    public static void setEditorReadonly(SourceCodeEditor sourceCodeEditor, boolean readonly) {
+        EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
+        editor.setViewer(readonly);
+        EditorColorsScheme scheme = editor.getColorsScheme();
+        Color defaultBackground = scheme.getDefaultBackground();
+        editor.setBackgroundColor(readonly ? GUIUtil.adjust(defaultBackground, -0.02) : defaultBackground);
+        scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
+                GUIUtil.adjust(defaultBackground, -0.02) :
+                EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
+
+    }
+
+    public static void setEditorsReadonly(DBContentVirtualFile contentFile, final boolean readonly) {
+        final Project project = FailsafeUtil.get(contentFile.getProject());
+
+        if (contentFile instanceof DBSourceCodeVirtualFile) {
+            final DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
+            new ReadActionRunner() {
+                @Override
+                protected Object run() {
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                    FileEditor[] allEditors = fileEditorManager.getAllEditors();
+                    for (FileEditor fileEditor : allEditors) {
+                        if (fileEditor instanceof SourceCodeEditor) {
+                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                            if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
+                                setEditorReadonly(sourceCodeEditor, readonly);
+                            }
+                        }
+                    }
+                    return null;
+                }
+            }.start();
+        } else if (contentFile instanceof DBDatasetVirtualFile) {
+            DBDatasetVirtualFile datasetFile = (DBDatasetVirtualFile) contentFile;
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            FileEditor[] allEditors = fileEditorManager.getAllEditors();
+            for (FileEditor fileEditor : allEditors) {
+                if (fileEditor instanceof DatasetEditor) {
+                    DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
+                    if (datasetEditor.getDatabaseFile().equals(datasetFile.getMainDatabaseFile())) {
+                        datasetEditor.getEditorTable().cancelEditing();
+                        datasetEditor.setEnvironmentReadonly(readonly);
+                    }
+                }
+            }
+        }
     }
 
     @Nullable

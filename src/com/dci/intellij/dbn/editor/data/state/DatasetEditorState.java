@@ -27,11 +27,6 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
         setRowCount(SettingsUtil.getIntegerAttribute(element, "row-count", 100));
         setReadonly(SettingsUtil.getBooleanAttribute(element, "readonly", false));
 
-/*
-        getSortingState().setColumnName(element.getAttributeValue("sort-column-name"));
-        getSortingState().setDirectionAsString(element.getAttributeValue("sort-direction"));
-*/
-
         Element columnsElement = element.getChild("columns");
         columnSetup.readState(columnsElement);
 
@@ -53,10 +48,6 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
     public void writeState(Element targetElement) {
         targetElement.setAttribute("row-count", Integer.toString(getRowCount()));
         targetElement.setAttribute("readonly", Boolean.toString(isReadonly()));
-/*
-        targetElement.setAttribute("sort-column-name", getSortingState().getColumnName());
-        targetElement.setAttribute("sort-direction", getSortingState().getDirectionAsString());
-*/
 
         Element columnsElement = new Element("columns");
         targetElement.addContent(columnsElement);

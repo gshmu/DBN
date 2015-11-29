@@ -78,7 +78,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         Object[] selectedPsiFiles = component.getSelection();
         for (Object selectedPsiFile : selectedPsiFiles) {
             VirtualFile virtualFile = (VirtualFile) selectedPsiFile;
-            fileAttachmentManager.bindDDLFile(object, virtualFile);
+            fileAttachmentManager.attachDDLFile(object, virtualFile);
         }
         if (showLookupOption && component.isDoNotPromptSelected()) {
             ConnectionHandler connectionHandler = object.getConnectionHandler();

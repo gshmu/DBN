@@ -8,12 +8,12 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
+import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.project.Project;
 
 public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelectionForm> {
-    private CompileTypeOption selection;
+    private CompileType selection;
 
     public CompilerTypeSelectionDialog(Project project, @Nullable DBSchemaObject object) {
         super(project, "Compile Type", true);
@@ -43,7 +43,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelection
         }
 
         public void actionPerformed(ActionEvent e) {
-            selection = CompileTypeOption.KEEP;
+            selection = CompileType.KEEP;
             doOKAction();
         }
     }
@@ -55,7 +55,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelection
         }
 
         public void actionPerformed(ActionEvent e) {
-            selection = CompileTypeOption.NORMAL;
+            selection = CompileType.NORMAL;
             doOKAction();
         }
     }
@@ -66,12 +66,12 @@ public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelection
         }
 
         public void actionPerformed(ActionEvent e) {
-            selection = CompileTypeOption.DEBUG;
+            selection = CompileType.DEBUG;
             doOKAction();
         }
     }
 
-    public CompileTypeOption getSelection() {
+    public CompileType getSelection() {
         return selection;
     }
 }

@@ -7,6 +7,8 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -22,22 +24,24 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
         SourceCodeEditor fileEditor = getFileEditor(e);
         if (project != null && fileEditor != null) {
             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            sourceCodeManager.loadSourceFromDatabase(fileEditor);
+            sourceCodeManager.loadSourceFromDatabase(fileEditor.getVirtualFile());
         }
     }
 
     public void update(AnActionEvent e) {
-        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
-        if (virtualFile == null) {
+        if (sourceCodeFile == null) {
             presentation.setEnabled(false);
         } else {
+            DBContentType contentType = sourceCodeFile.getContentType();
             String text =
-                virtualFile.getContentType() == DBContentType.CODE_SPEC ? "Reload spec" :
-                virtualFile.getContentType() == DBContentType.CODE_BODY ? "Reload body" : "Reload";
+                contentType == DBContentType.CODE_SPEC ? "Reload spec" :
+                contentType == DBContentType.CODE_BODY ? "Reload body" : "Reload";
 
             presentation.setText(text);
-            presentation.setEnabled(!virtualFile.isModified());
+            DBSchemaObject object = sourceCodeFile.getObject();
+            presentation.setEnabled(!sourceCodeFile.isModified() && !object.getStatus().is(contentType, DBObjectStatus.LOADING));
         }
     }
 }

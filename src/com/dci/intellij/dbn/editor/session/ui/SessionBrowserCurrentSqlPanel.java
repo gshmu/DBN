@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -67,13 +66,8 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
         return mainPanel;
     }
 
-    public void setPreviewText(final String text) {
-        new WriteActionRunner() {
-            @Override
-            public void run() {
-                document.setText(text);
-            }
-        }.start();
+    public void setPreviewText(String text) {
+        DocumentUtil.setText(document, text);
     }
 
     public void setCurrentSchema(DBSchema currentSchema) {
@@ -82,7 +76,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
 
     public void loadCurrentStatement() {
         SessionBrowserTable editorTable = sessionBrowser.getEditorTable();
-        if (editorTable != null && editorTable.getSelectedRowCount() == 1) {
+        if (editorTable.getSelectedRowCount() == 1) {
             SessionBrowserModelRow selectedRow = editorTable.getModel().getRowAtIndex(editorTable.getSelectedRow());
             final Object sessionId = selectedRow.getSessionId();
             final String schemaName = selectedRow.getSchema();

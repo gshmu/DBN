@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -27,7 +27,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public interface ConnectionHandler extends Disposable, ConnectionProvider, Presentable {
+public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable {
     @NotNull
     Project getProject();
     Connection getPoolConnection() throws SQLException;
@@ -104,8 +104,6 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider, Prese
     Filter<BrowserTreeNode> getObjectTypeFilter();
     NavigationPsiCache getPsiCache();
 
-    @NotNull
-    EnvironmentType getEnvironmentType();
     UncommittedChangeBundle getUncommittedChanges();
     boolean isConnected();
     int getIdleMinutes();

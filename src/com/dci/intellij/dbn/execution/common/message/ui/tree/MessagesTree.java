@@ -224,7 +224,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                 CharSequence documentText = document.getCharsSequence();
                 String objectName = compilerMessage.getObjectName();
                 CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
-                int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, compilerAction.getStartOffset());
+                int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, compilerAction.getSourceStartOffset());
                 if (objectStartOffset > -1) {
                     lineShifting = document.getLineNumber(objectStartOffset);
                 }
@@ -252,7 +252,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                 Document document = editor.getDocument();
                 CharSequence documentText = document.getCharsSequence();
                 String objectName = compilerMessage.getObjectName();
-                int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, compilerAction.getStartOffset());
+                int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, compilerAction.getSourceStartOffset());
                 if (objectStartOffset > -1) {
                     lineShifting = document.getLineNumber(objectStartOffset);
                 }
@@ -288,8 +288,10 @@ public class MessagesTree extends DBNTree implements Disposable {
                         int lineShifting = document.getLineNumber(codeEditor.getHeaderEndOffset());
                         navigateInEditor(editor, compilerMessage, lineShifting);
                         VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
-                        OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
-                        codeEditor.navigateTo(openFileDescriptor);
+                        if (virtualFile != null) {
+                            OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
+                            codeEditor.navigateTo(openFileDescriptor);
+                        }
                     }
                 }
             }

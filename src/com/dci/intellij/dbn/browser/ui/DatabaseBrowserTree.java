@@ -34,7 +34,6 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.action.ConnectionActionGroup;
-import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.object.action.ObjectActionGroup;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -259,8 +258,7 @@ public class DatabaseBrowserTree extends DBNTree {
                 DBObjectProperties properties = object.getProperties();
                 if (properties.is(DBObjectProperty.EDITABLE)) {
                     DBSchemaObject schemaObject = (DBSchemaObject) object;
-                    EditorProviderId editorProviderId = schemaObject.getDefaultEditorProviderId();
-                    DatabaseFileSystem.getInstance().openEditor(schemaObject, editorProviderId, deliberate);
+                    DatabaseFileSystem.getInstance().openEditor(schemaObject, deliberate);
                     event.consume();
                 } else if (properties.is(DBObjectProperty.NAVIGABLE)) {
                     DatabaseFileSystem.getInstance().openEditor(object, deliberate);

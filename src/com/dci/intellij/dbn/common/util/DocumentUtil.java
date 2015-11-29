@@ -1,9 +1,15 @@
 package com.dci.intellij.dbn.common.util;
 
+import java.util.ArrayList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
+import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.code.GuardedBlockMarkers;
+import com.dci.intellij.dbn.editor.code.GuardedBlockType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -16,7 +22,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.RangeMarker;
-import com.intellij.openapi.editor.colors.ColorKey;
+import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.DocumentBulkUpdateListener;
 import com.intellij.openapi.editor.ex.DocumentEx;
@@ -30,10 +36,6 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.Range;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
 
 public class DocumentUtil {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
@@ -95,39 +97,52 @@ public class DocumentUtil {
         return project == null ? null : PsiUtil.getPsiFile(project, editor.getDocument());
     }
 
-    public static void createGuardedBlock(Document document, String reason, boolean highlight) {
-        createGuardedBlock(document, 0, document.getTextLength(), reason);
+    public static void createGuardedBlock(Document document, GuardedBlockType type, String reason, boolean highlight) {
+        createGuardedBlock(document, type, 0, document.getTextLength(), reason);
+
         if (!highlight) {
             Editor[] editors = EditorFactory.getInstance().getEditors(document);
             for (Editor editor : editors) {
-                ColorKey key = ColorKey.find("READONLY_FRAGMENT_BACKGROUND");
                 EditorColorsScheme scheme = editor.getColorsScheme();
-                scheme.setColor(key, scheme.getDefaultBackground());
+                scheme.setColor(EditorColors.READONLY_FRAGMENT_BACKGROUND_COLOR, scheme.getDefaultBackground());
             }
         }
     }
 
-    public static void createGuardedBlocks(Document document, GuardedBlockMarkers ranges, String reason) {
+    public static void createGuardedBlocks(final Document document, final GuardedBlockType type, final GuardedBlockMarkers ranges, final String reason) {
         for (Range<Integer> range : ranges.getRanges()) {
-            DocumentUtil.createGuardedBlock(document, range.getFrom(), range.getTo(), reason);
+            DocumentUtil.createGuardedBlock(document, type, range.getFrom(), range.getTo(), reason);
         }
-
     }
-    public static void createGuardedBlock(Document document, int startOffset, int endOffset, String reason) {
+
+    public static void createGuardedBlock(final Document document, final GuardedBlockType type, final int startOffset, final int endOffset, final String reason) {
         if (startOffset != endOffset) {
-            RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
-            rangeMarker.setGreedyToLeft(startOffset == 0);
-            rangeMarker.setGreedyToRight(endOffset == document.getTextLength());
-            document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
+            new WriteActionRunner() {
+                @Override
+                public void run() {
+                    RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
+                    rangeMarker.setGreedyToLeft(startOffset == 0);
+                    rangeMarker.setGreedyToRight(endOffset == document.getTextLength());
+                    rangeMarker.putUserData(GuardedBlockType.KEY, type);
+                    document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
+                }
+            }.start();
         }
     }
 
-    public static void removeGuardedBlocks(Document document) {
+    public static void removeGuardedBlocks(final Document document, GuardedBlockType type) {
         if (document instanceof DocumentEx) {
             DocumentEx documentEx = (DocumentEx) document;
             ArrayList<RangeMarker> guardedBlocks = new ArrayList<RangeMarker>(documentEx.getGuardedBlocks());
-            for (RangeMarker block : guardedBlocks) {
-                document.removeGuardedBlock(block);
+            for (final RangeMarker block : guardedBlocks) {
+                if (block.getUserData(GuardedBlockType.KEY) == type) {
+                    new WriteActionRunner() {
+                        @Override
+                        public void run() {
+                            document.removeGuardedBlock(block);
+                        }
+                    }.start();
+                }
             }
             document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);
         }
@@ -157,5 +172,24 @@ public class DocumentUtil {
         } else {
             return null;
         }
+    }
+
+    public static void setReadonly(Document document, Project project, boolean readonly) {
+        //document.setReadOnly(readonly);
+        DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT);
+        if (readonly) {
+            DocumentUtil.createGuardedBlock(document, GuardedBlockType.READONLY_DOCUMENT, null, false);
+        }
+    }
+
+    public static void setText(final Document document, final CharSequence text) {
+        new WriteActionRunner() {
+            public void run() {
+                boolean isReadonly = !document.isWritable();
+                document.setReadOnly(false);
+                document.setText(text);
+                document.setReadOnly(isReadonly);
+            }
+        }.start();
     }
 }
