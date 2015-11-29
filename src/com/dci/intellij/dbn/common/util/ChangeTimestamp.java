@@ -18,4 +18,8 @@ public class ChangeTimestamp {
     public boolean isDirty() {
         return TimeUtil.isOlderThan(captureTime, 30 * TimeUtil.ONE_SECOND);
     }
+
+    public boolean before(ChangeTimestamp changeTimestampCheck) {
+        return value != null && changeTimestampCheck.value!= null && value.before(changeTimestampCheck.value);
+    }
 }
