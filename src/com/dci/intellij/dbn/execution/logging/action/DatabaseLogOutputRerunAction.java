@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 public class DatabaseLogOutputRerunAction extends AbstractDatabaseLogOutputAction {
@@ -20,8 +21,11 @@ public class DatabaseLogOutputRerunAction extends AbstractDatabaseLogOutputActio
         final DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
         if (project != null && loggingResult != null && !loggingResult.isDisposed()) {
             LogOutputContext context = loggingResult.getContext();
-            ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
-            scriptExecutionManager.executeScript(context.getSourceFile());
+            VirtualFile sourceFile = context.getSourceFile();
+            if (sourceFile != null) {
+                ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
+                scriptExecutionManager.executeScript(sourceFile);
+            }
         }
     }
 
@@ -33,7 +37,7 @@ public class DatabaseLogOutputRerunAction extends AbstractDatabaseLogOutputActio
 
         DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
         LogOutputContext context = loggingResult == null ? null : loggingResult.getContext();
-        boolean enabled = context != null && !context.isActive();
+        boolean enabled = context != null && context.getSourceFile() != null && !context.isActive();
         presentation.setEnabled(enabled);
 
     }
