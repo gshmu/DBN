@@ -5,7 +5,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLRecoverableException;
 import java.sql.Savepoint;
 import java.sql.Statement;
@@ -310,10 +309,7 @@ public class ConnectionUtil {
     public static void rollback(Connection connection, @Nullable Savepoint savepoint) {
         try {
             if (connection != null && savepoint != null && !connection.isClosed() && !connection.getAutoCommit()) connection.rollback(savepoint);
-        } catch (SQLFeatureNotSupportedException ignore){
-        } catch (SQLRecoverableException ignore){
-        } catch (SQLException e) {
-            LOGGER.warn("Error rolling back connection", e);
+        } catch (SQLException ignore) {
         }
     }
 
@@ -322,10 +318,7 @@ public class ConnectionUtil {
             if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) {
                 return connection.setSavepoint();
             }
-        } catch (SQLFeatureNotSupportedException ignore){
-        } catch (SQLRecoverableException ignore){
-        } catch (SQLException e) {
-            LOGGER.warn("Error releasing connection savepoint", e);
+        } catch (SQLException ignore) {
         }
         return null;
     }
@@ -335,10 +328,7 @@ public class ConnectionUtil {
             if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) {
                 connection.releaseSavepoint(savepoint);
             }
-        } catch (SQLFeatureNotSupportedException ignore){
-        } catch (SQLRecoverableException ignore){
-        } catch (SQLException e) {
-            LOGGER.warn("Error releasing connection savepoint", e);
+        } catch (SQLException ignore) {
         }
     }
 
