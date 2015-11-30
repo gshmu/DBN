@@ -47,12 +47,14 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     private transient boolean cancelled = false;
     private transient boolean cancelRequested = false;
     private Timer cancelCheckTimer;
+    private boolean createSavepoint;
 
-    public CancellableDatabaseCall(@Nullable Connection connection, int timeout, TimeUnit timeUnit) {
+    public CancellableDatabaseCall(@Nullable Connection connection, int timeout, TimeUnit timeUnit, boolean createSavepoint) {
         this.connection = connection;
         this.timeout = timeout;
         this.timeUnit = timeUnit;
-        progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+        this.createSavepoint = createSavepoint;
+        this.progressIndicator = ProgressManager.getInstance().getProgressIndicator();
     }
 
     public void requestCancellation() {
@@ -61,12 +63,16 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     @Override
     public T call() throws Exception {
-        return new TransactionSavepointCall<T>(connection) {
-            @Override
-            public T execute() throws Exception {
-                return CancellableDatabaseCall.this.execute();
-            }
-        }.start();
+        if (createSavepoint) {
+            return new TransactionSavepointCall<T>(connection) {
+                @Override
+                public T execute() throws Exception {
+                    return CancellableDatabaseCall.this.execute();
+                }
+            }.start();
+        } else {
+            return execute();
+        }
     }
 
     public abstract T execute() throws Exception;
