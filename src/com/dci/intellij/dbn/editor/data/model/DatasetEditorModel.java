@@ -68,7 +68,8 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         closeResultSet();
         int timeout = settings.getGeneralSettings().getFetchTimeout().value();
         final AtomicReference<Statement> statementRef = new AtomicReference<Statement>();
-        loaderCall = new CancellableDatabaseCall(timeout, TimeUnit.SECONDS) {
+        Connection connection = getConnectionHandler().getStandaloneConnection();
+        loaderCall = new CancellableDatabaseCall(connection, timeout, TimeUnit.SECONDS) {
             @Override
             public Object execute() throws Exception {
                 ResultSet newResultSet = loadResultSet(useCurrentFilter, statementRef);

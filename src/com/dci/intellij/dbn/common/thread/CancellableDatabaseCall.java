@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.util.Timer;
@@ -14,8 +15,10 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.connection.transaction.TransactionSavepointCall;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -34,6 +37,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
+    private Connection connection;
     private int timeout;
     private long startTimestamp = System.currentTimeMillis();
     private TimeUnit timeUnit;
@@ -44,7 +48,8 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     private transient boolean cancelRequested = false;
     private Timer cancelCheckTimer;
 
-    public CancellableDatabaseCall(int timeout, TimeUnit timeUnit) {
+    public CancellableDatabaseCall(@Nullable Connection connection, int timeout, TimeUnit timeUnit) {
+        this.connection = connection;
         this.timeout = timeout;
         this.timeUnit = timeUnit;
         progressIndicator = ProgressManager.getInstance().getProgressIndicator();
@@ -56,7 +61,12 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     @Override
     public T call() throws Exception {
-        return execute();
+        return new TransactionSavepointCall<T>(connection) {
+            @Override
+            public T execute() throws Exception {
+                return CancellableDatabaseCall.this.execute();
+            }
+        }.start();
     }
 
     public abstract T execute() throws Exception;
