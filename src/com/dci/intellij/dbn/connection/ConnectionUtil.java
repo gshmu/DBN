@@ -325,7 +325,7 @@ public class ConnectionUtil {
 
     public static void releaseSavepoint(Connection connection, @Nullable Savepoint savepoint) {
         try {
-            if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) {
+            if (connection != null && savepoint != null && !connection.isClosed() && !connection.getAutoCommit()) {
                 connection.releaseSavepoint(savepoint);
             }
         } catch (SQLException ignore) {

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -172,14 +172,19 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                     } catch (final SQLException e) {
                         executionContext.setExecuting(false);
                         if (!executionContext.isExecutionCancelled()) {
-                            new SimpleLaterInvocator() {
-                                protected void execute() {
-                                    MessageUtil.showErrorDialog(project, "Error executing " + method.getTypeName() + ".", e);
-                                    if (promptExecutionDialog(executionInput, DBDebuggerType.NONE)) {
-                                        MethodExecutionManager.this.execute(executionInput);
-                                    }
-                                }
-                            }.start();
+                            MessageUtil.showErrorDialog(project,
+                                    "Method execution error",
+                                    "Error executing " + method.getQualifiedNameWithType() + ".\n" + e.getMessage().trim(),
+                                    new String[]{"Try Again", "Cancel"}, 0, new SimpleTask() {
+                                        @Override
+                                        protected void execute() {
+                                            if (getOption() == 0) {
+                                                if (promptExecutionDialog(executionInput, DBDebuggerType.NONE)) {
+                                                    MethodExecutionManager.this.execute(executionInput);
+                                                }
+                                            }
+                                        }
+                                    });
                         }
                     }
                 }
