@@ -46,6 +46,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     private CancellableDatabaseCall loaderCall;
     private boolean isDirty;
+    private EditableResultSetHandler resultSetHandler;
 
     private List<DatasetEditorModelRow> changedRows = new ArrayList<DatasetEditorModelRow>();
 
@@ -69,11 +70,10 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         closeResultSet();
         int timeout = settings.getGeneralSettings().getFetchTimeout().value();
         final AtomicReference<Statement> statementRef = new AtomicReference<Statement>();
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        final ConnectionHandler connectionHandler = getConnectionHandler();
         Connection connection = connectionHandler.getStandaloneConnection();
-        boolean createSavepoint = !DatabaseFeature.CONNECTION_ERROR_RECOVERING.isSupported(connectionHandler);
 
-        loaderCall = new CancellableDatabaseCall(connection, timeout, TimeUnit.SECONDS, createSavepoint) {
+        loaderCall = new CancellableDatabaseCall(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
             @Override
             public Object execute() throws Exception {
                 ResultSet newResultSet = loadResultSet(useCurrentFilter, statementRef);
@@ -81,6 +81,8 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 if (newResultSet != null && !newResultSet.isClosed()) {
                     checkDisposed();
                     setResultSet(newResultSet);
+                    boolean useSavepoints = !DatabaseFeature.CONNECTION_ERROR_RECOVERING.isSupported(connectionHandler);
+                    resultSetHandler = new EditableResultSetHandler(newResultSet, useSavepoints);
                     setResultSetExhausted(false);
                     if (keepChanges) snapshotChanges(); else clearChanges();
 
@@ -101,6 +103,10 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             }
         };
         loaderCall.start();
+    }
+
+    public EditableResultSetHandler getResultSetHandler() {
+        return resultSetHandler;
     }
 
     private int computeRowCount() {
@@ -314,7 +320,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         try {
             isInserting = true;
             editorTable.stopCellEditing();
-            getResultSet().moveToInsertRow();
+            resultSetHandler.startInsertRow();
             DatasetEditorModelRow newRow = createRow(getRowCount()+1);
             newRow.setInsert(true);
             addRowAtIndex(rowIndex, newRow);
@@ -335,7 +341,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             isInserting = true;
             editorTable.stopCellEditing();
             int insertIndex = rowIndex + 1;
-            getResultSet().moveToInsertRow();
+            resultSetHandler.startInsertRow();
             DatasetEditorModelRow oldRow = getRowAtIndex(rowIndex);
             DatasetEditorModelRow newRow = createRow(getRowCount() + 1);
             newRow.setInsert(true);
@@ -356,9 +362,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         if (row != null) {
             try {
                 editorTable.stopCellEditing();
-                ResultSet resultSet = getResultSet();
-                resultSet.insertRow();
-                resultSet.moveToCurrentRow();
+                resultSetHandler.insertRow();
                 row.setInsert(false);
                 row.setNew(true);
                 isModified = true;
@@ -386,7 +390,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 removeRowAtIndex(rowIndex);
                 if (notifyListeners) notifyRowsDeleted(rowIndex, rowIndex);
             }
-            getResultSet().moveToCurrentRow();
+            resultSetHandler.cancelInsertRow();
             isInserting = false;
 
         } catch (SQLException e) {

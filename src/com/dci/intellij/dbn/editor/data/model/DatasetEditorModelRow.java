@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
@@ -15,8 +17,11 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.intellij.openapi.diagnostic.Logger;
 
 public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorModelCell> {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     private int resultSetRowIndex;
     private boolean isNew;
     private boolean isInsert;
@@ -69,17 +74,11 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
         }
     }
 
-    public void setUserValuesToResultSet(ResultSet resultSet) throws SQLException {
-        for (int i=0; i<getCells().size(); i++) {
-            DatasetEditorModelCell newCell = getCellAtIndex(i);
-            newCell.setUserValueToResultSet(resultSet);
-        }
-    }
-
     public void delete() {
         try {
-            ResultSet resultSet = scrollResultSet();
-            resultSet.deleteRow();
+            EditableResultSetHandler resultSetHandler = getModel().getResultSetHandler();
+            resultSetHandler.scroll(getResultSetRowIndex());
+            resultSetHandler.deleteRow();
             isDeleted = true;
             isModified = false;
             isNew = false;
@@ -168,14 +167,9 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
         resultSetRowIndex = resultSetRowIndex + delta;
     }
 
-    public ResultSet scrollResultSet() throws SQLException {
-        ResultSet resultSet = getResultSet();
-        resultSet.absolute(resultSetRowIndex);
-        return resultSet;
-    }
-
-    public ResultSet getResultSet() {
-        return getModel().getResultSet();
+    @NotNull
+    ConnectionHandler getConnectionHandler() {
+        return getModel().getConnectionHandler();
     }
 
     public boolean isDeleted() {

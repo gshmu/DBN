@@ -4,11 +4,11 @@ package com.dci.intellij.dbn.editor.data.model;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellEditor;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -26,8 +26,11 @@ import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import com.intellij.openapi.diagnostic.Logger;
 
 public class DatasetEditorModelCell extends ResultSetDataModelCell implements ChangeListener {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     private Object originalUserValue;
     private DatasetEditorError error;
     private boolean isModified;
@@ -46,39 +49,37 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         boolean valueChanged = userValueChanged(newUserValue);
         if (hasError() || valueChanged) {
             DatasetEditorModelRow row = getRow();
-            ResultSet resultSet;
-            boolean isInsertRow = row.isInsert();
+            EditableResultSetHandler resultSetHandler = getModel().getResultSetHandler();
             try {
-                resultSet = isInsertRow ? row.getResultSet() : row.scrollResultSet();
+                resultSetHandler.scroll(row.getResultSetRowIndex());
             } catch (Exception e) {
                 MessageUtil.showErrorDialog(getProject(), "Could not update cell value for " + getColumnInfo().getName() + ".", e);
                 return;
             }
-            boolean isValueAdapter = userValue instanceof ValueAdapter || newUserValue instanceof ValueAdapter;
+            final boolean isValueAdapter = userValue instanceof ValueAdapter || newUserValue instanceof ValueAdapter;
 
-            ConnectionHandler connectionHandler = getConnectionHandler();
+            final ConnectionHandler connectionHandler = getConnectionHandler();
             try {
                 clearError();
-                int columnIndex = getColumnInfo().getResultSetColumnIndex();
-
-                if (isValueAdapter) {
-                    if (userValue == null) {
-                        userValue = newUserValue.getClass().newInstance();
-                    }
-                    ValueAdapter valueAdapter = (ValueAdapter) userValue;
-                    Connection connection = connectionHandler.getStandaloneConnection();
-                    if (newUserValue instanceof ValueAdapter) {
-                        ValueAdapter newUserValueAdapter = (ValueAdapter) newUserValue;
-                        newUserValue = newUserValueAdapter.read();
-                    }
-                    valueAdapter.write(connection, resultSet, columnIndex, newUserValue);
-
-                } else {
-                    DBDataType dataType = getColumnInfo().getDataType();
-                    dataType.setValueToResultSet(resultSet, columnIndex, newUserValue);
+                final int columnIndex = getColumnInfo().getResultSetColumnIndex();
+                if (isValueAdapter && userValue == null) {
+                    userValue = newUserValue.getClass().newInstance();
                 }
 
-                if (!isInsertRow) resultSet.updateRow();
+                if (isValueAdapter) {
+                    ValueAdapter valueAdapter = (ValueAdapter) userValue;
+                    if (newUserValue instanceof ValueAdapter) {
+                        ValueAdapter newValueAdapter = (ValueAdapter) newUserValue;
+                        newUserValue = newValueAdapter.read();
+                    }
+                    resultSetHandler.setValue(columnIndex, valueAdapter, newUserValue);
+                } else {
+                    DBDataType dataType = getColumnInfo().getDataType();
+                    resultSetHandler.setValue(columnIndex, dataType, newUserValue);
+                }
+
+
+                resultSetHandler.updateRow();
             } catch (Exception e) {
                 DatasetEditorError error = new DatasetEditorError(connectionHandler, e);
 
@@ -96,30 +97,16 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                     EventUtil.notify(getProject(), DatasetEditorModelCellValueListener.TOPIC).valueChanged(this);
                 }
                 try {
-                    if (!isInsertRow) resultSet.refreshRow();
+                    resultSetHandler.refreshRow();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    LOGGER.error("Error refreshing row", e);
                 }
             }
 
-            if (!isInsertRow && !connectionHandler.isAutoCommit()) {
+            if (!row.isInsert() && !connectionHandler.isAutoCommit()) {
                 isModified = true;
                 row.setModified(true);
             }
-        }
-    }
-
-    public void setUserValueToResultSet(ResultSet resultSet) throws SQLException {
-        boolean isValueAdapter = userValue instanceof ValueAdapter;
-        int columnIndex = getColumnInfo().getResultSetColumnIndex();
-        if (isValueAdapter) {
-            ValueAdapter valueAdapter = (ValueAdapter) userValue;
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            Connection connection = connectionHandler.getStandaloneConnection();
-            valueAdapter.write(connection, resultSet, columnIndex, valueAdapter.read());
-        } else {
-            DBDataType dataType = getColumnInfo().getDataType();
-            dataType.setValueToResultSet(resultSet, columnIndex, userValue);
         }
     }
 
@@ -211,6 +198,12 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     @NotNull
     public DatasetEditorModelRow getRow() {
         return (DatasetEditorModelRow) super.getRow();
+    }
+
+    @NotNull
+    @Override
+    public DatasetEditorModel getModel() {
+        return (DatasetEditorModel) super.getModel();
     }
 
     public void setOriginalUserValue(Object value) {
