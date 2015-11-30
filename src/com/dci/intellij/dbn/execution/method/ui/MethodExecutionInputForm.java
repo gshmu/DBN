@@ -148,10 +148,10 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         }
         commitCheckBox.addActionListener(actionListener);
         usePoolConnectionCheckBox.addActionListener(actionListener);
-        usePoolConnectionCheckBox.setEnabled(debuggerType.isDebug());
+        usePoolConnectionCheckBox.setEnabled(!debuggerType.isDebug());
 
-        enableLoggingCheckBox.setEnabled(debuggerType.isDebug());
-        enableLoggingCheckBox.setSelected(debuggerType.isDebug() && executionInput.isEnableLogging());
+        enableLoggingCheckBox.setEnabled(!debuggerType.isDebug());
+        enableLoggingCheckBox.setSelected(!debuggerType.isDebug() && executionInput.isEnableLogging());
         enableLoggingCheckBox.setVisible(DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler));
         DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
         String databaseLogName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();

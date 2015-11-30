@@ -8,7 +8,7 @@ import java.sql.Savepoint;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 
 public abstract class ConnectionSavepointCall<T>{
-    private Connection connection;
+    private final Connection connection;
     private ThreadLocal<ConnectionSavepointCall> threadSavepointCall = new ThreadLocal<ConnectionSavepointCall>();
 
 
@@ -21,16 +21,19 @@ public abstract class ConnectionSavepointCall<T>{
     }
 
     public T start() throws SQLException {
-        Savepoint savepoint = ConnectionUtil.createSavepoint(connection);
-        try {
-            threadSavepointCall.set(this);
-            return execute();
-        } catch (SQLException e) {
-            ConnectionUtil.rollback(connection, savepoint);
-            throw e;
-        } finally {
-            threadSavepointCall.set(null);
-            ConnectionUtil.releaseSavepoint(connection, savepoint);
+        synchronized (connection) {
+            Savepoint savepoint = ConnectionUtil.createSavepoint(connection);
+            try {
+                threadSavepointCall.set(this);
+                return execute();
+            } catch (SQLException e) {
+                ConnectionUtil.rollback(connection, savepoint);
+                throw e;
+            } finally {
+                threadSavepointCall.set(null);
+                ConnectionUtil.releaseSavepoint(connection, savepoint);
+            }
+
         }
     }
 
