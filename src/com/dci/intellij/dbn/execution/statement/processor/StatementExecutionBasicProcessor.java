@@ -269,8 +269,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
                 statement.setQueryTimeout(timeout);
                 final String executable = executableStatementText;
-                boolean createSavepoint = !DatabaseFeature.CONNECTION_ERROR_RECOVERING.isSupported(getConnectionHandler());
-                executionResult = new CancellableDatabaseCall<StatementExecutionResult>(connection, timeout, TimeUnit.SECONDS, createSavepoint) {
+                executionResult = new CancellableDatabaseCall<StatementExecutionResult>(activeConnection, connection, timeout, TimeUnit.SECONDS) {
                     @Override
                     public StatementExecutionResult execute() throws Exception{
                         statement.execute(executable);
