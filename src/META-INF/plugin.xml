@@ -34,6 +34,7 @@
                 - Outdated sources notification<br>
                 - Configurable default editors<br>
                 - Recover connections after statement execution errors (MySQL, PostgreSQL)<br>
+                - Recover dataset editor after edit errors (MySQL, PostgreSQL)<br>
                 - Bug fixes<br>
             </ul>
             <li><b>3.0.4912</b>

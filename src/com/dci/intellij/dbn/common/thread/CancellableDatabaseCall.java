@@ -57,7 +57,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
         this.timeout = timeout;
         this.timeUnit = timeUnit;
         this.progressIndicator = ProgressManager.getInstance().getProgressIndicator();
-        createSavepoint = DatabaseFeature.CONNECTION_ERROR_RECOVERING.isSupported(connectionHandler);
+        createSavepoint = !DatabaseFeature.CONNECTION_ERROR_RECOVERING.isSupported(connectionHandler);
     }
 
     public void requestCancellation() {
