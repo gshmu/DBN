@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
@@ -68,8 +69,11 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         closeResultSet();
         int timeout = settings.getGeneralSettings().getFetchTimeout().value();
         final AtomicReference<Statement> statementRef = new AtomicReference<Statement>();
-        Connection connection = getConnectionHandler().getStandaloneConnection();
-        loaderCall = new CancellableDatabaseCall(connection, timeout, TimeUnit.SECONDS) {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        Connection connection = connectionHandler.getStandaloneConnection();
+        boolean createSavepoint = !DatabaseFeature.CONNECTION_ERROR_RECOVERING.isSupported(connectionHandler);
+
+        loaderCall = new CancellableDatabaseCall(connection, timeout, TimeUnit.SECONDS, createSavepoint) {
             @Override
             public Object execute() throws Exception {
                 ResultSet newResultSet = loadResultSet(useCurrentFilter, statementRef);

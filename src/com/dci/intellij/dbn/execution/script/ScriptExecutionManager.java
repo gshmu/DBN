@@ -146,7 +146,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         int timeout = input.getExecutionTimeout();
 
         try {
-            new CancellableDatabaseCall<Object>(null, timeout, TimeUnit.SECONDS) {
+            new CancellableDatabaseCall<Object>(null, timeout, TimeUnit.SECONDS, false) {
                 @Override
                 public Object execute() throws Exception {
                     ConnectionHandler connectionHandler = FailsafeUtil.get(input.getConnectionHandler());

@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
@@ -107,7 +108,8 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                     methodExecutionSettings.getExecutionTimeout();
 
             statement.setQueryTimeout(timeout);
-            MethodExecutionResult executionResult = new CancellableDatabaseCall<MethodExecutionResult>(connection, timeout, TimeUnit.SECONDS) {
+            boolean createSavepoint = !DatabaseFeature.CONNECTION_ERROR_RECOVERING.isSupported(connectionHandler);
+            MethodExecutionResult executionResult = new CancellableDatabaseCall<MethodExecutionResult>(connection, timeout, TimeUnit.SECONDS, createSavepoint) {
                 @Override
                 public MethodExecutionResult execute() throws Exception {
                     statement.execute();
