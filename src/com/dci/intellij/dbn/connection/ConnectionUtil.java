@@ -6,6 +6,7 @@ import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
+import java.sql.Savepoint;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.Properties;
@@ -299,12 +300,42 @@ public class ConnectionUtil {
     public static void rollback(Connection connection) {
         try {
             if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) connection.rollback();
-        } catch (SQLRecoverableException e){
-            // ignore
+        } catch (SQLRecoverableException ignore){
         } catch (SQLException e) {
-            LOGGER.warn("Error committing connection", e);
+            LOGGER.warn("Error rolling back connection", e);
         }
     }
+
+    public static void rollback(Connection connection, @Nullable Savepoint savepoint) {
+        try {
+            if (connection != null && savepoint != null && !connection.isClosed() && !connection.getAutoCommit()) connection.rollback(savepoint);
+        } catch (SQLRecoverableException ignore){
+        } catch (SQLException e) {
+            LOGGER.warn("Error rolling back connection", e);
+        }
+    }
+
+    public static @Nullable Savepoint createSavepoint(Connection connection) {
+        try {
+            if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) {
+                return connection.setSavepoint();
+            }
+        } catch (SQLRecoverableException ignore){
+        } catch (SQLException e) {
+            LOGGER.warn("Error releasing connection savepoint", e);
+        }
+        return null;
+    }
+
+    public static void releaseSavepoint(Connection connection, @Nullable Savepoint savepoint) {
+        try {
+            if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) connection.releaseSavepoint(savepoint);
+        } catch (SQLRecoverableException ignore){
+        } catch (SQLException e) {
+            LOGGER.warn("Error releasing connection savepoint", e);
+        }
+    }
+
     public static void setAutocommit(Connection connection, boolean autoCommit) {
         try {
             if (connection != null && !connection.isClosed()) connection.setAutoCommit(autoCommit);
