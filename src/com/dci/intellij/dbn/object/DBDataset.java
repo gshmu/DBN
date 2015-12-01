@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.object;
 
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public interface DBDataset extends DBSchemaObject {
-    @Nullable List<DBColumn> getColumns();
+    @NotNull List<DBColumn> getColumns();
     @Nullable DBColumn getColumn(String name);
 
     @Nullable List<DBConstraint> getConstraints();

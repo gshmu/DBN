@@ -45,7 +45,7 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
     }
 
     boolean ignore(String string) {
-        return ignoreMixedCase && StringUtil.isMixedCase(string);
+        return string.startsWith("`") || string.startsWith("'") || string.startsWith("\"") || (ignoreMixedCase && StringUtil.isMixedCase(string));
     }
 
     /*********************************************************

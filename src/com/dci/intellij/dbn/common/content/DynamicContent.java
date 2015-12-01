@@ -67,7 +67,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
     @NotNull List<T> getElements();
     @Nullable List<T> getElements(String name);
 
-    List<T> getAllElements();
+    @NotNull List<T> getAllElements();
 
     @Nullable
     Filter<T> getFilter();
