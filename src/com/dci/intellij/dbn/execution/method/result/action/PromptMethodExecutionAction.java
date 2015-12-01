@@ -23,9 +23,7 @@ public class PromptMethodExecutionAction extends MethodExecutionResultAction {
             if (executionResult != null) {
                 MethodExecutionInput executionInput = executionResult.getExecutionInput();
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-                if (executionManager.promptExecutionDialog(executionInput, DBDebuggerType.NONE)) {
-                    executionManager.execute(executionInput);
-                }
+                executionManager.startMethodExecution(executionInput, DBDebuggerType.NONE);
             }
         }
     }
