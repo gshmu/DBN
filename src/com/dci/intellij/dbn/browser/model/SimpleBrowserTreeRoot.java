@@ -33,8 +33,9 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
         }
     }
 
+    @NotNull
     public Project getProject() {
-        return projectRef.get();
+        return FailsafeUtil.get(projectRef.get());
     }
 
     @Nullable
