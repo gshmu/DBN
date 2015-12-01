@@ -100,9 +100,10 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return getTreeParent().getConnectionHandler();
+        return FailsafeUtil.get(getTreeParent().getConnectionHandler());
     }
 
+    @NotNull
     public Project getProject() {
         return getTreeParent().getProject();
     }

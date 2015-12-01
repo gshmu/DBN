@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 
@@ -33,10 +34,12 @@ public class ConnectionHandlerRef{
         return FailsafeUtil.get(connectionHandler);
     }
 
+    @Nullable
     public static ConnectionHandlerRef from(ConnectionHandler connectionHandler) {
         return connectionHandler == null ? null : connectionHandler.getRef();
     }
 
+    @Nullable
     public static ConnectionHandler get(ConnectionHandlerRef connectionHandlerRef) {
         return connectionHandlerRef == null ? null :connectionHandlerRef.get();
     }

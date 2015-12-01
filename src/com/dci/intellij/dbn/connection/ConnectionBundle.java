@@ -147,6 +147,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
     }
 
 
+    @NotNull
     public Project getProject() {
         return FailsafeUtil.get(projectRef.get());
     }
