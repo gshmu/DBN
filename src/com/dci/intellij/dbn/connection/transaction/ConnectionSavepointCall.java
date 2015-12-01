@@ -21,19 +21,22 @@ public abstract class ConnectionSavepointCall<T>{
     }
 
     public T start() throws SQLException {
-        synchronized (connection) {
-            Savepoint savepoint = ConnectionUtil.createSavepoint(connection);
-            try {
-                threadSavepointCall.set(this);
-                return execute();
-            } catch (SQLException e) {
-                ConnectionUtil.rollback(connection, savepoint);
-                throw e;
-            } finally {
-                threadSavepointCall.set(null);
-                ConnectionUtil.releaseSavepoint(connection, savepoint);
+        if (connection == null) {
+            return execute();
+        } else {
+            synchronized (connection) {
+                Savepoint savepoint = ConnectionUtil.createSavepoint(connection);
+                try {
+                    threadSavepointCall.set(this);
+                    return execute();
+                } catch (SQLException e) {
+                    ConnectionUtil.rollback(connection, savepoint);
+                    throw e;
+                } finally {
+                    threadSavepointCall.set(null);
+                    ConnectionUtil.releaseSavepoint(connection, savepoint);
+                }
             }
-
         }
     }
 

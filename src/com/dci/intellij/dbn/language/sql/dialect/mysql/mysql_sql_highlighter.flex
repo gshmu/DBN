@@ -38,7 +38,7 @@ wso = {WHITE_SPACE}*
 
 comment_tail =([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
 BLOCK_COMMENT=("/*"[^]{comment_tail})|"/*"
-LINE_COMMENT = "--" {input_character}*
+LINE_COMMENT = "--"|"#" {input_character}*
 
 IDENTIFIER = [:jletter:] [:jletterdigit:]*
 QUOTED_IDENTIFIER = "`"[^\`]*"`"?
