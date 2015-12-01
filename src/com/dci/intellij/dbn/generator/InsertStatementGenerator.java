@@ -28,14 +28,14 @@ public class InsertStatementGenerator extends StatementGenerator {
         StringBuilder statement = new StringBuilder();
 
         statement.append(kco.format("insert into "));
-        statement.append(oco.format(table.getName()));
+        statement.append(oco.format(table.getQuotedName(false)));
         statement.append(" (\n");
 
         Iterator<DBColumn> columnIterator = table.getColumns().iterator();
         while (columnIterator.hasNext()) {
             DBColumn column = columnIterator.next();
             statement.append("    ");
-            statement.append(oco.format(column.getName()));
+            statement.append(oco.format(column.getQuotedName(false)));
             if (columnIterator.hasNext()) {
                 statement.append(",\n");
             } else {
@@ -48,7 +48,7 @@ public class InsertStatementGenerator extends StatementGenerator {
         while (columnIterator.hasNext()) {
             DBColumn column = columnIterator.next();
             statement.append("    :");
-            statement.append(column.getName().toLowerCase());
+            statement.append(column.getName());
             if (columnIterator.hasNext()) {
                 statement.append(",\n");
             } else {
