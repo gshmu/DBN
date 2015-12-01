@@ -1,8 +1,20 @@
 package com.dci.intellij.dbn.common.util;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -39,17 +51,6 @@ import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.util.ArrayList;
-import java.util.List;
 
 public class EditorUtil {
     public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, EditorProviderId editorProviderId, boolean requestFocus) {
@@ -205,15 +206,20 @@ public class EditorUtil {
         return null;
     }
 
-    public static void setEditorReadonly(SourceCodeEditor sourceCodeEditor, boolean readonly) {
-        EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
+    public static void setEditorReadonly(SourceCodeEditor sourceCodeEditor, final boolean readonly) {
+        final EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
         editor.setViewer(readonly);
-        EditorColorsScheme scheme = editor.getColorsScheme();
-        Color defaultBackground = scheme.getDefaultBackground();
-        editor.setBackgroundColor(readonly ? GUIUtil.adjust(defaultBackground, -0.03) : defaultBackground);
-        scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
-                GUIUtil.adjust(defaultBackground, -0.03) :
-                EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
+        final EditorColorsScheme scheme = editor.getColorsScheme();
+        final Color defaultBackground = scheme.getDefaultBackground();
+        new SimpleLaterInvocator() {
+            @Override
+            protected void execute() {
+                editor.setBackgroundColor(readonly ? GUIUtil.adjust(defaultBackground, -0.03) : defaultBackground);
+                scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
+                        GUIUtil.adjust(defaultBackground, -0.03) :
+                        EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
+            }
+        }.start();
 
     }
 

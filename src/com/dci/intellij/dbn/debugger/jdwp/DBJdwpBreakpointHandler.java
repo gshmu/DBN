@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -119,7 +120,43 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                 }.invoke();
             }
         }
+    }
 
+    @Override
+    public void registerBreakpoints(Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints) {
+        prepareObjectClasses(breakpoints);
+        super.registerBreakpoints(breakpoints);
+    }
+
+    public void prepareObjectClasses(Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints) {
+        for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
+            prepareObjectClasses(breakpoint);
+        }
+    }
+
+    public void prepareObjectClasses(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
+        XBreakpointProperties properties = breakpoint.getProperties();
+        if (properties instanceof DBBreakpointProperties) {
+            DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
+            if (breakpointProperties.getConnectionHandler() == getConnectionHandler()) {
+                new ManagedThreadCommand(getJdiDebugProcess()) {
+
+                    @Override
+                    protected void action() throws Exception {
+                        RequestManagerImpl requestsManager = getRequestsManager();
+
+                        String programIdentifier = getProgramIdentifier(breakpoint);
+                        LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
+                        if (lineBreakpoint != null) {
+                            Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
+                            if (requests.size() == 0) {
+                                requestsManager.callbackOnPrepareClasses(lineBreakpoint, programIdentifier);
+                            }
+                        }
+                    }
+                }.invoke();
+            }
+        }
     }
 
     @Override
