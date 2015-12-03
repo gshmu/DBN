@@ -16,7 +16,7 @@ public class DebuggerSettings extends Configuration<DebuggerSettingsForm>{
                     "debugger-type",
                     "Debugger Type",
                     "Please select debugger type to use.",
-                    DBDebuggerType.JDWP.isSupported() ? DebuggerTypeOption.JDWP : DebuggerTypeOption.JDBC,
+                    DBDebuggerType.JDWP.isSupported() ? DebuggerTypeOption.ASK : DebuggerTypeOption.JDBC,
                     DebuggerTypeOption.JDWP,
                     DebuggerTypeOption.JDBC,
                     DebuggerTypeOption.CANCEL);
