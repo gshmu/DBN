@@ -458,7 +458,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
 
         CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(getProject()).getConfirmationSettings();
-        InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChangesOptionHandler();
+        InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChanges();
 
         for (VirtualFile openFile : openFiles) {
             if (openFile instanceof DBEditableObjectVirtualFile) {

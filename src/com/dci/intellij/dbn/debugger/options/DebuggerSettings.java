@@ -3,14 +3,23 @@ package com.dci.intellij.dbn.debugger.options;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.options.ui.DebuggerSettingsForm;
 
 public class DebuggerSettings extends Configuration<DebuggerSettingsForm>{
-    private DBDebuggerType debuggerType = DBDebuggerType.JDWP.isSupported() ? DBDebuggerType.JDWP : DBDebuggerType.JDBC;
     private boolean useGenericRunners = true;
+    private InteractiveOptionHandler<DebuggerTypeOption> debuggerType =
+            new InteractiveOptionHandler<DebuggerTypeOption>(
+                    "debugger-type",
+                    "Debugger Type",
+                    "Please select debugger type to use.",
+                    DBDebuggerType.JDWP.isSupported() ? DebuggerTypeOption.JDWP : DebuggerTypeOption.JDBC,
+                    DebuggerTypeOption.JDWP,
+                    DebuggerTypeOption.JDBC,
+                    DebuggerTypeOption.CANCEL);
 
     public String getDisplayName() {
         return "Data editor general settings";
@@ -20,17 +29,15 @@ public class DebuggerSettings extends Configuration<DebuggerSettingsForm>{
         return "debugger";
     }
 
+    public InteractiveOptionHandler<DebuggerTypeOption> getDebuggerType() {
+        return debuggerType;
+    }
+
     /*********************************************************
     *                       Settings                        *
     *********************************************************/
 
-    public DBDebuggerType getDebuggerType() {
-        return debuggerType;
-    }
 
-    public void setDebuggerType(DBDebuggerType debuggerType) {
-        this.debuggerType = debuggerType;
-    }
 
     public boolean isUseGenericRunners() {
         return useGenericRunners;
@@ -54,12 +61,12 @@ public class DebuggerSettings extends Configuration<DebuggerSettingsForm>{
     }
 
     public void readConfiguration(Element element) {
-        debuggerType = SettingsUtil.getEnum(element, "debugger-type", debuggerType);
+        debuggerType.readConfiguration(element);
         useGenericRunners = SettingsUtil.getBoolean(element, "use-generic-runners", useGenericRunners);
     }
 
     public void writeConfiguration(Element element) {
-        SettingsUtil.setEnum(element, "debugger-type", debuggerType);
+        debuggerType.writeConfiguration(element);
         SettingsUtil.setBoolean(element, "use-generic-runners", useGenericRunners);
     }
 }

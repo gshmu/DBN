@@ -30,15 +30,15 @@ public class CodeEditorConfirmationSettingsForm extends ConfigurationEditorForm<
 
     public void applyFormChanges() throws ConfigurationException {
         CodeEditorConfirmationSettings settings = getConfiguration();
-        settings.getSaveChangesOptionHandler().setConfirm(confirmSaveCheckBox.isSelected());
-        settings.getRevertChangesOptionHandler().setConfirm(confirmRevertCheckBox.isSelected());
-        settings.getExitOnChangesOptionHandler().setSelectedOption(disconnectSessionComboBox.getSelectedValue());
+        settings.getSaveChanges().setConfirm(confirmSaveCheckBox.isSelected());
+        settings.getRevertChanges().setConfirm(confirmRevertCheckBox.isSelected());
+        settings.getExitOnChanges().set(disconnectSessionComboBox.getSelectedValue());
     }
 
     public void resetFormChanges() {
         CodeEditorConfirmationSettings settings = getConfiguration();
-        confirmSaveCheckBox.setSelected(settings.getSaveChangesOptionHandler().isConfirm());
-        confirmRevertCheckBox.setSelected(settings.getRevertChangesOptionHandler().isConfirm());
-        disconnectSessionComboBox.setSelectedValue(settings.getExitOnChangesOptionHandler().getSelectedOption());
+        confirmSaveCheckBox.setSelected(settings.getSaveChanges().isConfirm());
+        confirmRevertCheckBox.setSelected(settings.getRevertChanges().isConfirm());
+        disconnectSessionComboBox.setSelectedValue(settings.getExitOnChanges().get());
     }
 }

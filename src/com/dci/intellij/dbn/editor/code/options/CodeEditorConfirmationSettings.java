@@ -11,19 +11,19 @@ import com.dci.intellij.dbn.editor.code.options.ui.CodeEditorConfirmationSetting
 public class CodeEditorConfirmationSettings extends Configuration<CodeEditorConfirmationSettingsForm> {
     public static final String REMEMBER_OPTION_HINT = ""; //"\n\n(you can remember your option and change it at any time in Settings > Operations > Session Manager)";
 
-    private ConfirmationOptionHandler saveChangesOptionHandler =
+    private ConfirmationOptionHandler saveChanges =
             new ConfirmationOptionHandler(
                     "save-changes",
                     "Save changes",
                     "Save the changes for {0}?" + REMEMBER_OPTION_HINT, false);
 
-    private ConfirmationOptionHandler revertChangesOptionHandler =
+    private ConfirmationOptionHandler revertChanges =
             new ConfirmationOptionHandler(
                     "revert-changes",
                     "Revert Changes",
                     "Revert the changes for {0}?" + REMEMBER_OPTION_HINT, true);
 
-    private InteractiveOptionHandler<CodeEditorChangesOption> exitOnChangesOptionHandler =
+    private InteractiveOptionHandler<CodeEditorChangesOption> exitOnChanges =
             new InteractiveOptionHandler<CodeEditorChangesOption>(
                     "exit-on-changes",
                     "Unsaved Changes",
@@ -48,16 +48,16 @@ public class CodeEditorConfirmationSettings extends Configuration<CodeEditorConf
      *                       Settings                        *
      *********************************************************/
 
-    public ConfirmationOptionHandler getSaveChangesOptionHandler() {
-        return saveChangesOptionHandler;
+    public ConfirmationOptionHandler getSaveChanges() {
+        return saveChanges;
     }
 
-    public ConfirmationOptionHandler getRevertChangesOptionHandler() {
-        return revertChangesOptionHandler;
+    public ConfirmationOptionHandler getRevertChanges() {
+        return revertChanges;
     }
 
-    public InteractiveOptionHandler<CodeEditorChangesOption> getExitOnChangesOptionHandler() {
-        return exitOnChangesOptionHandler;
+    public InteractiveOptionHandler<CodeEditorChangesOption> getExitOnChanges() {
+        return exitOnChanges;
     }
 
     /****************************************************
@@ -74,12 +74,12 @@ public class CodeEditorConfirmationSettings extends Configuration<CodeEditorConf
     }
 
     public void readConfiguration(Element element) {
-        saveChangesOptionHandler.readConfiguration(element);
-        revertChangesOptionHandler.readConfiguration(element);
+        saveChanges.readConfiguration(element);
+        revertChanges.readConfiguration(element);
     }
 
     public void writeConfiguration(Element element) {
-        saveChangesOptionHandler.writeConfiguration(element);
-        revertChangesOptionHandler.writeConfiguration(element);
+        saveChanges.writeConfiguration(element);
+        revertChanges.writeConfiguration(element);
     }
 }

@@ -58,20 +58,20 @@ public class TransactionManagerSettingsForm extends ConfigurationEditorForm<Tran
 
     public void applyFormChanges() throws ConfigurationException {
         TransactionManagerSettings settings = getConfiguration();
-        settings.getCloseProjectOptionHandler().setSelectedOption(uncommittedChangesOnProjectCloseComboBox.getSelectedValue());
-        settings.getToggleAutoCommitOptionHandler().setSelectedOption(uncommittedChangesOnSwitchComboBox.getSelectedValue());
-        settings.getDisconnectOptionHandler().setSelectedOption(uncommittedChangesOnDisconnectComboBox.getSelectedValue());
-        settings.getCommitMultipleChangesOptionHandler().setSelectedOption(multipleChangesOnCommitComboBox.getSelectedValue());
-        settings.getRollbackMultipleChangesOptionHandler().setSelectedOption(multipleChangesOnRollbackComboBox.getSelectedValue());
+        settings.getCloseProject().set(uncommittedChangesOnProjectCloseComboBox.getSelectedValue());
+        settings.getToggleAutoCommit().set(uncommittedChangesOnSwitchComboBox.getSelectedValue());
+        settings.getDisconnect().set(uncommittedChangesOnDisconnectComboBox.getSelectedValue());
+        settings.getCommitMultipleChanges().set(multipleChangesOnCommitComboBox.getSelectedValue());
+        settings.getRollbackMultipleChanges().set(multipleChangesOnRollbackComboBox.getSelectedValue());
     }
 
     public void resetFormChanges() {
         TransactionManagerSettings settings = getConfiguration();
-        uncommittedChangesOnProjectCloseComboBox.setSelectedValue(settings.getCloseProjectOptionHandler().getSelectedOption());
-        uncommittedChangesOnSwitchComboBox.setSelectedValue(settings.getToggleAutoCommitOptionHandler().getSelectedOption());
-        uncommittedChangesOnDisconnectComboBox.setSelectedValue(settings.getDisconnectOptionHandler().getSelectedOption());
-        multipleChangesOnCommitComboBox.setSelectedValue(settings.getCommitMultipleChangesOptionHandler().getSelectedOption());
-        multipleChangesOnRollbackComboBox.setSelectedValue(settings.getRollbackMultipleChangesOptionHandler().getSelectedOption());
+        uncommittedChangesOnProjectCloseComboBox.setSelectedValue(settings.getCloseProject().get());
+        uncommittedChangesOnSwitchComboBox.setSelectedValue(settings.getToggleAutoCommit().get());
+        uncommittedChangesOnDisconnectComboBox.setSelectedValue(settings.getDisconnect().get());
+        multipleChangesOnCommitComboBox.setSelectedValue(settings.getCommitMultipleChanges().get());
+        multipleChangesOnRollbackComboBox.setSelectedValue(settings.getRollbackMultipleChanges().get());
 
     }
 }

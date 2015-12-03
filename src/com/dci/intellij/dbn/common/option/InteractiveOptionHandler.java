@@ -44,16 +44,13 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
         }
     }
 
-    public void setSelectedOption(T selectedOption) {
-        if (selectedOption.isAsk() || selectedOption.isCancel()) {
-            this.selectedOption = null;
-        } else {
-            this.selectedOption = selectedOption;
-        }
+    public void set(T selectedOption) {
+        assert !selectedOption.isCancel();
+        this.selectedOption = selectedOption;
     }
 
     @NotNull
-    public T getSelectedOption() {
+    public T get() {
         return CommonUtil.nvl(selectedOption, defaultOption);
     }
 
@@ -79,7 +76,7 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
     }
 
     public T resolve(String ... messageArgs) {
-        if (selectedOption != null) {
+        if (selectedOption != null && !selectedOption.isAsk()) {
             return selectedOption;
         } else {
             int optionIndex = Messages.showDialog(
@@ -105,11 +102,11 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
     @Override
     public void readConfiguration(Element element) {
         T option = (T) SettingsUtil.getEnum(element, configName, (Enum)defaultOption);
-        setSelectedOption(option);
+        set(option);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setEnum(element, configName, (Enum) getSelectedOption());
+        SettingsUtil.setEnum(element, configName, (Enum) get());
     }
 }

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.thread;
 import com.intellij.openapi.progress.ProcessCanceledException;
 
 public abstract class SimpleTask implements RunnableTask<Integer>{
-    private int option;
+    private int option = 0;
 
     @Override
     public void setOption(Integer handle) {
