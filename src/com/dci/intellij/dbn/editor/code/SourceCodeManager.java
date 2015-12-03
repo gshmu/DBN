@@ -220,6 +220,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         if (!sourceCodeFile.isLoading()) {
             synchronized (sourceCodeFile) {
                 if (!sourceCodeFile.isLoading()) {
+                    EditorUtil.setEditorsReadonly(sourceCodeFile, true);
                     sourceCodeFile.setLoading(true);
                     final Project project = FailsafeUtil.get(getProject());
                     final DBSchemaObject object = sourceCodeFile.getObject();

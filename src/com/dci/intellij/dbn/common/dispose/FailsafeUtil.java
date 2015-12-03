@@ -11,7 +11,7 @@ import com.intellij.testFramework.LightVirtualFile;
 
 public class FailsafeUtil {
     private static final VirtualFile DUMMY_VIRTUAL_FILE = new LightVirtualFile();
-    private static final Project DUMMY_PROJECT = new MockProject(ApplicationManager.getApplication().getPicoContainer(), ApplicationManager.getApplication());
+    public static final Project DUMMY_PROJECT = new MockProject(ApplicationManager.getApplication().getPicoContainer(), ApplicationManager.getApplication());
 
     public static @NotNull <T extends Disposable> T get(@Nullable T disposable) {
         if (disposable == null || disposable.isDisposed()) {
