@@ -100,5 +100,5 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
 
     public abstract void unregisterDefaultBreakpoint();
 
-    public abstract void prepareObjectClasses(List<XLineBreakpoint<XBreakpointProperties>> breakpoints, List<? extends DBObject> objects);
+    public abstract void initializeResources(List<XLineBreakpoint<XBreakpointProperties>> breakpoints, List<? extends DBObject> objects);
 }

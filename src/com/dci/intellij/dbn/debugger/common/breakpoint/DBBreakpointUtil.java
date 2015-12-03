@@ -84,19 +84,19 @@ public class DBBreakpointUtil {
         return contentType;
     }
 
-    public static String getProgramIdentifier(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
+    @Nullable
+    public static String getProgramIdentifier(@NotNull ConnectionHandler connectionHandler, @NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
         DBSchemaObject object = getDatabaseObject(breakpoint);
         DBContentType contentType = getContentType(breakpoint);
-        return getProgramIdentifier(object, contentType);
+        return getProgramIdentifier(connectionHandler, object, contentType);
     }
 
     @Nullable
-    public static String getProgramIdentifier(DBSchemaObject object, DBContentType contentType) {
-        if (object != null) {
-            DatabaseDebuggerInterface debuggerInterface = object.getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
-            return debuggerInterface.getJdwpProgramIdentifier(object.getObjectType(), contentType, object.getQualifiedName());
-        }
-        return null;
+    public static String getProgramIdentifier(@NotNull ConnectionHandler connectionHandler, DBSchemaObject object, DBContentType contentType) {
+        DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
+        return object == null ?
+                debuggerInterface.getJdwpBlockIdentifier() :
+                debuggerInterface.getJdwpProgramIdentifier(object.getObjectType(), contentType, object.getQualifiedName());
     }
 
     @NotNull
