@@ -5,13 +5,13 @@ import javax.swing.JPanel;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
-import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.options.DebuggerSettings;
+import com.dci.intellij.dbn.debugger.options.DebuggerTypeOption;
 import com.intellij.openapi.options.ConfigurationException;
 
 public class DebuggerSettingsForm extends ConfigurationEditorForm<DebuggerSettings> {
     private JPanel mainPanel;
-    private DBNComboBox<DBDebuggerType> debuggerTypeComboBox;
+    private DBNComboBox<DebuggerTypeOption> debuggerTypeComboBox;
     private JCheckBox useGenericRunnersCheckBox;
     private JPanel genericRunnersHintPanel;
 
@@ -19,8 +19,9 @@ public class DebuggerSettingsForm extends ConfigurationEditorForm<DebuggerSettin
         super(settings);
 
         debuggerTypeComboBox.setValues(
-                DBDebuggerType.JDBC,
-                DBDebuggerType.JDWP);
+                DebuggerTypeOption.JDWP,
+                DebuggerTypeOption.JDBC,
+                DebuggerTypeOption.ASK);
 
 /*
         String genericRunnersHintText = "NOTE: Using generic runners prevents creating a run configuration for each method that is being debugged. ";
@@ -41,13 +42,14 @@ public class DebuggerSettingsForm extends ConfigurationEditorForm<DebuggerSettin
 
     public void applyFormChanges() throws ConfigurationException {
         DebuggerSettings settings = getConfiguration();
-        settings.setDebuggerType(debuggerTypeComboBox.getSelectedValue());
+
+        settings.getDebuggerType().set(debuggerTypeComboBox.getSelectedValue());
         settings.setUseGenericRunners(useGenericRunnersCheckBox.isSelected());
     }
 
     public void resetFormChanges() {
         DebuggerSettings settings = getConfiguration();
-        debuggerTypeComboBox.setSelectedValue(settings.getDebuggerType());
+        debuggerTypeComboBox.setSelectedValue(settings.getDebuggerType().get());
         useGenericRunnersCheckBox.setSelected(settings.isUseGenericRunners());
     }
 }

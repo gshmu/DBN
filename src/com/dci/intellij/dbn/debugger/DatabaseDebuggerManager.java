@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -36,6 +37,7 @@ import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBStatementJdwpRunner;
 import com.dci.intellij.dbn.debugger.options.DebuggerSettings;
+import com.dci.intellij.dbn.debugger.options.DebuggerTypeOption;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -290,7 +292,6 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             @Override
             protected void execute() {
                 Project project = getProject();
-                DebuggerSettings debuggerSettings = getDebuggerSettings();
                 DBDebuggerType debuggerType = getDebuggerType();
 
                 DBStatementRunConfigType configurationType = getStatementConfigurationType();
@@ -324,25 +325,50 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         });
     }
 
-    public void startDebugger(DebuggerStarter runner) {
-        DBDebuggerType debuggerType = getDebuggerSettings().getDebuggerType();
-        if (!debuggerType.isSupported()) {
-            ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
-            MessageUtil.showErrorDialog(
-                    getProject(), "Unsupported Debugger",
-                    debuggerType.name() + " debugging is not supported in \"" + applicationInfo.getVersionName() + " " + applicationInfo.getFullVersion()+ "\".\nDo you want to use classic debugger over JDBC instead?",
-                    new String[]{"Yes", "No"}, 0,
-                    runner);
-        } else {
-            runner.setOption(0);
-            runner.start();
+
+
+    public void startDebugger(final DebuggerStarter debuggerStarter) {
+        DebuggerTypeOption debuggerTypeOption = getDebuggerSettings().getDebuggerType().resolve();
+        DBDebuggerType debuggerType = debuggerTypeOption.getDebuggerType();
+        if (debuggerType != null) {
+            if (debuggerType.isSupported()) {
+                debuggerStarter.setDebuggerType(debuggerType);
+                debuggerStarter.start();
+            } else {
+                ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
+                MessageUtil.showErrorDialog(
+                        getProject(), "Unsupported Debugger",
+                        debuggerType.name() + " debugging is not supported in \"" + applicationInfo.getVersionName() + " " + applicationInfo.getFullVersion() + "\".\nDo you want to use classic debugger over JDBC instead?",
+                        new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
+                        new SimpleTask() {
+                            @Override
+                            protected void execute() {
+                                Integer option = getOption();
+                                if (option == 0) {
+                                    debuggerStarter.setDebuggerType(DBDebuggerType.JDBC);
+                                    debuggerStarter.start();
+                                }
+                            }
+                        });
+            }
+
         }
     }
+
     private abstract class DebuggerStarter extends ConditionalLaterInvocator {
-        public DBDebuggerType getDebuggerType() {
-            DBDebuggerType debuggerType = getDebuggerSettings().getDebuggerType();
-            return debuggerType.isSupported() ? debuggerType : DBDebuggerType.JDBC;
+        DBDebuggerType debuggerType;
+
+        public DebuggerStarter() {
         }
+
+        public DBDebuggerType getDebuggerType() {
+            return debuggerType;
+        }
+
+        public void setDebuggerType(DBDebuggerType debuggerType) {
+            this.debuggerType = debuggerType;
+        }
+
         @Override
         protected boolean canExecute() {
             return getOption() == 0;

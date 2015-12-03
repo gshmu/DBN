@@ -12,7 +12,7 @@ public class SessionBrowserSettings extends Configuration<SessionBrowserSettings
     public static final String REMEMBER_OPTION_HINT = ""; //"\n\n(you can remember your option and change it at any time in Settings > Operations > Session Manager)";
 
     private boolean reloadOnFilterChange = false;
-    private InteractiveOptionHandler<SessionInterruptionOption> disconnectSessionOptionHandler =
+    private InteractiveOptionHandler<SessionInterruptionOption> disconnectSession =
             new InteractiveOptionHandler<SessionInterruptionOption>(
                     "disconnect-session",
                     "Disconnect Sessions",
@@ -23,7 +23,7 @@ public class SessionBrowserSettings extends Configuration<SessionBrowserSettings
                     SessionInterruptionOption.POST_TRANSACTION,
                     SessionInterruptionOption.CANCEL);
 
-    private InteractiveOptionHandler<SessionInterruptionOption> killSessionOptionHandler =
+    private InteractiveOptionHandler<SessionInterruptionOption> killSession =
             new InteractiveOptionHandler<SessionInterruptionOption>(
                     "kill-session",
                     "Kill Sessions",
@@ -47,12 +47,12 @@ public class SessionBrowserSettings extends Configuration<SessionBrowserSettings
      *                       Settings                        *
      *********************************************************/
 
-    public InteractiveOptionHandler<SessionInterruptionOption> getDisconnectSessionOptionHandler() {
-        return disconnectSessionOptionHandler;
+    public InteractiveOptionHandler<SessionInterruptionOption> getDisconnectSession() {
+        return disconnectSession;
     }
 
-    public InteractiveOptionHandler<SessionInterruptionOption> getKillSessionOptionHandler() {
-        return killSessionOptionHandler;
+    public InteractiveOptionHandler<SessionInterruptionOption> getKillSession() {
+        return killSession;
     }
 
     public boolean isReloadOnFilterChange() {
@@ -77,14 +77,14 @@ public class SessionBrowserSettings extends Configuration<SessionBrowserSettings
     }
 
     public void readConfiguration(Element element) {
-        disconnectSessionOptionHandler.readConfiguration(element);
-        killSessionOptionHandler.readConfiguration(element);
+        disconnectSession.readConfiguration(element);
+        killSession.readConfiguration(element);
         reloadOnFilterChange = SettingsUtil.getBoolean(element, "reload-on-filter-change", reloadOnFilterChange);
     }
 
     public void writeConfiguration(Element element) {
-        disconnectSessionOptionHandler.writeConfiguration(element);
-        killSessionOptionHandler.writeConfiguration(element);
+        disconnectSession.writeConfiguration(element);
+        killSession.writeConfiguration(element);
         SettingsUtil.setBoolean(element, "reload-on-filter-change", reloadOnFilterChange);
     }
 }

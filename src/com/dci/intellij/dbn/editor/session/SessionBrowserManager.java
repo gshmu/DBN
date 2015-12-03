@@ -136,13 +136,13 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         if (DatabaseFeature.SESSION_INTERRUPTION_TIMING.isSupported(connectionHandler)) {
 
             SessionBrowserSettings sessionBrowserSettings = getSessionBrowserSettings();
-            InteractiveOptionHandler<SessionInterruptionOption> disconnectOptionHandler =
-                    type == SessionInterruptionType.KILL ? sessionBrowserSettings.getKillSessionOptionHandler() :
-                    type == SessionInterruptionType.DISCONNECT  ? sessionBrowserSettings.getDisconnectSessionOptionHandler() : null;
+            InteractiveOptionHandler<SessionInterruptionOption> disconnect =
+                    type == SessionInterruptionType.KILL ? sessionBrowserSettings.getKillSession() :
+                    type == SessionInterruptionType.DISCONNECT  ? sessionBrowserSettings.getDisconnectSession() : null;
 
-            if (disconnectOptionHandler != null) {
+            if (disconnect != null) {
                 String subject = sessionIds.size() > 1 ? "selected sessions" : "session with id \"" + sessionIds.keySet().iterator().next().toString() + "\"";
-                SessionInterruptionOption result = disconnectOptionHandler.resolve(subject, connectionHandler.getName());
+                SessionInterruptionOption result = disconnect.resolve(subject, connectionHandler.getName());
                 if (result != SessionInterruptionOption.CANCEL && result != SessionInterruptionOption.ASK) {
                     doInterruptSessions(sessionBrowser, sessionIds, type, result);
                 }

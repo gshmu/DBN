@@ -138,7 +138,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
                     Project project = getProject();
                     CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
-                    InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChangesOptionHandler();
+                    InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChanges();
                     CodeEditorChangesOption option = optionHandler.resolve(object.getQualifiedNameWithType());
 
                     switch (option) {

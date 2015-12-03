@@ -27,7 +27,7 @@ public class RevertChangesAction extends AbstractSourceCodeEditorAction {
         SourceCodeEditor fileEditor = getFileEditor(e);
         if (project != null && fileEditor != null) {
             CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
-            ConfirmationOptionHandler optionHandler = confirmationSettings.getRevertChangesOptionHandler();
+            ConfirmationOptionHandler optionHandler = confirmationSettings.getRevertChanges();
             boolean canContinue = optionHandler.resolve(fileEditor.getObject().getQualifiedNameWithType());
 
             if (canContinue) {

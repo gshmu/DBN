@@ -39,15 +39,15 @@ public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionB
 
     public void applyFormChanges() throws ConfigurationException {
         SessionBrowserSettings settings = getConfiguration();
-        settings.getDisconnectSessionOptionHandler().setSelectedOption(disconnectSessionComboBox.getSelectedValue());
-        settings.getKillSessionOptionHandler().setSelectedOption(killSessionComboBox.getSelectedValue());
+        settings.getDisconnectSession().set(disconnectSessionComboBox.getSelectedValue());
+        settings.getKillSession().set(killSessionComboBox.getSelectedValue());
         settings.setReloadOnFilterChange(reloadOnFilterChangeCheckBox.isSelected());
     }
 
     public void resetFormChanges() {
         SessionBrowserSettings settings = getConfiguration();
-        disconnectSessionComboBox.setSelectedValue(settings.getDisconnectSessionOptionHandler().getSelectedOption());
-        killSessionComboBox.setSelectedValue(settings.getKillSessionOptionHandler().getSelectedOption());
+        disconnectSessionComboBox.setSelectedValue(settings.getDisconnectSession().get());
+        killSessionComboBox.setSelectedValue(settings.getKillSession().get());
         reloadOnFilterChangeCheckBox.setSelected(settings.isReloadOnFilterChange());
     }
 }

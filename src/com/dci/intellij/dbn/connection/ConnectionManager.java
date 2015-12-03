@@ -437,7 +437,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public boolean canCloseProject(Project project) {
         if (project == getProject() && hasUncommittedChanges()) {
             TransactionManagerSettings transactionManagerSettings = DatabaseTransactionManager.getInstance(project).getTransactionManagerSettings();
-            InteractiveOptionHandler<TransactionOption> closeProjectOptionHandler = transactionManagerSettings.getCloseProjectOptionHandler();
+            InteractiveOptionHandler<TransactionOption> closeProjectOptionHandler = transactionManagerSettings.getCloseProject();
 
             TransactionOption result = closeProjectOptionHandler.resolve(project.getName());
             switch (result) {
