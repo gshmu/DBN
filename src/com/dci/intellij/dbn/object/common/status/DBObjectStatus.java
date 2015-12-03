@@ -6,8 +6,6 @@ public enum DBObjectStatus {
     VALID(true, true),
     EDITABLE(false, false),
     DEBUG(true, true),
-    LOADING(false, false),
-    SAVING(false, false),
     COMPILING(false, false);
 
     private boolean propagable;

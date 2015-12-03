@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
@@ -42,8 +43,6 @@ import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
-import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -53,6 +52,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.diff.ActionButtonPresentation;
 import com.intellij.openapi.diff.DiffManager;
 import com.intellij.openapi.diff.DiffRequestFactory;
@@ -80,7 +80,7 @@ import com.intellij.openapi.vfs.VirtualFile;
         @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class SourceCodeManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, SettingsSavingComponent {
-
+    private static final Logger LOGGER = LoggerFactory.createLogger();
     private DBLanguageFileEditorListener fileEditorListener;
 
     public static SourceCodeManager getInstance(@NotNull Project project) {
@@ -149,12 +149,9 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             if (newEditor instanceof SourceCodeEditor) {
                 SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) newEditor;
                 DBEditableObjectVirtualFile databaseFile = sourceCodeEditor.getVirtualFile().getMainDatabaseFile();
-                for (DBContentVirtualFile contentFile : databaseFile.getContentFiles()) {
-                    if (contentFile instanceof DBSourceCodeVirtualFile) {
-                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
-                        if (!sourceCodeFile.isLoaded()) {
-                            loadSourceFromDatabase(sourceCodeFile);
-                        }
+                for (DBSourceCodeVirtualFile sourceCodeFile : databaseFile.getSourceCodeFiles()) {
+                    if (!sourceCodeFile.isLoaded()) {
+                        loadSourceFromDatabase(sourceCodeFile);
                     }
                 }
 
@@ -168,12 +165,9 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         new BackgroundTask(project, "Reloading object source code", startInBackground) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                List<DBContentVirtualFile> contentFiles = databaseFile.getContentFiles();
-                for (DBContentVirtualFile contentFile : contentFiles) {
-                    if (contentFile instanceof DBSourceCodeVirtualFile) {
-                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
-                        loadSourceFromDatabase(sourceCodeFile);
-                    }
+                List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
+                for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                    loadSourceFromDatabase(sourceCodeFile);
                 }
             }
         }.start();
@@ -223,88 +217,89 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public void loadSourceFromDatabase(@NotNull final DBSourceCodeVirtualFile sourceCodeFile) {
-        final DBContentType contentType = sourceCodeFile.getContentType();
-        final DBSchemaObject object = sourceCodeFile.getObject();
-        final DBObjectStatusHolder objectStatus = sourceCodeFile.getObject().getStatus();
-        if (!objectStatus.is(contentType, DBObjectStatus.LOADING)) {
-            final Project project = FailsafeUtil.get(getProject());
-            final SourceCodeManagerListener sourceCodeManagerListener = EventUtil.notify(project, SourceCodeManagerListener.TOPIC);
-            sourceCodeManagerListener.sourceCodeLoadStarted(sourceCodeFile);
-            objectStatus.set(contentType, DBObjectStatus.LOADING, true);
+        if (!sourceCodeFile.isLoading()) {
+            synchronized (sourceCodeFile) {
+                if (!sourceCodeFile.isLoading()) {
+                    sourceCodeFile.setLoading(true);
+                    final Project project = FailsafeUtil.get(getProject());
+                    final DBSchemaObject object = sourceCodeFile.getObject();
+                    final DBContentType contentType = sourceCodeFile.getContentType();
 
-            TaskInstructions taskInstructions = new TaskInstructions("Loading source code", true, false);
-            new ConnectionAction("loading source code", sourceCodeFile, taskInstructions) {
-                @Override
-                protected void execute() {
-                    try {
-                        boolean isInitialLoad = !sourceCodeFile.isLoaded();
-                        sourceCodeFile.loadSourceFromDatabase();
-                        sourceCodeFile.updateChangeTimestamp();
-                        sourceCodeManagerListener.sourceCodeLoaded(sourceCodeFile, isInitialLoad);
-                    } catch (SQLException e) {
-                        MessageUtil.showErrorDialog(project, "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
-                    } finally {
-                        objectStatus.set(contentType, DBObjectStatus.LOADING, false);
-                        sourceCodeManagerListener.sourceCodeLoadFinished(sourceCodeFile);
-                    }
+                    EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoading(sourceCodeFile);
+
+
+                    TaskInstructions taskInstructions = new TaskInstructions("Loading source code", true, false);
+                    new ConnectionAction("loading source code", sourceCodeFile, taskInstructions) {
+                        @Override
+                        protected void execute() {
+                            final boolean initialLoad = !sourceCodeFile.isLoaded();
+                            try {
+                                SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
+                                sourceCodeFile.applyContent(sourceCodeContent);
+                                sourceCodeFile.updateChangeTimestamp();
+                            } catch (SQLException e) {
+                                sourceCodeFile.setSourceLoadError(e.getMessage());
+                                MessageUtil.showErrorDialog(project, "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
+                            } finally {
+                                EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoaded(sourceCodeFile, initialLoad);
+                                sourceCodeFile.setLoading(false);
+                            }
+                        }
+                    }.start();
                 }
-            }.start();
+            }
         }
     }
 
     public void saveSourceToDatabase(@NotNull final SourceCodeEditor fileEditor, @Nullable final Runnable successCallback) {
         final DBSourceCodeVirtualFile sourceCodeFile = fileEditor.getVirtualFile();
         final DBSchemaObject object = sourceCodeFile.getObject();
-        final DBObjectStatusHolder objectStatus = object.getStatus();
         final DBContentType contentType = sourceCodeFile.getContentType();
 
-        if (!objectStatus.is(contentType, DBObjectStatus.SAVING)) {
+        if (!sourceCodeFile.isSaving()) {
             DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
             if (!debuggerManager.checkForbiddenOperation(sourceCodeFile.getActiveConnection())) {
                 return;
             }
 
-            objectStatus.set(contentType, DBObjectStatus.SAVING, true);
+            sourceCodeFile.setSaving(true);
             TaskInstructions taskInstructions = new TaskInstructions("Checking for third party changes on " + object.getQualifiedNameWithType(), false, false);
             new ConnectionAction("saving the " + object.getQualifiedNameWithType(), object, taskInstructions) {
                 @Override
                 protected void execute() {
                     Project project = getProject();
                     try {
+                        Editor editor = FailsafeUtil.get(EditorUtil.getEditor(fileEditor));
+                        String content = editor.getDocument().getText();
+                        if (isValidObjectTypeAndName(content, object, contentType)) {
+                            boolean isChangedInDatabase = sourceCodeFile.isChangedInDatabase(true);
+                            if (isChangedInDatabase) {
+                                String message =
+                                        "The " + object.getQualifiedNameWithType() +
+                                                " has been changed by another user. \nYou will be prompted to merge the changes";
+                                MessageUtil.showErrorDialog(project, "Version conflict", message);
 
-                        Editor editor = EditorUtil.getEditor(fileEditor);
-                        if (editor != null) {
-                            String content = editor.getDocument().getText();
-                            if (isValidObjectTypeAndName(content, object, contentType)) {
-                                boolean isChangedInDatabase = sourceCodeFile.isChangedInDatabase(true);
-                                if (isChangedInDatabase) {
-                                    String message =
-                                            "The " + object.getQualifiedNameWithType() +
-                                                    " has been changed by another user. \nYou will be prompted to merge the changes";
-                                    MessageUtil.showErrorDialog(project, "Version conflict", message);
-
-                                    CharSequence databaseContent = loadSourceCodeFromDatabase(object, contentType);
-                                    openCodeMergeDialog(databaseContent.toString(), sourceCodeFile, fileEditor, true);
-                                } else {
-                                    storeSourceToDatabase(sourceCodeFile, fileEditor, successCallback);
-                                    //sourceCodeEditor.afterSave();
-                                }
-
+                                CharSequence databaseContent = loadSourceCodeFromDatabase(object, contentType);
+                                openCodeMergeDialog(databaseContent.toString(), sourceCodeFile, fileEditor, true);
                             } else {
-                                String message = "You are not allowed to change the name or the type of the object";
-                                objectStatus.set(contentType, DBObjectStatus.SAVING, false);
-                                MessageUtil.showErrorDialog(project, "Illegal action", message);
+                                storeSourceToDatabase(sourceCodeFile, fileEditor, successCallback);
+                                //sourceCodeEditor.afterSave();
                             }
+
+                        } else {
+                            String message = "You are not allowed to change the name or the type of the object";
+                            sourceCodeFile.setSaving(false);
+                            MessageUtil.showErrorDialog(project, "Illegal action", message);
                         }
-                    } catch (SQLException ex) {
+                    } catch (Exception ex) {
                         MessageUtil.showErrorDialog(project, "Could not save changes to database.", ex);
-                        objectStatus.set(contentType, DBObjectStatus.SAVING, false);
+                        sourceCodeFile.setSaving(false);
                     }
                 }
 
                 @Override
                 protected void cancel() {
-                    objectStatus.set(contentType, DBObjectStatus.SAVING, false);
+                    sourceCodeFile.setSaving(false);
                 }
 
             }.start();
@@ -395,8 +390,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                             Editor editor = EditorUtil.getEditor(fileEditor);
                             if (editor != null) {
                                 DocumentUtil.setText(editor.getDocument(), sourceCodeFile.getContent());
-                                DBContentType contentType = sourceCodeFile.getContentType();
-                                object.getStatus().set(contentType, DBObjectStatus.SAVING, false);
+                                sourceCodeFile.setSaving(false);
                             }
                         }
                     }
@@ -421,8 +415,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 } catch (SQLException e) {
                     MessageUtil.showErrorDialog(project, "Could not save changes to database.", e);
                 } finally {
-                    DBContentType contentType = sourceCodeFile.getContentType();
-                    object.getStatus().set(contentType, DBObjectStatus.SAVING, false);
+                    sourceCodeFile.setSaving(false);
                 }
                 if (successCallback != null) successCallback.run();
 
@@ -471,12 +464,10 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) openFile;
                 if (databaseFile.isModified()) {
                     DBSchemaObject object = databaseFile.getObject();
-                    List<DBContentVirtualFile> contentFiles = databaseFile.getContentFiles();
-                    for (DBContentVirtualFile contentFile : contentFiles) {
-                        if (contentFile instanceof DBSourceCodeVirtualFile && contentFile.isModified()) {
-                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
-                            DBContentType contentType = sourceCodeFile.getContentType();
-                            if (object.getStatus().is(contentType, DBObjectStatus.SAVING)) {
+                    List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
+                    for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                        if (sourceCodeFile.isModified()) {
+                            if (sourceCodeFile.isSaving()) {
                                 return false;
                             }
 

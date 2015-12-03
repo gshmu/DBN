@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -51,7 +50,7 @@ public class RevertChangesAction extends AbstractSourceCodeEditorAction {
             presentation.setVisible(!readonly);
             DBSchemaObject object = sourceCodeFile.getObject();
             DBContentType contentType = sourceCodeFile.getContentType();
-            presentation.setEnabled(sourceCodeFile.isModified() && !object.getStatus().is(contentType, DBObjectStatus.LOADING));
+            presentation.setEnabled(!sourceCodeFile.isLoading() && sourceCodeFile.isModified());
         }
 
 

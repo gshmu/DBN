@@ -146,14 +146,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                         case DISCARD: databaseFile.revertChanges(null); break;
                         case SHOW: {
                             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                            List<DBContentVirtualFile> contentFiles = databaseFile.getContentFiles();
-                            for (DBContentVirtualFile contentFile : contentFiles) {
-                                if (contentFile instanceof DBSourceCodeVirtualFile) {
-                                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
-                                    if (sourceCodeFile.isModified()) {
-                                        sourceCodeManager.opedDatabaseDiffWindow(sourceCodeFile);
-                                    }
-                                }
+                            List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
+                            for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                                sourceCodeManager.opedDatabaseDiffWindow(sourceCodeFile);
                             }
                             throw new ProcessCanceledException();
 

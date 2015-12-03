@@ -39,14 +39,6 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
         }
     };
 
-    private LazyValue<VirtualFile> virtualFile = new SimpleLazyValue<VirtualFile>() {
-        @Override
-        protected VirtualFile load() {
-            Location location = getLocation();
-            return getDebugProcess().getVirtualFile(location);
-        }
-    };
-
     public DBJdwpDebugStackFrame(DBJdwpDebugProcess debugProcess, JavaStackFrame underlyingFrame, int index) {
         super(debugProcess, index);
         this.underlyingFrame = underlyingFrame;
@@ -65,7 +57,7 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
     }
 
     @Override
-    protected XSourcePosition computeSourcePosition() {
+    protected XSourcePosition resolveSourcePosition() {
         Location location = getLocation();
         int lineNumber = location == null ? 0 : location.lineNumber() - 1;
 
@@ -79,6 +71,13 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
             }
         }
         return XSourcePositionImpl.create(getVirtualFile(), lineNumber);
+    }
+
+    @Override
+    protected VirtualFile resolveVirtualFile() {
+        Location location = getLocation();
+        return getDebugProcess().getVirtualFile(location);
+
     }
 
     public JavaStackFrame getUnderlyingFrame() {
@@ -95,12 +94,6 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
     @Nullable
     public Location getLocation() {
         return location.get();
-    }
-
-
-    @Nullable
-    public VirtualFile getVirtualFile() {
-        return virtualFile.get();
     }
 
     @Nullable

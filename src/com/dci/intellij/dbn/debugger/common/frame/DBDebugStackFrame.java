@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
@@ -29,6 +30,7 @@ import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -46,14 +48,23 @@ import com.intellij.xdebugger.frame.XValueChildrenList;
 import gnu.trove.THashMap;
 
 public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDebugValue> extends XStackFrame {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
     private P debugProcess;
     private int frameIndex;
     private Map<String, V> valuesMap;
 
+    private LazyValue<VirtualFile> virtualFile = new SimpleLazyValue<VirtualFile>() {
+        @Override
+        protected VirtualFile load() {
+            return resolveVirtualFile();
+        }
+    };
+
+
     private LazyValue<XSourcePosition> sourcePosition = new SimpleLazyValue<XSourcePosition>() {
         @Override
         protected XSourcePosition load() {
-            return computeSourcePosition();
+            return resolveSourcePosition();
         }
     };
 
@@ -95,7 +106,9 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
         this.frameIndex = frameIndex;
     }
 
-    protected abstract XSourcePosition computeSourcePosition();
+    protected abstract XSourcePosition resolveSourcePosition();
+
+    protected abstract VirtualFile resolveVirtualFile();
 
     @NotNull
     @Override
@@ -103,9 +116,16 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
 
     @Nullable
     @Override
-    public XSourcePosition getSourcePosition() {
+    public final XSourcePosition getSourcePosition() {
         return sourcePosition.get();
     }
+
+    @Nullable
+    public final VirtualFile getVirtualFile() {
+        return virtualFile.get();
+    }
+
+
 
     public IdentifierPsiElement getSubject() {
         return subject.get();
@@ -130,9 +150,6 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
         }
         valuesMap.put(variableName.toLowerCase(), value);
     }
-
-    @Nullable
-    protected abstract VirtualFile getVirtualFile();
 
     @Nullable
     protected abstract V createSuspendReasonDebugValue();
