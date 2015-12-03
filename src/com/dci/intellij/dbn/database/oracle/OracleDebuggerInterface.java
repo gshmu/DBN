@@ -197,6 +197,10 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
     }
 
     @Override
+    public String getJdwpBlockIdentifier() {
+        return "$Oracle.Block";
+    }
+
     public String getJdwpProgramIdentifier(DBObjectType objectType, DBContentType contentType, String qualifiedObjectName) {
         String objectTypeName = "Unknown";
         switch (objectType) {

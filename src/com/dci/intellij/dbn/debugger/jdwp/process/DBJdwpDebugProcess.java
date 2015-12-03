@@ -40,7 +40,6 @@ import com.intellij.debugger.engine.JavaDebugProcess;
 import com.intellij.debugger.engine.JavaStackFrame;
 import com.intellij.debugger.engine.SuspendContext;
 import com.intellij.debugger.engine.SuspendContextImpl;
-import com.intellij.debugger.engine.events.DebuggerCommandImpl;
 import com.intellij.debugger.impl.DebuggerContextImpl;
 import com.intellij.debugger.impl.DebuggerContextListener;
 import com.intellij.debugger.impl.DebuggerSession;
@@ -235,8 +234,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                         console.system("Debug session initialized (JDWP)");
                         status.CAN_SET_BREAKPOINTS = true;
 
-                        loadDatabaseClasses();
-                        initBreakpoints();
+                        initializeResources();
+                        initializeBreakpoints();
                         startTargetProgram();
                     }
                 } catch (Exception e) {
@@ -248,20 +247,20 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         }.start();
     }
 
-    void loadDatabaseClasses() {
+    void initializeResources() {
         new ReadActionRunner() {
             @Override
             protected Object run() {
 
                 List<DBMethod> methods = getRunProfile().getMethods();
                 List<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
-                getBreakpointHandler().prepareObjectClasses(breakpoints, methods);
+                getBreakpointHandler().initializeResources(breakpoints, methods);
                 return null;
             }
         }.start();
     }
 
-    void initBreakpoints() {
+    void initializeBreakpoints() {
         new ReadActionRunner() {
             @Override
             protected Object run() {
@@ -279,15 +278,13 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             lastSuspendContext = suspendContext;
             final XDebugSession session = getSession();
             if (shouldSuspend(suspendContext)) {
-                getDebuggerSession().getProcess().getManagerThread().schedule(
-                        new DebuggerCommandImpl() {
-                            @Override
-                            protected void action() throws Exception {
-                                DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
-                                session.positionReached(dbSuspendContext);
-
-                            }
-                        });
+                new ManagedThreadCommand(getDebuggerSession().getProcess()) {
+                    @Override
+                    protected void action() throws Exception {
+                        DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
+                        session.positionReached(dbSuspendContext);
+                    }
+                }.schedule();
                 throw AlreadyDisposedException.INSTANCE;
             }
         }
