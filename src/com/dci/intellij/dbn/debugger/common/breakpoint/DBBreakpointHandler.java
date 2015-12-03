@@ -34,6 +34,38 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
     }
 
 
+    protected boolean canSetBreakpoints() {
+        return getDebugProcess().getStatus().CAN_SET_BREAKPOINTS;
+    }
+
+    @Override
+    public final void registerBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
+        if (canSetBreakpoints()) {
+            XBreakpointProperties properties = breakpoint.getProperties();
+            if (properties instanceof DBBreakpointProperties) {
+                DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
+                if (getConnectionHandler() == breakpointProperties.getConnectionHandler()) {
+                    registerDatabaseBreakpoint(breakpoint);
+                }
+            }
+        }
+    }
+
+    @Override
+    public final void unregisterBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, boolean temporary) {
+        XBreakpointProperties properties = breakpoint.getProperties();
+        if (properties instanceof DBBreakpointProperties) {
+            DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
+            if (getConnectionHandler() == breakpointProperties.getConnectionHandler()) {
+                unregisterDatabaseBreakpoint(breakpoint, temporary);
+            }
+        }
+    }
+
+    protected abstract void registerDatabaseBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint);
+
+    protected abstract void unregisterDatabaseBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, boolean temporary);
+
     public void registerBreakpoints(Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints) {
         for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
             registerBreakpoint(breakpoint);
@@ -65,4 +97,6 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
     public abstract void registerDefaultBreakpoint(DBMethod method);
 
     public abstract void unregisterDefaultBreakpoint();
+
+    public abstract void prepareObjectClasses(Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints);
 }

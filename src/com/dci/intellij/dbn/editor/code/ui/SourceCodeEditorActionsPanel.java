@@ -43,7 +43,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
 
     SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeLoadStarted(DBSourceCodeVirtualFile sourceCodeFile) {
+        public void sourceCodeLoading(DBSourceCodeVirtualFile sourceCodeFile) {
             if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
                 new SimpleLaterInvocator() {
                     @Override
@@ -55,7 +55,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         }
 
         @Override
-        public void sourceCodeLoadFinished(DBSourceCodeVirtualFile sourceCodeFile) {
+        public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
             if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
                 new SimpleLaterInvocator() {
                     @Override

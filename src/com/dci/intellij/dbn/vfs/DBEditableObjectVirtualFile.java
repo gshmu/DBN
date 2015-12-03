@@ -146,6 +146,17 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         return contentFiles;
     }
 
+    public List<DBSourceCodeVirtualFile> getSourceCodeFiles() {
+        List<DBSourceCodeVirtualFile> sourceCodeFiles = new ArrayList<DBSourceCodeVirtualFile>();
+        List<DBContentVirtualFile> contentFiles = getContentFiles();
+        for (DBContentVirtualFile contentFile : contentFiles) {
+            if (contentFile instanceof DBSourceCodeVirtualFile) {
+                sourceCodeFiles.add((DBSourceCodeVirtualFile) contentFile);
+            }
+        }
+        return sourceCodeFiles;
+    }
+
     @Nullable
     public List<VirtualFile> getAttachedDDLFiles() {
         DBSchemaObject object = getObject();
@@ -279,8 +290,9 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         if (project != null) {
             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
-                if (contentVirtualFile.isModified() && contentVirtualFile instanceof DBSourceCodeVirtualFile) {
+            List<DBSourceCodeVirtualFile> sourceCodeFiles = getSourceCodeFiles();
+            for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                if (sourceCodeFile.isModified()) {
                     FileEditor[] fileEditors = fileEditorManager.getEditors(this);
                     for (FileEditor fileEditor : fileEditors) {
                         if (fileEditor instanceof SourceCodeEditor) {
@@ -297,13 +309,10 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     public void revertChanges(Runnable successCallback) {
         Project project = getProject();
         if (project != null) {
-            List<DBContentVirtualFile> contentFiles = getContentFiles();
+            List<DBSourceCodeVirtualFile> sourceCodeFiles = getSourceCodeFiles();
             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            for (DBContentVirtualFile contentFile : contentFiles) {
-                if (contentFile instanceof DBSourceCodeVirtualFile) {
-                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
-                    sourceCodeManager.loadSourceFromDatabase(sourceCodeFile);
-                }
+            for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                sourceCodeManager.loadSourceFromDatabase(sourceCodeFile);
             }
 
             if (successCallback != null) {

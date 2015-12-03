@@ -1,8 +1,14 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -13,7 +19,6 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.GuardedBlockMarkers;
 import com.dci.intellij.dbn.editor.code.GuardedBlockType;
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
-import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeOffsets;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -29,13 +34,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, DocumentListener, ConnectionProvider {
 
@@ -49,6 +47,8 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     private ChangeTimestamp changeTimestampCheck;
     private String sourceLoadError;
     private SourceCodeOffsets offsets;
+    private boolean loading;
+    private boolean saving;
 
     public DBSourceCodeVirtualFile(final DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
         super(databaseFile, contentType);
@@ -58,17 +58,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     @Nullable
     public SourceCodeOffsets getOffsets() {
         return offsets;
-    }
-
-    public void applyContentToDocument(Document document) {
-        DocumentUtil.setText(document, content);
-    }
-
-    public void applyGuardedBlocksToDocument(Document document) {
-        if (offsets != null) {
-            GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
-            DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
-        }
     }
 
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
@@ -93,8 +82,24 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         return null;
     }
 
-    public boolean isLoaded() {
+    public synchronized boolean isLoaded() {
         return content != EMPTY_CONTENT;
+    }
+
+    public synchronized boolean isLoading() {
+        return loading;
+    }
+
+    public synchronized void setLoading(boolean loading) {
+        this.loading = loading;
+    }
+
+    public synchronized boolean isSaving() {
+        return saving;
+    }
+
+    public synchronized void setSaving(boolean saving) {
+        this.saving = saving;
     }
 
     public String getParseRootId() {
@@ -166,23 +171,20 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         return content;
     }
 
-    public void loadSourceFromDatabase() throws SQLException {
-        try {
-            Project project = FailsafeUtil.get(getProject());
-            originalContent = EMPTY_CONTENT;
-
-            DBSchemaObject object = getObject();
-            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
-            content = sourceCodeContent.getText();
-            offsets = sourceCodeContent.getOffsets();
-
-            setModified(false);
-            sourceLoadError = null;
-        } catch (SQLException e) {
-            sourceLoadError = e.getMessage();
-            throw e;
+    public void applyContent(SourceCodeContent sourceCodeContent) {
+        originalContent = EMPTY_CONTENT;
+        content = sourceCodeContent.getText();
+        offsets = sourceCodeContent.getOffsets();
+        Document document = DocumentUtil.getDocument(this);
+        if (document != null) {
+            DocumentUtil.setText(document, content);
+            if (offsets != null) {
+                GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
+                DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
+            }
         }
+        setModified(false);
+        sourceLoadError = null;
     }
 
     public void saveSourceToDatabase() throws SQLException {
@@ -209,6 +211,10 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     public String getSourceLoadError() {
         return sourceLoadError;
+    }
+
+    public void setSourceLoadError(String sourceLoadError) {
+        this.sourceLoadError = sourceLoadError;
     }
 
     @Override

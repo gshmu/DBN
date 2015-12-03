@@ -7,8 +7,6 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -40,8 +38,7 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
                 contentType == DBContentType.CODE_BODY ? "Reload body" : "Reload";
 
             presentation.setText(text);
-            DBSchemaObject object = sourceCodeFile.getObject();
-            presentation.setEnabled(!sourceCodeFile.isModified() && !object.getStatus().is(contentType, DBObjectStatus.LOADING));
+            presentation.setEnabled(!sourceCodeFile.isLoading() && !sourceCodeFile.isModified());
         }
     }
 }
