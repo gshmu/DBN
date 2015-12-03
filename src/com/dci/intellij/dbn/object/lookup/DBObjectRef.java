@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.object.lookup;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
@@ -19,6 +11,14 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement<Element> {
     protected DBObjectRef parent;
@@ -276,27 +276,47 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     protected final T load(Project project) {
-        T object = reference == null ? null : reference.get();
-        if (reference == null || object == null || object.isDisposed()) {
-            object = null;
+        T object = getObject();
+        if (object == null) {
+            synchronized (this) {
+                object = getObject();
+                if (object == null) {
+                    clearReference();
+                    ConnectionHandler connectionHandler =
+                            project == null || project.isDisposed() ?
+                                    ConnectionCache.findConnectionHandler(getConnectionId()) :
+                                    ConnectionManager.getInstance(project).getConnectionHandler(getConnectionId());
+                    if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isActive()) {
+                        object = lookup(connectionHandler);
+                        if (object != null) {
+                            reference = new WeakReference<T>(object);
+                        }
+                    }
+                }
+            }
+        }
+        return object;
+    }
+
+    private T getObject () {
+        try {
+            return reference == null ? null : reference.get();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private void clearReference() {
+        try {
             if (reference != null) {
                 reference.clear();
                 reference = null;
             }
-            ConnectionHandler connectionHandler =
-                    project == null || project.isDisposed() ?
-                            ConnectionCache.findConnectionHandler(getConnectionId()) :
-                            ConnectionManager.getInstance(project).getConnectionHandler(getConnectionId());
-            if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isActive()) {
-                object = lookup(connectionHandler);
-                if (object != null) {
-                    reference = new WeakReference<T>(object);
-                }
-            }
+        } catch (Exception ignore) {
 
         }
-        return object;
     }
+
 
     @Nullable
     protected T lookup(@NotNull ConnectionHandler connectionHandler) {
@@ -312,6 +332,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return (T) object;
     }
 
+    @Nullable
     public ConnectionHandler lookupConnectionHandler() {
         return ConnectionCache.findConnectionHandler(getConnectionId());
     }

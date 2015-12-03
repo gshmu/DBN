@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.debugger.jdwp.process;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
@@ -37,10 +38,10 @@ public class DBStatementJdwpRunner extends DBProgramRunner<StatementExecutionInp
     }
 
     @Override
-    protected boolean promptExecutionDialog(StatementExecutionInput executionInput) {
+    protected void promptExecutionDialog(StatementExecutionInput executionInput, RunnableTask callback) {
         Project project = executionInput.getProject();
         StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-        return executionManager.promptExecutionDialog(executionInput.getExecutionProcessor(), DBDebuggerType.JDWP);
+        executionManager.promptExecutionDialog(executionInput.getExecutionProcessor(), DBDebuggerType.JDWP, callback);
     }
 }
 

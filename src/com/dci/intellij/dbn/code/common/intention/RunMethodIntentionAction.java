@@ -38,9 +38,7 @@ public class RunMethodIntentionAction extends AbstractMethodExecutionIntentionAc
         DBMethod method = resolveMethod(editor, psiFile);
         if (method != null) {
             MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-            if (executionManager.promptExecutionDialog(method, DBDebuggerType.NONE)) {
-                executionManager.execute(method);
-            }
+            executionManager.startMethodExecution(method, DBDebuggerType.NONE);
         }
     }
 

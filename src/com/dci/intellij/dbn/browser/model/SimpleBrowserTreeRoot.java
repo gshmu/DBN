@@ -25,7 +25,7 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
     private List<ConnectionBundle> rootChildren;
     private ProjectRef projectRef;
 
-    public SimpleBrowserTreeRoot(Project project, ConnectionBundle connectionBundle) {
+    public SimpleBrowserTreeRoot(@NotNull Project project, ConnectionBundle connectionBundle) {
         this.projectRef = new ProjectRef(project);
         this.rootChildren = new ArrayList<ConnectionBundle>();
         if (connectionBundle != null) {
@@ -33,8 +33,9 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
         }
     }
 
+    @NotNull
     public Project getProject() {
-        return projectRef.get();
+        return FailsafeUtil.get(projectRef.get());
     }
 
     @Nullable

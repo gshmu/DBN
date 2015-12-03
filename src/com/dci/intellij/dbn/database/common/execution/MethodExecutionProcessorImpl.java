@@ -107,7 +107,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                     methodExecutionSettings.getExecutionTimeout();
 
             statement.setQueryTimeout(timeout);
-            MethodExecutionResult executionResult = new CancellableDatabaseCall<MethodExecutionResult>(timeout, TimeUnit.SECONDS) {
+            MethodExecutionResult executionResult = new CancellableDatabaseCall<MethodExecutionResult>(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
                 @Override
                 public MethodExecutionResult execute() throws Exception {
                     statement.execute();

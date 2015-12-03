@@ -33,6 +33,9 @@
                 - "Cancel" action for unresponsive loads in data editors<br>
                 - Outdated sources notification<br>
                 - Configurable default editors<br>
+                - Recover connections after statement execution errors (MySQL, PostgreSQL)<br>
+                - Recover dataset editor after edit errors (MySQL, PostgreSQL)<br>
+                - JDWP debugger stability improvements
                 - Bug fixes<br>
             </ul>
             <li><b>3.0.4912</b>

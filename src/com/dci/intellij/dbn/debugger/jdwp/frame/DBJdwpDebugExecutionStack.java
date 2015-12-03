@@ -7,10 +7,12 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
+import com.dci.intellij.dbn.debugger.DBDebugUtil;
+import com.dci.intellij.dbn.debugger.jdwp.ManagedThreadCommand;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.JavaStackFrame;
-import com.intellij.debugger.engine.events.DebuggerContextCommandImpl;
+import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 
@@ -64,14 +66,9 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
         DebugProcessImpl debugProcess = getSuspendContext().getDebugProcess().getDebuggerSession().getProcess();
         final XExecutionStack underlyingStack = getUnderlyingStack();
         if (underlyingStack != null) {
-            debugProcess.getManagerThread().schedule(new DebuggerContextCommandImpl(debugProcess.getDebuggerContext()) {
+            new ManagedThreadCommand(debugProcess) {
                 @Override
-                public Priority getPriority() {
-                    return Priority.NORMAL;
-                }
-
-                @Override
-                public void threadAction() {
+                protected void action() throws Exception {
                     XStackFrameContainer fakeContainer = new XStackFrameContainer() {
                         @Override
                         public void addStackFrames(@NotNull List<? extends XStackFrame> stackFrames, boolean last) {
@@ -80,11 +77,15 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
                                 for (XStackFrame underlyingFrame : stackFrames) {
                                     DBJdwpDebugStackFrame frame = getFrame((JavaStackFrame) underlyingFrame);
                                     if (frame != null) {
+                                        XSourcePosition sourcePosition = frame.getSourcePosition();
+                                        //VirtualFile virtualFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
+                                        //DBSchemaObject object = DBDebugUtil.getObject(sourcePosition);
                                         frames.add(frame);
+                                        last = last || DBDebugUtil.getObject(sourcePosition) == null;
                                     }
                                 }
                                 if (frames.size() > 0) {
-                                    container.addStackFrames(frames, true) ;
+                                    container.addStackFrames(frames, last) ;
                                 }
                             }
                         }
@@ -101,7 +102,7 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
                     };
                     underlyingStack.computeStackFrames(firstFrameIndex, fakeContainer);
                 }
-            });
+            }.schedule();
         }
     }
 }

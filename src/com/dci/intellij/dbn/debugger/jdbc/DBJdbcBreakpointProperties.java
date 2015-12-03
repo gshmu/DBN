@@ -28,6 +28,7 @@ public class DBJdbcBreakpointProperties extends XBreakpointProperties<DBJdbcBrea
         return connectionId;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         if (connectionHandlerRef == null && connectionId != null) {
             connectionHandlerRef = new ConnectionHandlerRef(connectionId);

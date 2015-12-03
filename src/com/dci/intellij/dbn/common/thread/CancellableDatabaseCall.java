@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.util.Timer;
@@ -13,9 +14,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -34,9 +40,11 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
+    private Connection connection;
     private int timeout;
     private long startTimestamp = System.currentTimeMillis();
     private TimeUnit timeUnit;
+    private boolean createSavepoint;
 
     private transient ProgressIndicator progressIndicator;
     private transient Future<T> future;
@@ -44,10 +52,12 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     private transient boolean cancelRequested = false;
     private Timer cancelCheckTimer;
 
-    public CancellableDatabaseCall(int timeout, TimeUnit timeUnit) {
+    public CancellableDatabaseCall(@Nullable ConnectionHandler connectionHandler, @Nullable Connection connection, int timeout, TimeUnit timeUnit) {
+        this.connection = connection;
         this.timeout = timeout;
         this.timeUnit = timeUnit;
-        progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+        this.progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+        createSavepoint = !DatabaseFeature.CONNECTION_ERROR_RECOVERING.isSupported(connectionHandler);
     }
 
     public void requestCancellation() {
@@ -56,7 +66,31 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     @Override
     public T call() throws Exception {
-        return execute();
+        if (createSavepoint) {
+            final AtomicReference<Exception> innerException = new AtomicReference<Exception>();
+            ConnectionSavepointCall<T> call = new ConnectionSavepointCall<T>(connection) {
+                @Override
+                public T execute() throws SQLException {
+                    try {
+                        return CancellableDatabaseCall.this.execute();
+                    } catch (SQLException e) {
+                        throw e;
+                    } catch (Exception e) {
+                        innerException.set(e);
+                        return null;
+                    }
+                }
+            };
+            T result = call.start();
+            Exception exception = innerException.get();
+            if (exception != null) {
+                throw exception;
+            }
+            return result;
+
+        } else {
+            return execute();
+        }
     }
 
     public abstract T execute() throws Exception;

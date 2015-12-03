@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.debugger.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
@@ -22,6 +23,7 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -45,64 +47,57 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
     }
 
     @Override
-    public void registerBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
+    protected void registerDatabaseBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
         DBDebugProcess debugProcess = getDebugProcess();
         DBDebugConsoleLogger console = debugProcess.getConsole();
 
         XDebugSession session = getSession();
-        if (!debugProcess.getStatus().CAN_SET_BREAKPOINTS) return;
 
-        ConnectionHandler connectionHandler = debugProcess.getConnectionHandler();
         VirtualFile virtualFile = getVirtualFile(breakpoint);
         Project project = session.getProject();
         if (virtualFile == null) {
             XDebuggerManager debuggerManager = XDebuggerManager.getInstance(project);
             debuggerManager.getBreakpointManager().removeBreakpoint(breakpoint);
         } else {
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            ConnectionHandler breakpointConnectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
+            String breakpointDesc = DBBreakpointUtil.getBreakpointDesc(breakpoint);
 
-            if (breakpointConnectionHandler == connectionHandler) {
-                String breakpointDesc = DBBreakpointUtil.getBreakpointDesc(breakpoint);
+            try {
+                if (getBreakpointId(breakpoint) != null) {
+                    enableBreakpoint(breakpoint);
 
-                try {
-                    if (getBreakpointId(breakpoint) != null) {
-                        enableBreakpoint(breakpoint);
-
+                } else {
+                    BreakpointInfo breakpointInfo = addBreakpoint(breakpoint);
+                    String error = breakpointInfo.getError();
+                    if (error != null) {
+                        handleBreakpointError(breakpoint, error);
                     } else {
-                        BreakpointInfo breakpointInfo = addBreakpoint(breakpoint);
-                        String error = breakpointInfo.getError();
-                        if (error != null) {
-                            handleBreakpointError(breakpoint, error);
-                        } else {
-                            Integer breakpointId = breakpointInfo.getBreakpointId();
-                            setBreakpointId(breakpoint, breakpointId);
+                        Integer breakpointId = breakpointInfo.getBreakpointId();
+                        setBreakpointId(breakpoint, breakpointId);
 
-                            if (!breakpoint.isEnabled()) {
-                                error = disableBreakpoint(breakpointId);
-                                if (error != null) {
-                                    session.updateBreakpointPresentation( breakpoint,
-                                            Icons.DEBUG_INVALID_BREAKPOINT,
-                                            "INVALID: " + error);
-                                }
-
+                        if (!breakpoint.isEnabled()) {
+                            error = disableBreakpoint(breakpointId);
+                            if (error != null) {
+                                session.updateBreakpointPresentation( breakpoint,
+                                        Icons.DEBUG_INVALID_BREAKPOINT,
+                                        "INVALID: " + error);
                             }
-                            console.system("Breakpoint added: " + breakpointDesc);
-                        }
-                    }
 
-                } catch (Exception e) {
-                    handleBreakpointError(breakpoint, e.getMessage());
+                        }
+                        console.system("Breakpoint added: " + breakpointDesc);
+                    }
                 }
+
+            } catch (Exception e) {
+                handleBreakpointError(breakpoint, e.getMessage());
             }
         }
     }
 
     @Override
-    public void unregisterBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, boolean temporary) {
+    protected void unregisterDatabaseBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, boolean temporary) {
         DBDebugProcess debugProcess = getDebugProcess();
 
-        if (!debugProcess.getStatus().CAN_SET_BREAKPOINTS) return;
+        if (!canSetBreakpoints()) return;
 
         Integer breakpointId = getBreakpointId(breakpoint);
         if (breakpointId != null) {
@@ -111,22 +106,23 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
             VirtualFile virtualFile = getVirtualFile(breakpoint);
             if (virtualFile != null) {
                 Project project = getSession().getProject();
-                FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-                ConnectionHandler connectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
-                if (connectionHandler != null && connectionHandler == debugProcess.getConnectionHandler()) {
-                    String breakpointDesc = getBreakpointDesc(breakpoint);
-                    try {
-                        removeBreakpoint(temporary, breakpointId);
-                        console.system("Breakpoint removed: " + breakpointDesc);
-                    } catch (SQLException e) {
-                        console.error("Error removing breakpoint: " + breakpointDesc + ". " + e.getMessage());
-                        NotificationUtil.sendErrorNotification(project, "Error.", e.getMessage());
-                    } finally {
-                        setBreakpointId(breakpoint, null);
-                    }
+                String breakpointDesc = getBreakpointDesc(breakpoint);
+                try {
+                    removeBreakpoint(temporary, breakpointId);
+                    console.system("Breakpoint removed: " + breakpointDesc);
+                } catch (SQLException e) {
+                    console.error("Error removing breakpoint: " + breakpointDesc + ". " + e.getMessage());
+                    NotificationUtil.sendErrorNotification(project, "Error.", e.getMessage());
+                } finally {
+                    setBreakpointId(breakpoint, null);
                 }
             }
         }
+    }
+
+    @Override
+    public void initializeResources(List<XLineBreakpoint<XBreakpointProperties>> breakpoints, List<? extends DBObject> objects) {
+        // nothing to do
     }
 
     public void registerDefaultBreakpoint(DBMethod method) {

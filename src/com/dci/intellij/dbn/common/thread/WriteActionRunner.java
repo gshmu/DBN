@@ -3,6 +3,14 @@ package com.dci.intellij.dbn.common.thread;
 import com.intellij.openapi.application.ApplicationManager;
 
 public abstract class WriteActionRunner {
+    private RunnableTask callback;
+
+    public WriteActionRunner(RunnableTask callback) {
+        this.callback = callback;
+    }
+
+    public WriteActionRunner() {
+    }
 
     public final void start() {
         new ConditionalLaterInvocator() {
@@ -10,7 +18,13 @@ public abstract class WriteActionRunner {
             protected void execute() {
                 Runnable writeAction = new Runnable() {
                     public void run() {
-                        WriteActionRunner.this.run();
+                        try {
+                            WriteActionRunner.this.run();
+                        } finally {
+                            if (callback != null) {
+                                callback.start();
+                            }
+                        }
                     }
                 };
                 ApplicationManager.getApplication().runWriteAction(writeAction);

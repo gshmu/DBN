@@ -269,7 +269,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
                 statement.setQueryTimeout(timeout);
                 final String executable = executableStatementText;
-                executionResult = new CancellableDatabaseCall<StatementExecutionResult>(timeout, TimeUnit.SECONDS) {
+                executionResult = new CancellableDatabaseCall<StatementExecutionResult>(activeConnection, connection, timeout, TimeUnit.SECONDS) {
                     @Override
                     public StatementExecutionResult execute() throws Exception{
                         statement.execute(executable);

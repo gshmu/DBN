@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +12,10 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -77,14 +79,31 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         return argumentValuesCache;
     }
 
-    public boolean promptExecutionDialog(DBMethod method, @NotNull DBDebuggerType debuggerType) {
-        MethodExecutionInput executionInput = getExecutionInput(method);
-        return promptExecutionDialog(executionInput, debuggerType);
+    public void startMethodExecution(final @NotNull MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
+        promptExecutionDialog(executionInput, debuggerType, new SimpleTask() {
+            @Override
+            protected void execute() {
+                MethodExecutionManager.this.execute(executionInput);
+            }
+        });
     }
 
-    public boolean promptExecutionDialog(final MethodExecutionInput executionInput, final @NotNull DBDebuggerType debuggerType) {
-        final AtomicBoolean result = new AtomicBoolean(false);
-        new ConnectionAction("the method execution", executionInput) {
+    public void startMethodExecution(final @NotNull DBMethod method, @NotNull DBDebuggerType debuggerType) {
+        promptExecutionDialog(method, debuggerType, new SimpleTask() {
+            @Override
+            protected void execute() {
+                MethodExecutionManager.this.execute(method);
+            }
+        });
+    }
+
+    public void promptExecutionDialog(DBMethod method, @NotNull DBDebuggerType debuggerType, RunnableTask callback) {
+        MethodExecutionInput executionInput = getExecutionInput(method);
+        promptExecutionDialog(executionInput, debuggerType, callback);
+    }
+
+    public void promptExecutionDialog(final MethodExecutionInput executionInput, final @NotNull DBDebuggerType debuggerType, final RunnableTask callback) {
+        new ConnectionAction("the method execution", executionInput, new TaskInstructions("Loading method details", false, false)) {
             @Override
             protected void execute() {
                 Project project = getProject();
@@ -97,10 +116,19 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                                         executionInput.getMethodRef().getPath() + ".\nMethod not found!";
                         MessageUtil.showErrorDialog(project, message);
                     } else {
-                        MethodExecutionInputDialog executionDialog = new MethodExecutionInputDialog(executionInput, debuggerType);
-                        executionDialog.show();
+                        // load the arguments in background
+                        executionInput.getMethod().getArguments();
+                        new SimpleLaterInvocator() {
+                            @Override
+                            protected void execute() {
+                                MethodExecutionInputDialog executionDialog = new MethodExecutionInputDialog(executionInput, debuggerType);
+                                executionDialog.show();
+                                if (executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                                    callback.start();
+                                }
 
-                        result.set(executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE);
+                            }
+                        }.start();
                     }
                 } else {
                     String message =
@@ -111,7 +139,6 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                 }
             }
         }.start();
-        return result.get();
     }
 
 
@@ -172,14 +199,17 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                     } catch (final SQLException e) {
                         executionContext.setExecuting(false);
                         if (!executionContext.isExecutionCancelled()) {
-                            new SimpleLaterInvocator() {
-                                protected void execute() {
-                                    MessageUtil.showErrorDialog(project, "Error executing " + method.getTypeName() + ".", e);
-                                    if (promptExecutionDialog(executionInput, DBDebuggerType.NONE)) {
-                                        MethodExecutionManager.this.execute(executionInput);
-                                    }
-                                }
-                            }.start();
+                            MessageUtil.showErrorDialog(project,
+                                    "Method execution error",
+                                    "Error executing " + method.getQualifiedNameWithType() + ".\n" + e.getMessage().trim(),
+                                    new String[]{"Try Again", "Cancel"}, 0, new SimpleTask() {
+                                        @Override
+                                        protected void execute() {
+                                            if (getOption() == 0) {
+                                                startMethodExecution(executionInput, DBDebuggerType.NONE);
+                                            }
+                                        }
+                                    });
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.code;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditorImpl;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -19,6 +20,7 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
     public SourceCodeEditor(Project project, final DBSourceCodeVirtualFile sourceCodeFile, String name, EditorProviderId editorProviderId) {
         super(project, sourceCodeFile, name, editorProviderId);
         objectRef = DBObjectRef.from(sourceCodeFile.getObject());
+        EditorUtil.setEditorReadonly(this, true);
     }
 
     public DBSchemaObject getObject() {

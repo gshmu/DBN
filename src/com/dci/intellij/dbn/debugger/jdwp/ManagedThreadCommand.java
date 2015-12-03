@@ -10,6 +10,11 @@ public abstract class ManagedThreadCommand extends DebuggerCommandImpl{
         this.debugProcess = debugProcess;
     }
 
+
+    public final void schedule() {
+        debugProcess.getManagerThread().schedule(this);
+    }
+
     public final void invoke() {
         debugProcess.getManagerThread().invoke(this);
     }

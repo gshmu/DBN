@@ -1,9 +1,14 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -13,9 +18,13 @@ import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.xdebugger.XDebuggerManager;
+import com.intellij.xdebugger.XDebuggerUtil;
+import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 
@@ -75,14 +84,19 @@ public class DBBreakpointUtil {
         return contentType;
     }
 
-    public static String getProgramIdentifier(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
+    @Nullable
+    public static String getProgramIdentifier(@NotNull ConnectionHandler connectionHandler, @NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
         DBSchemaObject object = getDatabaseObject(breakpoint);
-        if (object != null) {
-            DatabaseDebuggerInterface debuggerInterface = object.getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
-            DBContentType contentType = getContentType(breakpoint);
-            return debuggerInterface.getJdwpProgramIdentifier(object.getObjectType(), contentType, object.getQualifiedName());
-        }
-        return null;
+        DBContentType contentType = getContentType(breakpoint);
+        return getProgramIdentifier(connectionHandler, object, contentType);
+    }
+
+    @Nullable
+    public static String getProgramIdentifier(@NotNull ConnectionHandler connectionHandler, DBSchemaObject object, DBContentType contentType) {
+        DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
+        return object == null ?
+                debuggerInterface.getJdwpBlockIdentifier() :
+                debuggerInterface.getJdwpProgramIdentifier(object.getObjectType(), contentType, object.getQualifiedName());
     }
 
     @NotNull
@@ -92,5 +106,53 @@ public class DBBreakpointUtil {
         return object == null ?
                 virtualFile == null ? "unknown" : virtualFile.getName() + ":" + (breakpoint.getLine() + 1) :
                 object.getQualifiedName() + ":" + (breakpoint.getLine() + 1);
+    }
+
+    public static List<XLineBreakpoint<XBreakpointProperties>> getDatabaseBreakpoints(final ConnectionHandler connectionHandler) {
+        return new ReadActionRunner<List<XLineBreakpoint<XBreakpointProperties>>>() {
+            @Override
+            protected List<XLineBreakpoint<XBreakpointProperties>> run() {
+                DBBreakpointType databaseBreakpointType = (DBBreakpointType) XDebuggerUtil.getInstance().findBreakpointType(DBBreakpointType.class);
+                Project project = connectionHandler.getProject();
+                XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
+                Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints = (Collection<XLineBreakpoint<XBreakpointProperties>>) breakpointManager.getBreakpoints(databaseBreakpointType);
+
+                List<XLineBreakpoint<XBreakpointProperties>> connectionBreakpoints = new ArrayList<XLineBreakpoint<XBreakpointProperties>>();
+                for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
+                    XBreakpointProperties properties = breakpoint.getProperties();
+                    if (properties instanceof DBBreakpointProperties) {
+                        DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
+                        if (connectionHandler == breakpointProperties.getConnectionHandler()) {
+                            connectionBreakpoints.add(breakpoint);
+                        }
+                    }
+                }
+                return connectionBreakpoints;
+            }
+        }.start();
+    }
+
+
+    public static void ensureFilesContentLoaded(VirtualFile virtualFile) {
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
+            DBEditableObjectVirtualFile databaseVirtualFile = (DBEditableObjectVirtualFile) virtualFile;
+            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+            databaseFileSystem.openEditor(databaseVirtualFile.getObject(), false);
+
+            List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseVirtualFile.getSourceCodeFiles();
+            //TODO find another locking mechanism
+            for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                try {
+                    int count = 0;
+                    while (!sourceCodeFile.isLoaded() && count < 10) {
+                        Thread.sleep(500);
+                        count++;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 }

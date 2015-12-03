@@ -247,6 +247,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         return elements;
     }
 
+    @NotNull
     @Override
     public List<T> getAllElements() {
         List<T> elements = getElements();
