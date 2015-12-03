@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.execution.logging;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -12,12 +18,6 @@ import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class DatabaseLoggingManager extends AbstractProjectComponent {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -41,7 +41,7 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
                 metadataInterface.enableLogger(connection);
                 return true;
             } catch (SQLException e) {
-                LOGGER.warn("Error enabling database logging", e);
+                LOGGER.warn("Error enabling database logging: " + e.getMessage());
                 DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
                 String logName = getLogName(compatibilityInterface);
                 NotificationUtil.sendWarningNotification(connectionHandler.getProject(), "Database Logging", "Error enabling " + logName + ": " + e.getMessage());
@@ -60,7 +60,7 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
                     DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
                     metadataInterface.disableLogger(connection);
                 } catch (SQLException e) {
-                    LOGGER.warn("Error disabling database logging", e);
+                    LOGGER.warn("Error disabling database logging: " + e.getMessage());
                     DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
                     String logName = getLogName(compatibilityInterface);
                     NotificationUtil.sendWarningNotification(connectionHandler.getProject(), "Database Logging", "Error disabling " + logName + ": " + e.getMessage());
@@ -76,7 +76,7 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
             DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
             return metadataInterface.readLoggerOutput(connection);
         } catch (SQLException e) {
-            LOGGER.warn("Error disabling database logging", e);
+            LOGGER.warn("Error reading database log output: " + e.getMessage());
             String logName = getLogName(compatibilityInterface);
             NotificationUtil.sendWarningNotification(connectionHandler.getProject(), "Database Logging", "Error loading " + logName + " : " + e.getMessage());
         }
