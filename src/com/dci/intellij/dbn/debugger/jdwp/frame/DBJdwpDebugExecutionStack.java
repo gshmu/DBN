@@ -10,10 +10,8 @@ import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.jdwp.ManagedThreadCommand;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.JavaStackFrame;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
@@ -80,10 +78,10 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
                                     DBJdwpDebugStackFrame frame = getFrame((JavaStackFrame) underlyingFrame);
                                     if (frame != null) {
                                         XSourcePosition sourcePosition = frame.getSourcePosition();
-                                        VirtualFile virtualFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
-                                        DBSchemaObject object = DBDebugUtil.getObject(sourcePosition);
+                                        //VirtualFile virtualFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
+                                        //DBSchemaObject object = DBDebugUtil.getObject(sourcePosition);
                                         frames.add(frame);
-                                        last = last || object == null;
+                                        last = last || DBDebugUtil.getObject(sourcePosition) == null;
                                     }
                                 }
                                 if (frames.size() > 0) {
