@@ -239,7 +239,8 @@ public class EditorUtil {
                             for (FileEditor fileEditor : allEditors) {
                                 if (fileEditor instanceof SourceCodeEditor) {
                                     SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                                    if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
+                                    DBSourceCodeVirtualFile virtualFile = sourceCodeEditor.getVirtualFile();
+                                    if (virtualFile != null && virtualFile.equals(sourceCodeFile)) {
                                         setEditorReadonly(sourceCodeEditor, readonly);
                                     }
                                 }

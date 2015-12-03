@@ -148,7 +148,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
                             List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                             for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                                sourceCodeManager.opedDatabaseDiffWindow(sourceCodeFile);
+                                if (sourceCodeFile.isModified()) {
+                                    sourceCodeManager.opedDatabaseDiffWindow(sourceCodeFile);
+                                }
                             }
                             throw new ProcessCanceledException();
 
