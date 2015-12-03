@@ -410,6 +410,6 @@ public class DatabaseBrowserTree extends DBNTree {
         mouseListener = null;
         keyListener = null;
         treeModelListener = null;
-        setModel(SimpleBrowserTreeModel.EMPTY_MODEL);
+        setModel(new SimpleBrowserTreeModel());
     }
 }

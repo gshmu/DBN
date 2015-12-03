@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.common.option;
 
 
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,13 +21,14 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
     private String message;
     private T defaultOption;
     private T selectedOption;
-    private T[] options;
+    private T lastUsedOption;
+    private List<T> options;
 
     public InteractiveOptionHandler(String configName, String title, String message, @NotNull T defaultOption, T... options) {
         this.configName = configName;
         this.title = title;
         this.message = message;
-        this.options = options;
+        this.options = Arrays.asList(options);
         this.defaultOption = defaultOption;
     }
 
@@ -36,7 +39,7 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
 
     @Override
     public void setToBeShown(boolean keepAsking, int selectedIndex) {
-        T selectedOption = options[selectedIndex];
+        T selectedOption = options.get(selectedIndex);
         if (keepAsking || selectedOption == null || selectedOption.isAsk() || selectedOption.isCancel()) {
             this.selectedOption = null;
         } else {
@@ -44,16 +47,13 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
         }
     }
 
-    public void setSelectedOption(T selectedOption) {
-        if (selectedOption.isAsk() || selectedOption.isCancel()) {
-            this.selectedOption = null;
-        } else {
-            this.selectedOption = selectedOption;
-        }
+    public void set(T selectedOption) {
+        assert !selectedOption.isCancel();
+        this.selectedOption = selectedOption;
     }
 
     @NotNull
-    public T getSelectedOption() {
+    public T get() {
         return CommonUtil.nvl(selectedOption, defaultOption);
     }
 
@@ -79,21 +79,31 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
     }
 
     public T resolve(String ... messageArgs) {
-        if (selectedOption != null) {
+        if (selectedOption != null && !selectedOption.isAsk()) {
             return selectedOption;
         } else {
+            int lastUsedOptionIndex = 0;
+            if (lastUsedOption != null) {
+                lastUsedOptionIndex = options.indexOf(lastUsedOption);
+            }
+
             int optionIndex = Messages.showDialog(
                     MessageFormat.format(message, messageArgs),
                     Constants.DBN_TITLE_PREFIX + title,
-                    toStringOptions(options), 0, Icons.DIALOG_QUESTION, this);
-            return options[optionIndex];
+                    toStringOptions(options), lastUsedOptionIndex, Icons.DIALOG_QUESTION, this);
+
+            T option = options.get(optionIndex);
+            if (!option.isCancel() && !option.isAsk()) {
+                lastUsedOption = option;
+            }
+            return option;
         }
     }
 
-    public static String[] toStringOptions(InteractiveOption[] options) {
-        String[] stringOptions = new String[options.length];
-        for (int i = 0; i < options.length; i++) {
-            stringOptions[i] = options[i].getName();
+    public static String[] toStringOptions(List<? extends InteractiveOption> options) {
+        String[] stringOptions = new String[options.size()];
+        for (int i = 0; i < options.size(); i++) {
+            stringOptions[i] = options.get(i).getName();
         }
         return stringOptions;
     }
@@ -105,11 +115,11 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
     @Override
     public void readConfiguration(Element element) {
         T option = (T) SettingsUtil.getEnum(element, configName, (Enum)defaultOption);
-        setSelectedOption(option);
+        set(option);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setEnum(element, configName, (Enum) getSelectedOption());
+        SettingsUtil.setEnum(element, configName, (Enum) get());
     }
 }

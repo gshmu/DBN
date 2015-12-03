@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.execution.method;
 
-import java.sql.ResultSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.ResultSet;
 
 public class ArgumentValue {
     private DBObjectRef<DBArgument> argumentRef;
@@ -37,8 +38,9 @@ public class ArgumentValue {
         return argumentRef;
     }
 
+    @NotNull
     public DBArgument getArgument() {
-        return argumentRef.get();
+        return FailsafeUtil.get(argumentRef.get());
     }
 
     public DBTypeAttribute getAttribute() {
@@ -58,11 +60,8 @@ public class ArgumentValue {
 
     public boolean isLargeObject() {
         DBArgument argument = getArgument();
-        if (argument != null) {
-            DBDataType dataType = argument.getDataType();
-            return dataType.isNative() && dataType.getNativeDataType().isLargeObject();
-        }
-        return false;
+        DBDataType dataType = argument.getDataType();
+        return dataType.isNative() && dataType.getNativeDataType().isLargeObject();
     }
 
     public boolean isCursor() {

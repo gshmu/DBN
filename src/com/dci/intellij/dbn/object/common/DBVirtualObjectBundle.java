@@ -266,6 +266,7 @@ public class DBVirtualObjectBundle implements DBObjectBundle{
         return null;
     }
 
+    @NotNull
     @Override
     public Project getProject() {
         return null;

@@ -36,7 +36,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
 
     private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {
+        public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
             updateEditorNotification(sourceCodeFile);
         }
     };
@@ -60,13 +60,9 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
             VirtualFile virtualFile = event.getNewFile();
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
-
                 DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
-                for (DBContentVirtualFile contentFile : databaseFile.getContentFiles()) {
-                    if (contentFile instanceof DBSourceCodeVirtualFile) {
-                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
-                        updateEditorNotification(sourceCodeFile);
-                    }
+                for (DBSourceCodeVirtualFile sourceCodeFile : databaseFile.getSourceCodeFiles()) {
+                    updateEditorNotification(sourceCodeFile);
                 }
             }
         }

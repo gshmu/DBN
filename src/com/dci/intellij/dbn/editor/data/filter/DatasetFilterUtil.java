@@ -28,7 +28,7 @@ public class DatasetFilterUtil {
                 if (column != null && !column.isDisposed() && !sortDirection.isIndefinite()) {
                     ConnectionHandler connectionHandler = FailsafeUtil.get(column.getConnectionHandler());
                     DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-                    String orderByClause = compatibilityInterface.getOrderByClause(column.getName(), sortDirection, nullsFirst);
+                    String orderByClause = compatibilityInterface.getOrderByClause(column.getQuotedName(false), sortDirection, nullsFirst);
                     buffer.append(instructionAdded ? ", " : "");
                     buffer.append(orderByClause);
                     instructionAdded = true;

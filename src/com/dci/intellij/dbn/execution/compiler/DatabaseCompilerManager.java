@@ -73,11 +73,6 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                 }
             }
         }
-
-        @Override
-        public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {
-
-        }
     };
 
     public void createCompilerResult(DBSchemaObject object, CompilerAction compilerAction) {

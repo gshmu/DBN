@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -24,7 +25,7 @@ public class EventUtil {
     }
     
     public static <T> void subscribe(Project project, Disposable parentDisposable, Topic<T> topic, final T handler) {
-        if (project != null) {
+        if (project != null && project != FailsafeUtil.DUMMY_PROJECT) {
             final MessageBusConnection messageBusConnection = connect(project);
             messageBusConnection.subscribe(topic, handler);
             Disposer.register(parentDisposable, new Disposable() {
@@ -52,7 +53,7 @@ public class EventUtil {
 
     @NotNull
     public static <T> T notify(@Nullable Project project, Topic<T> topic) {
-        if (project == null || project.isDisposed()) {
+        if (project == null || project.isDisposed() || project == FailsafeUtil.DUMMY_PROJECT) {
             throw AlreadyDisposedException.INSTANCE;
         }
         MessageBus messageBus = project.getMessageBus();

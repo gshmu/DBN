@@ -30,6 +30,7 @@ public class DBJdwpBreakpointProperties extends JavaBreakpointProperties<DBJdwpB
         return connectionId;
     }
 
+    @Nullable
     @Override
     public ConnectionHandler getConnectionHandler() {
         if (connectionHandlerRef == null && connectionId != null) {

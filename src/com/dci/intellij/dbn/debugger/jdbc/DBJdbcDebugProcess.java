@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -34,7 +33,7 @@ import com.dci.intellij.dbn.debugger.DBDebugTabLayouter;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
-import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointType;
+import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
@@ -58,18 +57,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebuggerManager;
-import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
-import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
-import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
-import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointId;
-import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.setBreakpointId;
+import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.*;
 
 public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebugProcess implements DBDebugProcess {
     protected Connection targetConnection;
@@ -264,15 +258,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
      */
     private void registerBreakpoints(final RunnableTask callback) {
         console.system("Registering breakpoints...");
-        final Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints = new ReadActionRunner<Collection<XLineBreakpoint<XBreakpointProperties>>>() {
-            @Override
-            protected Collection<XLineBreakpoint<XBreakpointProperties>> run() {
-                DBBreakpointType localXBreakpointType = (DBBreakpointType) XDebuggerUtil.getInstance().findBreakpointType(DBBreakpointType.class);
-                Project project = getProject();
-                XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
-                return (Collection<XLineBreakpoint<XBreakpointProperties>>) breakpointManager.getBreakpoints(localXBreakpointType);
-            }
-        }.start();
+        final Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
 
         new WriteActionRunner() {
             @Override
@@ -291,16 +277,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
      * breakpoints need to be unregistered before closing the database session, otherwise they remain resident.
      */
     private void unregisterBreakpoints() {
-        final Collection<XLineBreakpoint> breakpoints = new ReadActionRunner<Collection<XLineBreakpoint>>() {
-            @Override
-            protected Collection<XLineBreakpoint> run() {
-                XBreakpointType localXBreakpointType = XDebuggerUtil.getInstance().findBreakpointType(getBreakpointHandler().getBreakpointTypeClass());
-                Project project = getProject();
-                XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
-                return breakpointManager.getBreakpoints(localXBreakpointType);
-            }
-        }.start();
-
+        final Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
         Set<Integer> unregisteredBreakpointIds = new HashSet<Integer>();
         DBBreakpointHandler breakpointHandler = getBreakpointHandler();
         for (XLineBreakpoint breakpoint : breakpoints) {
@@ -473,6 +450,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             status.PROCESS_STOPPED_NORMALLY = true;
             session.stop();
         } else {
+            VirtualFile virtualFile = getRuntimeInfoFile(runtimeInfo);
+            ensureFilesContentLoaded(virtualFile);
             try {
                 backtraceInfo = getDebuggerInterface().getExecutionBacktraceInfo(debugConnection);
                 List<DebuggerRuntimeInfo> frames = backtraceInfo.getFrames();
@@ -493,7 +472,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 NotificationUtil.sendErrorNotification(project, "Error suspending debugger session.", e.getMessage());
                 //showErrorDialog(e);
             }
-            VirtualFile virtualFile = getRuntimeInfoFile(runtimeInfo);
+
             DBJdbcDebugSuspendContext suspendContext = new DBJdbcDebugSuspendContext(this);
             session.positionReached(suspendContext);
             navigateInEditor(virtualFile, runtimeInfo.getLineNumber());

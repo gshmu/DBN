@@ -7,18 +7,16 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.option.InteractiveOption;
 
 public enum CodeEditorChangesOption implements InteractiveOption {
-    ASK("Ask", false),
-    SAVE("Save", true),
-    DISCARD("Discard", true),
-    SHOW("Show Changes", false),
-    CANCEL("Cancel", false);
+    ASK("Ask"),
+    SAVE("Save"),
+    DISCARD("Discard"),
+    SHOW("Show Changes"),
+    CANCEL("Cancel");
 
     private String name;
-    private boolean persistable;
 
-    CodeEditorChangesOption(String name, boolean persistable) {
+    CodeEditorChangesOption(String name) {
         this.name = name;
-        this.persistable = persistable;
     }
 
     @NotNull

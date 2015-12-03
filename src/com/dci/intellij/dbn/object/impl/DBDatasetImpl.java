@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
@@ -53,7 +54,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
                 schema);
     }
 
-    @Nullable
+    @NotNull
     public List<DBColumn> getColumns() {
         return columns.getObjects();
     }

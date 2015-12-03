@@ -1,20 +1,22 @@
 package com.dci.intellij.dbn.connection;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.impl.ProjectLifecycleListener;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class ConnectionCache implements ApplicationComponent{
     private static Map<String, ConnectionHandler> CACHE = new THashMap<String, ConnectionHandler>();
 
+    @Nullable
     public static ConnectionHandler findConnectionHandler(String connectionId) {
         ConnectionHandler connectionHandler = CACHE.get(connectionId);
         ProjectManager projectManager = ProjectManager.getInstance();

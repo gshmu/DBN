@@ -105,8 +105,8 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             Project project = connectionHandler.getProject();
             VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
             if (selectedFile != null) {
-                InteractiveOptionHandler<TransactionOption> commitMultipleChangesOptionHandler = getTransactionManagerSettings().getCommitMultipleChangesOptionHandler();
-                TransactionOption result = commitMultipleChangesOptionHandler.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
+                InteractiveOptionHandler<TransactionOption> commitMultipleChanges = getTransactionManagerSettings().getCommitMultipleChanges();
+                TransactionOption result = commitMultipleChanges.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
                 switch (result) {
                     case COMMIT: execute(connectionHandler, background, TransactionAction.COMMIT); break;
                     case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, null); break;
@@ -122,8 +122,8 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             Project project = connectionHandler.getProject();
             VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
             if (selectedFile != null) {
-                InteractiveOptionHandler<TransactionOption> rollbackMultipleChangesOptionHandler = getTransactionManagerSettings().getRollbackMultipleChangesOptionHandler();
-                TransactionOption result = rollbackMultipleChangesOptionHandler.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
+                InteractiveOptionHandler<TransactionOption> rollbackMultipleChanges = getTransactionManagerSettings().getRollbackMultipleChanges();
+                TransactionOption result = rollbackMultipleChanges.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
                 switch (result) {
                     case ROLLBACK: execute(connectionHandler, background, TransactionAction.ROLLBACK); break;
                     case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, null); break;
@@ -158,8 +158,8 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 TransactionAction.TURN_AUTO_COMMIT_ON;
 
         if (!isAutoCommit && connectionHandler.hasUncommittedChanges()) {
-            InteractiveOptionHandler<TransactionOption> toggleAutoCommitOptionHandler = getTransactionManagerSettings().getToggleAutoCommitOptionHandler();
-            TransactionOption result = toggleAutoCommitOptionHandler.resolve(connectionHandler.getName());
+            InteractiveOptionHandler<TransactionOption> toggleAutoCommit = getTransactionManagerSettings().getToggleAutoCommit();
+            TransactionOption result = toggleAutoCommit.resolve(connectionHandler.getName());
             switch (result) {
                 case COMMIT: execute(connectionHandler, true, TransactionAction.COMMIT, autoCommitAction); break;
                 case ROLLBACK: execute(connectionHandler, true, TransactionAction.ROLLBACK, autoCommitAction); break;
@@ -172,8 +172,8 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
     public void disconnect(ConnectionHandler connectionHandler) {
         if (connectionHandler.hasUncommittedChanges()) {
-            InteractiveOptionHandler<TransactionOption> disconnectOptionHandler = getTransactionManagerSettings().getDisconnectOptionHandler();
-            TransactionOption result = disconnectOptionHandler.resolve(connectionHandler.getName());
+            InteractiveOptionHandler<TransactionOption> disconnect = getTransactionManagerSettings().getDisconnect();
+            TransactionOption result = disconnect.resolve(connectionHandler.getName());
 
             switch (result) {
                 case COMMIT: execute(connectionHandler, false, TransactionAction.COMMIT, TransactionAction.DISCONNECT); break;

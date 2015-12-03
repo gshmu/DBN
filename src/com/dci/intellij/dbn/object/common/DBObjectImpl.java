@@ -34,6 +34,7 @@ import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
@@ -222,7 +223,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return name.indexOf('-') > 0 ||
                 name.indexOf('.') > 0 ||
                 name.indexOf('#') > 0 ||
-                getLanguageDialect(SQLLanguage.INSTANCE).isReservedWord(name);
+                getLanguageDialect(SQLLanguage.INSTANCE).isReservedWord(name) ||
+                StringUtil.isMixedCase(name);
     }
 
     @Nullable

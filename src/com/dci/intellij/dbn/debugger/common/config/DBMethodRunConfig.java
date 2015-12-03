@@ -60,10 +60,13 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
                                 "The database connection is down or method has been dropped.");
             }
 
-            ConnectionHandler connectionHandler = getMethod().getConnectionHandler();
-            if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
-                throw new RuntimeConfigurationError(
-                        "Debugging is not supported for " + connectionHandler.getDatabaseType().getDisplayName() +" databases.");
+            DBMethod method = getMethod();
+            if (method != null) {
+                ConnectionHandler connectionHandler = method.getConnectionHandler();
+                if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
+                    throw new RuntimeConfigurationError(
+                            "Debugging is not supported for " + connectionHandler.getDatabaseType().getDisplayName() +" databases.");
+                }
             }
         }
     }

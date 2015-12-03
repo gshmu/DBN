@@ -145,7 +145,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
         @Override
         public void dataDefinitionChanged(DBSchema schema, DBObjectType objectType) {
-            if (schema.getConnectionHandler() == connectionHandler) {
+            if (schema.getConnectionHandler() == getConnectionHandler()) {
                 DBObjectList childObjectList = schema.getChildObjectList(objectType);
                 if (childObjectList != null && childObjectList.isLoaded()) {
                     childObjectList.reload();
@@ -166,7 +166,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
         @Override
         public void dataDefinitionChanged(@NotNull DBSchemaObject schemaObject) {
-            if (schemaObject.getConnectionHandler() == connectionHandler) {
+            if (schemaObject.getConnectionHandler() == getConnectionHandler()) {
                 DBObjectListContainer childObjects = schemaObject.getChildObjects();
                 if (childObjects != null) {
                     List<DBObjectList<DBObject>> objectLists = childObjects.getAllObjectLists();
@@ -190,7 +190,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     };
 
     public boolean isValid() {
-        return connectionConfigHash == connectionHandler.getSettings().getDatabaseSettings().hashCode();
+        return connectionConfigHash == getConnectionHandler().getSettings().getDatabaseSettings().hashCode();
     }
 
     @NotNull
@@ -220,7 +220,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
     public synchronized List<DBNativeDataType> getNativeDataTypes(){
         if (nativeDataTypes == null) {
-            List<DataTypeDefinition> dataTypeDefinitions = connectionHandler.getInterfaceProvider().getNativeDataTypes().list();
+            List<DataTypeDefinition> dataTypeDefinitions = getConnectionHandler().getInterfaceProvider().getNativeDataTypes().list();
             nativeDataTypes = new ArrayList<DBNativeDataType>();
             for (DataTypeDefinition dataTypeDefinition : dataTypeDefinitions) {
                 DBNativeDataType dataType = new DBNativeDataType(dataTypeDefinition);
@@ -348,7 +348,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     private void buildTreeChildren() {
         FailsafeUtil.check(this);
         List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
-        Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
+        Filter<BrowserTreeNode> filter = getConnectionHandler().getObjectTypeFilter();
         if (!filter.acceptsAll(allPossibleTreeChildren)) {
             newTreeChildren = new ArrayList<BrowserTreeNode>();
             for (BrowserTreeNode treeNode : allPossibleTreeChildren) {
@@ -387,7 +387,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     }
 
     public void rebuildTreeChildren() {
-        Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
+        Filter<BrowserTreeNode> filter = getConnectionHandler().getObjectTypeFilter();
         if (visibleTreeChildren != null && DatabaseBrowserUtils.treeVisibilityChanged(allPossibleTreeChildren, visibleTreeChildren, filter)) {
             buildTreeChildren();
         }
@@ -534,7 +534,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     }
 
     private Filter<DBObjectType> getConnectionObjectTypeFilter() {
-        return connectionHandler.getSettings().getFilterSettings().getObjectTypeFilterSettings().getTypeFilter();
+        return getConnectionHandler().getSettings().getFilterSettings().getObjectTypeFilterSettings().getTypeFilter();
     }
 
     public void lookupObjectsOfType(LookupConsumer consumer, DBObjectType objectType) throws ConsumerStoppedException {
@@ -596,7 +596,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     }
 
     public void refreshObjectsStatus(final @Nullable DBSchemaObject requester) {
-        if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
+        if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(getConnectionHandler())) {
             new BackgroundTask(getProject(), "Updating objects status", true) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) {
@@ -626,8 +626,9 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return objectLists;
     }
 
+    @NotNull
     public Project getProject() {
-        return connectionHandler == null ? null : connectionHandler.getProject();
+        return getConnectionHandler().getProject();
     }
 
     @Nullable

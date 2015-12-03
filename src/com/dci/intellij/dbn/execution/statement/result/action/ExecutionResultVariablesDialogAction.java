@@ -28,7 +28,7 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
             final Project project = executionResult.getProject();
             StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
             statementExecutionManager.promptExecutionDialog(
-                    executionProcessor.asList(),
+                    executionProcessor,
                     DBDebuggerType.NONE,
                     new BackgroundTask(project, "Executing " + executionResult.getExecutionProcessor().getStatementName(), false, true) {
                         @Override

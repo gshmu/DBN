@@ -21,10 +21,7 @@ public class RunMethodAction extends AnObjectAction<DBMethod> {
         DBMethod method = getObject();
         if (method != null) {
             MethodExecutionManager executionManager = MethodExecutionManager.getInstance(method.getProject());
-            if (executionManager.promptExecutionDialog(method, DBDebuggerType.NONE)) {
-                executionManager.execute(method);
-            }
-
+            executionManager.startMethodExecution(method, DBDebuggerType.NONE);
         }
     }
 }

@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.editor;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +33,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
@@ -66,30 +62,11 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
 
     private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile, boolean isInitialLoad) {
-            final Project project = getProject();
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            FileEditor[] allEditors = fileEditorManager.getAllEditors(sourceCodeFile.getMainDatabaseFile());
-            final Set<Document> documents = new HashSet<Document>();
-            for (FileEditor fileEditor : allEditors) {
-                if (fileEditor instanceof SourceCodeEditor) {
-                    SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                    if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
-                        Editor editor = sourceCodeEditor.getEditor();
-                        documents.add(editor.getDocument());
-                    }
-                }
-            }
-            if (documents.size() > 0) {
-                for (Document document : documents) {
-                    EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-                    boolean readonly = environmentManager.isReadonly(sourceCodeFile);
-                    sourceCodeFile.applyContentToDocument(document);
-                    sourceCodeFile.applyGuardedBlocksToDocument(document);
-
-                    EditorUtil.setEditorsReadonly(sourceCodeFile, readonly);
-                }
-            }
+        public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
+            Project project = getProject();
+            EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+            boolean readonly = environmentManager.isReadonly(sourceCodeFile);
+            EditorUtil.setEditorsReadonly(sourceCodeFile, readonly);
         }
     };
 

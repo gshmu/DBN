@@ -37,6 +37,7 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
             case SESSION_DISCONNECT: return true;
             case SESSION_KILL: return true;
             case SESSION_CURRENT_SQL: return true;
+            case CONNECTION_ERROR_RECOVERING: return true;
             default: return false;
         }
     }

@@ -105,6 +105,7 @@ public class VoidDynamicContent implements DynamicContent{
         return null;
     }
 
+    @NotNull
     @Override
     public List getAllElements() {
         return getElements();

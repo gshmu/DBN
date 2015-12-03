@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
+import javax.swing.Icon;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
@@ -12,11 +17,6 @@ import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.impl.XSourcePositionImpl;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.Set;
 
 public class DBJdbcDebugStackFrame extends DBDebugStackFrame<DBJdbcDebugProcess, DBJdbcDebugValue> {
     private DebuggerRuntimeInfo runtimeInfo;
@@ -33,7 +33,7 @@ public class DBJdbcDebugStackFrame extends DBDebugStackFrame<DBJdbcDebugProcess,
     }
 
     @Override
-    protected XSourcePosition computeSourcePosition() {
+    protected XSourcePosition resolveSourcePosition() {
         DBJdbcDebugProcess debugProcess = getDebugProcess();
         VirtualFile virtualFile = debugProcess.getRuntimeInfoFile(runtimeInfo);
 
@@ -48,9 +48,8 @@ public class DBJdbcDebugStackFrame extends DBDebugStackFrame<DBJdbcDebugProcess,
         return XSourcePositionImpl.create(virtualFile, lineNumber);
     }
 
-    @Nullable
     @Override
-    protected VirtualFile getVirtualFile() {
+    protected VirtualFile resolveVirtualFile() {
         return getDebugProcess().getRuntimeInfoFile(runtimeInfo);
     }
 

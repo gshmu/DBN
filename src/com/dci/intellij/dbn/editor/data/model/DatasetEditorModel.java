@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
@@ -45,6 +46,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     private CancellableDatabaseCall loaderCall;
     private boolean isDirty;
+    private EditableResultSetHandler resultSetHandler;
 
     private List<DatasetEditorModelRow> changedRows = new ArrayList<DatasetEditorModelRow>();
 
@@ -68,7 +70,10 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         closeResultSet();
         int timeout = settings.getGeneralSettings().getFetchTimeout().value();
         final AtomicReference<Statement> statementRef = new AtomicReference<Statement>();
-        loaderCall = new CancellableDatabaseCall(timeout, TimeUnit.SECONDS) {
+        final ConnectionHandler connectionHandler = getConnectionHandler();
+        Connection connection = connectionHandler.getStandaloneConnection();
+
+        loaderCall = new CancellableDatabaseCall(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
             @Override
             public Object execute() throws Exception {
                 ResultSet newResultSet = loadResultSet(useCurrentFilter, statementRef);
@@ -76,6 +81,8 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 if (newResultSet != null && !newResultSet.isClosed()) {
                     checkDisposed();
                     setResultSet(newResultSet);
+                    boolean useSavepoints = !DatabaseFeature.CONNECTION_ERROR_RECOVERING.isSupported(connectionHandler);
+                    resultSetHandler = new EditableResultSetHandler(newResultSet, useSavepoints);
                     setResultSetExhausted(false);
                     if (keepChanges) snapshotChanges(); else clearChanges();
 
@@ -96,6 +103,10 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             }
         };
         loaderCall.start();
+    }
+
+    public EditableResultSetHandler getResultSetHandler() {
+        return resultSetHandler;
     }
 
     private int computeRowCount() {
@@ -309,7 +320,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         try {
             isInserting = true;
             editorTable.stopCellEditing();
-            getResultSet().moveToInsertRow();
+            resultSetHandler.startInsertRow();
             DatasetEditorModelRow newRow = createRow(getRowCount()+1);
             newRow.setInsert(true);
             addRowAtIndex(rowIndex, newRow);
@@ -330,7 +341,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             isInserting = true;
             editorTable.stopCellEditing();
             int insertIndex = rowIndex + 1;
-            getResultSet().moveToInsertRow();
+            resultSetHandler.startInsertRow();
             DatasetEditorModelRow oldRow = getRowAtIndex(rowIndex);
             DatasetEditorModelRow newRow = createRow(getRowCount() + 1);
             newRow.setInsert(true);
@@ -351,9 +362,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         if (row != null) {
             try {
                 editorTable.stopCellEditing();
-                ResultSet resultSet = getResultSet();
-                resultSet.insertRow();
-                resultSet.moveToCurrentRow();
+                resultSetHandler.insertRow();
                 row.setInsert(false);
                 row.setNew(true);
                 isModified = true;
@@ -381,7 +390,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 removeRowAtIndex(rowIndex);
                 if (notifyListeners) notifyRowsDeleted(rowIndex, rowIndex);
             }
-            getResultSet().moveToCurrentRow();
+            resultSetHandler.cancelInsertRow();
             isInserting = false;
 
         } catch (SQLException e) {

@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.debugger;
 
-import com.dci.intellij.dbn.common.ui.Presentable;
+import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.ui.Presentable;
 
 public enum DBDebuggerType implements Presentable {
     JDBC("Classic (over JDBC)"),
@@ -28,6 +28,8 @@ public enum DBDebuggerType implements Presentable {
     public String getDescription() {
         return null;
     }
+
+
 
     public boolean isDebug() {
         return this != NONE;

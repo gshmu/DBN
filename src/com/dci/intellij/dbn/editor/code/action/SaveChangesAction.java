@@ -12,8 +12,6 @@ import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -30,7 +28,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
         final SourceCodeEditor fileEditor = getFileEditor(e);
         if (project != null && fileEditor != null) {
             CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
-            ConfirmationOptionHandler optionHandler = confirmationSettings.getSaveChangesOptionHandler();
+            ConfirmationOptionHandler optionHandler = confirmationSettings.getSaveChanges();
             boolean canContinue = optionHandler.resolve(fileEditor.getObject().getQualifiedNameWithType());
             if (canContinue) {
                 new WriteActionRunner() {
@@ -60,8 +58,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
                     contentType == DBContentType.CODE_SPEC ? "Save spec" :
                     contentType == DBContentType.CODE_BODY ? "Save body" : "Save";
 
-            DBSchemaObject object = sourceCodeFile.getObject();
-            presentation.setEnabled(!object.getStatus().is(contentType, DBObjectStatus.SAVING) && sourceCodeFile.isModified());
+            presentation.setEnabled(sourceCodeFile.isModified() && !sourceCodeFile.isSaving());
             presentation.setText(text);
         }
     }

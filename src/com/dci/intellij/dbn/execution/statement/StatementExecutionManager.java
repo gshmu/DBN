@@ -273,7 +273,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         }
                     };
 
-                    promptExecutionDialog(executionProcessors, DBDebuggerType.NONE, executionCallback);
+                    promptExecutionDialogs(executionProcessors, DBDebuggerType.NONE, executionCallback);
                 }
             };
 
@@ -310,24 +310,24 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     }
 
-    public void promptExecutionDialog(@NotNull final List<StatementExecutionProcessor> executionProcessors, final DBDebuggerType debuggerType, @NotNull final RunnableTask callback) {
+    public void promptExecutionDialog(@NotNull StatementExecutionProcessor executionProcessor, final DBDebuggerType debuggerType, @NotNull final RunnableTask callback) {
+        promptExecutionDialogs(executionProcessor.asList(), debuggerType, callback);
+
+    }
+
+    private void promptExecutionDialogs(@NotNull final List<StatementExecutionProcessor> processors, final DBDebuggerType debuggerType, @NotNull final RunnableTask callback) {
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
-                if (promptExecutionDialog(executionProcessors, debuggerType)) {
+                if (promptExecutionDialogs(processors, debuggerType)) {
                     callback.start();
                 }
             }
         }.start();
+
     }
 
-    public boolean promptExecutionDialog(@NotNull StatementExecutionProcessor executionProcessor, DBDebuggerType debuggerType) {
-        ArrayList<StatementExecutionProcessor> processors = new ArrayList<StatementExecutionProcessor>();
-        processors.add(executionProcessor);
-        return promptExecutionDialog(processors, debuggerType);
-    }
-
-    public boolean promptExecutionDialog(@NotNull List<StatementExecutionProcessor> executionProcessors, DBDebuggerType debuggerType) {
+    private boolean promptExecutionDialogs(@NotNull List<StatementExecutionProcessor> executionProcessors, DBDebuggerType debuggerType) {
         Map<String, StatementExecutionVariable> variableCache = new HashMap<String, StatementExecutionVariable>();
         boolean reuseVariables = false;
         boolean isBulkExecution = executionProcessors.size() > 1;
