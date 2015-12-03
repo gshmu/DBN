@@ -86,9 +86,14 @@ public class DBBreakpointUtil {
 
     public static String getProgramIdentifier(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
         DBSchemaObject object = getDatabaseObject(breakpoint);
+        DBContentType contentType = getContentType(breakpoint);
+        return getProgramIdentifier(object, contentType);
+    }
+
+    @Nullable
+    public static String getProgramIdentifier(DBSchemaObject object, DBContentType contentType) {
         if (object != null) {
             DatabaseDebuggerInterface debuggerInterface = object.getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
-            DBContentType contentType = getContentType(breakpoint);
             return debuggerInterface.getJdwpProgramIdentifier(object.getObjectType(), contentType, object.getQualifiedName());
         }
         return null;
@@ -103,16 +108,16 @@ public class DBBreakpointUtil {
                 object.getQualifiedName() + ":" + (breakpoint.getLine() + 1);
     }
 
-    public static Collection<XLineBreakpoint<XBreakpointProperties>> getDatabaseBreakpoints(final ConnectionHandler connectionHandler) {
-        return new ReadActionRunner<Collection<XLineBreakpoint<XBreakpointProperties>>>() {
+    public static List<XLineBreakpoint<XBreakpointProperties>> getDatabaseBreakpoints(final ConnectionHandler connectionHandler) {
+        return new ReadActionRunner<List<XLineBreakpoint<XBreakpointProperties>>>() {
             @Override
-            protected Collection<XLineBreakpoint<XBreakpointProperties>> run() {
+            protected List<XLineBreakpoint<XBreakpointProperties>> run() {
                 DBBreakpointType databaseBreakpointType = (DBBreakpointType) XDebuggerUtil.getInstance().findBreakpointType(DBBreakpointType.class);
                 Project project = connectionHandler.getProject();
                 XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
                 Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints = (Collection<XLineBreakpoint<XBreakpointProperties>>) breakpointManager.getBreakpoints(databaseBreakpointType);
 
-                Collection<XLineBreakpoint<XBreakpointProperties>> connectionBreakpoints = new ArrayList<XLineBreakpoint<XBreakpointProperties>>();
+                List<XLineBreakpoint<XBreakpointProperties>> connectionBreakpoints = new ArrayList<XLineBreakpoint<XBreakpointProperties>>();
                 for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
                     XBreakpointProperties properties = breakpoint.getProperties();
                     if (properties instanceof DBBreakpointProperties) {

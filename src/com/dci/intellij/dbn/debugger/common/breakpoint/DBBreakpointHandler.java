@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
 import java.util.Collection;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
@@ -9,6 +10,7 @@ import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
@@ -98,5 +100,5 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
 
     public abstract void unregisterDefaultBreakpoint();
 
-    public abstract void prepareObjectClasses(Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints);
+    public abstract void prepareObjectClasses(List<XLineBreakpoint<XBreakpointProperties>> breakpoints, List<? extends DBObject> objects);
 }

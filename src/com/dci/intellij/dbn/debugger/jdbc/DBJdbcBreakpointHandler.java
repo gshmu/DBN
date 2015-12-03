@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collection;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -120,7 +121,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
     }
 
     @Override
-    public void prepareObjectClasses(Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints) {
+    public void prepareObjectClasses(List<XLineBreakpoint<XBreakpointProperties>> breakpoints, List<? extends DBObject> objects) {
         // nothing to do
     }
 

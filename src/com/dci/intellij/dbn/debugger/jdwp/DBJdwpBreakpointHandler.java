@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,19 +11,23 @@ import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl;
 import com.intellij.debugger.engine.events.DebuggerCommandImpl;
 import com.intellij.debugger.engine.requests.RequestManagerImpl;
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
 import com.intellij.debugger.jdi.VirtualMachineProxyImpl;
+import com.intellij.debugger.requests.ClassPrepareRequestor;
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
@@ -131,7 +134,20 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
     }
 
     @Override
-    public void prepareObjectClasses(Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints) {
+    public void prepareObjectClasses(List<XLineBreakpoint<XBreakpointProperties>> breakpoints, List<? extends DBObject> objects) {
+        for (DBObject object : objects) {
+            if (object instanceof DBSchemaObject) {
+                DBSchemaObject schemaObject = (DBSchemaObject) object;
+                DBContentType contentType = schemaObject.getContentType();
+                if (contentType == DBContentType.CODE) {
+                    prepareObjectClasses(schemaObject, DBContentType.CODE);
+                } else if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
+                    prepareObjectClasses(schemaObject, DBContentType.CODE_SPEC);
+                    prepareObjectClasses(schemaObject, DBContentType.CODE_BODY);
+                }
+            }
+        }
+
         for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
             prepareObjectClasses(breakpoint);
         }
@@ -162,6 +178,21 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                     }
                 }.invoke();
             }
+        }
+    }
+
+    public void prepareObjectClasses(DBSchemaObject object, DBContentType contentType) {
+        RequestManagerImpl requestsManager = getRequestsManager();
+        String programIdentifier = getProgramIdentifier(object, contentType);
+
+        ClassPrepareRequest request = requestsManager.createClassPrepareRequest(new ClassPrepareRequestor() {
+            @Override
+            public void processClassPrepare(DebugProcess debuggerProcess, ReferenceType referenceType) {
+                System.out.println();
+            }
+        }, programIdentifier);
+        if (request != null) {
+            requestsManager.enableRequest(request);
         }
     }
 

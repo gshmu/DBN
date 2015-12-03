@@ -18,6 +18,7 @@ import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.requests.ClassPrepareRequestor;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.ClassPrepareRequest;
@@ -86,6 +87,10 @@ public class DBJdwpDebugPositionManager implements PositionManager {
     @Override
     public List<Location> locationsOfLine(@NotNull ReferenceType type, @NotNull SourcePosition position) throws NoDataException {
         check(position);
+        try {
+            return type.locationsOfLine(position.getLine() + 1);
+        } catch (AbsentInformationException ignore) {
+        }
         return Collections.emptyList();
     }
 
