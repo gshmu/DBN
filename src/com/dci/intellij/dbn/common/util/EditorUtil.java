@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -205,13 +206,12 @@ public class EditorUtil {
         }
         return null;
     }
-
     public static void setEditorReadonly(SourceCodeEditor sourceCodeEditor, final boolean readonly) {
         final EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
         editor.setViewer(readonly);
         final EditorColorsScheme scheme = editor.getColorsScheme();
         final Color defaultBackground = scheme.getDefaultBackground();
-        new SimpleLaterInvocator() {
+        new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
                 editor.setBackgroundColor(readonly ? GUIUtil.adjust(defaultBackground, -0.03) : defaultBackground);
@@ -232,15 +232,20 @@ public class EditorUtil {
                 @Override
                 protected Object run() {
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                    FileEditor[] allEditors = fileEditorManager.getAllEditors();
-                    for (FileEditor fileEditor : allEditors) {
-                        if (fileEditor instanceof SourceCodeEditor) {
-                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                            if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
-                                setEditorReadonly(sourceCodeEditor, readonly);
+                    final FileEditor[] allEditors = fileEditorManager.getAllEditors();
+                    new SimpleLaterInvocator() {
+                        @Override
+                        protected void execute() {
+                            for (FileEditor fileEditor : allEditors) {
+                                if (fileEditor instanceof SourceCodeEditor) {
+                                    SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                                    if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
+                                        setEditorReadonly(sourceCodeEditor, readonly);
+                                    }
+                                }
                             }
                         }
-                    }
+                    }.start();
                     return null;
                 }
             }.start();
