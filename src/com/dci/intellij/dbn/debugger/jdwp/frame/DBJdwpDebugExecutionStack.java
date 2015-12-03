@@ -103,17 +103,6 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
                     underlyingStack.computeStackFrames(firstFrameIndex, fakeContainer);
                 }
             }.schedule();
-/*            debugProcess.getManagerThread().schedule(new DebuggerContextCommandImpl(debugProcess.getDebuggerContext()) {
-                @Override
-                public Priority getPriority() {
-                    return Priority.NORMAL;
-                }
-
-                @Override
-                public void threadAction() {
-
-                }
-            });*/
         }
     }
 }
