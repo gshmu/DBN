@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
-import java.util.List;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
@@ -40,6 +35,12 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Set;
+
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getProgramIdentifier;
 
 public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProcess> {
@@ -151,7 +152,6 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
             DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
             if (breakpointProperties.getConnectionHandler() == getConnectionHandler()) {
                 new ManagedThreadCommand(getJdiDebugProcess()) {
-
                     @Override
                     protected void action() throws Exception {
                         RequestManagerImpl requestsManager = getRequestsManager();
@@ -175,14 +175,19 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
         }
     }
 
-    public void prepareObjectClasses(DBSchemaObject object, DBContentType contentType) {
-        RequestManagerImpl requestsManager = getRequestsManager();
-        String programIdentifier = getProgramIdentifier(getConnectionHandler(), object, contentType);
+    public void prepareObjectClasses(final DBSchemaObject object, final DBContentType contentType) {
+        new ManagedThreadCommand(getJdiDebugProcess()) {
+            @Override
+            protected void action() throws Exception {
+                RequestManagerImpl requestsManager = getRequestsManager();
+                String programIdentifier = getProgramIdentifier(getConnectionHandler(), object, contentType);
 
-        ClassPrepareRequest request = requestsManager.createClassPrepareRequest(GENERIC_CLASS_PREPARE_REQUESTOR, programIdentifier);
-        if (request != null) {
-            requestsManager.enableRequest(request);
-        }
+                ClassPrepareRequest request = requestsManager.createClassPrepareRequest(GENERIC_CLASS_PREPARE_REQUESTOR, programIdentifier);
+                if (request != null) {
+                    requestsManager.enableRequest(request);
+                }
+            }
+        }.schedule();
     }
 
     @Override
