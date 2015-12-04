@@ -8,7 +8,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
+import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
@@ -558,7 +558,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
                     //fixme check if the connection is pointing to a new database and reload if this is the case
                     //objectBundle.checkForDatabaseChange();
 
-                    EventUtil.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(getObjectBundle(), TreeEventType.NODES_CHANGED);
+                    EventUtil.notify(project, BrowserTreeEventListener.TOPIC).nodeChanged(getObjectBundle(), TreeEventType.NODES_CHANGED);
                 }
             }.start();
         }
