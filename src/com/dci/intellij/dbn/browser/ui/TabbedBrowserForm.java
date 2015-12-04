@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -182,13 +183,9 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     };
 
 
-    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
+    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
         @Override
-        public void settingsChanged(String connectionId) {
-        }
-
-        @Override
-        public void nameChanged(String connectionId) {
+        public void connectionNameChanged(String connectionId) {
             for (TabInfo tabInfo : connectionTabs.getTabs()) {
                 SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
                 ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
