@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
@@ -84,15 +85,10 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
     }
 
-    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
+    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
         @Override
-        public void settingsChanged(String connectionId) {
+        public void connectionChanged(String connectionId) {
             closeFiles(connectionId);
-        }
-
-        @Override
-        public void nameChanged(String connectionId) {
-
         }
     };
 
