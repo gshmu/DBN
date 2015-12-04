@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
+import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
@@ -325,9 +326,7 @@ public class DatabaseBrowserTree extends DBNTree {
                     }
                 }
 
-                BrowserSelectionChangeListener listener = EventUtil.notify(getProject(), BrowserSelectionChangeListener.TOPIC);
-                listener.browserSelectionChanged();
-
+                EventUtil.notify(getProject(), BrowserTreeEventListener.TOPIC).selectionChanged();
             }
         }
     };
