@@ -9,7 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -53,8 +55,8 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                 processor.export(exportModel, instructions, connectionHandler);
                 DataExportInstructions.Destination destination = instructions.getDestination();
                 if (destination == DataExportInstructions.Destination.CLIPBOARD) {
-                    MessageUtil.showInfoDialog(project, "Export info", "Content exported to clipboard.", new String[]{"OK"}, 0, successCallback);
-
+                    successCallback.start();
+                    NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Data Export", "Data content exported to clipboard.");
                 } else if (destination == DataExportInstructions.Destination.FILE) {
                     final File file = instructions.getFile();
                     if (Desktop.isDesktopSupported()) {
@@ -86,14 +88,14 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                                 new String[]{"OK", "Open File"}, 0,
                                 openFileTask);
                     } else {
-                        MessageUtil.showInfoDialog(project, "Export info", "Content exported to file " + file.getPath(),  new String[]{"OK"}, 0, successCallback);
+                        NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Data Export", "Content exported to file " + file.getPath());
                     }
                 }
             }
 
         } catch (DataExportException e) {
             MessageUtil.showErrorDialog(project, "Error performing data export.", e);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignore) {
 
         }
     }
