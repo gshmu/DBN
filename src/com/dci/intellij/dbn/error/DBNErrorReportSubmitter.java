@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.error;
 
 import java.awt.Component;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -16,17 +17,27 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.intellij.diagnostic.LogMessage;
 import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.errorreport.bean.ErrorBean;
@@ -58,6 +69,10 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
     private static final String LOGIN_URL = URL + "rest/user/login";
     private static final String ENCODING = "UTF-8";
     public static final String LINE_DELIMITER = "\n__________________________________________________________________\n";
+
+
+    private static final GsonBuilder JIRA_GSON_BUILDER = new GsonBuilder();
+    private static final HttpClientBuilder JIRA_HTTP_CLIENT_BUILDER = HttpClientBuilder.create();
 
     public DBNErrorReportSubmitter() {
         System.out.println();
@@ -204,6 +219,9 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
     public String submit(@NotNull IdeaLoggingEvent[] events, String pluginVersion, String summary, String description) throws Exception{
         StringBuilder response = new StringBuilder("");
 
+        submitJiraTicket(summary, description, pluginVersion);
+        if (true) return "";
+
         ErrorBean errorBean = new ErrorBean(events[0].getThrowable(), IdeaLogger.ourLastActionId);
         Object eventData = events[0].getData();
         if (eventData instanceof LogMessageEx) {
@@ -269,5 +287,81 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
             }
         }
         return builder.toString().getBytes(ENCODING);
+    }
+
+    private void submitJiraTicket(String summary, String description, String pluginVersion) {
+        JiraTicketRequest request = new JiraTicketRequest(summary, description);
+        JiraTicketResponse response = request.submit();
+    }
+
+    private static class JiraTicketRequest{
+        private JsonObject request = new JsonObject();
+
+        public JiraTicketRequest(String summary, String description) {
+            summary = summary.replace("\r\n", " ").replace("\t", " ");
+
+            // project
+            JsonObject project = new JsonObject();
+            project.addProperty("key", "DBN");
+
+            // issue type
+            JsonObject issueType = new JsonObject();
+            issueType.addProperty("name", "Exception");
+
+
+            // fields
+            JsonObject fields = new JsonObject();
+            fields.add("project", project);
+            fields.addProperty("summary", summary);
+            fields.addProperty("description", description);
+            fields.add("issuetype", issueType);
+            request.add("fields", fields);
+        }
+
+        public JiraTicketResponse submit() {
+            try {
+                Gson gson = JIRA_GSON_BUILDER.create();
+                String requestString = gson.toJson(request);
+
+                HttpPost httpPost = new HttpPost("https://database-navigator.atlassian.net/rest/api/2/issue");
+                StringEntity params = new StringEntity(requestString);
+                httpPost.addHeader("content-type", "application/json");
+                httpPost.setEntity(params);
+                HttpClient httpClient = JIRA_HTTP_CLIENT_BUILDER.build();
+                HttpResponse httpResponse = httpClient.execute(httpPost);
+
+                if (httpResponse == null) {
+                    return new JiraTicketResponse(null, "Received empty response from server");
+                } else {
+                    InputStream in = httpResponse.getEntity().getContent();
+                    String responseString = CommonUtil.readInputStream(in);
+                    return new JiraTicketResponse(responseString, null);
+                }
+            } catch (Exception e) {
+                return new JiraTicketResponse(null, e.getMessage());
+            }
+        }
+    }
+
+    private static class JiraTicketResponse {
+        private JsonObject response;
+        private String errorMessage;
+
+        public JiraTicketResponse(@Nullable String responseString, @Nullable String errorMessage) {
+            if (StringUtil.isNotEmpty(responseString)) {
+                Gson gson = JIRA_GSON_BUILDER.create();
+                this.response = gson.fromJson(responseString, JsonObject.class);
+            }
+            this.errorMessage = errorMessage;
+        }
+
+        @Nullable
+        public String getIssueId() {
+            return response == null ? null : response.get("key").getAsString();
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
     }
 }

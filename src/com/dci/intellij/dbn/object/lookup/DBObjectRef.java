@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.object.lookup;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
@@ -11,14 +19,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement<Element> {
     protected DBObjectRef parent;
@@ -298,9 +298,17 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return object;
     }
 
-    private T getObject () {
+    private T getObject() {
         try {
-            return reference == null ? null : reference.get();
+            if (reference == null) {
+                return null;
+            }
+
+            T object = reference.get();
+            if (object == null || object.isDisposed()) {
+                return null;
+            }
+            return object;
         } catch (Exception e) {
             return null;
         }
