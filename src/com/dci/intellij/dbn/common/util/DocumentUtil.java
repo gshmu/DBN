@@ -182,13 +182,22 @@ public class DocumentUtil {
         }
     }
 
-    public static void setText(final Document document, final CharSequence text) {
+    public static void setText(final @NotNull Document document, final CharSequence text) {
         new WriteActionRunner() {
             public void run() {
                 boolean isReadonly = !document.isWritable();
                 document.setReadOnly(false);
                 document.setText(text);
                 document.setReadOnly(isReadonly);
+            }
+        }.start();
+    }
+
+    public static void saveDocument(final  @NotNull Document document) {
+        new WriteActionRunner() {
+            @Override
+            public void run() {
+                FileDocumentManager.getInstance().saveDocument(document);
             }
         }.start();
     }

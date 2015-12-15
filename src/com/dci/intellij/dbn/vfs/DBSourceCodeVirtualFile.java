@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -35,7 +36,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 
-public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, DocumentListener, ConnectionProvider {
+public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private static final String EMPTY_CONTENT = "";
@@ -53,6 +54,24 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     public DBSourceCodeVirtualFile(final DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
         super(databaseFile, contentType);
         setCharset(databaseFile.getConnectionHandler().getSettings().getDetailSettings().getCharset());
+    }
+
+    private DocumentListener documentListener = new DocumentAdapter() {
+        @Override
+        public void documentChanged(DocumentEvent e) {
+            CharSequence newContent = e.getDocument().getCharsSequence();
+            if (!StringUtil.equals(newContent, content)){
+                setModified(true);
+                if (originalContent == EMPTY_CONTENT) {
+                    originalContent = content;
+                }
+                content = newContent.toString();
+            }
+        }
+    };
+
+    public DocumentListener getDocumentListener() {
+        return documentListener;
     }
 
     @Nullable
@@ -118,7 +137,8 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     public void updateChangeTimestamp() {
         DBSchemaObject object = getObject();
         try {
-            ChangeTimestamp timestamp = object.loadChangeTimestamp(getContentType());
+            DBContentType contentType = getContentType();
+            ChangeTimestamp timestamp = object.loadChangeTimestamp(contentType);
             if (timestamp != null) {
                 changeTimestamp = timestamp;
                 changeTimestampCheck = null;
@@ -133,7 +153,8 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object)) {
             try {
                 if (changeTimestampCheck == null || changeTimestampCheck.isDirty() || reload) {
-                    changeTimestampCheck = object.loadChangeTimestamp(getContentType());
+                    DBContentType contentType = getContentType();
+                    changeTimestampCheck = object.loadChangeTimestamp(contentType);
                 }
 
                 return changeTimestamp != null && changeTimestampCheck != null && changeTimestamp.before(changeTimestampCheck);
@@ -157,13 +178,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     @NotNull
     public CharSequence getLastSavedContent() {
         return lastSavedContent == EMPTY_CONTENT ? originalContent : lastSavedContent;
-    }
-
-    public void setContent(String content) {
-        if (originalContent == EMPTY_CONTENT) {
-            originalContent = this.content;
-        }
-        this.content = content;
     }
 
     @NotNull
@@ -223,23 +237,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             mainDatabaseFile.putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, (Document) value);
         }
         super.putUserData(key, value);
-    }
-
-    /**
-     * ******************************************************
-     * DocumentListener                    *
-     * *******************************************************
-     */
-    public void beforeDocumentChange(DocumentEvent event) {
-
-    }
-
-    public void documentChanged(DocumentEvent event) {
-        CharSequence newContent = event.getDocument().getCharsSequence();
-        if (!StringUtil.equals(newContent, content)){
-            setModified(true);
-            setContent(newContent.toString());
-        }
     }
 
     @Override

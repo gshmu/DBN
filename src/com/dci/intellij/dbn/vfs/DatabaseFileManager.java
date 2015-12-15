@@ -136,12 +136,12 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                     CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
                     InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChanges();
                     CodeEditorChangesOption option = optionHandler.resolve(object.getQualifiedNameWithType());
+                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
 
                     switch (option) {
-                        case SAVE: databaseFile.saveChanges(null); break;
-                        case DISCARD: databaseFile.revertChanges(null); break;
+                        case SAVE: sourceCodeManager.saveSourceCodeChanges(databaseFile, null); break;
+                        case DISCARD: sourceCodeManager.revertSourceCodeChanges(databaseFile, null); break;
                         case SHOW: {
-                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
                             List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                             for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
                                 if (sourceCodeFile.isModified()) {

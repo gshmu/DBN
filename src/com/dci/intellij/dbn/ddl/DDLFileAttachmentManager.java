@@ -84,7 +84,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         }
 
         @Override
-        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor) {
+        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
             updateDDLFiles(sourceCodeFile.getMainDatabaseFile());
         }
     };

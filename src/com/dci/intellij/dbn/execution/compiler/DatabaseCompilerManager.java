@@ -50,7 +50,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
 
     private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor) {
+        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
             Project project = getProject();
             DBSchemaObject object = sourceCodeFile.getObject();
             DBContentType contentType = sourceCodeFile.getContentType();
