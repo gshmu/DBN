@@ -217,7 +217,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }.start();
     }
 
-    public void loadSourcesFromDatabase(@NotNull final DBSchemaObject schemaObject) {
+    public void ensureSourcesLoaded(@NotNull final DBSchemaObject schemaObject) {
         DBEditableObjectVirtualFile virtualFile = schemaObject.getVirtualFile();
         List<DBSourceCodeVirtualFile> sourceCodeFiles = virtualFile.getSourceCodeFiles();
         for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
@@ -450,7 +450,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         DBEditableObjectVirtualFile databaseFile = parentObject.getVirtualFile();
         VirtualFile virtualFile = basePsiElement.getFile().getVirtualFile();
         if (virtualFile instanceof DBSourceCodeVirtualFile) {
-            BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) virtualFile);
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+            BasicTextEditor textEditor = EditorUtil.getTextEditor(sourceCodeFile);
             if (textEditor != null) {
                 Project project = getProject();
                 EditorProviderId editorProviderId = textEditor.getEditorProviderId();
