@@ -180,7 +180,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 Project project = getProject();
                 try {
                     SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                    CharSequence referenceText = sourceCodeManager.loadSourceCodeFromDatabase(object, sourcecodeFile.getContentType());
+                    SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, sourcecodeFile.getContentType());
+                    CharSequence referenceText = sourceCodeContent.getText();
                     if (!isCanceled()) {
                         openDiffWindow(sourcecodeFile, referenceText.toString(), "Database version", "Local version vs. database version");
                     }
@@ -214,6 +215,16 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 DiffManager.getInstance().getIdeaDiffTool().show(diffRequest);
             }
         }.start();
+    }
+
+    public void loadSourcesFromDatabase(@NotNull final DBSchemaObject schemaObject) {
+        DBEditableObjectVirtualFile virtualFile = schemaObject.getVirtualFile();
+        List<DBSourceCodeVirtualFile> sourceCodeFiles = virtualFile.getSourceCodeFiles();
+        for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+            if (!sourceCodeFile.isLoaded()) {
+                loadSourceFromDatabase(sourceCodeFile);
+            }
+        }
     }
 
     public void loadSourceFromDatabase(@NotNull final DBSourceCodeVirtualFile sourceCodeFile) {
@@ -280,8 +291,9 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                                 " has been changed by another user. \nYou will be prompted to merge the changes";
                                 MessageUtil.showErrorDialog(project, "Version conflict", message);
 
-                                CharSequence databaseContent = loadSourceCodeFromDatabase(object, contentType);
-                                openCodeMergeDialog(databaseContent.toString(), sourceCodeFile, fileEditor, true);
+                                SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
+                                String databaseContent = sourceCodeContent.getText().toString();
+                                openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, true);
                             } else {
                                 storeSourceToDatabase(sourceCodeFile, fileEditor, successCallback);
                                 //sourceCodeEditor.afterSave();
@@ -305,10 +317,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
             }.start();
         }
-    }
-
-    public CharSequence loadSourceCodeFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {
-        return loadSourceFromDatabase(object, contentType).getText();
     }
 
     public SourceCodeContent loadSourceFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {
