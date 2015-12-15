@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -35,8 +36,9 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
                     if (!project.isDisposed()) {
                         try {
                             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                            CharSequence databaseContent = sourceCodeManager.loadSourceCodeFromDatabase(editableObject, sourceCodeEditor.getContentType());
-                            sourceCodeManager.openCodeMergeDialog(databaseContent.toString(), sourceCodeFile, sourceCodeEditor, false);
+                            SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(editableObject, sourceCodeEditor.getContentType());
+                            String databaseContent = sourceCodeContent.getText().toString();
+                            sourceCodeManager.openCodeMergeDialog(databaseContent, sourceCodeFile, sourceCodeEditor, false);
                         }catch (Exception e) {
                             MessageUtil.showErrorDialog(project, "Could not load sources from database.", e);
 

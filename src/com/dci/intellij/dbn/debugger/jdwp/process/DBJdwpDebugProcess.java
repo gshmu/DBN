@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
+import java.net.Inet4Address;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.StringTokenizer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -49,14 +57,6 @@ import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.sun.jdi.Location;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.net.Inet4Address;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.StringTokenizer;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     public static final Key<DBJdwpDebugProcess> KEY = new Key<DBJdwpDebugProcess>("DBNavigator.JdwpDebugProcess");
@@ -204,7 +204,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                         if (topFrame instanceof JavaStackFrame) {
                             Location location = getLocation(topFrame);
                             VirtualFile virtualFile = getVirtualFile(location);
-                            DBBreakpointUtil.ensureFilesContentLoaded(virtualFile);
+                            DBBreakpointUtil.ensureFilesContentLoaded(virtualFile, true);
                         }
                     }
                 }

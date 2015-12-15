@@ -451,7 +451,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             session.stop();
         } else {
             VirtualFile virtualFile = getRuntimeInfoFile(runtimeInfo);
-            ensureFilesContentLoaded(virtualFile);
+            ensureFilesContentLoaded(virtualFile, true);
             try {
                 backtraceInfo = getDebuggerInterface().getExecutionBacktraceInfo(debugConnection);
                 List<DebuggerRuntimeInfo> frames = backtraceInfo.getFrames();
