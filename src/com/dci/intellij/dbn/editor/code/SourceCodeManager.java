@@ -233,7 +233,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         new SynchronizedTask() {
             @Override
             protected void execute() {
-                if (!sourceCodeFile.isLoading() && (!sourceCodeFile.isLoaded() || force)) {
+                boolean initialLoad = !sourceCodeFile.isLoaded();
+                if (!sourceCodeFile.isLoading() && (initialLoad || force)) {
                     EditorUtil.setEditorsReadonly(sourceCodeFile, true);
                     sourceCodeFile.setLoading(true);
                     Project project = getProject();
@@ -241,7 +242,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     DBContentType contentType = sourceCodeFile.getContentType();
 
                     EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoading(sourceCodeFile);
-                    boolean initialLoad = !sourceCodeFile.isLoaded();
                     try {
                         SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
                         sourceCodeFile.applyContent(sourceCodeContent);
@@ -505,7 +505,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     public void loadSourceCode(final DBSourceCodeVirtualFile sourceCodeFile, final boolean force) {
         TaskInstructions taskInstructions = new TaskInstructions("Loading source code for " + sourceCodeFile.getObject().getQualifiedNameWithType(), true, false);
-        new ConnectionAction("loading source code", sourceCodeFile, taskInstructions) {
+        new ConnectionAction("loading the source code", sourceCodeFile, taskInstructions) {
             @Override
             protected void execute() {
                 loadSourceFromDatabase(sourceCodeFile, force);
@@ -515,7 +515,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     public void saveSourceCode(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable final SourceCodeEditor fileEditor, final Runnable successCallback) {
         TaskInstructions taskInstructions = new TaskInstructions("Saving source code for " + sourceCodeFile.getObject().getQualifiedNameWithType(), false, false);
-        new ConnectionAction("saving source code", sourceCodeFile, taskInstructions) {
+        new ConnectionAction("saving the source code", sourceCodeFile, taskInstructions) {
             @Override
             protected void execute() {
                 saveSourceToDatabase(sourceCodeFile, fileEditor, successCallback);
@@ -525,7 +525,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     public void revertSourceCodeChanges(final DBEditableObjectVirtualFile databaseFile, final Runnable successCallback) {
         TaskInstructions taskInstructions = new TaskInstructions("Loading source code for " + databaseFile.getObject().getQualifiedNameWithType(), true, false);
-        new ConnectionAction("loading source code", databaseFile, taskInstructions) {
+        new ConnectionAction("loading the source code", databaseFile, taskInstructions) {
             @Override
             protected void execute() {
                 List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
@@ -542,7 +542,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     public void saveSourceCodeChanges(final DBEditableObjectVirtualFile databaseFile, Runnable successCallback) {
         TaskInstructions taskInstructions = new TaskInstructions("Saving source code for " + databaseFile.getObject().getQualifiedNameWithType(), false, false);
-        new ConnectionAction("saving source code", databaseFile, taskInstructions) {
+        new ConnectionAction("saving the source code", databaseFile, taskInstructions) {
             @Override
             protected void execute() {
                 List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
