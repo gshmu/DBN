@@ -7,12 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
@@ -132,35 +130,5 @@ public class DBBreakpointUtil {
                 return connectionBreakpoints;
             }
         }.start();
-    }
-
-
-    public static void ensureFilesContentLoaded(VirtualFile virtualFile, boolean openEditor) {
-        if (virtualFile instanceof DBEditableObjectVirtualFile) {
-            DBEditableObjectVirtualFile databaseVirtualFile = (DBEditableObjectVirtualFile) virtualFile;
-            if (openEditor) {
-                DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-                databaseFileSystem.openEditor(databaseVirtualFile.getObject(), false);
-
-                List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseVirtualFile.getSourceCodeFiles();
-                //TODO find another locking mechanism
-                for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                    try {
-                        int count = 0;
-                        while (!sourceCodeFile.isLoaded() && count < 10) {
-                            Thread.sleep(500);
-                            count++;
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {
-                Project project = FailsafeUtil.get(databaseVirtualFile.getProject());
-                SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                sourceCodeManager.loadSourcesFromDatabase(databaseVirtualFile.getObject());
-            }
-        }
-
     }
 }

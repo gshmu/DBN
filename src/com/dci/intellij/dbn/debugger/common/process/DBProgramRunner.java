@@ -140,11 +140,10 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             new BackgroundTask(project, "Initializing debug environment", false, true) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                    List<DBMethod> methods = runProfile.getMethods();
-
                     DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
                     initProgressIndicator(progressIndicator, true, "Loading method dependencies");
                     if (!project.isDisposed() && !progressIndicator.isCanceled()) {
+                        List<DBMethod> methods = runProfile.getMethods();
                         List<DBSchemaObject> dependencies = debuggerManager.loadCompileDependencies(methods, progressIndicator);
                         if (!progressIndicator.isCanceled()) {
                             if (dependencies.size() > 0) {

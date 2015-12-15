@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.DBDebugOperationTask;
+import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil;
@@ -204,7 +205,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                         if (topFrame instanceof JavaStackFrame) {
                             Location location = getLocation(topFrame);
                             VirtualFile virtualFile = getVirtualFile(location);
-                            DBBreakpointUtil.ensureFilesContentLoaded(virtualFile, true);
+                            DBDebugUtil.openEditor(virtualFile);
                         }
                     }
                 }

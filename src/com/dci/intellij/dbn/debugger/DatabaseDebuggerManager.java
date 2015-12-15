@@ -23,7 +23,6 @@ import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
-import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
@@ -39,6 +38,7 @@ import com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBStatementJdwpRunner;
 import com.dci.intellij.dbn.debugger.options.DebuggerSettings;
 import com.dci.intellij.dbn.debugger.options.DebuggerTypeOption;
+import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -388,7 +388,9 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         List<DBSchemaObject> compileList = new ArrayList<DBSchemaObject>();
         for (DBMethod method : methods) {
             DBSchemaObject executable = method.getProgram() == null ? method : method.getProgram();
-            DBBreakpointUtil.ensureFilesContentLoaded(executable.getVirtualFile(), false);
+            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(getProject());
+            sourceCodeManager.ensureSourcesLoaded(executable);
+
             addToCompileList(compileList, executable);
 
             for (DBObject object : executable.getReferencedObjects()) {
