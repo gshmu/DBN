@@ -53,7 +53,7 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
             public void run() {
                 if (!project.isDisposed()) {
                     SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                    sourceCodeManager.loadSourceFromDatabase(sourceCodeFile);
+                    sourceCodeManager.loadSourceCode(sourceCodeFile, true);
                 }
             }
         });

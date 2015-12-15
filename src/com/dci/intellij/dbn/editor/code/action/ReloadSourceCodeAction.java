@@ -18,11 +18,12 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
     }
 
     public void actionPerformed(@NotNull final AnActionEvent e) {
-        final Project project = ActionUtil.getProject(e);
+        Project project = ActionUtil.getProject(e);
         SourceCodeEditor fileEditor = getFileEditor(e);
         if (project != null && fileEditor != null) {
+            DBSourceCodeVirtualFile sourceCodeFile = fileEditor.getVirtualFile();
             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            sourceCodeManager.loadSourceFromDatabase(fileEditor.getVirtualFile());
+            sourceCodeManager.loadSourceCode(sourceCodeFile, true);
         }
     }
 
