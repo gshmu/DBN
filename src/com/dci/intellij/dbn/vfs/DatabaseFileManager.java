@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
+import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
@@ -145,7 +146,8 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                             List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                             for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
                                 if (sourceCodeFile.isModified()) {
-                                    sourceCodeManager.opedDatabaseDiffWindow(sourceCodeFile);
+                                    SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+                                    diffManager.opedDatabaseDiffWindow(sourceCodeFile);
                                 }
                             }
                             throw new ProcessCanceledException();

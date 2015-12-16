@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.code.action;
 
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.editor.code.SourceCodeManager;
+import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
@@ -15,8 +15,8 @@ public abstract class AbstractDiffAction extends AbstractSourceCodeEditorAction 
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Project project = ActionUtil.getProject(e);
         if (project!= null && sourceCodeFile != null) {
-            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            sourceCodeManager.openDiffWindow(sourceCodeFile, referenceText, referenceTitle, windowTitle);
+            SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+            diffManager.openDiffWindow(sourceCodeFile, referenceText, referenceTitle, windowTitle);
         }
     }
 }

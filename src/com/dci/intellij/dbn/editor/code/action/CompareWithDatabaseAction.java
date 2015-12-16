@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.editor.code.SourceCodeManager;
+import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
@@ -20,8 +20,8 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
         DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
 
         if (project != null && sourcecodeFile != null) {
-            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            sourceCodeManager.opedDatabaseDiffWindow(sourcecodeFile);
+            SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+            diffManager.opedDatabaseDiffWindow(sourcecodeFile);
         }
     }
 

@@ -33,7 +33,7 @@ import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.editor.code.diff.DBSourceFileContent;
+import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
@@ -56,15 +56,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.diff.ActionButtonPresentation;
-import com.intellij.openapi.diff.DiffManager;
-import com.intellij.openapi.diff.DiffRequestFactory;
-import com.intellij.openapi.diff.MergeRequest;
-import com.intellij.openapi.diff.SimpleContent;
-import com.intellij.openapi.diff.SimpleDiffRequest;
-import com.intellij.openapi.diff.impl.mergeTool.DiffRequestFactoryImpl;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -192,50 +184,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }.start();
     }
 
-    public void opedDatabaseDiffWindow(final DBSourceCodeVirtualFile sourcecodeFile) {
-        new ConnectionAction("comparing changes", sourcecodeFile, new TaskInstructions("Loading database source code", false, true)) {
-            @Override
-            protected void execute() {
-                DBSchemaObject object = sourcecodeFile.getObject();
-                Project project = getProject();
-                try {
-                    SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, sourcecodeFile.getContentType());
-                    CharSequence referenceText = sourceCodeContent.getText();
-                    if (!isCanceled()) {
-                        openDiffWindow(sourcecodeFile, referenceText.toString(), "Database version", "Local version vs. database version");
-                    }
-
-                } catch (SQLException e1) {
-                    MessageUtil.showErrorDialog(
-                            project, "Could not load sourcecode for " +
-                                    object.getQualifiedNameWithType() + " from database.", e1);
-                }
-            }
-        }.start();
-    }
-
-    public void openDiffWindow(@NotNull final DBSourceCodeVirtualFile sourceCodeFile,  final String referenceText, final String referenceTitle, final String windowTitle) {
-        final Project project = sourceCodeFile.getProject();
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                SimpleContent originalContent = new SimpleContent(referenceText, sourceCodeFile.getFileType());
-                DBSourceFileContent changedContent = new DBSourceFileContent(project, sourceCodeFile);
-
-                DBSchemaObject object = sourceCodeFile.getObject();
-                String title =
-                        object.getSchema().getName() + "." +
-                                object.getName() + " " +
-                                object.getTypeName() + " - " + windowTitle;
-                SimpleDiffRequest diffRequest = new SimpleDiffRequest(project, title);
-                diffRequest.setContents(originalContent, changedContent);
-                diffRequest.setContentTitles(referenceTitle + " ", "Your version ");
-
-                DiffManager.getInstance().getIdeaDiffTool().show(diffRequest);
-            }
-        }.start();
-    }
-
     public void ensureSourcesLoaded(@NotNull final DBSchemaObject schemaObject) {
         DBEditableObjectVirtualFile virtualFile = schemaObject.getVirtualFile();
         List<DBSourceCodeVirtualFile> sourceCodeFiles = virtualFile.getSourceCodeFiles();
@@ -308,7 +256,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
                         SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
                         String databaseContent = sourceCodeContent.getText().toString();
-                        openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, true);
+                        SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+                        diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, true);
                     } else {
                         storeSourceToDatabase(sourceCodeFile, fileEditor, successCallback);
                     }
@@ -375,47 +324,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         return true;
     }
 
-    public void openCodeMergeDialog(final String databaseContent, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor fileEditor, final boolean isSaveAction) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                DiffRequestFactory diffRequestFactory = new DiffRequestFactoryImpl();
-                Project project = sourceCodeFile.getProject();
-                if (project != null) {
-                    MergeRequest mergeRequest = diffRequestFactory.createMergeRequest(
-                            databaseContent,
-                            sourceCodeFile.getContent().toString(),
-                            sourceCodeFile.getLastSavedContent().toString(),
-                            sourceCodeFile,
-                            project,
-                            ActionButtonPresentation.APPLY,
-                            ActionButtonPresentation.CANCEL_WITH_PROMPT);
-                    mergeRequest.setVersionTitles(new String[]{"Database version", "Merge result", "Your version"});
-                    final DBSchemaObject object = sourceCodeFile.getObject();
-                    mergeRequest.setWindowTitle("Version conflict resolution for " + object.getQualifiedNameWithType());
-
-                    DiffManager.getInstance().getDiffTool().show(mergeRequest);
-
-                    int result = mergeRequest.getResult();
-                    if (isSaveAction) {
-                        if (result == 0) {
-                            storeSourceToDatabase(sourceCodeFile, fileEditor, null);
-                            //sourceCodeEditor.afterSave();
-                        } else if (result == 1) {
-                            Editor editor = EditorUtil.getEditor(fileEditor);
-                            if (editor != null) {
-                                DocumentUtil.setText(editor.getDocument(), sourceCodeFile.getContent());
-                                sourceCodeFile.setSaving(false);
-                            }
-                        }
-                    }
-                }
-            }
-        }.start();
-    }
-
-
-    private void storeSourceToDatabase(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable final SourceCodeEditor fileEditor, @Nullable final Runnable successCallback) {
+    public void storeSourceToDatabase(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable final SourceCodeEditor fileEditor, @Nullable final Runnable successCallback) {
         final DBSchemaObject object = sourceCodeFile.getObject();
         final Project project = getProject();
         new BackgroundTask(project, "Saving " + object.getQualifiedNameWithType() + " to database", false) {
@@ -492,7 +401,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                 List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                                 for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
                                     if (sourceCodeFile.isModified()) {
-                                        opedDatabaseDiffWindow(sourceCodeFile);
+                                        SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+                                        diffManager.opedDatabaseDiffWindow(sourceCodeFile);
                                     }
                                 }
 
