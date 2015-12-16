@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
+import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.project.Project;
@@ -23,8 +24,8 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
             @Override
             public void run() {
                 if (!project.isDisposed()) {
-                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                    sourceCodeManager.opedDatabaseDiffWindow(sourceCodeFile);
+                    SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+                    diffManager.opedDatabaseDiffWindow(sourceCodeFile);
                 }
             }
         });
@@ -36,9 +37,10 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
                     if (!project.isDisposed()) {
                         try {
                             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                            SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
                             SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(editableObject, sourceCodeEditor.getContentType());
                             String databaseContent = sourceCodeContent.getText().toString();
-                            sourceCodeManager.openCodeMergeDialog(databaseContent, sourceCodeFile, sourceCodeEditor, false);
+                            diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, sourceCodeEditor, false);
                         }catch (Exception e) {
                             MessageUtil.showErrorDialog(project, "Could not load sources from database.", e);
 

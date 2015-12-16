@@ -8,9 +8,9 @@ import com.intellij.openapi.diff.SimpleContent;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 
-public class DBSourceFileContent extends SimpleContent {
+public class SourceCodeFileContent extends SimpleContent {
     DBSourceCodeVirtualFile sourceCodeFile;
-    public DBSourceFileContent(Project project, @NotNull DBSourceCodeVirtualFile sourceCodeFile) {
+    public SourceCodeFileContent(Project project, @NotNull DBSourceCodeVirtualFile sourceCodeFile) {
         super(sourceCodeFile.getContent().toString());
         this.sourceCodeFile = sourceCodeFile;
         boolean readonly = EnvironmentManager.getInstance(project).isReadonly(sourceCodeFile);
