@@ -20,7 +20,7 @@ public interface DBSchemaObject extends DBObject {
     boolean isEditable(DBContentType contentType);
 
     @Nullable
-    ChangeTimestamp loadChangeTimestamp(DBContentType contentType) throws SQLException;
+    ChangeTimestamp loadChangeTimestamp(DBContentType contentType);
 
     String loadCodeFromDatabase(DBContentType contentType) throws SQLException;
     DBLanguage getCodeLanguage(DBContentType contentType);

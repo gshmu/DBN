@@ -136,32 +136,25 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     public void updateChangeTimestamp() {
         DBSchemaObject object = getObject();
-        try {
+        if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object)) {
             DBContentType contentType = getContentType();
             ChangeTimestamp timestamp = object.loadChangeTimestamp(contentType);
             if (timestamp != null) {
                 changeTimestamp = timestamp;
                 changeTimestampCheck = null;
             }
-        } catch (Exception e) {
-            LOGGER.warn("Error loading object timestamp", e);
         }
     }
 
     public boolean isChangedInDatabase(boolean reload) {
         DBSchemaObject object = getObject();
         if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object)) {
-            try {
-                if (changeTimestampCheck == null || changeTimestampCheck.isDirty() || reload) {
-                    DBContentType contentType = getContentType();
-                    changeTimestampCheck = object.loadChangeTimestamp(contentType);
-                }
-
-                return changeTimestamp != null && changeTimestampCheck != null && changeTimestamp.before(changeTimestampCheck);
-            } catch (Exception e) {
-                LOGGER.warn("Error loading object timestamp", e);
+            if (changeTimestampCheck == null || changeTimestampCheck.isDirty() || reload) {
+                DBContentType contentType = getContentType();
+                changeTimestampCheck = object.loadChangeTimestamp(contentType);
             }
 
+            return changeTimestamp != null && changeTimestampCheck != null && changeTimestamp.before(changeTimestampCheck);
         }
         return false;
     }

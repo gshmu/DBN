@@ -278,5 +278,15 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         }
         return false;
     }
+
+    public boolean isSaving() {
+        for (DBSourceCodeVirtualFile sourceCodeFile : getSourceCodeFiles()) {
+            if (sourceCodeFile.isSaving()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
 

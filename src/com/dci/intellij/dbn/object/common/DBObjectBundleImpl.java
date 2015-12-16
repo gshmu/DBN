@@ -29,13 +29,13 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
+import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionPool;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -614,7 +614,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                             schema.refreshObjectsStatus();
                         }
                     } catch (SQLException e) {
-                        MessageUtil.showErrorDialog(getProject(), "Object Dependencies Refresh", "Could not refresh dependencies", e);
+                        NotificationUtil.sendErrorNotification(getProject(), "Object Status Refresh", "Could not refresh object status. Cause: " + e.getMessage());
                     }
                 }
 

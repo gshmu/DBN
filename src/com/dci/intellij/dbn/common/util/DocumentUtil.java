@@ -120,11 +120,14 @@ public class DocumentUtil {
             new WriteActionRunner() {
                 @Override
                 public void run() {
-                    RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
-                    rangeMarker.setGreedyToLeft(startOffset == 0);
-                    rangeMarker.setGreedyToRight(endOffset == document.getTextLength());
-                    rangeMarker.putUserData(GuardedBlockType.KEY, type);
-                    document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
+                    int textLength = document.getTextLength();
+                    if (endOffset <= textLength) {
+                        RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
+                        rangeMarker.setGreedyToLeft(startOffset == 0);
+                        rangeMarker.setGreedyToRight(endOffset == textLength);
+                        rangeMarker.putUserData(GuardedBlockType.KEY, type);
+                        document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
+                    }
                 }
             }.start();
         }
@@ -185,10 +188,14 @@ public class DocumentUtil {
     public static void setText(final @NotNull Document document, final CharSequence text) {
         new WriteActionRunner() {
             public void run() {
-                boolean isReadonly = !document.isWritable();
-                document.setReadOnly(false);
-                document.setText(text);
-                document.setReadOnly(isReadonly);
+                FileDocumentManager manager = FileDocumentManager.getInstance();
+                VirtualFile file = manager.getFile(document);
+                if (file != null && file.isValid()) {
+                    boolean isReadonly = !document.isWritable();
+                    document.setReadOnly(false);
+                    document.setText(text);
+                    document.setReadOnly(isReadonly);
+                }
             }
         }.start();
     }
