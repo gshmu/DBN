@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
+import com.dci.intellij.dbn.editor.code.diff.MergeAction;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -18,8 +19,12 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
         super(MessageType.WARNING);
         final DBSchemaObject editableObject = sourceCodeFile.getObject();
         final Project project = editableObject.getProject();
-        Timestamp timestamp = sourceCodeFile.getChangedInDatabaseTimestamp();
-        setText("Outdated version. The " + editableObject.getQualifiedNameWithType() + " was modified by another user (" + DateFormatUtil.formatPrettyDateTime(timestamp).toLowerCase() + ")");
+        Timestamp timestamp = sourceCodeFile.getDatabaseChangeTimestamp();
+        String text = "Outdated version. The " + editableObject.getQualifiedNameWithType() + " was modified by another user (" + DateFormatUtil.formatPrettyDateTime(timestamp).toLowerCase() + ").";
+        if (!sourceCodeFile.isMergeRequired()) {
+            text = text + " You have merged the content!";
+        }
+        setText(text);
         createActionLabel("Show Diff", new Runnable() {
             @Override
             public void run() {
@@ -30,7 +35,7 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
             }
         });
 
-        if (sourceCodeFile.isModified()) {
+        if (sourceCodeFile.isModified() && sourceCodeFile.isMergeRequired()) {
             createActionLabel("Merge", new Runnable() {
                 @Override
                 public void run() {
@@ -40,7 +45,7 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
                             SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
                             SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(editableObject, sourceCodeEditor.getContentType());
                             String databaseContent = sourceCodeContent.getText().toString();
-                            diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, sourceCodeEditor, false);
+                            diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, sourceCodeEditor, MergeAction.MERGE);
                         }catch (Exception e) {
                             MessageUtil.showErrorDialog(project, "Could not load sources from database.", e);
 

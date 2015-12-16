@@ -7,10 +7,13 @@ import com.dci.intellij.dbn.common.editor.EditorNotificationProvider;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.editor.code.diff.MergeAction;
+import com.dci.intellij.dbn.editor.code.diff.SourceCodeDifManagerListener;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeLoadErrorNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeOutdatedNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeReadonlyNotificationPanel;
+import com.dci.intellij.dbn.execution.script.ScriptExecutionManagerListener;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
@@ -30,13 +33,34 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
     public SourceCodeEditorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         super(project);
         EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        EventUtil.subscribe(project, project, SourceCodeDifManagerListener.TOPIC, sourceCodeDifManagerListener);
         EventUtil.subscribe(project, project, EnvironmentManagerListener.TOPIC, environmentManagerListener);
         EventUtil.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        EventUtil.subscribe(project, project, ScriptExecutionManagerListener.TOPIC, scriptExecutionManagerListener);
     }
+
+    private ScriptExecutionManagerListener scriptExecutionManagerListener = new ScriptExecutionManagerListener() {
+        @Override
+        public void scriptExecuted(VirtualFile virtualFile) {
+            updateEditorNotification(null);
+        }
+    };
 
     private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
+            updateEditorNotification(sourceCodeFile);
+        }
+
+        @Override
+        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
+            updateEditorNotification(sourceCodeFile);
+        }
+    };
+
+    private SourceCodeDifManagerListener sourceCodeDifManagerListener = new SourceCodeDifManagerListener() {
+        @Override
+        public void contentMerged(DBSourceCodeVirtualFile sourceCodeFile, MergeAction mergeAction) {
             updateEditorNotification(sourceCodeFile);
         }
     };
