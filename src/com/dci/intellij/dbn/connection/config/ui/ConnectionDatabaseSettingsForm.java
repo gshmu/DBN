@@ -275,13 +275,13 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                 if (nameChanged) {
                     Project project = configuration.getProject();
                     ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
-                    listener.nameChanged(configuration.getConnectionId());
+                    listener.connectionNameChanged(configuration.getConnectionId());
                 }
 
                 if (settingsChanged) {
                     Project project = configuration.getProject();
                     ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
-                    listener.settingsChanged(configuration.getConnectionId());
+                    listener.connectionChanged(configuration.getConnectionId());
                 }
             }
         };

@@ -5,17 +5,18 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public enum DBContentType {
     NONE("No Content"),
-    DATA("Data"),
+    DATA("Data", EditorProviderId.DATA),
 
-    CODE("Code"),
-    CODE_SPEC("Code Spec"),
-    CODE_BODY("Code Body", "BODY"),
+    CODE("Code", EditorProviderId.CODE),
+    CODE_SPEC("Code Spec", EditorProviderId.CODE_SPEC),
+    CODE_BODY("Code Body", "BODY", EditorProviderId.CODE_BODY),
     CODE_SPEC_AND_BODY("Code Spec and Body", new DBContentType[]{CODE_SPEC, CODE_BODY}),
     CODE_AND_DATA("Code and Data", new DBContentType[]{CODE, DATA});
 
     private DBContentType[] subContentTypes = new DBContentType[0];
     private String description;
     private String objectTypeSubname;
+    private EditorProviderId editorProviderId;
 
     private DBContentType(String description, DBContentType[] subContentTypes) {
         this.description = description;
@@ -26,13 +27,23 @@ public enum DBContentType {
         this.description = description;
     }
 
-    DBContentType(String description, String objectTypeSubname) {
+    private DBContentType(String description, EditorProviderId editorProviderId) {
+        this.description = description;
+        this.editorProviderId = editorProviderId;
+    }
+
+    DBContentType(String description, String objectTypeSubname, EditorProviderId editorProviderId) {
         this.description = description;
         this.objectTypeSubname = objectTypeSubname;
+        this.editorProviderId = editorProviderId;
     }
 
     public DBContentType[] getSubContentTypes() {
         return subContentTypes;
+    }
+
+    public EditorProviderId getEditorProviderId() {
+        return editorProviderId;
     }
 
     public boolean isBundle() {

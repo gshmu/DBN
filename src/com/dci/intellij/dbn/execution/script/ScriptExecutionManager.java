@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -139,10 +140,11 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         final VirtualFile sourceFile = input.getSourceFile();
         activeProcesses.put(sourceFile, null);
 
+        final Project project = getProject();
         final AtomicReference<File> tempScriptFile = new AtomicReference<File>();
         final AtomicReference<BufferedReader> logReader = new AtomicReference<BufferedReader>();
         final LogOutputContext outputContext = new LogOutputContext(connectionHandler, sourceFile, null);
-        final ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
+        final ExecutionManager executionManager = ExecutionManager.getInstance(project);
         int timeout = input.getExecutionTimeout();
 
         try {
@@ -197,6 +199,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                     " - Script execution interrupted by user" :
                                     " - Script execution finished", false);
                     executionManager.writeLogOutput(outputContext, logOutput);
+                    EventUtil.notify(project, ScriptExecutionManagerListener.TOPIC).scriptExecuted(sourceFile);
                     return null;
                 }
 
@@ -210,7 +213,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                     new SimpleBackgroundTask("handling script execution timeout") {
                         @Override
                         protected void execute() {
-                            MessageUtil.showErrorDialog(getProject(),
+                            MessageUtil.showErrorDialog(project,
                                     "Script execution timeout",
                                     "The script execution has timed out",
                                     new String[]{"Retry", "Cancel"}, 0,
@@ -231,7 +234,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                     new SimpleBackgroundTask("handling script execution exception") {
                         @Override
                         protected void execute() {
-                            MessageUtil.showErrorDialog(getProject(),
+                            MessageUtil.showErrorDialog(project,
                                     "Script execution error",
                                     "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),
                                     new String[]{"Retry", "Cancel"}, 0,

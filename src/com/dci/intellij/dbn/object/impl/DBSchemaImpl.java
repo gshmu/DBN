@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
-import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
+import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
@@ -471,7 +471,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         }
 
         for (BrowserTreeNode treeNode : refreshNodes) {
-            EventUtil.notify(getProject(), BrowserTreeChangeListener.TOPIC).nodeChanged(treeNode, TreeEventType.NODES_CHANGED);
+            EventUtil.notify(getProject(), BrowserTreeEventListener.TOPIC).nodeChanged(treeNode, TreeEventType.NODES_CHANGED);
         }
 
     }

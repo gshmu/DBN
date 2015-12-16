@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.editor.code;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditorImpl;
-import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.editor.code.content.SourceCodeOffsets;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
@@ -20,7 +20,6 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
     public SourceCodeEditor(Project project, final DBSourceCodeVirtualFile sourceCodeFile, String name, EditorProviderId editorProviderId) {
         super(project, sourceCodeFile, name, editorProviderId);
         objectRef = DBObjectRef.from(sourceCodeFile.getObject());
-        EditorUtil.setEditorReadonly(this, true);
     }
 
     public DBSchemaObject getObject() {
@@ -29,7 +28,7 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
 
     public int getHeaderEndOffset() {
         SourceCodeOffsets offsets = getVirtualFile().getOffsets();
-        return offsets == null ? 0 :offsets.getHeaderEndOffset();
+        return offsets.getHeaderEndOffset();
     }
 
     public void navigateTo(DBObject object) {

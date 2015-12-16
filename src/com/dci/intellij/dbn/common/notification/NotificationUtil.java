@@ -33,7 +33,7 @@ public class NotificationUtil {
             };
 
             message = MessageFormat.format(message, args);
-            Notification notification = new Notification("Database Navigator", title, message, type);
+            Notification notification = new Notification("Database Navigator", title, message, type, listener);
             Notifications.Bus.notify(notification, project);
         }
     }

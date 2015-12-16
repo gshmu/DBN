@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModif
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.editor.code.GuardedBlockMarkers;
-import com.dci.intellij.dbn.editor.code.GuardedBlockType;
+import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
+import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -120,11 +120,14 @@ public class DocumentUtil {
             new WriteActionRunner() {
                 @Override
                 public void run() {
-                    RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
-                    rangeMarker.setGreedyToLeft(startOffset == 0);
-                    rangeMarker.setGreedyToRight(endOffset == document.getTextLength());
-                    rangeMarker.putUserData(GuardedBlockType.KEY, type);
-                    document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
+                    int textLength = document.getTextLength();
+                    if (endOffset <= textLength) {
+                        RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
+                        rangeMarker.setGreedyToLeft(startOffset == 0);
+                        rangeMarker.setGreedyToRight(endOffset == textLength);
+                        rangeMarker.putUserData(GuardedBlockType.KEY, type);
+                        document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
+                    }
                 }
             }.start();
         }
@@ -182,13 +185,26 @@ public class DocumentUtil {
         }
     }
 
-    public static void setText(final Document document, final CharSequence text) {
+    public static void setText(final @NotNull Document document, final CharSequence text) {
         new WriteActionRunner() {
             public void run() {
-                boolean isReadonly = !document.isWritable();
-                document.setReadOnly(false);
-                document.setText(text);
-                document.setReadOnly(isReadonly);
+                FileDocumentManager manager = FileDocumentManager.getInstance();
+                VirtualFile file = manager.getFile(document);
+                if (file != null && file.isValid()) {
+                    boolean isReadonly = !document.isWritable();
+                    document.setReadOnly(false);
+                    document.setText(text);
+                    document.setReadOnly(isReadonly);
+                }
+            }
+        }.start();
+    }
+
+    public static void saveDocument(final  @NotNull Document document) {
+        new WriteActionRunner() {
+            @Override
+            public void run() {
+                FileDocumentManager.getInstance().saveDocument(document);
             }
         }.start();
     }

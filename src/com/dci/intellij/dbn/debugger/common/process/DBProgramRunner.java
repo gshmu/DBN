@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
+import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
@@ -142,8 +143,8 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                     DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
                     initProgressIndicator(progressIndicator, true, "Loading method dependencies");
                     if (!project.isDisposed() && !progressIndicator.isCanceled()) {
-
-                        List<DBSchemaObject> dependencies = debuggerManager.loadCompileDependencies(runProfile.getMethods(), progressIndicator);
+                        List<DBMethod> methods = runProfile.getMethods();
+                        List<DBSchemaObject> dependencies = debuggerManager.loadCompileDependencies(methods, progressIndicator);
                         if (!progressIndicator.isCanceled()) {
                             if (dependencies.size() > 0) {
                                 performCompile(

@@ -4,8 +4,6 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -52,17 +50,8 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
         }
     }
 
-    protected static void showErrorDialog(final Project project, final String message) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                MessageUtil.showErrorDialog(project, message);
-            }
-        }.start();
-    }
-
     protected static ConnectionHandler getConnectionHandler(Project project, VirtualFile virtualFile) {
-        if (project != null) {
+        if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             return connectionMappingManager.getActiveConnection(virtualFile);
         }

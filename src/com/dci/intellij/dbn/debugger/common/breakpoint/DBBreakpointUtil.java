@@ -131,28 +131,4 @@ public class DBBreakpointUtil {
             }
         }.start();
     }
-
-
-    public static void ensureFilesContentLoaded(VirtualFile virtualFile) {
-        if (virtualFile instanceof DBEditableObjectVirtualFile) {
-            DBEditableObjectVirtualFile databaseVirtualFile = (DBEditableObjectVirtualFile) virtualFile;
-            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            databaseFileSystem.openEditor(databaseVirtualFile.getObject(), false);
-
-            List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseVirtualFile.getSourceCodeFiles();
-            //TODO find another locking mechanism
-            for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                try {
-                    int count = 0;
-                    while (!sourceCodeFile.isLoaded() && count < 10) {
-                        Thread.sleep(500);
-                        count++;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-    }
 }

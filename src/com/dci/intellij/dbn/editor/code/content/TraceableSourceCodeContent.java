@@ -1,37 +1,37 @@
-package com.dci.intellij.dbn.editor.code;
+package com.dci.intellij.dbn.editor.code.content;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.editor.code.GuardedBlockMarker.END_OFFSET_IDENTIFIER;
-import static com.dci.intellij.dbn.editor.code.GuardedBlockMarker.START_OFFSET_IDENTIFIER;
+import com.dci.intellij.dbn.common.util.ChangeTimestamp;
+import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.END_OFFSET_IDENTIFIER;
+import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.START_OFFSET_IDENTIFIER;
 
-public class SourceCodeContent{
-    private CharSequence text = "";
+public class TraceableSourceCodeContent extends BasicSourceCodeContent {
     private SourceCodeOffsets offsets = new SourceCodeOffsets();
+    private ChangeTimestamp timestamp;
 
-    public SourceCodeContent() {
+    public TraceableSourceCodeContent() {
+        timestamp = new ChangeTimestamp();
     }
 
-    public SourceCodeContent(CharSequence text) {
+    public TraceableSourceCodeContent(CharSequence text, ChangeTimestamp timestamp) {
         this.text = text;
+        this.timestamp = timestamp;
     }
 
-    public CharSequence getText() {
-        return text;
+    public ChangeTimestamp getTimestamp() {
+        return timestamp;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setTimestamp(ChangeTimestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public byte[] getBytes(Charset charset) {
-        return text.toString().getBytes(charset);
-    }
-
-
+    @NotNull
     public SourceCodeOffsets getOffsets() {
         return offsets;
     }
@@ -53,7 +53,7 @@ public class SourceCodeContent{
             startIndex = builder.indexOf(START_OFFSET_IDENTIFIER);
         }
 
-        text = builder.toString();
+        setText(builder.toString());
     }
 
     public String exportContent() {
@@ -66,4 +66,13 @@ public class SourceCodeContent{
         }
         return builder.toString();
     }
+
+    public boolean isOlderThan(@Nullable ChangeTimestamp timestamp) {
+        return timestamp != null && this.timestamp.isBefore(timestamp);
+    }
+
+    public boolean isOlderThan(@Nullable TraceableSourceCodeContent content) {
+        return content != null && isOlderThan(content.getTimestamp());
+    }
+
 }

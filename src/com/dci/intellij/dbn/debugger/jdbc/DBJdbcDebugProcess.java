@@ -63,7 +63,8 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
-import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.*;
+import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointId;
+import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.setBreakpointId;
 
 public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebugProcess implements DBDebugProcess {
     protected Connection targetConnection;
@@ -451,7 +452,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             session.stop();
         } else {
             VirtualFile virtualFile = getRuntimeInfoFile(runtimeInfo);
-            ensureFilesContentLoaded(virtualFile);
+            DBDebugUtil.openEditor(virtualFile);
             try {
                 backtraceInfo = getDebuggerInterface().getExecutionBacktraceInfo(debugConnection);
                 List<DebuggerRuntimeInfo> frames = backtraceInfo.getFrames();
@@ -547,13 +548,13 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                             sourceCodeEditor = (SourceCodeEditor) fileEditor;
                             objectVirtualFile.FAKE_DOCUMENT.set(sourceCodeEditor.getEditor().getDocument());
                         } else {
-                            FileEditor fileEditor = EditorUtil.getTextEditor(objectVirtualFile, mainContentFile);
+                            FileEditor fileEditor = EditorUtil.getTextEditor(mainContentFile);
                             if (fileEditor != null && fileEditor instanceof SourceCodeEditor) {
                                 sourceCodeEditor = (SourceCodeEditor) fileEditor;
                             }
                         }
                     } else {
-                        FileEditor fileEditor = EditorUtil.getTextEditor(objectVirtualFile, mainContentFile);
+                        FileEditor fileEditor = EditorUtil.getTextEditor(mainContentFile);
                         if (fileEditor != null && fileEditor instanceof SourceCodeEditor) {
                             sourceCodeEditor = (SourceCodeEditor) fileEditor;
                         }

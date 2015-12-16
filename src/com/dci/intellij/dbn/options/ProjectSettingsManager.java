@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
-import com.dci.intellij.dbn.connection.config.ConnectionSetupListener;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
@@ -249,7 +249,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                                 ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
                                 getProjectSettings().readConfiguration(element);
 
-                                EventUtil.notify(project, ConnectionSetupListener.TOPIC).setupChanged();
+                                EventUtil.notify(project, ConnectionSettingsListener.TOPIC).connectionsChanged();
 
                                 if (!isNewProject) {
                                     MessageUtil.showInfoDialog(project, "Project Settings", "Default project settings loaded to project \"" + project.getName() + "\".");

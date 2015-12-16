@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -15,7 +14,6 @@ import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 
 public class SaveChangesAction extends AbstractSourceCodeEditorAction {
@@ -31,15 +29,10 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
             ConfirmationOptionHandler optionHandler = confirmationSettings.getSaveChanges();
             boolean canContinue = optionHandler.resolve(fileEditor.getObject().getQualifiedNameWithType());
             if (canContinue) {
-                new WriteActionRunner() {
-                    public void run() {
-                        FileDocumentManager.getInstance().saveAllDocuments();
-                        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                        sourceCodeManager.saveSourceToDatabase(fileEditor, null);
-                    }
-                }.start();
+                DBSourceCodeVirtualFile sourceCodeFile = fileEditor.getVirtualFile();
+                SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                sourceCodeManager.saveSourceCode(sourceCodeFile, fileEditor, null);
             }
-
         }
     }
 

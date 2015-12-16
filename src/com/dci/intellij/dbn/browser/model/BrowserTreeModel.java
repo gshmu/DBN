@@ -27,7 +27,7 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
 
     protected BrowserTreeModel(BrowserTreeNode root) {
         this.root = root;
-        EventUtil.subscribe(root.getProject(), this, BrowserTreeChangeListener.TOPIC, browserTreeChangeListener);
+        EventUtil.subscribe(root.getProject(), this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
     }
 
     public void addTreeModelListener(TreeModelListener listener) {
@@ -138,7 +138,7 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
     /********************************************************
      *                       Listeners                      *
      ********************************************************/
-    private BrowserTreeChangeListener browserTreeChangeListener = new BrowserTreeChangeListener() {
+    private BrowserTreeEventListener browserTreeEventListener = new BrowserTreeEventAdapter() {
         @Override
         public void nodeChanged(BrowserTreeNode node, TreeEventType eventType) {
             if (contains(node)) {
