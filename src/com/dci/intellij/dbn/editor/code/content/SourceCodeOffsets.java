@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.editor.code;
+package com.dci.intellij.dbn.editor.code.content;
 
 import java.util.List;
 

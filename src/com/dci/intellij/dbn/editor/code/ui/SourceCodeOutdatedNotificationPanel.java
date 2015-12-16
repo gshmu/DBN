@@ -4,9 +4,9 @@ import java.sql.Timestamp;
 
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
+import com.dci.intellij.dbn.editor.code.content.TraceableSourceCodeContent;
 import com.dci.intellij.dbn.editor.code.diff.MergeAction;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -43,7 +43,7 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
                         try {
                             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
                             SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
-                            SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(editableObject, sourceCodeEditor.getContentType());
+                            TraceableSourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(editableObject, sourceCodeEditor.getContentType());
                             String databaseContent = sourceCodeContent.getText().toString();
                             diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, sourceCodeEditor, MergeAction.MERGE);
                         }catch (Exception e) {

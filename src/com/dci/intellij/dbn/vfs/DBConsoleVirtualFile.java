@@ -20,8 +20,9 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
-import com.dci.intellij.dbn.editor.code.GuardedBlockType;
-import com.dci.intellij.dbn.editor.code.SourceCodeContent;
+import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
+import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
+import com.dci.intellij.dbn.editor.code.content.TraceableSourceCodeContent;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -45,7 +46,7 @@ import com.intellij.util.LocalTimeCounter;
 
 public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentListener, DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
-    private SourceCodeContent content = new SourceCodeContent();
+    private TraceableSourceCodeContent content = new TraceableSourceCodeContent();
     private ConnectionHandlerRef connectionHandlerRef;
     private DBObjectRef<DBSchema> currentSchemaRef;
     private DBConsoleType type = DBConsoleType.STANDARD;
@@ -59,7 +60,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
 
-    public SourceCodeContent getContent() {
+    public TraceableSourceCodeContent getContent() {
         return content;
     }
 
@@ -75,8 +76,11 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         final Document document = DocumentUtil.getDocument(this);
         if (document != null) {
             DocumentUtil.setText(document, content.getText());
-            DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
-            DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, content.getOffsets().getGuardedBlocks(), null);
+            GuardedBlockMarkers guardedBlocks = content.getOffsets().getGuardedBlocks();
+            if (!guardedBlocks.isEmpty()) {
+                DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
+                DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
+            }
         }
     }
 

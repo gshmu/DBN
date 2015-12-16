@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.code.diff;
 
-import java.sql.SQLException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,14 +8,12 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
+import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.diff.DiffManager;
@@ -32,7 +29,6 @@ import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.diff.ActionButtonPresentation;
 import com.intellij.openapi.diff.SimpleContent;
 import com.intellij.openapi.diff.SimpleDiffRequest;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Consumer;
 
@@ -75,16 +71,26 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
                     int result = mergeRequest.getResult();
                     if (action == MergeAction.SAVE) {
-                        if (result == 0) {
-                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                            sourceCodeManager.storeSourceToDatabase(sourceCodeFile, fileEditor, null);
-                            //sourceCodeEditor.afterSave();
-                        } else if (result == 1) {
-                            Editor editor = EditorUtil.getEditor(fileEditor);
-                            if (editor != null) {
-                                DocumentUtil.setText(editor.getDocument(), sourceCodeFile.getContent());
+                        switch (result) {
+                            case 0:
+                                SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                                sourceCodeManager.storeSourceToDatabase(sourceCodeFile, fileEditor, null);
+                                EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
+                                break;
+                            case 1:
                                 sourceCodeFile.setSaving(false);
-                            }
+                                break;
+
+                        }
+                    } else if (action == MergeAction.MERGE) {
+                        switch (result) {
+                            case 0:
+                                sourceCodeFile.refreshMergeTimestamp();
+                                EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
+                                break;
+                            case 1:
+                                break;
+
                         }
                     }
                 }
@@ -114,10 +120,6 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                                 public void consume(MergeResult mergeResult) {
                                     if (action == MergeAction.SAVE) {
                                         switch (mergeResult) {
-                                            case CANCEL:
-                                                sourceCodeFile.applyContentToDocument();
-                                                sourceCodeFile.setSaving(false);
-                                                break;
                                             case LEFT:
                                             case RIGHT:
                                             case RESOLVED:
@@ -125,16 +127,19 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                                                 sourceCodeManager.storeSourceToDatabase(sourceCodeFile, fileEditor, null);
                                                 EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
                                                 break;
+                                            case CANCEL:
+                                                sourceCodeFile.setSaving(false);
+                                                break;
                                         }
                                     } else if (action == MergeAction.MERGE) {
                                         switch (mergeResult) {
-                                            case CANCEL:
-                                                break;
                                             case LEFT:
                                             case RIGHT:
                                             case RESOLVED:
-                                                sourceCodeFile.updateMergeTimestamp();
+                                                sourceCodeFile.refreshMergeTimestamp();
                                                 EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
+                                                break;
+                                            case CANCEL:
                                                 break;
                                         }
                                     }
@@ -174,21 +179,22 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
     }
 
 
-    public void opedDatabaseDiffWindow(final DBSourceCodeVirtualFile sourcecodeFile) {
-        new ConnectionAction("comparing changes", sourcecodeFile, new TaskInstructions("Loading database source code", false, true)) {
+    public void opedDatabaseDiffWindow(final DBSourceCodeVirtualFile sourceCodeFile) {
+        new ConnectionAction("comparing changes", sourceCodeFile, new TaskInstructions("Loading database source code", false, true)) {
             @Override
             protected void execute() {
-                DBSchemaObject object = sourcecodeFile.getObject();
+                DBSchemaObject object = sourceCodeFile.getObject();
                 Project project = getProject();
                 try {
                     SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                    SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, sourcecodeFile.getContentType());
+                    SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, sourceCodeFile.getContentType());
                     CharSequence referenceText = sourceCodeContent.getText();
+
                     if (!isCanceled()) {
-                        openDiffWindow(sourcecodeFile, referenceText.toString(), "Database version", "Local version vs. database version");
+                        openDiffWindow(sourceCodeFile, referenceText.toString(), "Database version", "Local version vs. database version");
                     }
 
-                } catch (SQLException e1) {
+                } catch (Exception e1) {
                     MessageUtil.showErrorDialog(
                             project, "Could not load sourcecode for " +
                                     object.getQualifiedNameWithType() + " from database.", e1);

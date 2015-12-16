@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModif
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.editor.code.GuardedBlockMarkers;
-import com.dci.intellij.dbn.editor.code.GuardedBlockType;
+import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
+import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;

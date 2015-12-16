@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -95,17 +94,10 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         return new ArrayList<DBObjectNavigationList>();
     }
 
-    @Nullable
-    public ChangeTimestamp loadChangeTimestamp(DBContentType contentType) {
-        try {
-            Timestamp timestamp = getTimestampLoader(contentType).load(this);
-            return new ChangeTimestamp(timestamp);
-        } catch (SQLException e) {
-            if (e != DatabaseInterface.DBN_NOT_CONNECTED_EXCEPTION) {
-                LOGGER.warn("Error loading object timestamp", e);
-            }
-        }
-        return null;
+    @NotNull
+    public ChangeTimestamp loadChangeTimestamp(DBContentType contentType) throws SQLException {
+        Timestamp timestamp = getTimestampLoader(contentType).load(this);
+        return new ChangeTimestamp(timestamp);
     }
 
     public DBObjectTimestampLoader getTimestampLoader(DBContentType contentType) {

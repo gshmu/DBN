@@ -50,7 +50,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
     @Override
     @Nullable
-    public final Project getProject() {
+    public Project getProject() {
         return projectRef.get();
     }
 
