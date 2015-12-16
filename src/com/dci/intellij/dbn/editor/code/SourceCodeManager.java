@@ -178,15 +178,17 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     private void reloadAndUpdateEditors(final DBEditableObjectVirtualFile databaseFile, boolean startInBackground) {
         Project project = getProject();
-        new BackgroundTask(project, "Reloading object source code", startInBackground) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
-                for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                    loadSourceCode(sourceCodeFile, true);
+        if (databaseFile.isContentLoaded()) {
+            new BackgroundTask(project, "Reloading object source code", startInBackground) {
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                    List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
+                    for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                        loadSourceCode(sourceCodeFile, true);
+                    }
                 }
-            }
-        }.start();
+            }.start();
+        }
     }
 
     public void ensureSourcesLoaded(@NotNull final DBSchemaObject schemaObject) {
