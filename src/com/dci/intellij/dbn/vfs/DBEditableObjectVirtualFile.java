@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.vfs;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,6 +114,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         if (contentFiles == null) {
             synchronized (this) {
                 if (contentFiles == null) {
+                    if (isDisposed()) return Collections.emptyList();
                     contentFiles = new ArrayList<DBContentVirtualFile>();
                     DBContentType objectContentType = getObject().getContentType();
                     if (objectContentType.isBundle()) {
