@@ -9,6 +9,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
@@ -16,7 +17,7 @@ import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
-import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -32,9 +33,12 @@ import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import com.intellij.openapi.diagnostic.Logger;
 
 
 public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchemaObject {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     private DBObjectList<DBObject> referencedObjects;
     private DBObjectList<DBObject> referencingObjects;
     private DBObjectStatusHolder objectStatus;
@@ -92,10 +96,14 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     }
 
     @Nullable
-    public ChangeTimestamp loadChangeTimestamp(DBContentType contentType) throws SQLException {
-        if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(this)) {
+    public ChangeTimestamp loadChangeTimestamp(DBContentType contentType) {
+        try {
             Timestamp timestamp = getTimestampLoader(contentType).load(this);
             return new ChangeTimestamp(timestamp);
+        } catch (SQLException e) {
+            if (e != DatabaseInterface.DBN_NOT_CONNECTED_EXCEPTION) {
+                LOGGER.warn("Error loading object timestamp", e);
+            }
         }
         return null;
     }
