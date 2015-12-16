@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.editor.code;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.editor.EditorNotificationProvider;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -26,6 +23,8 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SourceCodeEditorNotificationProvider extends EditorNotificationProvider<SourceCodeEditorNotificationPanel> {
     private static final Key<SourceCodeEditorNotificationPanel> KEY = Key.create("DBNavigator.SourceCodeEditorNotificationPanel");
@@ -112,11 +111,11 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
                 if (StringUtil.isNotEmpty(sourceLoadError)) {
                     notificationPanel = new SourceCodeLoadErrorNotificationPanel(editableObject, sourceLoadError);
 
-                } else if (sourceCodeFile.getEnvironmentType().isReadonlyCode()) {
-                    notificationPanel = new SourceCodeReadonlyNotificationPanel(editableObject, sourceCodeEditor);
-
                 } else if (sourceCodeFile.isChangedInDatabase(false)) {
                     notificationPanel = new SourceCodeOutdatedNotificationPanel(sourceCodeFile, sourceCodeEditor);
+
+                } else if (sourceCodeFile.getEnvironmentType().isReadonlyCode()) {
+                    notificationPanel = new SourceCodeReadonlyNotificationPanel(editableObject, sourceCodeEditor);
 
                 }
 
