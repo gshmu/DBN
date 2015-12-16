@@ -15,8 +15,10 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
+import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
@@ -84,15 +86,10 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
     }
 
-    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
+    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
         @Override
-        public void settingsChanged(String connectionId) {
+        public void connectionChanged(String connectionId) {
             closeFiles(connectionId);
-        }
-
-        @Override
-        public void nameChanged(String connectionId) {
-
         }
     };
 
@@ -140,16 +137,17 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                     CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
                     InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChanges();
                     CodeEditorChangesOption option = optionHandler.resolve(object.getQualifiedNameWithType());
+                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
 
                     switch (option) {
-                        case SAVE: databaseFile.saveChanges(null); break;
-                        case DISCARD: databaseFile.revertChanges(null); break;
+                        case SAVE: sourceCodeManager.saveSourceCodeChanges(databaseFile, null); break;
+                        case DISCARD: sourceCodeManager.revertSourceCodeChanges(databaseFile, null); break;
                         case SHOW: {
-                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
                             List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                             for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
                                 if (sourceCodeFile.isModified()) {
-                                    sourceCodeManager.opedDatabaseDiffWindow(sourceCodeFile);
+                                    SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+                                    diffManager.opedDatabaseDiffWindow(sourceCodeFile);
                                 }
                             }
                             throw new ProcessCanceledException();

@@ -48,13 +48,13 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
         Document document = sourceCodeEditor.getEditor().getDocument();
 
         EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-        if (environmentManager.isReadonly(sourceCodeFile)) {
+        if (environmentManager.isReadonly(sourceCodeFile) || !sourceCodeFile.isLoaded()) {
             EditorUtil.setEditorReadonly(sourceCodeEditor, true);
         }
 
         int documentTracking = document.hashCode();
         if (document.hashCode() != sourceCodeFile.getDocumentHashCode()) {
-            document.addDocumentListener(sourceCodeFile);
+            document.addDocumentListener(sourceCodeFile.getDocumentListener());
             sourceCodeFile.setDocumentHashCode(documentTracking);
         }
 

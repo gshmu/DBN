@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
@@ -114,19 +115,14 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     *                       Listeners                        *
     *********************************************************/
 
-    ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
+    ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
         @Override
-        public void settingsChanged(String connectionId) {
+        public void connectionChanged(String connectionId) {
             ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
             if (connectionHandler != null) {
                 connectionHandler.getConnectionPool().closeConnectionsSilently();
                 connectionHandler.getObjectBundle().getObjectListContainer().reload(true);
             }
-        }
-
-        @Override
-        public void nameChanged(String connectionId) {
-
         }
     };
 

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.vfs;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,8 +20,6 @@ import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
-import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
@@ -30,9 +29,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
@@ -118,6 +114,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         if (contentFiles == null) {
             synchronized (this) {
                 if (contentFiles == null) {
+                    if (isDisposed()) return Collections.emptyList();
                     contentFiles = new ArrayList<DBContentVirtualFile>();
                     DBContentType objectContentType = getObject().getContentType();
                     if (objectContentType.isBundle()) {
@@ -144,6 +141,10 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
             }
         }
         return contentFiles;
+    }
+
+    public boolean isContentLoaded() {
+        return contentFiles != null;
     }
 
     public List<DBSourceCodeVirtualFile> getSourceCodeFiles() {
@@ -276,49 +277,26 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
 
     public boolean isModified() {
-        for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
-           if (contentVirtualFile.isModified()) {
-               return true;
-           }
+        if (isContentLoaded()) {
+            for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
+                if (contentVirtualFile.isModified()) {
+                    return true;
+                }
+            }
         }
         return false;
     }
 
-    public void saveChanges(Runnable successCallback) {
-        FileDocumentManager.getInstance().saveAllDocuments();
-        final Project project = getProject();
-        if (project != null) {
-            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            List<DBSourceCodeVirtualFile> sourceCodeFiles = getSourceCodeFiles();
-            for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                if (sourceCodeFile.isModified()) {
-                    FileEditor[] fileEditors = fileEditorManager.getEditors(this);
-                    for (FileEditor fileEditor : fileEditors) {
-                        if (fileEditor instanceof SourceCodeEditor) {
-                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                            sourceCodeManager.saveSourceToDatabase(sourceCodeEditor, successCallback);
-                            break;
-                        }
-                    }
+    public boolean isSaving() {
+        if (isContentLoaded()) {
+            for (DBSourceCodeVirtualFile sourceCodeFile : getSourceCodeFiles()) {
+                if (sourceCodeFile.isSaving()) {
+                    return true;
                 }
             }
         }
-    }
 
-    public void revertChanges(Runnable successCallback) {
-        Project project = getProject();
-        if (project != null) {
-            List<DBSourceCodeVirtualFile> sourceCodeFiles = getSourceCodeFiles();
-            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                sourceCodeManager.loadSourceFromDatabase(sourceCodeFile);
-            }
-
-            if (successCallback != null) {
-                successCallback.run();
-            }
-        }
+        return false;
     }
 }
 

@@ -8,8 +8,9 @@ import javax.swing.JTable;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
+import com.dci.intellij.dbn.browser.model.BrowserTreeEventAdapter;
+import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.browser.ui.BrowserSelectionChangeListener;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -43,16 +44,16 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
         objectTypeLabel.setText("Object properties:");
         objectLabel.setText("(no object selected)");
 
-        EventUtil.subscribe(getProject(), this, BrowserSelectionChangeListener.TOPIC, browserSelectionChangeListener);
+        EventUtil.subscribe(getProject(), this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
     }
 
     public JComponent getComponent() {
         return mainPanel;
     }
 
-    private BrowserSelectionChangeListener browserSelectionChangeListener = new BrowserSelectionChangeListener() {
+    private BrowserTreeEventListener browserTreeEventListener = new BrowserTreeEventAdapter() {
         @Override
-        public void browserSelectionChanged() {
+        public void selectionChanged() {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
             if (browserManager.getShowObjectProperties().value()) {
                 DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();

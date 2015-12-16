@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.browser.ui;
 
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
@@ -11,17 +15,14 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.config.ConnectionSetupListener;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.properties.ui.ObjectPropertiesForm;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
 
 public class BrowserToolWindowForm extends DBNFormImpl {
     private JPanel mainPanel;
@@ -56,7 +57,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
 
 
         EventUtil.subscribe(project, this, DisplayModeSettingsListener.TOPIC, displayModeSettingsListener);
-        EventUtil.subscribe(project, this, ConnectionSetupListener.TOPIC, connectionSetupListener);
+        EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
     }
 
     public void rebuild() {
@@ -147,9 +148,9 @@ public class BrowserToolWindowForm extends DBNFormImpl {
     };
 
 
-    private ConnectionSetupListener connectionSetupListener = new ConnectionSetupListener() {
+    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
         @Override
-        public void setupChanged() {
+        public void connectionsChanged() {
             rebuild();
         }
     };

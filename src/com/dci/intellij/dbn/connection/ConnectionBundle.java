@@ -24,7 +24,7 @@ import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSetupListener;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
@@ -125,7 +125,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
             new SettingsChangeNotifier() {
                 @Override
                 public void notifyChanges() {
-                    EventUtil.notify(project, ConnectionSetupListener.TOPIC).setupChanged();
+                    EventUtil.notify(project, ConnectionSettingsListener.TOPIC).connectionsChanged();
                     ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                     connectionManager.disposeConnections(oldConnectionHandlers);
                 }

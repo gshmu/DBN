@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
+import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -75,6 +76,11 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
             Project project = getDebugProcess().getProject();
             XSourcePosition sourcePosition = getSourcePosition();
             VirtualFile virtualFile = getVirtualFile();
+            if (virtualFile instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
+                SourceCodeManager.getInstance(project).ensureSourcesLoaded(databaseFile.getObject());
+            }
+
 
             if (virtualFile != null) {
                 Document document = DocumentUtil.getDocument(virtualFile);

@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.compiler;
 import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -24,19 +23,12 @@ public class CompilerAction {
         this.contentType = contentType;
     }
 
-    public CompilerAction(CompilerActionSource source, DBContentType contentType, VirtualFile virtualFile, FileEditor fileEditor) {
+    public CompilerAction(CompilerActionSource source, DBContentType contentType, VirtualFile virtualFile, @Nullable FileEditor fileEditor) {
         this.source = source;
         this.contentType = contentType;
         this.virtualFileRef = new WeakReference<VirtualFile>(virtualFile);
-        this.fileEditorRef = new WeakReference<FileEditor>(fileEditor);
-        initEditorProviderId(fileEditor);
-    }
-
-    private void initEditorProviderId(FileEditor fileEditor) {
-        if (fileEditor instanceof BasicTextEditor) {
-            BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
-            editorProviderId = basicTextEditor.getEditorProviderId();
-        }
+        this.fileEditorRef = fileEditor == null ? null : new WeakReference<FileEditor>(fileEditor);
+        this.editorProviderId = contentType.getEditorProviderId();
     }
 
     @Nullable

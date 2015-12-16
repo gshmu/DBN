@@ -2650,7 +2650,7 @@
         <token id="000001301" type-id="CHR_GREATER" />
     </element-def>
 
-    <element-def attributes="SPECIFIC" description="Method call" id="method_call_assignment_statement">
+    <element-def attributes="SPECIFIC" description="Method call" id="method_call_statement">
         <sequence id="000001302" optional="true">
             <variable-ref id="000001303" type="RECORD" />
             <wrapper id="000001304" template="PARENTHESES">
@@ -2705,6 +2705,9 @@
         <wrapper id="000001331" optional="true" template="PARENTHESES">
             <element ref-id="expression" />
         </wrapper>
+    </element-def>
+    <element-def attributes="SPECIFIC" description="Method call / assignment" id="method_call_assignment_statement">
+        <element ref-id="method_call_statement"/>
         <sequence id="000001332" optional="true">
             <token id="000001333" type-id="OPR_ASSIGNMENT" />
             <token id="000001334" optional="true" type-id="KW_NEW" />

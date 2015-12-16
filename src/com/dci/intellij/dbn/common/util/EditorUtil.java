@@ -160,7 +160,8 @@ public class EditorUtil {
     }
 
     @Nullable
-    public static BasicTextEditor getTextEditor(DBEditableObjectVirtualFile databaseFile, DBSourceCodeVirtualFile sourceCodeVirtualFile) {
+    public static BasicTextEditor getTextEditor(DBSourceCodeVirtualFile sourceCodeVirtualFile) {
+        DBEditableObjectVirtualFile databaseFile = sourceCodeVirtualFile.getMainDatabaseFile();
         Project project = databaseFile.getProject();
         if (project != null) {
             FileEditorManager editorManager = FileEditorManager.getInstance(project);

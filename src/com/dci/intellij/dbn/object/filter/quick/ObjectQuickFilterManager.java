@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
+import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -49,7 +49,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
 
     public void applyFilter(DBObjectList objectList, @Nullable ObjectQuickFilter filter) {
         objectList.setQuickFilter(filter);
-        BrowserTreeChangeListener treeChangeListener = EventUtil.notify(getProject(), BrowserTreeChangeListener.TOPIC);
+        BrowserTreeEventListener treeChangeListener = EventUtil.notify(getProject(), BrowserTreeEventListener.TOPIC);
         treeChangeListener.nodeChanged(objectList, TreeEventType.STRUCTURE_CHANGED);
         CacheKey cacheKey = new CacheKey(objectList);
         if (filter == null || filter.isEmpty()) {
