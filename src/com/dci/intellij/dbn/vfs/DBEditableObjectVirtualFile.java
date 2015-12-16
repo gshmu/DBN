@@ -141,6 +141,10 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         return contentFiles;
     }
 
+    public boolean isContentLoaded() {
+        return contentFiles != null;
+    }
+
     public List<DBSourceCodeVirtualFile> getSourceCodeFiles() {
         List<DBSourceCodeVirtualFile> sourceCodeFiles = new ArrayList<DBSourceCodeVirtualFile>();
         List<DBContentVirtualFile> contentFiles = getContentFiles();
@@ -271,18 +275,22 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
 
     public boolean isModified() {
-        for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
-           if (contentVirtualFile.isModified()) {
-               return true;
-           }
+        if (isContentLoaded()) {
+            for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
+                if (contentVirtualFile.isModified()) {
+                    return true;
+                }
+            }
         }
         return false;
     }
 
     public boolean isSaving() {
-        for (DBSourceCodeVirtualFile sourceCodeFile : getSourceCodeFiles()) {
-            if (sourceCodeFile.isSaving()) {
-                return true;
+        if (isContentLoaded()) {
+            for (DBSourceCodeVirtualFile sourceCodeFile : getSourceCodeFiles()) {
+                if (sourceCodeFile.isSaving()) {
+                    return true;
+                }
             }
         }
 

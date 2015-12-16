@@ -33,7 +33,6 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -104,23 +103,25 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         boolean allowed = debuggerManager.checkForbiddenOperation(object.getConnectionHandler());
         if (allowed) {
             doCompileObject(object, compileType, compilerAction);
-            if (DatabaseFileSystem.isFileOpened(object)) {
-                DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
-                if (databaseFile != null) {
-                    DBContentType contentType = compilerAction.getContentType();
-                    if (contentType.isBundle()) {
-                        for (DBContentType subContentType : contentType.getSubContentTypes()) {
-                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
-                            if (sourceCodeFile != null) {
-                                sourceCodeFile.updateContentState();
-                            }
-                        }
-                    } else {
-                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                        if (sourceCodeFile != null) {
-                            sourceCodeFile.updateContentState();
-                        }
+            DBContentType contentType = compilerAction.getContentType();
+            updateFilesContentState(object, contentType);
+        }
+    }
+
+    void updateFilesContentState(DBSchemaObject object, DBContentType contentType) {
+        DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
+        if (databaseFile != null && databaseFile.isContentLoaded()) {
+            if (contentType.isBundle()) {
+                for (DBContentType subContentType : contentType.getSubContentTypes()) {
+                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
+                    if (sourceCodeFile != null) {
+                        sourceCodeFile.updateContentState();
                     }
+                }
+            } else {
+                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                if (sourceCodeFile != null) {
+                    sourceCodeFile.updateContentState();
                 }
             }
         }
@@ -145,16 +146,9 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                         doCompileObject(object, compileType, compilerAction);
                         ConnectionHandler connectionHandler = object.getConnectionHandler();
                         EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
-                        if (DatabaseFileSystem.isFileOpened(object)) {
-                            DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
-                            if (databaseFile != null) {
-                                DBContentType contentType = compilerAction.getContentType();
-                                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                                if (sourceCodeFile != null) {
-                                    sourceCodeFile.updateContentState();
-                                }
-                            }
-                        }
+
+                        DBContentType contentType = compilerAction.getContentType();
+                        updateFilesContentState(object, contentType);
                     }
                 };
 

@@ -80,10 +80,12 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
             for (VirtualFile virtualFile : openFiles) {
                 if (virtualFile instanceof DBEditableObjectVirtualFile) {
                     DBEditableObjectVirtualFile editableDatabaseFile = (DBEditableObjectVirtualFile) virtualFile;
-                    List<DBContentVirtualFile> contentFiles = editableDatabaseFile.getContentFiles();
-                    for (DBContentVirtualFile contentFile : contentFiles) {
-                        boolean readonly = environmentManager.isReadonly(contentFile);
-                        EditorUtil.setEditorsReadonly(contentFile, readonly);
+                    if (editableDatabaseFile.isContentLoaded()) {
+                        List<DBContentVirtualFile> contentFiles = editableDatabaseFile.getContentFiles();
+                        for (DBContentVirtualFile contentFile : contentFiles) {
+                            boolean readonly = environmentManager.isReadonly(contentFile);
+                            EditorUtil.setEditorsReadonly(contentFile, readonly);
+                        }
                     }
                 }
             }
