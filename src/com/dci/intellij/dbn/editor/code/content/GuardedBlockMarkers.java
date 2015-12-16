@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.editor.code;
+package com.dci.intellij.dbn.editor.code.content;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,9 @@ public class GuardedBlockMarkers {
                 rangeMarker.getStartOffset(),
                 rangeMarker.getEndOffset());
         }
+    }
 
+    public boolean isEmpty() {
+        return ranges.isEmpty();
     }
 }

@@ -100,7 +100,8 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     public void compileObject(final DBSchemaObject object, CompileType compileType, final CompilerAction compilerAction) {
         assert compileType != CompileType.KEEP;
         Project project = object.getProject();
-        boolean allowed = DatabaseDebuggerManager.getInstance(project).checkForbiddenOperation(object.getConnectionHandler());
+        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
+        boolean allowed = debuggerManager.checkForbiddenOperation(object.getConnectionHandler());
         if (allowed) {
             doCompileObject(object, compileType, compilerAction);
             if (DatabaseFileSystem.isFileOpened(object)) {
@@ -111,13 +112,13 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                         for (DBContentType subContentType : contentType.getSubContentTypes()) {
                             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
                             if (sourceCodeFile != null) {
-                                sourceCodeFile.updateChangeTimestamp();
+                                sourceCodeFile.updateContentState();
                             }
                         }
                     } else {
                         DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
                         if (sourceCodeFile != null) {
-                            sourceCodeFile.updateChangeTimestamp();
+                            sourceCodeFile.updateContentState();
                         }
                     }
                 }
@@ -150,7 +151,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                 DBContentType contentType = compilerAction.getContentType();
                                 DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
                                 if (sourceCodeFile != null) {
-                                    sourceCodeFile.updateChangeTimestamp();
+                                    sourceCodeFile.updateContentState();
                                 }
                             }
                         }

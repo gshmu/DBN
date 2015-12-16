@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
+import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -30,9 +31,11 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.editor.code.content.TraceableSourceCodeContent;
 import com.dci.intellij.dbn.editor.code.diff.MergeAction;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
@@ -210,9 +213,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
                     EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoading(sourceCodeFile);
                     try {
-                        SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
+                        TraceableSourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
                         sourceCodeFile.applyContent(sourceCodeContent);
-                        sourceCodeFile.updateChangeTimestamp();
                     } catch (SQLException e) {
                         sourceCodeFile.setSourceLoadError(e.getMessage());
                         NotificationUtil.sendErrorNotification(project, "Source Load Error", "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database. Cause: " + e.getMessage());
@@ -260,7 +262,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                                 if (getOption() == 0) {
                                     try {
-                                        SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
+                                        TraceableSourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
                                         String databaseContent = sourceCodeContent.getText().toString();
                                         SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
                                         diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, MergeAction.SAVE);
@@ -291,10 +293,16 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public SourceCodeContent loadSourceFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {
+    public TraceableSourceCodeContent loadSourceFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {
         ProgressMonitor.setTaskDescription("Loading source code of " + object.getQualifiedNameWithType());
         String sourceCode = object.loadCodeFromDatabase(contentType);
-        SourceCodeContent sourceCodeContent = new SourceCodeContent(sourceCode);
+
+        boolean tracingSupported = DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object);
+        ChangeTimestamp changeTimestamp = tracingSupported ?
+                object.loadChangeTimestamp(contentType) :
+                new ChangeTimestamp();
+
+        TraceableSourceCodeContent sourceCodeContent = new TraceableSourceCodeContent(sourceCode, changeTimestamp);
         ConnectionHandler connectionHandler = object.getConnectionHandler();
         DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
         ddlInterface.computeSourceCodeOffsets(sourceCodeContent, object.getObjectType().getTypeId(), object.getName());
@@ -349,7 +357,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             protected void execute(@NotNull ProgressIndicator indicator) {
                 try {
                     sourceCodeFile.saveSourceToDatabase();
-                    sourceCodeFile.updateChangeTimestamp();
                     EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeSaved(sourceCodeFile, fileEditor);
 
                     object.reload();

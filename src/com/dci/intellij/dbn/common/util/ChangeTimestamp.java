@@ -6,6 +6,10 @@ public class ChangeTimestamp {
     private Timestamp value;
     private long captureTime;
 
+    public ChangeTimestamp() {
+        this.captureTime = System.currentTimeMillis();
+        this.value = new Timestamp(captureTime);
+    }
     public ChangeTimestamp(Timestamp value) {
         this.value = value;
         this.captureTime = System.currentTimeMillis();
@@ -19,7 +23,7 @@ public class ChangeTimestamp {
         return TimeUtil.isOlderThan(captureTime, 30 * TimeUtil.ONE_SECOND);
     }
 
-    public boolean before(ChangeTimestamp changeTimestampCheck) {
+    public boolean isBefore(ChangeTimestamp changeTimestampCheck) {
         return value != null && changeTimestampCheck.value!= null && value.before(changeTimestampCheck.value);
     }
 }
