@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.editor.code.diff.MergeAction;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
@@ -68,6 +69,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeFrame;
+import com.intellij.util.text.DateFormatUtil;
 
 @State(
     name = "DBNavigator.Project.SourceCodeManager",
@@ -228,7 +230,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }.start();
     }
 
-    private void saveSourceToDatabase(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable final SourceCodeEditor fileEditor, @Nullable final Runnable successCallback) {
+    private void saveSourceToDatabase(@NotNull final DBSourceCodeVirtualFile sourceCodeFile, @Nullable final SourceCodeEditor fileEditor, @Nullable final Runnable successCallback) {
         final DBSchemaObject object = sourceCodeFile.getObject();
         final DBContentType contentType = sourceCodeFile.getContentType();
 
@@ -239,7 +241,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             }
 
             sourceCodeFile.setSaving(true);
-            Project project = getProject();
+            final Project project = getProject();
             try {
                 Document document = FailsafeUtil.get(DocumentUtil.getDocument(sourceCodeFile));
                 DocumentUtil.saveDocument(document);
@@ -248,16 +250,31 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 if (isValidObjectTypeAndName(content, object, contentType)) {
                     ProgressMonitor.setTaskDescription("Checking for third party changes on " + object.getQualifiedNameWithType());
                     boolean isChangedInDatabase = sourceCodeFile.isChangedInDatabase(true);
-                    if (isChangedInDatabase) {
+                    if (isChangedInDatabase && sourceCodeFile.isMergeRequired()) {
                         String message =
                                 "The " + object.getQualifiedNameWithType() +
-                                        " has been changed by another user. \nYou will be prompted to merge the changes";
-                        MessageUtil.showErrorDialog(project, "Version conflict", message);
+                                        " has been changed by another user " + DateFormatUtil.formatPrettyDateTime(sourceCodeFile.getDatabaseChangeTimestamp()).toLowerCase() + "." +
+                                        "\nYou must merge the changes before saving.";
+                        BackgroundTask<Integer> openMergeDialogTask = new BackgroundTask<Integer>(project, "Loading database source code", false) {
+                            @Override
+                            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                                if (getOption() == 0) {
+                                    try {
+                                        SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
+                                        String databaseContent = sourceCodeContent.getText().toString();
+                                        SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+                                        diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, MergeAction.SAVE);
+                                    } catch (SQLException e) {
+                                        MessageUtil.showErrorDialog(project, "Could not load database sources.", e);
+                                    }
+                                } else {
+                                    sourceCodeFile.setSaving(false);
+                                }
+                            }
 
-                        SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
-                        String databaseContent = sourceCodeContent.getText().toString();
-                        SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
-                        diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, true);
+                        };
+                        MessageUtil.showWarningDialog(project, "Version conflict", message, new String[]{"Merge Changes", "Cancel"}, 0, openMergeDialogTask);
+
                     } else {
                         storeSourceToDatabase(sourceCodeFile, fileEditor, successCallback);
                     }
@@ -502,6 +519,5 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
      *********************************************/
     @Override
     public void save() {
-        System.out.printf("");
     }
 }

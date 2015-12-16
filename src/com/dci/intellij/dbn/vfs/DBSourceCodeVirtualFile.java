@@ -44,8 +44,11 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     private CharSequence originalContent = EMPTY_CONTENT;
     private CharSequence lastSavedContent = EMPTY_CONTENT;
     private CharSequence content = EMPTY_CONTENT;
-    private ChangeTimestamp changeTimestamp;
-    private ChangeTimestamp changeTimestampCheck;
+
+    private ChangeTimestamp localChangeTimestamp;
+    private ChangeTimestamp databaseChangeTimestamp;
+    private ChangeTimestamp mergeChangeTimestamp;
+
     private String sourceLoadError;
     private SourceCodeOffsets offsets;
     private boolean loading;
@@ -140,8 +143,9 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             DBContentType contentType = getContentType();
             ChangeTimestamp timestamp = object.loadChangeTimestamp(contentType);
             if (timestamp != null) {
-                changeTimestamp = timestamp;
-                changeTimestampCheck = null;
+                localChangeTimestamp = timestamp;
+                databaseChangeTimestamp = null;
+                mergeChangeTimestamp = null;
             }
         }
     }
@@ -149,18 +153,38 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     public boolean isChangedInDatabase(boolean reload) {
         DBSchemaObject object = getObject();
         if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object)) {
-            if (changeTimestampCheck == null || changeTimestampCheck.isDirty() || reload) {
+            if (databaseChangeTimestamp == null || databaseChangeTimestamp.isDirty() || reload) {
                 DBContentType contentType = getContentType();
-                changeTimestampCheck = object.loadChangeTimestamp(contentType);
+                databaseChangeTimestamp = object.loadChangeTimestamp(contentType);
             }
 
-            return changeTimestamp != null && changeTimestampCheck != null && changeTimestamp.before(changeTimestampCheck);
+            return localChangeTimestamp != null && databaseChangeTimestamp != null && localChangeTimestamp.before(databaseChangeTimestamp);
         }
         return false;
     }
 
-    public Timestamp getChangedInDatabaseTimestamp() {
-        return changeTimestampCheck == null ? new Timestamp(System.currentTimeMillis() - 100) : changeTimestampCheck.value();
+    public boolean isMergeRequired() {
+        if (isChangedInDatabase(false)) {
+            if (databaseChangeTimestamp != null) {
+                if (mergeChangeTimestamp == null || mergeChangeTimestamp.before(databaseChangeTimestamp)) {
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
+    public void updateMergeTimestamp() {
+        if (databaseChangeTimestamp != null) {
+            mergeChangeTimestamp = new ChangeTimestamp(databaseChangeTimestamp.value());
+        } else {
+            mergeChangeTimestamp = null;
+        }
+    }
+
+    public Timestamp getDatabaseChangeTimestamp() {
+        return databaseChangeTimestamp == null ? new Timestamp(System.currentTimeMillis() - 100) : databaseChangeTimestamp.value();
     }
 
     @NotNull
@@ -182,16 +206,21 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         originalContent = EMPTY_CONTENT;
         content = sourceCodeContent.getText();
         offsets = sourceCodeContent.getOffsets();
+        applyContentToDocument();
+        setModified(false);
+        sourceLoadError = null;
+    }
+
+    public void applyContentToDocument() {
         Document document = DocumentUtil.getDocument(this);
         if (document != null) {
             DocumentUtil.setText(document, content);
             if (offsets != null) {
                 GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
+                DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
                 DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
             }
         }
-        setModified(false);
-        sourceLoadError = null;
     }
 
     public void saveSourceToDatabase() throws SQLException {

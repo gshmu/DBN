@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
@@ -18,20 +19,22 @@ import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.intellij.diff.DiffManager;
+import com.intellij.diff.DiffRequestFactory;
+import com.intellij.diff.InvalidDiffRequestException;
+import com.intellij.diff.merge.MergeRequest;
+import com.intellij.diff.merge.MergeResult;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.diff.ActionButtonPresentation;
-import com.intellij.openapi.diff.DiffManager;
-import com.intellij.openapi.diff.DiffRequestFactory;
-import com.intellij.openapi.diff.MergeRequest;
 import com.intellij.openapi.diff.SimpleContent;
 import com.intellij.openapi.diff.SimpleDiffRequest;
-import com.intellij.openapi.diff.impl.mergeTool.DiffRequestFactoryImpl;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.Consumer;
 
 @State(
         name = "DBNavigator.Project.SourceCodeDiffManager",
@@ -48,14 +51,15 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
     }
 
 
-    public void openCodeMergeDialog(final String databaseContent, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor fileEditor, final boolean isSaveAction) {
+    @Deprecated
+    public void openCodeMergeDialogOld(final String databaseContent, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor fileEditor, final MergeAction action) {
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
-                DiffRequestFactory diffRequestFactory = new DiffRequestFactoryImpl();
+                com.intellij.openapi.diff.DiffRequestFactory diffRequestFactory = new com.intellij.openapi.diff.impl.mergeTool.DiffRequestFactoryImpl();
                 Project project = sourceCodeFile.getProject();
                 if (project != null) {
-                    MergeRequest mergeRequest = diffRequestFactory.createMergeRequest(
+                    com.intellij.openapi.diff.MergeRequest mergeRequest = diffRequestFactory.createMergeRequest(
                             databaseContent,
                             sourceCodeFile.getContent().toString(),
                             sourceCodeFile.getLastSavedContent().toString(),
@@ -67,10 +71,10 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                     final DBSchemaObject object = sourceCodeFile.getObject();
                     mergeRequest.setWindowTitle("Version conflict resolution for " + object.getQualifiedNameWithType());
 
-                    DiffManager.getInstance().getDiffTool().show(mergeRequest);
+                    com.intellij.openapi.diff.DiffManager.getInstance().getDiffTool().show(mergeRequest);
 
                     int result = mergeRequest.getResult();
-                    if (isSaveAction) {
+                    if (action == MergeAction.SAVE) {
                         if (result == 0) {
                             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
                             sourceCodeManager.storeSourceToDatabase(sourceCodeFile, fileEditor, null);
@@ -83,6 +87,64 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                             }
                         }
                     }
+                }
+            }
+        }.start();
+    }
+
+    public void openCodeMergeDialog(final String databaseContent, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor fileEditor, final MergeAction action) {
+        new SimpleLaterInvocator() {
+            @Override
+            protected void execute() {
+                final Project project = getProject();
+                SourceCodeDiffContent leftContent = new SourceCodeDiffContent("Database version", databaseContent);
+                SourceCodeDiffContent targetContent = new SourceCodeDiffContent("Merge result", sourceCodeFile.getLastSavedContent());
+                SourceCodeDiffContent rightContent = new SourceCodeDiffContent("Your version", sourceCodeFile.getContent());
+                final MergeContent mergeContent = new MergeContent(leftContent, targetContent, rightContent );
+                try {
+                    DiffRequestFactory diffRequestFactory = DiffRequestFactory.getInstance();
+                    MergeRequest mergeRequest = diffRequestFactory.createMergeRequest(
+                            project,
+                            sourceCodeFile,
+                            mergeContent.getByteContents(),
+                            "Version conflict resolution for " + sourceCodeFile.getObject().getQualifiedNameWithType(),
+                            mergeContent.getTitles(),
+                            new Consumer<MergeResult>() {
+                                @Override
+                                public void consume(MergeResult mergeResult) {
+                                    if (action == MergeAction.SAVE) {
+                                        switch (mergeResult) {
+                                            case CANCEL:
+                                                sourceCodeFile.applyContentToDocument();
+                                                sourceCodeFile.setSaving(false);
+                                                break;
+                                            case LEFT:
+                                            case RIGHT:
+                                            case RESOLVED:
+                                                SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                                                sourceCodeManager.storeSourceToDatabase(sourceCodeFile, fileEditor, null);
+                                                EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
+                                                break;
+                                        }
+                                    } else if (action == MergeAction.MERGE) {
+                                        switch (mergeResult) {
+                                            case CANCEL:
+                                                break;
+                                            case LEFT:
+                                            case RIGHT:
+                                            case RESOLVED:
+                                                sourceCodeFile.updateMergeTimestamp();
+                                                EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
+                                                break;
+                                        }
+                                    }
+                                }
+                            });
+
+                    DiffManager diffManager = DiffManager.getInstance();
+                    diffManager.showMerge(project, mergeRequest);
+                } catch (InvalidDiffRequestException e) {
+                    e.printStackTrace();
                 }
             }
         }.start();
@@ -106,7 +168,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                 diffRequest.setContents(originalContent, changedContent);
                 diffRequest.setContentTitles(referenceTitle + " ", "Your version ");
 
-                DiffManager.getInstance().getIdeaDiffTool().show(diffRequest);
+                com.intellij.openapi.diff.DiffManager.getInstance().getIdeaDiffTool().show(diffRequest);
             }
         }.start();
     }
