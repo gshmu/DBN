@@ -13,7 +13,7 @@ public class MergeContent {
     }
 
     public List<String> getTitles() {
-        ArrayList<String> titles = new ArrayList<>();
+        ArrayList<String> titles = new ArrayList<String>();
         for (SourceCodeDiffContent content : contents) {
             titles.add(content.getTitle());
         }
@@ -22,7 +22,7 @@ public class MergeContent {
     }
 
     public List<byte[]> getByteContents() {
-        ArrayList<byte[]> byteContents = new ArrayList<>();
+        ArrayList<byte[]> byteContents = new ArrayList<byte[]>();
         for (SourceCodeDiffContent content : contents) {
             byteContents.add(content.getByteContent());
         }
