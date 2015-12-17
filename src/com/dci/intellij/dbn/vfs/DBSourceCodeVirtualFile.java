@@ -156,12 +156,12 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                     TraceableSourceCodeContent latestContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
                     ChangeTimestamp latestTimestamp = latestContent.getTimestamp();
 
-                    if (latestContent.isSameAs(content)) {
-                        content.setTimestamp(latestTimestamp);
+                    CharSequence lastSavedContent = getLastSavedContent();
 
+                    if (StringUtil.equals(latestContent.getText(), lastSavedContent)) {
+                        content.setTimestamp(latestTimestamp);
                         databaseContent.reset();
                         databaseContent.setTimestamp(latestTimestamp);
-                        setModified(false);
                     } else {
                         databaseContent = latestContent;
                     }
