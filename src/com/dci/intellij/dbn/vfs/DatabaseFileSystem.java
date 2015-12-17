@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.EditorStateManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeMainEditor;
+import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -87,7 +88,6 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                     String identifier = objectPath.substring(7);
                     DBObjectRef objectRef = new DBObjectRef(connectionId, identifier);
                     DBObject object = objectRef.get();
-
                     if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
                         return findOrCreateDatabaseFile((DBSchemaObject) object);
                     }
@@ -371,9 +371,10 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                 protected void execute() {
                     if (isFileOpened(object) || databaseFile.preOpen()) {
                         DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
-                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());
+                        Project project = object.getProject();
+                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                         fileEditorManager.openFile(databaseFile, focusEditor);
-                        EditorUtil.selectEditor(object.getProject(), null, databaseFile, editorProviderId, focusEditor);
+                        EditorUtil.selectEditor(project, null, databaseFile, editorProviderId, focusEditor);
                         DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(true);
                     }
                 }
@@ -383,19 +384,22 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
 
     private void openChildObject(final DBObject object, final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
         final DBSchemaObject schemaObject = (DBSchemaObject) object.getParentObject();
+        final Project project = schemaObject.getProject();
         final DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(schemaObject);
+        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+        sourceCodeManager.ensureSourcesLoaded(schemaObject);
         if (!BackgroundTask.isProcessCancelled()) {
             new SimpleLaterInvocator() {
                 @Override
                 protected void execute() {
                     if (isFileOpened(schemaObject) || databaseFile.preOpen()) {
                         DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
-                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());
+                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                         FileEditor[] fileEditors = fileEditorManager.openFile(databaseFile, focusEditor);
                         for (FileEditor fileEditor : fileEditors) {
                             if (fileEditor instanceof SourceCodeMainEditor) {
                                 SourceCodeMainEditor sourceCodeEditor = (SourceCodeMainEditor) fileEditor;
-                                EditorUtil.selectEditor(schemaObject.getProject(), fileEditor, databaseFile, editorProviderId, focusEditor);
+                                EditorUtil.selectEditor(project, fileEditor, databaseFile, editorProviderId, focusEditor);
                                 sourceCodeEditor.navigateTo(object);
                                 break;
                             }

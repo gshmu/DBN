@@ -206,27 +206,6 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
         return maxLength;
     }
 
-    // TODO IJ9 compatibility
-    public static boolean equals(@Nullable CharSequence s1, @Nullable CharSequence s2) {
-        if (s1 == null ^ s2 == null) {
-            return false;
-        }
-
-        if (s1 == null) {
-            return true;
-        }
-
-        if (s1.length() != s2.length()) {
-            return false;
-        }
-        for (int i = 0; i < s1.length(); i++) {
-            if (s1.charAt(i) != s2.charAt(i)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static void main(String[] args) {
 
         System.out.println(computeMaxRowLength("\ntest\ntest2342345345345\n234\n2324444444444444444444444444444444444\n1"));
