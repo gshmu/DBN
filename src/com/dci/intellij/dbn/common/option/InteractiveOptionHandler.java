@@ -1,12 +1,6 @@
 package com.dci.intellij.dbn.common.option;
 
 
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
@@ -14,6 +8,12 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 
 public class InteractiveOptionHandler<T extends InteractiveOption> implements DialogWrapper.DoNotAskOption, PersistentConfiguration{
     private String configName;
@@ -39,8 +39,8 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
 
     @Override
     public void setToBeShown(boolean keepAsking, int selectedIndex) {
-        T selectedOption = options.get(selectedIndex);
-        if (keepAsking || selectedOption == null || selectedOption.isAsk() || selectedOption.isCancel()) {
+        T selectedOption = getOption(selectedIndex);
+        if (keepAsking || selectedOption.isAsk() || selectedOption.isCancel()) {
             this.selectedOption = null;
         } else {
             this.selectedOption = selectedOption;
@@ -92,12 +92,17 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
                     Constants.DBN_TITLE_PREFIX + title,
                     toStringOptions(options), lastUsedOptionIndex, Icons.DIALOG_QUESTION, this);
 
-            T option = options.get(optionIndex);
+            T option = getOption(optionIndex);
             if (!option.isCancel() && !option.isAsk()) {
                 lastUsedOption = option;
             }
             return option;
         }
+    }
+
+    @NotNull
+    private T getOption(int index) {
+        return index == -1 ? options.get(options.size() -1) : options.get(index);
     }
 
     public static String[] toStringOptions(List<? extends InteractiveOption> options) {
