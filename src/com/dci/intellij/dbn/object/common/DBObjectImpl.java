@@ -236,6 +236,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return objectRef.getPath();
     }
 
+    @Override
     public String getQualifiedNameWithType() {
         return objectRef.getQualifiedNameWithType();
     }
