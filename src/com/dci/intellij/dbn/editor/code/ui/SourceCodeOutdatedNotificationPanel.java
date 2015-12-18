@@ -28,7 +28,7 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
         if (sourceCodeFile.isModified() && !mergeRequired) {
             text += " (MERGED)";
         }
-        text += ". The " + editableObject.getQualifiedNameWithType() + " was changed in database by another user " + presentableChangeTime + "";
+        text += ". The " + editableObject.getQualifiedNameWithType() + " was changed in database by another user (" + presentableChangeTime + ")";
 
         setText(text);
         createActionLabel("Show Diff", new Runnable() {
