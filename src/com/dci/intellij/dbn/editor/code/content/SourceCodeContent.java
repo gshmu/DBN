@@ -1,10 +1,8 @@
 package com.dci.intellij.dbn.editor.code.content;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.diff.comparison.ByWord;
-import com.intellij.diff.comparison.ComparisonPolicy;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.diff.impl.ComparisonPolicy;
+import com.intellij.openapi.diff.impl.processing.ByWord;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.Charset;
@@ -40,7 +38,7 @@ public class SourceCodeContent{
     }
 
     public void reset() {
-        text = EMPTY_CONTENT;
+        text =  EMPTY_CONTENT;
     }
 
     public byte[] getBytes(Charset charset) {
@@ -50,10 +48,9 @@ public class SourceCodeContent{
     public boolean matches(SourceCodeContent content, boolean soft) {
         if (soft) {
             try {
-                ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
-                return ByWord.compare(text, content.text, ComparisonPolicy.IGNORE_WHITESPACES, progressIndicator).isEmpty();
+                ByWord byWord = new ByWord(ComparisonPolicy.IGNORE_SPACE);
+                return byWord.buildFragments(text.toString(), content.text.toString()).length == 0;
             } catch (Exception ignore) {
-                ignore.printStackTrace();
             }
         }
         return StringUtil.equals(text, content.text);
