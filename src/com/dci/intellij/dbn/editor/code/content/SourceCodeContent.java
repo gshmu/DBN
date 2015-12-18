@@ -1,16 +1,17 @@
 package com.dci.intellij.dbn.editor.code.content;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.diff.comparison.ByWord;
 import com.intellij.diff.comparison.ComparisonPolicy;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import org.jetbrains.annotations.NotNull;
+
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.END_OFFSET_IDENTIFIER;
 import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.START_OFFSET_IDENTIFIER;
 
@@ -50,7 +51,7 @@ public class SourceCodeContent{
         if (soft) {
             try {
                 ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
-                return ByWord.compare(text, content.text, ComparisonPolicy.TRIM_WHITESPACES, progressIndicator).isEmpty();
+                return ByWord.compare(text, content.text, ComparisonPolicy.IGNORE_WHITESPACES, progressIndicator).isEmpty();
             } catch (Exception ignore) {
                 ignore.printStackTrace();
             }
