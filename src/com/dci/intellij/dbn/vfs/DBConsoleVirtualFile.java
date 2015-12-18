@@ -22,7 +22,7 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
-import com.dci.intellij.dbn.editor.code.content.TraceableSourceCodeContent;
+import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -46,7 +46,7 @@ import com.intellij.util.LocalTimeCounter;
 
 public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentListener, DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
-    private TraceableSourceCodeContent content = new TraceableSourceCodeContent();
+    private SourceCodeContent content = new SourceCodeContent();
     private ConnectionHandlerRef connectionHandlerRef;
     private DBObjectRef<DBSchema> currentSchemaRef;
     private DBConsoleType type = DBConsoleType.STANDARD;
@@ -60,7 +60,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
 
-    public TraceableSourceCodeContent getContent() {
+    public SourceCodeContent getContent() {
         return content;
     }
 

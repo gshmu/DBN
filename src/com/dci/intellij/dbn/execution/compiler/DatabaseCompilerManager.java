@@ -108,23 +108,28 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }
     }
 
-    void updateFilesContentState(DBSchemaObject object, DBContentType contentType) {
-        DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
-        if (databaseFile != null && databaseFile.isContentLoaded()) {
-            if (contentType.isBundle()) {
-                for (DBContentType subContentType : contentType.getSubContentTypes()) {
-                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
-                    if (sourceCodeFile != null) {
-                        sourceCodeFile.updateContentState();
+    void updateFilesContentState(final DBSchemaObject object, final DBContentType contentType) {
+        new BackgroundTask(getProject(), "Refreshing local content state", true) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
+                if (databaseFile != null && databaseFile.isContentLoaded()) {
+                    if (contentType.isBundle()) {
+                        for (DBContentType subContentType : contentType.getSubContentTypes()) {
+                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
+                            if (sourceCodeFile != null) {
+                                sourceCodeFile.refreshContentState();
+                            }
+                        }
+                    } else {
+                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                        if (sourceCodeFile != null) {
+                            sourceCodeFile.refreshContentState();
+                        }
                     }
                 }
-            } else {
-                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                if (sourceCodeFile != null) {
-                    sourceCodeFile.updateContentState();
-                }
             }
-        }
+        }.start();
     }
 
     public void compileInBackground(final DBSchemaObject object, final CompileType compileType, final CompilerAction compilerAction) {
@@ -139,7 +144,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             @Override
             protected void execute() {
                 final Project project = getProject();
-                BackgroundTask<CompileType> compileTask = new BackgroundTask<CompileType>(project, "Compiling " + object.getQualifiedNameWithType(), true) {
+                BackgroundTask<CompileType> compileTask = new BackgroundTask<CompileType>(project, "Compiling " + object.getObjectType().getName(), true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {
                         CompileType compileType = getOption();

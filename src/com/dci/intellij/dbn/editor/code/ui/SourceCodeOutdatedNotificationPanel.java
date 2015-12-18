@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.editor.code.ui;
 
-import java.sql.Timestamp;
-
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
-import com.dci.intellij.dbn.editor.code.content.TraceableSourceCodeContent;
+import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.diff.MergeAction;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -19,11 +18,18 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
         super(MessageType.WARNING);
         final DBSchemaObject editableObject = sourceCodeFile.getObject();
         final Project project = editableObject.getProject();
-        Timestamp timestamp = sourceCodeFile.getDatabaseChangeTimestamp();
-        String text = "Outdated version. The " + editableObject.getQualifiedNameWithType() + " was modified by another user (" + DateFormatUtil.formatPrettyDateTime(timestamp).toLowerCase() + ").";
-        if (!sourceCodeFile.isMergeRequired()) {
-            text = text + " You have merged the content!";
+        String presentableChangeTime =
+                DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(editableObject) ?
+                        DateFormatUtil.formatPrettyDateTime(sourceCodeFile.getDatabaseChangeTimestamp()).toLowerCase() : "";
+
+
+        String text = "Outdated version";
+        boolean mergeRequired = sourceCodeFile.isMergeRequired();
+        if (sourceCodeFile.isModified() && !mergeRequired) {
+            text += " (MERGED)";
         }
+        text += ". The " + editableObject.getQualifiedNameWithType() + " was changed in database by another user " + presentableChangeTime + "";
+
         setText(text);
         createActionLabel("Show Diff", new Runnable() {
             @Override
@@ -35,7 +41,7 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
             }
         });
 
-        if (sourceCodeFile.isModified() && sourceCodeFile.isMergeRequired()) {
+        if (mergeRequired) {
             createActionLabel("Merge", new Runnable() {
                 @Override
                 public void run() {
@@ -43,7 +49,7 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
                         try {
                             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
                             SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
-                            TraceableSourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(editableObject, sourceCodeEditor.getContentType());
+                            SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(editableObject, sourceCodeEditor.getContentType());
                             String databaseContent = sourceCodeContent.getText().toString();
                             diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, sourceCodeEditor, MergeAction.MERGE);
                         }catch (Exception e) {
