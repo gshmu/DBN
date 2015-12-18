@@ -97,7 +97,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     @NotNull
     public ChangeTimestamp loadChangeTimestamp(DBContentType contentType) throws SQLException {
         Timestamp timestamp = getTimestampLoader(contentType).load(this);
-        return new ChangeTimestamp(timestamp);
+        return new ChangeTimestamp(timestamp == null ? new Timestamp(System.currentTimeMillis()) : timestamp);
     }
 
     public DBObjectTimestampLoader getTimestampLoader(DBContentType contentType) {

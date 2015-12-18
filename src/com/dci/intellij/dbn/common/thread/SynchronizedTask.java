@@ -3,15 +3,7 @@ package com.dci.intellij.dbn.common.thread;
 import com.intellij.openapi.progress.ProcessCanceledException;
 
 public abstract class SynchronizedTask extends SimpleTask {
-    private Object syncObject;
     private static final SyncObjectProvider SYNC_OBJECT_PROVIDER = new SyncObjectProvider();
-
-    public SynchronizedTask(Object syncObject) {
-        this.syncObject = syncObject;
-    }
-
-    public SynchronizedTask() {
-    }
 
     public void start() {
         run();
@@ -22,17 +14,16 @@ public abstract class SynchronizedTask extends SimpleTask {
         try {
             if (canExecute()) {
                 String syncKey = getSyncKey();
-                Object syncObject = this.syncObject;
                 try {
-                    if (syncObject == null) {
-                        syncObject = SYNC_OBJECT_PROVIDER.get(syncKey);
-                    }
+                    Object syncObject = SYNC_OBJECT_PROVIDER.get(syncKey);
 
                     if (syncObject == null) {
                         execute();
                     } else {
                         synchronized (syncObject) {
-                            execute();
+                            if (canExecute()) {
+                                execute();
+                            }
                         }
                     }
                 } finally {
@@ -45,8 +36,6 @@ public abstract class SynchronizedTask extends SimpleTask {
         }
     }
 
-    protected String getSyncKey() {
-        return null;
-    }
+    protected abstract String getSyncKey();
 
 }

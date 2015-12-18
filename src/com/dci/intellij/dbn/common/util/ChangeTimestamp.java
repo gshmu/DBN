@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import java.sql.Timestamp;
+import org.jetbrains.annotations.NotNull;
 
 public class ChangeTimestamp {
     private Timestamp value;
@@ -10,11 +11,12 @@ public class ChangeTimestamp {
         this.captureTime = System.currentTimeMillis();
         this.value = new Timestamp(captureTime);
     }
-    public ChangeTimestamp(Timestamp value) {
+    public ChangeTimestamp(@NotNull Timestamp value) {
         this.value = value;
         this.captureTime = System.currentTimeMillis();
     }
 
+    @NotNull
     public Timestamp value() {
         return value;
     }
@@ -23,7 +25,12 @@ public class ChangeTimestamp {
         return TimeUtil.isOlderThan(captureTime, 30 * TimeUtil.ONE_SECOND);
     }
 
-    public boolean isBefore(ChangeTimestamp changeTimestampCheck) {
-        return value != null && changeTimestampCheck.value!= null && value.before(changeTimestampCheck.value);
+    public boolean isOlderThan(ChangeTimestamp changeTimestampCheck) {
+        return value.before(changeTimestampCheck.value);
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
     }
 }
