@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.thread.SynchronizedTask;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -18,12 +18,10 @@ import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
-import com.dci.intellij.dbn.editor.code.content.BasicSourceCodeContent;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeOffsets;
-import com.dci.intellij.dbn.editor.code.content.TraceableSourceCodeContent;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -44,16 +42,24 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private SourceCodeContent originalContent = new BasicSourceCodeContent();
-    private SourceCodeContent lastSavedContent = new BasicSourceCodeContent();
-    private TraceableSourceCodeContent databaseContent = new TraceableSourceCodeContent();
-    private TraceableSourceCodeContent content = new TraceableSourceCodeContent();
+    private SourceCodeContent originalContent = new SourceCodeContent();
+    private SourceCodeContent localContent = new SourceCodeContent();
+    private SourceCodeContent databaseContent = null;
 
-    private ChangeTimestamp codeMergeTimestamp;
+    private ChangeTimestamp databaseTimestamp = new ChangeTimestamp();
 
     private String sourceLoadError;
     private boolean loading;
     private boolean saving;
+    private boolean refreshing;
+
+    private Status status = Status.OK;
+
+    private enum Status {
+        OK,
+        MERGED,
+        OUTDATED
+    }
 
     public DBSourceCodeVirtualFile(final DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
         super(databaseFile, contentType);
@@ -67,7 +73,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             if (!isModified() && !StringUtil.equals(originalContent.getText(), newContent)) {
                 setModified(true);
             }
-            content.setText(newContent);
+            localContent.setText(newContent);
         }
     };
 
@@ -77,7 +83,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     @NotNull
     public SourceCodeOffsets getOffsets() {
-        return content.getOffsets();
+        return localContent.getOffsets();
     }
 
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
@@ -103,7 +109,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     public synchronized boolean isLoaded() {
-        return content.isLoaded();
+        return localContent.isLoaded();
     }
 
     public synchronized boolean isLoading() {
@@ -135,73 +141,83 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         return null;
     }
 
-    public void updateContentState() {
-        if (isLoaded()) {
-            try {
-                DBSchemaObject object = getObject();
-                boolean checkSources = true;
-                if (isChangeTracingSupported()) {
-                    checkSources = false;
-                    ChangeTimestamp latestTimestamp = object.loadChangeTimestamp(contentType);
-                    if (databaseContent.isOlderThan(latestTimestamp)) {
-                        checkSources = true;
-                        codeMergeTimestamp = null;
-                    }
-                    databaseContent.setTimestamp(latestTimestamp);
-                }
-
-                if (checkSources) {
-                    Project project = FailsafeUtil.get(getProject());
-                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                    TraceableSourceCodeContent latestContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
-                    ChangeTimestamp latestTimestamp = latestContent.getTimestamp();
-
-                    if (latestContent.isSameAs(content)) {
-                        content.setTimestamp(latestTimestamp);
-
-                        databaseContent.reset();
-                        databaseContent.setTimestamp(latestTimestamp);
-                        setModified(false);
-                    } else {
-                        databaseContent = latestContent;
-                    }
-                }
-
-                if (databaseContent.isLoaded() && StringUtil.equals(databaseContent.getText(), content.getText())) {
-                    databaseContent.reset();
-                    content.setTimestamp(databaseContent.getTimestamp());
-                    setModified(false);
-                }
-
-            } catch (SQLException e) {
-                LOGGER.warn("Error updating source content state", e);
+    public void refreshContentState() {
+        new SynchronizedTask() {
+            @Override
+            protected String getSyncKey() {
+                return "REFRESH_STATE:" + getUrl();
             }
-        }
+
+            @Override
+            protected boolean canExecute() {
+                return !refreshing && isLoaded();
+            }
+
+            @Override
+            protected void execute() {
+                try {
+                    refreshing = true;
+                    DBSchemaObject object = getObject();
+
+                    if (status == Status.OK || status == Status.MERGED) {
+                        boolean checkSources = true;
+
+                        ChangeTimestamp latestTimestamp = new ChangeTimestamp();
+                        if (isChangeTracingSupported()) {
+                            latestTimestamp = object.loadChangeTimestamp(contentType);
+                            checkSources = databaseTimestamp.isOlderThan(latestTimestamp);
+                            databaseTimestamp = latestTimestamp;
+                        }
+
+                        databaseTimestamp = latestTimestamp;
+
+                        if (checkSources) {
+                            Project project = object.getProject();
+                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                            SourceCodeContent latestContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
+
+                            if (status == Status.OK && !latestContent.matches(originalContent, true)) {
+                                status = Status.OUTDATED;
+                                databaseContent = latestContent;
+                            }
+
+                            if (status == Status.MERGED && !latestContent.matches(databaseContent, true)) {
+                                status = Status.OUTDATED;
+                                databaseContent = latestContent;
+                            }
+                        }
+                    }
+
+                } catch (SQLException e) {
+                    LOGGER.warn("Error refreshing source content state", e);
+                } finally {
+                    refreshing = false;
+                }
+            }
+        }.start();
     }
 
     public boolean isChangedInDatabase(boolean reload) {
-        if (isLoaded()) {
-            if (reload || databaseContent.getTimestamp().isDirty()) {
-                updateContentState();
+        if (!refreshing && isLoaded()) {
+            if (reload || databaseTimestamp.isDirty()) {
+                refreshContentState();
             }
-            return content.isOlderThan(databaseContent);
+            return !refreshing && (status == Status.OUTDATED || status == Status.MERGED);
         }
         return false;
     }
 
     public boolean isMergeRequired() {
-        if (isChangedInDatabase(false)) {
-            return codeMergeTimestamp == null || codeMergeTimestamp.isBefore(databaseContent.getTimestamp());
-        }
-        return false;
+        return isModified() && status == Status.OUTDATED;
     }
 
-    public void refreshMergeTimestamp() {
-        codeMergeTimestamp = databaseContent.getTimestamp();
+    public void markAsMerged() {
+        status = Status.MERGED;
     }
 
+    @NotNull
     public Timestamp getDatabaseChangeTimestamp() {
-        return databaseContent.getTimestamp().value();
+        return databaseTimestamp.value();
     }
 
     @NotNull
@@ -210,57 +226,49 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     @NotNull
-    public CharSequence getLastSavedContent() {
-        return lastSavedContent.isLoaded() ? lastSavedContent.getText() : originalContent.getText();
-    }
-
-    @NotNull
     public CharSequence getContent() {
-        return content.getText();
+        return localContent.getText();
     }
 
-    public CharSequence getDatabaseContent() {
-        return databaseContent.getText();
+    public void loadSourceFromDatabase() throws SQLException {
+        DBSchemaObject object = getObject();
+        Project project = object.getProject();
+        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+        localContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
+        originalContent.setText(localContent.getText().toString());
+        databaseContent = null;
+        databaseTimestamp = object.loadChangeTimestamp(contentType);
+
+        updateOffsets();
+        setModified(false);
+        sourceLoadError = null;
+        status = Status.OK;
     }
 
-    public void applyContent(TraceableSourceCodeContent sourceCodeContent) {
-        content = sourceCodeContent;
-        originalContent.setText(content.getText().toString());
-        lastSavedContent.reset();
+    public void saveSourceToDatabase() throws SQLException {
+        DBSchemaObject object = getObject();
+        String oldContent = getOriginalContent().toString();
+        String newContent = getContent().toString();
+        object.executeUpdateDDL(contentType, oldContent, newContent);
+        originalContent.setText(newContent);
+        databaseContent = null;
+        databaseTimestamp = object.loadChangeTimestamp(contentType);
 
-        databaseContent.reset();
-        databaseContent.setTimestamp(sourceCodeContent.getTimestamp());
-        codeMergeTimestamp = null;
+        setModified(false);
+        sourceLoadError = null;
+        status = Status.OK;
+    }
 
+    void updateOffsets() {
         Document document = DocumentUtil.getDocument(this);
         if (document != null) {
-            DocumentUtil.setText(document, content.getText());
-            SourceCodeOffsets offsets = content.getOffsets();
+            DocumentUtil.setText(document, localContent.getText());
+            SourceCodeOffsets offsets = localContent.getOffsets();
             GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
             if (!guardedBlocks.isEmpty()) {
                 DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
                 DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
             }
-        }
-        setModified(false);
-        sourceLoadError = null;
-    }
-
-    public void saveSourceToDatabase() throws SQLException {
-        DBSchemaObject object = getObject();
-        String oldContent = getLastSavedContent().toString();
-        String newContent = getContent().toString();
-        object.executeUpdateDDL(getContentType(), oldContent, newContent);
-        setModified(false);
-        lastSavedContent.setText(newContent);
-
-        databaseContent.reset();
-        codeMergeTimestamp = null;
-        if (isChangeTracingSupported()) {
-            DBContentType contentType = getContentType();
-            ChangeTimestamp timestamp = object.loadChangeTimestamp(contentType);
-            content.setTimestamp(timestamp);
-            databaseContent.setTimestamp(timestamp);
         }
     }
 
@@ -275,11 +283,11 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     @NotNull
     public byte[] contentsToByteArray() {
-        return content.getText().toString().getBytes(getCharset());
+        return localContent.getText().toString().getBytes(getCharset());
     }
 
     public long getLength() {
-        return content.length();
+        return localContent.length();
     }
 
     public String getSourceLoadError() {
@@ -301,8 +309,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     @Override
     public void dispose() {
         super.dispose();
-        originalContent = new TraceableSourceCodeContent();
-        lastSavedContent = new TraceableSourceCodeContent();
-        content = new TraceableSourceCodeContent();
+        originalContent = new SourceCodeContent();
+        localContent = new SourceCodeContent();
     }
 }

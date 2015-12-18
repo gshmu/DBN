@@ -106,6 +106,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
             TimerTask cancelCheckTask = new TimerTask() {
                 @Override
                 public void run() {
+                    ProgressIndicator progressIndicator = CancellableDatabaseCall.this.progressIndicator;
                     if (!cancelled && isCancelRequested()) {
                         cancelled = true;
                         if (future != null) future.cancel(true);
