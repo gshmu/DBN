@@ -58,7 +58,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                     com.intellij.openapi.diff.MergeRequest mergeRequest = diffRequestFactory.createMergeRequest(
                             databaseContent,
                             sourceCodeFile.getContent().toString(),
-                            sourceCodeFile.getLastSavedContent().toString(),
+                            sourceCodeFile.getOriginalContent().toString(),
                             sourceCodeFile,
                             project,
                             ActionButtonPresentation.APPLY,
@@ -85,7 +85,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                     } else if (action == MergeAction.MERGE) {
                         switch (result) {
                             case 0:
-                                sourceCodeFile.refreshMergeTimestamp();
+                                sourceCodeFile.markAsMerged();
                                 EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
                                 break;
                             case 1:
@@ -104,7 +104,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
             protected void execute() {
                 final Project project = getProject();
                 SourceCodeDiffContent leftContent = new SourceCodeDiffContent("Database version", databaseContent);
-                SourceCodeDiffContent targetContent = new SourceCodeDiffContent("Merge result", sourceCodeFile.getLastSavedContent());
+                SourceCodeDiffContent targetContent = new SourceCodeDiffContent("Merge result", sourceCodeFile.getOriginalContent());
                 SourceCodeDiffContent rightContent = new SourceCodeDiffContent("Your version", sourceCodeFile.getContent());
                 final MergeContent mergeContent = new MergeContent(leftContent, targetContent, rightContent );
                 try {
@@ -136,7 +136,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                                             case LEFT:
                                             case RIGHT:
                                             case RESOLVED:
-                                                sourceCodeFile.refreshMergeTimestamp();
+                                                sourceCodeFile.markAsMerged();
                                                 EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
                                                 break;
                                             case CANCEL:

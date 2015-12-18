@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.editor.code.content.TraceableSourceCodeContent;
+import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 import com.intellij.openapi.project.Project;
@@ -45,7 +45,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
     }
 
     @Override
-    public void computeSourceCodeOffsets(TraceableSourceCodeContent content, DatabaseObjectTypeId objectTypeId, String objectName) {
+    public void computeSourceCodeOffsets(SourceCodeContent content, DatabaseObjectTypeId objectTypeId, String objectName) {
         String sourceCode = content.getText().toString();
         if (StringUtil.isNotEmpty(sourceCode)) {
             if (objectTypeId == DatabaseObjectTypeId.DATASET_TRIGGER || objectTypeId == DatabaseObjectTypeId.DATABASE_TRIGGER) {

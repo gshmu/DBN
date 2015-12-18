@@ -19,15 +19,15 @@ public abstract class SimpleBackgroundTask extends SynchronizedTask{
     String name;
 
     public SimpleBackgroundTask(String name) {
-        super(null);
         this.name = name;
-    }
-
-    public SimpleBackgroundTask(Object syncObject) {
-        super(syncObject);
     }
 
     public final void start() {
         POOL.submit(this);
+    }
+
+    @Override
+    protected String getSyncKey() {
+        return null;
     }
 }

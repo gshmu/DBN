@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
-import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -35,7 +34,7 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.editor.code.content.TraceableSourceCodeContent;
+import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.diff.MergeAction;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
@@ -215,8 +214,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
                     EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoading(sourceCodeFile);
                     try {
-                        TraceableSourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
-                        sourceCodeFile.applyContent(sourceCodeContent);
+                        sourceCodeFile.loadSourceFromDatabase();
                     } catch (SQLException e) {
                         sourceCodeFile.setSourceLoadError(e.getMessage());
                         NotificationUtil.sendErrorNotification(project, "Source Load Error", "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database. Cause: " + e.getMessage());
@@ -229,7 +227,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
             @Override
             protected String getSyncKey() {
-                return sourceCodeFile.getUrl();
+                return "LOAD_SOURCE:" + sourceCodeFile.getUrl();
             }
         }.start();
     }
@@ -255,16 +253,19 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     ProgressMonitor.setTaskDescription("Checking for third party changes on " + object.getQualifiedNameWithType());
                     boolean isChangedInDatabase = sourceCodeFile.isChangedInDatabase(true);
                     if (isChangedInDatabase && sourceCodeFile.isMergeRequired()) {
+                        String presentableChangeTime =
+                                DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object) ?
+                                    DateFormatUtil.formatPrettyDateTime(sourceCodeFile.getDatabaseChangeTimestamp()).toLowerCase() : "";
                         String message =
                                 "The " + object.getQualifiedNameWithType() +
-                                        " has been changed by another user " + DateFormatUtil.formatPrettyDateTime(sourceCodeFile.getDatabaseChangeTimestamp()).toLowerCase() + "." +
+                                        " was changed in database by another user " + presentableChangeTime + "." +
                                         "\nYou must merge the changes before saving.";
                         BackgroundTask<Integer> openMergeDialogTask = new BackgroundTask<Integer>(project, "Loading database source code", false) {
                             @Override
                             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                                 if (getOption() == 0) {
                                     try {
-                                        TraceableSourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
+                                        SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
                                         String databaseContent = sourceCodeContent.getText().toString();
                                         SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
                                         diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, MergeAction.SAVE);
@@ -295,16 +296,10 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public TraceableSourceCodeContent loadSourceFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {
+    public SourceCodeContent loadSourceFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {
         ProgressMonitor.setTaskDescription("Loading source code of " + object.getQualifiedNameWithType());
         String sourceCode = object.loadCodeFromDatabase(contentType);
-
-        boolean tracingSupported = DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object);
-        ChangeTimestamp changeTimestamp = tracingSupported ?
-                object.loadChangeTimestamp(contentType) :
-                new ChangeTimestamp();
-
-        TraceableSourceCodeContent sourceCodeContent = new TraceableSourceCodeContent(sourceCode, changeTimestamp);
+        SourceCodeContent sourceCodeContent = new SourceCodeContent(sourceCode);
         ConnectionHandler connectionHandler = object.getConnectionHandler();
         DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
         ddlInterface.computeSourceCodeOffsets(sourceCodeContent, object.getObjectType().getTypeId(), object.getName());
@@ -354,7 +349,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     public void storeSourceToDatabase(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable final SourceCodeEditor fileEditor, @Nullable final Runnable successCallback) {
         final DBSchemaObject object = sourceCodeFile.getObject();
         final Project project = getProject();
-        new BackgroundTask(project, "Saving " + object.getQualifiedNameWithType() + " to database", false) {
+        new BackgroundTask(project, "Saving sources to database", false) {
             @Override
             protected void execute(@NotNull ProgressIndicator indicator) {
                 try {

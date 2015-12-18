@@ -4,13 +4,6 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 
 public abstract class ConditionalLaterInvocator extends SynchronizedTask{
-    public ConditionalLaterInvocator() {
-        super(null);
-    }
-    public ConditionalLaterInvocator(Object syncObject) {
-        super(syncObject);
-    }
-
     public final void start() {
         Application application = ApplicationManager.getApplication();
         if (application.isDispatchThread()) {
@@ -18,5 +11,10 @@ public abstract class ConditionalLaterInvocator extends SynchronizedTask{
         } else {
             application.invokeLater(this/*, ModalityState.NON_MODAL*/);
         }
+    }
+
+    @Override
+    protected String getSyncKey() {
+        return null;
     }
 }
