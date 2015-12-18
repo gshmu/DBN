@@ -46,7 +46,7 @@ public class ExecutablePsiElement extends NamedPsiElement{
     }
 
     public boolean isTransactional() {
-        return getSpecificElementType().is(ElementTypeAttribute.TRANSACTIONAL);
+        return is(ElementTypeAttribute.TRANSACTIONAL) || getSpecificElementType().is(ElementTypeAttribute.TRANSACTIONAL);
     }
 
     public boolean isTransactionControl() {
