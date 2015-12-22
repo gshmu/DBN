@@ -97,7 +97,11 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                     messageType == MessageType.WARNING ? Icons.EXEC_MESSAGES_WARNING_INACTIVE :
                     messageType == MessageType.INFO ? Icons.EXEC_MESSAGES_INFO : null;
 
-            append(" (line " + message.getLine() + " / position " + message.getPosition() + ")", secondaryTextAttributes);
+            int line = message.getLine();
+            int position = message.getPosition();
+            if (line > 0 && position > 0) {
+                append(" (line " + line + " / position " + position + ")", secondaryTextAttributes);
+            }
             background = regularAttributes.getBgColor();
         }
         else if (value instanceof StatementExecutionMessageNode) {
