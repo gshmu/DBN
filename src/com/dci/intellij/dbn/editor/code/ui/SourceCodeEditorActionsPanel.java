@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.editor.code.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -17,6 +12,11 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.AsyncProcessIcon;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class SourceCodeEditorActionsPanel extends DBNFormImpl{
     private JPanel mainPanel;
@@ -44,7 +44,8 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
     SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeLoading(DBSourceCodeVirtualFile sourceCodeFile) {
-            if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
+            DBSourceCodeVirtualFile virtualFile = sourceCodeEditor.getVirtualFile();
+            if (virtualFile != null && virtualFile.equals(sourceCodeFile)) {
                 new SimpleLaterInvocator() {
                     @Override
                     protected void execute() {
@@ -56,7 +57,8 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
 
         @Override
         public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
-            if (sourceCodeEditor.getVirtualFile().equals(sourceCodeFile)) {
+            DBSourceCodeVirtualFile virtualFile = sourceCodeEditor.getVirtualFile();
+            if (virtualFile != null && virtualFile.equals(sourceCodeFile)) {
                 new SimpleLaterInvocator() {
                     @Override
                     protected void execute() {
