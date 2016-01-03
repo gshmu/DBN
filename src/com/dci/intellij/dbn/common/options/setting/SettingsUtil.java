@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.common.options.setting;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.util.StringUtil;
 
 public class SettingsUtil {
     public static boolean isDebugEnabled;
