@@ -28,11 +28,15 @@ public class PostgresNativeDataTypes extends DatabaseNativeDataTypes {
         createNumericDefinition("SERIAL", Long.class, Types.INTEGER);
         createNumericDefinition("BIGSERIAL", Long.class, Types.BIGINT);
         createNumericDefinition("INT8", Long.class, Types.BIGINT);
+        createNumericDefinition("SERIAL2", Long.class, Types.BIGINT);
+        createNumericDefinition("SERIAL3", Long.class, Types.BIGINT);
         createNumericDefinition("SERIAL8", Long.class, Types.BIGINT);
         createNumericDefinition("DECIMAL", BigDecimal.class, Types.DECIMAL);
         createNumericDefinition("NUMERIC", BigDecimal.class, Types.NUMERIC);
         createNumericDefinition("REAL", BigDecimal.class, Types.NUMERIC);
         createNumericDefinition("DOUBLE_PRECISION", BigDecimal.class, Types.DOUBLE);
+        createNumericDefinition("FLOAT4", Float.class, Types.FLOAT);
+        createNumericDefinition("FLOAT8", Float.class, Types.FLOAT);
         createNumericDefinition("MONEY", BigDecimal.class, Types.DOUBLE);
 
         createLiteralDefinition("CHARACTER VARYING", String.class, Types.VARCHAR);

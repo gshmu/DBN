@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.database.mysql;
 
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
+
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Blob;
 import java.sql.Timestamp;
 import java.sql.Types;
-
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 
 public class MySqlNativeDataTypes extends DatabaseNativeDataTypes {
     {
@@ -28,7 +29,7 @@ public class MySqlNativeDataTypes extends DatabaseNativeDataTypes {
         createNumericDefinition("INT", Long.class, Types.INTEGER);
         createNumericDefinition("INT UNSIGNED", Long.class, Types.INTEGER);
         createNumericDefinition("INTEGER", Long.class, Types.INTEGER);
-        createNumericDefinition("BIGINT", Long.class, Types.BIGINT);
+        createNumericDefinition("BIGINT", BigInteger.class, Types.BIGINT);
         createNumericDefinition("FLOAT", Float.class, Types.FLOAT);
         createNumericDefinition("DOUBLE", Double.class, Types.DOUBLE);
         createNumericDefinition("DOUBLE PRECISION", Double.class, Types.DOUBLE);
