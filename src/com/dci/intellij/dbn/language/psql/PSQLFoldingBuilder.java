@@ -4,21 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.language.common.DBLanguageFoldingBuilder;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
 import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.folding.FoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 
-public class PSQLFoldingBuilder implements FoldingBuilder, DumbAware {
+public class PSQLFoldingBuilder extends DBLanguageFoldingBuilder {
 
     @NotNull
     public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
@@ -27,20 +26,13 @@ public class PSQLFoldingBuilder implements FoldingBuilder, DumbAware {
         return foldingDescriptors.toArray(new FoldingDescriptor[foldingDescriptors.size()]);
     }
 
-    private static void createFoldingDescriptors(PsiElement psiElement, Document document, List<FoldingDescriptor> foldingDescriptors, int nestingIndex) {
+    private static void createFoldingDescriptors(PsiElement psiElement, Document document, List<FoldingDescriptor> descriptors, int nestingIndex) {
         PsiElement child = psiElement.getFirstChild();
         while (child != null) {
             if (child instanceof PsiComment) {
-                String text = child.getText();
-                if (text.startsWith("/*") && text.indexOf('\n') > -1) {
-                    FoldingDescriptor foldingDescriptor = new FoldingDescriptor(
-                            child.getNode(),
-                            child.getTextRange());
-
-                    foldingDescriptors.add(foldingDescriptor);
-                }
+                createCommentFolding(descriptors, (PsiComment) child);
             }
-            if (child instanceof BasePsiElement) {
+            else if (child instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
                 ElementType elementType = basePsiElement.getElementType();
                 int blockEndOffset = basePsiElement.getTextOffset() + basePsiElement.getTextLength();
@@ -67,7 +59,7 @@ public class PSQLFoldingBuilder implements FoldingBuilder, DumbAware {
 
                             FoldingDescriptor foldingDescriptor = new FoldingDescriptor(basePsiElement.getNode(), textRange);
 
-                            foldingDescriptors.add(foldingDescriptor);
+                            descriptors.add(foldingDescriptor);
                             nestingIndex++;
                             folded = true;
                         }
@@ -99,14 +91,19 @@ public class PSQLFoldingBuilder implements FoldingBuilder, DumbAware {
 
                         if (textRange.getLength() > 10) {
                             FoldingDescriptor foldingDescriptor = new FoldingDescriptor(basePsiElement.getNode(), textRange);
-                            foldingDescriptors.add(foldingDescriptor);
+                            descriptors.add(foldingDescriptor);
                             nestingIndex++;
                         }
                     }
                 }
 
+                if (!folded && child instanceof TokenPsiElement) {
+                    createLiteralFolding(descriptors, (TokenPsiElement) child);
+                }
+
+
                 if (nestingIndex < 9) {
-                    createFoldingDescriptors(child, document, foldingDescriptors, nestingIndex);
+                    createFoldingDescriptors(child, document, descriptors, nestingIndex);
                 }
             }
             child = child.getNextSibling();

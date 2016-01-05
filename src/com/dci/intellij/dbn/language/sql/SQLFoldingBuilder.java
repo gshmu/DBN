@@ -8,21 +8,23 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.language.common.DBLanguageFoldingBuilder;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
+import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.FoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.lang.folding.LanguageFolding;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 
-public class SQLFoldingBuilder implements FoldingBuilder, DumbAware {
+public class SQLFoldingBuilder extends DBLanguageFoldingBuilder {
 
     @NotNull
     public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
@@ -30,7 +32,11 @@ public class SQLFoldingBuilder implements FoldingBuilder, DumbAware {
 
         PsiElement child = node.getPsi().getFirstChild();
         while (child != null) {
-            if (child instanceof RootPsiElement) {
+            if (child instanceof PsiComment) {
+                PsiComment psiComment = (PsiComment) child;
+                createCommentFolding(descriptors, psiComment);
+            }
+            else if (child instanceof RootPsiElement) {
                 RootPsiElement rootPsiElement = (RootPsiElement) child;
                 /*FoldingDescriptor rootFoldingDescriptor = new FoldingDescriptor(
                             rootPsiElement.getAstNode(),
@@ -57,6 +63,9 @@ public class SQLFoldingBuilder implements FoldingBuilder, DumbAware {
                 FoldingDescriptor[] nestedDescriptors = foldingBuilder.buildFoldRegions(chameleonPsiElement.getNode(), document);
                 descriptors.addAll(Arrays.asList(nestedDescriptors));
 
+            } else if (child instanceof TokenPsiElement) {
+                TokenPsiElement tokenPsiElement = (TokenPsiElement) child;
+                createLiteralFolding(descriptors, tokenPsiElement);
             }
             child = child.getNextSibling();
         }
@@ -64,7 +73,11 @@ public class SQLFoldingBuilder implements FoldingBuilder, DumbAware {
     }
 
     public String getPlaceholderText(@NotNull ASTNode node) {
-        BasePsiElement basePsiElement = (BasePsiElement) node.getPsi();
+        PsiElement psiElement = node.getPsi();
+        if (psiElement instanceof PsiComment) {
+            return "/*...*/";
+        }
+        BasePsiElement basePsiElement = (BasePsiElement) psiElement;
         Set<IdentifierPsiElement> subjects = new HashSet<IdentifierPsiElement>();
         basePsiElement.collectSubjectPsiElements(subjects);
         StringBuilder buffer = new StringBuilder(basePsiElement.getSpecificElementType().getDescription());

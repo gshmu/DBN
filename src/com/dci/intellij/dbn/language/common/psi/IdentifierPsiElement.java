@@ -432,7 +432,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         LeafPsiElement prevLeaf = getPrevLeaf();
         if (prevLeaf instanceof TokenPsiElement) {
             TokenPsiElement tokenPsiElement = (TokenPsiElement) prevLeaf;
-            return tokenPsiElement.getElementType().getTokenType() == tokenPsiElement.getLanguage().getSharedTokenTypes().getChrDot();
+            return tokenPsiElement.getTokenType() == tokenPsiElement.getLanguage().getSharedTokenTypes().getChrDot();
         }
         return false;
     }
