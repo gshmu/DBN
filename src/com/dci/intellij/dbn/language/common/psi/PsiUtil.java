@@ -75,13 +75,6 @@ public class PsiUtil {
                 }
             }
 
-/*            if(objectPsiElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) objectPsiElement;
-                if (identifierPsiElement.isAlias()) {
-                    objectPsiElement = resolveAliasedEntityElement(identifierPsiElement);
-                }
-            }*/
-
             if (objectPsiElement != null) {
                 Set<BasePsiElement> virtualObjectPsiElements = new THashSet<BasePsiElement>();
                 scope.collectVirtualObjectPsiElements(virtualObjectPsiElements, objectType);

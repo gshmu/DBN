@@ -33,7 +33,6 @@ public class AliasObjectResolver extends UnderlyingObjectResolver{
             LOGGER.error("Recursive alias lookup", new Attachment(psiFile.getVirtualFile().getPath(), psiFile.getText()));
             return null;
         }
-        recursionCheck++;
 
         BasePsiElement aliasedObject = PsiUtil.resolveAliasedEntityElement(identifierPsiElement);
         if (aliasedObject != null) {
@@ -49,6 +48,7 @@ public class AliasObjectResolver extends UnderlyingObjectResolver{
                 if (underlyingPsiElement instanceof IdentifierPsiElement && underlyingPsiElement != identifierPsiElement) {
                     IdentifierPsiElement underlyingIdentifierPsiElement = (IdentifierPsiElement) underlyingPsiElement;
                     if (underlyingIdentifierPsiElement.isAlias() && underlyingIdentifierPsiElement.isDefinition()) {
+                        recursionCheck++;
                         return resolve(underlyingIdentifierPsiElement, recursionCheck);
                     }
                 }
