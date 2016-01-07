@@ -2707,7 +2707,7 @@
         </wrapper>
     </element-def>
     <element-def attributes="SPECIFIC" description="Method call / assignment" id="method_call_assignment_statement">
-        <element ref-id="method_call_statement"/>
+        <element ref-id="method_call_statement" />
         <sequence id="000001332" optional="true">
             <token id="000001333" type-id="OPR_ASSIGNMENT" />
             <token id="000001334" optional="true" type-id="KW_NEW" />
@@ -3152,37 +3152,40 @@
             </variant>
         </qualified-identifier>
         <alias-def id="000001552" optional="true" original-name="t_alias" type="DATASET" />
-        <token id="000001553" type-id="KW_USING" />
-        <one-of id="000001554">
-            <qualified-identifier id="000001555" separator="CHR_DOT">
-                <variant>
-                    <object-ref id="000001556" optional="true" referenceable="true" type="SCHEMA" />
-                    <object-ref id="000001557" referenceable="true" type="DATASET" />
-                </variant>
-            </qualified-identifier>
-            <sequence id="000001558">
-                <token id="000001559" type-id="KW_TABLE" />
-                <wrapper id="000001560" template="PARENTHESES">
-                    <object-ref id="000001561" type="ANY" />
-                </wrapper>
-            </sequence>
-            <element ref-id="subquery" />
-        </one-of>
-        <alias-def id="000001562" optional="true" original-name="t_alias" type="DATASET" />
-        <token id="000001563" type-id="KW_ON" />
-        <wrapper id="000001564" template="PARENTHESES">
-            <element ref-id="condition" />
-        </wrapper>
-        <iteration id="000001565" optional="true">
-            <sequence id="000001566">
-                <token id="000001567" type-id="KW_WHEN" />
-                <one-of id="000001568">
+        <element ref-id="merge_using_clause" />
+        <iteration id="000001553" optional="true">
+            <sequence id="000001554">
+                <token id="000001555" type-id="KW_WHEN" />
+                <one-of id="000001556">
                     <element ref-id="merge_update_clause" />
                     <element ref-id="merge_insert_clause" />
                 </one-of>
             </sequence>
         </iteration>
         <element optional="true" ref-id="error_logging_clause" />
+    </element-def>
+    <element-def attributes="CLAUSE" description="MERGE USING clause" id="merge_using_clause"> <!-- CUSTOM -->
+        <token id="000001557" type-id="KW_USING" />
+        <one-of id="000001558">
+            <qualified-identifier id="000001559" separator="CHR_DOT">
+                <variant>
+                    <object-ref id="000001560" optional="true" referenceable="true" type="SCHEMA" />
+                    <object-ref id="000001561" referenceable="true" type="DATASET" />
+                </variant>
+            </qualified-identifier>
+            <sequence id="000001562">
+                <token id="000001563" type-id="KW_TABLE" />
+                <wrapper id="000001564" template="PARENTHESES">
+                    <object-ref id="000001565" type="ANY" />
+                </wrapper>
+            </sequence>
+            <element ref-id="subquery" />
+        </one-of>
+        <alias-def id="000001566" optional="true" original-name="t_alias" type="DATASET" />
+        <token id="000001567" type-id="KW_ON" />
+        <wrapper id="000001568" template="PARENTHESES">
+            <element ref-id="condition" />
+        </wrapper>
     </element-def>
     <element-def attributes="CLAUSE" description="MERGE UPDATE clause" id="merge_update_clause">
         <token id="000001569" type-id="KW_MATCHED" />

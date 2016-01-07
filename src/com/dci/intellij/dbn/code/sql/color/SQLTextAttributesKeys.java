@@ -22,7 +22,7 @@ public interface SQLTextAttributesKeys {
     TextAttributesKey OPERATOR           = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.Operator",          DefaultLanguageHighlighterColors.OPERATION_SIGN);
     TextAttributesKey PARENTHESIS        = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.Parenthesis",       DefaultLanguageHighlighterColors.PARENTHESES);
     TextAttributesKey BRACKET            = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.Brackets",          DefaultLanguageHighlighterColors.BRACKETS);
-    TextAttributesKey UNKNOWN_IDENTIFIER = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.UnknownIdentifier", CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES);
+    TextAttributesKey UNKNOWN_IDENTIFIER = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.UnknownIdentifier", CodeInsightColors.WARNINGS_ATTRIBUTES);
     TextAttributesKey CHAMELEON          = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.Chameleon",         new TextAttributes(null, null, null, null, 0));
     TextAttributesKey VARIABLE           = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.Variable",          TemplateColors.TEMPLATE_VARIABLE_ATTRIBUTES);
     TextAttributesKey BAD_CHARACTER      = HighlighterColors.BAD_CHARACTER;
