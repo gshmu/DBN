@@ -70,9 +70,18 @@ public class PsiUtil {
             BasePsiElement objectPsiElement = lookupInput.findInScope(scope);
             if (objectPsiElement == null) {
                 scope = scope.findEnclosingSequencePsiElement();
-                if (scope != null)
+                if (scope != null) {
                     objectPsiElement = lookupInput.findInScope(scope);
+                }
             }
+
+/*            if(objectPsiElement instanceof IdentifierPsiElement) {
+                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) objectPsiElement;
+                if (identifierPsiElement.isAlias()) {
+                    objectPsiElement = resolveAliasedEntityElement(identifierPsiElement);
+                }
+            }*/
+
             if (objectPsiElement != null) {
                 Set<BasePsiElement> virtualObjectPsiElements = new THashSet<BasePsiElement>();
                 scope.collectVirtualObjectPsiElements(virtualObjectPsiElements, objectType);
@@ -82,6 +91,7 @@ public class PsiUtil {
 
                 }
             }
+
             return objectPsiElement;
 
         }
