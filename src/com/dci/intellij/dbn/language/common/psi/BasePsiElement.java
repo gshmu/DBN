@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiEl
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
@@ -104,11 +105,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
     public boolean containsLineBreaks() {
-        CharSequence charSequence = getNode().getChars();
-        for (int i=0; i<charSequence.length(); i++) {
-            if (charSequence.charAt(i) == '\n') return true;
-        }
-        return false;
+        return StringUtil.containsLineBreak(getNode().getChars());
     }
 
     public void setElementType(ElementType elementType) {

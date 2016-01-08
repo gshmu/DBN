@@ -6582,8 +6582,8 @@
             <element ref-id="subquery_factoring_clause_item" />
         </iteration>
     </element-def>
-    <element-def description="Subquery factoring clause item" id="subquery_factoring_clause_item"> <!-- CUSTOM -->
-        <alias-def id="000003667" original-name="query_name" type="DATASET" />
+    <element-def description="Subquery factoring clause item" id="subquery_factoring_clause_item" attributes="FOLDABLE_BLOCK"> <!-- CUSTOM -->
+        <alias-def id="000003667" original-name="query_name" type="DATASET" attributes="SUBJECT"/>
         <token id="000003668" type-id="KW_AS" />
         <wrapper id="000003669" template="PARENTHESES">
             <element ref-id="subquery" />
