@@ -36,25 +36,28 @@ public class PSQLDocumentationProvider implements DocumentationProvider {
                     }
 
                 }
-             } else if (identifierPsiElement.isObject()) {
-                 if (identifierPsiElement.isDefinition()) {
+             } else {
+                 String objectTypeName = identifierPsiElement.getObjectType().getName();
+                 if (identifierPsiElement.isObject()) {
+                     if (identifierPsiElement.isDefinition()) {
+                         BasePsiElement contextPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(identifierPsiElement.getObjectType());
+                         if (contextPsiElement == null) {
+                             contextPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
+                         }
+                         return contextPsiElement == null ? objectTypeName : objectTypeName + ":\n" + contextPsiElement.getText();
+                     }
+                 }
+
+                 else if (identifierPsiElement.isVariable()) {
                      BasePsiElement contextPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(identifierPsiElement.getObjectType());
                      if (contextPsiElement == null) {
                          contextPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
                      }
-                     return identifierPsiElement.getObjectType().getName() + ":\n" + contextPsiElement.getText();
-                 }
+
+                     String prefix = identifierPsiElement.getObjectType() == DBObjectType.ANY ? "variable" : objectTypeName;
+                     return contextPsiElement == null ? prefix : prefix + ":\n " + contextPsiElement.getText() ;
+                }
              }
-
-             else if (identifierPsiElement.isVariable()) {
-                 BasePsiElement contextPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(identifierPsiElement.getObjectType());
-                 if (contextPsiElement == null) {
-                     contextPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
-                 }
-
-                 String prefix = identifierPsiElement.getObjectType() == DBObjectType.ANY ? "variable" : identifierPsiElement.getObjectType().getName();
-                 return prefix + ":\n " + contextPsiElement.getText() ;
-            }
         }
         return null;
     }

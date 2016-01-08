@@ -27,7 +27,7 @@ public class PsiResolveResult {
     private boolean isConnectionValid;
     private boolean isConnectionActive;
     private long lastResolveInvocation = 0;
-    private int executableTextLength;
+    private int scopeTextLength;
     private int resolveTrials = 0;
     private int overallResolveTrials = 0;
 
@@ -51,7 +51,8 @@ public class PsiResolveResult {
         this.parent = null;
         this.activeConnection = ConnectionHandlerRef.from(connectionHandler);
         this.currentSchema = DBObjectRef.from(psiElement.getCurrentSchema());
-        this.executableTextLength = psiElement.getEnclosingScopePsiElement().getTextLength();
+        BasePsiElement enclosingScopePsiElement = psiElement.findEnclosingScopePsiElement();
+        this.scopeTextLength = enclosingScopePsiElement == null ? 0 : enclosingScopePsiElement.getTextLength();
     }
 
     public void postResolve() {
@@ -94,7 +95,7 @@ public class PsiResolveResult {
         if (referencedElement == null &&
                 resolveTrials > 3 &&
                 !elementTextChanged() &&
-                !enclosingExecutableChanged()) {
+                !enclosingScopeChanged()) {
             return false;
         }
 
@@ -148,9 +149,14 @@ public class PsiResolveResult {
         return !isConnectionActive && connectionHandler!= null && !connectionHandler.isVirtual() && connectionHandler.canConnect();
     }
 
-    private boolean enclosingExecutableChanged() {
+    private boolean enclosingScopeChanged() {
         IdentifierPsiElement element = this.element.get();
-        return element != null && executableTextLength != element.getEnclosingScopePsiElement().getTextLength();
+        if (element != null) {
+            BasePsiElement scopePsiElement = element.findEnclosingScopePsiElement();
+            int scopeTextLength = scopePsiElement == null ? 0 : scopePsiElement.getTextLength();
+            return this.scopeTextLength != scopeTextLength;
+        }
+        return false;
     }
 
     public DBObjectType getObjectType() {
