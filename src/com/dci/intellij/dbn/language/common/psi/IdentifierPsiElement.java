@@ -306,7 +306,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
     private Object[] buildAliasRefVariants() {
         SequencePsiElement statement = (SequencePsiElement) findEnclosingPsiElement(ElementTypeAttribute.STATEMENT);
-        BasePsiElement sourceScope = getEnclosingScopePsiElement();
+        BasePsiElement sourceScope = findEnclosingScopePsiElement();
         DBObjectType objectType = getObjectType();
         PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
         Set<BasePsiElement> aliasDefinitions = lookupAdapter.collectInScope(statement, null);
@@ -449,7 +449,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             if (referencedElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;
                 if (identifierPsiElement.isReference() && identifierPsiElement.isReferenceable()) {
-                    return identifierPsiElement.findEnclosingScopeDemarcationPsiElement() == findEnclosingScopeDemarcationPsiElement();
+                    return identifierPsiElement.findEnclosingScopePsiElement() == findEnclosingScopePsiElement();
                 }
             }
             return true;
@@ -577,14 +577,16 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
     public List<BasePsiElement> findQualifiedUsages() {
         List<BasePsiElement> qualifiedUsages= new ArrayList<BasePsiElement>();
-        BasePsiElement scopePsiElement = getEnclosingScopePsiElement();
-        IdentifierLookupAdapter identifierLookupAdapter = new IdentifierLookupAdapter(this, null, null, null, getChars());
-        Set<BasePsiElement> basePsiElements = identifierLookupAdapter.collectInElement(scopePsiElement, null);
-        if (basePsiElements != null) {
-            for (BasePsiElement basePsiElement : basePsiElements) {
-                QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = basePsiElement.findEnclosingPsiElement(QualifiedIdentifierPsiElement.class);
-                if (qualifiedIdentifierPsiElement != null && qualifiedIdentifierPsiElement.getElementsCount() > 1) {
-                    qualifiedUsages.add(qualifiedIdentifierPsiElement);
+        BasePsiElement scopePsiElement = findEnclosingScopePsiElement();
+        if (scopePsiElement != null) {
+            IdentifierLookupAdapter identifierLookupAdapter = new IdentifierLookupAdapter(this, null, null, null, getChars());
+            Set<BasePsiElement> basePsiElements = identifierLookupAdapter.collectInElement(scopePsiElement, null);
+            if (basePsiElements != null) {
+                for (BasePsiElement basePsiElement : basePsiElements) {
+                    QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = basePsiElement.findEnclosingPsiElement(QualifiedIdentifierPsiElement.class);
+                    if (qualifiedIdentifierPsiElement != null && qualifiedIdentifierPsiElement.getElementsCount() > 1) {
+                        qualifiedUsages.add(qualifiedIdentifierPsiElement);
+                    }
                 }
             }
         }

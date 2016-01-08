@@ -12,6 +12,8 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiEl
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -464,6 +466,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
      *                       ItemPresentation                *
      *********************************************************/
 
+    @Nullable
     public BasePsiElement findEnclosingPsiElement(ElementTypeAttribute attribute) {
         PsiElement element = this;
         while (element != null) {
@@ -478,6 +481,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return null;
     }
 
+    @Nullable
     public BasePsiElement findEnclosingVirtualObjectPsiElement(DBObjectType objectType) {
         PsiElement element = this;
         while (element != null) {
@@ -492,6 +496,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return null;
     }
 
+    @Nullable
     public BasePsiElement findEnclosingPsiElement(ElementTypeAttribute[] typeAttributes) {
         PsiElement element = this;
         while (element != null) {
@@ -509,6 +514,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
 
+    @Nullable
     public NamedPsiElement findEnclosingNamedPsiElement() {
         PsiElement parent = getParent();
         while (parent != null) {
@@ -520,6 +526,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return null;
     }
 
+    @Nullable
     public SequencePsiElement findEnclosingSequencePsiElement() {
         PsiElement parent = getParent();
         while (parent != null) {
@@ -529,16 +536,6 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
             parent = parent.getParent();
         }
         return null;
-    }
-
-    BasePsiElement enclosingScopePsiElement;
-
-    public BasePsiElement getEnclosingScopePsiElement() {
-        if (enclosingScopePsiElement == null) {
-            enclosingScopePsiElement = findEnclosingScopePsiElement();
-        }
-
-        return enclosingScopePsiElement;
     }
 
     public BasePsiElement findEnclosingScopeIsolationPsiElement() {
@@ -557,6 +554,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return basePsiElement;
     }
 
+    @Nullable
     public BasePsiElement findEnclosingScopeDemarcationPsiElement() {
         PsiElement element = this;
         BasePsiElement basePsiElement = null;
@@ -574,41 +572,31 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return basePsiElement;
     }
 
-    /**
-     * @deprecated use scope demarcation and isolation
-     */
-    public BasePsiElement findEnclosingScopePsiElement() {
-        PsiElement element = this;
-        BasePsiElement basePsiElement = null;
-        while (element != null) {
-            if (element instanceof BasePsiElement) {
-                basePsiElement = (BasePsiElement) element;
-                if (basePsiElement.isScopeBoundary()) {
-                    return basePsiElement;
+    private LazyValue<BasePsiElement> enclosingScopePsiElement = new SimpleLazyValue<BasePsiElement>() {
+        @Override
+        protected BasePsiElement load() {
+            PsiElement element = BasePsiElement.this;
+            BasePsiElement basePsiElement = null;
+            while (element != null) {
+                if (element instanceof BasePsiElement) {
+                    basePsiElement = (BasePsiElement) element;
+                    if (basePsiElement.isScopeBoundary()) {
+                        return basePsiElement;
+                    }
                 }
+                element = element.getParent();
             }
-            element = element.getParent();
-        }
 
-        return basePsiElement;
+            return basePsiElement;
+        }
+    };
+
+    @Nullable
+    public BasePsiElement findEnclosingScopePsiElement() {
+        return enclosingScopePsiElement.get();
     }
 
-
-
-/*    public BasePsiElement findEnclosingPsiElement(Class<? extends BasePsiElement> type) {
-        PsiElement parent = getParent();
-        while (parent != null) {
-            if (parent instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) parent;
-                if (type.isAssignableFrom(basePsiElement.getElementType().getClass())) {
-                    return (BasePsiElement) parent;
-                }
-            }
-            parent = parent.getParent();
-        }
-        return null;
-    }*/
-
+    @Nullable
     public <T extends BasePsiElement> T findEnclosingPsiElement(Class<T> psiClass) {
         PsiElement parent = getParent();
         while (parent != null) {
@@ -623,6 +611,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return null;
     }
 
+    @Nullable
     public NamedPsiElement findEnclosingRootPsiElement() {
         PsiElement parent = getParent();
         while (parent != null) {

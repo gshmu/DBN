@@ -1531,7 +1531,7 @@
         <element optional="true" ref-id="for_update_clause" />
         <element optional="true" ref-id="order_by_clause" />
     </element-def>
-    <element-def attributes="DATA_MANIPULATION, QUERY" description="Subquery" id="subquery" virtual-object="DATASET">
+    <element-def attributes="DATA_MANIPULATION, QUERY, SCOPE_DEMARCATION" description="Subquery" id="subquery" virtual-object="DATASET">
         <one-of id="000000782" wrapping-template="PARENTHESES">
             <sequence id="000000783">
                 <element optional="true" ref-id="subquery_factoring_clause" />
