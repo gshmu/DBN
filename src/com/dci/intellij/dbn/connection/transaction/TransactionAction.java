@@ -10,7 +10,7 @@ public enum TransactionAction implements Serializable {
     COMMIT(
             "Commit",
             NotificationType.INFORMATION, "Connection \"{0}\" committed",
-            "Error committing connection \"{0}\". Details: {1}",
+            NotificationType.ERROR, "Error committing connection \"{0}\". Details: {1}",
             false,
             new Executor() {
                 void execute(ConnectionHandler connectionHandler) throws SQLException {
@@ -21,7 +21,7 @@ public enum TransactionAction implements Serializable {
     ROLLBACK(
             "Rollback",
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
-            "Error rolling back connection \"{0}\". Details: {1}",
+            NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
             new Executor() {
                 void execute(ConnectionHandler connectionHandler) throws SQLException {
@@ -32,7 +32,7 @@ public enum TransactionAction implements Serializable {
     ROLLBACK_IDLE(
             "Rollback",
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
-            "Error rolling back connection \"{0}\". Details: {1}",
+            NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
             new Executor() {
                 void execute(ConnectionHandler connectionHandler) throws SQLException {
@@ -42,8 +42,8 @@ public enum TransactionAction implements Serializable {
 
     DISCONNECT(
             "Disconnect",
-            NotificationType.INFORMATION, "Disconnected from \"{0}\"",
-            "Error disconnecting from \"{0}\". Details: {1}",
+            NotificationType.INFORMATION, "Successfully disconnected from \"{0}\"",
+            NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
             new Executor() {
                 @Override
@@ -53,9 +53,9 @@ public enum TransactionAction implements Serializable {
             }),
 
     DISCONNECT_IDLE(
-            "Connect",
+            "Idle Disconnect",
             NotificationType.WARNING, "Disconnected from \"{0}\" because it has exceeded the configured idle timeout.",
-            "Error disconnecting from \"{0}\". Details: {1}",
+            NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
             new Executor() {
                 void execute(ConnectionHandler connectionHandler) throws SQLException {
@@ -66,7 +66,7 @@ public enum TransactionAction implements Serializable {
     PING(
             "Ping",
             null, "",
-            "Error checking connectivity for \"{0}\". Details: {1}",
+            NotificationType.ERROR, "Error checking connectivity for \"{0}\". Details: {1}",
             false,
             new Executor() {
                 @Override
@@ -79,7 +79,7 @@ public enum TransactionAction implements Serializable {
             "Auto-Commit Switch ON",
             NotificationType.WARNING,
             "Auto-Commit switched ON for connection \"{0}\".",
-            "Error switching Auto-Commit ON for connection \"{0}\". Details: {1}",
+            NotificationType.ERROR, "Error switching Auto-Commit ON for connection \"{0}\". Details: {1}",
             true,
             new Executor() {
                 void execute(ConnectionHandler connectionHandler) throws SQLException {
@@ -91,7 +91,7 @@ public enum TransactionAction implements Serializable {
     TURN_AUTO_COMMIT_OFF(
             "Auto-Commit Switch OFF",
             NotificationType.INFORMATION, "Auto-Commit switched OFF for connection \"{0}\".",
-            "Error switching Auto-Commit OFF for connection\"{0}\". Details: {1}",
+            NotificationType.ERROR, "Error switching Auto-Commit OFF for connection\"{0}\". Details: {1}",
             true,
             new Executor() {
                 void execute(ConnectionHandler connectionHandler) throws SQLException {
@@ -103,18 +103,20 @@ public enum TransactionAction implements Serializable {
 
     private String name;
     private String successNotificationMessage;
-    private String errorNotificationMessage;
+    private String failureNotificationMessage;
     private NotificationType notificationType;
+    private NotificationType failureNotificationType;
     private Executor executor;
     private boolean isStatusChange;
 
-    TransactionAction(String name, NotificationType notificationType, String successNotificationMessage, String errorNotificationMessage, boolean isStatusChange, Executor executor) {
+    TransactionAction(String name, NotificationType notificationType, String successNotificationMessage, NotificationType failureNotificationType, String failureNotificationMessage, boolean isStatusChange, Executor executor) {
         this.name = name;
-        this.errorNotificationMessage = errorNotificationMessage;
+        this.failureNotificationMessage = failureNotificationMessage;
         this.successNotificationMessage = successNotificationMessage;
         this.executor = executor;
         this.isStatusChange = isStatusChange;
         this.notificationType = notificationType;
+        this.failureNotificationType = failureNotificationType;
     }
 
     public String getName() {
@@ -125,12 +127,16 @@ public enum TransactionAction implements Serializable {
         return successNotificationMessage;
     }
 
-    public String getErrorNotificationMessage() {
-        return errorNotificationMessage;
+    public String getFailureNotificationMessage() {
+        return failureNotificationMessage;
     }
 
     public NotificationType getNotificationType() {
         return notificationType;
+    }
+
+    public NotificationType getFailureNotificationType() {
+        return failureNotificationType;
     }
 
     public boolean isStatusChange() {
