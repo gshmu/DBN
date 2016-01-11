@@ -78,10 +78,11 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                                 connectionName);
                     }
                 } catch (SQLException ex) {
-                    NotificationUtil.sendErrorNotification(
+                    NotificationUtil.sendNotification(
                             project,
+                            action.getFailureNotificationType(),
                             Constants.DBN_TITLE_PREFIX + action.getName(),
-                            action.getErrorNotificationMessage(),
+                            action.getFailureNotificationMessage(),
                             connectionName,
                             ex.getMessage());
                     success = false;
