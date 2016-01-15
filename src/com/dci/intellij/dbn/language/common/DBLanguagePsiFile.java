@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -311,7 +312,12 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
             return NavigationPsiCache.getPsiDirectory(parentObject);
 
         }
-        return super.getParent();
+        return new ConditionalReadActionRunner<PsiDirectory>() {
+            @Override
+            protected PsiDirectory run() {
+                return DBLanguagePsiFile.super.getParent();
+            }
+        }.start();
     }
 
     @Override
