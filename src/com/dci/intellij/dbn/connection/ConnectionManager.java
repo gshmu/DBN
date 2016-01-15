@@ -91,8 +91,10 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public void dispose() {
         ConnectionBundle connectionBundle = getConnectionBundle();
         super.dispose();
-        idleConnectionCleaner.cancel();
-        idleConnectionCleaner.purge();
+        if (idleConnectionCleaner != null) {
+            idleConnectionCleaner.cancel();
+            idleConnectionCleaner.purge();
+        }
         Disposer.dispose(connectionBundle);
     }
 
