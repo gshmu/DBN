@@ -181,6 +181,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return DBObjectRef.get(parentObjectRef);
     }
 
+    @Nullable
     public DBObject getDefaultNavigationObject() {
         return null;
     }

@@ -150,6 +150,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         return collectionElementType;
     }
 
+    @Nullable
     public DBObject getDefaultNavigationObject() {
         if (isCollection) {
             DBDataType dataType = getCollectionElementType();

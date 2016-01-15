@@ -1,10 +1,12 @@
 package com.dci.intellij.dbn.editor.data.filter.global;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBTable;
 
 public class DataDependencyPathBuilder {
-    public static void buildDependencyPath(DataDependencyPath path, DBColumn sourceColumn, DBColumn targetColumn, DataDependencyPath[] shortestPath) {
+    public static void buildDependencyPath(DataDependencyPath path, @NotNull DBColumn sourceColumn, DBColumn targetColumn, DataDependencyPath[] shortestPath) {
         if (path == null) {
             path = new DataDependencyPath(sourceColumn);
         } else {
@@ -29,7 +31,9 @@ public class DataDependencyPathBuilder {
         for (DBColumn column : sourceTable.getForeignKeyColumns()) {
             if (column != sourceColumn) {
                 DBColumn fkColumn = column.getForeignKeyColumn();
-                buildDependencyPath(path, fkColumn, targetColumn, shortestPath);
+                if (fkColumn != null) {
+                    buildDependencyPath(path, fkColumn, targetColumn, shortestPath);
+                }
             }
 
         }
@@ -48,7 +52,8 @@ public class DataDependencyPathBuilder {
 
         // look first if targetTable is a referenced from masterTable
         for (DBColumn fkColumn : masterTable.getForeignKeyColumns()) {
-            if (fkColumn.getForeignKeyColumn().getDataset() == targetTable) {
+            DBColumn foreignKeyColumn = fkColumn.getForeignKeyColumn();
+            if (foreignKeyColumn != null && foreignKeyColumn.getDataset() == targetTable) {
                 return new DBTable[]{masterTable, targetTable};
             }
         }

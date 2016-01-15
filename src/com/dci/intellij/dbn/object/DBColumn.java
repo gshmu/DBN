@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object;
 
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -16,6 +17,7 @@ public interface DBColumn extends DBObject {
     DBDataset getDataset();
     int getPosition();
 
+    @Nullable
     DBColumn getForeignKeyColumn();
     List<DBColumn> getReferencingColumns();  // foreign key columns referencing to this
     List<DBIndex> getIndexes();

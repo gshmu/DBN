@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import com.dci.intellij.dbn.object.DBColumn;
-import com.dci.intellij.dbn.object.DBDataset;
-import gnu.trove.THashMap;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.object.DBColumn;
+import com.dci.intellij.dbn.object.DBDataset;
+import gnu.trove.THashMap;
 
 public class DatasetFilterInput {
     private DBDataset dataset;
@@ -25,7 +26,7 @@ public class DatasetFilterInput {
         return columns;
     }
 
-    public void setColumnValue(DBColumn column, Object value) {
+    public void setColumnValue(@NotNull DBColumn column, Object value) {
         columns.add(column);
         values.put(column, value);
     }

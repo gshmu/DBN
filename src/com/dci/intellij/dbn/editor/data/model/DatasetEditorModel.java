@@ -105,7 +105,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         loaderCall.start();
     }
 
-    public EditableResultSetHandler getResultSetHandler() {
+    EditableResultSetHandler getResultSetHandler() {
         return resultSetHandler;
     }
 
@@ -278,8 +278,10 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                             constraintColumn = (DBColumn) constraintColumn.getUndisposedElement();
                             if (constraintColumn != null) {
                                 DBColumn foreignKeyColumn = constraintColumn.getForeignKeyColumn();
-                                Object value = cell.getRow().getCellForColumn(constraintColumn).getUserValue();
-                                filterInput.setColumnValue(foreignKeyColumn, value);
+                                if (foreignKeyColumn != null) {
+                                    Object value = cell.getRow().getCellForColumn(constraintColumn).getUserValue();
+                                    filterInput.setColumnValue(foreignKeyColumn, value);
+                                }
                             }
                         }
                         return filterInput;
@@ -401,7 +403,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     /**
      * after delete or insert performed on a result set, the row indexes have to be shifted accordingly
      */
-    public void shiftResultSetRowIndex(int fromIndex, int shifting) {
+    private void shiftResultSetRowIndex(int fromIndex, int shifting) {
         for (DatasetEditorModelRow row : getRows()) {
             if (row.getResultSetRowIndex() > fromIndex) {
                 row.shiftResultSetRowIndex(shifting);

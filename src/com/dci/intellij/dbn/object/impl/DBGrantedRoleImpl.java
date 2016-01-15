@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.object.DBGrantedRole;
@@ -51,6 +52,7 @@ public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
         return isDefaultRole;
     }
 
+    @Nullable
     @Override
     public DBObject getDefaultNavigationObject() {
         return getRole();
