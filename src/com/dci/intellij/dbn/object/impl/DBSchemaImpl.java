@@ -184,6 +184,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         return isEmptySchema;
     }
 
+    @Nullable
     @Override
     public DBObject getDefaultNavigationObject() {
         return getOwner();

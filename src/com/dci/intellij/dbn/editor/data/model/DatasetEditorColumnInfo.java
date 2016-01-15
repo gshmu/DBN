@@ -32,7 +32,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
         }
     };
 
-    public DatasetEditorColumnInfo(DBColumn column, int columnIndex, int resultSetColumnIndex) {
+    DatasetEditorColumnInfo(DBColumn column, int columnIndex, int resultSetColumnIndex) {
         super(columnIndex, resultSetColumnIndex);
         this.columnRef = DBObjectRef.from(column);
         this.columnIndex = columnIndex;
@@ -75,11 +75,13 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
             synchronized (this) {
                 if (possibleValues == null) {
                     possibleValues = EMPTY_LIST;
-                    List<String> values;
+                    List<String> values = null;
                     DBColumn column = getColumn();
                     if (column.isForeignKey()) {
                         DBColumn foreignKeyColumn = column.getForeignKeyColumn();
-                        values = DatasetEditorUtils.loadDistinctColumnValues(foreignKeyColumn);
+                        if (foreignKeyColumn != null) {
+                            values = DatasetEditorUtils.loadDistinctColumnValues(foreignKeyColumn);
+                        }
                     } else {
                         values = DatasetEditorUtils.loadDistinctColumnValues(column);
                     }

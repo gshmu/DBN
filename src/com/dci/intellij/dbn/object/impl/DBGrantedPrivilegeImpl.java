@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
@@ -45,6 +46,7 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl implements DBGrantedPri
         return isAdminOption;
     }
 
+    @Nullable
     @Override
     public DBObject getDefaultNavigationObject() {
         return getPrivilege();
