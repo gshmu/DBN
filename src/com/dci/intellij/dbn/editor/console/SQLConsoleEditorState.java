@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.editor.console;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.editor.BasicTextEditorState;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
@@ -12,14 +10,16 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
-public class SQLConsoleEditorState extends BasicTextEditorState {
+class SQLConsoleEditorState extends BasicTextEditorState {
     private String currentSchema = "";
 
     @Override
     public void writeState(Element targetElement, Project project) {
         super.writeState(targetElement, project);
-        targetElement.setAttribute("current-schema", currentSchema);
+        targetElement.setAttribute("current-schema", CommonUtil.nvl(currentSchema, ""));
     }
 
     @Override
