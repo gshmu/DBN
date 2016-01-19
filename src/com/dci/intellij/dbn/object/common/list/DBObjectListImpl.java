@@ -171,6 +171,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return this;
     }
 
+    @Nullable
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         return null;
     }

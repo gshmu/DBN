@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.editor.action;
 
 import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -50,7 +51,8 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
         }
     }
 
-    protected static ConnectionHandler getConnectionHandler(Project project, VirtualFile virtualFile) {
+    @Nullable
+    protected static ConnectionHandler getConnectionHandler(@Nullable Project project, @Nullable VirtualFile virtualFile) {
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             return connectionMappingManager.getActiveConnection(virtualFile);

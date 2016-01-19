@@ -149,22 +149,27 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         DBObjectRelationListContainer childObjectRelations = getDataset().getChildObjectRelations();
         if (childObjectRelations != null) {
             DBObjectRelationList<DBConstraintColumnRelation> relations = childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
-            for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
-                if (relation.getConstraint().equals(this) && relation.getColumn().equals(column)) {
-                    return relation.getPosition();
+            if (relations != null) {
+                for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
+                    if (relation.getConstraint().equals(this) && relation.getColumn().equals(column)) {
+                        return relation.getPosition();
+                    }
                 }
             }
         }
         return 0;
     }
 
+    @Nullable
     public DBColumn getColumnForPosition(int position) {
         DBObjectRelationListContainer childObjectRelations = getDataset().getChildObjectRelations();
         if (childObjectRelations != null) {
             DBObjectRelationList<DBConstraintColumnRelation> relations = childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
-            for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
-                if (relation.getConstraint().equals(this) && relation.getPosition() == position)
-                    return relation.getColumn();
+            if (relations != null) {
+                for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
+                    if (relation.getConstraint().equals(this) && relation.getPosition() == position)
+                        return relation.getColumn();
+                }
             }
         }
         return null;

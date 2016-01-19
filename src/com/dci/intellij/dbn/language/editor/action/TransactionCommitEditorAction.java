@@ -23,7 +23,9 @@ public class TransactionCommitEditorAction extends TransactionEditorAction {
         if (project != null && virtualFile != null) {
             DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
             ConnectionHandler activeConnection = getConnectionHandler(project, virtualFile);
-            transactionManager.commit(activeConnection, true, false);
+            if (activeConnection != null) {
+                transactionManager.commit(activeConnection, true, false);
+            }
         }
     }
 
