@@ -16,15 +16,27 @@ import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
 public class JiraIssueReportSubmitter extends IssueReportSubmitter {
     private static final HttpClientBuilder HTTP_CLIENT_BUILDER = HttpClientBuilder.create();
     private static final GsonBuilder GSON_BUILDER = new GsonBuilder();
+    private static final String URL = "https://database-navigator.atlassian.net/";
 
     @Override
     public String getTicketUrlStub() {
-        return null;
+        return URL + "browse/";
     }
 
     @Override
     public String getTicketUrl(String ticketId) {
-        return null;
+        return URL + "browse/" + ticketId;
+    }
+
+    @Override
+    public String getMarkupElement(MarkupElement element) {
+        switch (element) {
+            case CODE: return "{code}";
+            case BOLD: return "*";
+            case ITALIC: return "_";
+            case TABLE: return "|";
+        }
+        return "";
     }
 
     @NotNull
@@ -35,7 +47,7 @@ public class JiraIssueReportSubmitter extends IssueReportSubmitter {
             Gson gson = GSON_BUILDER.create();
             String requestString = gson.toJson(ticketRequest.getJsonObject());
 
-            HttpPost httpPost = new HttpPost("https://database-navigator.atlassian.net/rest/api/2/issue");
+            HttpPost httpPost = new HttpPost(URL + "rest/api/2/issue");
             StringEntity params = new StringEntity(requestString);
             httpPost.addHeader("content-type", "application/json");
             httpPost.setEntity(params);

@@ -99,15 +99,17 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
             connectionString = connectionInfo.getDatabaseType().getDisplayName() + " " + connectionInfo.getProductVersion();
             driverString = connectionInfo.getDriverVersion();
         }
+        String codeME = getMarkupElement(MarkupElement.CODE);
+        String boldME = getMarkupElement(MarkupElement.BOLD);
 
         @NonNls final StringBuilder description = new StringBuilder();
-        description.append("Java Version: ").append(System.getProperty("java.version")).append('\n');
-        description.append("Operating System: ").append(System.getProperty("os.name")).append('\n');
-        description.append("IDE Version: ").append(platformBuild).append('\n');
-        description.append("DBN Version: ").append(localPluginVersion).append("\n");
-        description.append("Database Version: ").append(connectionString == null ? "NA" : connectionString).append("\n");
-        description.append("Driver Version: ").append(driverString == null ? "NA" : driverString).append("\n");
-        description.append("Last Action Id: ").append(IdeaLogger.ourLastActionId).append("\n");
+        addEnvInfo(description, "Java Version", System.getProperty("java.version"));
+        addEnvInfo(description, "Operating System", System.getProperty("os.name"));
+        addEnvInfo(description, "IDE Version", platformBuild);
+        addEnvInfo(description, "DBN Version", localPluginVersion);
+        addEnvInfo(description, "Database Version", connectionString == null ? "NA" : connectionString);
+        addEnvInfo(description, "Driver Version", driverString == null ? "NA" : driverString);
+        addEnvInfo(description, "Last Action Id", IdeaLogger.ourLastActionId);
 
         if (StringUtil.isNotEmpty(additionalInfo)) {
             description.append("\n\nUser Message:");
@@ -116,7 +118,10 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
             description.append(LINE_DELIMITER);
         }
 
-        description.append("\n\n").append(event.toString());
+        description.append("\n\n");
+        description.append(codeME);
+        description.append(event.toString());
+        description.append(codeME);
 
         Object eventData = event.getData();
         if (eventData instanceof LogMessageEx) {
@@ -177,8 +182,23 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         return true;
     }
 
+    void addEnvInfo(StringBuilder description, String label, String value) {
+        String boldME = getMarkupElement(MarkupElement.BOLD);
+        String tableME = getMarkupElement(MarkupElement.TABLE);
+        description.append(tableME);
+        description.append(label);
+        description.append(": ");
+        description.append(tableME);
+        description.append(boldME);
+        description.append(value);
+        description.append(boldME);
+        description.append(tableME);
+        description.append('\n');
+    }
+
     public abstract String getTicketUrlStub();
     public abstract String getTicketUrl(String ticketId);
+    public String getMarkupElement(MarkupElement element) {return "";}
 
     @NotNull
     public abstract TicketResponse submit(@NotNull IdeaLoggingEvent[] events, String pluginVersion, String summary, String description) throws Exception;
