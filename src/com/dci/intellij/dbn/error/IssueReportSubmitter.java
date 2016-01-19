@@ -1,46 +1,26 @@
 package com.dci.intellij.dbn.error;
 
 import java.awt.Component;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.intellij.diagnostic.LogMessage;
 import com.intellij.diagnostic.LogMessageEx;
-import com.intellij.errorreport.bean.ErrorBean;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
@@ -57,26 +37,14 @@ import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Consumer;
-import com.intellij.util.containers.ContainerUtil;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.FAILED;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.NEW_ISSUE;
 
-public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
+abstract class IssueReportSubmitter extends ErrorReportSubmitter {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private static final String URL = "http://dci.myjetbrains.com/youtrack/";
-    private static final String ISSUE_URL = URL + "rest/issue";
-    private static final String LOGIN_URL = URL + "rest/user/login";
     private static final String ENCODING = "UTF-8";
-    public static final String LINE_DELIMITER = "\n__________________________________________________________________\n";
-
-
-    private static final GsonBuilder JIRA_GSON_BUILDER = new GsonBuilder();
-    private static final HttpClientBuilder JIRA_HTTP_CLIENT_BUILDER = HttpClientBuilder.create();
-
-    public DBNErrorReportSubmitter() {
-        System.out.println();
-    }
+    private static final String LINE_DELIMITER = "\n__________________________________________________________________\n";
 
     @Override
     public IdeaPluginDescriptor getPluginDescriptor() {
@@ -115,7 +83,7 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
 
         if (repositoryPluginVersion != null && repositoryPluginVersion.compareTo(localPluginVersion) > 0) {
             NotificationUtil.sendWarningNotification(project, Constants.DBN_TITLE_PREFIX + "New Plugin Version Available", "A newer version of Database Navigator plugin is available in repository" + ". Error report not sent.");
-            consumer.consume(new SubmittedReportInfo(ISSUE_URL, "", FAILED));
+            consumer.consume(new SubmittedReportInfo(getTicketUrlStub(), "", FAILED));
             return false;
         }
 
@@ -177,7 +145,7 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
         new BackgroundTask(project, "Submitting issue report", false, false) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                String result = null;
+                TicketResponse result = null;
                 try {
                     result = submit(events, localPluginVersion, summary, description.toString());
                 } catch (Exception e) {
@@ -185,95 +153,41 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
                     NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
                             "<html>Failed to send error report: "+ e.getMessage() + "</html>");
 
-                    consumer.consume(new SubmittedReportInfo(ISSUE_URL, "", FAILED));
+                    consumer.consume(new SubmittedReportInfo(getTicketUrlStub(), "", FAILED));
                     return;
                 }
 
-                LOGGER.info("Error report submitted, response: " + result);
+                String errorMessage = result.getErrorMessage();
+                if (StringUtil.isEmpty(errorMessage)) {
+                    LOGGER.info("Error report submitted, response: " + result);
 
-                String ticketId = null;
-                try {
-                    Pattern regex = Pattern.compile("id=\"([^\"]+)\"", Pattern.DOTALL | Pattern.MULTILINE);
-                    Matcher regexMatcher = regex.matcher(result);
-                    if (regexMatcher.find()) {
-                        ticketId = regexMatcher.group(1);
-                    }
-                } catch (PatternSyntaxException e) {
-                    NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting", "Failed to receive error report confirmation");
-                    consumer.consume(new SubmittedReportInfo(ISSUE_URL, "", FAILED));
-                    return;
+                    String ticketId = result.getTicketId();
+                    String ticketUrl = getTicketUrl(ticketId);
+                    NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
+                            "<html>Error report successfully sent. Ticket <a href='" + ticketUrl + "'>" + ticketId + "</a> created.</html>");
+
+                    consumer.consume(new SubmittedReportInfo(ticketUrl, ticketId, NEW_ISSUE));
+                } else {
+                    NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting", errorMessage);
+                    consumer.consume(new SubmittedReportInfo(getTicketUrlStub(), "", FAILED));
                 }
-
-                String ticketUrl = URL + "issue/" + ticketId;
-                NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
-                        "<html>Error report successfully sent. Ticket <a href='" + ticketUrl + "'>" + ticketId + "</a> created.</html>");
-
-                consumer.consume(new SubmittedReportInfo(ticketUrl, ticketId, NEW_ISSUE));
             }
         }.start();
 
         return true;
     }
 
+    public abstract String getTicketUrlStub();
+    public abstract String getTicketUrl(String ticketId);
+
     @NotNull
-    public String submit(@NotNull IdeaLoggingEvent[] events, String pluginVersion, String summary, String description) throws Exception{
-        StringBuilder response = new StringBuilder("");
-
-        submitJiraTicket(summary, description, pluginVersion);
-        if (true) return "";
-
-        ErrorBean errorBean = new ErrorBean(events[0].getThrowable(), IdeaLogger.ourLastActionId);
-        Object eventData = events[0].getData();
-        if (eventData instanceof LogMessageEx) {
-            errorBean.setAttachments(((LogMessageEx)eventData).getAttachments());
-        }
-
-        Map<String, String> parameters = createParameters(summary, description, pluginVersion, errorBean);
-        byte[] output = join(parameters);
-        URL issueUrl = new URL(ISSUE_URL);
-        URLConnection issueConnection = issueUrl.openConnection();
-        issueConnection.setDoOutput(true);
-
-        OutputStream outputStream = issueConnection.getOutputStream();
-        try {
-            outputStream.write(output);
-        } finally {
-            outputStream.close();
-        }
-
-        BufferedReader responseReader = new BufferedReader(new InputStreamReader(issueConnection.getInputStream()));
-
-        String line;
-        while ((line = responseReader.readLine()) != null) {
-            response.append(line);
-        }
-        return response.toString();
-    }
-
-    private static Map<String, String> createParameters(String summary, String description, String pluginVersion, ErrorBean error) {
-        Map<String, String> params = ContainerUtil.newLinkedHashMap();
-
-        params.put("login", "autosubmit");
-        params.put("password", "autosubmit");
-
-        params.put("project", "DBNE");
-        params.put("assignee", "Unassigned");
-        params.put("summary", summary);
-        params.put("description", description);
-        params.put("priority", "4");
-        params.put("type", "Exception");
-
-        if (pluginVersion != null)                     {
-            params.put("affectsVersion", pluginVersion);
-        }
-        return params;
-    }
+    public abstract TicketResponse submit(@NotNull IdeaLoggingEvent[] events, String pluginVersion, String summary, String description) throws Exception;
 
     private static String format(Calendar calendar) {
         return calendar == null ?  null : Long.toString(calendar.getTime().getTime());
     }
 
-    private static byte[] join(Map<String, String> params) throws UnsupportedEncodingException {
+    static byte[] join(Map<String, String> params) throws UnsupportedEncodingException {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, String> param : params.entrySet()) {
             if (com.intellij.openapi.util.text.StringUtil.isEmpty(param.getKey())) {
@@ -287,81 +201,5 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
             }
         }
         return builder.toString().getBytes(ENCODING);
-    }
-
-    private void submitJiraTicket(String summary, String description, String pluginVersion) {
-        JiraTicketRequest request = new JiraTicketRequest(summary, description);
-        JiraTicketResponse response = request.submit();
-    }
-
-    private static class JiraTicketRequest{
-        private JsonObject request = new JsonObject();
-
-        public JiraTicketRequest(String summary, String description) {
-            summary = summary.replace("\r\n", " ").replace("\t", " ");
-
-            // project
-            JsonObject project = new JsonObject();
-            project.addProperty("key", "DBN");
-
-            // issue type
-            JsonObject issueType = new JsonObject();
-            issueType.addProperty("name", "Exception");
-
-
-            // fields
-            JsonObject fields = new JsonObject();
-            fields.add("project", project);
-            fields.addProperty("summary", summary);
-            fields.addProperty("description", description);
-            fields.add("issuetype", issueType);
-            request.add("fields", fields);
-        }
-
-        public JiraTicketResponse submit() {
-            try {
-                Gson gson = JIRA_GSON_BUILDER.create();
-                String requestString = gson.toJson(request);
-
-                HttpPost httpPost = new HttpPost("https://database-navigator.atlassian.net/rest/api/2/issue");
-                StringEntity params = new StringEntity(requestString);
-                httpPost.addHeader("content-type", "application/json");
-                httpPost.setEntity(params);
-                HttpClient httpClient = JIRA_HTTP_CLIENT_BUILDER.build();
-                HttpResponse httpResponse = httpClient.execute(httpPost);
-
-                if (httpResponse == null) {
-                    return new JiraTicketResponse(null, "Received empty response from server");
-                } else {
-                    InputStream in = httpResponse.getEntity().getContent();
-                    String responseString = CommonUtil.readInputStream(in);
-                    return new JiraTicketResponse(responseString, null);
-                }
-            } catch (Exception e) {
-                return new JiraTicketResponse(null, e.getMessage());
-            }
-        }
-    }
-
-    private static class JiraTicketResponse {
-        private JsonObject response;
-        private String errorMessage;
-
-        public JiraTicketResponse(@Nullable String responseString, @Nullable String errorMessage) {
-            if (StringUtil.isNotEmpty(responseString)) {
-                Gson gson = JIRA_GSON_BUILDER.create();
-                this.response = gson.fromJson(responseString, JsonObject.class);
-            }
-            this.errorMessage = errorMessage;
-        }
-
-        @Nullable
-        public String getIssueId() {
-            return response == null ? null : response.get("key").getAsString();
-        }
-
-        public String getErrorMessage() {
-            return errorMessage;
-        }
     }
 }
