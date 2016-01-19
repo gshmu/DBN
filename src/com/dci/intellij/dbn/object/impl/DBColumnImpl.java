@@ -178,9 +178,11 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         if (childObjectRelations != null) {
             DBObjectRelationList<DBConstraintColumnRelation> constraintColumnRelations =
                     childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
-            for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
-                if (relation.getColumn().equals(this) && relation.getConstraint().equals(constraint))
-                    return relation.getPosition();
+            if (constraintColumnRelations != null) {
+                for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
+                    if (relation.getColumn().equals(this) && relation.getConstraint().equals(constraint))
+                        return relation.getPosition();
+                }
             }
         }
         return 0;
@@ -191,9 +193,11 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         if (childObjectRelations != null) {
             DBObjectRelationList<DBConstraintColumnRelation> constraintColumnRelations =
                     childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
-            for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
-                if (relation.getColumn().equals(this) && relation.getPosition() == position) {
-                    return relation.getConstraint();
+            if (constraintColumnRelations != null) {
+                for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
+                    if (relation.getColumn().equals(this) && relation.getPosition() == position) {
+                        return relation.getConstraint();
+                    }
                 }
             }
         }

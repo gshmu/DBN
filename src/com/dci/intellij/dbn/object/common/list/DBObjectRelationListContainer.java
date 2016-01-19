@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.object.common.list;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyAdapter;
@@ -35,6 +36,7 @@ public class DBObjectRelationListContainer implements Disposable {
                  compatibilityInterface.supportsObjectType(objectRelationType.getTargetType().getTypeId()));
     }
 
+    @Nullable
     public DBObjectRelationList getObjectRelationList(DBObjectRelationType objectRelationType) {
         if (objectRelationLists != null) {
             for (DBObjectRelationList objectRelationList : objectRelationLists) {
@@ -46,6 +48,7 @@ public class DBObjectRelationListContainer implements Disposable {
         return null;
     }
 
+    @Nullable
     public DBObjectRelationList createObjectRelationList(
             DBObjectRelationType type,
             GenericDatabaseElement parent,

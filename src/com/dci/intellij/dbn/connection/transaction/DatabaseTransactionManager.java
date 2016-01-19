@@ -101,7 +101,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         }
     }
 
-    public void commit(final ConnectionHandler connectionHandler, boolean fromEditor, boolean background) {
+    public void commit(final @NotNull ConnectionHandler connectionHandler, boolean fromEditor, boolean background) {
         if (fromEditor && connectionHandler.getUncommittedChanges().size() > 1) {
             Project project = connectionHandler.getProject();
             VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
@@ -118,7 +118,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         }
     }
 
-    public void rollback(final ConnectionHandler connectionHandler, boolean fromEditor, boolean background) {
+    public void rollback(final @NotNull ConnectionHandler connectionHandler, boolean fromEditor, boolean background) {
         if (fromEditor && connectionHandler.getUncommittedChanges().size() > 1) {
             Project project = connectionHandler.getProject();
             VirtualFile selectedFile = EditorUtil.getSelectedFile(project);

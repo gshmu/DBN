@@ -190,6 +190,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return getObjectType().matches(objectType);
     }
 
+    @Nullable
     @Override
     public GenericDatabaseElement getParentElement() {
         return getParentObject();
@@ -479,6 +480,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return objectRef.get();
     }
 
+    @Nullable
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         if(dynamicContentType instanceof DBObjectType && childObjects != null) {
             DBObjectType objectType = (DBObjectType) dynamicContentType;
