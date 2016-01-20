@@ -88,8 +88,8 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         }
 
         IdeaLoggingEvent event = events[0];
-        String eventText = event.getThrowableText();
-        final String summary = eventText.substring(0, Math.min(Math.max(80, eventText.length()), 80));
+        String eventSummary = event.getThrowableText();
+        final String summary = eventSummary.substring(0, Math.min(Math.max(80, eventSummary.length()), 80));
 
         String platformBuild = ApplicationInfo.getInstance().getBuild().asString();
         ConnectionInfo connectionInfo = ConnectionManager.getLastUsedConnectionInfo();
@@ -120,7 +120,11 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
 
         description.append("\n\n");
         description.append(codeME);
-        description.append(event.toString());
+        String eventDetails = event.toString();
+        if (eventDetails.length() > 30000) {
+            eventDetails = eventDetails.substring(0, 30000);
+        }
+        description.append(eventDetails);
         description.append(codeME);
 
         Object eventData = event.getData();
