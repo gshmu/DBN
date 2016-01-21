@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
@@ -89,7 +90,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
 
         IdeaLoggingEvent event = events[0];
         String eventSummary = event.getThrowableText();
-        final String summary = eventSummary.substring(0, Math.min(Math.max(80, eventSummary.length()), 80));
+        final String summary = eventSummary.substring(0, Math.min(Math.max(100, eventSummary.length()), 100));
 
         String platformBuild = ApplicationInfo.getInstance().getBuild().asString();
         ConnectionInfo connectionInfo = ConnectionManager.getLastUsedConnectionInfo();
@@ -99,9 +100,6 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
             connectionString = connectionInfo.getDatabaseType().getDisplayName() + " " + connectionInfo.getProductVersion();
             driverString = connectionInfo.getDriverVersion();
         }
-        String codeME = getMarkupElement(MarkupElement.CODE);
-        String boldME = getMarkupElement(MarkupElement.BOLD);
-
         @NonNls final StringBuilder description = new StringBuilder();
         addEnvInfo(description, "Java Version", System.getProperty("java.version"));
         addEnvInfo(description, "Operating System", System.getProperty("os.name"));
@@ -112,20 +110,24 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         addEnvInfo(description, "Last Action Id", IdeaLogger.ourLastActionId);
 
         if (StringUtil.isNotEmpty(additionalInfo)) {
-            description.append("\n\nUser Message:");
-            description.append(LINE_DELIMITER);
+            description.append(getMarkupElement(MarkupElement.PANEL, "User Message"));
             description.append(additionalInfo);
-            description.append(LINE_DELIMITER);
+            description.append(getMarkupElement(MarkupElement.PANEL));
         }
 
-        description.append("\n\n");
-        description.append(codeME);
-        String eventDetails = event.toString();
+        String exceptionMessage = event.getMessage();
+        if (StringUtil.isNotEmpty(exceptionMessage) && !"null".equals(exceptionMessage)) {
+            description.append("\n\n");
+            description.append(exceptionMessage);
+            description.append("\n\n");
+        }
+        description.append(getMarkupElement(MarkupElement.CODE, event.getThrowable().getClass().getName()));
+        String eventDetails = event.getThrowableText();
         if (eventDetails.length() > 30000) {
             eventDetails = eventDetails.substring(0, 30000);
         }
         description.append(eventDetails);
-        description.append(codeME);
+        description.append(getMarkupElement(MarkupElement.CODE));
 
         Object eventData = event.getData();
         if (eventData instanceof LogMessageEx) {
@@ -162,7 +164,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
                     NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
                             "<html>Failed to send error report: "+ e.getMessage() + "</html>");
 
-                    consumer.consume(new SubmittedReportInfo(getTicketUrlStub(), "", FAILED));
+                    consumer.consume(new SubmittedReportInfo(null, null, FAILED));
                     return;
                 }
 
@@ -177,8 +179,9 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
 
                     consumer.consume(new SubmittedReportInfo(ticketUrl, ticketId, NEW_ISSUE));
                 } else {
-                    NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting", errorMessage);
-                    consumer.consume(new SubmittedReportInfo(getTicketUrlStub(), "", FAILED));
+                    NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
+                            "<html>Failed to send error report: "+ errorMessage + "</html>");
+                    consumer.consume(new SubmittedReportInfo(null, null, FAILED));
                 }
             }
         }.start();
@@ -202,7 +205,8 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
 
     public abstract String getTicketUrlStub();
     public abstract String getTicketUrl(String ticketId);
-    public String getMarkupElement(MarkupElement element) {return "";}
+    public String getMarkupElement(MarkupElement element) {return getMarkupElement(element, null);}
+    public String getMarkupElement(MarkupElement element, String title) {return CommonUtil.nvl(title, "");}
 
     @NotNull
     public abstract TicketResponse submit(@NotNull IdeaLoggingEvent[] events, String pluginVersion, String summary, String description) throws Exception;

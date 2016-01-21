@@ -29,12 +29,13 @@ public class JiraIssueReportSubmitter extends IssueReportSubmitter {
     }
 
     @Override
-    public String getMarkupElement(MarkupElement element) {
+    public String getMarkupElement(MarkupElement element, String title) {
         switch (element) {
-            case CODE: return "{code}";
             case BOLD: return "*";
             case ITALIC: return "_";
             case TABLE: return "|";
+            case CODE: return title == null ? "{code}" : "{code:title=" + title + "}";
+            case PANEL: return title == null ? "{panel}" : "{panel:title=" + title + "}";
         }
         return "";
     }
@@ -46,9 +47,10 @@ public class JiraIssueReportSubmitter extends IssueReportSubmitter {
         try {
             Gson gson = GSON_BUILDER.create();
             String requestString = gson.toJson(ticketRequest.getJsonObject());
+            StringEntity params = new StringEntity(requestString);
 
             HttpPost httpPost = new HttpPost(URL + "rest/api/2/issue");
-            StringEntity params = new StringEntity(requestString);
+            httpPost.addHeader("Authorization", "Basic cGx1Z2luOlNfcGFzczAx");
             httpPost.addHeader("content-type", "application/json");
             httpPost.setEntity(params);
             HttpClient httpClient = HTTP_CLIENT_BUILDER.build();
