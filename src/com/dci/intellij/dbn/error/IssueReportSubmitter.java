@@ -190,12 +190,12 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         String boldME = getMarkupElement(MarkupElement.BOLD);
         String tableME = getMarkupElement(MarkupElement.TABLE);
         description.append(tableME);
+        description.append(boldME);
         description.append(label);
+        description.append(boldME);
         description.append(": ");
         description.append(tableME);
-        description.append(boldME);
         description.append(value);
-        description.append(boldME);
         description.append(tableME);
         description.append('\n');
     }
