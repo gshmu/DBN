@@ -641,6 +641,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return this;
     }
 
+    @Nullable
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         if(dynamicContentType instanceof DBObjectType) {
             DBObjectType objectType = (DBObjectType) dynamicContentType;

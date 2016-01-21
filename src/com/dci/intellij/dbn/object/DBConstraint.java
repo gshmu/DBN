@@ -25,5 +25,5 @@ public interface DBConstraint extends DBSchemaObject {
 
     List<DBColumn> getColumns();
     int getColumnPosition(DBColumn constraint);
-    DBColumn getColumnForPosition(int position);
+    @Nullable DBColumn getColumnForPosition(int position);
 }

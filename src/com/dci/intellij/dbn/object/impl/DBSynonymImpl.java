@@ -67,6 +67,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
         return DBObjectType.SYNONYM;
     }
 
+    @Nullable
     @Override
     public DBObject getDefaultNavigationObject() {
         return getUnderlyingObject();

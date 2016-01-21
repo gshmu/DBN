@@ -23,7 +23,9 @@ public class TransactionRollbackEditorAction extends TransactionEditorAction {
         if (project != null) {
             DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
             ConnectionHandler activeConnection = getConnectionHandler(project, virtualFile);
-            transactionManager.rollback(activeConnection, true, false);
+            if (activeConnection != null) {
+                transactionManager.rollback(activeConnection, true, false);
+            }
         }
     }
 

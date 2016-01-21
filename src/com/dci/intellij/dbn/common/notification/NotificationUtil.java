@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.common.notification;
 
-import javax.swing.event.HyperlinkEvent;
 import java.text.MessageFormat;
-import org.jetbrains.annotations.NotNull;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -26,14 +24,11 @@ public class NotificationUtil {
 
     public static void sendNotification(Project project, NotificationType type, String title, String message, String ... args) {
         if (project != null && !project.isDisposed()) {
-            final NotificationListener listener = new NotificationListener() {
-                public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-                    notification.expire();
-                }
-            };
+            final NotificationListener listener = new NotificationListener.UrlOpeningListener(true);
 
             message = MessageFormat.format(message, args);
             Notification notification = new Notification("Database Navigator", title, message, type, listener);
+            notification.setImportant(false);
             Notifications.Bus.notify(notification, project);
         }
     }

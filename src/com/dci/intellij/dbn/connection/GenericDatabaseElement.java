@@ -13,5 +13,7 @@ public interface GenericDatabaseElement extends ConnectionProvider, Disposable {
     @NotNull Project getProject();
     @Nullable GenericDatabaseElement getParentElement();
     GenericDatabaseElement getUndisposedElement();
+
+    @Nullable
     DynamicContent getDynamicContent(DynamicContentType dynamicContentType);
 }

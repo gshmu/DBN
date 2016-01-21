@@ -283,6 +283,7 @@ public class DBVirtualObjectBundle implements DBObjectBundle{
         return null;
     }
 
+    @Nullable
     @Override
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         return null;

@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.list;
 
-import java.util.Comparator;
-import java.util.List;
+import com.dci.intellij.dbn.common.filter.Filter;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.filter.Filter;
+import java.util.Comparator;
+import java.util.List;
 
 public interface FiltrableList<T> extends List<T> {
     List<T> getFullList();
@@ -13,5 +13,5 @@ public interface FiltrableList<T> extends List<T> {
     Filter<T> getFilter();
 
     // update methods should not be affected by filtering
-    void sort(Comparator<T> comparator);
+    void sort(Comparator<? super T> comparator);
 }

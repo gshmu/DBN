@@ -90,7 +90,7 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
         return PsiElement.EMPTY_ARRAY;
     }
 
-    public static Set<DBObject> identifyPotentialParentObjects(DBObjectType objectType, @Nullable ObjectTypeFilter filter, BasePsiElement sourceScope, LeafPsiElement lookupIssuer) {
+    public static Set<DBObject> identifyPotentialParentObjects(DBObjectType objectType, @Nullable ObjectTypeFilter filter, @NotNull BasePsiElement sourceScope, LeafPsiElement lookupIssuer) {
         ConnectionHandler connectionHandler = sourceScope.getActiveConnection();
         Set<DBObject> parentObjects = null;
         Set<DBObjectType> parentTypes = objectType.getGenericParents();

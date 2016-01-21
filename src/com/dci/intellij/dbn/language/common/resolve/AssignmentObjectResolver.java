@@ -22,9 +22,12 @@ public class AssignmentObjectResolver extends UnderlyingObjectResolver{
     @Override
     protected DBObject resolve(IdentifierPsiElement identifierPsiElement, int recursionCheck) {
         NamedPsiElement enclosingNamedPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
-        PsiLookupAdapter lookupAdapter = new ObjectReferenceLookupAdapter(identifierPsiElement, DBObjectType.TYPE, null);
-        BasePsiElement underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
+        if (enclosingNamedPsiElement != null) {
+            PsiLookupAdapter lookupAdapter = new ObjectReferenceLookupAdapter(identifierPsiElement, DBObjectType.TYPE, null);
+            BasePsiElement underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
 
-        return underlyingObjectCandidate == null ? null : underlyingObjectCandidate.resolveUnderlyingObject() ;
+            return underlyingObjectCandidate == null ? null : underlyingObjectCandidate.resolveUnderlyingObject() ;
+        }
+        return null;
     }
 }

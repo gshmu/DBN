@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.object.impl;
 
+import javax.swing.Icon;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
@@ -23,14 +31,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBUserImpl extends DBObjectImpl implements DBUser {
     DBObjectList<DBGrantedRole> roles;
@@ -84,6 +84,7 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
                (isLocked ? Icons.DBO_USER_LOCKED : Icons.DBO_USER);
     }
 
+    @Nullable
     @Override
     public DBObject getDefaultNavigationObject() {
         return getSchema();

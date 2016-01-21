@@ -127,6 +127,7 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
         return this;
     }
 
+    @Nullable
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         return null;
     }

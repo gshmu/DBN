@@ -6,12 +6,12 @@ import java.util.Map;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 
-public class DatasetJoin {
+class DatasetJoin {
     private DBDataset dataset1;
     private DBDataset dataset2;
     private Map<DBColumn, DBColumn> mappings;
 
-    public DatasetJoin(DBDataset dataset1, DBDataset dataset2, boolean lenient) {
+    DatasetJoin(DBDataset dataset1, DBDataset dataset2, boolean lenient) {
         this.dataset1 = dataset1;
         this.dataset2 = dataset2;
 
@@ -27,7 +27,7 @@ public class DatasetJoin {
             for (DBColumn column1 : dataset1.getColumns()) {
                 if (column1.isForeignKey()) {
                     DBColumn column2 = column1.getForeignKeyColumn();
-                    if (column2.getDataset().equals(dataset2)) {
+                    if (column2 != null && column2.getDataset().equals(dataset2)) {
                         createMapping(column1, column2);
                     }
                 }

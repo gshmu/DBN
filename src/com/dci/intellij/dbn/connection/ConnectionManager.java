@@ -91,13 +91,15 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public void dispose() {
         ConnectionBundle connectionBundle = getConnectionBundle();
         super.dispose();
-        idleConnectionCleaner.cancel();
-        idleConnectionCleaner.purge();
+        if (idleConnectionCleaner != null) {
+            idleConnectionCleaner.cancel();
+            idleConnectionCleaner.purge();
+        }
         Disposer.dispose(connectionBundle);
     }
 
     @Nullable
-    public static ConnectionHandler getLastUsedConnection() {
+    private static ConnectionHandler getLastUsedConnection() {
         return ConnectionHandlerRef.get(lastUsedConnection);
     }
 
@@ -107,7 +109,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         return lastUsedConnection == null ? null : lastUsedConnection.getConnectionInfo();
     }
 
-    public static void setLastUsedConnection(@NotNull ConnectionHandler lastUsedConnection) {
+    static void setLastUsedConnection(@NotNull ConnectionHandler lastUsedConnection) {
         ConnectionManager.lastUsedConnection = lastUsedConnection.getRef();
     }
 
@@ -115,7 +117,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     *                       Listeners                        *
     *********************************************************/
 
-    ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
+    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
         @Override
         public void connectionChanged(String connectionId) {
             ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
@@ -224,7 +226,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public AuthenticationInfo getTemporaryAuthentication(ConnectionDatabaseSettings databaseSettings) {
+    private AuthenticationInfo getTemporaryAuthentication(ConnectionDatabaseSettings databaseSettings) {
         AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo().clone();
         if (!authenticationInfo.isProvided()) {
             return openUserPasswordDialog(databaseSettings.getProject(), null, authenticationInfo);
@@ -264,7 +266,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }.start();
     }
 
-    public void showConnectionInfoDialog(final Project project, final ConnectionInfo connectionInfo, final String connectionName, final EnvironmentType environmentType) {
+    private void showConnectionInfoDialog(final Project project, final ConnectionInfo connectionInfo, final String connectionName, final EnvironmentType environmentType) {
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
@@ -275,7 +277,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }.start();
     }
 
-    public static AuthenticationInfo openUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull AuthenticationInfo authenticationInfo) {
+    static AuthenticationInfo openUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull AuthenticationInfo authenticationInfo) {
         ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(project, connectionHandler, authenticationInfo);
         passwordDialog.show();
         if (passwordDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
@@ -340,7 +342,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         return false;
     }
 
-    public void commitAll() {
+    private void commitAll() {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
         for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers()) {
             if (connectionHandler.hasUncommittedChanges()) {
@@ -349,7 +351,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void rollbackAll() {
+    private void rollbackAll() {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
         for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers()) {
             if (connectionHandler.hasUncommittedChanges()) {
@@ -393,7 +395,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void disposeConnections(@NotNull final List<ConnectionHandler> connectionHandlers) {
+    void disposeConnections(@NotNull final List<ConnectionHandler> connectionHandlers) {
         if (connectionHandlers.size() > 0) {
             final Project project = getProject();
             new ConditionalLaterInvocator() {
