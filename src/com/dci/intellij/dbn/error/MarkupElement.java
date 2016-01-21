@@ -4,5 +4,6 @@ public enum MarkupElement {
     CODE,
     BOLD,
     ITALIC,
-    TABLE
+    TABLE,
+    PANEL
 }

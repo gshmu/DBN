@@ -24,7 +24,7 @@ public class NotificationUtil {
 
     public static void sendNotification(Project project, NotificationType type, String title, String message, String ... args) {
         if (project != null && !project.isDisposed()) {
-            final NotificationListener listener = new NotificationListener.UrlOpeningListener(false);
+            final NotificationListener listener = new NotificationListener.UrlOpeningListener(true);
 
             message = MessageFormat.format(message, args);
             Notification notification = new Notification("Database Navigator", title, message, type, listener);
