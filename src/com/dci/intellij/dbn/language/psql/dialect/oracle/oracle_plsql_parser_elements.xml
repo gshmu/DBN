@@ -2965,7 +2965,7 @@
         </sequence>
         <token id="000001465" type-id="KW_END" />
         <token id="000001466" optional="true" type-id="KW_CASE" />
-        <variable-def id="000001467" optional="true" type="LABEL" />
+        <variable-ref id="000001467" optional="true" type="LABEL" />
     </element-def>
     <element-def description="LOOP statement" id="loop_statement">
         <one-of id="000001468">
