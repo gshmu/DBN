@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.object.impl;
 
+import javax.swing.Icon;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
@@ -29,14 +37,6 @@ import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     private DBDataType dataType;
@@ -94,6 +94,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     }
 
     @Override
+    @Nullable
     public DBObject getDefaultNavigationObject() {
         if (isForeignKey) {
             return getForeignKeyColumn();
@@ -112,7 +113,8 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
 
         if (isForeignKey && getForeignKeyColumn() != null) {
             ttb.append(true, "FK column:&nbsp;", false);
-            ttb.append(false, getForeignKeyColumn().getDataset().getName() + '.' + getForeignKeyColumn().getName(), false);
+            DBColumn foreignKeyColumn = getForeignKeyColumn();
+            ttb.append(false, foreignKeyColumn.getDataset().getName() + '.' + foreignKeyColumn.getName(), false);
         }
 
         ttb.createEmptyRow();
@@ -176,9 +178,11 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         if (childObjectRelations != null) {
             DBObjectRelationList<DBConstraintColumnRelation> constraintColumnRelations =
                     childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
-            for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
-                if (relation.getColumn().equals(this) && relation.getConstraint().equals(constraint))
-                    return relation.getPosition();
+            if (constraintColumnRelations != null) {
+                for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
+                    if (relation.getColumn().equals(this) && relation.getConstraint().equals(constraint))
+                        return relation.getPosition();
+                }
             }
         }
         return 0;
@@ -189,15 +193,18 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         if (childObjectRelations != null) {
             DBObjectRelationList<DBConstraintColumnRelation> constraintColumnRelations =
                     childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
-            for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
-                if (relation.getColumn().equals(this) && relation.getPosition() == position) {
-                    return relation.getConstraint();
+            if (constraintColumnRelations != null) {
+                for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
+                    if (relation.getColumn().equals(this) && relation.getPosition() == position) {
+                        return relation.getConstraint();
+                    }
                 }
             }
         }
         return null;
     }
 
+    @Nullable
     public DBColumn getForeignKeyColumn() {
         for (DBConstraint constraint : getConstraints()) {
             if (constraint.isForeignKey()) {
@@ -252,7 +259,8 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
             }
 
             if (isForeignKey) {
-                navigationLists.add(new DBObjectNavigationListImpl<DBColumn>("Referenced column", getForeignKeyColumn()));
+                DBColumn foreignKeyColumn = getForeignKeyColumn();
+                navigationLists.add(new DBObjectNavigationListImpl<DBColumn>("Referenced column", foreignKeyColumn));
             }
         }
 

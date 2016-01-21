@@ -26,7 +26,7 @@ public abstract class ClauseAbstractPreset extends CodeStylePresetImpl {
             if (previousPsiElement instanceof TokenPsiElement) {
                 TokenPsiElement previousToken = (TokenPsiElement) previousPsiElement;
                 SharedTokenTypeBundle sharedTokenTypes = psiElement.getLanguage().getSharedTokenTypes();
-                TokenType tokenType = previousToken.getElementType().getTokenType();
+                TokenType tokenType = previousToken.getTokenType();
                 return tokenType ==  sharedTokenTypes.getChrLeftParenthesis() ?
                         SPACING_NO_SPACE :
                         SPACING_ONE_SPACE;

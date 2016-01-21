@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.5023.3</version>
+    <version>3.0.5111.3</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -27,6 +27,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.5111</b>
+            <ul>
+                - Support for latest IDE EAP versions<br>
+                - Request tracker move to JIRA<br>
+                - Bug fixes and performance improvements<br>
+            </ul>
             <li><b>3.0.5023</b>
             <ul>
                 - Environment types - editing control for code and data<br>
@@ -37,286 +43,6 @@
                 - Recover dataset editor after edit errors (MySQL, PostgreSQL)<br>
                 - JDWP debugger stability improvements<br>
                 - Bug fixes<br>
-            </ul>
-            <li><b>3.0.4912</b>
-            <ul>
-                - Compatibility with latest IntelliJ EAP<br>
-                - Data export - support for file encoding selection<br>
-                - Error reporting - send database and driver info<br>
-                - Bug fixes<br>
-            </ul>
-            <li><b>3.0.4880</b>
-            <ul>
-                - Oracle JDWP debug interface (early preview)<br>
-                - Cancellable long running operations (method, statement and script executions)<br>
-                - Prompt timeout options for method, statement and script executions<br>
-                - Option to prompt statement executions<br>
-                - Bug fixes<br>
-            </ul>
-            <li><b>3.0.4705</b>
-            <ul>
-                - Compatibility with latest IntelliJ EAP (15.0)<br>
-                - Oracle statement debugging (early preview)<br>
-                - Dedicated debugger console (Oracle)<br>
-                - More reliable debugger processor (Oracle)<br>
-                - Quick object filters in database browser<br>
-                - Connection SSH tunnel with key-pair support<br>
-                - Support Oracle materialized view indexes<br>
-                - Fixed external driver setup issues<br>
-                - Messages Tree - highlight new messages<br>
-                - Bug fixes<br>
-            </ul>
-            <li><b>3.0.4560</b>
-            <ul>
-                - Restored URL-based connection setup<br>
-                - Fixed external driver issues<br>
-                - Bug fixes<br>
-            </ul>
-            <li><b>3.0.4534</b>
-            <ul>
-                - Idle disconnect on long running operations<br>
-                - Fixed serious memory leaks on project close<br>
-                - Support for oracle "Service name" connection<br>
-                - Fixed oracle sqlplus script execution on mac<br>
-                - Various small bug fixes<br>
-            </ul>
-            <li><b>3.0.4513</b>
-            <ul>
-                - SQL Script execution support (using db command-line client)<br>
-                - Oracle TNS Names import (tnsnames.ora)<br>
-                - Build-in jdbc drivers support<br>
-                - Bug fixes<br>
-            </ul>
-            <li><b>3.0.4412</b>
-            <ul>
-                - Support for various dark schemes in WebStorm/PhpStorm<br>
-                - Redesigned connection setup<br>
-                - Support for connection over SSH<br>
-                - Connection with empty password option<br>
-                - Fixed several Oracle PLSQL syntax issues<br>
-                - Bug fixes<br>
-            </ul>
-            <li><b>3.0.4307</b>
-            <ul>
-                - Object dependency tree<br>
-                - Connection credentials interactive dialogs<br>
-                - Confirmation options for code editors<br>
-                - Session Browser "quick Find Data" support (Ctrl-F)<br>
-                - Method execution cursor result "Find Data" support (Ctrl-F)<br>
-                - General bug fixes and performance improvements<br>
-            </ul>
-            <li><b>3.0.4183</b>
-            <ul>
-                - Zoom in/out support for data grids (Ctrl-MouseWheel)<br>
-                - Remember statement execution variables<br>
-                - Remember method execution parameter history<br>
-                - Session Browser colors configuration</br>
-                - Error reporting improvements (attachments)<br>
-                - Settings editor cosmetic updates<br>
-                - Minor bug fixes<br>
-            </ul>
-            <li><b>3.0.4012</b>
-            <ul>
-                - Support for GRANT SQL-statement (Oracle)</br>
-                - Database Sessions Browser (all databases)</br>
-                - Session disconnect / kill actions</br>
-                - Transaction Management options</br>
-                - Restore database editors state (folding, selection, cursor position)</br>
-                - Minor bug fixes<br>
-            </ul>
-            <li><b>3.0.3821</b>
-            <ul>
-                - Support for IntelliJ IDEA latest EAP version (14.1)</br>
-                - Code completion enhancements (ignore case lookup / enforce code style case option)<br>
-                - Method execution/debug intention actions (Alt-Enter)<br>
-                - Oracle PLSQL Debugger enhancements (support for record variables) <br>
-                - Column parameter info (Ctrl-P) for insert statements<br>
-                - Plugin update notification in configuration dialog<br>
-                - Discontinued support for IntelliJ IDEA 12.x and related products<br>
-                - Minor bug fixes<br>
-            </ul>
-            <li><b>3.0.3674</b>
-            <ul>
-                - Support for Oracle XMLTYPE editing / method execution<br>
-                - Support for BLOB/CLOB method execution arguments<br>
-                - Method call parameter info (Ctrl-P)<br>
-                - Minor bug fixes<br>
-            </ul>
-            <li><b>3.0.3601</b>
-            <ul>
-                - Object sorting options in database browser<br>
-                - Icon rework for better visibility in dark schemes<br>
-                - Support method executions with collection return types (Oracle) <br>
-                - Excel 2007 (xlsx) data export format<br>
-                - Oracle Type language support<br>
-                - Execution logging - Oracle DBMS_OUTPUT<br>
-                - Improved code completion support for local objects<br>
-                - Minor bug fixes and improvements<br>
-            </ul>
-            <li><b>3.0.3501</b>
-             <ul>
-                - Parser improvements and optimizations<br>
-                - Explain plan execution support (Oracle)<br>
-                - Support for database triggers<br>
-                - Language support for XML functions (Oracle)<br>
-                - Code completion support for locally defined objects<br>
-                - Various bug fixes<br>
-            </ul>
-            <li><b>3.0.3401</b>
-             <ul>
-                - Support for latest IntelliJ EAP version<br>
-                - Support for default project configuration (including connections)<br>
-                - Discontinued connection setup on module level<br>
-                - Compile error outputs on DDL script execution (Oracle)<br>
-                - Support for manually controlled database connectivity<br>
-                - Improved statement execution result linkage<br>
-                - Improved focus logic on statement execution<br>
-                - Various bug fixes and optimizations<br>
-            </ul>
-            <li><b>3.0.3305</b>
-             <ul>
-                - Support connecting on demand only (i.e. disable auto-connect)<br>
-                - Support for multiple SQL consoles per connection<br>
-                - "Save Console To File" functionality<br>
-                - Statement execution shortcut improvements<br>
-                - Support for Oracle trigger syntax<br>
-                - Support for Oracle explain plan syntax<br>
-                - Bug fixes<br>
-            </ul>
-            <li><b>3.0.3272</b>
-             <ul>
-                - Support for anonymous "begin / end" blocks (Oracle)<br>
-                - Support for alternative delimiter configuration (MySQL)<br>
-                - "Hide empty schemas" feature for object browser<br>
-                - MySQL DDL file support<br>
-                - DDL file formatting and configuration enhancements<br>
-                - Structure view enhancements<br>
-                - Language parsers support for database versions (postgres)<br>
-                - Bug fixes and performance improvements<br>
-            </ul>
-            <li><b>3.0.3192</b>
-             <ul>
-                - Configurable "tracking" columns (display text attributes, visibility, editable)<br>
-                - Datagrid sorting settings (nulls first/last, max number of sorting columns)<br>
-                - Postgres table editor (support for Array editing)<br>
-                - Postgres SQL language (additional statements support)<br>
-                - Oracle SQL (support PIVOT clause)<br>
-                - Discontinued support for IntelliJ IDEA 11.x and related products<br>
-                - Bug fixes and performance improvements<br>
-            </ul>
-            <li><b>3.0.3145</b>
-             <ul>
-                - PostgreSQL support (work in progress)<br>
-                - Multiple column sorting in dataset editor and query results (Ctrl-Click)<br>
-                - Dataset Editor - hide / move columns (persistent state)<br>
-                - Improved object lookup functionality (Ctrl-Shift-D)<br>
-                - Copy / Paste feature for connection settings<br>
-                - Metadata layer performance improvements (use prepared statements)<br>
-                - Support for latest IntelliJ IDEA EAP versions<br>
-                - Discontinued support for IntelliJ IDEA 10.x and related products<br>
-                - Bug fixes and performance improvements<br>
-            </ul>
-            <li><b>3.0.2686</b>
-             <ul>
-                - Support for latest IntelliJ version<br>
-                - Live Templates Ctrl-J (work in progress)<br>
-                - "About" page (with "donate" link) <br>
-                - Multiple column sorting (work in progress - not released)<br>
-                - Method execution result improvements (tree view)<br>
-                - Reworked action system to allow multiple editor instances, split and detached editors<br>
-                - Bug fixes and performance improvements<br>
-            </ul>
-            <li><b>3.0.2530</b>
-             <ul>
-                - Support for error reporting directly from IDE<br>
-                - Connection timeout and idle time management<br>
-                - Memory management improvements (fixed memory leaks on project close)<br>
-                - Improved performance for database object lookup (Ctrl+Shift+D)<br>
-                - Compatibility with latest IDE version (including EAP)<br>
-                - New Icon set (work in progress)<br>
-                - Support for dark scheme<br>
-                - Minor bug fixes and performance improvements<br>
-                - Discontinued support for IntelliJ IDEA 9.x and related products<br>
-            </ul>
-            <li><b>3.0.2349</b>
-            <ul>
-                - Code formatting (Experimental - work in progress)<br>
-                - Customizable data-grid colors and fonts<br>
-                - Uncommitted changes overview / prompt dialogs<br>
-                - Balloon notifications and activiy log entries for several operations<br>
-                - Connection Auto-Commit support<br>
-                - Support for IntelliJ 12 EAP release<br>
-                - Fixed broken user interface with PyCharm and RubyMine<br>
-                - Minor bug fixes<br>
-            </ul>
-            <li><b>3.0.2191</b>
-            <ul>
-                - Support for IntelliJ 11 release<br>
-                - Configurable datbase environments / environment colors<br>
-                - Data grid preview popup for BLOB/CLOBs <br>
-                - Data search functionality in dataset editors and query results (experimental)<br>
-                - Minor bug fixes<br>
-            </ul>
-            <li><b>3.0.2017</b>
-            <ul>
-                - Support for latest IntelliJ EAP versions<br>
-                - Statement generation engine (extract select, insert, ddl statements)<br>
-                - Fixes of BLOB editing support<br>
-                - Support for database content encoding<br>
-                - Data Editor - navigate to referenced record<br>
-                - Navigation bar improvement for DB objects<br>
-                - XML Data Export format<br>
-                - Custom number and date/time formats in locale settings<br>
-                - Connection setup enhancements (NOTE: you may lose connection custom properties)<br>
-                - Minor bug fixes<br>
-            </ul>
-            <li><b>3.0.1911</b>
-            <ul>
-                - Fixed compatibility issues with Ruby plugin<br>
-                - Support for IDEA 10.5 release<br>
-                - General bug fixes and performance improvements<br>
-            </ul>
-            <li><b>3.0.1898</b>
-            <ul>
-                - <b>recommended upgrade if you are using 3.0.1895</b><br>
-                - Support for IDEA X EAP releases<br>
-                - Configuration framework changes (NOTE: some of your settings may be reset to default)<br>
-                - Object name filters (e.g. Schema filters) on connection level<br>
-                - Object type filters on connection level<br>
-                - Ability to activate/deactivate connections<br>
-                - Oracle OS authentication<br>
-                - Fixed memory leak issues with large result-sets<br>
-                - General bug fixes and performance improvements<br>
-            </ul>
-            <li><b>3.0.1870</b>
-            <ul>
-                - Quick SQL sandbox (SQL Console for database connections)<br>
-                - Show object detailed information (configurable)<br>
-                - Added support for SQL ISO-92 (work in progress - not usable yet)<br>
-                - Minor bug fixes<br>
-            </ul>
-            <li><b>3.0.1856</b>
-            <ul>
-                - Added support for IntelliJ IDEA X (BETA)<br>
-                - Discontinued support for IDEA 8.x<br>
-                - Improved navigation within PL/SQL code<br>
-                - Added code completion for variables and method parameters in PL/SQL code<br>
-                - Enhanced database object compiler handling (keep current debug status)<br>
-                - Improved object lookup functionality (select connection prompt)<br>
-                - Added navigation-bar support for database objects (experimental)<br>
-                - Fixed xls data export for select statement results<br>
-                - Enhanced xls export data format (make use of regional settings)<br>
-                - Added HTML data export processor<br>
-                - Persisted data export options<br>
-                - Object properties (work in progress)<br>
-                - Minor bug fixes<br>
-            </ul>
-            <li><b>3.0.1804</b>
-            <ul>
-                - Database object lookup (Ctrl-Shift-D) - Experimental phase<br>
-                - Improved Debugger breakpoint handling<br>
-                - Compatibility version constraint (no support for IDEA X yet)<br>
-                - Minor bug fixes<br>
             </ul>
         </ul>
         <a href="http://confluence.jetbrains.net/display/CONTEST/DBN+-+Change+Notes">See full release notes</a>
@@ -658,7 +384,8 @@
         <navbar order="last" implementation="com.dci.intellij.dbn.navigation.NavigationBarExtension"/>
         <editorTabColorProvider order="first" implementation="com.dci.intellij.dbn.editor.DBEditorTabColorProvider"/>
 
-        <errorHandler implementation="com.dci.intellij.dbn.error.DBNErrorReportSubmitter"/>
+        <errorHandler implementation="com.dci.intellij.dbn.error.JiraIssueReportSubmitter"/>
+        <!--<errorHandler implementation="com.dci.intellij.dbn.error.YouTrackIssueReportSubmitter"/>-->
         <liveTemplateContext implementation="com.dci.intellij.dbn.language.sql.template.SQLTemplateContextType"/>
         <liveTemplateContext implementation="com.dci.intellij.dbn.language.psql.template.PSQLTemplateContextType"/>
         <defaultLiveTemplatesProvider implementation="com.dci.intellij.dbn.language.sql.template.SQLTemplateProvider"/>

@@ -56,21 +56,23 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
         BasePsiElement handlerPsiElement = lookupHandlerElement(context.getFile(), context.getOffset());
         if (handlerPsiElement != null) {
             NamedPsiElement enclosingNamedPsiElement = handlerPsiElement.findEnclosingNamedPsiElement();
-            BasePsiElement methodPsiElement = METHOD_LOOKUP_ADAPTER.findInElement(enclosingNamedPsiElement);
-            if (methodPsiElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) methodPsiElement;
-                DBObject object = identifierPsiElement.resolveUnderlyingObject();
-                if (object instanceof DBMethod) {
-                    DBMethod method = (DBMethod) object;
-                    DBProgram program = method.getProgram();
-                    if (program != null) {
-                        DBObjectList objectList = program.getChildObjectList(method.getObjectType());
-                        List<DBMethod> methods = objectList.getObjects(method.getName());
-                        context.setItemsToShow(methods.toArray());
-                    } else {
-                        context.setItemsToShow(new Object[]{method});
+            if (enclosingNamedPsiElement != null) {
+                BasePsiElement methodPsiElement = METHOD_LOOKUP_ADAPTER.findInElement(enclosingNamedPsiElement);
+                if (methodPsiElement instanceof IdentifierPsiElement) {
+                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) methodPsiElement;
+                    DBObject object = identifierPsiElement.resolveUnderlyingObject();
+                    if (object instanceof DBMethod) {
+                        DBMethod method = (DBMethod) object;
+                        DBProgram program = method.getProgram();
+                        if (program != null) {
+                            DBObjectList objectList = program.getChildObjectList(method.getObjectType());
+                            List<DBMethod> methods = objectList.getObjects(method.getName());
+                            context.setItemsToShow(methods.toArray());
+                        } else {
+                            context.setItemsToShow(new Object[]{method});
+                        }
+                        return identifierPsiElement;
                     }
-                    return identifierPsiElement;
                 }
             }
         }

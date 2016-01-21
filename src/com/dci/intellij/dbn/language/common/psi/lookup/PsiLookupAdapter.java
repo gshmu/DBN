@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -31,21 +32,21 @@ public abstract class PsiLookupAdapter {
         return finder.visit(source);
     }
 
-    public final BasePsiElement findInScope(BasePsiElement scope) {
+    public final BasePsiElement findInScope(@NotNull BasePsiElement scope) {
         return scope.findPsiElement(this, 100);
     }
 
-    public final BasePsiElement findInElement(BasePsiElement element) {
+    public final BasePsiElement findInElement(@NotNull BasePsiElement element) {
         return element.findPsiElement(this, 100);
     }
 
 
-    public final Set<BasePsiElement> collectInParentScopeOf(BasePsiElement source) {
+    public final Set<BasePsiElement> collectInParentScopeOf(@NotNull BasePsiElement source) {
         return collectInParentScopeOf(source, null);
     }
 
 
-    public final Set<BasePsiElement> collectInParentScopeOf(BasePsiElement source, Set<BasePsiElement> bucket) {
+    public final Set<BasePsiElement> collectInParentScopeOf(@NotNull BasePsiElement source, Set<BasePsiElement> bucket) {
         CollectScopeVisitor collector = new CollectScopeVisitor() {
             protected Set<BasePsiElement> performCollect(BasePsiElement scope) {
                 return scope.collectPsiElements(PsiLookupAdapter.this, getResult(), 1);
@@ -56,13 +57,17 @@ public abstract class PsiLookupAdapter {
         return collector.visit(source);
     }
 
-    public final Set<BasePsiElement> collectInScope(BasePsiElement scope, Set<BasePsiElement> bucket) {
-        if (!scope.isScopeBoundary()) scope = scope.getEnclosingScopePsiElement();
-        return scope.collectPsiElements(this, bucket, 100);
+    @Nullable
+    public final Set<BasePsiElement> collectInScope(@NotNull BasePsiElement scope, @Nullable Set<BasePsiElement> bucket) {
+        BasePsiElement collectScope = scope.isScopeBoundary() ? scope : scope.findEnclosingScopePsiElement();
+        if (collectScope != null) {
+            return collectScope.collectPsiElements(this, bucket, 100);
+        }
+        return bucket;
     }
 
     @Nullable
-    public final Set<BasePsiElement> collectInElement(BasePsiElement element, Set<BasePsiElement> bucket) {
+    public final Set<BasePsiElement> collectInElement(@NotNull BasePsiElement element, @Nullable Set<BasePsiElement> bucket) {
         return element.collectPsiElements(this, bucket, 100);
     }
 }

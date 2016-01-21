@@ -18,20 +18,27 @@ public class IterationChopDownIfNotSinglePreset extends IterationAbstractPreset 
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
-        IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
-        ElementType elementType = psiElement.getElementType();
+        if (parentPsiElement != null) {
+            IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
+            ElementType elementType = psiElement.getElementType();
 
-        boolean shouldWrap = PsiUtil.getChildrenCount(parentPsiElement) > 1;
-        return getWrap(elementType, iterationElementType, shouldWrap);
+            boolean shouldWrap = PsiUtil.getChildrenCount(parentPsiElement) > 1;
+            return getWrap(elementType, iterationElementType, shouldWrap);
+        }
+
+        return null;
     }
 
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
-        IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
-        ElementType elementType = psiElement.getElementType();
+        if (parentPsiElement != null) {
+            IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
+            ElementType elementType = psiElement.getElementType();
 
-        boolean shouldWrap = PsiUtil.getChildrenCount(parentPsiElement) > 1;
-        return getSpacing(iterationElementType, elementType, shouldWrap);
+            boolean shouldWrap = PsiUtil.getChildrenCount(parentPsiElement) > 1;
+            return getSpacing(iterationElementType, elementType, shouldWrap);
+        }
+        return null;
     }
 }

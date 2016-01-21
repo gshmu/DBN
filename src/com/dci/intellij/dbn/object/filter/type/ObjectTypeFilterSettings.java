@@ -192,7 +192,7 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
 
         for (ObjectTypeFilterSetting objectTypeEntry : getSettings()) {
             Element child = new Element("object-type");
-            child.setAttribute("name", objectTypeEntry.getName());
+            child.setAttribute("name", objectTypeEntry.getObjectType().name());
             child.setAttribute("enabled", Boolean.toString(objectTypeEntry.isSelected()));
             element.addContent(child);
         }

@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.editor.data.options.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.data.record.navigation.RecordNavigationTarget;
 import com.dci.intellij.dbn.editor.data.options.DataEditorRecordNavigationSettings;
 import com.intellij.openapi.options.ConfigurationException;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorForm<DataEditorRecordNavigationSettings> {
     private JPanel mainPanel;
@@ -20,7 +20,7 @@ public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorF
         navigationTargetComboBox.setValues(
                 RecordNavigationTarget.EDITOR,
                 RecordNavigationTarget.VIEWER,
-                RecordNavigationTarget.PROMPT);
+                RecordNavigationTarget.ASK);
 
         resetFormChanges();
         registerComponent(mainPanel);

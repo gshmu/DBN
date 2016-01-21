@@ -38,7 +38,7 @@ public abstract class CodeStylePresetImpl implements CodeStylePreset {
     }
 
     @Nullable
-    protected static BasePsiElement getParentPsiElement(PsiElement psiElement) {
+    protected static BasePsiElement getParentPsiElement(@NotNull PsiElement psiElement) {
         PsiElement parentPsiElement = psiElement.getParent();
         if (parentPsiElement instanceof BasePsiElement) {
             return (BasePsiElement) parentPsiElement;

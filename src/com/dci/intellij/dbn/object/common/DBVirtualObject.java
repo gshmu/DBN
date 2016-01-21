@@ -52,7 +52,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         public boolean matches(BasePsiElement element) {
             if (element instanceof TokenPsiElement) {
                 TokenPsiElement tokenPsiElement = (TokenPsiElement) element;
-                return tokenPsiElement.getElementType().getTokenType() == tokenPsiElement.getElementType().getLanguage().getSharedTokenTypes().getChrStar();
+                return tokenPsiElement.getTokenType() == tokenPsiElement.getElementType().getLanguage().getSharedTokenTypes().getChrStar();
             }
             return false;
         }

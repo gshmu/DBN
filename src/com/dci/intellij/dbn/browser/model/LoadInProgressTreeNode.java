@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.browser.model;
 import javax.swing.Icon;
 import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
@@ -108,6 +109,7 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
         return getTreeParent().getProject();
     }
 
+    @Nullable
     @Override
     public GenericDatabaseElement getParentElement() {
         return null;
@@ -117,6 +119,7 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
         return this;
     }
 
+    @Nullable
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         return null;
     }

@@ -232,8 +232,10 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                         }
 
                         if (parentIdentifierPsiElement == null) {
-                            BasePsiElement scope = element.getEnclosingScopePsiElement();
-                            collectObjectMatchingScope(consumer, identifierElementType, filterSettings, scope, context);
+                            BasePsiElement scope = element.findEnclosingScopePsiElement();
+                            if (scope != null) {
+                                collectObjectMatchingScope(consumer, identifierElementType, filterSettings, scope, context);
+                            }
                         }
                     } else if (parentIdentifierPsiElement == null) {
                         if (identifierElementType.isAlias()) {
@@ -289,7 +291,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             if (unquotedText.length() > 0) {
                 String[] aliasNames = NamingUtil.createAliasNames(unquotedText);
 
-                BasePsiElement scope = aliasElement.getEnclosingScopePsiElement();
+                BasePsiElement scope = aliasElement.findEnclosingScopePsiElement();
 
                 for (int i = 0; i< aliasNames.length; i++) {
                     while (true) {
@@ -313,7 +315,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             LookupConsumer consumer,
             IdentifierElementType identifierElementType,
             ObjectTypeFilter filter,
-            BasePsiElement sourceScope,
+            @NotNull  BasePsiElement sourceScope,
             CodeCompletionContext context) throws ConsumerStoppedException {
         DBObjectType objectType = identifierElementType.getObjectType();
         PsiElement sourceElement = context.getElementAtCaret();

@@ -152,6 +152,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         return FailsafeUtil.get(projectRef.get());
     }
 
+    @Nullable
     @Override
     public GenericDatabaseElement getParentElement() {
         return null;
@@ -161,6 +162,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         return this;
     }
 
+    @Nullable
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         return null;
     }

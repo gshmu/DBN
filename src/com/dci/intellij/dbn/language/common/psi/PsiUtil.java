@@ -65,14 +65,19 @@ public class PsiUtil {
             BasePsiElement scope = basePsiElement.findEnclosingNamedPsiElement();
 
             DBObjectType objectType = aliasElement.getObjectType();
-            IdentifierLookupAdapter lookupInput = new IdentifierLookupAdapter(aliasElement, null, null, objectType, null);
+            BasePsiElement objectPsiElement = null;
+            if (scope != null) {
+                IdentifierLookupAdapter lookupInput = new IdentifierLookupAdapter(aliasElement, null, null, objectType, null);
 
-            BasePsiElement objectPsiElement = lookupInput.findInScope(scope);
-            if (objectPsiElement == null) {
-                scope = scope.findEnclosingSequencePsiElement();
-                if (scope != null)
-                    objectPsiElement = lookupInput.findInScope(scope);
+                objectPsiElement = lookupInput.findInScope(scope);
+                if (objectPsiElement == null) {
+                    scope = scope.findEnclosingSequencePsiElement();
+                    if (scope != null) {
+                        objectPsiElement = lookupInput.findInScope(scope);
+                    }
+                }
             }
+
             if (objectPsiElement != null) {
                 Set<BasePsiElement> virtualObjectPsiElements = new THashSet<BasePsiElement>();
                 scope.collectVirtualObjectPsiElements(virtualObjectPsiElements, objectType);
@@ -82,6 +87,7 @@ public class PsiUtil {
 
                 }
             }
+
             return objectPsiElement;
 
         }
@@ -91,18 +97,20 @@ public class PsiUtil {
     public static IdentifierPsiElement lookupObjectPriorTo(BasePsiElement element, DBObjectType objectType) {
         SequencePsiElement scope = element.findEnclosingSequencePsiElement();
 
-        Iterator<PsiElement> children = PsiUtil.getChildrenIterator(scope);
-        while (children.hasNext()) {
-            PsiElement child = children.next();
-            if (child instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) child;
-                ObjectLookupAdapter lookupInput = new ObjectLookupAdapter(null, objectType);
-                BasePsiElement objectPsiElement = lookupInput.findInScope(basePsiElement);
-                if (objectPsiElement != null && objectPsiElement instanceof IdentifierPsiElement) {
-                    return (IdentifierPsiElement) objectPsiElement;
-                }                                        
+        if (scope != null) {
+            Iterator<PsiElement> children = PsiUtil.getChildrenIterator(scope);
+            while (children.hasNext()) {
+                PsiElement child = children.next();
+                if (child instanceof BasePsiElement) {
+                    BasePsiElement basePsiElement = (BasePsiElement) child;
+                    ObjectLookupAdapter lookupInput = new ObjectLookupAdapter(null, objectType);
+                    BasePsiElement objectPsiElement = lookupInput.findInScope(basePsiElement);
+                    if (objectPsiElement != null && objectPsiElement instanceof IdentifierPsiElement) {
+                        return (IdentifierPsiElement) objectPsiElement;
+                    }
+                }
+                if (child == element) break;
             }
-            if (child == element) break;
         }
         return null;
     }
@@ -222,7 +230,7 @@ public class PsiUtil {
         }
     }
 
-    public static Iterator<PsiElement> getChildrenIterator(final PsiElement element) {
+    public static Iterator<PsiElement> getChildrenIterator(final @NotNull PsiElement element) {
         return new Iterator<PsiElement>() {
             private PsiElement current = element.getFirstChild();
             public boolean hasNext() {
@@ -241,7 +249,7 @@ public class PsiUtil {
         };
     }
 
-    public static int getChildrenCount(PsiElement element) {
+    public static int getChildrenCount(@NotNull PsiElement element) {
         int count = 0;
         PsiElement current = element.getFirstChild();
         while (current != null) {
@@ -275,6 +283,7 @@ public class PsiUtil {
     }
 
 
+    @Nullable
     public static BasePsiElement getBasePsiElement(PsiElement psiElement) {
         while (psiElement != null) {
             if (psiElement instanceof BasePsiElement) {

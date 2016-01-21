@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -11,7 +12,7 @@ import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.object.DBColumn;
 
 public class DatasetEditorUtils {
-    public static List<String> loadDistinctColumnValues(DBColumn column) {
+    public static List<String> loadDistinctColumnValues(@NotNull DBColumn column) {
         List<String> list = new ArrayList<String>();
         ConnectionHandler connectionHandler = FailsafeUtil.get(column.getConnectionHandler());
         Connection connection = null;

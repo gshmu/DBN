@@ -21,11 +21,11 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.SimpleTextAttributes;
 
-public class ColumnValueTextField extends JTextField {
+class ColumnValueTextField extends JTextField {
     private DatasetRecord record;
     private DBObjectRef<DBColumn> columnRef;
 
-    public ColumnValueTextField(DatasetRecord record, DBColumn column) {
+    ColumnValueTextField(DatasetRecord record, DBColumn column) {
         this.record = record;
         this.columnRef = DBObjectRef.from(column);
         if (column.isPrimaryKey()) {
@@ -52,7 +52,10 @@ public class ColumnValueTextField extends JTextField {
         if (column != null && column.isForeignKey()) {
             if (e.isControlDown() && e.getID() != MouseEvent.MOUSE_DRAGGED && record.getColumnValue(column) != null) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                setToolTipText("<html>Show referenced <b>" + column.getForeignKeyColumn().getDataset().getQualifiedName() + "</b> record<html>");
+                DBColumn foreignKeyColumn = column.getForeignKeyColumn();
+                if (foreignKeyColumn != null) {
+                    setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
+                }
             } else {
                 super.processMouseMotionEvent(e);
                 setCursor(Cursor.getDefaultCursor());
@@ -64,7 +67,7 @@ public class ColumnValueTextField extends JTextField {
     }
     
     @Nullable
-    public DatasetFilterInput resolveForeignKeyRecord() {
+    private DatasetFilterInput resolveForeignKeyRecord() {
         DBColumn column = getColumn();
         if (column != null) {
             for (DBConstraint constraint : column.getConstraints()) {
@@ -72,14 +75,19 @@ public class ColumnValueTextField extends JTextField {
                     DBConstraint foreignKeyConstraint = constraint.getForeignKeyConstraint();
                     if (foreignKeyConstraint != null) {
                         DBDataset foreignKeyDataset = foreignKeyConstraint.getDataset();
-                        DatasetFilterInput filterInput = new DatasetFilterInput(foreignKeyDataset);
+                        DatasetFilterInput filterInput = null;
 
                         for (DBColumn constraintColumn : constraint.getColumns()) {
                             DBObject constraintCol = constraintColumn.getUndisposedElement();
                             if (constraintCol != null) {
                                 DBColumn foreignKeyColumn = ((DBColumn) constraintCol).getForeignKeyColumn();
-                                Object value = record.getColumnValue(column);
-                                filterInput.setColumnValue(foreignKeyColumn, value);
+                                if (foreignKeyColumn != null) {
+                                    Object value = record.getColumnValue(column);
+                                    if (filterInput == null) {
+                                        filterInput = new DatasetFilterInput(foreignKeyDataset);
+                                    }
+                                    filterInput.setColumnValue(foreignKeyColumn, value);
+                                }
                             }
                         }
                         return filterInput;
@@ -95,7 +103,7 @@ public class ColumnValueTextField extends JTextField {
         return DBObjectRef.get(columnRef);
     }
 
-    MouseListener mouseListener = new MouseAdapter() {
+    private MouseListener mouseListener = new MouseAdapter() {
         public void mouseClicked(MouseEvent event) {
             DBColumn column = getColumn();
             if (column != null && MouseUtil.isNavigationEvent(event)) {

@@ -1,14 +1,16 @@
 package com.dci.intellij.dbn.data.record.navigation;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.ui.Presentable;
+import javax.swing.Icon;
 
 public enum RecordNavigationTarget implements Presentable{
     VIEWER("Record Viewer", null),
     EDITOR("Table Editor", null),
+    ASK("Ask", null),
+    @Deprecated
     PROMPT("Ask", null);
 
     private String name;
@@ -24,7 +26,6 @@ public enum RecordNavigationTarget implements Presentable{
     public String getName() {
         return name;
     }
-
     @Nullable
     @Override
     public String getDescription() {

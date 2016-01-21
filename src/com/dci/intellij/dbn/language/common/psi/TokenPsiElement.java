@@ -55,7 +55,7 @@ public class TokenPsiElement extends LeafPsiElement {
      *                       ItemPresentation                *
      *********************************************************/
     public String getPresentableText() {
-        return getElementType().getTokenType().getValue();
+        return getTokenType().getValue();
     }
 
     @Nullable
@@ -81,8 +81,8 @@ public class TokenPsiElement extends LeafPsiElement {
     public boolean matches(BasePsiElement basePsiElement, MatchType matchType) {
         if (basePsiElement instanceof TokenPsiElement) {
             TokenPsiElement remote = (TokenPsiElement) basePsiElement;
-            TokenType localTokenType = getElementType().getTokenType();
-            TokenType remoteTokenType = remote.getElementType().getTokenType();
+            TokenType localTokenType = getTokenType();
+            TokenType remoteTokenType = remote.getTokenType();
             if (localTokenType == remoteTokenType) {
                 if (matchType == MatchType.SOFT) {
                     return true;
@@ -96,5 +96,9 @@ public class TokenPsiElement extends LeafPsiElement {
             }
         }
         return false;
+    }
+
+    public TokenType getTokenType() {
+        return getElementType().getTokenType();
     }
 }

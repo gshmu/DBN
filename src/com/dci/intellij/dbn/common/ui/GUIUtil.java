@@ -1,12 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.Colors;
-import com.intellij.openapi.ui.Splitter;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.ui.awt.RelativePoint;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -21,6 +16,13 @@ import java.awt.Point;
 import java.awt.PointerInfo;
 import java.lang.reflect.Method;
 import java.util.EventListener;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.Colors;
+import com.intellij.openapi.ui.Splitter;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.popup.list.ListPopupImpl;
 
 public class GUIUtil{
     public static final Font REGULAR_FONT = com.intellij.util.ui.UIUtil.getLabelFont();
@@ -157,6 +159,16 @@ public class GUIUtil{
         Dimension preferredSize = popupContent.getPreferredSize();
         int width = Math.max((int) preferredSize.getWidth(), sourceComponent.getWidth());
         int height = (int) Math.min(maxHeight, preferredSize.getHeight());
+
+        if (popup instanceof ListPopupImpl) {
+            ListPopupImpl listPopup = (ListPopupImpl) popup;
+            JList list = listPopup.getList();
+            int listHeight = (int) list.getPreferredSize().getHeight();
+            if (listHeight > height) {
+                height = Math.min(maxHeight, listHeight);
+            }
+        }
+
         popupContent.setPreferredSize(new Dimension(width, height));
 
         popup.show(new RelativePoint(sourceComponent, new Point(0, sourceComponent.getHeight() + verticalShift)));
