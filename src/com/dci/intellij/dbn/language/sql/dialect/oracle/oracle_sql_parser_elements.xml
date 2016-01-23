@@ -5873,54 +5873,36 @@
                         </sequence>
                         <token id="000003400" type-id="KW_RESUMABLE" />
                         <sequence id="000003401">
-                            <token id="000003402" type-id="KW_SELECT" />
+                            <token id="000003402" type-id="KW_UNDER" />
                             <token id="000003403" type-id="KW_ANY" />
                             <one-of id="000003404">
-                                <sequence id="000003405">
-                                    <token id="000003406" type-id="KW_CUBE" />
-                                    <token id="000003407" optional="true" type-id="KW_DIMENSION" />
-                                </sequence>
-                                <token id="000003408" type-id="KW_DICTIONARY" />
-                                <sequence id="000003409">
-                                    <token id="000003410" type-id="KW_MINING" />
-                                    <token id="000003411" type-id="KW_MODEL" />
-                                </sequence>
-                                <token id="000003412" type-id="KW_SEQUENCE" />
-                                <token id="000003413" type-id="KW_TABLE" />
-                                <token id="000003414" type-id="KW_TRANSACTION" />
+                                <token id="000003405" type-id="KW_TABLE" />
+                                <token id="000003406" type-id="KW_TYPE" />
+                                <token id="000003407" type-id="KW_VIEW" />
                             </one-of>
                         </sequence>
-                        <sequence id="000003415">
-                            <token id="000003416" type-id="KW_UNDER" />
-                            <token id="000003417" type-id="KW_ANY" />
-                            <one-of id="000003418">
-                                <token id="000003419" type-id="KW_TABLE" />
-                                <token id="000003420" type-id="KW_TYPE" />
-                                <token id="000003421" type-id="KW_VIEW" />
-                            </one-of>
+                        <sequence id="000003408">
+                            <token id="000003409" type-id="KW_UNLIMITED" />
+                            <token id="000003410" type-id="KW_TABLESPACE" />
                         </sequence>
-                        <sequence id="000003422">
-                            <token id="000003423" type-id="KW_UNLIMITED" />
-                            <token id="000003424" type-id="KW_TABLESPACE" />
-                        </sequence>
-                        <sequence id="000003425">
-                            <token id="000003426" type-id="KW_UPDATE" />
-                            <token id="000003427" type-id="KW_ANY" />
-                            <one-of id="000003428">
-                                <sequence id="000003429">
-                                    <token id="000003430" type-id="KW_CUBE" />
-                                    <one-of id="000003431">
-                                        <sequence id="000003432">
-                                            <token id="000003433" type-id="KW_BUILD" />
-                                            <token id="000003434" type-id="KW_PROCESS" />
+                        <sequence id="000003411">
+                            <token id="000003412" type-id="KW_UPDATE" />
+                            <token id="000003413" type-id="KW_ANY" />
+                            <one-of id="000003414">
+                                <sequence id="000003415">
+                                    <token id="000003416" type-id="KW_CUBE" />
+                                    <one-of id="000003417">
+                                        <sequence id="000003418">
+                                            <token id="000003419" type-id="KW_BUILD" />
+                                            <token id="000003420" type-id="KW_PROCESS" />
                                         </sequence>
-                                        <token id="000003435" type-id="KW_DIMENSION" />
+                                        <token id="000003421" type-id="KW_DIMENSION" />
                                     </one-of>
                                 </sequence>
-                                <token id="000003436" type-id="KW_TABLE" />
+                                <token id="000003422" type-id="KW_TABLE" />
                             </one-of>
                         </sequence>
-                        <object-ref id="000003437" type="SYSTEM_PRIVILEGE" />
+                        <object-ref id="000003423" type="SYSTEM_PRIVILEGE" />
                         <!--
                                                 <token id="000002995" type-id="OBJ_ADMINISTER_ANY_SQL_TUNING_SET" />
                                                 <token id="000002996" type-id="OBJ_ADMINISTER_DATABASE_TRIGGER" />
@@ -6126,38 +6108,58 @@
                                                 <token id="000003196" type-id="OBJ_UPDATE_ANY_CUBE_DIMENSION" />
                                                 <token id="000003197" type-id="OBJ_UPDATE_ANY_TABLE" />-->
                     </one-of>
-                    <one-of branch="br0002" id="000003438">
-                        <token id="000003439" type-id="KW_ALTER" />
-                        <token id="000003440" type-id="KW_EXECUTE" />
-                        <token id="000003441" type-id="KW_DEBUG" />
-                        <token id="000003442" type-id="KW_DELETE" />
-                        <token id="000003443" type-id="KW_INDEX" />
-                        <token id="000003444" type-id="KW_INSERT" />
-                        <token id="000003445" type-id="KW_READ" />
-                        <token id="000003446" type-id="KW_REFERENCES" />
-                        <token id="000003447" type-id="KW_SELECT" />
-                        <token id="000003448" type-id="KW_USE" />
-                        <token id="000003449" type-id="KW_UNDER" />
-                        <token id="000003450" type-id="KW_UPDATE" />
-                        <token id="000003451" type-id="KW_WRITE" />
-                        <sequence id="000003452">
-                            <token id="000003453" type-id="KW_MERGE" />
-                            <token id="000003454" type-id="KW_VIEW" />
+                    <one-of branch="br0002" id="000003424">
+                        <token id="000003425" type-id="KW_ALTER" />
+                        <token id="000003426" type-id="KW_EXECUTE" />
+                        <token id="000003427" type-id="KW_DEBUG" />
+                        <token id="000003428" type-id="KW_DELETE" />
+                        <token id="000003429" type-id="KW_INDEX" />
+                        <token id="000003430" type-id="KW_INSERT" />
+                        <token id="000003431" type-id="KW_READ" />
+                        <token id="000003432" type-id="KW_REFERENCES" />
+                        <!--<token id="000003447" type-id="KW_SELECT" />-->
+                        <token id="000003433" type-id="KW_USE" />
+                        <token id="000003434" type-id="KW_UNDER" />
+                        <token id="000003435" type-id="KW_UPDATE" />
+                        <token id="000003436" type-id="KW_WRITE" />
+                        <sequence id="000003437">
+                            <token id="000003438" type-id="KW_MERGE" />
+                            <token id="000003439" type-id="KW_VIEW" />
                         </sequence>
-                        <sequence id="000003455">
-                            <token id="000003456" type-id="KW_FLASHBACK" />
-                            <token id="000003457" type-id="KW_ARCHIVE" />
+                        <sequence id="000003440">
+                            <token id="000003441" type-id="KW_FLASHBACK" />
+                            <token id="000003442" type-id="KW_ARCHIVE" />
                         </sequence>
-                        <sequence id="000003458">
-                            <token id="000003459" type-id="KW_ON" />
-                            <token id="000003460" type-id="KW_COMMIT" />
-                            <token id="000003461" type-id="KW_REFRESH" />
+                        <sequence id="000003443">
+                            <token id="000003444" type-id="KW_ON" />
+                            <token id="000003445" type-id="KW_COMMIT" />
+                            <token id="000003446" type-id="KW_REFRESH" />
                         </sequence>
-                        <sequence id="000003462">
-                            <token id="000003463" type-id="KW_QUERY" />
-                            <token id="000003464" type-id="KW_REWRITE" />
+                        <sequence id="000003447">
+                            <token id="000003448" type-id="KW_QUERY" />
+                            <token id="000003449" type-id="KW_REWRITE" />
                         </sequence>
                     </one-of>
+                    <sequence branch="br0002" id="000003450">
+                        <token id="000003451" type-id="KW_SELECT" />
+                        <sequence branch="br0001" optional="true" id="000003452">
+                            <token id="000003453" type-id="KW_ANY" />
+                            <one-of id="000003454">
+                                <sequence id="000003455">
+                                    <token id="000003456" type-id="KW_CUBE" />
+                                    <token id="000003457" optional="true" type-id="KW_DIMENSION" />
+                                </sequence>
+                                <token id="000003458" type-id="KW_DICTIONARY" />
+                                <sequence id="000003459">
+                                    <token id="000003460" type-id="KW_MINING" />
+                                    <token id="000003461" type-id="KW_MODEL" />
+                                </sequence>
+                                <token id="000003462" type-id="KW_SEQUENCE" />
+                                <token id="000003463" type-id="KW_TABLE" />
+                                <token id="000003464" type-id="KW_TRANSACTION" />
+                            </one-of>
+                        </sequence>
+                    </sequence>
                     <object-ref branch="br0001" id="000003465" type="ROLE" />
                 </one-of>
                 <wrapper branch="br0002" id="000003466" optional="true" template="PARENTHESES">
@@ -6582,8 +6584,8 @@
             <element ref-id="subquery_factoring_clause_item" />
         </iteration>
     </element-def>
-    <element-def description="Subquery factoring clause item" id="subquery_factoring_clause_item" attributes="FOLDABLE_BLOCK"> <!-- CUSTOM -->
-        <alias-def id="000003667" original-name="query_name" type="DATASET" attributes="SUBJECT"/>
+    <element-def attributes="FOLDABLE_BLOCK" description="Subquery factoring clause item" id="subquery_factoring_clause_item"> <!-- CUSTOM -->
+        <alias-def attributes="SUBJECT" id="000003667" original-name="query_name" type="DATASET" />
         <token id="000003668" type-id="KW_AS" />
         <wrapper id="000003669" template="PARENTHESES">
             <element ref-id="subquery" />
