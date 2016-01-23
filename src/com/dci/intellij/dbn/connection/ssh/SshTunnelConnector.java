@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.connection.ssh;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import org.apache.commons.lang.StringUtils;
+
+import java.io.IOException;
+import java.net.ServerSocket;
 
 public class SshTunnelConnector {
     private String proxyHost;
@@ -54,7 +55,9 @@ public class SshTunnelConnector {
         session = jsch.getSession(proxyUser, proxyHost, proxyPort);
 
         if(authType == SshAuthType.KEY_PAIR) {
-            jsch.addIdentity(keyFile, keyPassphrase);
+            if (StringUtils.isNotEmpty(keyPassphrase)) {
+                jsch.addIdentity(keyFile, keyPassphrase);
+            }
         } else {
             session.setPassword(proxyPassword);
         }
