@@ -55,4 +55,9 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
         if (StringUtil.isEmpty(statusName)) return SessionStatus.INACTIVE;
         else return SessionStatus.ACTIVE;
     }
+
+    @Override
+    public int getColumnIndexPadding() {
+        return 1;
+    }
 }

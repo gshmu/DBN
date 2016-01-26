@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.data.type;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.data.value.ValueAdapter;
-import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Date;
@@ -14,14 +8,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.content.DynamicContentElement;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.intellij.openapi.diagnostic.Logger;
 
 public class DBNativeDataType implements DynamicContentElement{
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private DataTypeDefinition dataTypeDefinition;
+    private int columnIndexPadding;
 
-    public DBNativeDataType(DataTypeDefinition dataTypeDefinition) {
+    public DBNativeDataType(DataTypeDefinition dataTypeDefinition, int columnIndexPadding) {
         this.dataTypeDefinition = dataTypeDefinition;
+        this.columnIndexPadding = columnIndexPadding;
     }
 
     public boolean isDisposed() {
@@ -54,6 +56,7 @@ public class DBNativeDataType implements DynamicContentElement{
     }
 
     public Object getValueFromResultSet(ResultSet resultSet, int columnIndex) throws SQLException {
+        columnIndex = columnIndex + columnIndexPadding;
         // FIXME: add support for stream updatable types
 
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
@@ -100,6 +103,7 @@ public class DBNativeDataType implements DynamicContentElement{
     }
 
     public void setValueToResultSet(ResultSet resultSet, int columnIndex, Object value) throws SQLException {
+        columnIndex = columnIndex + columnIndexPadding;
         // FIXME: add support for stream updatable types
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
         if (genericDataType == GenericDataType.BLOB) return;

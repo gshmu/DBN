@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBTable;
@@ -54,16 +55,20 @@ public class DatasetFilterUtil {
             index++;
         }
         buffer.append(" from ");
-        buffer.append(dataset.getSchema().getQuotedName(false));
-        buffer.append(".");
+        if (DatabaseFeature.SCHEMA_STRUCTURE.isSupported(dataset)) {
+            buffer.append(dataset.getSchema().getQuotedName(false));
+            buffer.append(".");
+        }
         buffer.append(dataset.getQuotedName(false));
 
     }
 
     public static void createSimpleSelectStatement(DBDataset dataset, StringBuilder buffer) {
         buffer.append("select a.* from ");
-        buffer.append(dataset.getSchema().getQuotedName(false));
-        buffer.append(".");
+        if (DatabaseFeature.SCHEMA_STRUCTURE.isSupported(dataset)) {
+            buffer.append(dataset.getSchema().getQuotedName(false));
+            buffer.append(".");
+        }
         buffer.append(dataset.getQuotedName(false));
         buffer.append(" a");
 

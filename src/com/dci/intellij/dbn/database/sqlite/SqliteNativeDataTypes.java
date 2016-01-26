@@ -40,6 +40,7 @@ public class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
         createLiteralDefinition("NATIVE CHARACTER", String.class, Types.NCHAR);
         createLiteralDefinition("NVARCHAR", String.class, Types.NVARCHAR);
         createLiteralDefinition("TEXT", String.class, Types.VARCHAR);
+        createLiteralDefinition("NULL", String.class, Types.VARCHAR);
         createLargeValueDefinition("BLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
         createLargeValueDefinition("CLOB", Clob.class, Types.CLOB, GenericDataType.CLOB);
 
