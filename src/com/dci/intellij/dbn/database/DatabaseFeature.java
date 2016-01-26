@@ -24,6 +24,7 @@ public enum DatabaseFeature {
     SESSION_DISCONNECT("Disconnect session"),
     SESSION_INTERRUPTION_TIMING("Session interruption timing"),
     CONNECTION_ERROR_RECOVERING("Recover connection transaction after error"),
+    SCHEMA_STRUCTURE("Schema structure"),
     ;
 
     private String description;

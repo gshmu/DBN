@@ -44,6 +44,7 @@ import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
@@ -220,10 +221,12 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
     public synchronized List<DBNativeDataType> getNativeDataTypes(){
         if (nativeDataTypes == null) {
-            List<DataTypeDefinition> dataTypeDefinitions = getConnectionHandler().getInterfaceProvider().getNativeDataTypes().list();
+            DatabaseInterfaceProvider interfaceProvider = getConnectionHandler().getInterfaceProvider();
+            int columnIndexPadding = interfaceProvider.getCompatibilityInterface().getColumnIndexPadding();
+            List<DataTypeDefinition> dataTypeDefinitions = interfaceProvider.getNativeDataTypes().list();
             nativeDataTypes = new ArrayList<DBNativeDataType>();
             for (DataTypeDefinition dataTypeDefinition : dataTypeDefinitions) {
-                DBNativeDataType dataType = new DBNativeDataType(dataTypeDefinition);
+                DBNativeDataType dataType = new DBNativeDataType(dataTypeDefinition, columnIndexPadding);
                 nativeDataTypes.add(dataType);
             }
             Collections.sort(nativeDataTypes, new Comparator<DBNativeDataType>() {

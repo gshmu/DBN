@@ -138,9 +138,16 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         }
 
         String selectStatement = filter.createSelectStatement(dataset, getState().getSortingState());
-        Statement statement = isReadonly() ?
-                connection.createStatement() :
-                connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        Statement statement;
+        if (isReadonly()) {
+            statement = connection.createStatement();
+        } else {
+            if (connection.getMetaData().supportsResultSetType(ResultSet.TYPE_SCROLL_INSENSITIVE)) {
+                statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            } else {
+                statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            }
+        }
         statementRef.set(statement);
         checkDisposed();
         if (timeout != -1) {

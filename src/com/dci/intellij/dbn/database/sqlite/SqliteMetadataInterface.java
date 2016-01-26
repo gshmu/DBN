@@ -25,6 +25,27 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
         return executeQuery(connection, "charsets");
     }
 
+    @Override
+    public ResultSet loadColumns(String ownerName, String datasetName, Connection connection) throws SQLException {
+        return new SqliteColumnsResultSet(datasetName) {
+            @Override
+            protected ResultSet loadColumns(String datasetName) throws SQLException {
+                return executeQuery(connection, "dataset-columns", datasetName);
+            }
+        };
+    }
+
+    @Override
+    public ResultSet loadAllColumns(String ownerName, Connection connection) throws SQLException {
+        ResultSet resultSet = executeQuery(connection, "dataset-names");
+        return new SqliteColumnsResultSet(resultSet) {
+            @Override
+            protected ResultSet loadColumns(String datasetName) throws SQLException {
+                return executeQuery(connection, "dataset-columns", datasetName);
+            }
+        };
+    }
+
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public String createDateString(Date date) {
         String dateString = DATE_FORMAT.format(date);
