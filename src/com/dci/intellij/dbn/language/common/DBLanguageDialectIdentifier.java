@@ -7,6 +7,7 @@ public enum DBLanguageDialectIdentifier {
     MYSQL_PSQL("MYSQL-PSQL"),
     POSTGRES_SQL("POSTGRES-SQL"),
     POSTGRES_PSQL("POSTGRES-PSQL"),
+    SQLITE_SQL("SQLITE-SQL"),
     ISO92_SQL("ISO92-SQL");
 
     private String value;

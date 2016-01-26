@@ -18,6 +18,7 @@ public class CreateConnectionDropdownAction extends GroupPopupAction {
             new CreateConnectionAction(DatabaseType.ORACLE),
             new CreateConnectionAction(DatabaseType.MYSQL),
             new CreateConnectionAction(DatabaseType.POSTGRES),
+            new CreateConnectionAction(DatabaseType.SQLITE),
             new CreateConnectionAction(null),
             ActionUtil.SEPARATOR,
             new TnsNamesImportAction()
