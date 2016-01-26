@@ -49,8 +49,4 @@ public abstract class DatabaseCompatibilityInterface {
     public abstract SessionStatus getSessionStatus(String statusName);
 
     public abstract String getExplainPlanStatementPrefix();
-
-    public int getColumnIndexPadding() {
-        return 0;
-    }
 }

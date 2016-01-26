@@ -161,8 +161,12 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="view-source-code" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="view-source-code" is-query="true">
         <statement>
+            select SQL
+              from SQLITE_MASTER
+             where TYPE = 'view'
+               and NAME = '{0}'
         </statement>
     </statement-execution-processor>    
 

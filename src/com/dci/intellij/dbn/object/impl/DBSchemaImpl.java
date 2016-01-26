@@ -158,6 +158,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     @Override
     public void initProperties() {}
 
+    @Nullable
     @Override
     public DBUser getOwner() {
         return FailsafeUtil.get(getObjectBundle()).getUser(name);

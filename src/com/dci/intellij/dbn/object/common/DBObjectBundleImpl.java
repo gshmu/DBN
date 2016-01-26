@@ -222,11 +222,10 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     public synchronized List<DBNativeDataType> getNativeDataTypes(){
         if (nativeDataTypes == null) {
             DatabaseInterfaceProvider interfaceProvider = getConnectionHandler().getInterfaceProvider();
-            int columnIndexPadding = interfaceProvider.getCompatibilityInterface().getColumnIndexPadding();
             List<DataTypeDefinition> dataTypeDefinitions = interfaceProvider.getNativeDataTypes().list();
             nativeDataTypes = new ArrayList<DBNativeDataType>();
             for (DataTypeDefinition dataTypeDefinition : dataTypeDefinitions) {
-                DBNativeDataType dataType = new DBNativeDataType(dataTypeDefinition, columnIndexPadding);
+                DBNativeDataType dataType = new DBNativeDataType(dataTypeDefinition);
                 nativeDataTypes.add(dataType);
             }
             Collections.sort(nativeDataTypes, new Comparator<DBNativeDataType>() {
@@ -275,7 +274,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
     @Nullable
     public DBUser getUser(String name) {
-        return users.getObject(name);
+        return users == null ? null : users.getObject(name);
     }
 
     @Nullable
