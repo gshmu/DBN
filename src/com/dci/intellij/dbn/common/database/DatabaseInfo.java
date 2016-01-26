@@ -9,13 +9,14 @@ public class DatabaseInfo implements Cloneable{
         DatabaseInfo ORACLE   = new DatabaseInfo("localhost", "1521", "XE",       DatabaseUrlType.SID);
         DatabaseInfo MYSQL    = new DatabaseInfo("localhost", "3306", "mysql",    DatabaseUrlType.DATABASE);
         DatabaseInfo POSTGRES = new DatabaseInfo("localhost", "5432", "postgres", DatabaseUrlType.DATABASE);
-        DatabaseInfo SQLITE   = new DatabaseInfo("", "", "",                      DatabaseUrlType.FILE);
+        DatabaseInfo SQLITE   = new DatabaseInfo("sqlite.db",                     DatabaseUrlType.FILE);
         DatabaseInfo UNKNOWN  = new DatabaseInfo("localhost", "1234", "database", DatabaseUrlType.DATABASE);
     }
 
     private String host;
     private String port;
     private String database;
+    private String file;
     private String url;
     private DatabaseUrlType urlType = DatabaseUrlType.DATABASE;
 
@@ -29,8 +30,13 @@ public class DatabaseInfo implements Cloneable{
         this.urlType = urlType;
     }
 
+    public DatabaseInfo(String file, DatabaseUrlType urlType) {
+        this.file = file;
+        this.urlType = urlType;
+    }
+
     public boolean isEmpty() {
-        return StringUtil.isEmpty(host) && StringUtil.isEmpty(port) && StringUtil.isEmpty(database);
+        return StringUtil.isEmpty(host) && StringUtil.isEmpty(port) && StringUtil.isEmpty(database) && StringUtil.isEmpty(file);
     }
 
     public void setUrl(String url) {
@@ -63,6 +69,14 @@ public class DatabaseInfo implements Cloneable{
 
     public void setDatabase(String database) {
         this.database = database;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
     }
 
     public DatabaseUrlType getUrlType() {

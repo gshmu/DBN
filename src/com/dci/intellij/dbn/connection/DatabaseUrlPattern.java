@@ -10,14 +10,14 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 
 public enum DatabaseUrlPattern {
 
-    ORACLE_SID     ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",         "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(:[\\-$_a-z0-9]+)$",             DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SID),
-    ORACLE_SERVICE ("jdbc:oracle:thin:@//<HOST>:<PORT>/<DATABASE>",       "^(jdbc:oracle:(?:thin|oci):@\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)(/[\\-$_a-z0-9]+)$",       DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SERVICE),
-    ORACLE_LDAP    ("jdbc:oracle:thin:@ldap://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@ldap\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)(/[\\-$_a-z0-9]+)$",   DatabaseInfo.Default.ORACLE,   DatabaseUrlType.LDAP),
-    ORACLE_LDAPS   ("jdbc:oracle:thin:@ldaps://<HOST>:<PORT>/<DATABASE>", "^(jdbc:oracle:(?:thin|oci):@ldaps\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)(/[\\-$_a-z0-9]+)$",  DatabaseInfo.Default.ORACLE,   DatabaseUrlType.LDAPS),
-    MYSQL          ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",              "^(jdbc:mysql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\-$_a-z0-9]*)?$",                  DatabaseInfo.Default.MYSQL,    DatabaseUrlType.DATABASE),
-    POSTGRES       ("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",         "^(jdbc:postgresql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\-$_a-z0-9]*)?$",             DatabaseInfo.Default.POSTGRES, DatabaseUrlType.DATABASE),
-    SQLITE         ("jdbc:sqlite://<FILE>",                               "^(jdbc:sqlite:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\-$_a-z0-9]*)?$",                 DatabaseInfo.Default.SQLITE,   DatabaseUrlType.FILE),
-    UNKNOWN        ("jdbc:unknown://<HOST>:<PORT>/<DATABASE>",            "^(jdbc:unknown:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\-$_a-z0-9]*)?$",                DatabaseInfo.Default.UNKNOWN,  DatabaseUrlType.DATABASE),
+    ORACLE_SID     ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",         "^(jdbc:oracle:(?:thin|oci):@)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)(?<DATABASE>:[\\-$_a-z0-9]+)$",             DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SID),
+    ORACLE_SERVICE ("jdbc:oracle:thin:@//<HOST>:<PORT>/<DATABASE>",       "^(jdbc:oracle:(?:thin|oci):@\\/\\/)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)(?<DATABASE>/[\\-$_a-z0-9]+)$",       DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SERVICE),
+    ORACLE_LDAP    ("jdbc:oracle:thin:@ldap://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@ldap\\/\\/)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)(?<DATABASE>/[\\-$_a-z0-9]+)$",   DatabaseInfo.Default.ORACLE,   DatabaseUrlType.LDAP),
+    ORACLE_LDAPS   ("jdbc:oracle:thin:@ldaps://<HOST>:<PORT>/<DATABASE>", "^(jdbc:oracle:(?:thin|oci):@ldaps\\/\\/)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)(?<DATABASE>\\/[\\-$_a-z0-9]+)$",  DatabaseInfo.Default.ORACLE,   DatabaseUrlType.LDAPS),
+    MYSQL          ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",              "^(jdbc:mysql:\\/\\/)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)?(?<DATABASE>\\/[\\-$_a-z0-9]*)?$",                  DatabaseInfo.Default.MYSQL,    DatabaseUrlType.DATABASE),
+    POSTGRES       ("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",         "^(jdbc:postgresql:\\/\\/)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)?(?<DATABASE>\\/[\\-$_a-z0-9]*)?$",             DatabaseInfo.Default.POSTGRES, DatabaseUrlType.DATABASE),
+    SQLITE         ("jdbc:sqlite:<FILE>",                                 "^(jdbc:sqlite:)(?<FILE>([a-zA-Z]:)?(\\\\[a-zA-Z0-9_\\.-]+)+\\\\?)$",                            DatabaseInfo.Default.SQLITE,   DatabaseUrlType.FILE),
+    UNKNOWN        ("jdbc:unknown://<HOST>:<PORT>/<DATABASE>",            "^(jdbc:unknown:\\/\\/)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)?(?<DATABASE>\\/[\\-$_a-z0-9]*)?$",                DatabaseInfo.Default.UNKNOWN,  DatabaseUrlType.DATABASE),
     ;
 
     private DatabaseUrlType urlType;
@@ -39,14 +39,16 @@ public enum DatabaseUrlPattern {
         return getUrl(
                 databaseInfo.getHost(),
                 databaseInfo.getPort(),
-                databaseInfo.getDatabase());
+                databaseInfo.getDatabase(),
+                databaseInfo.getFile());
     }
 
-    public String getUrl(String host, String port, String database) {
+    public String getUrl(String host, String port, String database, String file) {
         return urlPattern.
                 replace("<HOST>", CommonUtil.nvl(host, "")).
                 replace(":<PORT>", StringUtil.isEmpty(port) ? "" : ":" + port).
-                replace("<DATABASE>", CommonUtil.nvl(database, ""));
+                replace("<DATABASE>", CommonUtil.nvl(database, "")).
+                replace("<FILE>", CommonUtil.nvl(file, ""));
     }
 
     public String getDefaultUrl() {
@@ -99,6 +101,19 @@ public enum DatabaseUrlPattern {
                 String databaseGroup = matcher.group(4);
                 if (StringUtil.isNotEmpty(databaseGroup)) {
                     return databaseGroup.substring(1);
+                }
+            }
+        }
+        return "";
+    }
+
+    public String resolveFile(String url) {
+        if (StringUtil.isNotEmpty(url)) {
+            Matcher matcher = getMatcher(url);
+            if (matcher.matches()) {
+                String fileGroup = matcher.group("FILE");
+                if (StringUtil.isNotEmpty(fileGroup)) {
+                    return fileGroup;
                 }
             }
         }
