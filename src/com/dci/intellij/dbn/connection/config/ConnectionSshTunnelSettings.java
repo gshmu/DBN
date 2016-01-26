@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.connection.config;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSshTunnelSettingsForm;
 import com.dci.intellij.dbn.connection.ssh.SshAuthType;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunnelSettingsForm> {
     private ConnectionSettings parent;
@@ -98,7 +97,7 @@ public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunn
     }
 
     public void setKeyPassphrase(String keyPassphrase) {
-        this.keyPassphrase = keyPassphrase;
+        this.keyPassphrase = StringUtil.isEmpty(keyPassphrase) ? null : keyPassphrase;
     }
 
     /*********************************************************
