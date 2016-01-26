@@ -243,6 +243,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return objectRef.getQualifiedNameWithType();
     }
 
+    @Nullable
     public DBUser getOwner() {
         DBObject parentObject = getParentObject();
         return parentObject == null ? null : parentObject.getOwner();

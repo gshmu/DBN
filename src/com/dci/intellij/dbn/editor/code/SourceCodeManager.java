@@ -210,13 +210,13 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     sourceCodeFile.setLoading(true);
                     Project project = getProject();
                     DBSchemaObject object = sourceCodeFile.getObject();
-                    DBContentType contentType = sourceCodeFile.getContentType();
 
                     EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoading(sourceCodeFile);
                     try {
                         sourceCodeFile.loadSourceFromDatabase();
                     } catch (SQLException e) {
                         sourceCodeFile.setSourceLoadError(e.getMessage());
+                        sourceCodeFile.setModified(false);
                         NotificationUtil.sendErrorNotification(project, "Source Load Error", "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database. Cause: " + e.getMessage());
                     } finally {
                         EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoaded(sourceCodeFile, initialLoad);
@@ -462,13 +462,15 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         new ConnectionAction("loading the source code", databaseFile, taskInstructions) {
             @Override
             protected void execute() {
-                List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
-                for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                    loadSourceFromDatabase(sourceCodeFile, true);
-                }
-
-                if (successCallback != null) {
-                    successCallback.run();
+                try {
+                    List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
+                    for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                        loadSourceFromDatabase(sourceCodeFile, true);
+                    }
+                } finally {
+                    if (successCallback != null) {
+                        successCallback.run();
+                    }
                 }
             }
         }.start();

@@ -76,7 +76,7 @@ public abstract class SqliteColumnsResultSet extends ResultSetAdapter {
 
     public int getInt(String columnLabel) throws SQLException {
         return
-            columnLabel.equals("POSITION") ? columnResultSet.getInt("cid") :
+            columnLabel.equals("POSITION") ? columnResultSet.getInt("cid") + 1 :
             columnLabel.equals("DATA_LENGTH") ? 0 :
             columnLabel.equals("DATA_PRECISION") ? 0 :
             columnLabel.equals("DATA_SCALE") ? 0 : 0;

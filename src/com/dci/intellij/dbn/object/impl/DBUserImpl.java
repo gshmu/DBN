@@ -43,6 +43,7 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
         super(connectionHandler, resultSet);
     }
 
+    @Nullable
     @Override
     public DBUser getOwner() {
         return this;

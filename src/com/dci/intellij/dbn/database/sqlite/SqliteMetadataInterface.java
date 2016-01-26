@@ -46,6 +46,11 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
         };
     }
 
+    @Override
+    public ResultSet loadViewSourceCode(String ownerName, String viewName, Connection connection) throws SQLException {
+        return executeQuery(connection, "view-source-code", viewName);
+    }
+
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public String createDateString(Date date) {
         String dateString = DATE_FORMAT.format(date);

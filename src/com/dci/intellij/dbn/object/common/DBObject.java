@@ -50,6 +50,7 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
     Icon getIcon();
     Icon getOriginalIcon();
 
+    @Nullable
     DBUser getOwner();
     DBSchema getSchema();
 

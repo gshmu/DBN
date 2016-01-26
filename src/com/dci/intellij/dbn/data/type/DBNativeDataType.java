@@ -19,11 +19,9 @@ public class DBNativeDataType implements DynamicContentElement{
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private DataTypeDefinition dataTypeDefinition;
-    private int columnIndexPadding;
 
-    public DBNativeDataType(DataTypeDefinition dataTypeDefinition, int columnIndexPadding) {
+    public DBNativeDataType(DataTypeDefinition dataTypeDefinition) {
         this.dataTypeDefinition = dataTypeDefinition;
-        this.columnIndexPadding = columnIndexPadding;
     }
 
     public boolean isDisposed() {
@@ -56,7 +54,6 @@ public class DBNativeDataType implements DynamicContentElement{
     }
 
     public Object getValueFromResultSet(ResultSet resultSet, int columnIndex) throws SQLException {
-        columnIndex = columnIndex + columnIndexPadding;
         // FIXME: add support for stream updatable types
 
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
@@ -103,7 +100,6 @@ public class DBNativeDataType implements DynamicContentElement{
     }
 
     public void setValueToResultSet(ResultSet resultSet, int columnIndex, Object value) throws SQLException {
-        columnIndex = columnIndex + columnIndexPadding;
         // FIXME: add support for stream updatable types
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
         if (genericDataType == GenericDataType.BLOB) return;
