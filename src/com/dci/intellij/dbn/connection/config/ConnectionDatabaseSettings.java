@@ -174,7 +174,8 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
             return urlPattern.getUrl(
                     host,
                     port,
-                    databaseInfo.getDatabase());
+                    databaseInfo.getDatabase(),
+                    databaseInfo.getFile());
         } else {
             return databaseInfo.getUrl();
         }
@@ -187,6 +188,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
                 databaseInfo.getHost() +
                 databaseInfo.getPort() +
                 databaseInfo.getDatabase() +
+                databaseInfo.getFile() +
                 databaseInfo.getUrl() +
                 authenticationInfo.getUser() +
                 authenticationInfo.getPassword() +
@@ -276,6 +278,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
             databaseInfo.setHost(getString(element, "host", databaseInfo.getHost()));
             databaseInfo.setPort(getString(element, "port", databaseInfo.getPort()));
             databaseInfo.setDatabase(getString(element, "database", databaseInfo.getDatabase()));
+            databaseInfo.setFile(getString(element, "file", databaseInfo.getFile()));
 
             DatabaseUrlType urlType = getEnum(element, "url-type", databaseType.getDefaultUrlPattern().getUrlType());
             databaseInfo.setUrlType(urlType);
@@ -336,6 +339,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
             setString(element, "host", nvl(databaseInfo.getHost()));
             setString(element, "port", nvl(databaseInfo.getPort()));
             setString(element, "database", nvl(databaseInfo.getDatabase()));
+            setString(element, "file", nvl(databaseInfo.getFile()));
             setEnum(element, "url-type", databaseInfo.getUrlType());
         } else if (configType == ConnectionConfigType.CUSTOM) {
             setString(element, "url", nvl(databaseInfo.getUrl()));
