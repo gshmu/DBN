@@ -291,6 +291,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
                 databaseInfo.setUrlType(urlPattern.getUrlType());
                 databaseInfo.setHost(urlPattern.resolveHost(url));
                 databaseInfo.setPort(urlPattern.resolvePort(url));
+                databaseInfo.setFile(urlPattern.resolveFile(url));
                 databaseInfo.setDatabase(urlPattern.resolveDatabase(url));
             }
         }

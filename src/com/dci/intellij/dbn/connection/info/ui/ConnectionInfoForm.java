@@ -3,7 +3,11 @@ package com.dci.intellij.dbn.connection.info.ui;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
@@ -11,14 +15,17 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.driver.DriverSource;
+import com.intellij.util.ui.UIUtil;
 
 public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
     private JPanel mainPanel;
@@ -26,25 +33,41 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
     private JPanel setupPanel;
     private JPanel metaDataPanel;
     private JPanel detailsPanel;
+    private JLabel infoDatabaseTypeLabel;
+    private JLabel statusMessageLabel;
+    private JLabel setupDescriptionLabel;
+    private JTextField setupFileTextField;
+    private JTextField setupDatabaseTextField;
+    private JTextField setupUrlTextField;
+    private JTextField setupHostTextField;
+    private JTextField setupPortTextField;
+    private JTextField setupDriverTextField;
+    private JTextField setupNameTextField;
+    private JTextField setupDescriptionTextField;
+    private JTextField setupDriverLibraryTextField;
+    private JTextField infoProductNameTextField;
+    private JTextField infoProductVersionTextField;
+    private JTextField infoDriverNameTextField;
+    private JTextField infoDriverVersionTextField;
+    private JTextField infoJdbcTypeTextField;
+    private JTextField infoConnectionUrlTextField;
+    private JTextField infoUserNameTextField;
+    private JLabel setupNameLabel;
+    private JLabel setupDriverLibraryLabel;
+    private JLabel setupDriverLabel;
+    private JLabel setupHostLabel;
+    private JLabel setupPortLabel;
+    private JLabel setupDatabaseLabel;
+    private JLabel setupUrlLabel;
+    private JLabel setupFileLabel;
+    private JLabel infoDatabaseTypeValueLabel;
     private JLabel infoProductNameLabel;
     private JLabel infoProductVersionLabel;
     private JLabel infoDriverNameLabel;
     private JLabel infoDriverVersionLabel;
+    private JLabel infoJdbcTypeLabel;
     private JLabel infoConnectionUrlLabel;
     private JLabel infoUserNameLabel;
-    private JLabel infoDatabaseTypeLabel;
-    private JLabel infoDriverJdbcType;
-    private JLabel setupNameValueLabel;
-    private JLabel setupDescriptionValueLabel;
-    private JLabel setupDriverLibraryValueLabel;
-    private JLabel setupDriverValueLabel;
-    private JLabel setupUrlValueLabel;
-    private JLabel statusMessageLabel;
-    private JLabel setupDatabaseValueLabel;
-    private JLabel setupDescLabel;
-    private JLabel setupHostValueLabel;
-    private JLabel setupPortValueLabel;
-    private JLabel setupUrlLabel;
 
     public ConnectionInfoForm(ConnectionInfoDialog parentComponent, ConnectionHandler connectionHandler) {
         super(parentComponent);
@@ -83,18 +106,18 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
 
             initInfoPanel(connectionInfo);
         } catch (SQLException e) {
-            infoDatabaseTypeLabel.setText(DatabaseType.UNKNOWN.getName());
-            infoDatabaseTypeLabel.setIcon(DatabaseType.UNKNOWN.getIcon());
+            infoDatabaseTypeValueLabel.setText(DatabaseType.UNKNOWN.getName());
+            infoDatabaseTypeValueLabel.setIcon(DatabaseType.UNKNOWN.getIcon());
 
 
-            infoProductNameLabel.setText("-");
-            infoProductVersionLabel.setText("-");
-            infoDriverNameLabel.setText("-");
-            infoDriverVersionLabel.setText("-");
-            infoDriverJdbcType.setText("-");
-            infoConnectionUrlLabel.setText("-");
-            infoUserNameLabel.setText("-");
-            statusMessageLabel.setText("Connection error: " + e.getMessage());
+            initValueField(infoProductNameLabel, infoProductNameTextField, "-");
+            initValueField(infoProductVersionLabel, infoProductVersionTextField, "-");
+            initValueField(infoDriverNameLabel, infoDriverNameTextField, "-");
+            initValueField(infoDriverVersionLabel, infoDriverVersionTextField, "-");
+            initValueField(infoJdbcTypeLabel, infoJdbcTypeTextField, "-");
+            initValueField(infoConnectionUrlLabel, infoConnectionUrlTextField, "-");
+            initValueField(infoUserNameLabel, infoUserNameTextField, "-");
+            statusMessageLabel.setText(e.getMessage());
             statusMessageLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
         }
 
@@ -103,42 +126,60 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
 
     private void initInfoPanel(ConnectionInfo connectionInfo) {
         DatabaseType databaseType = connectionInfo.getDatabaseType();
-        infoDatabaseTypeLabel.setText(databaseType.getName());
-        infoDatabaseTypeLabel.setIcon(databaseType.getIcon());
+        infoDatabaseTypeValueLabel.setText(databaseType.getName());
+        infoDatabaseTypeValueLabel.setIcon(databaseType.getIcon());
 
-        infoProductNameLabel.setText(connectionInfo.getProductName());
-        infoProductVersionLabel.setText(connectionInfo.getProductVersion());
-        infoDriverNameLabel.setText(connectionInfo.getDriverName());
-        infoDriverVersionLabel.setText(connectionInfo.getDriverVersion());
-        infoDriverJdbcType.setText(connectionInfo.getDriverJdbcType());
-        infoConnectionUrlLabel.setText(connectionInfo.getUrl());
-        infoUserNameLabel.setText(connectionInfo.getUserName());
+        initValueField(infoProductNameLabel, infoProductNameTextField, connectionInfo.getProductName());
+        initValueField(infoProductVersionLabel, infoProductVersionTextField, connectionInfo.getProductVersion());
+        initValueField(infoDriverNameLabel, infoDriverNameTextField, connectionInfo.getDriverName());
+        initValueField(infoDriverVersionLabel, infoDriverVersionTextField, connectionInfo.getDriverVersion());
+        initValueField(infoJdbcTypeLabel, infoJdbcTypeTextField, connectionInfo.getDriverJdbcType());
+        initValueField(infoConnectionUrlLabel, infoConnectionUrlTextField, connectionInfo.getUrl());
+        initValueField(infoUserNameLabel, infoUserNameTextField, connectionInfo.getUserName());
 
         statusMessageLabel.setText("Connection successful");
         statusMessageLabel.setIcon(Icons.EXEC_MESSAGES_INFO);
     }
 
     private void initSetupPanel(ConnectionHandler connectionHandler) {
-        setupNameValueLabel.setText(connectionHandler.getName());
+        initValueField(setupNameLabel, setupNameTextField, connectionHandler.getName());
 
         String description = connectionHandler.getDescription();
-        if (StringUtil.isEmpty(description)) {
-            setupDescLabel.setVisible(false);
-            setupDescriptionValueLabel.setVisible(false);
-        } else {
-            setupDescriptionValueLabel.setText(description);
-        }
+        initValueField(setupDescriptionLabel, setupDescriptionTextField, description, !StringUtil.isEmpty(description));
+
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
         String driverLibrary = databaseSettings.getDriverLibrary();
-        setupDriverLibraryValueLabel.setText(databaseSettings.getDriverSource() == DriverSource.BUILTIN ? "Built-in library" : getPresentableText(driverLibrary));
-        setupDriverValueLabel.setText(getPresentableText(databaseSettings.getDriver()));
+        initValueField(setupDriverLibraryLabel, setupDriverLibraryTextField, databaseSettings.getDriverSource() == DriverSource.BUILTIN ? "Built-in library" : driverLibrary);
+        initValueField(setupDriverLabel, setupDriverTextField, databaseSettings.getDriver(), true);
 
         DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
-        setupHostValueLabel.setText(getPresentableText(databaseInfo.getHost()));
-        setupPortValueLabel.setText(getPresentableText(databaseInfo.getPort()));
-        setupDatabaseValueLabel.setText(getPresentableText(databaseInfo.getDatabase()));
-        setupUrlValueLabel.setText(getPresentableText(databaseSettings.getConnectionUrl()));
+        boolean isFileUrlType = databaseInfo.getUrlType() == DatabaseUrlType.FILE;
+        initValueField(setupHostLabel, setupHostTextField, databaseInfo.getHost(), !isFileUrlType);
+        initValueField(setupPortLabel, setupPortTextField, databaseInfo.getPort(), !isFileUrlType);
+        initValueField(setupDatabaseLabel, setupDatabaseTextField, databaseInfo.getDatabase(), !isFileUrlType);
+        initValueField(setupUrlLabel, setupUrlTextField, databaseSettings.getConnectionUrl(), true);
+        initValueField(setupFileLabel, setupFileTextField, databaseInfo.getFile(), isFileUrlType);
         updateBorderTitleForeground(setupPanel);
+    }
+
+    private void initValueField(JLabel label, JTextField textField, String value) {
+        initValueField(label, textField, value, true);
+    }
+    private void initValueField(JLabel label, JTextField textField, String value, boolean visible) {
+        label.setVisible(visible);
+        textField.setVisible(visible);
+        textField.setBorder(Borders.EMPTY_BORDER);
+        textField.setBackground(UIUtil.getPanelBackground());
+        textField.setEditable(false);
+        textField.setText(getPresentableText(value));
+        textField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+
+        String text = textField.getText();
+        if (text.length() > 0) {
+            FontMetrics fontMetrics = textField.getFontMetrics(textField.getFont());
+            int width = fontMetrics.charsWidth(text.toCharArray(), 0, text.length()) + 40;
+            textField.setMinimumSize(new Dimension(Math.min(width, 600), -1));
+        }
     }
 
     @NotNull
