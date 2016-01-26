@@ -18,7 +18,7 @@ public abstract class DatabaseInterfaceProviderImpl implements DatabaseInterface
     private SQLLanguageDialect sqlLanguageDialect;
     private PSQLLanguageDialect psqlLanguageDialect;
 
-    protected DatabaseInterfaceProviderImpl(SQLLanguageDialect sqlLanguageDialect, PSQLLanguageDialect psqlLanguageDialect) {
+    protected DatabaseInterfaceProviderImpl(SQLLanguageDialect sqlLanguageDialect, @Nullable PSQLLanguageDialect psqlLanguageDialect) {
         this.sqlLanguageDialect = sqlLanguageDialect;
         this.psqlLanguageDialect = psqlLanguageDialect;
     }

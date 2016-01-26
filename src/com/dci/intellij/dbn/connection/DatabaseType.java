@@ -12,6 +12,7 @@ public enum DatabaseType implements Presentable {
     ORACLE   ("ORACLE",   "Oracle",     Icons.DB_ORACLE,     Icons.DB_ORACLE_LARGE,     "oracle.jdbc.driver.OracleDriver", DatabaseUrlPattern.ORACLE_SID, DatabaseUrlPattern.ORACLE_SERVICE),
     MYSQL    ("MYSQL",    "MySQL",      Icons.DB_MYSQL,      Icons.DB_MYSQL_LARGE,      "com.mysql.jdbc.Driver",           DatabaseUrlPattern.MYSQL),
     POSTGRES ("POSTGRES", "PostgreSQL", Icons.DB_POSTGRESQL, Icons.DB_POSTGRESQL_LARGE, "org.postgresql.Driver",           DatabaseUrlPattern.POSTGRES),
+    SQLITE   ("SQLITE",   "SQLite",     Icons.DB_SQLITE,     Icons.DB_SQLITE_LARGE,     "org.sqlite.JDBC",                 DatabaseUrlPattern.POSTGRES),
     UNKNOWN  ("UNKNOWN",  "Unknown",    null,                null,                      "java.sql.Driver",                 DatabaseUrlPattern.UNKNOWN);
 
     private String name;
@@ -111,6 +112,8 @@ public enum DatabaseType implements Presentable {
             return DatabaseType.MYSQL;
         } else if (name.contains("POSTGRESQL")) {
             return DatabaseType.POSTGRES;
+        } else if (name.contains("SQLITE")) {
+            return DatabaseType.SQLITE;
         }
         return UNKNOWN;
     }
