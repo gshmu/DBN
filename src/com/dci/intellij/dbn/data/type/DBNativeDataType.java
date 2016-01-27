@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
 import com.intellij.openapi.diagnostic.Logger;
 
 public class DBNativeDataType implements DynamicContentElement{
@@ -77,6 +78,11 @@ public class DBNativeDataType implements DynamicContentElement{
             return null;
         }
         try {
+            DataTypeParseAdapter parseAdapter = dataTypeDefinition.getParseAdapter();
+            if (parseAdapter != null) {
+                return parseAdapter.parse(resultSet.getString(columnIndex));
+            }
+
             return
                     clazz == String.class ? resultSet.getString(columnIndex) :
                     clazz == Byte.class ? resultSet.getByte(columnIndex) :
