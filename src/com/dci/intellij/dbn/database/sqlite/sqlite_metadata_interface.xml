@@ -12,7 +12,13 @@
     <statement-execution-processor id="schemas" is-query="true" is-prepared-statement="true">
         <statement>
             select
-                'sqlite' as SCHEMA_NAME,
+                'main' as SCHEMA_NAME,
+                'N' as IS_PUBLIC,
+                'N' as IS_SYSTEM,
+                'N' as IS_EMPTY
+            union
+            select
+                'temp' as SCHEMA_NAME,
                 'N' as IS_PUBLIC,
                 'N' as IS_SYSTEM,
                 'N' as IS_EMPTY
@@ -20,12 +26,6 @@
     </statement-execution-processor>
     <statement-execution-processor id="users" is-query="true" is-prepared-statement="true">
         <statement>
-            select distinct
-                GRANTEE as USER_NAME,
-                'N' as IS_EXPIRED,
-                'N' as IS_LOCKED
-            from information_schema.USER_PRIVILEGES
-            order by GRANTEE asc
         </statement>
     </statement-execution-processor>
 
@@ -68,66 +68,13 @@
 
     <statement-execution-processor id="dataset-columns" is-query="true">
         <statement>
-            PRAGMA TABLE_INFO({0})
-        </statement>
-    </statement-execution-processor>
-
-    <statement-execution-processor id="all-constraints" is-query="true" is-prepared-statement="true">
-        <statement>
-            select
-                tc.TABLE_NAME as DATASET_NAME,
-                case
-                    when tc.CONSTRAINT_TYPE = 'PRIMARY KEY' then concat('pk_', tc.TABLE_NAME)
-                    when tc.CONSTRAINT_TYPE = 'UNIQUE' then concat('unq_', tc.TABLE_NAME)
-                    else tc.CONSTRAINT_NAME
-                end as CONSTRAINT_NAME,
-                tc.CONSTRAINT_TYPE,
-                rc.UNIQUE_CONSTRAINT_SCHEMA as FK_CONSTRAINT_OWNER,
-                case
-                    when rc.UNIQUE_CONSTRAINT_NAME = 'PRIMARY' then concat('pk_', rc.REFERENCED_TABLE_NAME)
-                    when rc.UNIQUE_CONSTRAINT_NAME = 'name' then concat('unq_', rc.REFERENCED_TABLE_NAME)
-                    else rc.UNIQUE_CONSTRAINT_NAME
-                end as FK_CONSTRAINT_NAME,
-                'Y' as IS_ENABLED,
-                null as CHECK_CONDITION
-            from
-                information_schema.TABLE_CONSTRAINTS tc left join
-                information_schema.REFERENTIAL_CONSTRAINTS rc on
-                    rc.CONSTRAINT_SCHEMA = tc.CONSTRAINT_SCHEMA and
-                    rc.CONSTRAINT_NAME = tc.CONSTRAINT_NAME and
-                    rc.TABLE_NAME = tc.TABLE_NAME
-            where
-                tc.TABLE_SCHEMA = {0}
-            order by
-                tc.TABLE_NAME,
-                tc.CONSTRAINT_NAME asc
-        </statement>
-        <statement>
-            select
-                tc.TABLE_NAME as DATASET_NAME,
-                case
-                    when tc.CONSTRAINT_TYPE = 'PRIMARY KEY' then concat('pk_', tc.TABLE_NAME)
-                    when tc.CONSTRAINT_TYPE = 'UNIQUE' then concat('unq_', tc.TABLE_NAME)
-                    else tc.CONSTRAINT_NAME
-                end as CONSTRAINT_NAME,
-                tc.CONSTRAINT_TYPE,
-                null as FK_CONSTRAINT_OWNER,
-                null as FK_CONSTRAINT_NAME,
-                'Y' as IS_ENABLED,
-                null as CHECK_CONDITION
-            from
-                information_schema.TABLE_CONSTRAINTS tc
-            where
-                tc.TABLE_SCHEMA = {0}
-            order by
-                tc.TABLE_NAME,
-                tc.CONSTRAINT_NAME asc
+            PRAGMA TABLE_INFO("{0}")
         </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="constraints" is-query="true" is-prepared-statement="true">
         <statement>
-
+            PRAGMA INDEX_LIST("{0}")
         </statement>
     </statement-execution-processor>
 
@@ -141,13 +88,9 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="indexes" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="indexes" is-query="true">
         <statement>
-        </statement>
-    </statement-execution-processor>
-
-    <statement-execution-processor id="all-indexes" is-query="true" is-prepared-statement="true">
-        <statement>
+            PRAGMA INDEX_LIST("{0}")
         </statement>
     </statement-execution-processor>
 

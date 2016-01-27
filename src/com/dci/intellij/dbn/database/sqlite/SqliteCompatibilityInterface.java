@@ -46,6 +46,11 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
     }
 
     @Override
+    public String getForUpdateClause() {
+        return "";
+    }
+
+    @Override
     public String getExplainPlanStatementPrefix() {
         return null;
     }

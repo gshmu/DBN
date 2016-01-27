@@ -173,6 +173,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                     ProcessBuilder processBuilder = new ProcessBuilder(executionInput.getCommand());
                     processBuilder.environment().putAll(executionInput.getEnvironmentVars());
                     processBuilder.redirectErrorStream(true);
+                    executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Executing command: " + executionInput.getLineCommand(), input.isClearOutput()));
                     Process process = processBuilder.start();
 
                     outputContext.setProcess(process);

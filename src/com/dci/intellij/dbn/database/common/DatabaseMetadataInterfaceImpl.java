@@ -29,6 +29,10 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
         return executeQuery(connection, "users");
     }
 
+    public ResultSet loadCharsets(Connection connection) throws SQLException {
+        return executeQuery(connection, "charsets");
+    }
+
     public ResultSet loadRoles(Connection connection) throws SQLException {
         return executeQuery(connection, "roles");
     }

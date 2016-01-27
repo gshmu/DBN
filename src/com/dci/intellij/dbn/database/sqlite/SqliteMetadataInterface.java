@@ -9,6 +9,9 @@ import java.util.Date;
 
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
+import com.dci.intellij.dbn.database.sqlite.rs.SqliteColumnsResultSet;
+import com.dci.intellij.dbn.database.sqlite.rs.SqliteConstraintsResultSet;
+import com.dci.intellij.dbn.database.sqlite.rs.SqliteIndexesResultSet;
 
 
 public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
@@ -21,16 +24,12 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
         return null;
     }
 
-    public ResultSet loadCharsets(Connection connection) throws SQLException {
-        return executeQuery(connection, "charsets");
-    }
-
     @Override
     public ResultSet loadColumns(String ownerName, String datasetName, Connection connection) throws SQLException {
         return new SqliteColumnsResultSet(datasetName) {
             @Override
-            protected ResultSet loadColumns(String datasetName) throws SQLException {
-                return executeQuery(connection, "dataset-columns", datasetName);
+            protected ResultSet loadChildren(String parentName) throws SQLException {
+                return executeQuery(connection, "dataset-columns", parentName);
             }
         };
     }
@@ -40,8 +39,50 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
         ResultSet resultSet = executeQuery(connection, "dataset-names");
         return new SqliteColumnsResultSet(resultSet) {
             @Override
-            protected ResultSet loadColumns(String datasetName) throws SQLException {
-                return executeQuery(connection, "dataset-columns", datasetName);
+            protected ResultSet loadChildren(String parentName) throws SQLException {
+                return executeQuery(connection, "dataset-columns", parentName);
+            }
+        };
+    }
+
+    @Override
+    public ResultSet loadIndexes(String ownerName, String tableName, Connection connection) throws SQLException {
+        return new SqliteIndexesResultSet(tableName) {
+            @Override
+            protected ResultSet loadChildren(String parentName) throws SQLException {
+                return executeQuery(connection, "indexes", parentName);
+            }
+        };
+    }
+
+    @Override
+    public ResultSet loadAllIndexes(String ownerName, Connection connection) throws SQLException {
+        ResultSet resultSet = executeQuery(connection, "dataset-names");
+        return new SqliteIndexesResultSet(resultSet) {
+            @Override
+            protected ResultSet loadChildren(String parentName) throws SQLException {
+                return executeQuery(connection, "indexes", parentName);
+            }
+        };
+    }
+
+    @Override
+    public ResultSet loadConstraints(String ownerName, String tableName, Connection connection) throws SQLException {
+        return new SqliteConstraintsResultSet(tableName) {
+            @Override
+            protected ResultSet loadChildren(String parentName) throws SQLException {
+                return executeQuery(connection, "constraints", parentName);
+            }
+        };
+    }
+
+    @Override
+    public ResultSet loadAllConstraints(String ownerName, Connection connection) throws SQLException {
+        ResultSet resultSet = executeQuery(connection, "dataset-names");
+        return new SqliteConstraintsResultSet(resultSet) {
+            @Override
+            protected ResultSet loadChildren(String parentName) throws SQLException {
+                return executeQuery(connection, "constraints", parentName);
             }
         };
     }
