@@ -21,10 +21,6 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         return null;
     }
 
-    public ResultSet loadCharsets(Connection connection) throws SQLException {
-        return executeQuery(connection, "charsets");
-    }
-
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public String createDateString(Date date) {
         String dateString = DATE_FORMAT.format(date);
