@@ -37,6 +37,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
             case SESSION_BROWSING: return true;
             case SESSION_KILL: return true;
             case OBJECT_CHANGE_TRACING: return true;
+            case UPDATABLE_RESULT_SETS: return true;
             default: return false;
         }
     }

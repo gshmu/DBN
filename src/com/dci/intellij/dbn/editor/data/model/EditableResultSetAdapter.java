@@ -6,23 +6,23 @@ import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 
-public class EditableResultSetHandler {
+public class EditableResultSetAdapter extends ResultSetAdapter {
     private ResultSet resultSet;
-    private boolean useSavepoints;
-    private boolean insertMode;
 
-    public EditableResultSetHandler(ResultSet resultSet, boolean useSavepoints) {
+    public EditableResultSetAdapter(ConnectionHandler connectionHandler, ResultSet resultSet) {
+        super(connectionHandler);
         this.resultSet = resultSet;
-        this.useSavepoints = useSavepoints;
     }
 
+    @Override
     public void scroll(final int rowIndex) throws SQLException {
-        if (!insertMode) {
-            if (useSavepoints) {
+        if (!isInsertMode()) {
+            if (isUseSavePoints()) {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
@@ -36,9 +36,10 @@ public class EditableResultSetHandler {
         }
     }
 
+    @Override
     public void updateRow() throws SQLException {
-        if (!insertMode)  {
-            if (useSavepoints) {
+        if (!isInsertMode())  {
+            if (isUseSavePoints()) {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
@@ -52,9 +53,10 @@ public class EditableResultSetHandler {
         }
     }
 
+    @Override
     public void refreshRow() throws SQLException {
-        if (!insertMode)  {
-            if (useSavepoints) {
+        if (!isInsertMode())  {
+            if (isUseSavePoints()) {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
@@ -68,65 +70,69 @@ public class EditableResultSetHandler {
         }
     }
 
+    @Override
     public void startInsertRow() throws SQLException {
-        if (!insertMode)  {
-            if (useSavepoints) {
+        if (!isInsertMode())  {
+            if (isUseSavePoints()) {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
                         resultSet.moveToInsertRow();
-                        insertMode = true;
+                        setInsertMode(true);
                         return null;
                     }
                 }.start();
             } else {
                 resultSet.moveToInsertRow();
-                insertMode = true;
+                setInsertMode(true);
             }
         }
     }
 
+    @Override
     public void cancelInsertRow() throws SQLException {
-        if (!insertMode)  {
-            if (useSavepoints) {
+        if (isInsertMode())  {
+            if (isUseSavePoints()) {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
                         resultSet.moveToCurrentRow();
-                        insertMode = false;
+                        setInsertMode(false);
                         return null;
                     }
                 }.start();
             } else {
                 resultSet.moveToCurrentRow();
-                insertMode = false;
+                setInsertMode(false);
             }
         }
     }
 
+    @Override
     public void insertRow() throws SQLException {
-        if (insertMode)  {
-            if (useSavepoints) {
+        if (isInsertMode())  {
+            if (isUseSavePoints()) {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
                         resultSet.insertRow();
                         resultSet.moveToCurrentRow();
-                        insertMode = false;
+                        setInsertMode(false);
                         return null;
                     }
                 }.start();
             } else {
                 resultSet.insertRow();
                 resultSet.moveToCurrentRow();
-                insertMode = false;
+                setInsertMode(false);
             }
         }
     }
 
+    @Override
     public void deleteRow() throws SQLException {
-        if (!insertMode)  {
-            if (useSavepoints) {
+        if (!isInsertMode())  {
+            if (isUseSavePoints()) {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
@@ -140,9 +146,10 @@ public class EditableResultSetHandler {
         }
     }
 
+    @Override
     public void setValue(final int columnIndex, @NotNull final ValueAdapter valueAdapter, @Nullable final Object value) throws SQLException {
         final Connection connection = resultSet.getStatement().getConnection();
-        if (useSavepoints) {
+        if (isUseSavePoints()) {
             new ConnectionSavepointCall(resultSet) {
                 @Override
                 public Object execute() throws SQLException {
@@ -155,8 +162,9 @@ public class EditableResultSetHandler {
         }
     }
 
+    @Override
     public void setValue(final int columnIndex, @NotNull final DBDataType dataType, @Nullable final Object value) throws SQLException {
-        if (useSavepoints) {
+        if (isUseSavePoints()) {
             new ConnectionSavepointCall(resultSet) {
                 @Override
                 public Object execute() throws SQLException {

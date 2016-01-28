@@ -76,9 +76,9 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
 
     public void delete() {
         try {
-            EditableResultSetHandler resultSetHandler = getModel().getResultSetHandler();
-            resultSetHandler.scroll(getResultSetRowIndex());
-            resultSetHandler.deleteRow();
+            ResultSetAdapter resultSetAdapter = getModel().getResultSetAdapter();
+            resultSetAdapter.scroll(getResultSetRowIndex());
+            resultSetAdapter.deleteRow();
             isDeleted = true;
             isModified = false;
             isNew = false;
@@ -170,6 +170,10 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
     @NotNull
     ConnectionHandler getConnectionHandler() {
         return getModel().getConnectionHandler();
+    }
+
+    public boolean isResultSetUpdatable() {
+        return getModel().isResultSetUpdatable();
     }
 
     public boolean isDeleted() {
