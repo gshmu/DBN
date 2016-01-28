@@ -11,6 +11,7 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -153,6 +154,11 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     }
 
     private void executeUpdate() throws SQLException {
+        List<Cell> keyCells = currentRow.getKeyCells();
+        if (keyCells.size() == 0) {
+            throw new SQLException("No primary key defined for table");
+        }
+
         StringBuilder buffer = new StringBuilder();
         buffer.append("update ");
         buffer.append(getModel().getDataset().getQualifiedName());
@@ -165,7 +171,6 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
         }
         buffer.append(" where ");
 
-        List<Cell> keyCells = currentRow.getKeyCells();
         for (Cell cell : keyCells) {
             buffer.append(cell.getColumnName());
             buffer.append(" = ? ");
@@ -187,11 +192,16 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     }
 
     private void executeInsert() throws SQLException {
+        List<Cell> changedCells = currentRow.getChangedCells();
+        if (changedCells.size() == 0) {
+            throw AlreadyDisposedException.INSTANCE;
+        }
+
         StringBuilder buffer = new StringBuilder();
         buffer.append("insert into ");
         buffer.append(getModel().getDataset().getQualifiedName());
         buffer.append(" (");
-        List<Cell> changedCells = currentRow.getChangedCells();
+
         for (Cell cell : changedCells) {
             buffer.append(cell.getColumnName());
             buffer.append(", ");
