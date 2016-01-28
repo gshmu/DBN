@@ -23,7 +23,7 @@ public abstract class SqliteResultSetAdapter extends ResultSetAdapter {
         if (parentResultSet != null) {
             if (parentName == null || childResultSet == null || !childResultSet.next()) {
                 if (parentResultSet.next()) {
-                    parentName = parentResultSet.getString("DATASET_NAME");
+                    parentName = parentResultSet.getString(getParentColumnName());
                     ConnectionUtil.closeResultSet(childResultSet);
                     childResultSet = loadChildren(parentName);
                     return childResultSet.next() || next();
@@ -39,6 +39,10 @@ public abstract class SqliteResultSetAdapter extends ResultSetAdapter {
             }
             return childResultSet.next();
         }
+    }
+
+    protected String getParentColumnName() {
+        return "DATASET_NAME";
     }
 
     @Override

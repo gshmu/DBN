@@ -9,6 +9,7 @@ import java.util.Date;
 
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
+import com.dci.intellij.dbn.database.sqlite.rs.SqliteColumnIndexesResultSet;
 import com.dci.intellij.dbn.database.sqlite.rs.SqliteColumnsResultSet;
 import com.dci.intellij.dbn.database.sqlite.rs.SqliteConstraintsResultSet;
 import com.dci.intellij.dbn.database.sqlite.rs.SqliteIndexesResultSet;
@@ -83,6 +84,38 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
             @Override
             protected ResultSet loadChildren(String parentName) throws SQLException {
                 return executeQuery(connection, "constraints", parentName);
+            }
+        };
+    }
+
+    @Override
+    public ResultSet loadIndexRelations(String ownerName, String tableName, Connection connection) throws SQLException {
+        ResultSet indexesResultSet = loadIndexes(ownerName, tableName, connection);
+        return new SqliteColumnIndexesResultSet(indexesResultSet) {
+            @Override
+            protected ResultSet loadChildren(String parentName) throws SQLException {
+                return executeQuery(connection, "index-info", parentName);
+            }
+
+            @Override
+            protected String getParentColumnName() {
+                return "INDEX_NAME";
+            }
+        };
+    }
+
+    @Override
+    public ResultSet loadAllIndexRelations(String ownerName, Connection connection) throws SQLException {
+        ResultSet resultSet = loadAllIndexes(ownerName, connection);
+        return new SqliteColumnIndexesResultSet(resultSet) {
+            @Override
+            protected ResultSet loadChildren(String parentName) throws SQLException {
+                return executeQuery(connection, "index-info", parentName);
+            }
+
+            @Override
+            protected String getParentColumnName() {
+                return "INDEX_NAME";
             }
         };
     }
