@@ -11,12 +11,12 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.intellij.openapi.progress.ProcessCanceledException;
 
 public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     private Connection connection;
@@ -194,7 +194,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     private void executeInsert() throws SQLException {
         List<Cell> changedCells = currentRow.getChangedCells();
         if (changedCells.size() == 0) {
-            throw AlreadyDisposedException.INSTANCE;
+            throw new ProcessCanceledException();
         }
 
         StringBuilder buffer = new StringBuilder();
