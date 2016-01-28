@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.common.util.SkipEntrySQLException;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -86,6 +87,8 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
                     return;
                 } catch (RuntimeException e) {
                     System.out.println("RuntimeException: " + e.getMessage());
+                } catch (SkipEntrySQLException e) {
+                    continue;
                 }
 
                 dynamicContent.checkDisposed();

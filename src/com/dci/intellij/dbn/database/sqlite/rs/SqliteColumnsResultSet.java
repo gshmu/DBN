@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.database.sqlite.rs;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * COLUMN_NAME
@@ -33,7 +34,7 @@ public abstract class SqliteColumnsResultSet extends SqliteResultSetAdapter {
         return
                 columnLabel.equals("DATASET_NAME") ? parentName :
                 columnLabel.equals("COLUMN_NAME") ? childResultSet.getString("name") :
-                columnLabel.equals("DATA_TYPE_NAME") ? childResultSet.getString("type") :
+                columnLabel.equals("DATA_TYPE_NAME") ? (StringUtils.isEmpty(childResultSet.getString("type")) ? "NULL" : childResultSet.getString("type")) :
                 columnLabel.equals("IS_FOREIGN_KEY") ? "N" :
                 columnLabel.equals("IS_UNIQUE_KEY") ? "N" :
                 columnLabel.equals("IS_HIDDEN") ? "N" :

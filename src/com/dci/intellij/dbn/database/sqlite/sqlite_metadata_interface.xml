@@ -16,12 +16,14 @@
                 'N' as IS_PUBLIC,
                 'N' as IS_SYSTEM,
                 'N' as IS_EMPTY
+<!--
             union
             select
                 'temp' as SCHEMA_NAME,
                 'N' as IS_PUBLIC,
                 'N' as IS_SYSTEM,
                 'N' as IS_EMPTY
+-->
         </statement>
     </statement-execution-processor>
     <statement-execution-processor id="users" is-query="true" is-prepared-statement="true">
@@ -72,18 +74,18 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="constraints" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="constraints" is-query="true">
         <statement>
             PRAGMA INDEX_LIST("{0}")
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="column-constraint-relations" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="column-constraint-relations" is-query="true">
         <statement>
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-column-constraint-relations" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-column-constraint-relations" is-query="true">
         <statement>
         </statement>
     </statement-execution-processor>
@@ -94,12 +96,13 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="column-index-relations" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="index-info" is-query="true">
         <statement>
+            PRAGMA INDEX_XINFO("{0}")
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-column-index-relations" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-column-index-relations" is-query="true">
         <statement>
         </statement>
     </statement-execution-processor>
@@ -119,7 +122,7 @@
         </statement>
     </statement-execution-processor>    
 
-    <statement-execution-processor id="validate-connection" timeout="5" is-prepared-statement="true">
+    <statement-execution-processor id="validate-connection" timeout="5">
         <statement>
             select 1
         </statement>
