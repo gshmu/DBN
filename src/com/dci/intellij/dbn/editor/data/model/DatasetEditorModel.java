@@ -36,6 +36,7 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
@@ -384,6 +385,9 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         DatasetEditorTable editorTable = getEditorTable();
         DatasetEditorModelRow row = getInsertRow();
         if (row != null) {
+            if (row.isEmptyData()) {
+                throw new ProcessCanceledException();
+            }
             try {
                 editorTable.stopCellEditing();
                 resultSetAdapter.insertRow();

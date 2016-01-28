@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
@@ -202,5 +203,22 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
 
     public boolean isModified() {
         return isModified;
+    }
+
+    public boolean isEmptyData() {
+        for (DatasetEditorModelCell cell : getCells()) {
+            Object userValue = cell.getUserValue();
+            if (userValue != null) {
+                if (userValue instanceof String) {
+                    String stringUserValue = (String) userValue;
+                    if (StringUtils.isNotEmpty(stringUserValue)) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
