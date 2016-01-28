@@ -40,13 +40,14 @@ import com.intellij.openapi.project.Project;
 public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow> implements ListSelectionListener {
     private boolean isInserting;
     private boolean isModified;
+    private boolean isResultSetUpdatable;
     private DatasetEditor datasetEditor;
     private DataEditorSettings settings;
     private DBObjectRef<DBDataset> datasetRef;
 
     private CancellableDatabaseCall loaderCall;
     private boolean isDirty;
-    private EditableResultSetHandler resultSetHandler;
+    private ResultSetAdapter resultSetAdapter;
 
     private List<DatasetEditorModelRow> changedRows = new ArrayList<DatasetEditorModelRow>();
 
@@ -58,6 +59,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         this.datasetRef = DBObjectRef.from(dataset);
         this.settings =  DataEditorSettings.getInstance(project);
         setHeader(new DatasetEditorModelHeader(datasetEditor, null));
+        this.isResultSetUpdatable = DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(getConnectionHandler());
 
         EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
         boolean readonly = environmentManager.isReadonly(dataset, DBContentType.DATA);
@@ -81,8 +83,9 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 if (newResultSet != null && !newResultSet.isClosed()) {
                     checkDisposed();
                     setResultSet(newResultSet);
-                    boolean useSavepoints = !DatabaseFeature.CONNECTION_ERROR_RECOVERING.isSupported(connectionHandler);
-                    resultSetHandler = new EditableResultSetHandler(newResultSet, useSavepoints);
+                    resultSetAdapter = DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(connectionHandler) ?
+                            new EditableResultSetAdapter(connectionHandler, newResultSet) :
+                            new ReadonlyResultSetAdapter(connectionHandler);
                     setResultSetExhausted(false);
                     if (keepChanges) snapshotChanges(); else clearChanges();
 
@@ -105,8 +108,8 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         loaderCall.start();
     }
 
-    EditableResultSetHandler getResultSetHandler() {
-        return resultSetHandler;
+    ResultSetAdapter getResultSetAdapter() {
+        return resultSetAdapter;
     }
 
     private int computeRowCount() {
@@ -329,7 +332,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         try {
             isInserting = true;
             editorTable.stopCellEditing();
-            resultSetHandler.startInsertRow();
+            resultSetAdapter.startInsertRow();
             DatasetEditorModelRow newRow = createRow(getRowCount()+1);
             newRow.setInsert(true);
             addRowAtIndex(rowIndex, newRow);
@@ -350,7 +353,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             isInserting = true;
             editorTable.stopCellEditing();
             int insertIndex = rowIndex + 1;
-            resultSetHandler.startInsertRow();
+            resultSetAdapter.startInsertRow();
             DatasetEditorModelRow oldRow = getRowAtIndex(rowIndex);
             DatasetEditorModelRow newRow = createRow(getRowCount() + 1);
             newRow.setInsert(true);
@@ -371,7 +374,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         if (row != null) {
             try {
                 editorTable.stopCellEditing();
-                resultSetHandler.insertRow();
+                resultSetAdapter.insertRow();
                 row.setInsert(false);
                 row.setNew(true);
                 isModified = true;
@@ -399,7 +402,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 removeRowAtIndex(rowIndex);
                 if (notifyListeners) notifyRowsDeleted(rowIndex, rowIndex);
             }
-            resultSetHandler.cancelInsertRow();
+            resultSetAdapter.cancelInsertRow();
             isInserting = false;
 
         } catch (SQLException e) {
@@ -437,6 +440,10 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         for (DatasetEditorModelRow row : getRows()) {
             row.revertChanges();
         }
+    }
+
+    public boolean isResultSetUpdatable() {
+        return isResultSetUpdatable;
     }
 
     /*********************************************************
