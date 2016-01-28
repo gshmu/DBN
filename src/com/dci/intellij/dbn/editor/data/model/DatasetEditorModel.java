@@ -82,7 +82,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             public Object execute() throws Exception {
                 ResultSet newResultSet = loadResultSet(useCurrentFilter, statementRef);
 
-                if (newResultSet != null && !newResultSet.isClosed()) {
+                if (newResultSet != null) {
                     checkDisposed();
                     setResultSet(newResultSet);
                     setResultSetExhausted(false);

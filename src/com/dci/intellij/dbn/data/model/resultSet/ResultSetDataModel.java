@@ -72,7 +72,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         final List<T> oldRows = getRows();
         List<T> newRows = reset ? new ArrayList<T>(oldRows.size()) : new ArrayList<T>(oldRows);
 
-        if (resultSet == null) {
+        if (resultSet == null || resultSet.isClosed()) {
             resultSetExhausted = true;
         } else {
             while (count < records) {

@@ -190,20 +190,21 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
         StringBuilder buffer = new StringBuilder();
         buffer.append("insert into ");
         buffer.append(getModel().getDataset().getQualifiedName());
-        buffer.append(" ( ");
+        buffer.append(" (");
         List<Cell> changedCells = currentRow.getChangedCells();
         for (Cell cell : changedCells) {
             buffer.append(cell.getColumnName());
             buffer.append(", ");
         }
-        buffer.substring(0, buffer.length() -2);
+        buffer.delete(buffer.length() -2, buffer.length());
         buffer.append(" ) values (");
 
         for (Cell cell : changedCells) {
             buffer.append(" ? ");
             buffer.append(", ");
         }
-        buffer.substring(0, buffer.length() -2);
+        buffer.delete(buffer.length() -2, buffer.length());
+        buffer.append(")");
 
 
         PreparedStatement preparedStatement = connection.prepareStatement(buffer.toString());
@@ -284,11 +285,13 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
 
         public void addKeyCell(ColumnInfo columnInfo, Object value) {
             Cell cell = new Cell(columnInfo, value);
+            keyCells.remove(cell);
             keyCells.add(cell);
         }
 
         public void addChangedCell(ColumnInfo columnInfo, Object value) {
             Cell cell = new Cell(columnInfo, value);
+            changedCells.remove(cell);
             changedCells.add(cell);
         }
     }
