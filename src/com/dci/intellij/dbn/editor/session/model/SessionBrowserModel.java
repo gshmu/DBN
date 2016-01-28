@@ -108,7 +108,7 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
 
     @Override
     protected SessionBrowserModelRow createRow(int resultSetRowIndex) throws SQLException {
-        return new SessionBrowserModelRow(this, getResultSet());
+        return new SessionBrowserModelRow(this, getResultSet(), resultSetRowIndex);
     }
 
     public List<String> getDistinctValues(SessionBrowserFilterType filterType, String selectedValue) {

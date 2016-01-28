@@ -24,7 +24,7 @@ public class BasicTableSpeedSearch extends SpeedSearchBase<BasicTable<? extends 
 
     protected Object[] getAllElements() {
         if (columnInfos == null) {
-            DataModelHeader modelHeader = getTable().getModel().getHeader();
+            DataModelHeader<ColumnInfo> modelHeader = getTable().getModel().getHeader();
             columnInfos = modelHeader.getColumnInfos().toArray(new ColumnInfo[modelHeader.getColumnCount()]);
         }
         return columnInfos;

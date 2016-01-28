@@ -34,7 +34,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
 public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
-    private DataModelHeader header;
+    private DataModelHeader<? extends ColumnInfo> header;
     private DataModelState state;
     private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
     private Set<DataModelListener> dataModelListeners = new HashSet<DataModelListener>();
@@ -101,12 +101,12 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
         return FailsafeUtil.get(project);
     }
 
-    public void setHeader(@NotNull DataModelHeader header) {
+    public void setHeader(@NotNull DataModelHeader<? extends ColumnInfo> header) {
         this.header = header;
         Disposer.register(this, header);
     }
 
-    public DataModelHeader getHeader() {
+    public DataModelHeader<? extends ColumnInfo> getHeader() {
         return header;
     }
 

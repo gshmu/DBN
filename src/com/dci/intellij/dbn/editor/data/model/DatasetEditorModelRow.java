@@ -22,7 +22,6 @@ import com.intellij.openapi.diagnostic.Logger;
 public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorModelCell> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private int resultSetRowIndex;
     private boolean isNew;
     private boolean isInsert;
     private boolean isDeleted;
@@ -30,8 +29,7 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
 
 
     public DatasetEditorModelRow(DatasetEditorModel model, ResultSet resultSet, int resultSetRowIndex) throws SQLException {
-        super(model, resultSet);
-        this.resultSetRowIndex = resultSetRowIndex;
+        super(model, resultSet, resultSetRowIndex);
     }
 
     @NotNull
@@ -159,12 +157,13 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
 
 
     public int getResultSetRowIndex() {
-        return isDeleted ? -1 : resultSetRowIndex;
+        return isDeleted ? -1 : super.getResultSetRowIndex();
     }
 
+    @Override
     public void shiftResultSetRowIndex(int delta) {
         assert !isDeleted;
-        resultSetRowIndex = resultSetRowIndex + delta;
+        super.shiftResultSetRowIndex(delta);
     }
 
     @NotNull

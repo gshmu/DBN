@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
@@ -36,6 +37,7 @@ import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 
 public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow> implements ListSelectionListener {
     private boolean isInserting;
@@ -83,9 +85,6 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 if (newResultSet != null && !newResultSet.isClosed()) {
                     checkDisposed();
                     setResultSet(newResultSet);
-                    resultSetAdapter = DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(connectionHandler) ?
-                            new EditableResultSetAdapter(connectionHandler, newResultSet) :
-                            new ReadonlyResultSetAdapter(connectionHandler);
                     setResultSetExhausted(false);
                     if (keepChanges) snapshotChanges(); else clearChanges();
 
@@ -106,6 +105,19 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             }
         };
         loaderCall.start();
+    }
+
+    @Override
+    public void setResultSet(ResultSet resultSet) throws SQLException {
+        super.setResultSet(resultSet);
+
+        // create the adapter
+        DisposerUtil.dispose(resultSetAdapter);
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        resultSetAdapter = DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(connectionHandler) ?
+                    new EditableResultSetAdapter(this, resultSet) :
+                    new ReadonlyResultSetAdapter(this, resultSet);
+        Disposer.register(DatasetEditorModel.this, resultSetAdapter);
     }
 
     ResultSetAdapter getResultSetAdapter() {
