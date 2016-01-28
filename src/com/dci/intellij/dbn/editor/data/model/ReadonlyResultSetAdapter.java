@@ -1,178 +1,295 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
+import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 
 public class ReadonlyResultSetAdapter extends ResultSetAdapter {
-    private ResultSet resultSet;
+    private Connection connection;
+    private Row currentRow;
 
-    public ReadonlyResultSetAdapter(ConnectionHandler connectionHandler) {
-        super(connectionHandler);
+    public ReadonlyResultSetAdapter(DatasetEditorModel model, ResultSet resultSet) throws SQLException {
+        super(model);
+        this.connection = resultSet.getStatement().getConnection();
     }
 
     @Override
-    public void scroll(final int rowIndex) throws SQLException {
+    public synchronized void scroll(final int rowIndex) throws SQLException {
         if (!isInsertMode()) {
-            if (isUseSavePoints()) {
-                new ConnectionSavepointCall(resultSet) {
-                    @Override
-                    public Object execute() throws SQLException {
-                        resultSet.absolute(rowIndex);
-                        return null;
-                    }
-                }.start();
-            } else {
-                resultSet.absolute(rowIndex);
+            DatasetEditorModelRow modelRow = getModel().getRowAtResultSetIndex(rowIndex);
+            if (modelRow == null) {
+                throw new SQLException("Could not scroll to row index " + rowIndex);
+            }
+
+            currentRow = new Row();
+            List<DatasetEditorModelCell> modelCells = modelRow.getCells();
+            for (DatasetEditorModelCell modelCell : modelCells) {
+                DatasetEditorColumnInfo columnInfo = modelCell.getColumnInfo();
+                if (columnInfo.isPrimaryKey()) {
+                    currentRow.addKeyCell(columnInfo, modelCell.getUserValue());
+                }
             }
         }
     }
 
     @Override
-    public void updateRow() throws SQLException {
+    public synchronized void updateRow() throws SQLException {
         if (!isInsertMode())  {
             if (isUseSavePoints()) {
-                new ConnectionSavepointCall(resultSet) {
+                new ConnectionSavepointCall(connection) {
                     @Override
                     public Object execute() throws SQLException {
-                        resultSet.updateRow();
+                        executeUpdate();
                         return null;
                     }
                 }.start();
             } else {
-                resultSet.updateRow();
+                executeUpdate();
             }
         }
     }
 
     @Override
-    public void refreshRow() throws SQLException {
+    public synchronized void refreshRow() throws SQLException {
+        // not supported
+    }
+
+
+    @Override
+    public synchronized void startInsertRow() throws SQLException {
         if (!isInsertMode())  {
-            if (isUseSavePoints()) {
-                new ConnectionSavepointCall(resultSet) {
-                    @Override
-                    public Object execute() throws SQLException {
-                        resultSet.refreshRow();
-                        return null;
-                    }
-                }.start();
-            } else {
-                resultSet.refreshRow();
-            }
+            setInsertMode(true);
+            currentRow = new Row();
         }
     }
 
     @Override
-    public void startInsertRow() throws SQLException {
-        if (!isInsertMode())  {
-            if (isUseSavePoints()) {
-                new ConnectionSavepointCall(resultSet) {
-                    @Override
-                    public Object execute() throws SQLException {
-                        resultSet.moveToInsertRow();
-                        setInsertMode(true);
-                        return null;
-                    }
-                }.start();
-            } else {
-                resultSet.moveToInsertRow();
-                setInsertMode(true);
-            }
+    public synchronized void cancelInsertRow() throws SQLException {
+        if (isInsertMode())  {
+            setInsertMode(false);
+            currentRow = null;
         }
     }
 
     @Override
-    public void cancelInsertRow() throws SQLException {
+    public synchronized void insertRow() throws SQLException {
         if (isInsertMode())  {
             if (isUseSavePoints()) {
-                new ConnectionSavepointCall(resultSet) {
+                new ConnectionSavepointCall(connection) {
                     @Override
                     public Object execute() throws SQLException {
-                        resultSet.moveToCurrentRow();
+                        executeInsert();
                         setInsertMode(false);
                         return null;
                     }
                 }.start();
             } else {
-                resultSet.moveToCurrentRow();
+                executeInsert();
                 setInsertMode(false);
             }
         }
     }
 
     @Override
-    public void insertRow() throws SQLException {
-        if (isInsertMode())  {
-            if (isUseSavePoints()) {
-                new ConnectionSavepointCall(resultSet) {
-                    @Override
-                    public Object execute() throws SQLException {
-                        resultSet.insertRow();
-                        resultSet.moveToCurrentRow();
-                        setInsertMode(false);
-                        return null;
-                    }
-                }.start();
-            } else {
-                resultSet.insertRow();
-                resultSet.moveToCurrentRow();
-                setInsertMode(false);
-            }
-        }
-    }
-
-    @Override
-    public void deleteRow() throws SQLException {
+    public synchronized void deleteRow() throws SQLException {
         if (!isInsertMode())  {
             if (isUseSavePoints()) {
-                new ConnectionSavepointCall(resultSet) {
+                new ConnectionSavepointCall(connection) {
                     @Override
                     public Object execute() throws SQLException {
-                        resultSet.deleteRow();
+                        runDeleteStatement();
                         return null;
                     }
                 }.start();
             } else {
-                resultSet.deleteRow();
+                runDeleteStatement();
             }
         }
     }
 
+    private void runDeleteStatement() {}
+
     @Override
-    public void setValue(final int columnIndex, @NotNull final ValueAdapter valueAdapter, @Nullable final Object value) throws SQLException {
-        final Connection connection = resultSet.getStatement().getConnection();
-        if (isUseSavePoints()) {
-            new ConnectionSavepointCall(resultSet) {
-                @Override
-                public Object execute() throws SQLException {
-                    valueAdapter.write(connection, resultSet, columnIndex, value);
-                    return null;
-                }
-            }.start();
-        } else {
-            valueAdapter.write(connection, resultSet, columnIndex, value);
-        }
+    public synchronized void setValue(final int columnIndex, @NotNull final ValueAdapter valueAdapter, @Nullable final Object value) throws SQLException {
+        throw new SQLException("Operation not supported");
     }
 
     @Override
-    public void setValue(final int columnIndex, @NotNull final DBDataType dataType, @Nullable final Object value) throws SQLException {
+    public synchronized void setValue(final int columnIndex, @NotNull final DBDataType dataType, @Nullable final Object value) throws SQLException {
+        DatasetEditorColumnInfo columnInfo = getColumnInfo(columnIndex);
+        currentRow.addChangedCell(columnInfo, value);
         if (isUseSavePoints()) {
-            new ConnectionSavepointCall(resultSet) {
+            new ConnectionSavepointCall(connection) {
                 @Override
                 public Object execute() throws SQLException {
-                    dataType.setValueToResultSet(resultSet, columnIndex, value);
+                    if (!isInsertMode()) {
+                        executeUpdate();
+                    }
                     return null;
                 }
             }.start();
         } else {
-            dataType.setValueToResultSet(resultSet, columnIndex, value);
+            if (!isInsertMode()) {
+                executeUpdate();
+            }
+        }
+    }
+
+    DatasetEditorColumnInfo getColumnInfo(int columnIndex) {
+        return getModel().getHeader().getResultSetColumnInfo(columnIndex);
+    }
+
+    private void executeUpdate() throws SQLException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("update ");
+        buffer.append(getModel().getDataset().getQualifiedName());
+        buffer.append(" set ");
+
+        List<Cell> changedCells = currentRow.getChangedCells();
+        for (Cell cell : changedCells) {
+            buffer.append(cell.getColumnName());
+            buffer.append(" = ? ");
+        }
+        buffer.append(" where ");
+
+        List<Cell> keyCells = currentRow.getKeyCells();
+        for (Cell cell : keyCells) {
+            buffer.append(cell.getColumnName());
+            buffer.append(" = ? ");
+        }
+
+        PreparedStatement preparedStatement = connection.prepareStatement(buffer.toString());
+        int paramIndex = 0;
+        for (Cell cell : changedCells) {
+            paramIndex++;
+            DBNativeDataType nativeDataType = cell.getDataType();
+            nativeDataType.setValueToStatement(preparedStatement, paramIndex, cell.getValue());
+        }
+        for (Cell cell : keyCells) {
+            paramIndex++;
+            DBNativeDataType nativeDataType = cell.getDataType();
+            nativeDataType.setValueToStatement(preparedStatement, paramIndex, cell.getValue());
+        }
+        preparedStatement.executeUpdate();
+    }
+
+    private void executeInsert() throws SQLException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("insert into ");
+        buffer.append(getModel().getDataset().getQualifiedName());
+        buffer.append(" ( ");
+        List<Cell> changedCells = currentRow.getChangedCells();
+        for (Cell cell : changedCells) {
+            buffer.append(cell.getColumnName());
+            buffer.append(", ");
+        }
+        buffer.substring(0, buffer.length() -2);
+        buffer.append(" ) values (");
+
+        for (Cell cell : changedCells) {
+            buffer.append(" ? ");
+            buffer.append(", ");
+        }
+        buffer.substring(0, buffer.length() -2);
+
+
+        PreparedStatement preparedStatement = connection.prepareStatement(buffer.toString());
+        int paramIndex = 0;
+        for (Cell cell : changedCells) {
+            paramIndex++;
+            DBNativeDataType nativeDataType = cell.getDataType();
+            nativeDataType.setValueToStatement(preparedStatement, paramIndex, cell.getValue());
+        }
+        preparedStatement.executeUpdate();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        connection = null;
+    }
+
+    private class Cell {
+        private ColumnInfo columnInfo;
+        private Object value;
+
+        public Cell(ColumnInfo columnInfo, Object value) {
+            this.columnInfo = columnInfo;
+            this.value = value;
+        }
+
+        public ColumnInfo getColumnInfo() {
+            return columnInfo;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        @NotNull
+        public DBNativeDataType getDataType() throws SQLException {
+            DBDataType dataType = columnInfo.getDataType();
+            DBNativeDataType nativeDataType = dataType.getNativeDataType();
+            if (nativeDataType == null) {
+                throw new SQLException("Operation not supported for " + dataType.getName());
+            }
+            return nativeDataType;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Cell cell = (Cell) o;
+
+            return columnInfo.getName().equals(cell.getColumnInfo().getName());
+
+        }
+
+        @Override
+        public int hashCode() {
+            return columnInfo.getName().hashCode();
+        }
+
+        public String getColumnName() {
+            return columnInfo.getName();
+        }
+    }
+
+    private class Row {
+        private Set<Cell> keyCells = new HashSet<Cell>();
+        private Set<Cell> changedCells = new HashSet<Cell>();
+
+        public List<Cell> getKeyCells() {
+            return new ArrayList<Cell>(keyCells);
+        }
+
+        public List<Cell> getChangedCells() {
+            return new ArrayList<Cell>(changedCells);
+        }
+
+        public void addKeyCell(ColumnInfo columnInfo, Object value) {
+            Cell cell = new Cell(columnInfo, value);
+            keyCells.add(cell);
+        }
+
+        public void addChangedCell(ColumnInfo columnInfo, Object value) {
+            Cell cell = new Cell(columnInfo, value);
+            changedCells.add(cell);
         }
     }
 }

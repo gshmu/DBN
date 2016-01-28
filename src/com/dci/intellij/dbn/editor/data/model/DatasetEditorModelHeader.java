@@ -7,14 +7,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.dci.intellij.dbn.data.model.ColumnInfo;
-import com.dci.intellij.dbn.data.model.DataModelHeader;
-import com.dci.intellij.dbn.data.model.basic.BasicDataModelHeader;
+import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelHeader;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnState;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 
-public class DatasetEditorModelHeader extends BasicDataModelHeader implements DataModelHeader {
+public class DatasetEditorModelHeader extends ResultSetDataModelHeader<DatasetEditorColumnInfo> {
     public DatasetEditorModelHeader(DatasetEditor datasetEditor, ResultSet resultSet) throws SQLException {
         DBDataset dataset = datasetEditor.getDataset();
         if (resultSet == null) {
@@ -24,7 +23,7 @@ public class DatasetEditorModelHeader extends BasicDataModelHeader implements Da
             for (DatasetColumnState columnState : columnStates) {
                 DBColumn column = dataset.getColumn(columnState.getName());
                 if (column != null) {
-                    ColumnInfo columnInfo = new DatasetEditorColumnInfo(column, index, column.getPosition());
+                    DatasetEditorColumnInfo columnInfo = new DatasetEditorColumnInfo(column, index, column.getPosition());
                     addColumnInfo(columnInfo);
                     index++;
                 }
@@ -35,7 +34,7 @@ public class DatasetEditorModelHeader extends BasicDataModelHeader implements Da
             for (int i = 0; i < columnCount; i++) {
                 String name = metaData.getColumnName(i+1);
                 DBColumn column = dataset.getColumn(name);
-                ColumnInfo columnInfo = new DatasetEditorColumnInfo(column, i, i+1);
+                DatasetEditorColumnInfo columnInfo = new DatasetEditorColumnInfo(column, i, i+1);
                 addColumnInfo(columnInfo);
             }
         }

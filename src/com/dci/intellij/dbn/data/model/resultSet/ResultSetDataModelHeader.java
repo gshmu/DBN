@@ -3,14 +3,13 @@ package com.dci.intellij.dbn.data.model.resultSet;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.data.model.ColumnInfo;
-import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModelHeader;
 
-public class ResultSetDataModelHeader extends BasicDataModelHeader implements DataModelHeader {
+public class ResultSetDataModelHeader<T extends ResultSetColumnInfo> extends BasicDataModelHeader<T> {
 
     public ResultSetDataModelHeader() {
     }
@@ -20,13 +19,23 @@ public class ResultSetDataModelHeader extends BasicDataModelHeader implements Da
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
         for (int i = 0; i < columnCount; i++) {
-            ColumnInfo columnInfo = createColumnInfo(connectionHandler, resultSet, i);
+            T columnInfo = createColumnInfo(connectionHandler, resultSet, i);
             addColumnInfo(columnInfo);
         }
     }
 
+    public T getResultSetColumnInfo(int resultSetColumnIndex) {
+        List<T> columnInfos = getColumnInfos();
+        for (T columnInfo : columnInfos) {
+            if (columnInfo.getResultSetColumnIndex() == resultSetColumnIndex) {
+                return columnInfo;
+            }
+        }
+        throw new IllegalArgumentException("Invalid result set column index " + resultSetColumnIndex + ". Columns count " + columnInfos.size());
+    }
+
     @NotNull
-    public ResultSetColumnInfo createColumnInfo(ConnectionHandler connectionHandler, ResultSet resultSet, int columnIndex) throws SQLException {
-        return new ResultSetColumnInfo(connectionHandler, resultSet, columnIndex);
+    public T createColumnInfo(ConnectionHandler connectionHandler, ResultSet resultSet, int columnIndex) throws SQLException {
+        return (T) new ResultSetColumnInfo(connectionHandler, resultSet, columnIndex);
     }
 }

@@ -8,11 +8,15 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.intellij.openapi.Disposable;
 
-public abstract class ResultSetAdapter {
+public abstract class ResultSetAdapter implements Disposable{
     private boolean useSavePoints;
     private boolean insertMode;
-    public ResultSetAdapter(ConnectionHandler connectionHandler) {
+    private DatasetEditorModel model;
+    public ResultSetAdapter(DatasetEditorModel model) {
+        this.model = model;
+        ConnectionHandler connectionHandler = model.getConnectionHandler();
         useSavePoints = !DatabaseFeature.CONNECTION_ERROR_RECOVERY.isSupported(connectionHandler);
     }
 
@@ -26,6 +30,10 @@ public abstract class ResultSetAdapter {
 
     public void setInsertMode(boolean insertMode) {
         this.insertMode = insertMode;
+    }
+
+    public DatasetEditorModel getModel() {
+        return model;
     }
 
     public abstract void scroll(int rowIndex) throws SQLException;
@@ -45,4 +53,9 @@ public abstract class ResultSetAdapter {
     public abstract void setValue(int columnIndex, @NotNull ValueAdapter valueAdapter, @Nullable Object value) throws SQLException;
 
     public abstract void setValue(int columnIndex, @NotNull DBDataType dataType, @Nullable Object value) throws SQLException;
+
+    @Override
+    public void dispose() {
+        model = null;
+    }
 }

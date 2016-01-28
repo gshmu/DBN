@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
@@ -14,8 +13,8 @@ import com.dci.intellij.dbn.data.value.ValueAdapter;
 public class EditableResultSetAdapter extends ResultSetAdapter {
     private ResultSet resultSet;
 
-    public EditableResultSetAdapter(ConnectionHandler connectionHandler, ResultSet resultSet) {
-        super(connectionHandler);
+    public EditableResultSetAdapter(DatasetEditorModel model, ResultSet resultSet) {
+        super(model);
         this.resultSet = resultSet;
     }
 
@@ -175,5 +174,11 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
         } else {
             dataType.setValueToResultSet(resultSet, columnIndex, value);
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        resultSet = null;
     }
 }
