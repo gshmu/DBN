@@ -7,18 +7,15 @@ import org.apache.commons.lang.StringUtils;
 import com.dci.intellij.dbn.database.common.util.SkipEntrySQLException;
 
 /**
- * COLUMN_NAME,
+ * COLUMN_NAME
  * INDEX_NAME
+ * TABLE_NAME
  */
 
 public abstract class SqliteColumnIndexesResultSet extends SqliteResultSetAdapter {
 
     public SqliteColumnIndexesResultSet(ResultSet parentResultSet) {
         super(parentResultSet);
-    }
-
-    public SqliteColumnIndexesResultSet(String parentName) {
-        super(parentName);
     }
 
     protected abstract ResultSet loadChildren(String parentName) throws SQLException;
