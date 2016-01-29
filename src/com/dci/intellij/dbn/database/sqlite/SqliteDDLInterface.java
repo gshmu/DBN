@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
 import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
@@ -13,7 +12,6 @@ import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
-import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -38,23 +36,17 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
         CodeStyleCaseOption oco = caseSettings.getObjectCaseOption();
 
 
-        if (objectTypeId == DatabaseObjectTypeId.VIEW) {
-            return kco.format("create" + (makeRerunnable ? " or replace" : "") + " view ") +
-                    oco.format((useQualified ? schemaName + "." : "") + objectName) +
-                    kco.format(" as\n") +
-                    code;
-        }
-
-        if (objectTypeId == DatabaseObjectTypeId.PROCEDURE || objectTypeId == DatabaseObjectTypeId.FUNCTION) {
+        if (objectTypeId.isOneOf(DatabaseObjectTypeId.VIEW, DatabaseObjectTypeId.DATASET_TRIGGER)) {
+            if (objectTypeId == DatabaseObjectTypeId.DATASET_TRIGGER) {
+                objectTypeId = DatabaseObjectTypeId.TRIGGER;
+            }
             String objectType = objectTypeId.toString().toLowerCase();
             code = updateNameQualification(code, useQualified, objectType, schemaName, objectName, caseSettings);
-            String delimiterChange = kco.format("delimiter ") + alternativeDelimiter + "\n";
             String dropStatement =
                     kco.format("drop " + objectType + " if exists ") +
                     oco.format((useQualified ? schemaName + "." : "") + objectName) + alternativeDelimiter + "\n";
-            String createStatement = kco.format("create definer=current_user\n") + code + alternativeDelimiter + "\n";
-            String delimiterReset = kco.format("delimiter ;");
-            return delimiterChange + (makeRerunnable ? dropStatement : "") + createStatement + delimiterReset;
+            String createStatement = kco.format("create \n") + code + alternativeDelimiter + "\n";
+            return (makeRerunnable ? dropStatement : "") + createStatement;
         }
         return code;
     }
@@ -62,16 +54,6 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
     @Override
     public void computeSourceCodeOffsets(SourceCodeContent content, DatabaseObjectTypeId objectTypeId, String objectName) {
         super.computeSourceCodeOffsets(content, objectTypeId, objectName);
-    }
-
-    public String getSessionSqlMode(Connection connection) throws SQLException {
-        return getSingleValue(connection, "get-session-sql-mode");
-    }
-
-    public void setSessionSqlMode(String sqlMode, Connection connection) throws SQLException {
-        if (sqlMode != null) {
-            executeCall(connection, null, "set-session-sql-mode", sqlMode);
-        }
     }
 
     /*********************************************************
@@ -123,67 +105,7 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
      *                   CREATE statements                   *
      *********************************************************/
     public void createMethod(MethodFactoryInput method, Connection connection) throws SQLException {
-        CodeStyleCaseSettings styleCaseSettings = PSQLCodeStyleSettings.getInstance(method.getSchema().getProject()).getCaseSettings();
-        CodeStyleCaseOption keywordCaseOption = styleCaseSettings.getKeywordCaseOption();
-        CodeStyleCaseOption objectCaseOption = styleCaseSettings.getObjectCaseOption();
-        CodeStyleCaseOption dataTypeCaseOption = styleCaseSettings.getDatatypeCaseOption();
-
-        StringBuilder buffer = new StringBuilder();
-        String methodType = method.isFunction() ? "function " : "procedure ";
-        buffer.append(keywordCaseOption.format(methodType));
-        buffer.append(objectCaseOption.format(method.getObjectName()));
-        buffer.append("(");
-
-        int maxArgNameLength = 0;
-        int maxArgDirectionLength = 0;
-        for (ArgumentFactoryInput argument : method.getArguments()) {
-            maxArgNameLength = Math.max(maxArgNameLength, argument.getObjectName().length());
-            maxArgDirectionLength = Math.max(maxArgDirectionLength,
-                    argument.isInput() && argument.isOutput() ? 5 :
-                    argument.isInput() ? 2 :
-                    argument.isOutput() ? 3 : 0);
-        }
-
-
-        for (ArgumentFactoryInput argument : method.getArguments()) {
-            buffer.append("\n    ");
-            
-            if (!method.isFunction()) {
-                String direction =
-                        argument.isInput() && argument.isOutput() ? keywordCaseOption.format("inout") :
-                                argument.isInput() ? keywordCaseOption.format("in") :
-                                        argument.isOutput() ? keywordCaseOption.format("out") : "";
-                buffer.append(direction);
-                buffer.append(StringUtil.repeatSymbol(' ', maxArgDirectionLength - direction.length() + 1));
-            }
-
-            buffer.append(objectCaseOption.format(argument.getObjectName()));
-            buffer.append(StringUtil.repeatSymbol(' ', maxArgNameLength - argument.getObjectName().length() + 1));
-
-            buffer.append(dataTypeCaseOption.format(argument.getDataType()));
-            if (argument != method.getArguments().get(method.getArguments().size() -1)) {
-                buffer.append(",");
-            }
-        }
-
-        buffer.append(")\n");
-        if (method.isFunction()) {
-            buffer.append(keywordCaseOption.format("returns "));
-            buffer.append(dataTypeCaseOption.format(method.getReturnArgument().getDataType()));
-            buffer.append("\n");
-        }
-        buffer.append(keywordCaseOption.format("begin\n\n"));
-        if (method.isFunction()) buffer.append(keywordCaseOption.format("    return null;\n\n"));
-        buffer.append("end");
-        
-        String sqlMode = getSessionSqlMode(connection);
-        try {
-            setSessionSqlMode("TRADITIONAL", connection);
-            createObject(buffer.toString(), connection);
-        } finally {
-            setSessionSqlMode(sqlMode, connection);
-        }
-
+        throw new SQLException("Operation not supported: [create method]");
     }
 
 }

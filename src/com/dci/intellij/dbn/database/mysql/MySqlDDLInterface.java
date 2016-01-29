@@ -45,7 +45,10 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
                     code;
         }
 
-        if (objectTypeId == DatabaseObjectTypeId.PROCEDURE || objectTypeId == DatabaseObjectTypeId.FUNCTION) {
+        if (objectTypeId.isOneOf(DatabaseObjectTypeId.PROCEDURE, DatabaseObjectTypeId.FUNCTION, DatabaseObjectTypeId.DATASET_TRIGGER)) {
+            if (objectTypeId == DatabaseObjectTypeId.DATASET_TRIGGER) {
+                objectTypeId = DatabaseObjectTypeId.TRIGGER;
+            }
             String objectType = objectTypeId.toString().toLowerCase();
             code = updateNameQualification(code, useQualified, objectType, schemaName, objectName, caseSettings);
             String delimiterChange = kco.format("delimiter ") + alternativeDelimiter + "\n";
