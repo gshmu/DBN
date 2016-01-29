@@ -32,6 +32,10 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
         CodeStyleCaseOption kco = styleCaseSettings.getKeywordCaseOption();
         CodeStyleCaseOption oco = styleCaseSettings.getObjectCaseOption();
 
+        if (objectTypeId.isOneOf(DatabaseObjectTypeId.DATABASE_TRIGGER, DatabaseObjectTypeId.DATASET_TRIGGER)) {
+            objectTypeId = DatabaseObjectTypeId.TRIGGER;
+        }
+
         if (objectTypeId == DatabaseObjectTypeId.VIEW) {
             return kco.format("create" + (makeRerunnable ? " or replace" : "") + " view ") + oco.format((useQualified ? schemaName + "." : "") + objectName) + kco.format(" as\n") + code + "\n/";
         } else {

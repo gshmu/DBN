@@ -37,7 +37,7 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
 
     @Override
     public String getDefaultAlternativeStatementDelimiter() {
-        return "$$";
+        return ";";
     }
 
     @Override
