@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +17,11 @@ import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 
 public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseDDLInterface {
-    public static final String TEMP_VIEW_NAME = "DBN_TEMPORARY_VIEW_0001";
+    public static final String TEMP_OBJECT_NAME = "DBN_TEMPORARY_{0}_0001";
+
+    public static String getTempObjectName(String objectType) {
+        return MessageFormat.format(TEMP_OBJECT_NAME, objectType.toUpperCase());
+    }
 
     public DatabaseDDLInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
         super(fileName, provider);
