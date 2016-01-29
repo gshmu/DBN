@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.database.sqlite.rs.SqliteColumnIndexesResultSet;
 import com.dci.intellij.dbn.database.sqlite.rs.SqliteColumnsResultSet;
 import com.dci.intellij.dbn.database.sqlite.rs.SqliteConstraintsResultSet;
 import com.dci.intellij.dbn.database.sqlite.rs.SqliteIndexesResultSet;
+import com.dci.intellij.dbn.database.sqlite.rs.SqliteTriggersResultSet;
 
 
 public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
@@ -89,6 +90,16 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
         };
     }
 
+    public ResultSet loadDatasetTriggers(String ownerName, String datasetName, Connection connection) throws SQLException {
+        ResultSet resultSet = executeQuery(connection, "dataset-triggers", datasetName);
+        return new SqliteTriggersResultSet(resultSet);
+    }
+
+    public ResultSet loadAllDatasetTriggers(String ownerName, Connection connection) throws SQLException {
+        ResultSet resultSet = executeQuery(connection, "all-dataset-triggers");
+        return new SqliteTriggersResultSet(resultSet);
+    }
+
     @Override
     public ResultSet loadIndexRelations(String ownerName, String tableName, Connection connection) throws SQLException {
         ResultSet indexesResultSet = loadIndexes(ownerName, tableName, connection);
@@ -158,6 +169,10 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
     @Override
     public ResultSet loadViewSourceCode(String ownerName, String viewName, Connection connection) throws SQLException {
         return executeQuery(connection, "view-source-code", viewName);
+    }
+
+    public ResultSet loadDatasetTriggerSourceCode(String tableOwner, String tableName, String ownerName, String triggerName, Connection connection) throws SQLException {
+        return executeQuery(connection, "dataset-trigger-source-code", tableName, triggerName);
     }
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
