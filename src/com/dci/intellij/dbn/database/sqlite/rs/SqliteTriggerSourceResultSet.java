@@ -9,8 +9,8 @@ import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker;
 
 public class SqliteTriggerSourceResultSet extends ResultSetAdapter {
-    public static final Pattern DDL_STUB_REGEX = Pattern.compile("(?i)(CREATE\\s+(TEMP(ORARY)?\\s+)?)");
-    public static final Pattern GUARDED_STUB_REGEX = Pattern.compile("(?i)TRIGGER\\s+[^.]+(?=\\s+(BEFORE|AFTER|INSTEAD))");
+    public static final Pattern DDL_STUB_REGEX = Pattern.compile("(CREATE\\s+(TEMP(ORARY)?\\s+)?)", Pattern.CASE_INSENSITIVE);
+    public static final Pattern GUARDED_STUB_REGEX = Pattern.compile("TRIGGER\\s+[^.]+(?=\\s+(BEFORE|AFTER|INSTEAD))", Pattern.CASE_INSENSITIVE);
     private ResultSet resultSet;
 
     public SqliteTriggerSourceResultSet(ResultSet resultSet) {
