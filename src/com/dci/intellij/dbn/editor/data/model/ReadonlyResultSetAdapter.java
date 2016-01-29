@@ -111,17 +111,15 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
                 new ConnectionSavepointCall(connection) {
                     @Override
                     public Object execute() throws SQLException {
-                        runDeleteStatement();
+                        executeDelete();
                         return null;
                     }
                 }.start();
             } else {
-                runDeleteStatement();
+                executeDelete();
             }
         }
     }
-
-    private void runDeleteStatement() {}
 
     @Override
     public synchronized void setValue(final int columnIndex, @NotNull final ValueAdapter valueAdapter, @Nullable final Object value) throws SQLException {
@@ -220,6 +218,32 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
         PreparedStatement preparedStatement = connection.prepareStatement(buffer.toString());
         int paramIndex = 0;
         for (Cell cell : changedCells) {
+            paramIndex++;
+            DBNativeDataType nativeDataType = cell.getDataType();
+            nativeDataType.setValueToStatement(preparedStatement, paramIndex, cell.getValue());
+        }
+        preparedStatement.executeUpdate();
+    }
+
+    private void executeDelete() throws SQLException {
+        List<Cell> keyCells = currentRow.getKeyCells();
+        if (keyCells.size() == 0) {
+            throw new SQLException("No primary key defined for table");
+        }
+
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("delete from ");
+        buffer.append(getModel().getDataset().getQualifiedName());
+        buffer.append(" where ");
+
+        for (Cell cell : keyCells) {
+            buffer.append(cell.getColumnName());
+            buffer.append(" = ? ");
+        }
+
+        PreparedStatement preparedStatement = connection.prepareStatement(buffer.toString());
+        int paramIndex = 0;
+        for (Cell cell : keyCells) {
             paramIndex++;
             DBNativeDataType nativeDataType = cell.getDataType();
             nativeDataType.setValueToStatement(preparedStatement, paramIndex, cell.getValue());
