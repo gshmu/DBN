@@ -162,6 +162,12 @@ public class DBNativeDataType implements DynamicContentElement{
         }
         if (genericDataType == GenericDataType.CURSOR) return;// not supported
 
+        DataTypeParseAdapter parseAdapter = dataTypeDefinition.getParseAdapter();
+        if (parseAdapter != null) {
+            value =  parseAdapter.toString(value);
+            preparedStatement.setString(parameterIndex, (String) value);
+            return;
+        }
 
         if (value == null) {
             preparedStatement.setObject(parameterIndex, null);
