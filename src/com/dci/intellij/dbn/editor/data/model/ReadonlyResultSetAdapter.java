@@ -130,21 +130,6 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     public synchronized void setValue(final int columnIndex, @NotNull final DBDataType dataType, @Nullable final Object value) throws SQLException {
         DatasetEditorColumnInfo columnInfo = getColumnInfo(columnIndex);
         currentRow.addChangedCell(columnInfo, value);
-        if (isUseSavePoints()) {
-            new ConnectionSavepointCall(connection) {
-                @Override
-                public Object execute() throws SQLException {
-                    if (!isInsertMode()) {
-                        executeUpdate();
-                    }
-                    return null;
-                }
-            }.start();
-        } else {
-            if (!isInsertMode()) {
-                executeUpdate();
-            }
-        }
     }
 
     DatasetEditorColumnInfo getColumnInfo(int columnIndex) {
