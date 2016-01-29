@@ -14,7 +14,9 @@ import com.dci.intellij.dbn.database.sqlite.rs.SqliteColumnIndexesResultSet;
 import com.dci.intellij.dbn.database.sqlite.rs.SqliteColumnsResultSet;
 import com.dci.intellij.dbn.database.sqlite.rs.SqliteConstraintsResultSet;
 import com.dci.intellij.dbn.database.sqlite.rs.SqliteIndexesResultSet;
+import com.dci.intellij.dbn.database.sqlite.rs.SqliteTriggerSourceResultSet;
 import com.dci.intellij.dbn.database.sqlite.rs.SqliteTriggersResultSet;
+import com.dci.intellij.dbn.database.sqlite.rs.SqliteViewSourceResultSet;
 
 
 public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
@@ -168,11 +170,13 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadViewSourceCode(String ownerName, String viewName, Connection connection) throws SQLException {
-        return executeQuery(connection, "view-source-code", viewName);
+        ResultSet resultSet = executeQuery(connection, "view-source-code", viewName);
+        return new SqliteViewSourceResultSet(resultSet);
     }
 
     public ResultSet loadDatasetTriggerSourceCode(String tableOwner, String tableName, String ownerName, String triggerName, Connection connection) throws SQLException {
-        return executeQuery(connection, "dataset-trigger-source-code", tableName, triggerName);
+        ResultSet resultSet = executeQuery(connection, "dataset-trigger-source-code", tableName, triggerName);
+        return new SqliteTriggerSourceResultSet(resultSet);
     }
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

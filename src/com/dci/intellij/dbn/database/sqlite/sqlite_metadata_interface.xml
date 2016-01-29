@@ -129,7 +129,7 @@
 
     <statement-execution-processor id="view-source-code" is-query="true">
         <statement>
-            select SQL
+            select SQL as SOURCE_CODE
               from SQLITE_MASTER
              where TYPE = 'view'
                and NAME = '{0}'
@@ -137,7 +137,7 @@
     </statement-execution-processor>
     <statement-execution-processor id="dataset-trigger-source-code" is-query="true">
         <statement>
-            select SQL
+            select SQL as SOURCE_CODE
               from SQLITE_MASTER
              where TYPE = 'trigger'
                and TBL_NAME = '{0}'
