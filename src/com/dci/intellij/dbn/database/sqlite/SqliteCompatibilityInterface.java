@@ -21,7 +21,8 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
             objectTypeId == DatabaseObjectTypeId.VIEW ||
             objectTypeId == DatabaseObjectTypeId.COLUMN ||
             objectTypeId == DatabaseObjectTypeId.CONSTRAINT ||
-            objectTypeId == DatabaseObjectTypeId.INDEX;
+            objectTypeId == DatabaseObjectTypeId.INDEX ||
+            objectTypeId == DatabaseObjectTypeId.DATASET_TRIGGER;
     }
 
     public boolean supportsFeature(DatabaseFeature feature) {

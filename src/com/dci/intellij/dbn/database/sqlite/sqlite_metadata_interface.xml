@@ -80,16 +80,6 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="column-constraint-relations" is-query="true">
-        <statement>
-        </statement>
-    </statement-execution-processor>
-
-    <statement-execution-processor id="all-column-constraint-relations" is-query="true">
-        <statement>
-        </statement>
-    </statement-execution-processor>
-
     <statement-execution-processor id="indexes" is-query="true">
         <statement>
             PRAGMA INDEX_LIST("{0}")
@@ -102,8 +92,38 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-column-index-relations" is-query="true">
+    <statement-execution-processor id="dataset-triggers" is-query="true">
         <statement>
+            select NAME as TRIGGER_NAME,
+                   TBL_NAME as DATASET_NAME,
+                   '' as TRIGGER_TYPE,
+                   '' as TRIGGERING_EVENT,
+                   'Y' as IS_ENABLED,
+                   'Y' as IS_VALID,
+                   'N' as IS_DEBUG,
+                   'Y' as IS_FOR_EACH_ROW,
+                   SQL as SOURCE_CODE
+              from SQLITE_MASTER
+             where TYPE = 'trigger'
+               and TBL_NAME = "{0}"
+             order by TRIGGER_NAME asc
+        </statement>
+    </statement-execution-processor>
+
+    <statement-execution-processor id="all-dataset-triggers" is-query="true" is-prepared-statement="true">
+        <statement>
+            select NAME as TRIGGER_NAME,
+                   TBL_NAME as DATASET_NAME,
+                   '' as TRIGGER_TYPE,
+                   '' as TRIGGERING_EVENT,
+                   'Y' as IS_ENABLED,
+                   'Y' as IS_VALID,
+                   'N' as IS_DEBUG,
+                   'Y' as IS_FOR_EACH_ROW,
+                    SQL as SOURCE_CODE
+              from SQLITE_MASTER
+             where TYPE = 'trigger'
+             order by TRIGGER_NAME asc
         </statement>
     </statement-execution-processor>
 
@@ -114,7 +134,17 @@
              where TYPE = 'view'
                and NAME = '{0}'
         </statement>
-    </statement-execution-processor>    
+    </statement-execution-processor>
+    <statement-execution-processor id="dataset-trigger-source-code" is-query="true">
+        <statement>
+            select SQL
+              from SQLITE_MASTER
+             where TYPE = 'trigger'
+               and TBL_NAME = '{0}'
+               and NAME = '{1}'
+        </statement>
+    </statement-execution-processor>
+
 
     <statement-execution-processor id="load-distinct-values" is-query="true">
         <statement>
