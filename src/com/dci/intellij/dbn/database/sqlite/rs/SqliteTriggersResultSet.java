@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
 
 public class SqliteTriggersResultSet extends ResultSetAdapter {
+    public static final Pattern TRIGGER_EVENT_REGEX = Pattern.compile("(before|after|instead\\s+of)\\s+(delete|insert|update)", Pattern.CASE_INSENSITIVE);
     private ResultSet resultSet;
 
     public SqliteTriggersResultSet(ResultSet resultSet) {
@@ -22,7 +23,7 @@ public class SqliteTriggersResultSet extends ResultSetAdapter {
         if (isType || isEvent) {
             String sourceCode = resultSet.getString("SOURCE_CODE");
 
-            Pattern p = Pattern.compile("(?i)(before|after|instead\\s+of)\\s+(delete|insert|update)");
+            Pattern p = TRIGGER_EVENT_REGEX;
             Matcher m = p.matcher(sourceCode);
             if (m.find()) {
                 int start = m.start();

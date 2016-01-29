@@ -81,8 +81,8 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
 
         StringBuffer buffer = new StringBuffer();
         String q = "\\" + getProvider().getCompatibilityInterface().getIdentifierQuotes() + "?";
+        String regex = objectType + "\\s+(" + q + schemaName + q + "\\s*\\.)?\\s*" + q + objectName + q;
         if (qualified) {
-            String regex = objectType + "\\s+(" + q + schemaName + q + "\\s*\\.)?\\s*" + q + objectName + q;
             Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(code);
             if (matcher.find()) {
@@ -92,7 +92,6 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
                 code = buffer.toString();
             }
         } else {
-            String regex = objectType + "(?i)\\s+(" + q + schemaName + q + "\\s*\\.)?\\s*" + q + objectName + q;
             Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(code);
             if (matcher.find()) {
