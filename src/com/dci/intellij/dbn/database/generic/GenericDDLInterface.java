@@ -32,7 +32,7 @@ public class GenericDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
-    public void updateView(String viewName, String oldCode, String newCode, Connection connection) throws SQLException {
+    public void updateView(String viewName, String code, Connection connection) throws SQLException {
         throw new UnsupportedOperationException("Not implemented");
     }
 

@@ -25,6 +25,7 @@ public enum DatabaseFeature {
     SESSION_INTERRUPTION_TIMING("Session interruption timing"),
     CONNECTION_ERROR_RECOVERY("Recover connection transaction after error"),
     UPDATABLE_RESULT_SETS("Updatable result sets"),
+    CURRENT_SCHEMA("Current schema initializing"),
     ;
 
     private String description;

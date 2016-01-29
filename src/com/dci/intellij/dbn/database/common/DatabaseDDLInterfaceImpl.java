@@ -16,6 +16,8 @@ import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 
 public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseDDLInterface {
+    public static final String TEMP_VIEW_NAME = "DBN_TEMPORARY_VIEW_0001";
+
     public DatabaseDDLInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
         super(fileName, provider);
     }

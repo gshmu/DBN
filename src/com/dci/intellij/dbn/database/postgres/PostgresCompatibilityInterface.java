@@ -38,6 +38,7 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
             case SESSION_KILL: return true;
             case SESSION_CURRENT_SQL: return true;
             case UPDATABLE_RESULT_SETS: return true;
+            case CURRENT_SCHEMA: return true;
             default: return false;
         }
     }

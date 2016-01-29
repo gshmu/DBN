@@ -75,8 +75,8 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
-    public void updateView(String viewName, String oldCode, String newCode, Connection connection) throws SQLException {
-        executeUpdate(connection, "change-view", viewName, newCode);
+    public void updateView(String viewName, String code, Connection connection) throws SQLException {
+        executeUpdate(connection, "change-view", viewName, code);
     }
 
     @Override

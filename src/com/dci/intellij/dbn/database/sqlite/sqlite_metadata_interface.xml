@@ -145,6 +145,9 @@
         </statement>
     </statement-execution-processor>
 
+    <statement-execution-processor id="drop-object-if-exists">
+        <statement>drop {0} if exists {1}</statement>
+    </statement-execution-processor>
 
     <statement-execution-processor id="load-distinct-values" is-query="true">
         <statement>
