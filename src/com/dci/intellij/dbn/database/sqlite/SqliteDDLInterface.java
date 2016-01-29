@@ -79,31 +79,36 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
      *********************************************************/
     public void updateView(String viewName, String code, Connection connection) throws SQLException {
         // try create
-        dropObjectIfExists("VIEW", TEMP_VIEW_NAME, connection);
-        createView(TEMP_VIEW_NAME, code, connection);
-        dropObjectIfExists("VIEW", TEMP_VIEW_NAME, connection);
+        String objectType = "VIEW";
+        String tempViewName = getTempObjectName(objectType);
+        dropObjectIfExists(objectType, tempViewName, connection);
+        createView(tempViewName, code, connection);
+        dropObjectIfExists(objectType, tempViewName, connection);
 
         // create
-        dropObjectIfExists("VIEW", viewName, connection);
+        dropObjectIfExists(objectType, viewName, connection);
         createView(viewName, code, connection);
     }
 
     @Override
     public void updateTrigger(String tableOwner, String tableName, String triggerName, String oldCode, String newCode, Connection connection) throws SQLException {
-        updateObject(triggerName, "trigger", oldCode, newCode, connection);
+        String objectType = "TRIGGER";
+        String tempTriggerName = getTempObjectName(objectType);
+        dropObjectIfExists(objectType, tempTriggerName, connection);
+        createObject(newCode.replaceFirst("(?i)" + triggerName, tempTriggerName), connection);
+        dropObjectIfExists(objectType, tempTriggerName, connection);
+
+        dropObjectIfExists(objectType, triggerName, connection);
+        createObject(newCode, connection);
     }
 
     public void updateObject(String objectName, String objectType, String oldCode, String newCode, Connection connection) throws SQLException {
-        String sqlMode = getSessionSqlMode(connection);
-        setSessionSqlMode("TRADITIONAL", connection);
         dropObjectIfExists(objectType, objectName, connection);
         try {
             createObject(newCode, connection);
         } catch (SQLException e) {
             createObject(oldCode, connection);
             throw e;
-        } finally {
-            setSessionSqlMode(sqlMode, connection);
         }
     }
 

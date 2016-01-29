@@ -82,14 +82,14 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
         setSessionSqlMode("TRADITIONAL", connection);
         try {
             // try create
-            dropObjectIfExists("VIEW", TEMP_VIEW_NAME, connection);
-            createView(TEMP_VIEW_NAME, code, connection);
-            dropObjectIfExists("VIEW", TEMP_VIEW_NAME, connection);
-
+            String tempViewName = getTempObjectName("VIEW");
+            dropObjectIfExists("VIEW", tempViewName, connection);
+            createView(tempViewName, code, connection);
+            dropObjectIfExists("VIEW", tempViewName, connection);
 
             // create
+            dropObjectIfExists("VIEW", viewName, connection);
             createView(viewName, code, connection);
-            dropObjectIfExists("view", viewName, connection);
         } finally {
             setSessionSqlMode(sqlMode, connection);
         }
@@ -97,18 +97,31 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
 
     @Override
     public void updateTrigger(String tableOwner, String tableName, String triggerName, String oldCode, String newCode, Connection connection) throws SQLException {
-        updateObject(triggerName, "trigger", oldCode, newCode, connection);
-    }
-
-    public void updateObject(String objectName, String objectType, String oldCode, String newCode, Connection connection) throws SQLException {
+        // triggers do not support multiple triggers with same event (i.e can not use "try temp" approach)
         String sqlMode = getSessionSqlMode(connection);
         setSessionSqlMode("TRADITIONAL", connection);
-        dropObjectIfExists(objectType, objectName, connection);
+        dropObjectIfExists("trigger", triggerName, connection);
         try {
             createObject(newCode, connection);
         } catch (SQLException e) {
             createObject(oldCode, connection);
             throw e;
+        } finally {
+            setSessionSqlMode(sqlMode, connection);
+        }
+    }
+
+    public void updateObject(String objectName, String objectType, String oldCode, String newCode, Connection connection) throws SQLException {
+        String sqlMode = getSessionSqlMode(connection);
+        setSessionSqlMode("TRADITIONAL", connection);
+        try {
+            String tempObjectName = getTempObjectName(objectType);
+            dropObjectIfExists(objectType, tempObjectName, connection);
+            createObject(newCode.replaceFirst("(?i)" + objectName, tempObjectName), connection);
+            dropObjectIfExists(objectType, tempObjectName, connection);
+
+            dropObjectIfExists(objectType, objectName, connection);
+            createObject(newCode, connection);
         } finally {
             setSessionSqlMode(sqlMode, connection);
         }
