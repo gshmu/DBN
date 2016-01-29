@@ -11,11 +11,8 @@
         ]>
 <data-dictionary>
     <statement-execution-processor id="create-view">
-        <statement>create view {0} as {1}</statement>
+        <statement>create view [{0}] as {1}</statement>
     </statement-execution-processor>
-
-
-
 
     <statement-execution-processor id="create-object">
         <statement>create {0}</statement>
@@ -26,7 +23,7 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="drop-object-if-exists">
-        <statement>drop {0} if exists {1}</statement>
+        <statement>drop {0} if exists "{1}"</statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="get-session-sql-mode" is-query="true">

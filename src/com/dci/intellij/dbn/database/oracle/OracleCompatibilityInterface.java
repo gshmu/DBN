@@ -39,6 +39,7 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
             case SESSION_CURRENT_SQL: return true;
             case CONNECTION_ERROR_RECOVERY: return true;
             case UPDATABLE_RESULT_SETS: return true;
+            case CURRENT_SCHEMA: return true;
             default: return false;
         }
     }

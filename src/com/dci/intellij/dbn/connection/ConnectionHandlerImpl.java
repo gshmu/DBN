@@ -30,6 +30,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -403,7 +404,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     public Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException {
         Connection connection = getStandaloneConnection();
-        if (schema != null && !schema.isPublicSchema()) {
+        if (schema != null && !schema.isPublicSchema() && DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) {
             DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
             metadataInterface.setCurrentSchema(schema.getQuotedName(false), connection);
         }
@@ -413,7 +414,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     public Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException {
         Connection connection = getPoolConnection();
         //if (!schema.isPublicSchema()) {
-        if (schema != null) {
+        if (schema != null && DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) {
             DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
             metadataInterface.setCurrentSchema(schema.getQuotedName(false), connection);
         }

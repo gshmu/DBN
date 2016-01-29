@@ -77,18 +77,15 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
-    public void updateView(String viewName, String oldCode, String newCode, Connection connection) throws SQLException {
-        String sqlMode = getSessionSqlMode(connection);
-        setSessionSqlMode("TRADITIONAL", connection);
-        dropObjectIfExists("view", viewName, connection);
-        try {
-            createView(viewName, newCode, connection);
-        } catch (SQLException e) {
-            createView(viewName, oldCode, connection);
-            throw e;
-        } finally {
-            setSessionSqlMode(sqlMode, connection);
-        }
+    public void updateView(String viewName, String code, Connection connection) throws SQLException {
+        // try create
+        dropObjectIfExists("VIEW", TEMP_VIEW_NAME, connection);
+        createView(TEMP_VIEW_NAME, code, connection);
+        dropObjectIfExists("VIEW", TEMP_VIEW_NAME, connection);
+
+        // create
+        dropObjectIfExists("VIEW", viewName, connection);
+        createView(viewName, code, connection);
     }
 
     @Override
