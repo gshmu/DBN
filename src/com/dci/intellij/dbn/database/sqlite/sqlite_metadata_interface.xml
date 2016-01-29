@@ -80,6 +80,12 @@
         </statement>
     </statement-execution-processor>
 
+    <statement-execution-processor id="foreign-key-constraints" is-query="true">
+        <statement>
+            PRAGMA FOREIGN_KEY_LIST("{0}")
+        </statement>
+    </statement-execution-processor>
+
     <statement-execution-processor id="indexes" is-query="true">
         <statement>
             PRAGMA INDEX_LIST("{0}")

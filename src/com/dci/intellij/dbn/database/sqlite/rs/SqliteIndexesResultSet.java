@@ -19,7 +19,7 @@ public abstract class SqliteIndexesResultSet extends SqliteResultSetAdapter {
         super(parentName);
     }
 
-    protected abstract ResultSet loadChildren(String parentName) throws SQLException;
+    protected abstract ResultSet loadChildren(String parentName, int index) throws SQLException;
 
     public String getString(String columnLabel) throws SQLException {
         return

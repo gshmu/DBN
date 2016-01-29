@@ -18,7 +18,7 @@ public abstract class SqliteColumnConstraintsResultSet extends SqliteResultSetAd
         super(parentResultSet);
     }
 
-    protected abstract ResultSet loadChildren(String parentName) throws SQLException;
+    protected abstract ResultSet loadChildren(String parentName, int index) throws SQLException;
 
     public String getString(String columnLabel) throws SQLException {
         if (columnLabel.equals("COLUMN_NAME")) {

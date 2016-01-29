@@ -18,44 +18,61 @@ import com.dci.intellij.dbn.database.common.util.SkipEntrySQLException;
 public abstract class SqliteConstraintsResultSet extends SqliteResultSetAdapter {
 
 
-    public SqliteConstraintsResultSet(ResultSet parentResultSet) {
-        super(parentResultSet);
+    public SqliteConstraintsResultSet(ResultSet parentResultSet, int childCount) {
+        super(parentResultSet, childCount);
     }
 
-    public SqliteConstraintsResultSet(String parentName) {
-        super(parentName);
+    public SqliteConstraintsResultSet(String parentName, int childCount) {
+        super(parentName, childCount);
     }
 
     public String getString(String columnLabel) throws SQLException {
-        boolean isUnique = childResultSet.getInt("unique") == 1;
-        boolean isPrimaryKey = "pk".equals(childResultSet.getString("origin"));
-
-        if (!isUnique && !isPrimaryKey) {
-            throw new SkipEntrySQLException();
-        }
-
-        if (columnLabel.equals("CONSTRAINT_NAME")) {
-            String indexName = childResultSet.getString("name");
-            return indexName + "_c";
-        }
-
-        if (columnLabel.equals("CONSTRAINT_TYPE")) {
-            if (isPrimaryKey) {
-                return "PRIMARY KEY";
-            }
-
-            if (isUnique) {
-                return "UNIQUE";
-            }
-
-        }
-
         if (columnLabel.equals("DATASET_NAME")) {
             return parentName;
         }
 
         if (columnLabel.equals("IS_ENABLED")) {
             return "Y";
+        }
+
+        int childIndex = getChildIndex();
+        if (childIndex == 0) {
+            boolean isUnique = childResultSet.getInt("unique") == 1;
+            boolean isPrimaryKey = "pk".equals(childResultSet.getString("origin"));
+
+            if (!isUnique && !isPrimaryKey) {
+                throw new SkipEntrySQLException();
+            }
+
+            if (columnLabel.equals("CONSTRAINT_TYPE")) {
+                if (isPrimaryKey) {
+                    return "PRIMARY KEY";
+                }
+
+                if (isUnique) {
+                    return "UNIQUE";
+                }
+            }
+
+
+            if (columnLabel.equals("CONSTRAINT_NAME")) {
+                String indexName = childResultSet.getString("name");
+                if (isPrimaryKey) {
+                    return "pk_" + indexName;
+                }
+
+                if (isUnique) {
+                    return "uc_" + indexName;
+                }
+            }
+        } else if (childIndex == 1) {
+            if (columnLabel.equals("CONSTRAINT_TYPE")) {
+                return "FOREIGN KEY";
+            }
+
+            if (columnLabel.equals("CONSTRAINT_NAME")) {
+                return "fk_" + childResultSet.getString("table") + "_" +childResultSet.getString("to");
+            }
         }
 
         return null;
