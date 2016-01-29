@@ -1763,7 +1763,7 @@
 
     <statement-execution-processor id="view-source-code" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
-            select TEXT
+            select TEXT as SOURCE_CODE
             from [PREFIX]_VIEWS
             where
                 OWNER = {0} and
@@ -1773,7 +1773,7 @@
 
     <statement-execution-processor id="materialized-view-source-code" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
-            select QUERY as TEXT
+            select QUERY as SOURCE_CODE
             from [PREFIX]_MVIEWS
             where
                 OWNER = {0} and
@@ -1783,7 +1783,7 @@
 
     <statement-execution-processor id="object-source-code" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
-            select TEXT
+            select TEXT as SOURCE_CODE
             from [PREFIX]_SOURCE
             where
                 OWNER = {0} and
