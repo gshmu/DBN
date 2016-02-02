@@ -3,23 +3,29 @@
 <element-defs language="MYSQL-SQL" version="6.0">
     <element-def attributes="ROOT, STRUCTURE" description="SQL block" icon="FILE_BLOCK_SQL" id="sql_block">
         <iteration id="000000000">
-            <one-of attributes="STATEMENT, SCOPE_ISOLATION" id="000000001">
-                <element ref-id="delete_statement" />
-                <element ref-id="create_statement" />
-                <element ref-id="do_statement" />
-                <element ref-id="handler_statement" />
-                <element ref-id="insert_statement" />
-                <element ref-id="load_data_infile_statement" />
-                <element ref-id="replace_statement" />
-                <element ref-id="select_statement" />
-                <element ref-id="truncate_statement" />
-                <element ref-id="update_statement" />
-            </one-of>
+            <element ref-id="sql_statement" />
         </iteration>
     </element-def>
 
+    <element-def attributes="STRUCTURE, EXECUTABLE, STATEMENT, SCOPE_ISOLATION, GENERIC" description="SQL statement" formatting-indent="ABSOLUTE_NONE" id="sql_statement">
+        <one-of id="000000001">
+            <element ref-id="delete_statement" />
+            <element ref-id="create_statement" />
+            <element ref-id="do_statement" />
+            <element ref-id="handler_statement" />
+            <element ref-id="insert_statement" />
+            <element ref-id="load_data_infile_statement" />
+            <element ref-id="replace_statement" />
+            <element ref-id="select_statement" />
+            <element ref-id="truncate_statement" />
+            <element ref-id="update_statement" />
+        </one-of>
+        <element optional="true" ref-id="end" />
+    </element-def>
+
+
     <!-- ========= DELETE ========= -->
-    <element-def attributes="EXECUTABLE, DATA_MANIPULATION, TRANSACTIONAL, STRUCTURE" description="DELETE statement" id="delete_statement">
+    <element-def attributes="DATA_MANIPULATION, TRANSACTIONAL" description="DELETE statement" id="delete_statement">
         <token id="000000002" type-id="KW_DELETE" />
         <token id="000000003" optional="true" type-id="KW_LOW_PRIORITY" />
         <token id="000000004" optional="true" type-id="KW_QUICK" />
@@ -74,7 +80,6 @@
                 <element optional="true" ref-id="where_clause" />
             </sequence>
         </one-of>
-        <element ref-id="end" />
     </element-def>
     <element-def attributes="SCOPE_DEMARCATION" description="Table identifier with alias" id="table_identifier_with_alias">
         <element ref-id="table_identifier" />
@@ -105,7 +110,7 @@
     </element-def>
 
     <!-- ========= CREATE ========= -->
-    <element-def attributes="EXECUTABLE, DATA_DEFINITION, STRUCTURE" description="CREATE statement" id="create_statement">
+    <element-def attributes="DATA_DEFINITION" description="CREATE statement" id="create_statement">
         <token type-id="KW_CREATE" id="000000042" />
         <sequence optional="true" id="000000043">
             <token type-id="KW_OR" id="000000044" />
@@ -165,17 +170,16 @@
     </element-def>
 
     <!-- ========= DO ========= -->
-    <element-def attributes="EXECUTABLE, STRUCTURE" description="DO statement" id="do_statement">
+    <element-def description="DO statement" id="do_statement">
         <token id="000000080" type-id="KW_DO" />
         <iteration id="000000081" separator="CHR_COMMA">
             <element ref-id="expr" />
         </iteration>
-        <element ref-id="end" />
     </element-def>
 
 
     <!-- ========= HANDLER ========= -->
-    <element-def attributes="EXECUTABLE, STRUCTURE" description="HANDLER statement" id="handler_statement">
+    <element-def description="HANDLER statement" id="handler_statement">
         <token id="000000082" type-id="KW_HANDLER" />
         <qualified-identifier id="000000083" separator="CHR_DOT">
             <variant>
@@ -231,11 +235,10 @@
             </sequence>
             <token id="000000112" type-id="KW_CLOSE" />
         </one-of>
-        <element ref-id="end" />
     </element-def>
 
     <!-- ========= INSERT ========= -->
-    <element-def attributes="EXECUTABLE, DATA_MANIPULATION, TRANSACTIONAL, STRUCTURE" description="INSERT statement" id="insert_statement">
+    <element-def attributes="DATA_MANIPULATION, TRANSACTIONAL" description="INSERT statement" id="insert_statement">
         <token id="000000113" type-id="KW_INSERT" />
         <one-of id="000000114" optional="true">
             <token id="000000115" type-id="KW_LOW_PRIORITY" />
@@ -257,7 +260,6 @@
                 </sequence>
             </iteration>
         </sequence>
-        <element ref-id="end" />
     </element-def>
 
     <element-def description="INSERT REPLACE INTO subclause" id="insert_replace_into_subclause">
@@ -313,7 +315,7 @@
 
 
     <!-- ========= LOAD DATA INFILE ========= -->
-    <element-def attributes="EXECUTABLE, DATA_MANIPULATION, STRUCTURE" description="LOAD DATA INFILE statement" id="load_data_infile_statement">
+    <element-def attributes="DATA_MANIPULATION" description="LOAD DATA INFILE statement" id="load_data_infile_statement">
         <token id="000000152" type-id="KW_LOAD" />
         <token id="000000153" type-id="KW_DATA" />
         <one-of id="000000154" optional="true">
@@ -363,26 +365,23 @@
                 <element ref-id="expr" />
             </sequence>
         </iteration>
-        <element ref-id="end" />
     </element-def>
 
 
     <!-- ========= REPLACE ========= -->
-    <element-def attributes="EXECUTABLE, DATA_MANIPULATION, TRANSACTIONAL, STRUCTURE" description="REPLACE statement" id="replace_statement">
+    <element-def attributes="DATA_MANIPULATION, TRANSACTIONAL" description="REPLACE statement" id="replace_statement">
         <token id="000000185" type-id="KW_REPLACE" />
         <one-of id="000000186" optional="true">
             <token id="000000187" type-id="KW_LOW_PRIORITY" />
             <token id="000000188" type-id="KW_DELAYED" />
         </one-of>
         <element ref-id="insert_replace_into_subclause" />
-        <element ref-id="end" />
     </element-def>
 
 
     <!-- ========= SELECT ========= -->
-    <element-def attributes="EXECUTABLE, DATA_MANIPULATION, QUERY, STRUCTURE" description="SELECT statement" id="select_statement">
+    <element-def attributes="DATA_MANIPULATION, QUERY" description="SELECT statement" id="select_statement">
         <element ref-id="subquery" />
-        <element ref-id="end" />
     </element-def>
     <element-def attributes="DATA_MANIPULATION, QUERY" description="Subquery" id="subquery" virtual-object="DATASET">
         <token id="000000189" type-id="KW_SELECT" />
@@ -712,7 +711,7 @@
 
 
     <!-- ========= TRUNCATE ========= -->
-    <element-def attributes="EXECUTABLE, DATA_MANIPULATION, STRUCTURE" description="TRUNCATE statement" id="truncate_statement">
+    <element-def attributes="DATA_MANIPULATION" description="TRUNCATE statement" id="truncate_statement">
         <token id="000000371" type-id="KW_TRUNCATE" />
         <token id="000000372" optional="true" type-id="KW_TABLE" />
         <qualified-identifier id="000000373" original-name="tbl_name" separator="CHR_DOT">
@@ -721,11 +720,10 @@
                 <object-ref attributes="SUBJECT" id="000000375" type="TABLE" />
             </variant>
         </qualified-identifier>
-        <element ref-id="end" />
     </element-def>
 
     <!-- ========= UPDATE ========= -->
-    <element-def attributes="EXECUTABLE, DATA_MANIPULATION, TRANSACTIONAL, STRUCTURE" description="UPDATE statement" id="update_statement">
+    <element-def attributes="DATA_MANIPULATION, TRANSACTIONAL" description="UPDATE statement" id="update_statement">
         <token id="000000376" type-id="KW_UPDATE" />
         <token id="000000377" optional="true" type-id="KW_LOW_PRIORITY" />
         <token id="000000378" optional="true" type-id="KW_LOW_IGNORE" />
@@ -765,7 +763,6 @@
                 <element optional="true" ref-id="where_clause" />
             </sequence>
         </one-of>
-        <element ref-id="end" />
     </element-def>
 
 
