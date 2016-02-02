@@ -6,7 +6,7 @@
         </iteration>
     </element-def>
 
-    <element-def attributes="STRUCTURE, EXECUTABLE, GENERIC, STATEMENT" description="SQL statement" formatting-indent="ABSOLUTE_NONE" id="sql_statement">
+    <element-def attributes="STRUCTURE, EXECUTABLE, GENERIC, SCOPE_ISOLATION, STATEMENT" description="SQL statement" formatting-indent="ABSOLUTE_NONE" id="sql_statement">
         <element optional="true" ref-id="with_clause" version="8.4" />
         <one-of id="000000001">
             <element branch-check="-br0001" ref-id="create_statement" />
@@ -22,7 +22,7 @@
             <element branch-check="-br0001" ref-id="explain_statement" />
             <element branch-check="-br0001" ref-id="savepoint_statement" />
         </one-of>
-        <element ref-id="end" />
+        <element ref-id="end" optional="true"/>
     </element-def>
 
     <element-def attributes="CLAUSE" branch="br0001" description="WITH clause" id="with_clause">

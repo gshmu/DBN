@@ -21,8 +21,7 @@ public class SqliteInterfaceProvider extends DatabaseInterfaceProviderImpl {
     private DatabaseNativeDataTypes NATIVE_DATA_TYPES = new SqliteNativeDataTypes();
 
     public SqliteInterfaceProvider() {
-        //super(SQLLanguage.INSTANCE.getLanguageDialect(DBLanguageDialectIdentifier.SQLITE_SQL), null);
-        super(SQLLanguage.INSTANCE.getLanguageDialect(DBLanguageDialectIdentifier.MYSQL_SQL), null);
+        super(SQLLanguage.INSTANCE.getLanguageDialect(DBLanguageDialectIdentifier.SQLITE_SQL), null);
     }
 
     @Override
