@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.IndexDetailInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.IndexInfo;
 

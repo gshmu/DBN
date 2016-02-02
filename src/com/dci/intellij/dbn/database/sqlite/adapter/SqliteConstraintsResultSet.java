@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.*;
+import com.dci.intellij.dbn.database.common.util.ResultSetReader;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteConstraintsLoader.ConstraintColumnInfo;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteConstraintsLoader.ConstraintType;
+import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteConstraintsLoader.getConstraintName;
 
 /**
  * DATASET_NAME,
@@ -36,10 +39,28 @@ public abstract class SqliteConstraintsResultSet extends SqliteResultSetAdapter<
     }
 
     void init(String datasetName) throws SQLException {
-        Map<String, List<ConstraintColumnInfo>> constraints = loadConstraints(
-                datasetName,
-                getColumnsResultSet(datasetName),
-                getForeignKeyResultSet(datasetName));
+        SqliteConstraintsLoader loader = new SqliteConstraintsLoader() {
+            @Override
+            public ResultSet getColumns(String datasetName) throws SQLException {
+                return getColumnsResultSet(datasetName);
+            }
+
+            @Override
+            public ResultSet getForeignKeys(String datasetName) throws SQLException {
+                return getForeignKeyResultSet(datasetName);
+            }
+
+            @Override
+            public ResultSet getIndexes(String tableName) throws SQLException {
+                return getIndexResultSet(tableName);
+            }
+
+            @Override
+            public ResultSet getIndexDetails(String indexName) throws SQLException {
+                return getIndexInfoResultSet(indexName);
+            }
+        };
+        Map<String, List<ConstraintColumnInfo>> constraints = loader.loadConstraints(datasetName);
 
         for (String indexKey : constraints.keySet()) {
             if (indexKey.startsWith("FK")) {
@@ -79,6 +100,8 @@ public abstract class SqliteConstraintsResultSet extends SqliteResultSetAdapter<
 
     protected abstract ResultSet getColumnsResultSet(String datasetName) throws SQLException;
     protected abstract ResultSet getForeignKeyResultSet(String datasetName) throws SQLException;
+    protected abstract ResultSet getIndexResultSet(String tableName) throws SQLException;
+    protected abstract ResultSet getIndexInfoResultSet(String indexName) throws SQLException;
 
     public static class Constraint implements ResultSetElement<Constraint> {
         String datasetName;
