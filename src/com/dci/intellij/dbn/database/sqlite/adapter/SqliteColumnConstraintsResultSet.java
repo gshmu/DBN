@@ -59,8 +59,8 @@ public abstract class SqliteColumnConstraintsResultSet extends SqliteResultSetAd
         Map<String, List<ConstraintColumnInfo>> constraints = loader.loadConstraints(datasetName);
 
         for (String indexKey : constraints.keySet()) {
+            List<ConstraintColumnInfo> constraintColumnInfos = constraints.get(indexKey);
             if (indexKey.startsWith("FK")) {
-                List<ConstraintColumnInfo> constraintColumnInfos = constraints.get(indexKey);
                 String constraintName = getConstraintName(ConstraintType.FK, constraintColumnInfos);
                 for (ConstraintColumnInfo constraintColumnInfo : constraintColumnInfos) {
                     ConstraintColumn constraintColumn = new ConstraintColumn();
@@ -72,8 +72,17 @@ public abstract class SqliteColumnConstraintsResultSet extends SqliteResultSetAd
                 }
 
             } else if (indexKey.startsWith("PK")) {
-                List<ConstraintColumnInfo> constraintColumnInfos = constraints.get(indexKey);
                 String constraintName = getConstraintName(ConstraintType.PK, constraintColumnInfos);
+                for (ConstraintColumnInfo constraintColumnInfo : constraintColumnInfos) {
+                    ConstraintColumn constraintColumn = new ConstraintColumn();
+                    constraintColumn.setConstraintName(constraintName);
+                    constraintColumn.setDatasetName(datasetName);
+                    constraintColumn.setColumnName(constraintColumnInfo.getColumn());
+                    constraintColumn.setPosition(constraintColumnInfo.getPosition());
+                    addElement(constraintColumn);
+                }
+            } else if (indexKey.startsWith("UQ")) {
+                String constraintName = getConstraintName(ConstraintType.UQ, constraintColumnInfos);
                 for (ConstraintColumnInfo constraintColumnInfo : constraintColumnInfos) {
                     ConstraintColumn constraintColumn = new ConstraintColumn();
                     constraintColumn.setConstraintName(constraintName);
