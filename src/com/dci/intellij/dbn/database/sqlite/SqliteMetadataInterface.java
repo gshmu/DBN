@@ -63,8 +63,8 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
     public ResultSet loadIndexes(String ownerName, String tableName, Connection connection) throws SQLException {
         return new SqliteIndexesResultSet(tableName) {
             @Override
-            protected ResultSet getIndexResultSet(String datasetName) throws SQLException {
-                return executeQuery(connection, "indexes", datasetName);
+            protected ResultSet getIndexResultSet(String tableName) throws SQLException {
+                return executeQuery(connection, "indexes", tableName);
             }
         };
     }
@@ -73,8 +73,8 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
     public ResultSet loadAllIndexes(String ownerName, Connection connection) throws SQLException {
         return new SqliteIndexesResultSet(executeQuery(connection, "dataset-names")) {
             @Override
-            protected ResultSet getIndexResultSet(String datasetName) throws SQLException {
-                return executeQuery(connection, "indexes", datasetName);
+            protected ResultSet getIndexResultSet(String tableName) throws SQLException {
+                return executeQuery(connection, "indexes", tableName);
             }
         };
     }
@@ -91,6 +91,16 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
             protected ResultSet getForeignKeyResultSet(String datasetName) throws SQLException {
                 return executeQuery(connection, "foreign-key-constraints", datasetName);
             }
+
+            @Override
+            protected ResultSet getIndexResultSet(String tableName) throws SQLException {
+                return executeQuery(connection, "indexes", tableName);
+            }
+
+            @Override
+            protected ResultSet getIndexInfoResultSet(String indexName) throws SQLException {
+                return executeQuery(connection, "index-info", indexName);
+            }
         };
     }
 
@@ -105,6 +115,16 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
             @Override
             protected ResultSet getForeignKeyResultSet(String datasetName) throws SQLException {
                 return executeQuery(connection, "foreign-key-constraints", datasetName);
+            }
+
+            @Override
+            protected ResultSet getIndexResultSet(String tableName) throws SQLException {
+                return executeQuery(connection, "indexes", tableName);
+            }
+
+            @Override
+            protected ResultSet getIndexInfoResultSet(String indexName) throws SQLException {
+                return executeQuery(connection, "index-info", indexName);
             }
         };
     }
@@ -161,6 +181,15 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
             protected ResultSet getForeignKeyResultSet(String datasetName) throws SQLException {
                 return executeQuery(connection, "foreign-key-constraints", datasetName);
             }
+            @Override
+            protected ResultSet getIndexResultSet(String tableName) throws SQLException {
+                return executeQuery(connection, "indexes", tableName);
+            }
+
+            @Override
+            protected ResultSet getIndexInfoResultSet(String indexName) throws SQLException {
+                return executeQuery(connection, "index-info", indexName);
+            }
         };
     }
 
@@ -175,6 +204,15 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
             @Override
             protected ResultSet getForeignKeyResultSet(String datasetName) throws SQLException {
                 return executeQuery(connection, "foreign-key-constraints", datasetName);
+            }
+            @Override
+            protected ResultSet getIndexResultSet(String tableName) throws SQLException {
+                return executeQuery(connection, "indexes", tableName);
+            }
+
+            @Override
+            protected ResultSet getIndexInfoResultSet(String indexName) throws SQLException {
+                return executeQuery(connection, "index-info", indexName);
             }
         };
     }

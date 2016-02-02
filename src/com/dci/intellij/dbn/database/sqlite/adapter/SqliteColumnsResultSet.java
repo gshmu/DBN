@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.database.sqlite.adapter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.ForeignKeyInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.TableInfo;
 
