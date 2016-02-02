@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.ForeignKeyInfo;
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.TableInfo;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.*;
 
 public abstract class SqliteConstraintsLoader {
 
@@ -24,6 +24,7 @@ public abstract class SqliteConstraintsLoader {
     public Map<String, List<ConstraintColumnInfo>> loadConstraints(final String dataset) throws SQLException {
         TableInfo tableInfo = new TableInfo(getColumns(dataset));
         ForeignKeyInfo foreignKeyInfo = new ForeignKeyInfo(getForeignKeys(dataset));
+        IndexInfo indexInfo = new IndexInfo(getIndexes(dataset));
 
         Map<String, List<ConstraintColumnInfo>> constraints = new HashMap<String, List<ConstraintColumnInfo>>();
         AtomicInteger pkPosition = new AtomicInteger();
@@ -31,11 +32,7 @@ public abstract class SqliteConstraintsLoader {
         for (TableInfo.Row row : tableInfo.getRows()) {
             String column = row.getName();
             if (row.getPk() > 0) {
-                List<ConstraintColumnInfo> primaryKeyColumns = constraints.get("PK");
-                if (primaryKeyColumns == null) {
-                    primaryKeyColumns = new ArrayList<ConstraintColumnInfo>();
-                    constraints.put("PK", primaryKeyColumns);
-                }
+                List<ConstraintColumnInfo> primaryKeyColumns = getConstraintColumns(constraints, "PK");
                 primaryKeyColumns.add(new ConstraintColumnInfo(dataset, column, null, null, pkPosition.get()));
                 pkPosition.incrementAndGet();
             }
@@ -48,14 +45,37 @@ public abstract class SqliteConstraintsLoader {
             String fkDataset = row.getTable();
             int position = row.getSeq();
             String indexId = "FK" + row.getId();
-            List<ConstraintColumnInfo> foreignKeyColumns = constraints.get(indexId);
-            if (foreignKeyColumns == null) {
-                foreignKeyColumns = new ArrayList<ConstraintColumnInfo>();
-                constraints.put(indexId, foreignKeyColumns);
-            }
+            List<ConstraintColumnInfo> foreignKeyColumns = getConstraintColumns(constraints, indexId);
             foreignKeyColumns.add(new ConstraintColumnInfo(dataset, column, fkDataset, fkColumn, position));
         }
+
+        for (IndexInfo.Row row : indexInfo.getRows()) {
+            if (row.getUnique() == 1 && !row.getOrigin().equals("pk")) {
+                String indexId = "UQ" + row.getSeq();
+                String indexName = row.getName();
+                IndexDetailInfo detailInfo = new IndexDetailInfo(getIndexDetails(indexName));
+                for (IndexDetailInfo.Row detailRow : detailInfo.getRows()) {
+                    String column = detailRow.getName();
+                    if (StringUtil.isNotEmpty(column)) {
+                        int position = detailRow.getSeqno();
+                        List<ConstraintColumnInfo> uniqueKeyColumns = getConstraintColumns(constraints, indexId);
+                        uniqueKeyColumns.add(new ConstraintColumnInfo(dataset, column, null, null, position));
+                    }
+                }
+            }
+        }
+
         return constraints;
+    }
+
+    @NotNull
+    List<ConstraintColumnInfo> getConstraintColumns(Map<String, List<ConstraintColumnInfo>> constraints, String indexId) {
+        List<ConstraintColumnInfo> foreignKeyColumns = constraints.get(indexId);
+        if (foreignKeyColumns == null) {
+            foreignKeyColumns = new ArrayList<ConstraintColumnInfo>();
+            constraints.put(indexId, foreignKeyColumns);
+        }
+        return foreignKeyColumns;
     }
 
     public abstract ResultSet getColumns(String datasetName) throws SQLException;

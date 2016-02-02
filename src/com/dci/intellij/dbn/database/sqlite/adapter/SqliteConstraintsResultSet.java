@@ -81,7 +81,14 @@ public abstract class SqliteConstraintsResultSet extends SqliteResultSetAdapter<
                 constraint.setDatasetName(datasetName);
                 constraint.setConstraintType("PRIMARY KEY");
                 addElement(constraint);
-
+            } else if (indexKey.startsWith("UQ")) {
+                List<ConstraintColumnInfo> constraintColumnInfos = constraints.get(indexKey);
+                String constraintName = getConstraintName(ConstraintType.UQ, constraintColumnInfos);
+                Constraint constraint = new Constraint();
+                constraint.setConstraintName(constraintName);
+                constraint.setDatasetName(datasetName);
+                constraint.setConstraintType("UNIQUE");
+                addElement(constraint);
             }
         }
     }
