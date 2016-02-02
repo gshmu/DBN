@@ -9,14 +9,14 @@ import java.util.Date;
 
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
-import com.dci.intellij.dbn.database.sqlite.rs.SqliteColumnConstraintsResultSet;
-import com.dci.intellij.dbn.database.sqlite.rs.SqliteColumnIndexesResultSet;
-import com.dci.intellij.dbn.database.sqlite.rs.SqliteColumnsResultSet;
-import com.dci.intellij.dbn.database.sqlite.rs.SqliteConstraintsResultSet;
-import com.dci.intellij.dbn.database.sqlite.rs.SqliteIndexesResultSet;
-import com.dci.intellij.dbn.database.sqlite.rs.SqliteTriggerSourceResultSet;
-import com.dci.intellij.dbn.database.sqlite.rs.SqliteTriggersResultSet;
-import com.dci.intellij.dbn.database.sqlite.rs.SqliteViewSourceResultSet;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteColumnConstraintsResultSet;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteColumnIndexesResultSet;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteColumnsResultSet;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteConstraintsResultSet;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteIndexesResultSet;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteTriggerSourceResultSet;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteTriggersResultSet;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteViewSourceResultSet;
 
 
 public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
@@ -33,19 +33,28 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
     public ResultSet loadColumns(String ownerName, String datasetName, Connection connection) throws SQLException {
         return new SqliteColumnsResultSet(datasetName) {
             @Override
-            protected ResultSet loadChildren(String parentName, int index) throws SQLException {
-                return executeQuery(connection, "dataset-columns", parentName);
+            protected ResultSet getColumnsResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "dataset-columns", datasetName);
+            }
+
+            @Override
+            protected ResultSet getForeignKeyResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "foreign-key-constraints", datasetName);
             }
         };
     }
 
     @Override
     public ResultSet loadAllColumns(String ownerName, Connection connection) throws SQLException {
-        ResultSet resultSet = executeQuery(connection, "dataset-names");
-        return new SqliteColumnsResultSet(resultSet) {
+        return new SqliteColumnsResultSet(executeQuery(connection, "dataset-names")) {
             @Override
-            protected ResultSet loadChildren(String parentName, int index) throws SQLException {
-                return executeQuery(connection, "dataset-columns", parentName);
+            protected ResultSet getColumnsResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "dataset-columns", datasetName);
+            }
+
+            @Override
+            protected ResultSet getForeignKeyResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "foreign-key-constraints", datasetName);
             }
         };
     }
@@ -54,48 +63,48 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
     public ResultSet loadIndexes(String ownerName, String tableName, Connection connection) throws SQLException {
         return new SqliteIndexesResultSet(tableName) {
             @Override
-            protected ResultSet loadChildren(String parentName, int index) throws SQLException {
-                return executeQuery(connection, "indexes", parentName);
+            protected ResultSet getIndexResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "indexes", datasetName);
             }
         };
     }
 
     @Override
     public ResultSet loadAllIndexes(String ownerName, Connection connection) throws SQLException {
-        ResultSet datasetResultSet = executeQuery(connection, "dataset-names");
-        return new SqliteIndexesResultSet(datasetResultSet) {
+        return new SqliteIndexesResultSet(executeQuery(connection, "dataset-names")) {
             @Override
-            protected ResultSet loadChildren(String parentName, int index) throws SQLException {
-                return executeQuery(connection, "indexes", parentName);
+            protected ResultSet getIndexResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "indexes", datasetName);
             }
         };
     }
 
     @Override
     public ResultSet loadConstraints(String ownerName, String datasetName, Connection connection) throws SQLException {
-        return new SqliteConstraintsResultSet(datasetName, 2) {
+        return new SqliteConstraintsResultSet(datasetName) {
             @Override
-            protected ResultSet loadChildren(String datasetName, int index) throws SQLException {
-                switch (index) {
-                    case 0: return executeQuery(connection, "constraints", datasetName);
-                    case 1: return executeQuery(connection, "foreign-key-constraints", datasetName);
-                }
-                throw new IllegalArgumentException("Invalid child result index " + index);
+            protected ResultSet getColumnsResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "dataset-columns", datasetName);
+            }
+
+            @Override
+            protected ResultSet getForeignKeyResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "foreign-key-constraints", datasetName);
             }
         };
     }
 
     @Override
     public ResultSet loadAllConstraints(String ownerName, Connection connection) throws SQLException {
-        ResultSet datasetResultSet = executeQuery(connection, "dataset-names");
-        return new SqliteConstraintsResultSet(datasetResultSet, 2) {
+        return new SqliteConstraintsResultSet(executeQuery(connection, "dataset-names")) {
             @Override
-            protected ResultSet loadChildren(String datasetName, int index) throws SQLException {
-                switch (index) {
-                    case 0: return executeQuery(connection, "constraints", datasetName);
-                    case 1: return executeQuery(connection, "foreign-key-constraints", datasetName);
-                }
-                throw new IllegalArgumentException("Invalid child result index " + index);
+            protected ResultSet getColumnsResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "dataset-columns", datasetName);
+            }
+
+            @Override
+            protected ResultSet getForeignKeyResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "foreign-key-constraints", datasetName);
             }
         };
     }
@@ -112,66 +121,60 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadIndexRelations(String ownerName, String tableName, Connection connection) throws SQLException {
-        ResultSet indexesResultSet = loadIndexes(ownerName, tableName, connection);
-        return new SqliteColumnIndexesResultSet(indexesResultSet) {
+        return new SqliteColumnIndexesResultSet(tableName) {
             @Override
-            protected ResultSet loadChildren(String indexName, int index) throws SQLException {
-                return executeQuery(connection, "index-info", indexName);
+            protected ResultSet getIndexResultSet(String tableName) throws SQLException {
+                return executeQuery(connection, "indexes", tableName);
             }
 
             @Override
-            protected String getParentColumnName() {
-                return "INDEX_NAME";
+            protected ResultSet getIndexInfoResultSet(String indexName) throws SQLException {
+                return executeQuery(connection, "index-info", indexName);
             }
         };
     }
 
     @Override
     public ResultSet loadAllIndexRelations(String ownerName, Connection connection) throws SQLException {
-        ResultSet indexResultSet = loadAllIndexes(ownerName, connection);
-        return new SqliteColumnIndexesResultSet(indexResultSet) {
+        return new SqliteColumnIndexesResultSet(executeQuery(connection, "dataset-names")) {
             @Override
-            protected ResultSet loadChildren(String indexName, int index) throws SQLException {
-                return executeQuery(connection, "index-info", indexName);
+            protected ResultSet getIndexResultSet(String tableName) throws SQLException {
+                return executeQuery(connection, "indexes", tableName);
             }
 
             @Override
-            protected String getParentColumnName() {
-                return "INDEX_NAME";
+            protected ResultSet getIndexInfoResultSet(String indexName) throws SQLException {
+                return executeQuery(connection, "index-info", indexName);
             }
         };
     }
 
     @Override
     public ResultSet loadConstraintRelations(String ownerName, String datasetName, Connection connection) throws SQLException {
-        ResultSet constraintResultSet = loadConstraints(ownerName, datasetName, connection);
-        return new SqliteColumnConstraintsResultSet(constraintResultSet) {
+        return new SqliteColumnConstraintsResultSet(datasetName) {
             @Override
-            protected ResultSet loadChildren(String constraintName, int index) throws SQLException {
-                String indexName = constraintName.substring(0, constraintName.lastIndexOf("_c"));
-                return executeQuery(connection, "index-info", indexName);
+            protected ResultSet getColumnsResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "dataset-columns", datasetName);
             }
 
             @Override
-            protected String getParentColumnName() {
-                return "CONSTRAINT_NAME";
+            protected ResultSet getForeignKeyResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "foreign-key-constraints", datasetName);
             }
         };
     }
 
     @Override
     public ResultSet loadAllConstraintRelations(String ownerName, Connection connection) throws SQLException {
-        ResultSet constraintResultSet = loadAllConstraints(ownerName, connection);
-        return new SqliteColumnConstraintsResultSet(constraintResultSet) {
+        return new SqliteColumnConstraintsResultSet(executeQuery(connection, "dataset-names")) {
             @Override
-            protected ResultSet loadChildren(String constraintName, int index) throws SQLException {
-                String indexName = constraintName.substring(0, constraintName.lastIndexOf("_c"));
-                return executeQuery(connection, "index-info", indexName);
+            protected ResultSet getColumnsResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "dataset-columns", datasetName);
             }
 
             @Override
-            protected String getParentColumnName() {
-                return "CONSTRAINT_NAME";
+            protected ResultSet getForeignKeyResultSet(String datasetName) throws SQLException {
+                return executeQuery(connection, "foreign-key-constraints", datasetName);
             }
         };
     }

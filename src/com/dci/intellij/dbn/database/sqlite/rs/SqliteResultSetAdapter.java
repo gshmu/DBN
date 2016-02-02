@@ -6,6 +6,9 @@ import java.sql.SQLException;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
 
+/**
+ * @deprecated
+ */
 public abstract class SqliteResultSetAdapter extends ResultSetAdapter {
     protected ResultSet childResultSet;
     protected ResultSet parentResultSet;

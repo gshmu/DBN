@@ -73,12 +73,10 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
             String fkName = resultSet.getString("FK_CONSTRAINT_NAME");
 
             ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler != null) {
-                DBSchema schema = connectionHandler.getObjectBundle().getSchema(fkOwner);
-                if (schema != null) {
-                    DBObjectRef<DBSchema> schemaRef = schema.getRef();
-                    foreignKeyConstraint = new DBObjectRef<DBConstraint>(schemaRef, DBObjectType.CONSTRAINT, fkName);
-                }
+            DBSchema schema = connectionHandler.getObjectBundle().getSchema(fkOwner);
+            if (schema != null) {
+                DBObjectRef<DBSchema> schemaRef = schema.getRef();
+                foreignKeyConstraint = new DBObjectRef<DBConstraint>(schemaRef, DBObjectType.CONSTRAINT, fkName);
             }
         }
     }
