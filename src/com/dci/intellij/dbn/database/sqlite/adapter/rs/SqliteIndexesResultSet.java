@@ -1,9 +1,12 @@
-package com.dci.intellij.dbn.database.sqlite.adapter;
+package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.database.common.util.ResultSetReader;
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteResultSetAdapter;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.IndexInfo;
 
 
@@ -16,8 +19,8 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.In
 
 public abstract class SqliteIndexesResultSet extends SqliteResultSetAdapter<SqliteIndexesResultSet.Index> {
 
-    public SqliteIndexesResultSet(ResultSet datasetNames) throws SQLException {
-        new ResultSetReader(datasetNames) {
+    public SqliteIndexesResultSet(ResultSet tableName) throws SQLException {
+        new ResultSetReader(tableName) {
             @Override
             protected void processRow(ResultSet resultSet) throws SQLException {
                 String parentName = resultSet.getString(1);
@@ -26,16 +29,16 @@ public abstract class SqliteIndexesResultSet extends SqliteResultSetAdapter<Sqli
             }
         };
     }
-    public SqliteIndexesResultSet(String datasetName) throws SQLException {
-        init(datasetName);
+    public SqliteIndexesResultSet(String tableName) throws SQLException {
+        init(tableName);
     }
 
-    void init(String datasetName) throws SQLException {
-        IndexInfo indexInfo = new IndexInfo(getIndexResultSet(datasetName));
+    void init(String tableName) throws SQLException {
+        IndexInfo indexInfo = getIndexInfo(tableName);
 
         for (IndexInfo.Row row : indexInfo.getRows()) {
             Index element = new Index();
-            element.setTableName(datasetName);
+            element.setTableName(tableName);
             element.setIndexName(row.getName());
             element.setUnique(row.getUnique() == 1);
             element.setValid(true);
@@ -43,7 +46,16 @@ public abstract class SqliteIndexesResultSet extends SqliteResultSetAdapter<Sqli
         }
     }
 
-    protected abstract ResultSet getIndexResultSet(String datasetName) throws SQLException;
+    private IndexInfo getIndexInfo(final String tableName) throws SQLException {
+        return new CacheAdapter<IndexInfo>(getCache()) {
+            @Override
+            protected IndexInfo load() throws SQLException {
+                return new IndexInfo(loadIndexInfo(tableName));
+            }
+        }.get(tableName + ".INDEX_INFO");
+    }
+
+    protected abstract ResultSet loadIndexInfo(String tableName) throws SQLException;
 
     public String getString(String columnLabel) throws SQLException {
         Index index = getCurrentElement();

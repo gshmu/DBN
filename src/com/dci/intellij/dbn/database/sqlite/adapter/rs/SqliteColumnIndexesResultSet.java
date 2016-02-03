@@ -1,11 +1,15 @@
-package com.dci.intellij.dbn.database.sqlite.adapter;
+package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.util.ResultSetReader;
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteResultSetAdapter;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.IndexDetailInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.IndexInfo;
 
@@ -33,10 +37,10 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteResultSetAdapte
     }
 
     void init(String tableName) throws SQLException {
-        IndexInfo indexInfo = new IndexInfo(getIndexResultSet(tableName));
+        IndexInfo indexInfo = getIndexInfo(tableName);
         for (IndexInfo.Row row : indexInfo.getRows()) {
             String indexName = row.getName();
-            IndexDetailInfo indexDetailInfo = new IndexDetailInfo(getIndexInfoResultSet(indexName));
+            IndexDetailInfo indexDetailInfo = getIndexDetailInfo(indexName);
             for (IndexDetailInfo.Row detailRow : indexDetailInfo.getRows()) {
                 String columnName = detailRow.getName();
                 if (StringUtil.isNotEmpty(columnName)) {
@@ -49,11 +53,29 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteResultSetAdapte
                 }
             }
         }
-
     }
 
-    protected abstract ResultSet getIndexResultSet(String tableName) throws SQLException;
-    protected abstract ResultSet getIndexInfoResultSet(String indexName) throws SQLException;
+    private IndexInfo getIndexInfo(final String tableName) throws SQLException {
+        return new CacheAdapter<SqliteMetaDataUtil.IndexInfo>(getCache()) {
+            @Override
+            protected IndexInfo load() throws SQLException {
+                return new IndexInfo(loadIndexInfo(tableName));
+            }
+        }.get(tableName + ".INDEX_INFO");
+    }
+
+    private IndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
+        return new CacheAdapter<SqliteMetaDataUtil.IndexDetailInfo>(getCache()) {
+            @Override
+            protected IndexDetailInfo load() throws SQLException {
+                return new IndexDetailInfo(loadIndexDetailInfo(indexName));
+            }
+        }.get(indexName + ".INDEX_DETAIL_INFO");
+    }
+
+
+    protected abstract ResultSet loadIndexInfo(String tableName) throws SQLException;
+    protected abstract ResultSet loadIndexDetailInfo(String indexName) throws SQLException;
 
 
     public String getString(String columnLabel) throws SQLException {

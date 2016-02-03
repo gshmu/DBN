@@ -5,12 +5,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.dci.intellij.dbn.common.cache.Cache;
+import com.dci.intellij.dbn.database.common.DatabaseInterfaceProviderImpl;
 import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
 
 public class SqliteResultSetAdapter<T extends ResultSetElement> extends ResultSetAdapter{
     private List<T> elements = new ArrayList<T>();
     private int cursor = -1;
 
+    public Cache getCache() {
+        return DatabaseInterfaceProviderImpl.getMetaDataCache();
+    }
 
     @Override
     public boolean next() throws SQLException {
@@ -47,4 +52,5 @@ public class SqliteResultSetAdapter<T extends ResultSetElement> extends ResultSe
     public static String toFlag(boolean value) {
         return value ? "Y" : "N";
     }
+
 }
