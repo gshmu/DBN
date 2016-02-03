@@ -15,14 +15,14 @@
         <token index="6" id="DT_DATETIME" value="datetime" type="datatype"/>
         <token index="7" id="DT_DECIMAL" value="decimal" type="datatype"/>
         <token index="8" id="DT_DOUBLE" value="double" type="datatype"/>
-        <token index="9" id="DT_DOUBLE PRECISION" value="double precision" type="datatype"/>
+        <token index="9" id="DT_DOUBLE_PRECISION" value="double precision" type="datatype"/>
         <token index="10" id="DT_FLOAT" value="float" type="datatype"/>
         <token index="11" id="DT_INT" value="int" type="datatype"/>
         <token index="12" id="DT_INT2" value="int2" type="datatype"/>
         <token index="13" id="DT_INT8" value="int8" type="datatype"/>
         <token index="14" id="DT_INTEGER" value="integer" type="datatype"/>
         <token index="15" id="DT_MEDIUMINT" value="mediumint" type="datatype"/>
-        <token index="16" id="DT_NATIVE CHARACTER" value="native character" type="datatype"/>
+        <token index="16" id="DT_NATIVE_CHARACTER" value="native character" type="datatype"/>
         <token index="17" id="DT_NCHAR" value="nchar" type="datatype"/>
         <token index="18" id="DT_NUMERIC" value="numeric" type="datatype"/>
         <token index="19" id="DT_NVARCHAR" value="nvarchar" type="datatype"/>
@@ -30,9 +30,10 @@
         <token index="21" id="DT_SMALLINT" value="smallint" type="datatype"/>
         <token index="22" id="DT_TEXT" value="text" type="datatype"/>
         <token index="23" id="DT_TINYINT" value="tinyint" type="datatype"/>
-        <token index="24" id="DT_UNSIGNED BIG INT" value="unsigned big int" type="datatype"/>
+        <token index="24" id="DT_UNSIGNED_BIG_INT" value="unsigned big int" type="datatype"/>
         <token index="25" id="DT_VARCHAR" value="varchar" type="datatype"/>
-        <token index="26" id="DT_VARYING CHARACTER" value="varying character" type="datatype"/>
+        <token index="26" id="DT_VARYING_CHARACTER" value="varying character" type="datatype"/>
+
 
 
 
