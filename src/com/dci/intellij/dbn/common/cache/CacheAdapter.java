@@ -1,16 +1,15 @@
 package com.dci.intellij.dbn.common.cache;
 
-import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class CacheAdapter<T> {
+public abstract class CacheAdapter<T, E extends Throwable> {
     private Cache cache;
 
     public CacheAdapter(@NotNull Cache cache) {
         this.cache = cache;
     }
 
-    public final T get(String key) throws SQLException {
+    public final T get(String key) throws E {
         T value = cache.get(key);
         if (value == null) {
             value = load();
@@ -19,5 +18,5 @@ public abstract class CacheAdapter<T> {
         return value;
     }
 
-    protected abstract T load() throws SQLException;
+    protected abstract T load() throws E;
 }
