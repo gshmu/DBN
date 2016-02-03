@@ -65,7 +65,7 @@ public abstract class SqliteColumnsResultSet extends SqliteResultSetAdapter<Sqli
     }
 
     private ForeignKeyInfo getForeignKeyInfo(final String datasetName) throws SQLException {
-        return new CacheAdapter<ForeignKeyInfo>(getCache()) {
+        return new CacheAdapter<ForeignKeyInfo, SQLException>(getCache()) {
             @Override
             protected ForeignKeyInfo load() throws SQLException {
                 return new ForeignKeyInfo(loadForeignKeyInfo(datasetName));
@@ -74,7 +74,7 @@ public abstract class SqliteColumnsResultSet extends SqliteResultSetAdapter<Sqli
     }
 
     private TableInfo getTableInfo(final String datasetName) throws SQLException {
-        return new CacheAdapter<TableInfo>(getCache()) {
+        return new CacheAdapter<TableInfo, SQLException>(getCache()) {
             @Override
             protected TableInfo load() throws SQLException {
                 return new TableInfo(loatTableInfo(datasetName));

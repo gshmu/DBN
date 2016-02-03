@@ -14,8 +14,8 @@ import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteResultSetAdapter;
+import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.*;
 
 public abstract class SqliteConstraintsAbstractResultSet<T extends ResultSetElement<T>> extends SqliteResultSetAdapter<T> {
 
@@ -83,14 +83,14 @@ public abstract class SqliteConstraintsAbstractResultSet<T extends ResultSetElem
 
         @NotNull
         public Map<String, List<ConstraintColumnInfo>> loadConstraints(final String dataset) throws SQLException {
-            SqliteMetaDataUtil.TableInfo tableInfo = getTableInfo(dataset);
-            SqliteMetaDataUtil.ForeignKeyInfo foreignKeyInfo = getForeignKeyInfo(dataset);
-            SqliteMetaDataUtil.IndexInfo indexInfo = getIndexInfo(dataset);
+            TableInfo tableInfo = getTableInfo(dataset);
+            ForeignKeyInfo foreignKeyInfo = getForeignKeyInfo(dataset);
+            IndexInfo indexInfo = getIndexInfo(dataset);
 
             Map<String, List<ConstraintColumnInfo>> constraints = new HashMap<String, List<ConstraintColumnInfo>>();
             AtomicInteger pkPosition = new AtomicInteger();
 
-            for (SqliteMetaDataUtil.TableInfo.Row row : tableInfo.getRows()) {
+            for (TableInfo.Row row : tableInfo.getRows()) {
                 String column = row.getName();
                 if (row.getPk() > 0) {
                     List<ConstraintColumnInfo> primaryKeyColumns = getConstraintColumns(constraints, "PK");
@@ -100,7 +100,7 @@ public abstract class SqliteConstraintsAbstractResultSet<T extends ResultSetElem
 
             }
 
-            for (SqliteMetaDataUtil.ForeignKeyInfo.Row row : foreignKeyInfo.getRows()) {
+            for (ForeignKeyInfo.Row row : foreignKeyInfo.getRows()) {
                 String column = row.getFrom();
                 String fkColumn = row.getTo();
                 String fkDataset = row.getTable();
@@ -110,12 +110,12 @@ public abstract class SqliteConstraintsAbstractResultSet<T extends ResultSetElem
                 foreignKeyColumns.add(new ConstraintColumnInfo(dataset, column, fkDataset, fkColumn, position));
             }
 
-            for (SqliteMetaDataUtil.IndexInfo.Row row : indexInfo.getRows()) {
+            for (IndexInfo.Row row : indexInfo.getRows()) {
                 if (row.getUnique() == 1 && !row.getOrigin().equals("pk")) {
                     String indexId = "UQ" + row.getSeq();
                     String indexName = row.getName();
-                    SqliteMetaDataUtil.IndexDetailInfo detailInfo = getIndexDetailInfo(indexName);
-                    for (SqliteMetaDataUtil.IndexDetailInfo.Row detailRow : detailInfo.getRows()) {
+                    IndexDetailInfo detailInfo = getIndexDetailInfo(indexName);
+                    for (IndexDetailInfo.Row detailRow : detailInfo.getRows()) {
                         String column = detailRow.getName();
                         if (StringUtil.isNotEmpty(column)) {
                             int position = detailRow.getSeqno();
@@ -129,38 +129,38 @@ public abstract class SqliteConstraintsAbstractResultSet<T extends ResultSetElem
             return constraints;
         }
 
-        private SqliteMetaDataUtil.ForeignKeyInfo getForeignKeyInfo(final String datasetName) throws SQLException {
-            return new CacheAdapter<SqliteMetaDataUtil.ForeignKeyInfo>(cache) {
+        private ForeignKeyInfo getForeignKeyInfo(final String datasetName) throws SQLException {
+            return new CacheAdapter<ForeignKeyInfo, SQLException>(cache) {
                 @Override
-                protected SqliteMetaDataUtil.ForeignKeyInfo load() throws SQLException {
-                    return new SqliteMetaDataUtil.ForeignKeyInfo(loadForeignKeyInfo(datasetName));
+                protected ForeignKeyInfo load() throws SQLException {
+                    return new ForeignKeyInfo(loadForeignKeyInfo(datasetName));
                 }
             }.get(datasetName + ".FOREIGN_KEY_INFO");
         }
 
-        private SqliteMetaDataUtil.TableInfo getTableInfo(final String datasetName) throws SQLException {
-            return new CacheAdapter<SqliteMetaDataUtil.TableInfo>(cache) {
+        private TableInfo getTableInfo(final String datasetName) throws SQLException {
+            return new CacheAdapter<TableInfo, SQLException>(cache) {
                 @Override
-                protected SqliteMetaDataUtil.TableInfo load() throws SQLException {
-                    return new SqliteMetaDataUtil.TableInfo(loadTableInfo(datasetName));
+                protected TableInfo load() throws SQLException {
+                    return new TableInfo(loadTableInfo(datasetName));
                 }
             }.get(datasetName + ".TABLE_INFO");
         }
 
-        private SqliteMetaDataUtil.IndexInfo getIndexInfo(final String tableName) throws SQLException {
-            return new CacheAdapter<SqliteMetaDataUtil.IndexInfo>(cache) {
+        private IndexInfo getIndexInfo(final String tableName) throws SQLException {
+            return new CacheAdapter<IndexInfo, SQLException>(cache) {
                 @Override
-                protected SqliteMetaDataUtil.IndexInfo load() throws SQLException {
-                    return new SqliteMetaDataUtil.IndexInfo(loadIndexInfo(tableName));
+                protected IndexInfo load() throws SQLException {
+                    return new IndexInfo(loadIndexInfo(tableName));
                 }
             }.get(tableName + ".INDEX_INFO");
         }
 
-        private SqliteMetaDataUtil.IndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
-            return new CacheAdapter<SqliteMetaDataUtil.IndexDetailInfo>(cache) {
+        private IndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
+            return new CacheAdapter<IndexDetailInfo, SQLException>(cache) {
                 @Override
-                protected SqliteMetaDataUtil.IndexDetailInfo load() throws SQLException {
-                    return new SqliteMetaDataUtil.IndexDetailInfo(loadIndexDetailInfo(indexName));
+                protected IndexDetailInfo load() throws SQLException {
+                    return new IndexDetailInfo(loadIndexDetailInfo(indexName));
                 }
             }.get(indexName + ".INDEX_DETAIL_INFO");
         }

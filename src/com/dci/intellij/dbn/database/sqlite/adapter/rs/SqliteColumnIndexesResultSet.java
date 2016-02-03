@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteResultSetAdapter;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.IndexDetailInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.IndexInfo;
@@ -56,7 +55,7 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteResultSetAdapte
     }
 
     private IndexInfo getIndexInfo(final String tableName) throws SQLException {
-        return new CacheAdapter<SqliteMetaDataUtil.IndexInfo>(getCache()) {
+        return new CacheAdapter<IndexInfo, SQLException>(getCache()) {
             @Override
             protected IndexInfo load() throws SQLException {
                 return new IndexInfo(loadIndexInfo(tableName));
@@ -65,7 +64,7 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteResultSetAdapte
     }
 
     private IndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
-        return new CacheAdapter<SqliteMetaDataUtil.IndexDetailInfo>(getCache()) {
+        return new CacheAdapter<IndexDetailInfo, SQLException>(getCache()) {
             @Override
             protected IndexDetailInfo load() throws SQLException {
                 return new IndexDetailInfo(loadIndexDetailInfo(indexName));

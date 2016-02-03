@@ -47,7 +47,7 @@ public abstract class SqliteIndexesResultSet extends SqliteResultSetAdapter<Sqli
     }
 
     private IndexInfo getIndexInfo(final String tableName) throws SQLException {
-        return new CacheAdapter<IndexInfo>(getCache()) {
+        return new CacheAdapter<IndexInfo, SQLException>(getCache()) {
             @Override
             protected IndexInfo load() throws SQLException {
                 return new IndexInfo(loadIndexInfo(tableName));
