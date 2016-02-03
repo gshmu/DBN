@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.database.sqlite.rs;
+package com.dci.intellij.dbn.database.sqlite.adapter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,26 +9,26 @@ import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
 /**
  * @deprecated
  */
-public abstract class SqliteResultSetAdapter extends ResultSetAdapter {
+public abstract class SqliteResultSetAdapterOld extends ResultSetAdapter {
     protected ResultSet childResultSet;
     protected ResultSet parentResultSet;
     protected String parentName;
     private int childCount = 1;
     private int childIndex = -1;
 
-    public SqliteResultSetAdapter(ResultSet parentResultSet) {
+    public SqliteResultSetAdapterOld(ResultSet parentResultSet) {
         this(parentResultSet, 1);
     }
-    public SqliteResultSetAdapter(ResultSet parentResultSet, int childCount) {
+    public SqliteResultSetAdapterOld(ResultSet parentResultSet, int childCount) {
         this.parentResultSet = parentResultSet;
         this.childCount = childCount;
     }
 
-    public SqliteResultSetAdapter(String parentName) {
+    public SqliteResultSetAdapterOld(String parentName) {
         this(parentName, 1);
     }
 
-    public SqliteResultSetAdapter(String parentName, int childCount) {
+    public SqliteResultSetAdapterOld(String parentName, int childCount) {
         this.parentName = parentName;
         this.childCount = childCount;
     }

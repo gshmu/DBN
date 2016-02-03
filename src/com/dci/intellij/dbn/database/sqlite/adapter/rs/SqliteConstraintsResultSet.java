@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.database.sqlite.adapter;
+package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.database.common.util.ResultSetReader;
-import com.dci.intellij.dbn.database.sqlite.adapter.SqliteConstraintsLoader.ConstraintColumnInfo;
-import com.dci.intellij.dbn.database.sqlite.adapter.SqliteConstraintsLoader.ConstraintType;
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteConstraintsLoader.getConstraintName;
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
+import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintsAbstractResultSet.SqliteConstraintsLoader.*;
 
 /**
  * DATASET_NAME,
@@ -21,46 +19,18 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteConstraintsLoad
  * CHECK_CONDITION
  */
 
-public abstract class SqliteConstraintsResultSet extends SqliteResultSetAdapter<SqliteConstraintsResultSet.Constraint> {
+public abstract class SqliteConstraintsResultSet extends SqliteConstraintsAbstractResultSet<SqliteConstraintsResultSet.Constraint> {
 
 
     public SqliteConstraintsResultSet(ResultSet datasetNames) throws SQLException {
-        new ResultSetReader(datasetNames) {
-            @Override
-            protected void processRow(ResultSet resultSet) throws SQLException {
-                String parentName = resultSet.getString(1);
-                init(parentName);
-
-            }
-        };
+        super(datasetNames);
     }
     public SqliteConstraintsResultSet(String datasetName) throws SQLException {
-        init(datasetName);
+        super(datasetName);
     }
 
-    void init(String datasetName) throws SQLException {
-        SqliteConstraintsLoader loader = new SqliteConstraintsLoader() {
-            @Override
-            public ResultSet getColumns(String datasetName) throws SQLException {
-                return getColumnsResultSet(datasetName);
-            }
-
-            @Override
-            public ResultSet getForeignKeys(String datasetName) throws SQLException {
-                return getForeignKeyResultSet(datasetName);
-            }
-
-            @Override
-            public ResultSet getIndexes(String tableName) throws SQLException {
-                return getIndexResultSet(tableName);
-            }
-
-            @Override
-            public ResultSet getIndexDetails(String indexName) throws SQLException {
-                return getIndexInfoResultSet(indexName);
-            }
-        };
-        Map<String, List<ConstraintColumnInfo>> constraints = loader.loadConstraints(datasetName);
+    protected void init(String datasetName) throws SQLException {
+        Map<String, List<ConstraintColumnInfo>> constraints = loadConstraintInfo(datasetName);
 
         for (String indexKey : constraints.keySet()) {
             if (indexKey.startsWith("FK")) {
@@ -104,11 +74,6 @@ public abstract class SqliteConstraintsResultSet extends SqliteResultSetAdapter<
             columnLabel.equals("FK_CONSTRAINT_NAME") ? element.getFkConstraintName() :
             columnLabel.equals("IS_ENABLED") ? "Y" : null;
     }
-
-    protected abstract ResultSet getColumnsResultSet(String datasetName) throws SQLException;
-    protected abstract ResultSet getForeignKeyResultSet(String datasetName) throws SQLException;
-    protected abstract ResultSet getIndexResultSet(String tableName) throws SQLException;
-    protected abstract ResultSet getIndexInfoResultSet(String indexName) throws SQLException;
 
     public static class Constraint implements ResultSetElement<Constraint> {
         String datasetName;

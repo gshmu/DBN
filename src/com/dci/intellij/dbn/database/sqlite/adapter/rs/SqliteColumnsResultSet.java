@@ -1,9 +1,12 @@
-package com.dci.intellij.dbn.database.sqlite.adapter;
+package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.database.common.util.ResultSetReader;
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteResultSetAdapter;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.ForeignKeyInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.TableInfo;
 
@@ -40,8 +43,7 @@ public abstract class SqliteColumnsResultSet extends SqliteResultSetAdapter<Sqli
     }
 
     void init(String datasetName) throws SQLException {
-        TableInfo tableInfo = new TableInfo(getColumnsResultSet(datasetName));
-        ForeignKeyInfo foreignKeyInfo = new ForeignKeyInfo(getForeignKeyResultSet(datasetName));
+        TableInfo tableInfo = getTableInfo(datasetName);
 
         for (TableInfo.Row row : tableInfo.getRows()) {
             Column element = new Column();
@@ -54,6 +56,7 @@ public abstract class SqliteColumnsResultSet extends SqliteResultSetAdapter<Sqli
             addElement(element);
         }
 
+        ForeignKeyInfo foreignKeyInfo = getForeignKeyInfo(datasetName);
         for (ForeignKeyInfo.Row row : foreignKeyInfo.getRows()) {
             String columnName = row.getFrom();
             Column column = getElement(datasetName + "." + columnName);
@@ -61,8 +64,26 @@ public abstract class SqliteColumnsResultSet extends SqliteResultSetAdapter<Sqli
         }
     }
 
-    protected abstract ResultSet getColumnsResultSet(String datasetName) throws SQLException;
-    protected abstract ResultSet getForeignKeyResultSet(String datasetName) throws SQLException;
+    private ForeignKeyInfo getForeignKeyInfo(final String datasetName) throws SQLException {
+        return new CacheAdapter<ForeignKeyInfo>(getCache()) {
+            @Override
+            protected ForeignKeyInfo load() throws SQLException {
+                return new ForeignKeyInfo(loadForeignKeyInfo(datasetName));
+            }
+        }.get(datasetName + ".FOREIGN_KEY_INFO");
+    }
+
+    private TableInfo getTableInfo(final String datasetName) throws SQLException {
+        return new CacheAdapter<TableInfo>(getCache()) {
+            @Override
+            protected TableInfo load() throws SQLException {
+                return new TableInfo(loatTableInfo(datasetName));
+            }
+        }.get(datasetName + ".TABLE_INFO");
+    }
+
+    protected abstract ResultSet loatTableInfo(String datasetName) throws SQLException;
+    protected abstract ResultSet loadForeignKeyInfo(String datasetName) throws SQLException;
 
     public String getString(String columnLabel) throws SQLException {
         Column element = getCurrentElement();

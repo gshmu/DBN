@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.database.sqlite.adapter;
+package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

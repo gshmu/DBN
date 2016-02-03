@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -72,6 +73,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private ConnectionHandlerRef ref;
     private AuthenticationInfo temporaryAuthenticationInfo = new AuthenticationInfo();
     private ConnectionInfo connectionInfo;
+    private Cache metaDataCache = new Cache(TimeUtil.ONE_MINUTE);
 
     private LazyValue<NavigationPsiCache> psiCache = new DisposableLazyValue<NavigationPsiCache>(this) {
         @Override
@@ -457,6 +459,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         }
         if (interfaceProvider != null) {
             interfaceProvider.setProject(getProject());
+            interfaceProvider.setMetaDataCache(metaDataCache);
         }
 
         // do not initialize

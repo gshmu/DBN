@@ -8,11 +8,8 @@ import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.logging.ExecutionLogOutput;
-import com.intellij.openapi.diagnostic.Logger;
 
 public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseMetadataInterface {
-    private Logger logger = Logger.getInstance(getClass().getName());
-
     public DatabaseMetadataInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
         super(fileName, provider);
     }
