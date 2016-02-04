@@ -9,7 +9,9 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.FileASTNode;
 import com.intellij.lang.Language;
@@ -97,7 +99,11 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
 
     public void navigate(boolean requestFocus) {
         DBObject object = getObject();
-        object.navigate(requestFocus);
+        if (object.getProperties().is(DBObjectProperty.EDITABLE)) {
+            DatabaseFileSystem.getInstance().openEditor(object, requestFocus);
+        } else {
+            object.navigate(requestFocus);
+        }
     }
 
     public boolean canNavigate() {
@@ -318,7 +324,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
     }
 
     public boolean processChildren(PsiElementProcessor<PsiFileSystemItem> processor) {
-        return false;
+        return true;
     }
 
     @NotNull
