@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.dci.intellij.dbn.common.cache.CacheAdapter;
-import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-import com.dci.intellij.dbn.database.sqlite.adapter.SqliteResultSetAdapter;
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.IndexInfo;
+import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexInfo;
 
 
 /**
@@ -17,26 +16,20 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.In
  * IS_VALID
  */
 
-public abstract class SqliteIndexesResultSet extends SqliteResultSetAdapter<SqliteIndexesResultSet.Index> {
+public abstract class SqliteIndexesResultSet extends SqliteDatasetInfoResultSetStub<SqliteIndexesResultSet.Index> {
 
-    public SqliteIndexesResultSet(ResultSet tableName) throws SQLException {
-        new ResultSetReader(tableName) {
-            @Override
-            protected void processRow(ResultSet resultSet) throws SQLException {
-                String parentName = resultSet.getString(1);
-                init(parentName);
-
-            }
-        };
-    }
-    public SqliteIndexesResultSet(String tableName) throws SQLException {
-        init(tableName);
+    public SqliteIndexesResultSet(SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
+        super(datasetNames, connection);
     }
 
-    void init(String tableName) throws SQLException {
-        IndexInfo indexInfo = getIndexInfo(tableName);
+    public SqliteIndexesResultSet(String datasetName, Connection connection) throws SQLException {
+        super(datasetName, connection);
+    }
 
-        for (IndexInfo.Row row : indexInfo.getRows()) {
+    protected void init(String tableName) throws SQLException {
+        RawIndexInfo indexInfo = getIndexInfo(tableName);
+
+        for (RawIndexInfo.Row row : indexInfo.getRows()) {
             Index element = new Index();
             element.setTableName(tableName);
             element.setIndexName(row.getName());
@@ -46,11 +39,11 @@ public abstract class SqliteIndexesResultSet extends SqliteResultSetAdapter<Sqli
         }
     }
 
-    private IndexInfo getIndexInfo(final String tableName) throws SQLException {
-        return new CacheAdapter<IndexInfo, SQLException>(getCache()) {
+    private RawIndexInfo getIndexInfo(final String tableName) throws SQLException {
+        return new CacheAdapter<RawIndexInfo, SQLException>(getCache()) {
             @Override
-            protected IndexInfo load() throws SQLException {
-                return new IndexInfo(loadIndexInfo(tableName));
+            protected RawIndexInfo load() throws SQLException {
+                return new RawIndexInfo(loadIndexInfo(tableName));
             }
         }.get(tableName + ".INDEX_INFO");
     }

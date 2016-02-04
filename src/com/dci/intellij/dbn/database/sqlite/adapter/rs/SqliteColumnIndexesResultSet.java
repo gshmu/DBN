@@ -1,16 +1,15 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-import com.dci.intellij.dbn.database.sqlite.adapter.SqliteResultSetAdapter;
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.IndexDetailInfo;
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.IndexInfo;
+import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexDetailInfo;
+import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexInfo;
 
 /**
  * COLUMN_NAME
@@ -19,28 +18,22 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.In
  * POSITION
  */
 
-public abstract class SqliteColumnIndexesResultSet extends SqliteResultSetAdapter<SqliteColumnIndexesResultSet.IndexColumn> {
+public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResultSetStub<SqliteColumnIndexesResultSet.IndexColumn> {
 
-    public SqliteColumnIndexesResultSet(ResultSet tableNames) throws SQLException {
-        new ResultSetReader(tableNames) {
-            @Override
-            protected void processRow(ResultSet resultSet) throws SQLException {
-                String tableName = resultSet.getString(1);
-                init(tableName);
-
-            }
-        };
-    }
-    public SqliteColumnIndexesResultSet(String tableName) throws SQLException {
-        init(tableName);
+    public SqliteColumnIndexesResultSet(SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
+        super(datasetNames, connection);
     }
 
-    void init(String tableName) throws SQLException {
-        IndexInfo indexInfo = getIndexInfo(tableName);
-        for (IndexInfo.Row row : indexInfo.getRows()) {
+    public SqliteColumnIndexesResultSet(String datasetName, Connection connection) throws SQLException {
+        super(datasetName, connection);
+    }
+
+    protected void init(String tableName) throws SQLException {
+        RawIndexInfo indexInfo = getIndexInfo(tableName);
+        for (RawIndexInfo.Row row : indexInfo.getRows()) {
             String indexName = row.getName();
-            IndexDetailInfo indexDetailInfo = getIndexDetailInfo(indexName);
-            for (IndexDetailInfo.Row detailRow : indexDetailInfo.getRows()) {
+            RawIndexDetailInfo indexDetailInfo = getIndexDetailInfo(indexName);
+            for (RawIndexDetailInfo.Row detailRow : indexDetailInfo.getRows()) {
                 String columnName = detailRow.getName();
                 if (StringUtil.isNotEmpty(columnName)) {
                     IndexColumn indexColumn = new IndexColumn();
@@ -54,20 +47,20 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteResultSetAdapte
         }
     }
 
-    private IndexInfo getIndexInfo(final String tableName) throws SQLException {
-        return new CacheAdapter<IndexInfo, SQLException>(getCache()) {
+    private RawIndexInfo getIndexInfo(final String tableName) throws SQLException {
+        return new CacheAdapter<RawIndexInfo, SQLException>(getCache()) {
             @Override
-            protected IndexInfo load() throws SQLException {
-                return new IndexInfo(loadIndexInfo(tableName));
+            protected RawIndexInfo load() throws SQLException {
+                return new RawIndexInfo(loadIndexInfo(tableName));
             }
         }.get(tableName + ".INDEX_INFO");
     }
 
-    private IndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
-        return new CacheAdapter<IndexDetailInfo, SQLException>(getCache()) {
+    private RawIndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
+        return new CacheAdapter<RawIndexDetailInfo, SQLException>(getCache()) {
             @Override
-            protected IndexDetailInfo load() throws SQLException {
-                return new IndexDetailInfo(loadIndexDetailInfo(indexName));
+            protected RawIndexDetailInfo load() throws SQLException {
+                return new RawIndexDetailInfo(loadIndexDetailInfo(indexName));
             }
         }.get(indexName + ".INDEX_DETAIL_INFO");
     }
