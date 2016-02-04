@@ -7,10 +7,10 @@ import java.util.List;
 
 import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 
-public class SqliteMetaDataUtil {
-    public static class ForeignKeyInfo extends MetaData<ForeignKeyInfo.Row>{
+public class SqliteRawMetaData {
+    public static class RawForeignKeyInfo extends RawMetaData<RawForeignKeyInfo.Row> {
 
-        public ForeignKeyInfo(ResultSet resultSet) throws SQLException {
+        public RawForeignKeyInfo(ResultSet resultSet) throws SQLException {
             super(resultSet);
         }
 
@@ -56,9 +56,9 @@ public class SqliteMetaDataUtil {
         }
     }
 
-    public static class IndexInfo extends MetaData<IndexInfo.Row>{
+    public static class RawIndexInfo extends RawMetaData<RawIndexInfo.Row> {
 
-        public IndexInfo(ResultSet resultSet) throws SQLException {
+        public RawIndexInfo(ResultSet resultSet) throws SQLException {
             super(resultSet);
         }
 
@@ -104,9 +104,9 @@ public class SqliteMetaDataUtil {
         }
     }
 
-    public static class IndexDetailInfo extends MetaData<IndexDetailInfo.Row>{
+    public static class RawIndexDetailInfo extends RawMetaData<RawIndexDetailInfo.Row> {
 
-        public IndexDetailInfo(ResultSet resultSet) throws SQLException {
+        public RawIndexDetailInfo(ResultSet resultSet) throws SQLException {
             super(resultSet);
         }
 
@@ -158,9 +158,9 @@ public class SqliteMetaDataUtil {
         }
     }
 
-    public static class TableInfo extends MetaData<TableInfo.Row>{
+    public static class RawTableInfo extends RawMetaData<RawTableInfo.Row> {
 
-        public TableInfo(ResultSet resultSet) throws SQLException {
+        public RawTableInfo(ResultSet resultSet) throws SQLException {
             super(resultSet);
         }
 
@@ -206,9 +206,33 @@ public class SqliteMetaDataUtil {
         }
     }
 
-    public abstract static class MetaData<T> extends ResultSetReader {
+    public static class TableNames extends RawMetaData<TableNames.Row> {
+
+        public TableNames(ResultSet resultSet) throws SQLException {
+            super(resultSet);
+        }
+
+        @Override
+        protected Row createRow(ResultSet resultSet) throws SQLException {
+            return new Row(resultSet);
+        }
+
+        public static class Row {
+            String name;
+
+            Row (ResultSet resultSet) throws SQLException {
+                name = resultSet.getString("DATASET_NAME");
+            }
+
+            public String getName() {
+                return name;
+            }
+        }
+    }
+
+    private abstract static class RawMetaData<T> extends ResultSetReader {
         private List<T> rows;
-        public MetaData(ResultSet resultSet) throws SQLException {
+        public RawMetaData(ResultSet resultSet) throws SQLException {
             super(resultSet);
         }
 

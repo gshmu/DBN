@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import java.sql.ResultSet;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintsAbstractResultSet.SqliteConstraintsLoader.*;
+import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.*;
 
 /**
  * DATASET_NAME,
@@ -19,14 +19,15 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintsA
  * CHECK_CONDITION
  */
 
-public abstract class SqliteConstraintsResultSet extends SqliteConstraintsAbstractResultSet<SqliteConstraintsResultSet.Constraint> {
+public abstract class SqliteConstraintsResultSet extends SqliteConstraintInfoResultSetStub<SqliteConstraintsResultSet.Constraint> {
 
 
-    public SqliteConstraintsResultSet(ResultSet datasetNames) throws SQLException {
-        super(datasetNames);
+    public SqliteConstraintsResultSet(SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
+        super(datasetNames, connection);
     }
-    public SqliteConstraintsResultSet(String datasetName) throws SQLException {
-        super(datasetName);
+
+    public SqliteConstraintsResultSet(String datasetName, Connection connection) throws SQLException {
+        super(datasetName, connection);
     }
 
     protected void init(String datasetName) throws SQLException {

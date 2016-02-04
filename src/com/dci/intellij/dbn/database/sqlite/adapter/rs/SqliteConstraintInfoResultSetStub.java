@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,29 +13,20 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-import com.dci.intellij.dbn.database.sqlite.adapter.SqliteResultSetAdapter;
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetaDataUtil.*;
+import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.*;
 
-public abstract class SqliteConstraintsAbstractResultSet<T extends ResultSetElement<T>> extends SqliteResultSetAdapter<T> {
+public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetElement<T>> extends SqliteDatasetInfoResultSetStub<T> {
 
-    public SqliteConstraintsAbstractResultSet(ResultSet datasetNames) throws SQLException {
-        new ResultSetReader(datasetNames) {
-            @Override
-            protected void processRow(ResultSet resultSet) throws SQLException {
-                String parentName = resultSet.getString(1);
-                init(parentName);
-
-            }
-        };
+    public SqliteConstraintInfoResultSetStub(SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
+        super(datasetNames, connection);
     }
 
-    public SqliteConstraintsAbstractResultSet(String datasetName) throws SQLException {
-        init(datasetName);
+    public SqliteConstraintInfoResultSetStub(String datasetName, Connection connection) throws SQLException {
+        super(datasetName, connection);
     }
 
-    protected abstract void init(String parentName) throws SQLException;
+    protected abstract void init(String datasetName) throws SQLException;
 
     protected abstract ResultSet loadTableInfo(String datasetName) throws SQLException;
     protected abstract ResultSet loadForeignKeyInfo(String datasetName) throws SQLException;
@@ -45,22 +37,22 @@ public abstract class SqliteConstraintsAbstractResultSet<T extends ResultSetElem
         SqliteConstraintsLoader loader = new SqliteConstraintsLoader(getCache()) {
             @Override
             public ResultSet loadTableInfo(String datasetName) throws SQLException {
-                return SqliteConstraintsAbstractResultSet.this.loadTableInfo(datasetName);
+                return SqliteConstraintInfoResultSetStub.this.loadTableInfo(datasetName);
             }
 
             @Override
             public ResultSet loadForeignKeyInfo(String datasetName) throws SQLException {
-                return SqliteConstraintsAbstractResultSet.this.loadForeignKeyInfo(datasetName);
+                return SqliteConstraintInfoResultSetStub.this.loadForeignKeyInfo(datasetName);
             }
 
             @Override
             public ResultSet loadIndexInfo(String tableName) throws SQLException {
-                return SqliteConstraintsAbstractResultSet.this.loadIndexInfo(tableName);
+                return SqliteConstraintInfoResultSetStub.this.loadIndexInfo(tableName);
             }
 
             @Override
             public ResultSet loadIndexDetailInfo(String indexName) throws SQLException {
-                return SqliteConstraintsAbstractResultSet.this.loadIndexDetailInfo(indexName);
+                return SqliteConstraintInfoResultSetStub.this.loadIndexDetailInfo(indexName);
             }
         };
         return loader.loadConstraints(datasetName);
@@ -83,14 +75,14 @@ public abstract class SqliteConstraintsAbstractResultSet<T extends ResultSetElem
 
         @NotNull
         public Map<String, List<ConstraintColumnInfo>> loadConstraints(final String dataset) throws SQLException {
-            TableInfo tableInfo = getTableInfo(dataset);
-            ForeignKeyInfo foreignKeyInfo = getForeignKeyInfo(dataset);
-            IndexInfo indexInfo = getIndexInfo(dataset);
+            RawTableInfo tableInfo = getTableInfo(dataset);
+            RawForeignKeyInfo foreignKeyInfo = getForeignKeyInfo(dataset);
+            RawIndexInfo indexInfo = getIndexInfo(dataset);
 
             Map<String, List<ConstraintColumnInfo>> constraints = new HashMap<String, List<ConstraintColumnInfo>>();
             AtomicInteger pkPosition = new AtomicInteger();
 
-            for (TableInfo.Row row : tableInfo.getRows()) {
+            for (RawTableInfo.Row row : tableInfo.getRows()) {
                 String column = row.getName();
                 if (row.getPk() > 0) {
                     List<ConstraintColumnInfo> primaryKeyColumns = getConstraintColumns(constraints, "PK");
@@ -100,7 +92,7 @@ public abstract class SqliteConstraintsAbstractResultSet<T extends ResultSetElem
 
             }
 
-            for (ForeignKeyInfo.Row row : foreignKeyInfo.getRows()) {
+            for (RawForeignKeyInfo.Row row : foreignKeyInfo.getRows()) {
                 String column = row.getFrom();
                 String fkColumn = row.getTo();
                 String fkDataset = row.getTable();
@@ -110,12 +102,12 @@ public abstract class SqliteConstraintsAbstractResultSet<T extends ResultSetElem
                 foreignKeyColumns.add(new ConstraintColumnInfo(dataset, column, fkDataset, fkColumn, position));
             }
 
-            for (IndexInfo.Row row : indexInfo.getRows()) {
+            for (RawIndexInfo.Row row : indexInfo.getRows()) {
                 if (row.getUnique() == 1 && !row.getOrigin().equals("pk")) {
                     String indexId = "UQ" + row.getSeq();
                     String indexName = row.getName();
-                    IndexDetailInfo detailInfo = getIndexDetailInfo(indexName);
-                    for (IndexDetailInfo.Row detailRow : detailInfo.getRows()) {
+                    RawIndexDetailInfo detailInfo = getIndexDetailInfo(indexName);
+                    for (RawIndexDetailInfo.Row detailRow : detailInfo.getRows()) {
                         String column = detailRow.getName();
                         if (StringUtil.isNotEmpty(column)) {
                             int position = detailRow.getSeqno();
@@ -129,38 +121,38 @@ public abstract class SqliteConstraintsAbstractResultSet<T extends ResultSetElem
             return constraints;
         }
 
-        private ForeignKeyInfo getForeignKeyInfo(final String datasetName) throws SQLException {
-            return new CacheAdapter<ForeignKeyInfo, SQLException>(cache) {
+        private RawForeignKeyInfo getForeignKeyInfo(final String datasetName) throws SQLException {
+            return new CacheAdapter<RawForeignKeyInfo, SQLException>(cache) {
                 @Override
-                protected ForeignKeyInfo load() throws SQLException {
-                    return new ForeignKeyInfo(loadForeignKeyInfo(datasetName));
+                protected RawForeignKeyInfo load() throws SQLException {
+                    return new RawForeignKeyInfo(loadForeignKeyInfo(datasetName));
                 }
             }.get(datasetName + ".FOREIGN_KEY_INFO");
         }
 
-        private TableInfo getTableInfo(final String datasetName) throws SQLException {
-            return new CacheAdapter<TableInfo, SQLException>(cache) {
+        private RawTableInfo getTableInfo(final String datasetName) throws SQLException {
+            return new CacheAdapter<RawTableInfo, SQLException>(cache) {
                 @Override
-                protected TableInfo load() throws SQLException {
-                    return new TableInfo(loadTableInfo(datasetName));
+                protected RawTableInfo load() throws SQLException {
+                    return new RawTableInfo(loadTableInfo(datasetName));
                 }
             }.get(datasetName + ".TABLE_INFO");
         }
 
-        private IndexInfo getIndexInfo(final String tableName) throws SQLException {
-            return new CacheAdapter<IndexInfo, SQLException>(cache) {
+        private RawIndexInfo getIndexInfo(final String tableName) throws SQLException {
+            return new CacheAdapter<RawIndexInfo, SQLException>(cache) {
                 @Override
-                protected IndexInfo load() throws SQLException {
-                    return new IndexInfo(loadIndexInfo(tableName));
+                protected RawIndexInfo load() throws SQLException {
+                    return new RawIndexInfo(loadIndexInfo(tableName));
                 }
             }.get(tableName + ".INDEX_INFO");
         }
 
-        private IndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
-            return new CacheAdapter<IndexDetailInfo, SQLException>(cache) {
+        private RawIndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
+            return new CacheAdapter<RawIndexDetailInfo, SQLException>(cache) {
                 @Override
-                protected IndexDetailInfo load() throws SQLException {
-                    return new IndexDetailInfo(loadIndexDetailInfo(indexName));
+                protected RawIndexDetailInfo load() throws SQLException {
+                    return new RawIndexDetailInfo(loadIndexDetailInfo(indexName));
                 }
             }.get(indexName + ".INDEX_DETAIL_INFO");
         }

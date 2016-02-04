@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -12,6 +13,9 @@ import com.dci.intellij.dbn.database.common.logging.ExecutionLogOutput;
 public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseMetadataInterface {
     public DatabaseMetadataInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
         super(fileName, provider);
+    }
+    public Cache getCache() {
+        return DatabaseInterfaceProviderImpl.getMetaDataCache();
     }
 
     public ResultSet getDistinctValues(String ownerName, String datasetName, String columnName, Connection connection) throws SQLException {
