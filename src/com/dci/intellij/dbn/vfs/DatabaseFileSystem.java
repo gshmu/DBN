@@ -159,7 +159,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
 
         buffer.insert(0, objectRef.getObjectType().getName().toUpperCase());
         buffer.insert(0, "] ");
-        buffer.insert(0, objectRef.lookupConnectionHandler().getName());
+        ConnectionHandler connectionHandler = objectRef.lookupConnectionHandler();
+        buffer.insert(0, connectionHandler == null ? "UNKNOWN" : connectionHandler.getName());
         buffer.insert(0, '[');
 
         return buffer.toString();
@@ -178,7 +179,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
 
         buffer.insert(0, objectList.getName().toUpperCase() + "LIST");
         buffer.insert(0, "] ");
-        buffer.insert(0, objectList.getConnectionHandler().getName());
+        ConnectionHandler connectionHandler = objectList.getConnectionHandler();
+        buffer.insert(0, connectionHandler == null ? "UNKNOWN" : connectionHandler.getName());
         buffer.insert(0, '[');
 
         return buffer.toString();
