@@ -136,7 +136,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         DBSchema schema = executionInput.getSchema();
         CmdLineInterface cmdLineInterface;
         if (connectionHandler != null && !connectionHandler.isVirtual()) {
-            schema = CommonUtil.nvln(schema, connectionHandler.getUserSchema());
+            schema = CommonUtil.nvln(schema, connectionHandler.getDefaultSchema());
             connectionComboBox.setSelectedValue(connectionHandler);
             schemaComboBox.setValues(connectionHandler.getObjectBundle().getSchemas());
             schemaComboBox.setSelectedValue(schema);
