@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
@@ -317,19 +318,32 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     public boolean isValid() {
         if (getConnectionBundle().containsConnection(this)) {
             long currentTimestamp = System.currentTimeMillis();
-            if (validityCheckTimestamp < currentTimestamp - 30000 && !ApplicationManager.getApplication().isDispatchThread()) {
-                validityCheckTimestamp = currentTimestamp;
-                try {
-                    getStandaloneConnection();
-                } catch (SQLException e) {
-                    if (SettingsUtil.isDebugEnabled) {
-                        LOGGER.warn("[DBN-INFO] Could not connect to database [" + getName() + "]: " + e.getMessage());
-                    }
+            if (validityCheckTimestamp < currentTimestamp - 30000) {
+                if (ApplicationManager.getApplication().isDispatchThread()) {
+                    new SimpleBackgroundTask("verify connection") {
+                        @Override
+                        protected void execute() {
+                            checkConnection();
+                        }
+                    }.start();
+                } else {
+                    checkConnection();
                 }
             }
             return connectionStatus.isValid();
         }
         return false;
+    }
+
+    void checkConnection() {
+        validityCheckTimestamp = System.currentTimeMillis();
+        try {
+            getStandaloneConnection();
+        } catch (SQLException e) {
+            if (SettingsUtil.isDebugEnabled) {
+                LOGGER.warn("[DBN-INFO] Could not connect to database [" + getName() + "]: " + e.getMessage());
+            }
+        }
     }
 
     public boolean isVirtual() {
