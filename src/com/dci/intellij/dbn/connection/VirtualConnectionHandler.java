@@ -208,6 +208,11 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public DBSchema getUserSchema() {return null;}
 
     @Override
+    public DBSchema getDefaultSchema() {
+        return null;
+    }
+
+    @Override
     public DBSessionBrowserVirtualFile getSessionBrowserFile() {
         return null;
     }

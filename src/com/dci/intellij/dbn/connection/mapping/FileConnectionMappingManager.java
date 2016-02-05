@@ -197,8 +197,8 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                     if (mapping != null) {
                         String schemaName = mapping.getCurrentSchema();
                         if (StringUtil.isEmptyOrSpaces(schemaName)) {
-                            DBSchema userSchema = connectionHandler.getUserSchema();
-                            currentSchemaRef = userSchema == null ? null : userSchema.getRef();
+                            DBSchema defaultSchema = connectionHandler.getDefaultSchema();
+                            currentSchemaRef = defaultSchema == null ? null : defaultSchema.getRef();
                             schemaName = currentSchemaRef == null ? null : currentSchemaRef.getObjectName();
                         } else {
                             DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
@@ -395,11 +395,11 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            DBSchema currentSchema = connectionHandler.getUserSchema();
+            DBSchema defaultSchema = connectionHandler.getDefaultSchema();
             DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
                 file.setActiveConnection(connectionHandler);
-                file.setCurrentSchema(currentSchema);
+                file.setCurrentSchema(defaultSchema);
                 if (callback != null) {
                     callback.start();
                 }

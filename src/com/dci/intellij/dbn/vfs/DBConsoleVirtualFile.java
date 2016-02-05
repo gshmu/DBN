@@ -55,7 +55,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         super(connectionHandler.getProject());
         this.type = type;
         connectionHandlerRef = connectionHandler.getRef();
-        setCurrentSchemaName(connectionHandler.getUserName());
+        setCurrentSchema(connectionHandler.getDefaultSchema());
         setName(name);
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }

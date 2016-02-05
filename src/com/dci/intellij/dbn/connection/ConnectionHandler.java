@@ -62,15 +62,13 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
 
     boolean isDatabaseInitialized();
 
-    @NotNull
-    ConnectionBundle getConnectionBundle();
-    @NotNull
-    ConnectionPool getConnectionPool();
+    @NotNull ConnectionBundle getConnectionBundle();
+    @NotNull ConnectionPool getConnectionPool();
     ConnectionLoadMonitor getLoadMonitor();
     DatabaseInterfaceProvider getInterfaceProvider();
-    @NotNull
-    DBObjectBundle getObjectBundle();
-    DBSchema getUserSchema();
+    @NotNull DBObjectBundle getObjectBundle();
+    @Nullable DBSchema getUserSchema();
+    @Nullable DBSchema getDefaultSchema();
 
     boolean isValid(boolean check);
     boolean isValid();

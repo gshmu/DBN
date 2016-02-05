@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
@@ -399,15 +400,25 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     public DBSchema getUserSchema() {
         String userName = getUserName().toUpperCase();
-        DBSchema defaultSchema = getObjectBundle().getSchema(userName);
-        if (defaultSchema == null) {
-            List<DBSchema> schemas = getObjectBundle().getSchemas();
-            if (schemas.size() > 0) {
-                return schemas.get(0);
+        return getObjectBundle().getSchema(userName);
+    }
+
+    @Override
+    public DBSchema getDefaultSchema() {
+        DBSchema schema = getUserSchema();
+        if (schema == null) {
+            String databaseName = getSettings().getDatabaseSettings().getDatabaseInfo().getDatabase();
+            if (StringUtil.isNotEmpty(databaseName)) {
+                schema = getObjectBundle().getSchema(databaseName);
+            }
+            if (schema == null) {
+                List<DBSchema> schemas = getObjectBundle().getSchemas();
+                if (schemas.size() > 0) {
+                    schema = schemas.get(0);
+                }
             }
         }
-
-        return defaultSchema;
+        return schema;
     }
 
     public Connection getStandaloneConnection() throws SQLException {
