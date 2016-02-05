@@ -13,9 +13,9 @@ import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -347,7 +347,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                                             "Database error message: " + e.getMessage());
                             String[] options = {"Edit filter", "Remove filter", "Ignore filter", "Cancel"};
 
-                            MessageUtil.showErrorDialog(project, "Error", message, options, 0, new SimpleTask<Integer>() {
+                            MessageUtil.showErrorDialog(project, "Error", message, options, 0, new MessageCallback() {
                                 @Override
                                 protected void execute() {
                                     int option = getOption();

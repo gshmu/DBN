@@ -19,13 +19,13 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -195,12 +195,10 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             if (databaseSettings.isDatabaseInitialized()) {
                 promptTemporaryAuthenticationDialog(databaseSettings, connectCallback);
             } else {
-                promptDatabaseInitDialog(databaseSettings, new SimpleTask<Integer>() {
+                promptDatabaseInitDialog(databaseSettings, new MessageCallback(0) {
                     @Override
                     protected void execute() {
-                        if (getOption() == 0) {
-                            promptTemporaryAuthenticationDialog(databaseSettings, connectCallback);
-                        }
+                        promptTemporaryAuthenticationDialog(databaseSettings, connectCallback);
                     }
                 });
             }
@@ -252,12 +250,12 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void promptDatabaseInitDialog(ConnectionHandler connectionHandler, RunnableTask<Integer> callback) {
+    public void promptDatabaseInitDialog(ConnectionHandler connectionHandler, MessageCallback callback) {
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
         promptDatabaseInitDialog(databaseSettings, callback);
 
     }
-    public void promptDatabaseInitDialog(ConnectionDatabaseSettings databaseSettings, RunnableTask<Integer> callback) {
+    public void promptDatabaseInitDialog(ConnectionDatabaseSettings databaseSettings, MessageCallback callback) {
         DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
             String file = databaseInfo.getFile();
@@ -274,7 +272,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void promptConnectDialog(ConnectionHandler connectionHandler, @Nullable String actionDesc, RunnableTask<Integer> callback) {
+    public void promptConnectDialog(ConnectionHandler connectionHandler, @Nullable String actionDesc, MessageCallback callback) {
         MessageUtil.showInfoDialog(
                 getProject(),
                 "Not Connected to Database",

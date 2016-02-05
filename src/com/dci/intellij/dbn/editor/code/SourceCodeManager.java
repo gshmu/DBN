@@ -15,11 +15,11 @@ import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModif
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -126,12 +126,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                             "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor.\n" +
                                     "Do you want to discard the changes and reload the updated database version?",
                             new String[]{"Reload", "Keep changes"}, 0,
-                            new SimpleTask<Integer>() {
-                                @Override
-                                protected boolean canExecute() {
-                                    return getOption() == 0;
-                                }
-
+                            new MessageCallback(0) {
                                 @Override
                                 protected void execute() {
                                     reloadAndUpdateEditors(databaseFile, false);
