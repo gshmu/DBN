@@ -47,7 +47,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
             final ConnectionHandler activeConnection = dbLanguagePsiFile.getActiveConnection();
             if (activeConnection != null && !activeConnection.isDisposed() && !activeConnection.isVirtual()) {
-                activeConnection.setAllowConnection(true);
+                activeConnection.getInstructions().setAllowAutoConnect(true);
                 new BackgroundTask(project, "Trying to connect to " + activeConnection.getName(), false) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {

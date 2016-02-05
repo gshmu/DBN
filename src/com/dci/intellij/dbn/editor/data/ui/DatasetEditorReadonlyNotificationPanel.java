@@ -23,7 +23,9 @@ public class DatasetEditorReadonlyNotificationPanel extends DatasetEditorNotific
                 public void run() {
                     MessageUtil.showQuestionDialog(project,
                             "Enable edit-mode",
-                            "Are you sure you want to enable editing for " + schemaObject.getQualifiedNameWithType(), new String[]{"Yes", "Cancel"}, 0, new SimpleTask() {
+                            "Are you sure you want to enable editing for " + schemaObject.getQualifiedNameWithType(),
+                            new String[]{"Yes", "Cancel"}, 0,
+                            new SimpleTask<Integer>() {
                                 @Override
                                 protected void execute() {
                                     Integer option = getOption();

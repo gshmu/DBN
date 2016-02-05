@@ -23,19 +23,19 @@ public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction
         if (project != null && loggingResult != null && !loggingResult.isDisposed()) {
             final LogOutputContext context = loggingResult.getContext();
             if (context.isActive()) {
-                SimpleTask killConsoleTask = new SimpleTask() {
-                    @Override
-                    protected void execute() {
-                        if (getOption() == 0) {
-                            context.stop();
-                        }
-                    }
-                };
                 MessageUtil.showQuestionDialog(
                         project,
                         "Kill Process",
                         "This will interrupt the script execution process. \nAre you sure you want to continue?",
-                        MessageUtil.OPTIONS_YES_NO, 0, killConsoleTask);
+                        MessageUtil.OPTIONS_YES_NO, 0,
+                        new SimpleTask<Integer>() {
+                            @Override
+                            protected void execute() {
+                                if (getOption() == 0) {
+                                    context.stop();
+                                }
+                            }
+                        });
             } else {
                 context.stop();
             }

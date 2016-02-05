@@ -183,7 +183,7 @@ public class ConnectionUtil {
                 if (!authenticationInfo.isProvided() && temporaryAuthenticationInfo != null) {
                     authenticationInfo = temporaryAuthenticationInfo;
                 }
-                if (!authenticationInfo.isOsAuthentication()) {
+                if (authenticationInfo.isSupported() && !authenticationInfo.isOsAuthentication()) {
                     String user = authenticationInfo.getUser();
                     String password = authenticationInfo.getPassword();
                     properties.put("user", user);

@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +53,8 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         if (databaseType != DatabaseType.UNKNOWN) {
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo = urlPattern.getDefaultInfo();
-            this.driverSource = DriverSource.BUILTIN;
+            driverSource = DriverSource.BUILTIN;
+            authenticationInfo.setSupported(databaseType.isAuthenticationSupported());
         }
     }
 
@@ -129,6 +132,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
             this.databaseType = databaseType;
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo.setUrlType(urlPattern.getUrlType());
+            authenticationInfo.setSupported(databaseType.isAuthenticationSupported());
         }
     }
 
@@ -161,6 +165,16 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
 
     public DatabaseInfo getDatabaseInfo() {
         return databaseInfo;
+    }
+
+    public boolean isDatabaseInitialized() {
+        DatabaseInfo databaseInfo = getDatabaseInfo();
+        if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
+            // only for file based databases
+            String file = databaseInfo.getFile();
+            return StringUtils.isNotEmpty(file) && new File(file).exists();
+        }
+        return true;
     }
 
     public String getConnectionUrl() {
@@ -304,6 +318,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         authenticationInfo.setPassword(PasswordUtil.decodePassword(getString(element, "password", authenticationInfo.getPassword())));
         authenticationInfo.setEmptyPassword(getBoolean(element, "empty-password", authenticationInfo.isEmptyPassword()));
         authenticationInfo.setOsAuthentication(getBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication()));
+        authenticationInfo.setSupported(databaseType.isAuthenticationSupported());
 
 
         // TODO backward compatibility (to remove)

@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.io.File;
+import java.sql.Driver;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -12,16 +22,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.io.File;
-import java.sql.Driver;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm>{
@@ -31,6 +31,8 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
     private JLabel driverErrorLabel;
     private DBNComboBox<DriverSource> driverSourceComboBox;
     private JPanel driverSetupPanel;
+    private JLabel driverLabel;
+    private JLabel driverLibraryLabel;
 
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
 
@@ -50,7 +52,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         });
 
         driverLibraryTextField.addBrowseFolderListener(
-                "Select driver library",
+                "Select Driver Library",
                 "Library must contain classes implementing the 'java.sql.Driver' class.",
                 null, LIBRARY_FILE_DESCRIPTOR);
     }
@@ -59,7 +61,13 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         DriverSource driverSource = driverSourceComboBox == null ? DriverSource.EXTERNAL : driverSourceComboBox.getSelectedValue();
 
         String error = null;
-        if (driverSource == DriverSource.EXTERNAL) {
+        boolean externalDriver = driverSource == DriverSource.EXTERNAL;
+        driverLibraryLabel.setVisible(externalDriver);
+        driverLibraryTextField.setVisible(externalDriver);
+        driverLabel.setVisible(externalDriver);
+        driverComboBox.setVisible(externalDriver);
+
+        if (externalDriver) {
             JTextField textField = driverLibraryTextField.getTextField();
             String driverLibrary = textField.getText();
 

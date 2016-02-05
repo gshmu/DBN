@@ -218,7 +218,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                     "Script execution timeout",
                                     "The script execution has timed out",
                                     new String[]{"Retry", "Cancel"}, 0,
-                                    new SimpleTask() {
+                                    new SimpleTask<Integer>() {
                                         @Override
                                         protected void execute() {
                                             if (getOption() == 0) {
@@ -239,7 +239,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                     "Script execution error",
                                     "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),
                                     new String[]{"Retry", "Cancel"}, 0,
-                                    new SimpleTask() {
+                                    new SimpleTask<Integer>() {
                                         @Override
                                         protected void execute() {
                                             if (getOption() == 0) {

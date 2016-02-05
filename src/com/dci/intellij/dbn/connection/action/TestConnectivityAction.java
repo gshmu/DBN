@@ -16,7 +16,7 @@ public class TestConnectivityAction extends AbstractConnectionAction {
     public void actionPerformed(AnActionEvent anActionEvent) {
         final ConnectionHandler connectionHandler = getConnectionHandler();
         final Project project = connectionHandler.getProject();
-        connectionHandler.setAllowConnection(true);
+        connectionHandler.getInstructions().setAllowAutoConnect(true);
         TaskInstructions taskInstructions = new TaskInstructions("Trying to connect to " + connectionHandler.getName(), false, false);
         new ConnectionAction("testing the connectivity", connectionHandler, taskInstructions) {
             @Override
