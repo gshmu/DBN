@@ -21,7 +21,7 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputActio
         final DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
         if (project != null && loggingResult != null && !loggingResult.isDisposed()) {
             if (loggingResult.getContext().isActive()) {
-                SimpleTask closeConsoleTask = new SimpleTask() {
+                SimpleTask<Integer> closeConsoleTask = new SimpleTask<Integer>() {
                     @Override
                     protected void execute() {
                         if (getOption() == 0) {

@@ -8,6 +8,7 @@ public class AuthenticationInfo implements com.dci.intellij.dbn.common.util.Clon
     private long timestamp = System.currentTimeMillis();
     private boolean osAuthentication;
     private boolean emptyPassword;
+    private boolean supported = true;
     private String user;
     private String password;
 
@@ -35,6 +36,14 @@ public class AuthenticationInfo implements com.dci.intellij.dbn.common.util.Clon
         this.osAuthentication = osAuthentication;
     }
 
+    public boolean isSupported() {
+        return supported;
+    }
+
+    public void setSupported(boolean supported) {
+        this.supported = supported;
+    }
+
     public boolean isEmptyPassword() {
         return emptyPassword;
     }
@@ -44,7 +53,7 @@ public class AuthenticationInfo implements com.dci.intellij.dbn.common.util.Clon
     }
 
     public boolean isProvided() {
-        return osAuthentication || (StringUtil.isNotEmpty(user) && (StringUtil.isNotEmpty(password) || emptyPassword));
+        return !supported || osAuthentication || (StringUtil.isNotEmpty(user) && (StringUtil.isNotEmpty(password) || emptyPassword));
     }
 
     public boolean isOlderThan(long millis) {
@@ -65,6 +74,7 @@ public class AuthenticationInfo implements com.dci.intellij.dbn.common.util.Clon
         authenticationInfo.password = password;
         authenticationInfo.osAuthentication = osAuthentication;
         authenticationInfo.emptyPassword = emptyPassword;
+        authenticationInfo.supported = supported;
         return authenticationInfo;
     }
 }

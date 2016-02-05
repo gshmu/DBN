@@ -317,7 +317,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             MessageUtil.showInfoDialog(getProject(),
                     "No DDL Files found",
                     message.toString(), options, 0,
-                    new SimpleTask() {
+                    new SimpleTask<Integer>() {
                         @Override
                         protected void execute() {
                             if (getOption() == 1) {

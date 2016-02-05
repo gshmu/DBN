@@ -88,7 +88,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
                     MessageUtil.showInfoDialog(
                             project, "No connections available.", "No database connections found. Please setup a connection first",
                             new String[]{"Setup Connection", "Cancel"}, 0,
-                            new SimpleTask() {
+                            new SimpleTask<Integer>() {
                                 @Override
                                 protected boolean canExecute() {
                                     return getOption() == 0;

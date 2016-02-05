@@ -341,7 +341,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                         getProject(), "Unsupported Debugger",
                         debuggerType.name() + " debugging is not supported in \"" + applicationInfo.getVersionName() + " " + applicationInfo.getFullVersion() + "\".\nDo you want to use classic debugger over JDBC instead?",
                         new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
-                        new SimpleTask() {
+                        new SimpleTask<Integer>() {
                             @Override
                             protected void execute() {
                                 Integer option = getOption();
@@ -356,7 +356,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         }
     }
 
-    private abstract class DebuggerStarter extends ConditionalLaterInvocator {
+    private abstract class DebuggerStarter extends ConditionalLaterInvocator<Integer> {
         DBDebuggerType debuggerType;
 
         public DebuggerStarter() {

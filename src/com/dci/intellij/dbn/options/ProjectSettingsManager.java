@@ -200,7 +200,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                 project, "Default Project Settings",
                 "This will overwrite your default settings with the ones from the current project (including database connections configuration). \nAre you sure you want to continue?",
                 new String[]{"Yes", "No"}, 0,
-                new SimpleTask() {
+                new SimpleTask<Integer>() {
                     @Override
                     protected boolean canExecute() {
                         return getOption() == 0;
@@ -233,7 +233,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                     project, "Default Project Settings",
                     message,
                     new String[]{"Yes", "No"}, 0,
-                    new SimpleTask() {
+                    new SimpleTask<Integer>() {
                         @Override
                         protected boolean canExecute() {
                             return getOption() == 0;

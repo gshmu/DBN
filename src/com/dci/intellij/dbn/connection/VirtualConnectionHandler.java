@@ -42,6 +42,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     private NavigationPsiCache psiCache;
     private ConnectionHandlerRef ref;
     private DBObjectBundle objectBundle;
+    private ConnectionInstructions instructions = new ConnectionInstructions();
 
     public VirtualConnectionHandler(String id, String name, DatabaseType databaseType, double databaseVersion, Project project){
         this.id = id;
@@ -57,6 +58,11 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         return connectionManager.getConnectionBundle().getVirtualConnection("virtual-oracle-connection");
 
+    }
+
+    @Override
+    public ConnectionInstructions getInstructions() {
+        return instructions;
     }
 
     public DatabaseType getDatabaseType() {return databaseType;}
@@ -164,8 +170,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @NotNull
     @Override public ConnectionStatus getConnectionStatus() {return CONNECTION_STATUS;}
 
-    @Override public boolean isAllowConnection() {return false;}
-    @Override public void setAllowConnection(boolean allowConnection) {}
     @Override public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {}
 
     @Nullable
@@ -183,8 +187,11 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override
     public boolean isAuthenticationProvided() {
-        return false;
+        return true;
     }
+
+    @Override
+    public boolean isDatabaseInitialized() {return true;}
 
     @NotNull
     public ConnectionBundle getConnectionBundle() {return null;}

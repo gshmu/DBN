@@ -57,10 +57,10 @@ public abstract class ObjectListShowAction extends AnAction {
         new ConnectionAction("loading " + getListName(), sourceObject, taskInstructions) {
             @Override
             protected void execute() {
-                if (!isCanceled()) {
+                if (!isCancelled()) {
                     final List<? extends DBObject> recentObjectList = getRecentObjectList();
                     final List<? extends DBObject> objects = getObjectList();
-                    if (!isCanceled()) {
+                    if (!isCancelled()) {
                         new SimpleLaterInvocator() {
                             @Override
                             protected void execute() {

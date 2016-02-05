@@ -97,7 +97,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
 
     public void deleteConsole(final DBConsoleVirtualFile consoleFile) {
         final Project project = getProject();
-        SimpleTask deleteTask = new SimpleTask() {
+        SimpleTask<Integer> deleteTask = new SimpleTask<Integer>() {
             @Override
             protected boolean canExecute() {
                 return getOption() == 0;

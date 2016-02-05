@@ -347,7 +347,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                                             "Database error message: " + e.getMessage());
                             String[] options = {"Edit filter", "Remove filter", "Ignore filter", "Cancel"};
 
-                            MessageUtil.showErrorDialog(project, "Error", message, options, 0, new SimpleTask() {
+                            MessageUtil.showErrorDialog(project, "Error", message, options, 0, new SimpleTask<Integer>() {
                                 @Override
                                 protected void execute() {
                                     int option = getOption();

@@ -202,7 +202,8 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                             MessageUtil.showErrorDialog(project,
                                     "Method execution error",
                                     "Error executing " + method.getQualifiedNameWithType() + ".\n" + e.getMessage().trim(),
-                                    new String[]{"Try Again", "Cancel"}, 0, new SimpleTask() {
+                                    new String[]{"Try Again", "Cancel"}, 0,
+                                    new SimpleTask<Integer>() {
                                         @Override
                                         protected void execute() {
                                             if (getOption() == 0) {

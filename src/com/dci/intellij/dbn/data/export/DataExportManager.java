@@ -63,7 +63,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                         //FileSystemView view = FileSystemView.getFileSystemView();
                         //Icon icon = view.getSystemIcon(file);
 
-                        SimpleTask openFileTask = new SimpleTask() {
+                        SimpleTask<Integer> openFileTask = new SimpleTask<Integer>() {
                             @Override
                             protected void execute() {
                                 successCallback.start();

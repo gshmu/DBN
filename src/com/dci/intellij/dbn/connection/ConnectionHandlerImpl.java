@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
@@ -35,7 +36,6 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
@@ -63,17 +63,16 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private UncommittedChangeBundle changesBundle;
     private DatabaseConsoleBundle consoleBundle;
     private DBSessionBrowserVirtualFile sessionBrowserFile;
-    private DatabaseLoggingResult logOutput;
+    private ConnectionInstructions instructions = new ConnectionInstructions();
 
     private boolean isActive;
     private boolean isDisposed;
-    private boolean checkingIdleStatus;
-    private boolean allowConnection;
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
     private AuthenticationInfo temporaryAuthenticationInfo = new AuthenticationInfo();
     private ConnectionInfo connectionInfo;
     private Cache metaDataCache = new Cache(TimeUtil.ONE_MINUTE);
+
 
     private LazyValue<NavigationPsiCache> psiCache = new DisposableLazyValue<NavigationPsiCache>(this) {
         @Override
@@ -107,13 +106,8 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     @Override
-    public boolean isAllowConnection() {
-        return allowConnection;
-    }
-
-    @Override
-    public void setAllowConnection(boolean allowConnection) {
-        this.allowConnection = allowConnection;
+    public ConnectionInstructions getInstructions() {
+        return instructions;
     }
 
     @Override
@@ -151,8 +145,13 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             return false;
         }
 
+        ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
+        if (!databaseSettings.isDatabaseInitialized() && !instructions.isAllowAutoInit()) {
+            return false;
+        }
+
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
-        if (allowConnection || detailSettings.isConnectAutomatically()) {
+        if (detailSettings.isConnectAutomatically() || instructions.isAllowAutoConnect()) {
             if (isAuthenticationProvided()) {
                 return true;
             }
@@ -165,7 +164,10 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return getAuthenticationInfo().isProvided() || getTemporaryAuthenticationInfo().isProvided();
     }
 
-
+    @Override
+    public boolean isDatabaseInitialized() {
+        return getSettings().getDatabaseSettings().isDatabaseInitialized();
+    }
 
     @NotNull
     public ConnectionBundle getConnectionBundle() {

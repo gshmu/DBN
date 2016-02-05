@@ -103,7 +103,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                 MessageUtil.showWarningDialog(
                         project, "Insufficient privileges", buffer.toString(),
                         new String[]{"Continue anyway", "Cancel"}, 0,
-                        new SimpleTask() {
+                        new SimpleTask<Integer>() {
                             @Override
                             protected boolean canExecute() {
                                 return getOption() == 0;

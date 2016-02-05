@@ -249,7 +249,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         @Override
                         protected void execute(@NotNull ProgressIndicator progressIndicator) {
                             boolean showIndeterminateProgress = size < 5;
-                            BackgroundTask.initProgressIndicator(progressIndicator, showIndeterminateProgress);
+                            initProgressIndicator(progressIndicator, showIndeterminateProgress);
                             long lastRefresh = 0;
                             for (int i = 0; i < size; i++) {
                                 if (!progressIndicator.isCanceled()) {
@@ -293,7 +293,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         getProject(),
                         "Multiple Statement Execution",
                         "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
-                        OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, new SimpleTask() {
+                        OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, new SimpleTask<Integer>() {
                             @Override
                             protected void execute() {
                                 int option = getOption();
