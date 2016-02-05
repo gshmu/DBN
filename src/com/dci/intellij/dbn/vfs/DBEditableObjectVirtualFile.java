@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -92,12 +92,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                                 project, "No DDL file found",
                                 "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
                                 "(You can disable this check in \"DDL File\" options)", MessageUtil.OPTIONS_YES_NO, 0,
-                                new SimpleTask<Integer>() {
-                                    @Override
-                                    protected boolean canExecute() {
-                                        return getOption() == DialogWrapper.OK_EXIT_CODE;
-                                    }
-
+                                new MessageCallback(0) {
                                     @Override
                                     protected void execute() {
                                         fileAttachmentManager.createDDLFile(object);

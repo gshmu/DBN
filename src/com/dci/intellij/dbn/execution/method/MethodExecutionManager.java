@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -203,12 +204,10 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                                     "Method execution error",
                                     "Error executing " + method.getQualifiedNameWithType() + ".\n" + e.getMessage().trim(),
                                     new String[]{"Try Again", "Cancel"}, 0,
-                                    new SimpleTask<Integer>() {
+                                    new MessageCallback(0) {
                                         @Override
                                         protected void execute() {
-                                            if (getOption() == 0) {
-                                                startMethodExecution(executionInput, DBDebuggerType.NONE);
-                                            }
+                                            startMethodExecution(executionInput, DBDebuggerType.NONE);
                                         }
                                     });
                         }

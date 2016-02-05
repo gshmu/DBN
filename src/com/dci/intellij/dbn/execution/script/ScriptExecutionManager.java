@@ -21,12 +21,12 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -218,12 +218,10 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                     "Script execution timeout",
                                     "The script execution has timed out",
                                     new String[]{"Retry", "Cancel"}, 0,
-                                    new SimpleTask<Integer>() {
+                                    new MessageCallback(0) {
                                         @Override
                                         protected void execute() {
-                                            if (getOption() == 0) {
-                                                executeScript(sourceFile);
-                                            }
+                                            executeScript(sourceFile);
                                         }
                                     });
                         }
@@ -239,12 +237,10 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                     "Script execution error",
                                     "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),
                                     new String[]{"Retry", "Cancel"}, 0,
-                                    new SimpleTask<Integer>() {
+                                    new MessageCallback(0) {
                                         @Override
                                         protected void execute() {
-                                            if (getOption() == 0) {
-                                                executeScript(sourceFile);
-                                            }
+                                            executeScript(sourceFile);
                                         }
                                     });
                         }

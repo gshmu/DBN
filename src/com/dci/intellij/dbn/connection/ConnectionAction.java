@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
@@ -22,11 +23,21 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     private TaskInstructions taskInstructions;
 
     public ConnectionAction(String description, ConnectionProvider connectionProvider) {
+        this(description, connectionProvider, (Integer) null);
+    }
+
+    public ConnectionAction(String description, ConnectionProvider connectionProvider, Integer executeOption) {
+        super(executeOption);
         this.description = description;
         this.connectionProvider = connectionProvider;
     }
 
     public ConnectionAction(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions) {
+        this(description, connectionProvider, taskInstructions, null);
+    }
+
+    public ConnectionAction(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions, Integer executeOption) {
+        super(executeOption);
         this.description = description;
         this.connectionProvider = connectionProvider;
         this.taskInstructions = taskInstructions;
@@ -89,7 +100,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         ConnectionHandler connectionHandler = getConnectionHandler();
         getConnectionManager().promptDatabaseInitDialog(
                 connectionHandler,
-                new SimpleTask<Integer>() {
+                new MessageCallback() {
                     @Override
                     protected void execute() {
                         if (getOption() == 0) {
@@ -132,7 +143,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         ConnectionHandler connectionHandler = getConnectionHandler();
         getConnectionManager().promptConnectDialog(
                 connectionHandler, description,
-                new SimpleTask<Integer>() {
+                new MessageCallback() {
                     @Override
                     protected void execute() {
                         if (getOption() == 0) {

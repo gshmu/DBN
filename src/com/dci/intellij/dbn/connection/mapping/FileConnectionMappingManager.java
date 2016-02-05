@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -296,13 +297,10 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                                             "You can not execute statements against this connection. Please select a proper connection to continue.";
 
 
-                    MessageUtil.showWarningDialog(project, "No Valid Connection", message, new String[]{"Select Connection", "Cancel"}, 0,
-                            new SimpleTask<Integer>() {
-                                @Override
-                                protected boolean canExecute() {
-                                    return getOption() == 0;
-                                }
-
+                    MessageUtil.showWarningDialog(project,
+                            "No Valid Connection", message,
+                            new String[]{"Select Connection", "Cancel"}, 0,
+                            new MessageCallback(0) {
                                 @Override
                                 protected void execute() {
                                     promptConnectionSelector(file, false, true,
@@ -314,7 +312,6 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                                                     } else {
                                                         callback.start();
                                                     }
-
                                                 }
                                             });
                                 }
@@ -323,9 +320,11 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                 } else if (file.getCurrentSchema() == null) {
                     String message =
                             "You did not select any schema to run the statement against.\n" +
-                                    "To continue with the statement execution please select a schema.";
-                    MessageUtil.showWarningDialog(project, "No Schema Selected", message, new String[]{"Use Current Schema", "Select Schema", "Cancel"}, 0,
-                            new SimpleTask<Integer>() {
+                            "To continue with the statement execution please select a schema.";
+                    MessageUtil.showWarningDialog(project,
+                            "No Schema Selected", message,
+                            new String[]{"Use Current Schema", "Select Schema", "Cancel"}, 0,
+                            new MessageCallback() {
                                 @Override
                                 protected void execute() {
                                     Integer result = getOption();

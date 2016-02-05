@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.logging.action;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
@@ -28,12 +28,10 @@ public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction
                         "Kill Process",
                         "This will interrupt the script execution process. \nAre you sure you want to continue?",
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        new SimpleTask<Integer>() {
+                        new MessageCallback(0) {
                             @Override
                             protected void execute() {
-                                if (getOption() == 0) {
-                                    context.stop();
-                                }
+                                context.stop();
                             }
                         });
             } else {

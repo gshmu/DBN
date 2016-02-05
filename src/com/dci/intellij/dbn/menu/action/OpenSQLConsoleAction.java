@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -88,12 +88,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
                     MessageUtil.showInfoDialog(
                             project, "No connections available.", "No database connections found. Please setup a connection first",
                             new String[]{"Setup Connection", "Cancel"}, 0,
-                            new SimpleTask<Integer>() {
-                                @Override
-                                protected boolean canExecute() {
-                                    return getOption() == 0;
-                                }
-
+                            new MessageCallback(0) {
                                 @Override
                                 protected void execute() {
                                     ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
