@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +13,7 @@ import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import gnu.trove.THashSet;
@@ -21,6 +23,7 @@ public class ElementLookupContext {
     private Set<NamedElementType> scannedElements = new THashSet<NamedElementType>();
     protected Set<Branch> branches;
     private Map<Branch, NamedElementType> branchMarkers = new HashMap<Branch, NamedElementType>();
+    private Set<ElementTypeAttribute> breakOnAttributes = new HashSet<ElementTypeAttribute>();
 
     protected double databaseVersion = MAX_DB_VERSION;
 
@@ -34,6 +37,10 @@ public class ElementLookupContext {
     public ElementLookupContext(Set<Branch> branches, double version) {
         this.branches = branches;
         this.databaseVersion = version;
+    }
+
+    public void addBreakOnAttribute(ElementTypeAttribute attribute) {
+        breakOnAttributes.add(attribute);
     }
 
     public boolean check(ElementTypeRef elementTypeRef) {
@@ -114,5 +121,9 @@ public class ElementLookupContext {
 
     public void markScanned(NamedElementType elementType) {
         scannedElements.add(elementType);
+    }
+
+    public boolean isBreakOnAttribute(ElementTypeAttribute attribute) {
+        return breakOnAttributes.contains(attribute);
     }
 }
