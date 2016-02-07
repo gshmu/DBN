@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.element.impl;
 import javax.swing.Icon;
 import java.util.Set;
 import java.util.StringTokenizer;
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -265,4 +266,13 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return virtualObjectType;
     }
 
+    protected boolean getBooleanAttribute(Element element, String attributeName) {
+        String attributeValue = element.getAttributeValue(attributeName);
+        if (StringUtils.isNotEmpty(attributeValue)) {
+            if (attributeValue.equals("true")) return true;
+            if (attributeValue.equals("false")) return false;
+            LOGGER.warn('[' + getLanguageDialect().getID() + "] Invalid element boolean attribute '" + attributeName + "' (id=" + this.id + "). Expected 'true' or 'false'");
+        }
+        return false;
+    }
 }
