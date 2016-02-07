@@ -305,8 +305,8 @@
                         <token id="000000131" type-id="KW_IGNORE" />
                     </one-of>
                 </sequence>
-                <token id="000000132" type-id="KW_REPLACE" />
             </sequence>
+            <token id="000000132" type-id="KW_REPLACE" />
         </one-of>
         <token id="000000133" type-id="KW_INTO" />
         <qualified-identifier id="000000134" separator="CHR_DOT">
