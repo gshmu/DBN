@@ -283,17 +283,11 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
 
     }
 
-    protected void deleteFile(Object o, @NotNull VirtualFile virtualFile) throws IOException {
-        throw new UnsupportedOperationException(ERR);
-    }
+    protected void deleteFile(Object o, @NotNull VirtualFile virtualFile) throws IOException {}
 
-    protected void moveFile(Object o, @NotNull VirtualFile virtualFile, @NotNull VirtualFile virtualFile1) throws IOException {
-        throw new UnsupportedOperationException(ERR);
-    }
+    protected void moveFile(Object o, @NotNull VirtualFile virtualFile, @NotNull VirtualFile virtualFile1) throws IOException {}
 
-    protected void renameFile(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {
-        throw new UnsupportedOperationException(ERR);
-    }
+    protected void renameFile(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {}
 
     @NotNull
     protected VirtualFile createChildFile(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {
