@@ -22,6 +22,7 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
             objectTypeId == DatabaseObjectTypeId.COLUMN ||
             objectTypeId == DatabaseObjectTypeId.CONSTRAINT ||
             objectTypeId == DatabaseObjectTypeId.INDEX ||
+            objectTypeId == DatabaseObjectTypeId.SAVEPOINT ||
             objectTypeId == DatabaseObjectTypeId.DATASET_TRIGGER;
     }
 

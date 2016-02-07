@@ -65,8 +65,8 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
                     ElementTypeDefinition.ALIAS_DEF.is(type) ||
                     ElementTypeDefinition.VARIABLE_DEF.is(type) ? IdentifierCategory.DEFINITION : IdentifierCategory.UNKNOWN;
 
-        referenceable = Boolean.parseBoolean(def.getAttributeValue("referenceable"));
-        localReference = Boolean.parseBoolean(def.getAttributeValue("local"));
+        referenceable = getBooleanAttribute(def, "referenceable");
+        localReference = getBooleanAttribute(def, "local");
 
         underlyingObjectResolverId = def.getAttributeValue("underlying-object-resolver");
 

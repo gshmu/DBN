@@ -65,7 +65,7 @@ public class WrapperElementTypeImpl extends AbstractElementType implements Wrapp
         Element child = (Element) children.get(0);
         String type = child.getName();
         wrappedElement = bundle.resolveElementDefinition(child, type, this);
-        wrappedElementOptional = Boolean.parseBoolean(child.getAttributeValue("optional"));
+        wrappedElementOptional = getBooleanAttribute(child, "optional");
 
         //getLookupCache().registerFirstLeaf(beginTokenElement, isOptional);
     }
