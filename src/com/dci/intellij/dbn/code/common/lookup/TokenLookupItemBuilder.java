@@ -37,17 +37,20 @@ public class TokenLookupItemBuilder extends LookupItemBuilder {
 
     @Override
     public CharSequence getText(CodeCompletionContext completionContext) {
-        Project project = completionContext.getParameters().getOriginalFile().getProject();
+        String text = tokenElementType.getText();
         TokenType tokenType = tokenElementType.getTokenType();
-        String text = tokenType.getValue();
+        if (StringUtil.isEmpty(text)) {
+            text = tokenType.getValue();
+        }
+        Project project = completionContext.getParameters().getOriginalFile().getProject();
 
         DBLanguage language = tokenElementType.getLanguage();
         CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(language);
         CodeStyleCaseOption caseOption =
                 tokenType.isFunction() ? styleCaseSettings.getFunctionCaseOption() :
-                        tokenType.isKeyword() ? styleCaseSettings.getKeywordCaseOption() :
-                                tokenType.isParameter() ? styleCaseSettings.getParameterCaseOption() :
-                                        tokenType.isDataType() ? styleCaseSettings.getDatatypeCaseOption() : null;
+                tokenType.isKeyword() ? styleCaseSettings.getKeywordCaseOption() :
+                tokenType.isParameter() ? styleCaseSettings.getParameterCaseOption() :
+                tokenType.isDataType() ? styleCaseSettings.getDatatypeCaseOption() : null;
 
         if (caseOption != null) {
             text = caseOption.format(text);

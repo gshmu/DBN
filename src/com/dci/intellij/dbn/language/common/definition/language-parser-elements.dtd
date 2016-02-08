@@ -7,6 +7,7 @@
         id ID #REQUIRED
         description CDATA #REQUIRED
         attributes CDATA #IMPLIED
+        branch CDATA #IMPLIED
         wrapping-template (PARENTHESES) #IMPLIED
         formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
         formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
@@ -20,6 +21,7 @@
 <!ATTLIST token
         id ID #REQUIRED
         type-id CDATA #REQUIRED
+        text CDATA #IMPLIED
         version CDATA #IMPLIED
         branch CDATA #IMPLIED
         branch-check CDATA #IMPLIED
