@@ -415,14 +415,14 @@
         <token id="000000175" optional="true" type-id="KW_DATABASE" />
         <element ref-id="expr" />
         <token id="000000176" type-id="KW_AS" />
-        <object-def type="SCHEMA" id="000000177" />
+        <object-def id="000000177" type="SCHEMA" />
     </element-def>
 
     <!-- ========= DETACH DATABASE ========= -->
     <element-def attributes="SPECIFIC, SCOPE_ISOLATION" description="DETACH DATABASE statement" id="detach_database_statement">
         <token id="000000178" type-id="KW_DETACH" />
         <token id="000000179" optional="true" type-id="KW_DATABASE" />
-        <object-ref type="SCHEMA" id="000000180" />
+        <object-ref id="000000180" type="SCHEMA" />
     </element-def>
 
     <!-- ========= EXPRESSIONS ========= -->
@@ -798,30 +798,32 @@
     </element-def>
 
     <element-def description="Literal value" id="literal_value">
-        <token id="000000400" type-id="STRING" />
-        <token id="000000401" type-id="KW_NULL" />
-        <token id="000000402" type-id="KW_CURRENT_TIME" />
-        <token id="000000403" type-id="KW_CURRENT_DATE" />
-        <token id="000000404" type-id="KW_CURRENT_TIMESTAMP" />
+        <one-of id="000000400">
+            <token id="000000401" type-id="STRING" />
+            <token id="000000402" type-id="KW_NULL" />
+            <token id="000000403" type-id="KW_CURRENT_TIME" />
+            <token id="000000404" type-id="KW_CURRENT_DATE" />
+            <token id="000000405" type-id="KW_CURRENT_TIMESTAMP" />
+        </one-of>
     </element-def>
 
 
     <!-- ========= MISCELLANEOUS ========= -->
     <element-def description="Number" id="number">
-        <one-of id="000000405" optional="true">
-            <token id="000000406" type-id="CHR_MINUS" />
-            <token id="000000407" type-id="CHR_PLUS" />
+        <one-of id="000000406" optional="true">
+            <token id="000000407" type-id="CHR_MINUS" />
+            <token id="000000408" type-id="CHR_PLUS" />
         </one-of>
-        <one-of id="000000408">
-            <token id="000000409" type-id="NUMBER" />
-            <token id="000000410" type-id="INTEGER" />
+        <one-of id="000000409">
+            <token id="000000410" type-id="NUMBER" />
+            <token id="000000411" type-id="INTEGER" />
         </one-of>
     </element-def>
 
     <element-def description="Unknown identifier" id="custom_undefined">
-        <token id="000000411" type-id="IDENTIFIER" />
+        <token id="000000412" type-id="IDENTIFIER" />
     </element-def>
     <element-def description="Statement end" formatting-spacing-before="NO_SPACE" id="end" truncate-on-execution="true">
-        <token id="000000412" type-id="CHR_SEMICOLON" />
+        <token id="000000413" type-id="CHR_SEMICOLON" />
     </element-def>
 </element-defs>
