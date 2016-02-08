@@ -29,10 +29,12 @@
         <token index="20" id="DT_REAL" value="real" type="datatype"/>
         <token index="21" id="DT_SMALLINT" value="smallint" type="datatype"/>
         <token index="22" id="DT_TEXT" value="text" type="datatype"/>
-        <token index="23" id="DT_TINYINT" value="tinyint" type="datatype"/>
-        <token index="24" id="DT_UNSIGNED_BIG_INT" value="unsigned big int" type="datatype"/>
-        <token index="25" id="DT_VARCHAR" value="varchar" type="datatype"/>
-        <token index="26" id="DT_VARYING_CHARACTER" value="varying character" type="datatype"/>
+        <token index="23" id="DT_TIME" value="time" type="datatype"/>
+        <token index="24" id="DT_TINYINT" value="tinyint" type="datatype"/>
+        <token index="25" id="DT_UNSIGNED_BIG_INT" value="unsigned big int" type="datatype"/>
+        <token index="26" id="DT_VARCHAR" value="varchar" type="datatype"/>
+        <token index="27" id="DT_VARYING_CHARACTER" value="varying character" type="datatype"/>
+
 
 
 
@@ -169,7 +171,6 @@
 
 
 
-
          <!-- FUNCTIONS -->
         <token index="0" id="FN_ABS" value="abs" type="function"/>
         <token index="1" id="FN_AVG" value="avg" type="function"/>
@@ -217,15 +218,14 @@
         <token index="43" id="FN_STRFTIME" value="strftime" type="function"/>
         <token index="44" id="FN_SUBSTR" value="substr" type="function"/>
         <token index="45" id="FN_SUM" value="sum" type="function"/>
-        <token index="46" id="FN_TIME" value="time" type="function"/>
-        <token index="47" id="FN_TOTAL" value="total" type="function"/>
-        <token index="48" id="FN_TOTAL_CHANGES" value="total_changes" type="function"/>
-        <token index="49" id="FN_TRIM" value="trim" type="function"/>
-        <token index="50" id="FN_TYPEOF" value="typeof" type="function"/>
-        <token index="51" id="FN_UNLIKELY" value="unlikely" type="function"/>
-        <token index="52" id="FN_UNICODE" value="unicode" type="function"/>
-        <token index="53" id="FN_UPPER" value="upper" type="function"/>
-        <token index="54" id="FN_ZEROBLOB" value="zeroblob" type="function"/>
+        <token index="46" id="FN_TOTAL" value="total" type="function"/>
+        <token index="47" id="FN_TOTAL_CHANGES" value="total_changes" type="function"/>
+        <token index="48" id="FN_TRIM" value="trim" type="function"/>
+        <token index="49" id="FN_TYPEOF" value="typeof" type="function"/>
+        <token index="50" id="FN_UNLIKELY" value="unlikely" type="function"/>
+        <token index="51" id="FN_UNICODE" value="unicode" type="function"/>
+        <token index="52" id="FN_UPPER" value="upper" type="function"/>
+        <token index="53" id="FN_ZEROBLOB" value="zeroblob" type="function"/>
 
 
 
