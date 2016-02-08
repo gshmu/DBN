@@ -41,128 +41,129 @@
         <!-- KEYWORDS -->
         <token index="0" id="KW_ABORT" value="abort" type="keyword"/>
         <token index="1" id="KW_ACTION" value="action" type="keyword"/>
-        <token index="2" id="KW_ADD" value="add" type="keyword"/>
+        <token index="2" id="KW_ADD" value="add" type="keyword" reserved="true"/>
         <token index="3" id="KW_AFTER" value="after" type="keyword"/>
-        <token index="4" id="KW_ALL" value="all" type="keyword"/>
-        <token index="5" id="KW_ALTER" value="alter" type="keyword"/>
+        <token index="4" id="KW_ALL" value="all" type="keyword" reserved="true"/>
+        <token index="5" id="KW_ALTER" value="alter" type="keyword" reserved="true"/>
         <token index="6" id="KW_ANALYZE" value="analyze" type="keyword"/>
-        <token index="7" id="KW_AND" value="and" type="keyword"/>
-        <token index="8" id="KW_AS" value="as" type="keyword"/>
+        <token index="7" id="KW_AND" value="and" type="keyword" reserved="true"/>
+        <token index="8" id="KW_AS" value="as" type="keyword" reserved="true"/>
         <token index="9" id="KW_ASC" value="asc" type="keyword"/>
         <token index="10" id="KW_ATTACH" value="attach" type="keyword"/>
-        <token index="11" id="KW_AUTOINCREMENT" value="autoincrement" type="keyword"/>
+        <token index="11" id="KW_AUTOINCREMENT" value="autoincrement" type="keyword" reserved="true"/>
         <token index="12" id="KW_BEFORE" value="before" type="keyword"/>
         <token index="13" id="KW_BEGIN" value="begin" type="keyword"/>
-        <token index="14" id="KW_BETWEEN" value="between" type="keyword"/>
+        <token index="14" id="KW_BETWEEN" value="between" type="keyword" reserved="true"/>
         <token index="15" id="KW_BY" value="by" type="keyword"/>
         <token index="16" id="KW_CASCADE" value="cascade" type="keyword"/>
-        <token index="17" id="KW_CASE" value="case" type="keyword"/>
+        <token index="17" id="KW_CASE" value="case" type="keyword" reserved="true"/>
         <token index="18" id="KW_CAST" value="cast" type="keyword"/>
-        <token index="19" id="KW_CHECK" value="check" type="keyword"/>
-        <token index="20" id="KW_COLLATE" value="collate" type="keyword"/>
+        <token index="19" id="KW_CHECK" value="check" type="keyword" reserved="true"/>
+        <token index="20" id="KW_COLLATE" value="collate" type="keyword" reserved="true"/>
         <token index="21" id="KW_COLUMN" value="column" type="keyword"/>
-        <token index="22" id="KW_COMMIT" value="commit" type="keyword"/>
+        <token index="22" id="KW_COMMIT" value="commit" type="keyword" reserved="true"/>
         <token index="23" id="KW_CONFLICT" value="conflict" type="keyword"/>
-        <token index="24" id="KW_CONSTRAINT" value="constraint" type="keyword"/>
-        <token index="25" id="KW_CREATE" value="create" type="keyword"/>
-        <token index="26" id="KW_CROSS" value="cross" type="keyword"/>
+        <token index="24" id="KW_CONSTRAINT" value="constraint" type="keyword" reserved="true"/>
+        <token index="25" id="KW_CREATE" value="create" type="keyword" reserved="true"/>
+        <token index="26" id="KW_CROSS" value="cross" type="keyword" reserved="true"/>
         <token index="27" id="KW_CURRENT_DATE" value="current_date" type="keyword"/>
         <token index="28" id="KW_CURRENT_TIME" value="current_time" type="keyword"/>
         <token index="29" id="KW_CURRENT_TIMESTAMP" value="current_timestamp" type="keyword"/>
         <token index="30" id="KW_DATABASE" value="database" type="keyword"/>
-        <token index="31" id="KW_DEFAULT" value="default" type="keyword"/>
-        <token index="32" id="KW_DEFERRABLE" value="deferrable" type="keyword"/>
+        <token index="31" id="KW_DEFAULT" value="default" type="keyword" reserved="true"/>
+        <token index="32" id="KW_DEFERRABLE" value="deferrable" type="keyword" reserved="true"/>
         <token index="33" id="KW_DEFERRED" value="deferred" type="keyword"/>
-        <token index="34" id="KW_DELETE" value="delete" type="keyword"/>
+        <token index="34" id="KW_DELETE" value="delete" type="keyword" reserved="true"/>
         <token index="35" id="KW_DESC" value="desc" type="keyword"/>
         <token index="36" id="KW_DETACH" value="detach" type="keyword"/>
-        <token index="37" id="KW_DISTINCT" value="distinct" type="keyword"/>
-        <token index="38" id="KW_DROP" value="drop" type="keyword"/>
+        <token index="37" id="KW_DISTINCT" value="distinct" type="keyword" reserved="true"/>
+        <token index="38" id="KW_DROP" value="drop" type="keyword" reserved="true"/>
         <token index="39" id="KW_EACH" value="each" type="keyword"/>
-        <token index="40" id="KW_ELSE" value="else" type="keyword"/>
+        <token index="40" id="KW_ELSE" value="else" type="keyword" reserved="true"/>
         <token index="41" id="KW_END" value="end" type="keyword"/>
-        <token index="42" id="KW_ESCAPE" value="escape" type="keyword"/>
-        <token index="43" id="KW_EXCEPT" value="except" type="keyword"/>
+        <token index="42" id="KW_ESCAPE" value="escape" type="keyword" reserved="true"/>
+        <token index="43" id="KW_EXCEPT" value="except" type="keyword" reserved="true"/>
         <token index="44" id="KW_EXCLUSIVE" value="exclusive" type="keyword"/>
-        <token index="45" id="KW_EXISTS" value="exists" type="keyword"/>
+        <token index="45" id="KW_EXISTS" value="exists" type="keyword" reserved="true"/>
         <token index="46" id="KW_EXPLAIN" value="explain" type="keyword"/>
         <token index="47" id="KW_FAIL" value="fail" type="keyword"/>
         <token index="48" id="KW_FOR" value="for" type="keyword"/>
-        <token index="49" id="KW_FOREIGN" value="foreign" type="keyword"/>
-        <token index="50" id="KW_FROM" value="from" type="keyword"/>
-        <token index="51" id="KW_FULL" value="full" type="keyword"/>
+        <token index="49" id="KW_FOREIGN" value="foreign" type="keyword" reserved="true"/>
+        <token index="50" id="KW_FROM" value="from" type="keyword" reserved="true"/>
+        <token index="51" id="KW_FULL" value="full" type="keyword" reserved="true"/>
         <token index="52" id="KW_GLOB" value="glob" type="keyword"/>
-        <token index="53" id="KW_GROUP" value="group" type="keyword"/>
-        <token index="54" id="KW_HAVING" value="having" type="keyword"/>
+        <token index="53" id="KW_GROUP" value="group" type="keyword" reserved="true"/>
+        <token index="54" id="KW_HAVING" value="having" type="keyword" reserved="true"/>
         <token index="55" id="KW_IF" value="if" type="keyword"/>
         <token index="56" id="KW_IGNORE" value="ignore" type="keyword"/>
         <token index="57" id="KW_IMMEDIATE" value="immediate" type="keyword"/>
-        <token index="58" id="KW_IN" value="in" type="keyword"/>
-        <token index="59" id="KW_INDEX" value="index" type="keyword"/>
+        <token index="58" id="KW_IN" value="in" type="keyword" reserved="true"/>
+        <token index="59" id="KW_INDEX" value="index" type="keyword" reserved="true"/>
         <token index="60" id="KW_INDEXED" value="indexed" type="keyword"/>
         <token index="61" id="KW_INITIALLY" value="initially" type="keyword"/>
-        <token index="62" id="KW_INNER" value="inner" type="keyword"/>
-        <token index="63" id="KW_INSERT" value="insert" type="keyword"/>
+        <token index="62" id="KW_INNER" value="inner" type="keyword" reserved="true"/>
+        <token index="63" id="KW_INSERT" value="insert" type="keyword" reserved="true"/>
         <token index="64" id="KW_INSTEAD" value="instead" type="keyword"/>
-        <token index="65" id="KW_INTERSECT" value="intersect" type="keyword"/>
-        <token index="66" id="KW_INTO" value="into" type="keyword"/>
-        <token index="67" id="KW_IS" value="is" type="keyword"/>
-        <token index="68" id="KW_ISNULL" value="isnull" type="keyword"/>
-        <token index="69" id="KW_JOIN" value="join" type="keyword"/>
+        <token index="65" id="KW_INTERSECT" value="intersect" type="keyword" reserved="true"/>
+        <token index="66" id="KW_INTO" value="into" type="keyword" reserved="true"/>
+        <token index="67" id="KW_IS" value="is" type="keyword" reserved="true"/>
+        <token index="68" id="KW_ISNULL" value="isnull" type="keyword" reserved="true"/>
+        <token index="69" id="KW_JOIN" value="join" type="keyword" reserved="true"/>
         <token index="70" id="KW_KEY" value="key" type="keyword"/>
-        <token index="71" id="KW_LEFT" value="left" type="keyword"/>
+        <token index="71" id="KW_LEFT" value="left" type="keyword" reserved="true"/>
         <token index="72" id="KW_LIKE" value="like" type="keyword"/>
-        <token index="73" id="KW_LIMIT" value="limit" type="keyword"/>
+        <token index="73" id="KW_LIMIT" value="limit" type="keyword" reserved="true"/>
         <token index="74" id="KW_MATCH" value="match" type="keyword"/>
-        <token index="75" id="KW_NATURAL" value="natural" type="keyword"/>
+        <token index="75" id="KW_NATURAL" value="natural" type="keyword" reserved="true"/>
         <token index="76" id="KW_NO" value="no" type="keyword"/>
-        <token index="77" id="KW_NOT" value="not" type="keyword"/>
-        <token index="78" id="KW_NOTNULL" value="notnull" type="keyword"/>
-        <token index="79" id="KW_NULL" value="null" type="keyword"/>
+        <token index="77" id="KW_NOT" value="not" type="keyword" reserved="true"/>
+        <token index="78" id="KW_NOTNULL" value="notnull" type="keyword" reserved="true"/>
+        <token index="79" id="KW_NULL" value="null" type="keyword" reserved="true"/>
         <token index="80" id="KW_OF" value="of" type="keyword"/>
         <token index="81" id="KW_OFFSET" value="offset" type="keyword"/>
-        <token index="82" id="KW_ON" value="on" type="keyword"/>
-        <token index="83" id="KW_OR" value="or" type="keyword"/>
-        <token index="84" id="KW_ORDER" value="order" type="keyword"/>
-        <token index="85" id="KW_OUTER" value="outer" type="keyword"/>
+        <token index="82" id="KW_ON" value="on" type="keyword" reserved="true"/>
+        <token index="83" id="KW_OR" value="or" type="keyword" reserved="true"/>
+        <token index="84" id="KW_ORDER" value="order" type="keyword" reserved="true"/>
+        <token index="85" id="KW_OUTER" value="outer" type="keyword" reserved="true"/>
         <token index="86" id="KW_PLAN" value="plan" type="keyword"/>
         <token index="87" id="KW_PRAGMA" value="pragma" type="keyword"/>
-        <token index="88" id="KW_PRIMARY" value="primary" type="keyword"/>
+        <token index="88" id="KW_PRIMARY" value="primary" type="keyword" reserved="true"/>
         <token index="89" id="KW_QUERY" value="query" type="keyword"/>
         <token index="90" id="KW_RAISE" value="raise" type="keyword"/>
         <token index="91" id="KW_RECURSIVE" value="recursive" type="keyword"/>
-        <token index="92" id="KW_REFERENCES" value="references" type="keyword"/>
+        <token index="92" id="KW_REFERENCES" value="references" type="keyword" reserved="true"/>
         <token index="93" id="KW_REGEXP" value="regexp" type="keyword"/>
         <token index="94" id="KW_REINDEX" value="reindex" type="keyword"/>
         <token index="95" id="KW_RELEASE" value="release" type="keyword"/>
         <token index="96" id="KW_RENAME" value="rename" type="keyword"/>
         <token index="97" id="KW_REPLACE" value="replace" type="keyword"/>
         <token index="98" id="KW_RESTRICT" value="restrict" type="keyword"/>
-        <token index="99" id="KW_RIGHT" value="right" type="keyword"/>
-        <token index="100" id="KW_ROLLBACK" value="rollback" type="keyword"/>
+        <token index="99" id="KW_RIGHT" value="right" type="keyword" reserved="true"/>
+        <token index="100" id="KW_ROLLBACK" value="rollback" type="keyword" reserved="true"/>
         <token index="101" id="KW_ROW" value="row" type="keyword"/>
         <token index="102" id="KW_SAVEPOINT" value="savepoint" type="keyword"/>
-        <token index="103" id="KW_SELECT" value="select" type="keyword"/>
-        <token index="104" id="KW_SET" value="set" type="keyword"/>
-        <token index="105" id="KW_TABLE" value="table" type="keyword"/>
+        <token index="103" id="KW_SELECT" value="select" type="keyword" reserved="true"/>
+        <token index="104" id="KW_SET" value="set" type="keyword" reserved="true"/>
+        <token index="105" id="KW_TABLE" value="table" type="keyword" reserved="true"/>
         <token index="106" id="KW_TEMP" value="temp" type="keyword"/>
         <token index="107" id="KW_TEMPORARY" value="temporary" type="keyword"/>
-        <token index="108" id="KW_THEN" value="then" type="keyword"/>
-        <token index="109" id="KW_TO" value="to" type="keyword"/>
-        <token index="110" id="KW_TRANSACTION" value="transaction" type="keyword"/>
+        <token index="108" id="KW_THEN" value="then" type="keyword" reserved="true"/>
+        <token index="109" id="KW_TO" value="to" type="keyword" reserved="true"/>
+        <token index="110" id="KW_TRANSACTION" value="transaction" type="keyword" reserved="true"/>
         <token index="111" id="KW_TRIGGER" value="trigger" type="keyword"/>
-        <token index="112" id="KW_UNION" value="union" type="keyword"/>
-        <token index="113" id="KW_UNIQUE" value="unique" type="keyword"/>
-        <token index="114" id="KW_UPDATE" value="update" type="keyword"/>
-        <token index="115" id="KW_USING" value="using" type="keyword"/>
+        <token index="112" id="KW_UNION" value="union" type="keyword" reserved="true"/>
+        <token index="113" id="KW_UNIQUE" value="unique" type="keyword" reserved="true"/>
+        <token index="114" id="KW_UPDATE" value="update" type="keyword" reserved="true"/>
+        <token index="115" id="KW_USING" value="using" type="keyword" reserved="true"/>
         <token index="116" id="KW_VACUUM" value="vacuum" type="keyword"/>
-        <token index="117" id="KW_VALUES" value="values" type="keyword"/>
+        <token index="117" id="KW_VALUES" value="values" type="keyword" reserved="true"/>
         <token index="118" id="KW_VIEW" value="view" type="keyword"/>
         <token index="119" id="KW_VIRTUAL" value="virtual" type="keyword"/>
-        <token index="120" id="KW_WHEN" value="when" type="keyword"/>
-        <token index="121" id="KW_WHERE" value="where" type="keyword"/>
+        <token index="120" id="KW_WHEN" value="when" type="keyword" reserved="true"/>
+        <token index="121" id="KW_WHERE" value="where" type="keyword" reserved="true"/>
         <token index="122" id="KW_WITH" value="with" type="keyword"/>
         <token index="123" id="KW_WITHOUT" value="without" type="keyword"/>
+
 
 
 

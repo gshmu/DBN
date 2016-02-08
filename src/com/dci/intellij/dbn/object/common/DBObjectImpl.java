@@ -43,6 +43,7 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
@@ -214,8 +215,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     public String getQuotedName(boolean quoteAlways) {
         if (quoteAlways || needsNameQuoting()) {
             DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(this);
-            char quoteChar = compatibilityInterface.getIdentifierQuotes();
-            return quoteChar + name + quoteChar;
+            QuotePair quotes = compatibilityInterface.getDefaultIdentifierQuotes();
+            return quotes.beginChar() + name + quotes.endChar();
         } else {
             return name;
         }

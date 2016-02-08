@@ -6,8 +6,12 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.editor.session.SessionStatus;
+import com.dci.intellij.dbn.language.common.QuoteDefinition;
+import com.dci.intellij.dbn.language.common.QuotePair;
 
 public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterface {
+
+    public static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(new QuotePair('"', '"'));
 
     public PostgresCompatibilityInterface(DatabaseInterfaceProvider parent) {
         super(parent);
@@ -52,8 +56,8 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
         return SessionStatus.SNIPED;
     }
 
-    public char getIdentifierQuotes() {
-        return '"';
+    public QuoteDefinition getIdentifierQuotes() {
+        return IDENTIFIER_QUOTE_DEFINITION;
     }
 
     @Override
