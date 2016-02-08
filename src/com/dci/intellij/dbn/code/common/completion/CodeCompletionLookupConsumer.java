@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.code.common.completion;
 
 import java.util.Collection;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
@@ -38,18 +39,23 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
 
         } else if (object instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) object;
-            CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
-            TokenTypeCategory tokenTypeCategory = tokenElementType.getTokenTypeCategory();
-            if (tokenTypeCategory == TokenTypeCategory.OBJECT) {
-                TokenType tokenType = tokenElementType.getTokenType();
-                DBObjectType objectType = tokenType.getObjectType();
-                if (objectType != null) {
-                    if (filterSettings.acceptsRootObject(objectType)) {
-                        lookupItemBuilder = new BasicLookupItemBuilder(tokenType.getValue(), objectType.getName(), objectType.getIcon());
-                    }
-                }
-            } else if (filterSettings.acceptReservedWord(tokenTypeCategory)) {
+            String text = tokenElementType.getText();
+            if (StringUtils.isNotEmpty(text)) {
                 lookupItemBuilder = tokenElementType.getLookupItemBuilder(context.getLanguage());
+            } else {
+                CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
+                TokenTypeCategory tokenTypeCategory = tokenElementType.getTokenTypeCategory();
+                if (tokenTypeCategory == TokenTypeCategory.OBJECT) {
+                    TokenType tokenType = tokenElementType.getTokenType();
+                    DBObjectType objectType = tokenType.getObjectType();
+                    if (objectType != null) {
+                        if (filterSettings.acceptsRootObject(objectType)) {
+                            lookupItemBuilder = new BasicLookupItemBuilder(tokenType.getValue(), objectType.getName(), objectType.getIcon());
+                        }
+                    }
+                } else if (filterSettings.acceptReservedWord(tokenTypeCategory)) {
+                    lookupItemBuilder = tokenElementType.getLookupItemBuilder(context.getLanguage());
+                }
             }
         } else if (object instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) object;
