@@ -111,6 +111,7 @@
 <!ATTLIST qualified-identifier
         id ID #REQUIRED
         separator CDATA #REQUIRED
+        optional (true | false) CDATA #IMPLIED
         original-name CDATA #IMPLIED>
 <!ELEMENT variant (token|object-def|object-ref|variable-ref|alias-ref|alias-def)*>
 <!ELEMENT object-def (#PCDATA)>
@@ -134,6 +135,7 @@
 <!ATTLIST alias-def
         id ID #REQUIRED
         type CDATA #REQUIRED
+        attributes CDATA #IMPLIED
         optional (true | false) #IMPLIED
         original-name CDATA #IMPLIED>
 <!ELEMENT alias-ref (#PCDATA)>
@@ -141,6 +143,7 @@
         id ID #REQUIRED
         type CDATA #REQUIRED
         optional (true | false) #IMPLIED
+        referenceable (true | false) #IMPLIED
         original-name CDATA #IMPLIED>
 <!ELEMENT variable-ref (#PCDATA)>
 <!ATTLIST variable-ref
