@@ -120,10 +120,12 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 "real" {return tt.getDataTypeTokenType(20);}
 "smallint" {return tt.getDataTypeTokenType(21);}
 "text" {return tt.getDataTypeTokenType(22);}
-"tinyint" {return tt.getDataTypeTokenType(23);}
-"unsigned"{ws}"big"{ws}"int" {return tt.getDataTypeTokenType(24);}
-"varchar" {return tt.getDataTypeTokenType(25);}
-"varying"{ws}"character" {return tt.getDataTypeTokenType(26);}
+"time" {return tt.getDataTypeTokenType(23);}
+"tinyint" {return tt.getDataTypeTokenType(24);}
+"unsigned"{ws}"big"{ws}"int" {return tt.getDataTypeTokenType(25);}
+"varchar" {return tt.getDataTypeTokenType(26);}
+"varying"{ws}"character" {return tt.getDataTypeTokenType(27);}
+
 
 
 
@@ -303,16 +305,14 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 "strftime" {return tt.getFunctionTokenType(43);}
 "substr" {return tt.getFunctionTokenType(44);}
 "sum" {return tt.getFunctionTokenType(45);}
-"time" {return tt.getFunctionTokenType(46);}
-"total" {return tt.getFunctionTokenType(47);}
-"total_changes" {return tt.getFunctionTokenType(48);}
-"trim" {return tt.getFunctionTokenType(49);}
-"typeof" {return tt.getFunctionTokenType(50);}
-"unlikely" {return tt.getFunctionTokenType(51);}
-"unicode" {return tt.getFunctionTokenType(52);}
-"upper" {return tt.getFunctionTokenType(53);}
-"zeroblob" {return tt.getFunctionTokenType(54);}
-
+"total" {return tt.getFunctionTokenType(46);}
+"total_changes" {return tt.getFunctionTokenType(47);}
+"trim" {return tt.getFunctionTokenType(48);}
+"typeof" {return tt.getFunctionTokenType(49);}
+"unlikely" {return tt.getFunctionTokenType(50);}
+"unicode" {return tt.getFunctionTokenType(51);}
+"upper" {return tt.getFunctionTokenType(52);}
+"zeroblob" {return tt.getFunctionTokenType(53);}
 
 
 
