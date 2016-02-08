@@ -416,7 +416,13 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
                 }
                 return EMPTY_OBJECT_LIST;
             } else {
-                DBObjectList<DBObject> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
+                DBObjectList objectList = null;
+                if (childObjects != null) {
+                    objectList = childObjects.getObjectList(objectType);
+                    if (objectList == null) {
+                        objectList = childObjects.getHiddenObjectList(objectType);
+                    }
+                }
                 return objectList == null ? EMPTY_OBJECT_LIST : objectList.getObjects();
             }
         }
