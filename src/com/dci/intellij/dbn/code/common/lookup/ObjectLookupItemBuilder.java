@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.language.common.DBLanguage;
+import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.object.DBSynonym;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
@@ -35,8 +36,8 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
             if (object.needsNameQuoting()) {
                 DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(object);
                 String lookupString = object.getName();
-                char quoteChar = compatibilityInterface.getIdentifierQuotes();
-                lookupString = quoteChar + lookupString + quoteChar;
+                QuotePair quotes = compatibilityInterface.getDefaultIdentifierQuotes();
+                lookupString = quotes.beginChar() + lookupString + quotes.endChar();
                 lookupItem.setLookupString(lookupString);
             }
 

@@ -41,6 +41,8 @@ import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
+import com.dci.intellij.dbn.language.common.QuoteDefinition;
+import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.editor.DBLanguageFileEditorListener;
@@ -319,22 +321,28 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 if (!Character.isWhitespace(text.charAt(typeEndIndex))) return false;
             }
 
-            char quotes = DatabaseCompatibilityInterface.getInstance(connectionHandler).getIdentifierQuotes();
-
+            QuoteDefinition quotes = DatabaseCompatibilityInterface.getInstance(connectionHandler).getIdentifierQuotes();
 
             String objectName = object.getName();
             int nameIndex = StringUtil.indexOfIgnoreCase(text, objectName, typeEndIndex);
             if (nameIndex == -1) return false;
             int nameEndIndex = nameIndex + objectName.length();
 
-            if (text.charAt(nameIndex -1) == quotes) {
-                if (text.charAt(nameEndIndex) != quotes) return false;
+            char namePreChar = text.charAt(nameIndex - 1);
+            char namePostChar = text.charAt(nameEndIndex);
+            QuotePair quotePair = null;
+            if (quotes.isQuoteBegin(namePreChar)) {
+                quotePair = quotes.getQuote(namePreChar);
+                if (!quotes.isQuoteEnd(namePreChar, namePostChar)) return false;
                 nameIndex = nameIndex -1;
                 nameEndIndex = nameEndIndex + 1;
             }
 
             String typeNameGap = text.substring(typeEndIndex, nameIndex);
-            typeNameGap = StringUtil.replaceIgnoreCase(typeNameGap, object.getSchema().getName(), "").replace(".", " ").replace(quotes, ' ');
+            typeNameGap = StringUtil.replaceIgnoreCase(typeNameGap, object.getSchema().getName(), "").replace(".", " ");
+            if (quotePair != null) {
+                typeNameGap = quotePair.replaceQuotes(typeNameGap, ' ');
+            }
             if (!StringUtil.isEmptyOrSpaces(typeNameGap)) return false;
             if (!Character.isWhitespace(text.charAt(nameEndIndex)) && text.charAt(nameEndIndex) != '(') return false;
         }

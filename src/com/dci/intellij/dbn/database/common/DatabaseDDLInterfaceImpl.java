@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
+import com.dci.intellij.dbn.language.common.QuotePair;
 
 public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseDDLInterface {
     public static final String TEMP_OBJECT_NAME = "DBN_TEMPORARY_{0}_0001";
@@ -80,8 +81,10 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
         CodeStyleCaseOption oco = caseSettings.getObjectCaseOption();
 
         StringBuffer buffer = new StringBuffer();
-        String q = "\\" + getProvider().getCompatibilityInterface().getIdentifierQuotes() + "?";
-        String regex = objectType + "\\s+(" + q + schemaName + q + "\\s*\\.)?\\s*" + q + objectName + q;
+        QuotePair quotes = getProvider().getCompatibilityInterface().getDefaultIdentifierQuotes();
+        String bq = "\\" + quotes.beginChar() + "?";
+        String eq = "\\" + quotes.endChar() + "?";
+        String regex = objectType + "\\s+(" + bq + schemaName + eq + "\\s*\\.)?\\s*" + bq + objectName + eq;
         if (qualified) {
             Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(code);

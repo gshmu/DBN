@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.editor.session.ui.SessionBrowserForm;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBundle;
@@ -738,12 +739,12 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return underlyingObject != null && underlyingObject.isValid() ? underlyingObject : null;
     }
 
-    public char getIdentifierQuotesChar() {
+    public QuoteDefinition getIdentifierQuotes() {
         ConnectionHandler activeConnection = getActiveConnection();
         if (activeConnection != null) {
             return DatabaseCompatibilityInterface.getInstance(activeConnection).getIdentifierQuotes();
         }
-        return '"';
+        return QuoteDefinition.DEFAULT_IDENTIFIER_QUOTE_DEFINITION;
     }
 
 }

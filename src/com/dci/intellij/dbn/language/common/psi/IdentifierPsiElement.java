@@ -59,16 +59,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
     }
 
     public boolean isQuoted() {
-        CharSequence charSequence = getChars();
-
-        char firstChar = charSequence.charAt(0);
-        char lastChar = charSequence.charAt(charSequence.length() - 1);
-
-        if (!Character.isLetterOrDigit(firstChar) && !Character.isLetterOrDigit(lastChar)) {
-            char quotesChar = getIdentifierQuotesChar();
-            return (firstChar == quotesChar && lastChar == quotesChar);
-        }
-        return false;
+        return getIdentifierQuotes().isQuoted(getChars());
     }
 
     @Override
