@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.code.common.completion;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -57,7 +58,7 @@ public class CodeCompletionContext {
         Document document = parameters.getEditor().getDocument();
         int lineStartOffset = document.getLineStartOffset(document.getLineNumber(offset));
         String text = document.getText(new TextRange(lineStartOffset, offset));
-        newLine = text.trim().length() == 0;
+        newLine = !StringUtil.containsWhitespaces(text.trim());
     }
 
     public String getUserInput() {
