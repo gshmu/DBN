@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.database.sqlite;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteColumnConstraintsResultSet;
@@ -19,6 +11,14 @@ import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteIndexesResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteTriggerSourceResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteTriggersResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteViewSourceResultSet;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
@@ -32,7 +32,7 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public ResultSet loadColumns(String ownerName, String datasetName, Connection connection) throws SQLException {
+    public ResultSet loadColumns(String ownerName, String datasetName, final Connection connection) throws SQLException {
         return new SqliteColumnsResultSet(datasetName, connection) {
             @Override
             protected ResultSet loadTableInfo(String datasetName) throws SQLException {
@@ -47,7 +47,7 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public ResultSet loadAllColumns(String ownerName, Connection connection) throws SQLException {
+    public ResultSet loadAllColumns(String ownerName, final Connection connection) throws SQLException {
         return new SqliteColumnsResultSet(getDatasetNames(connection), connection) {
             @Override
             protected ResultSet loadTableInfo(String datasetName) throws SQLException {
@@ -62,7 +62,7 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public ResultSet loadIndexes(String ownerName, String tableName, Connection connection) throws SQLException {
+    public ResultSet loadIndexes(String ownerName, String tableName, final Connection connection) throws SQLException {
         return new SqliteIndexesResultSet(tableName, connection) {
             @Override
             protected ResultSet loadIndexInfo(String tableName) throws SQLException {
@@ -92,7 +92,7 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public ResultSet loadIndexRelations(String ownerName, String tableName, Connection connection) throws SQLException {
+    public ResultSet loadIndexRelations(String ownerName, String tableName, final Connection connection) throws SQLException {
         return new SqliteColumnIndexesResultSet(tableName, connection) {
             @Override
             protected ResultSet loadIndexInfo(String tableName) throws SQLException {
@@ -107,7 +107,7 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public ResultSet loadAllIndexRelations(String ownerName, Connection connection) throws SQLException {
+    public ResultSet loadAllIndexRelations(String ownerName, final Connection connection) throws SQLException {
         return new SqliteColumnIndexesResultSet(getDatasetNames(connection), connection) {
             @Override
             protected ResultSet loadIndexInfo(String tableName) throws SQLException {
