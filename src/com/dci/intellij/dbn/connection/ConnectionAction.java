@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -14,6 +12,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class ConnectionAction extends SimpleTask<Integer> {
     public static final String[] OPTIONS_CONNECT_CANCEL = new String[]{"Connect", "Cancel"};
@@ -97,7 +96,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     }
 
     void promptDatabaseInitDialog() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        final ConnectionHandler connectionHandler = getConnectionHandler();
         getConnectionManager().promptDatabaseInitDialog(
                 connectionHandler,
                 new MessageCallback() {
@@ -140,7 +139,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     }
 
     void promptConnectDialog() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        final ConnectionHandler connectionHandler = getConnectionHandler();
         getConnectionManager().promptConnectDialog(
                 connectionHandler, description,
                 new MessageCallback() {
