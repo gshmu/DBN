@@ -14,4 +14,6 @@ public interface IterationElementType extends ElementType {
     boolean isSeparator(TokenElementType tokenElementType);
 
     boolean isSeparator(TokenType tokenType);
+
+    boolean isFollowedBySeparator();
 }

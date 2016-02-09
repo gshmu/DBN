@@ -2,10 +2,13 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
+import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -24,6 +27,21 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
     protected TokenElementType[] separatorTokens;
     private int[] elementsCountVariants;
     private int minIterations;
+    private LazyValue<Boolean> isFollowedBySeparator = new SimpleLazyValue<Boolean>() {
+        @Override
+        protected Boolean load() {
+            TokenElementType[] separatorTokens = getSeparatorTokens();
+            if (separatorTokens != null) {
+                Set<TokenType> nextPossibleTokens = getLookupCache().getNextPossibleTokens();
+                for (TokenElementType separatorToken : separatorTokens) {
+                    if (nextPossibleTokens.contains(separatorToken.getTokenType())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    };
 
     public IterationElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
@@ -141,5 +159,10 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean isFollowedBySeparator() {
+        return isFollowedBySeparator.get();
     }
 }
