@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
+import com.dci.intellij.dbn.common.cache.CacheAdapter;
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.dci.intellij.dbn.common.cache.CacheAdapter;
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexInfo;
 
 
@@ -18,15 +19,15 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.Raw
 
 public abstract class SqliteIndexesResultSet extends SqliteDatasetInfoResultSetStub<SqliteIndexesResultSet.Index> {
 
-    public SqliteIndexesResultSet(SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
-        super(datasetNames, connection);
+    public SqliteIndexesResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
+        super(ownerName, datasetNames, connection);
     }
 
-    public SqliteIndexesResultSet(String datasetName, Connection connection) throws SQLException {
-        super(datasetName, connection);
+    public SqliteIndexesResultSet(String ownerName, String datasetName, Connection connection) throws SQLException {
+        super(ownerName, datasetName, connection);
     }
 
-    protected void init(String tableName) throws SQLException {
+    protected void init(String ownerName, String tableName) throws SQLException {
         RawIndexInfo indexInfo = getIndexInfo(tableName);
 
         for (RawIndexInfo.Row row : indexInfo.getRows()) {

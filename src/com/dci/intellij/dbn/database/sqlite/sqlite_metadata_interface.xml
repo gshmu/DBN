@@ -9,21 +9,22 @@
         <!ELEMENT statement (#PCDATA)>
         ]>
 <data-dictionary>
-    <statement-execution-processor id="schemas" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="schemas" is-query="true">
         <statement>
-            select
-                'main' as SCHEMA_NAME,
-                'N' as IS_PUBLIC,
-                'N' as IS_SYSTEM,
-                'N' as IS_EMPTY
-<!--
-            union
-            select
-                'temp' as SCHEMA_NAME,
-                'N' as IS_PUBLIC,
-                'N' as IS_SYSTEM,
-                'N' as IS_EMPTY
--->
+            pragma database_list
+            <!--            select
+                            'main' as SCHEMA_NAME,
+                            'N' as IS_PUBLIC,
+                            'N' as IS_SYSTEM,
+                            'N' as IS_EMPTY
+
+                        union
+                        select
+                            'temp' as SCHEMA_NAME,
+                            'N' as IS_PUBLIC,
+                            'N' as IS_SYSTEM,
+                            'N' as IS_EMPTY
+            -->
         </statement>
     </statement-execution-processor>
     <statement-execution-processor id="users" is-query="true" is-prepared-statement="true">
@@ -31,36 +32,36 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="tables" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="tables" is-query="true">
         <statement>
             select
                 NAME as TABLE_NAME,
                 'N' as IS_TEMPORARY
-            from SQLITE_MASTER
+            from "{0}".SQLITE_MASTER
             where
                 TYPE = 'table'
             order by TABLE_NAME asc
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="views" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="views" is-query="true">
         <statement>
             select
                 NAME as VIEW_NAME,
                 null as VIEW_TYPE_OWNER,
                 null as VIEW_TYPE,
                 'N' as IS_SYSTEM_VIEW
-            from SQLITE_MASTER
+            from "{0}".SQLITE_MASTER
             where
                 TYPE = 'view'
             order by VIEW_NAME asc
         </statement>
     </statement-execution-processor>
-    <statement-execution-processor id="dataset-names" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="dataset-names" is-query="true">
         <statement>
             select
                 NAME as DATASET_NAME
-            from SQLITE_MASTER
+            from "{0}".SQLITE_MASTER
             where
                 TYPE = 'table' or
                 TYPE = 'view'
@@ -70,31 +71,31 @@
 
     <statement-execution-processor id="dataset-columns" is-query="true">
         <statement>
-            PRAGMA TABLE_INFO("{0}")
+            PRAGMA "{0}".TABLE_INFO("{1}")
         </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="constraints" is-query="true">
         <statement>
-            PRAGMA INDEX_LIST("{0}")
+            PRAGMA "{0}".INDEX_LIST("{1}")
         </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="foreign-key-constraints" is-query="true">
         <statement>
-            PRAGMA FOREIGN_KEY_LIST("{0}")
+            PRAGMA "{0}".FOREIGN_KEY_LIST("{1}")
         </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="indexes" is-query="true">
         <statement>
-            PRAGMA INDEX_LIST("{0}")
+            PRAGMA "{0}".INDEX_LIST("{1}")
         </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="index-info" is-query="true">
         <statement>
-            PRAGMA INDEX_XINFO("{0}")
+            PRAGMA "{0}".INDEX_XINFO("{1}")
         </statement>
     </statement-execution-processor>
 
@@ -109,14 +110,14 @@
                    'N' as IS_DEBUG,
                    'Y' as IS_FOR_EACH_ROW,
                    SQL as SOURCE_CODE
-              from SQLITE_MASTER
+              from "{0}".SQLITE_MASTER
              where TYPE = 'trigger'
-               and TBL_NAME = "{0}"
+               and TBL_NAME = '{1}'
              order by TRIGGER_NAME asc
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-dataset-triggers" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-dataset-triggers" is-query="true">
         <statement>
             select NAME as TRIGGER_NAME,
                    TBL_NAME as DATASET_NAME,
@@ -127,7 +128,7 @@
                    'N' as IS_DEBUG,
                    'Y' as IS_FOR_EACH_ROW,
                     SQL as SOURCE_CODE
-              from SQLITE_MASTER
+              from "{0}".SQLITE_MASTER
              where TYPE = 'trigger'
              order by TRIGGER_NAME asc
         </statement>
@@ -136,28 +137,28 @@
     <statement-execution-processor id="view-source-code" is-query="true">
         <statement>
             select SQL as SOURCE_CODE
-              from SQLITE_MASTER
+              from "{0}".SQLITE_MASTER
              where TYPE = 'view'
-               and NAME = '{0}'
+               and NAME = '{1}'
         </statement>
     </statement-execution-processor>
     <statement-execution-processor id="dataset-trigger-source-code" is-query="true">
         <statement>
             select SQL as SOURCE_CODE
-              from SQLITE_MASTER
+              from "{0}".SQLITE_MASTER
              where TYPE = 'trigger'
-               and TBL_NAME = '{0}'
-               and NAME = '{1}'
+               and TBL_NAME = '{1}'
+               and NAME = '{2}'
         </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="drop-object-if-exists">
-        <statement>drop {0} if exists {1}</statement>
+        <statement>drop {0} if exists "{1}"."{2}"</statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="load-distinct-values" is-query="true">
         <statement>
-            select distinct {2} from {0}.{1} where {2} is not null order by {2}
+            select distinct {2} from "{0}"."{1}" where "{2}" is not null order by "{2}"
         </statement>
     </statement-execution-processor>    
 
