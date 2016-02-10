@@ -12,22 +12,10 @@
     <statement-execution-processor id="schemas" is-query="true">
         <statement>
             pragma database_list
-            <!--            select
-                            'main' as SCHEMA_NAME,
-                            'N' as IS_PUBLIC,
-                            'N' as IS_SYSTEM,
-                            'N' as IS_EMPTY
-
-                        union
-                        select
-                            'temp' as SCHEMA_NAME,
-                            'N' as IS_PUBLIC,
-                            'N' as IS_SYSTEM,
-                            'N' as IS_EMPTY
-            -->
         </statement>
     </statement-execution-processor>
-    <statement-execution-processor id="users" is-query="true" is-prepared-statement="true">
+
+    <statement-execution-processor id="users" is-query="true">
         <statement>
         </statement>
     </statement-execution-processor>
