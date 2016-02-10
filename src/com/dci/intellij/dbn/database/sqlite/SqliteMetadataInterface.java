@@ -34,7 +34,7 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadSchemas(Connection connection) throws SQLException {
-        return new SqliteSchemasResultSet(super.loadSchemas(connection));
+        return new SqliteSchemasResultSet(executeQuery(connection, "schemas"));
     }
 
     @Override

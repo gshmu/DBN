@@ -42,7 +42,7 @@ public abstract class SqliteConstraintsResultSet extends SqliteConstraintInfoRes
                 constraint.setConstraintName(constraintName);
                 constraint.setDatasetName(datasetName);
                 constraint.setConstraintType("FOREIGN KEY");
-                constraint.setFkConstraintOwner("main");
+                constraint.setFkConstraintOwner(ownerName);
                 constraint.setFkConstraintName(constraintName.replace("fk_", "pk_"));
                 addElement(constraint);
             } else if (indexKey.startsWith("PK")) {
