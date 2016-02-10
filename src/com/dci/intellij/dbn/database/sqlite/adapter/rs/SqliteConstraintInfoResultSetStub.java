@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
+import com.dci.intellij.dbn.common.cache.Cache;
+import com.dci.intellij.dbn.common.cache.CacheAdapter;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,51 +14,46 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.cache.Cache;
-import com.dci.intellij.dbn.common.cache.CacheAdapter;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.*;
 
 public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetElement<T>> extends SqliteDatasetInfoResultSetStub<T> {
 
-    public SqliteConstraintInfoResultSetStub(SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
-        super(datasetNames, connection);
+    public SqliteConstraintInfoResultSetStub(String ownerName, SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
+        super(ownerName, datasetNames, connection);
     }
 
-    public SqliteConstraintInfoResultSetStub(String datasetName, Connection connection) throws SQLException {
-        super(datasetName, connection);
+    public SqliteConstraintInfoResultSetStub(String ownerName, String datasetName, Connection connection) throws SQLException {
+        super(ownerName, datasetName, connection);
     }
 
-    protected abstract void init(String datasetName) throws SQLException;
+    protected abstract void init(String ownerName, String datasetName) throws SQLException;
 
-    protected abstract ResultSet loadTableInfo(String datasetName) throws SQLException;
-    protected abstract ResultSet loadForeignKeyInfo(String datasetName) throws SQLException;
-    protected abstract ResultSet loadIndexInfo(String tableName) throws SQLException;
-    protected abstract ResultSet loadIndexDetailInfo(String indexName) throws SQLException;
+    protected abstract ResultSet loadTableInfo(String ownerName, String datasetName) throws SQLException;
+    protected abstract ResultSet loadForeignKeyInfo(String ownerName, String datasetName) throws SQLException;
+    protected abstract ResultSet loadIndexInfo(String ownerName, String tableName) throws SQLException;
+    protected abstract ResultSet loadIndexDetailInfo(String ownerName, String indexName) throws SQLException;
 
-    protected Map<String, List<SqliteConstraintsLoader.ConstraintColumnInfo>> loadConstraintInfo(String datasetName) throws SQLException {
+    protected Map<String, List<SqliteConstraintsLoader.ConstraintColumnInfo>> loadConstraintInfo(final String ownerName, String datasetName) throws SQLException {
         SqliteConstraintsLoader loader = new SqliteConstraintsLoader(getCache()) {
             @Override
             public ResultSet loadTableInfo(String datasetName) throws SQLException {
-                return SqliteConstraintInfoResultSetStub.this.loadTableInfo(datasetName);
+                return SqliteConstraintInfoResultSetStub.this.loadTableInfo(ownerName, datasetName);
             }
 
             @Override
             public ResultSet loadForeignKeyInfo(String datasetName) throws SQLException {
-                return SqliteConstraintInfoResultSetStub.this.loadForeignKeyInfo(datasetName);
+                return SqliteConstraintInfoResultSetStub.this.loadForeignKeyInfo(ownerName, datasetName);
             }
 
             @Override
             public ResultSet loadIndexInfo(String tableName) throws SQLException {
-                return SqliteConstraintInfoResultSetStub.this.loadIndexInfo(tableName);
+                return SqliteConstraintInfoResultSetStub.this.loadIndexInfo(ownerName, tableName);
             }
 
             @Override
             public ResultSet loadIndexDetailInfo(String indexName) throws SQLException {
-                return SqliteConstraintInfoResultSetStub.this.loadIndexDetailInfo(indexName);
+                return SqliteConstraintInfoResultSetStub.this.loadIndexDetailInfo(ownerName, indexName);
             }
         };
         return loader.loadConstraints(datasetName);

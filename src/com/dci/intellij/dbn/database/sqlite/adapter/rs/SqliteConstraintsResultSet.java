@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.*;
 
 /**
@@ -22,16 +23,16 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintIn
 public abstract class SqliteConstraintsResultSet extends SqliteConstraintInfoResultSetStub<SqliteConstraintsResultSet.Constraint> {
 
 
-    public SqliteConstraintsResultSet(SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
-        super(datasetNames, connection);
+    public SqliteConstraintsResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
+        super(ownerName, datasetNames, connection);
     }
 
-    public SqliteConstraintsResultSet(String datasetName, Connection connection) throws SQLException {
-        super(datasetName, connection);
+    public SqliteConstraintsResultSet(String ownerName, String datasetName, Connection connection) throws SQLException {
+        super(ownerName, datasetName, connection);
     }
 
-    protected void init(String datasetName) throws SQLException {
-        Map<String, List<ConstraintColumnInfo>> constraints = loadConstraintInfo(datasetName);
+    protected void init(String ownerName, String datasetName) throws SQLException {
+        Map<String, List<ConstraintColumnInfo>> constraints = loadConstraintInfo(ownerName, datasetName);
 
         for (String indexKey : constraints.keySet()) {
             if (indexKey.startsWith("FK")) {
