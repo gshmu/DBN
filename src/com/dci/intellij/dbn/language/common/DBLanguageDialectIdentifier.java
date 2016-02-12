@@ -8,6 +8,7 @@ public enum DBLanguageDialectIdentifier {
     POSTGRES_SQL("POSTGRES-SQL"),
     POSTGRES_PSQL("POSTGRES-PSQL"),
     SQLITE_SQL("SQLITE-SQL"),
+    SQLITE_PSQL("SQLITE-PSQL"),
     ISO92_SQL("ISO92-SQL");
 
     private String value;

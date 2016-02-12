@@ -41,7 +41,7 @@ public class OracleSQLLanguageDialect extends SQLLanguageDialect {
     }
 
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
-        return new OracleSQLSyntaxHighlighter(this);
+        return new OracleSQLHighlighter(this);
 }
 
     protected OracleSQLParserDefinition createParserDefinition() {

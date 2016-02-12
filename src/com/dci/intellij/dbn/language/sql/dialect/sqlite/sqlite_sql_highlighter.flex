@@ -38,7 +38,7 @@ wso = {WHITE_SPACE}*
 
 comment_tail =([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
 BLOCK_COMMENT=("/*"[^]{comment_tail})|"/*"
-LINE_COMMENT = "--"|"#" {input_character}*
+LINE_COMMENT = "--"{input_character}*
 
 IDENTIFIER = [:jletter:] [:jletterdigit:]*
 QUOTED_IDENTIFIER = `[^\`]*`?|\"[^\"]*\"?|\[[^\]]*\]?
@@ -97,8 +97,6 @@ PARAMETER = "application_id"|"auto_vacuum"|"automatic_index"|"busy_timeout"|"cac
 
 "("                    { return tt.getTokenType("CHR_LEFT_PARENTHESIS"); }
 ")"                    { return tt.getTokenType("CHR_RIGHT_PARENTHESIS"); }
-"["                    { return tt.getTokenType("CHR_LEFT_BRACKET"); }
-"]"                    { return tt.getTokenType("CHR_RIGHT_BRACKET"); }
 
 <YYINITIAL> {
     .                  { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }

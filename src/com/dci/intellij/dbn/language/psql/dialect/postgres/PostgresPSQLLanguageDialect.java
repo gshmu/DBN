@@ -10,7 +10,7 @@ public class PostgresPSQLLanguageDialect extends PSQLLanguageDialect {
     }
 
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
-        return new PostgresPSQLSyntaxHighlighter(this);
+        return new PostgresPSQLHighlighter(this);
 }
 
     protected PostgresPSQLParserDefinition createParserDefinition() {

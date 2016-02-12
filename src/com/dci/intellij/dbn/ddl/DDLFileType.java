@@ -9,12 +9,12 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 
 public class DDLFileType {
     private DBLanguageFileType languageFileType;
-    private String id;
+    private DDLFileTypeId id;
     private String description;
     private DBContentType contentType;
     private List<String> extensions = new ArrayList<String>();
 
-    public DDLFileType(String id, String description, String extension, DBLanguageFileType languageFileType, DBContentType contentType) {
+    public DDLFileType(DDLFileTypeId id, String description, String extension, DBLanguageFileType languageFileType, DBContentType contentType) {
         this.id = id;
         this.description = description;
         this.extensions.add(extension);
@@ -26,11 +26,11 @@ public class DDLFileType {
         return languageFileType;
     }
 
-    public String getId() {
+    public DDLFileTypeId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(DDLFileTypeId id) {
         this.id = id;
     }
 
