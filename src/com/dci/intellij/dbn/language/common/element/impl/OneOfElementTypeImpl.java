@@ -40,7 +40,7 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
             previous = this.children[i];
 
         }
-        sortable = Boolean.parseBoolean(def.getAttributeValue("sortable"));
+        sortable = getBooleanAttribute(def, "sortable");
     }
 
     @Override

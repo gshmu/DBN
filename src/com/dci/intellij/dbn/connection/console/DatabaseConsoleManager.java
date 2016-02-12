@@ -11,9 +11,9 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -97,27 +97,22 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
 
     public void deleteConsole(final DBConsoleVirtualFile consoleFile) {
         final Project project = getProject();
-        SimpleTask deleteTask = new SimpleTask() {
-            @Override
-            protected boolean canExecute() {
-                return getOption() == 0;
-            }
-
-            @Override
-            protected void execute() {
-                FileEditorManager.getInstance(project).closeFile(consoleFile);
-                ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
-                String fileName = consoleFile.getName();
-                connectionHandler.getConsoleBundle().removeConsole(fileName);
-                eventDispatcher.getMulticaster().fileDeleted(new VirtualFileEvent(this, consoleFile, fileName, null));
-            }
-        };
         MessageUtil.showQuestionDialog(
                 project,
                 "Delete Console",
                 "You will loose the information contained in this console.\n" +
                         "Are you sure you want to delete the console?",
-                MessageUtil.OPTIONS_YES_NO, 0, deleteTask);
+                MessageUtil.OPTIONS_YES_NO, 0,
+                new MessageCallback(0) {
+                    @Override
+                    protected void execute() {
+                        FileEditorManager.getInstance(project).closeFile(consoleFile);
+                        ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
+                        String fileName = consoleFile.getName();
+                        connectionHandler.getConsoleBundle().removeConsole(fileName);
+                        eventDispatcher.getMulticaster().fileDeleted(new VirtualFileEvent(this, consoleFile, fileName, null));
+                    }
+                });
     }
 
     /*********************************************

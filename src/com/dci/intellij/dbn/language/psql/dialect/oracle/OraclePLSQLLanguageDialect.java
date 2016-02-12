@@ -15,7 +15,7 @@ public class OraclePLSQLLanguageDialect extends PSQLLanguageDialect {
     }
 
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
-        return new OraclePLSQLSyntaxHighlighter(this);
+        return new OraclePLSQLHighlighter(this);
 }
 
     protected OraclePLSQLParserDefinition createParserDefinition() {

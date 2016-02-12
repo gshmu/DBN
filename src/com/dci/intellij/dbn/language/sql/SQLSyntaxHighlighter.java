@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.language.sql;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
+import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguageSyntaxHighlighter;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
-import com.dci.intellij.dbn.language.sql.dialect.SQLLanguageDialect;
 
 public abstract class SQLSyntaxHighlighter extends DBLanguageSyntaxHighlighter {
-    public SQLSyntaxHighlighter(SQLLanguageDialect languageDialect, String tokenTypesFile) {
+    public SQLSyntaxHighlighter(DBLanguageDialect languageDialect, String tokenTypesFile) {
         super(languageDialect, tokenTypesFile);
         TokenTypeBundle tt = getTokenTypes();
         SharedTokenTypeBundle stt = tt.getSharedTokenTypes();

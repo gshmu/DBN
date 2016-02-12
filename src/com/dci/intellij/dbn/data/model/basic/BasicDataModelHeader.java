@@ -9,26 +9,26 @@ import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.intellij.openapi.util.Disposer;
 
-public class BasicDataModelHeader implements DataModelHeader {
-    private List<ColumnInfo> columnInfos = new ArrayList<ColumnInfo>();
+public class BasicDataModelHeader<T extends ColumnInfo> implements DataModelHeader<T> {
+    private List<T> columnInfos = new ArrayList<T>();
 
 
-    protected void addColumnInfo(ColumnInfo columnInfo) {
+    protected void addColumnInfo(T columnInfo) {
         columnInfos.add(columnInfo);
         Disposer.register(this, columnInfo);
     }
 
-    public List<ColumnInfo> getColumnInfos() {
+    public List<T> getColumnInfos() {
         return columnInfos;
     }
 
-    public ColumnInfo getColumnInfo(int columnIndex) {
+    public T getColumnInfo(int columnIndex) {
         return columnInfos.get(columnIndex);
     }
 
     public int getColumnIndex(String name) {
         for (int i=0; i<columnInfos.size(); i++) {
-            ColumnInfo columnInfo = columnInfos.get(i);
+            T columnInfo = columnInfos.get(i);
             if (columnInfo.getName().equalsIgnoreCase(name)) {
                 return i;
             }
@@ -47,6 +47,7 @@ public class BasicDataModelHeader implements DataModelHeader {
     public int getColumnCount() {
         return columnInfos.size();
     }
+
 
     /********************************************************
      *                    Disposable                        *

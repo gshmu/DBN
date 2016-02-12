@@ -2,17 +2,12 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 
-public abstract class SimpleTask implements RunnableTask<Integer>{
-    private int option = 0;
-
-    @Override
-    public void setOption(Integer handle) {
-        this.option = handle;
+public abstract class SimpleTask<T> extends AbstractTask<T>{
+    public SimpleTask() {
     }
 
-    @Override
-    public Integer getOption() {
-        return option;
+    public SimpleTask(T executeOption) {
+        super(executeOption);
     }
 
     public void start() {
@@ -20,7 +15,7 @@ public abstract class SimpleTask implements RunnableTask<Integer>{
     }
 
     protected boolean canExecute() {
-        return true;
+        return getExecuteOption() == null || getExecuteOption().equals(getOption());
     }
 
     public void run() {
@@ -30,13 +25,8 @@ public abstract class SimpleTask implements RunnableTask<Integer>{
             } else {
                 cancel();
             }
-        } catch (ProcessCanceledException e) {
-            // do nothing
+        } catch (ProcessCanceledException ignore) {
         }
-    }
-
-    protected void cancel() {
-
     }
 
     protected abstract void execute();

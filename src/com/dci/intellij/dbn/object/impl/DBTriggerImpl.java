@@ -50,8 +50,8 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
         String triggerTypeString = resultSet.getString("TRIGGER_TYPE");
         triggerType =
                 triggerTypeString.contains("BEFORE") ? TRIGGER_TYPE_BEFORE :
-                        triggerTypeString.contains("AFTER") ? TRIGGER_TYPE_AFTER :
-                                triggerTypeString.contains("INSTEAD OF") ? TRIGGER_TYPE_INSTEAD_OF :
+                triggerTypeString.contains("AFTER") ? TRIGGER_TYPE_AFTER :
+                triggerTypeString.contains("INSTEAD OF") ? TRIGGER_TYPE_INSTEAD_OF :
                                         TRIGGER_TYPE_UNKNOWN;
 
 

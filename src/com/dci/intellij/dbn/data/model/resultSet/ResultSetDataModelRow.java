@@ -9,13 +9,24 @@ import com.dci.intellij.dbn.data.model.sortable.SortableDataModelRow;
 
 
 public class ResultSetDataModelRow<T extends ResultSetDataModelCell> extends SortableDataModelRow<T> {
-    public ResultSetDataModelRow(ResultSetDataModel model, ResultSet resultSet) throws SQLException {
+    private int resultSetRowIndex;
+
+    public ResultSetDataModelRow(ResultSetDataModel model, ResultSet resultSet, int resultSetRowIndex) throws SQLException {
         super(model);
+        this.resultSetRowIndex = resultSetRowIndex;
         for (int i = 0; i < model.getColumnCount(); i++) {
             ResultSetColumnInfo columnInfo = (ResultSetColumnInfo) getModel().getColumnInfo(i);
             T cell = createCell(resultSet, columnInfo);
             addCell(cell);
         }
+    }
+
+    public int getResultSetRowIndex() {
+        return resultSetRowIndex;
+    }
+
+    public void shiftResultSetRowIndex(int delta) {
+        resultSetRowIndex = resultSetRowIndex + delta;
     }
 
     @NotNull

@@ -15,11 +15,11 @@ import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModif
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -41,6 +41,8 @@ import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
+import com.dci.intellij.dbn.language.common.QuoteDefinition;
+import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.editor.DBLanguageFileEditorListener;
@@ -126,12 +128,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                             "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor.\n" +
                                     "Do you want to discard the changes and reload the updated database version?",
                             new String[]{"Reload", "Keep changes"}, 0,
-                            new SimpleTask() {
-                                @Override
-                                protected boolean canExecute() {
-                                    return getOption() == 0;
-                                }
-
+                            new MessageCallback(0) {
                                 @Override
                                 protected void execute() {
                                     reloadAndUpdateEditors(databaseFile, false);
@@ -210,13 +207,13 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     sourceCodeFile.setLoading(true);
                     Project project = getProject();
                     DBSchemaObject object = sourceCodeFile.getObject();
-                    DBContentType contentType = sourceCodeFile.getContentType();
 
                     EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoading(sourceCodeFile);
                     try {
                         sourceCodeFile.loadSourceFromDatabase();
                     } catch (SQLException e) {
                         sourceCodeFile.setSourceLoadError(e.getMessage());
+                        sourceCodeFile.setModified(false);
                         NotificationUtil.sendErrorNotification(project, "Source Load Error", "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database. Cause: " + e.getMessage());
                     } finally {
                         EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoaded(sourceCodeFile, initialLoad);
@@ -324,22 +321,28 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 if (!Character.isWhitespace(text.charAt(typeEndIndex))) return false;
             }
 
-            char quotes = DatabaseCompatibilityInterface.getInstance(connectionHandler).getIdentifierQuotes();
-
+            QuoteDefinition quotes = DatabaseCompatibilityInterface.getInstance(connectionHandler).getIdentifierQuotes();
 
             String objectName = object.getName();
             int nameIndex = StringUtil.indexOfIgnoreCase(text, objectName, typeEndIndex);
             if (nameIndex == -1) return false;
             int nameEndIndex = nameIndex + objectName.length();
 
-            if (text.charAt(nameIndex -1) == quotes) {
-                if (text.charAt(nameEndIndex) != quotes) return false;
+            char namePreChar = text.charAt(nameIndex - 1);
+            char namePostChar = text.charAt(nameEndIndex);
+            QuotePair quotePair = null;
+            if (quotes.isQuoteBegin(namePreChar)) {
+                quotePair = quotes.getQuote(namePreChar);
+                if (!quotes.isQuoteEnd(namePreChar, namePostChar)) return false;
                 nameIndex = nameIndex -1;
                 nameEndIndex = nameEndIndex + 1;
             }
 
             String typeNameGap = text.substring(typeEndIndex, nameIndex);
-            typeNameGap = StringUtil.replaceIgnoreCase(typeNameGap, object.getSchema().getName(), "").replace(".", " ").replace(quotes, ' ');
+            typeNameGap = StringUtil.replaceIgnoreCase(typeNameGap, object.getSchema().getName(), "").replace(".", " ");
+            if (quotePair != null) {
+                typeNameGap = quotePair.replaceQuotes(typeNameGap, ' ');
+            }
             if (!StringUtil.isEmptyOrSpaces(typeNameGap)) return false;
             if (!Character.isWhitespace(text.charAt(nameEndIndex)) && text.charAt(nameEndIndex) != '(') return false;
         }
@@ -462,13 +465,15 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         new ConnectionAction("loading the source code", databaseFile, taskInstructions) {
             @Override
             protected void execute() {
-                List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
-                for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                    loadSourceFromDatabase(sourceCodeFile, true);
-                }
-
-                if (successCallback != null) {
-                    successCallback.run();
+                try {
+                    List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
+                    for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                        loadSourceFromDatabase(sourceCodeFile, true);
+                    }
+                } finally {
+                    if (successCallback != null) {
+                        successCallback.run();
+                    }
                 }
             }
         }.start();

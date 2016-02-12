@@ -4,17 +4,18 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.logging.ExecutionLogOutput;
-import com.intellij.openapi.diagnostic.Logger;
 
 public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseMetadataInterface {
-    private Logger logger = Logger.getInstance(getClass().getName());
-
     public DatabaseMetadataInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
         super(fileName, provider);
+    }
+    public Cache getCache() {
+        return DatabaseInterfaceProviderImpl.getMetaDataCache();
     }
 
     public ResultSet getDistinctValues(String ownerName, String datasetName, String columnName, Connection connection) throws SQLException {
@@ -27,6 +28,10 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
 
     public ResultSet loadUsers(Connection connection) throws SQLException {
         return executeQuery(connection, "users");
+    }
+
+    public ResultSet loadCharsets(Connection connection) throws SQLException {
+        return executeQuery(connection, "charsets");
     }
 
     public ResultSet loadRoles(Connection connection) throws SQLException {

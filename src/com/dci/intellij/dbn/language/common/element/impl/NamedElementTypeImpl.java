@@ -46,7 +46,7 @@ public class NamedElementTypeImpl extends SequenceElementTypeImpl implements Nam
         super.loadDefinition(def);
         String description = ElementTypeBundle.determineMandatoryAttribute(def, "description", "Invalid definition of complex element '" + getId() + "'.");
         setDescription(description);
-        truncateOnExecution = Boolean.parseBoolean(def.getAttributeValue("truncate-on-execution"));
+        truncateOnExecution = getBooleanAttribute(def, "truncate-on-execution");
 
         definitionLoaded = true;
     }

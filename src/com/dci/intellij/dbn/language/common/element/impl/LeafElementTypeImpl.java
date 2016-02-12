@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
@@ -21,6 +22,7 @@ import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCach
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiWhiteSpace;
@@ -83,7 +85,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
         return null;
     }
 
-    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, ElementLookupContext context) {
+    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, @NotNull ElementLookupContext context) {
         Set<LeafElementType> possibleLeafs = new THashSet<LeafElementType>();
         int position = 1;
         while (pathNode != null) {
@@ -130,6 +132,9 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 possibleLeafs.addAll(lookupCache.getFirstPossibleLeafs());
             }
             if (pathNode != null) {
+                if (pathNode.getElementType().is(ElementTypeAttribute.STATEMENT) && context.isBreakOnAttribute(ElementTypeAttribute.STATEMENT)){
+                    break;
+                }
                 position = pathNode.getIndexInParent() + 1;
                 pathNode = pathNode.getParent();
             }

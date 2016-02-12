@@ -69,6 +69,13 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
                 project));
 
         virtualConnections.add(new VirtualConnectionHandler(
+                "virtual-sqlite-connection",
+                "Virtual - SQLite 3.10.2",
+                DatabaseType.SQLITE,
+                3.10,
+                project));
+
+        virtualConnections.add(new VirtualConnectionHandler(
                 "virtual-iso92-sql-connection",
                 "Virtual - ISO-92 SQL",
                 DatabaseType.UNKNOWN,

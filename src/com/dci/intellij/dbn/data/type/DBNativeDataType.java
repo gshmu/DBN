@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.data.type;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.data.value.ValueAdapter;
-import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Date;
@@ -14,6 +8,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.content.DynamicContentElement;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
+import com.intellij.openapi.diagnostic.Logger;
 
 public class DBNativeDataType implements DynamicContentElement{
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -77,6 +78,11 @@ public class DBNativeDataType implements DynamicContentElement{
             return null;
         }
         try {
+            DataTypeParseAdapter parseAdapter = dataTypeDefinition.getParseAdapter();
+            if (parseAdapter != null) {
+                return parseAdapter.parse(resultSet.getString(columnIndex));
+            }
+
             return
                     clazz == String.class ? resultSet.getString(columnIndex) :
                     clazz == Byte.class ? resultSet.getByte(columnIndex) :
@@ -156,6 +162,12 @@ public class DBNativeDataType implements DynamicContentElement{
         }
         if (genericDataType == GenericDataType.CURSOR) return;// not supported
 
+        DataTypeParseAdapter parseAdapter = dataTypeDefinition.getParseAdapter();
+        if (parseAdapter != null) {
+            value =  parseAdapter.toString(value);
+            preparedStatement.setString(parameterIndex, (String) value);
+            return;
+        }
 
         if (value == null) {
             preparedStatement.setObject(parameterIndex, null);

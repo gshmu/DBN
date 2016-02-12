@@ -13,8 +13,8 @@ import com.dci.intellij.dbn.editor.session.SessionStatus;
 
 public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowserModelCell> {
 
-    public SessionBrowserModelRow(SessionBrowserModel model, ResultSet resultSet) throws SQLException {
-        super(model, resultSet);
+    public SessionBrowserModelRow(SessionBrowserModel model, ResultSet resultSet, int resultSetRowIndex) throws SQLException {
+        super(model, resultSet, resultSetRowIndex);
     }
 
     @NotNull

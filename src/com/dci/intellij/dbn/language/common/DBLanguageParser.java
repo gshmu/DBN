@@ -23,10 +23,14 @@ public abstract class DBLanguageParser implements PsiParser {
 
     public DBLanguageParser(DBLanguageDialect languageDialect, String tokenTypesFile, String elementTypesFile, String defaultParseRootId) {
         this.languageDialect = languageDialect;
-        this.tokenTypes = new TokenTypeBundle(languageDialect, CommonUtil.loadXmlFile(getClass(), tokenTypesFile));
-        Document document = CommonUtil.loadXmlFile(getClass(), elementTypesFile);
+        this.tokenTypes = new TokenTypeBundle(languageDialect, CommonUtil.loadXmlFile(getResourceLookupClass(), tokenTypesFile));
+        Document document = CommonUtil.loadXmlFile(getResourceLookupClass(), elementTypesFile);
         this.elementTypes = new ElementTypeBundle(languageDialect, tokenTypes, document);
         this.defaultParseRootId = defaultParseRootId;
+    }
+
+    protected Class getResourceLookupClass() {
+        return getClass();
     }
 
     public DBLanguageDialect getLanguageDialect() {

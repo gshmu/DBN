@@ -121,7 +121,7 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
         Connection connection = connectionHandler.getPoolConnection(getSchema());
         try {
             DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-            ddlInterface.updateView(getName(), oldCode, newCode, connection);
+            ddlInterface.updateView(getName(), newCode, connection);
         } finally {
             connectionHandler.freePoolConnection(connection);
         }

@@ -23,7 +23,10 @@ public enum DatabaseFeature {
     SESSION_KILL("Kill session"),
     SESSION_DISCONNECT("Disconnect session"),
     SESSION_INTERRUPTION_TIMING("Session interruption timing"),
-    CONNECTION_ERROR_RECOVERING("Recover connection transaction after error"),
+    CONNECTION_ERROR_RECOVERY("Recover connection transaction after error"),
+    UPDATABLE_RESULT_SETS("Updatable result sets"),
+    CURRENT_SCHEMA("Current schema initializing"),
+    CONSTRAINT_MANIPULATION("Constraint manipulation"),
     ;
 
     private String description;

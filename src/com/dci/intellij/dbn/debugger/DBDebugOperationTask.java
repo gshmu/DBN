@@ -6,12 +6,10 @@ import java.util.concurrent.ThreadFactory;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
-import com.dci.intellij.dbn.common.thread.RunnableTask;
+import com.dci.intellij.dbn.common.thread.AbstractTask;
 import com.intellij.openapi.project.Project;
 
-public abstract class DBDebugOperationTask<T> implements RunnableTask<T> {
-    private T handle;
-
+public abstract class DBDebugOperationTask<T> extends AbstractTask<T> {
     public static final ExecutorService POOL = Executors.newCachedThreadPool(new ThreadFactory() {
         @Override
         public Thread newThread(@NotNull Runnable runnable) {
@@ -58,15 +56,5 @@ public abstract class DBDebugOperationTask<T> implements RunnableTask<T> {
 
     private void handleException(Exception e) {
         NotificationUtil.sendErrorNotification(project, "Debugger", "Error performing debug operation (" + operationDescription + ").", e.getMessage());
-    }
-
-    @Override
-    public void setOption(T handle) {
-        this.handle = handle;
-    }
-
-    @Override
-    public T getOption() {
-        return handle;
     }
 }

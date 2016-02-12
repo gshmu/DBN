@@ -88,6 +88,9 @@ public class DBObjectListContainer implements Disposable {
 
     public DBObject getObject(DBObjectType objectType, String name, int overload) {
         DBObjectList objectList = getObjectList(objectType);
+        if (objectList == null) {
+            objectList = getHiddenObjectList(objectType);
+        }
         if (objectList != null) {
             return objectList.getObject(name, overload);
         }

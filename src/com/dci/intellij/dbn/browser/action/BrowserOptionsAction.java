@@ -20,7 +20,7 @@ public class BrowserOptionsAction extends GroupPopupAction {
                 ActionUtil.SEPARATOR,
                 new OpenConnectionFilterSettingsAction(),
                 ActionUtil.SEPARATOR,
-                new OpenSettingsAction(ConfigId.BROWSER, false)
+                new OpenSettingsAction(ConfigId.CONNECTIONS, false)
         };
     }
 }

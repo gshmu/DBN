@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.message.MessageType;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -23,14 +23,13 @@ public class DatasetEditorReadonlyNotificationPanel extends DatasetEditorNotific
                 public void run() {
                     MessageUtil.showQuestionDialog(project,
                             "Enable edit-mode",
-                            "Are you sure you want to enable editing for " + schemaObject.getQualifiedNameWithType(), new String[]{"Yes", "Cancel"}, 0, new SimpleTask() {
+                            "Are you sure you want to enable editing for " + schemaObject.getQualifiedNameWithType(),
+                            new String[]{"Yes", "Cancel"}, 0,
+                            new MessageCallback(0) {
                                 @Override
                                 protected void execute() {
-                                    Integer option = getOption();
-                                    if (option == 0) {
-                                        EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-                                        environmentManager.enableEditing(schemaObject, DBContentType.DATA);
-                                    }
+                                    EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+                                    environmentManager.enableEditing(schemaObject, DBContentType.DATA);
                                 }
                             });
                 }

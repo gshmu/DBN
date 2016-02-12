@@ -9,10 +9,11 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 
 public enum DatabaseType implements Presentable {
-    ORACLE   ("ORACLE",   "Oracle",     Icons.DB_ORACLE,     Icons.DB_ORACLE_LARGE,     "oracle.jdbc.driver.OracleDriver", DatabaseUrlPattern.ORACLE_SID, DatabaseUrlPattern.ORACLE_SERVICE),
-    MYSQL    ("MYSQL",    "MySQL",      Icons.DB_MYSQL,      Icons.DB_MYSQL_LARGE,      "com.mysql.jdbc.Driver",           DatabaseUrlPattern.MYSQL),
-    POSTGRES ("POSTGRES", "PostgreSQL", Icons.DB_POSTGRESQL, Icons.DB_POSTGRESQL_LARGE, "org.postgresql.Driver",           DatabaseUrlPattern.POSTGRES),
-    UNKNOWN  ("UNKNOWN",  "Unknown",    null,                null,                      "java.sql.Driver",                 DatabaseUrlPattern.UNKNOWN);
+    ORACLE   ("ORACLE",   "Oracle",     Icons.DB_ORACLE,     Icons.DB_ORACLE_LARGE,     "oracle.jdbc.driver.OracleDriver", true, DatabaseUrlPattern.ORACLE_SID, DatabaseUrlPattern.ORACLE_SERVICE),
+    MYSQL    ("MYSQL",    "MySQL",      Icons.DB_MYSQL,      Icons.DB_MYSQL_LARGE,      "com.mysql.jdbc.Driver", true, DatabaseUrlPattern.MYSQL),
+    POSTGRES ("POSTGRES", "PostgreSQL", Icons.DB_POSTGRESQL, Icons.DB_POSTGRESQL_LARGE, "org.postgresql.Driver", true, DatabaseUrlPattern.POSTGRES),
+    SQLITE   ("SQLITE",   "SQLite",     Icons.DB_SQLITE,     Icons.DB_SQLITE_LARGE,     "org.sqlite.JDBC",       false, DatabaseUrlPattern.SQLITE),
+    UNKNOWN  ("UNKNOWN",  "Unknown",    null,                null,                      "java.sql.Driver",       true, DatabaseUrlPattern.UNKNOWN);
 
     private String name;
     private String displayName;
@@ -20,16 +21,18 @@ public enum DatabaseType implements Presentable {
     private Icon largeIcon;
     private DatabaseUrlPattern[] urlPatterns;
     private String driverClassName;
-    private String internaLibraryPath;
+    private String internalLibraryPath;
+    private boolean authenticationSupported;
 
 
-    DatabaseType(String name, String displayName, Icon icon, Icon largeIcon, String driverClassName, DatabaseUrlPattern... urlPatterns) {
+    DatabaseType(String name, String displayName, Icon icon, Icon largeIcon, String driverClassName, boolean authenticationSupported, DatabaseUrlPattern... urlPatterns) {
         this.name = name;
         this.displayName = displayName;
         this.icon = icon;
         this.largeIcon = largeIcon;
         this.urlPatterns = urlPatterns;
         this.driverClassName = driverClassName;
+        this.authenticationSupported = authenticationSupported;
     }
 
     @NotNull
@@ -55,6 +58,10 @@ public enum DatabaseType implements Presentable {
 
     public Icon getLargeIcon() {
         return largeIcon;
+    }
+
+    public boolean isAuthenticationSupported() {
+        return authenticationSupported;
     }
 
     public DatabaseUrlPattern[] getUrlPatterns() {
@@ -111,6 +118,8 @@ public enum DatabaseType implements Presentable {
             return DatabaseType.MYSQL;
         } else if (name.contains("POSTGRESQL")) {
             return DatabaseType.POSTGRES;
+        } else if (name.contains("SQLITE")) {
+            return DatabaseType.SQLITE;
         }
         return UNKNOWN;
     }

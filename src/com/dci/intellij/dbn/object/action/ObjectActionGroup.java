@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.generator.action.GenerateStatementActionGroup;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
@@ -47,7 +48,9 @@ public class ObjectActionGroup extends DefaultActionGroup {
             }
 
             if (properties.is(DBObjectProperty.SCHEMA_OBJECT)) {
-                add(new DropObjectAction((DBSchemaObject) object));
+                if (object.getObjectType() != DBObjectType.CONSTRAINT || DatabaseFeature.CONSTRAINT_MANIPULATION.isSupported(object)) {
+                    add(new DropObjectAction((DBSchemaObject) object));
+                }
 
                 //add(new TestAction(object));
             }

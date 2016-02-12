@@ -16,8 +16,6 @@ public class OracleMetadataInterface extends DatabaseMetadataInterfaceImpl {
         super("oracle_metadata_interface.xml", provider);
     }
 
-    public ResultSet loadCharsets(Connection connection) throws SQLException {return null;}
-
     @Override
     public ResultSet loadDatabaseTriggerSourceCode(String ownerName, String triggerName, Connection connection) throws SQLException {
         return loadObjectSourceCode(ownerName, triggerName, "TRIGGER", connection);

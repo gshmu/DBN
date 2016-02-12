@@ -630,7 +630,7 @@
 
     <statement-execution-processor id="view-source-code" is-query="true" is-prepared-statement="true">
         <statement>
-            select VIEW_DEFINITION
+            select VIEW_DEFINITION as SOURCE_CODE
             from INFORMATION_SCHEMA.VIEWS
             where
                 TABLE_SCHEMA = {0} and
@@ -648,7 +648,7 @@
                 E'\n\r    on ',
                 EVENT_OBJECT_SCHEMA, '.', EVENT_OBJECT_TABLE,
                 E'\n\r for each row ',
-                E'\n\r', ACTION_STATEMENT)
+                E'\n\r', ACTION_STATEMENT) as SOURCE_CODE
             from INFORMATION_SCHEMA.TRIGGERS
             where
                 EVENT_OBJECT_SCHEMA = {0} and
@@ -699,7 +699,7 @@
                                         p.SPECIFIC_SCHEMA = r.SPECIFIC_SCHEMA and
                                         p.SPECIFIC_NAME = r.SPECIFIC_NAME
                                     order by p.ORDINAL_POSITION), ', ' )),
-                    ') owner to ', (select session_user), ';')
+                    ') owner to ', (select session_user), ';') as SOURCE_CODE
             from
                 (select
                     r1.SPECIFIC_SCHEMA,

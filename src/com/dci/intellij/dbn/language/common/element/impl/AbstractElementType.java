@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.element.impl;
 import javax.swing.Icon;
 import java.util.Set;
 import java.util.StringTokenizer;
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -194,16 +195,24 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return branch;
     }
 
-    public synchronized ElementTypeLookupCache getLookupCache() {
+    public ElementTypeLookupCache getLookupCache() {
         if (lookupCache == null) {
-            lookupCache = createLookupCache();
+            synchronized (this) {
+                if (lookupCache == null) {
+                    lookupCache = createLookupCache();
+                }
+            }
         }
         return lookupCache;
     }
 
-    public synchronized  @NotNull ElementTypeParser getParser() {
+    public  @NotNull ElementTypeParser getParser() {
         if (parser == null) {
-            parser = createParser();
+            synchronized (this) {
+                if (parser == null) {
+                    parser = createParser();
+                }
+            }
         }
 
         return parser;
@@ -265,4 +274,13 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return virtualObjectType;
     }
 
+    protected boolean getBooleanAttribute(Element element, String attributeName) {
+        String attributeValue = element.getAttributeValue(attributeName);
+        if (StringUtils.isNotEmpty(attributeValue)) {
+            if (attributeValue.equals("true")) return true;
+            if (attributeValue.equals("false")) return false;
+            LOGGER.warn('[' + getLanguageDialect().getID() + "] Invalid element boolean attribute '" + attributeName + "' (id=" + this.id + "). Expected 'true' or 'false'");
+        }
+        return false;
+    }
 }

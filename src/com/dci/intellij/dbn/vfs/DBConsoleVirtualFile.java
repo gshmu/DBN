@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -41,7 +42,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
 
 public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentListener, DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
@@ -55,7 +55,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         super(connectionHandler.getProject());
         this.type = type;
         connectionHandlerRef = connectionHandler.getRef();
-        setCurrentSchemaName(connectionHandler.getUserName());
+        setCurrentSchema(connectionHandler.getDefaultSchema());
         setName(name);
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
@@ -92,7 +92,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
             fileViewProvider.forceCachedPsi(file);
             Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
             if (document != null) {
-                PsiDocumentManagerImpl.cachePsi(document, file);
+                CompatibilityUtil.cachePsi(document, file);
             }
             return file;
         }

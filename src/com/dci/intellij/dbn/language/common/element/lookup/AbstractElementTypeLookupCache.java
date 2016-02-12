@@ -156,21 +156,30 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         }
     }
 
-    public synchronized boolean containsLandmarkToken(TokenType tokenType) {
+    public boolean containsLandmarkToken(TokenType tokenType) {
         if (elementType.isLeaf()) return containsToken(tokenType);
 
         Boolean value = landmarkTokens.get(tokenType);
         if (value == null) {
-            value = containsLandmarkToken(tokenType, null);
-            landmarkTokens.put(tokenType, value);
+            synchronized (this)  {
+                value = landmarkTokens.get(tokenType);
+                if (value == null) {
+                    value = containsLandmarkToken(tokenType, null);
+                    landmarkTokens.put(tokenType, value);
+                }
+            }
         }
         return value;
     }
 
 
-    public synchronized boolean startsWithIdentifier() {
+    public boolean startsWithIdentifier() {
         if (startsWithIdentifier == null) {
-            startsWithIdentifier =  startsWithIdentifier(null);
+            synchronized (this) {
+                if (startsWithIdentifier == null) {
+                    startsWithIdentifier = startsWithIdentifier(null);
+                }
+            }
         }
         return startsWithIdentifier;
     }
@@ -186,40 +195,44 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
      * is done only until first named element is hit.
      * (named elements do not have parents)
      */
-    public synchronized Set<TokenType> getNextPossibleTokens() {
+    public Set<TokenType> getNextPossibleTokens() {
         if (nextPossibleTokens == null) {
-            nextPossibleTokens = new THashSet<TokenType>();
-            ElementType elementType = this.elementType;
-            ElementType parentElementType = elementType.getParent();
-            while (parentElementType != null) {
-                if (parentElementType instanceof SequenceElementType) {
-                    SequenceElementType sequenceElementType = (SequenceElementType) parentElementType;
-                    int elementsCount = sequenceElementType.getChildCount();
-                    int index = sequenceElementType.indexOf(elementType, 0) + 1;
+            synchronized (this) {
+                if (nextPossibleTokens == null) {
+                    nextPossibleTokens = new THashSet<TokenType>();
+                    ElementType elementType = this.elementType;
+                    ElementType parentElementType = elementType.getParent();
+                    while (parentElementType != null) {
+                        if (parentElementType instanceof SequenceElementType) {
+                            SequenceElementType sequenceElementType = (SequenceElementType) parentElementType;
+                            int elementsCount = sequenceElementType.getChildCount();
+                            int index = sequenceElementType.indexOf(elementType, 0) + 1;
 
-                    if (index < elementsCount) {
-                        ElementTypeRef child = sequenceElementType.getChild(index);
-                        while (child != null) {
-                            nextPossibleTokens.addAll(child.getLookupCache().getFirstPossibleTokens());
-                            if (!child.isOptional()) {
-                                parentElementType = null;
-                                break;
+                            if (index < elementsCount) {
+                                ElementTypeRef child = sequenceElementType.getChild(index);
+                                while (child != null) {
+                                    nextPossibleTokens.addAll(child.getLookupCache().getFirstPossibleTokens());
+                                    if (!child.isOptional()) {
+                                        parentElementType = null;
+                                        break;
+                                    }
+                                    child = child.getNext();
+                                }
                             }
-                            child = child.getNext();
+                        } else if (parentElementType instanceof IterationElementType) {
+                            IterationElementType iteration = (IterationElementType) parentElementType;
+                            TokenElementType[] separatorTokens = iteration.getSeparatorTokens();
+                            if (separatorTokens != null) {
+                                for (TokenElementType separatorToken : separatorTokens) {
+                                    nextPossibleTokens.add(separatorToken.getTokenType());
+                                }
+                            }
+                        }
+                        if (parentElementType != null) {
+                            elementType = parentElementType;
+                            parentElementType = elementType.getParent();
                         }
                     }
-                } else if (parentElementType instanceof IterationElementType) {
-                    IterationElementType iteration = (IterationElementType) parentElementType;
-                    TokenElementType[] separatorTokens = iteration.getSeparatorTokens();
-                    if (separatorTokens != null) {
-                        for (TokenElementType separatorToken : separatorTokens) {
-                            nextPossibleTokens.add(separatorToken.getTokenType());
-                        }
-                    }
-                }
-                if (parentElementType != null) {
-                    elementType = parentElementType;
-                    parentElementType = elementType.getParent();
                 }
             }
         }

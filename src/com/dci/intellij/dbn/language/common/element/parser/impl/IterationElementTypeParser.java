@@ -52,7 +52,11 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
                     iterations++;
                     // check separator
                     // if not matched just step out
+                    PsiBuilder.Marker partialMatchMarker = null;
                     if (separatorTokens != null) {
+                        if (elementType.isFollowedBySeparator()) {
+                            partialMatchMarker = builder.mark(null);
+                        }
                         for (TokenElementType separatorToken : separatorTokens) {
                             result = separatorToken.getParser().parse(node, false, depth + 1, context);
                             matchedTokens = matchedTokens + result.getMatchedTokens();
@@ -67,6 +71,8 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
                                             ParseResultType.FULL_MATCH :
                                             ParseResultType.PARTIAL_MATCH :
                                     ParseResultType.NO_MATCH;
+
+                            builder.markerDrop(partialMatchMarker);
                             return stepOut(node, context, depth, resultType, matchedTokens);
                         } else {
                             node.setCurrentOffset(builder.getCurrentOffset());
@@ -90,15 +96,24 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
                             return stepOut(node, context, depth, resultType, matchedTokens);
                         } else {
                             if (matchesMinIterations(iterations)) {
+                                if (elementType.isFollowedBySeparator()) {
+                                    builder.markerRollbackTo(partialMatchMarker, null);
+                                    return stepOut(node, context, depth, ParseResultType.FULL_MATCH, matchedTokens);
+                                } else {
+                                    builder.markerDrop(partialMatchMarker);
+                                }
+
                                 boolean exit = advanceLexerToNextLandmark(node, false, context);
                                 if (exit){
                                     return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
                                 }
                             } else {
+                                builder.markerDrop(partialMatchMarker);
                                 return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
                             }
                         }
                     } else {
+                        builder.markerDrop(partialMatchMarker);
                         matchedTokens = matchedTokens + result.getMatchedTokens();
                     }
                 }
@@ -183,6 +198,4 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
         }
         return true;
     }
-
-
 }

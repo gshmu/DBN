@@ -14,6 +14,6 @@ public class DisconnectAction extends AbstractConnectionAction {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(connectionHandler.getProject());
         transactionManager.disconnect(connectionHandler);
-        connectionHandler.setAllowConnection(false);
+        connectionHandler.getInstructions().setAllowAutoConnect(false);
     }
 }

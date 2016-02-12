@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.editor.data.filter;
 
 import java.util.List;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
@@ -26,8 +24,7 @@ public class DatasetFilterUtil {
                 SortDirection sortDirection = sortingInstruction.getDirection();
                 DBColumn column = dataset.getColumn(sortingInstruction.getColumnName());
                 if (column != null && !column.isDisposed() && !sortDirection.isIndefinite()) {
-                    ConnectionHandler connectionHandler = FailsafeUtil.get(column.getConnectionHandler());
-                    DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+                    DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(column);
                     String orderByClause = compatibilityInterface.getOrderByClause(column.getQuotedName(false), sortDirection, nullsFirst);
                     buffer.append(instructionAdded ? ", " : "");
                     buffer.append(orderByClause);
@@ -39,7 +36,8 @@ public class DatasetFilterUtil {
 
     public static void addForUpdateClause(DBDataset dataset, StringBuilder buffer) {
         if (dataset instanceof DBTable && dataset.hasLobColumns()) {
-            buffer.append(" for update");
+            DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(dataset);
+            buffer.append(compatibilityInterface.getForUpdateClause());
         }
     }
 

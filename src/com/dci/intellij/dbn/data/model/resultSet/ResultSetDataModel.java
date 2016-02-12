@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -35,7 +36,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     }
 
     protected T createRow(int resultSetRowIndex) throws SQLException {
-        return (T) new ResultSetDataModelRow(this, getResultSet());
+        return (T) new ResultSetDataModelRow(this, getResultSet(), resultSetRowIndex);
     }
 
     @NotNull
@@ -43,8 +44,21 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         return FailsafeUtil.get(resultSet);
     }
 
-    public void setResultSet(ResultSet resultSet) {
+    public void setResultSet(ResultSet resultSet) throws SQLException {
         this.resultSet = resultSet;
+    }
+
+    @Nullable
+    public T getRowAtResultSetIndex(int index) {
+        // model may be reloading when this is called, hence
+        // IndexOutOfBoundsException is thrown if the range is not checked
+        List<T> rows = getRows();
+        for (T row : rows) {
+            if (row.getResultSetRowIndex() == index) {
+                return row;
+            }
+        }
+        return null;
     }
 
     public int fetchNextRecords(int records, boolean reset) throws SQLException {
@@ -58,7 +72,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         final List<T> oldRows = getRows();
         List<T> newRows = reset ? new ArrayList<T>(oldRows.size()) : new ArrayList<T>(oldRows);
 
-        if (resultSet == null) {
+        if (resultSet == null || resultSet.isClosed()) {
             resultSetExhausted = true;
         } else {
             while (count < records) {

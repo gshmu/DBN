@@ -140,7 +140,6 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         @Override
         public void displayModeChanged(BrowserDisplayMode displayMode) {
             if (getDisplayMode() != displayMode) {
-                Disposer.dispose(browserForm);
                 setDisplayMode(displayMode);
                 rebuild();
             }
@@ -153,7 +152,13 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         public void connectionsChanged() {
             rebuild();
         }
+
+        public void connectionNameChanged(String connectionId) {
+            if (browserForm instanceof TabbedBrowserForm && !browserForm.isDisposed()) {
+                TabbedBrowserForm tabbedBrowserForm = (TabbedBrowserForm) browserForm;
+                tabbedBrowserForm.refreshTabInfo(connectionId);
+            }
+        }
+
     };
-
-
 }

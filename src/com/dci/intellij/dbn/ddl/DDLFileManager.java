@@ -70,7 +70,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
         return DDLFileSettings.getInstance(getProject()).getExtensionSettings();
     }
 
-    public DDLFileType getDDLFileType(String ddlFileTypeId) {
+    public DDLFileType getDDLFileType(DDLFileTypeId ddlFileTypeId) {
         return getExtensionSettings().getDDLFileType(ddlFileTypeId);
     }
 

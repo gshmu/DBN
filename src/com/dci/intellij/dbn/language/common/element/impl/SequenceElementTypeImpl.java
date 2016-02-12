@@ -65,7 +65,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
             Element child = (Element) children.get(i);
             String type = child.getName();
             ElementType elementType = getElementBundle().resolveElementDefinition(child, type, this);
-            boolean optional = Boolean.parseBoolean(child.getAttributeValue("optional"));
+            boolean optional = getBooleanAttribute(child, "optional");
             double version = Double.parseDouble(CommonUtil.nvl(child.getAttributeValue("version"), "0"));
 
             Set<BranchCheck> branchChecks = parseBranchChecks(child.getAttributeValue("branch-check"));

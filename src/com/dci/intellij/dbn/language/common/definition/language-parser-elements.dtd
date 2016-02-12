@@ -7,6 +7,7 @@
         id ID #REQUIRED
         description CDATA #REQUIRED
         attributes CDATA #IMPLIED
+        branch CDATA #IMPLIED
         wrapping-template (PARENTHESES) #IMPLIED
         formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
         formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
@@ -20,6 +21,7 @@
 <!ATTLIST token
         id ID #REQUIRED
         type-id CDATA #REQUIRED
+        text CDATA #IMPLIED
         version CDATA #IMPLIED
         branch CDATA #IMPLIED
         branch-check CDATA #IMPLIED
@@ -109,6 +111,7 @@
 <!ATTLIST qualified-identifier
         id ID #REQUIRED
         separator CDATA #REQUIRED
+        optional (true | false) CDATA #IMPLIED
         original-name CDATA #IMPLIED>
 <!ELEMENT variant (token|object-def|object-ref|variable-ref|alias-ref|alias-def)*>
 <!ELEMENT object-def (#PCDATA)>
@@ -132,6 +135,7 @@
 <!ATTLIST alias-def
         id ID #REQUIRED
         type CDATA #REQUIRED
+        attributes CDATA #IMPLIED
         optional (true | false) #IMPLIED
         original-name CDATA #IMPLIED>
 <!ELEMENT alias-ref (#PCDATA)>
@@ -139,6 +143,7 @@
         id ID #REQUIRED
         type CDATA #REQUIRED
         optional (true | false) #IMPLIED
+        referenceable (true | false) #IMPLIED
         original-name CDATA #IMPLIED>
 <!ELEMENT variable-ref (#PCDATA)>
 <!ATTLIST variable-ref

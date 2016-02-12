@@ -193,7 +193,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                     SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, sourceCodeFile.getContentType());
                     CharSequence referenceText = sourceCodeContent.getText();
 
-                    if (!isCanceled()) {
+                    if (!isCancelled()) {
                         openDiffWindow(sourceCodeFile, referenceText.toString(), "Database version", "Local version vs. database version");
                     }
 

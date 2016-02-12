@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -196,8 +197,8 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                     if (mapping != null) {
                         String schemaName = mapping.getCurrentSchema();
                         if (StringUtil.isEmptyOrSpaces(schemaName)) {
-                            DBSchema userSchema = connectionHandler.getUserSchema();
-                            currentSchemaRef = userSchema == null ? null : userSchema.getRef();
+                            DBSchema defaultSchema = connectionHandler.getDefaultSchema();
+                            currentSchemaRef = defaultSchema == null ? null : defaultSchema.getRef();
                             schemaName = currentSchemaRef == null ? null : currentSchemaRef.getObjectName();
                         } else {
                             DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
@@ -296,13 +297,10 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                                             "You can not execute statements against this connection. Please select a proper connection to continue.";
 
 
-                    MessageUtil.showWarningDialog(project, "No Valid Connection", message, new String[]{"Select Connection", "Cancel"}, 0,
-                            new SimpleTask() {
-                                @Override
-                                protected boolean canExecute() {
-                                    return getOption() == 0;
-                                }
-
+                    MessageUtil.showWarningDialog(project,
+                            "No Valid Connection", message,
+                            new String[]{"Select Connection", "Cancel"}, 0,
+                            new MessageCallback(0) {
                                 @Override
                                 protected void execute() {
                                     promptConnectionSelector(file, false, true,
@@ -314,7 +312,6 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                                                     } else {
                                                         callback.start();
                                                     }
-
                                                 }
                                             });
                                 }
@@ -323,9 +320,11 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                 } else if (file.getCurrentSchema() == null) {
                     String message =
                             "You did not select any schema to run the statement against.\n" +
-                                    "To continue with the statement execution please select a schema.";
-                    MessageUtil.showWarningDialog(project, "No Schema Selected", message, new String[]{"Use Current Schema", "Select Schema", "Cancel"}, 0,
-                            new SimpleTask() {
+                            "To continue with the statement execution please select a schema.";
+                    MessageUtil.showWarningDialog(project,
+                            "No Schema Selected", message,
+                            new String[]{"Use Current Schema", "Select Schema", "Cancel"}, 0,
+                            new MessageCallback() {
                                 @Override
                                 protected void execute() {
                                     Integer result = getOption();
@@ -396,11 +395,11 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            DBSchema currentSchema = connectionHandler.getUserSchema();
+            DBSchema defaultSchema = connectionHandler.getDefaultSchema();
             DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
                 file.setActiveConnection(connectionHandler);
-                file.setCurrentSchema(currentSchema);
+                file.setCurrentSchema(defaultSchema);
                 if (callback != null) {
                     callback.start();
                 }

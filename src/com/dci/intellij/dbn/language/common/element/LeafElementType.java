@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.element;
 
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
@@ -23,7 +24,7 @@ public interface LeafElementType extends ElementType {
 
     boolean isSameAs(LeafElementType leaf);
 
-    Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, ElementLookupContext context);
+    Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, @NotNull ElementLookupContext context);
 
     boolean isNextPossibleToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context);
 

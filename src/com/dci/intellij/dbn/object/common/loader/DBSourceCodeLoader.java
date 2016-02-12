@@ -32,7 +32,7 @@ public abstract class DBSourceCodeLoader {
 
             StringBuilder sourceCode = new StringBuilder();
             while (resultSet != null && resultSet.next()) {
-                String codeLine = resultSet.getString(1);
+                String codeLine = resultSet.getString("SOURCE_CODE");
                 sourceCode.append(codeLine);
             }
 

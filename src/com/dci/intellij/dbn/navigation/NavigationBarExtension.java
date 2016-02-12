@@ -10,12 +10,13 @@ import com.dci.intellij.dbn.navigation.psi.DBObjectPsiFile;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
-import com.intellij.ide.navigationToolbar.NavBarModelExtension;
+import com.intellij.ide.navigationToolbar.AbstractNavBarModelExtension;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.Processor;
 
-public class NavigationBarExtension implements NavBarModelExtension {
+public class NavigationBarExtension extends AbstractNavBarModelExtension {
     public String getPresentableText(Object object) {
         if (object instanceof DBObject) {
             DBObject dbObject = (DBObject) object;
@@ -47,5 +48,11 @@ public class NavigationBarExtension implements NavBarModelExtension {
 
     public Collection<VirtualFile> additionalRoots(Project project) {
         return Collections.emptyList();
+    }
+
+    @Override
+    public boolean processChildren(Object object, Object rootElement, Processor<Object> processor) {
+        return true;
+
     }
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilderProvider;
 import com.dci.intellij.dbn.code.common.lookup.TokenLookupItemBuilder;
@@ -35,10 +37,12 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
     private TokenLookupItemBuilder lookupItemBuilder = new TokenLookupItemBuilder(this);
     private TokenTypeCategory flavor;
     private List<TokenElementTypeChain> possibleTokenChains;
+    private String text;
 
     public TokenElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
         String typeId = def.getAttributeValue("type-id");
+        text = def.getAttributeValue("text");
         TokenType tokenType = bundle.getTokenTypeBundle().getTokenType(typeId);
         setTokenType(tokenType);
         setDefaultFormatting(tokenType.getFormatting());
@@ -60,6 +64,12 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         setDefaultFormatting(tokenType.getFormatting());
     }
 
+    @Nullable
+    @Override
+    public String getText() {
+        return text;
+    }
+
     public TokenElementTypeLookupCache createLookupCache() {
         return new TokenElementTypeLookupCache(this);
     }
@@ -72,7 +82,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         return "token (" + getId() + " - " + getTokenType().getId() + ")";
     }
 
-    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, ElementLookupContext context) {
+    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, @NotNull ElementLookupContext context) {
         ElementType parent = getParent();
         if (isIterationSeparator()) {
             if (parent instanceof IterationElementType) {
@@ -164,7 +174,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         return possibleTokenChains;
     }
 
-    private void buildPossibleChains(TokenElementType tokenElementType, TokenElementTypeChain stump) {
+    private void buildPossibleChains(TokenElementType tokenElementType, TokenElementTypeChain chain) {
         PathNode pathNode = BasicPathNode.buildPathUp(tokenElementType);
         Set<LeafElementType> nextPossibleLeafs = getNextPossibleLeafs(pathNode, new ElementLookupContext());
         if (nextPossibleLeafs != null) {
@@ -172,7 +182,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
                 if (nextPossibleLeaf instanceof TokenElementType) {
                     TokenElementType nextTokenElementType = (TokenElementType) nextPossibleLeaf;
                     if (nextTokenElementType.getTokenType().isKeyword()) {
-                        TokenElementTypeChain tokenElementTypeChain = stump.createVariant(nextTokenElementType);
+                        TokenElementTypeChain tokenElementTypeChain = chain.createVariant(nextTokenElementType);
                         if (possibleTokenChains == null) possibleTokenChains = new ArrayList<TokenElementTypeChain>();
                         possibleTokenChains.add(tokenElementTypeChain);
                         if (tokenElementTypeChain.getElementTypes().size()<3) {

@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -341,14 +341,11 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                         getProject(), "Unsupported Debugger",
                         debuggerType.name() + " debugging is not supported in \"" + applicationInfo.getVersionName() + " " + applicationInfo.getFullVersion() + "\".\nDo you want to use classic debugger over JDBC instead?",
                         new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
-                        new SimpleTask() {
+                        new MessageCallback(0) {
                             @Override
                             protected void execute() {
-                                Integer option = getOption();
-                                if (option == 0) {
-                                    debuggerStarter.setDebuggerType(DBDebuggerType.JDBC);
-                                    debuggerStarter.start();
-                                }
+                                debuggerStarter.setDebuggerType(DBDebuggerType.JDBC);
+                                debuggerStarter.start();
                             }
                         });
             }
@@ -356,7 +353,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         }
     }
 
-    private abstract class DebuggerStarter extends ConditionalLaterInvocator {
+    private abstract class DebuggerStarter extends ConditionalLaterInvocator<Integer> {
         DBDebuggerType debuggerType;
 
         public DebuggerStarter() {

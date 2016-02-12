@@ -49,9 +49,9 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         boolean valueChanged = userValueChanged(newUserValue);
         if (hasError() || valueChanged) {
             DatasetEditorModelRow row = getRow();
-            EditableResultSetHandler resultSetHandler = getModel().getResultSetHandler();
+            ResultSetAdapter resultSetAdapter = getModel().getResultSetAdapter();
             try {
-                resultSetHandler.scroll(row.getResultSetRowIndex());
+                resultSetAdapter.scroll(row.getResultSetRowIndex());
             } catch (Exception e) {
                 MessageUtil.showErrorDialog(getProject(), "Could not update cell value for " + getColumnInfo().getName() + ".", e);
                 return;
@@ -72,14 +72,14 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                         ValueAdapter newValueAdapter = (ValueAdapter) newUserValue;
                         newUserValue = newValueAdapter.read();
                     }
-                    resultSetHandler.setValue(columnIndex, valueAdapter, newUserValue);
+                    resultSetAdapter.setValue(columnIndex, valueAdapter, newUserValue);
                 } else {
                     DBDataType dataType = getColumnInfo().getDataType();
-                    resultSetHandler.setValue(columnIndex, dataType, newUserValue);
+                    resultSetAdapter.setValue(columnIndex, dataType, newUserValue);
                 }
 
 
-                resultSetHandler.updateRow();
+                resultSetAdapter.updateRow();
             } catch (Exception e) {
                 DatasetEditorError error = new DatasetEditorError(connectionHandler, e);
 
@@ -97,7 +97,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                     EventUtil.notify(getProject(), DatasetEditorModelCellValueListener.TOPIC).valueChanged(this);
                 }
                 try {
-                    resultSetHandler.refreshRow();
+                    resultSetAdapter.refreshRow();
                 } catch (SQLException e) {
                     LOGGER.error("Error refreshing row", e);
                 }
@@ -231,7 +231,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
 
     public boolean isNavigable() {
         DBColumn column = getColumnInfo().getColumn();
-        return column != null && column.isForeignKey() && getUserValue() != null;
+        return column.isForeignKey() && getUserValue() != null;
     }
 
     public void notifyCellUpdated() {
@@ -241,6 +241,10 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     public void scrollToVisible() {
         DatasetEditorTable table = getEditorTable();
         table.scrollRectToVisible(table.getCellRect(getRow().getIndex(), getIndex(), true));
+    }
+
+    public boolean isResultSetUpdatable() {
+        return getRow().isResultSetUpdatable();
     }
 
     /*********************************************************
