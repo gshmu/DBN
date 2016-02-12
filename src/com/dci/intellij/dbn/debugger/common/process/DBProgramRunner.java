@@ -4,6 +4,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -103,12 +104,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                 MessageUtil.showWarningDialog(
                         project, "Insufficient privileges", buffer.toString(),
                         new String[]{"Continue anyway", "Cancel"}, 0,
-                        new SimpleTask() {
-                            @Override
-                            protected boolean canExecute() {
-                                return getOption() == 0;
-                            }
-
+                        new MessageCallback(0) {
                             @Override
                             protected void execute() {
                                 performInitialize(

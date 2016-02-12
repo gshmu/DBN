@@ -109,12 +109,13 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
             Project project = e.getProject();
             if (project != null) {
                 ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
-                scriptExecutionManager.createCmdLineInterface(databaseType, cmdLineInterfacesTable.getNames(), new SimpleCallback<CmdLineInterface>() {
-                    @Override
-                    public void start(@Nullable CmdLineInterface inputValue) {
-                        cmdLineInterfacesTable.addInterface(inputValue);
-                    }
-                });
+                scriptExecutionManager.createCmdLineInterface(databaseType, cmdLineInterfacesTable.getNames(),
+                        new SimpleCallback<CmdLineInterface>() {
+                            @Override
+                            public void start(@Nullable CmdLineInterface inputValue) {
+                                cmdLineInterfacesTable.addInterface(inputValue);
+                            }
+                        });
             }
         }
     }

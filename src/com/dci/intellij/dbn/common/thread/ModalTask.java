@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.common.thread;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -10,6 +8,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>{
     private T option;

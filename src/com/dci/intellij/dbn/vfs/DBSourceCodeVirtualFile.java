@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -36,7 +37,6 @@ import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.PsiDocumentManagerImpl;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider {
 
@@ -100,7 +100,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                 fileViewProvider.forceCachedPsi(file);
                 Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
                 if (document != null) {
-                    PsiDocumentManagerImpl.cachePsi(document, file);
+                    CompatibilityUtil.cachePsi(document, file);
                 }
                 return file;
             }

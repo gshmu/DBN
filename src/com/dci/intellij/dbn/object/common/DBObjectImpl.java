@@ -43,6 +43,7 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
@@ -214,8 +215,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     public String getQuotedName(boolean quoteAlways) {
         if (quoteAlways || needsNameQuoting()) {
             DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(this);
-            char quoteChar = compatibilityInterface.getIdentifierQuotes();
-            return quoteChar + name + quoteChar;
+            QuotePair quotes = compatibilityInterface.getDefaultIdentifierQuotes();
+            return quotes.beginChar() + name + quotes.endChar();
         } else {
             return name;
         }
@@ -243,6 +244,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return objectRef.getQualifiedNameWithType();
     }
 
+    @Nullable
     public DBUser getOwner() {
         DBObject parentObject = getParentObject();
         return parentObject == null ? null : parentObject.getOwner();
@@ -414,7 +416,13 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
                 }
                 return EMPTY_OBJECT_LIST;
             } else {
-                DBObjectList<DBObject> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
+                DBObjectList objectList = null;
+                if (childObjects != null) {
+                    objectList = childObjects.getObjectList(objectType);
+                    if (objectList == null) {
+                        objectList = childObjects.getHiddenObjectList(objectType);
+                    }
+                }
                 return objectList == null ? EMPTY_OBJECT_LIST : objectList.getObjects();
             }
         }

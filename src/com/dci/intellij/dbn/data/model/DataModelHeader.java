@@ -5,10 +5,10 @@ import java.util.List;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.data.type.DBDataType;
 
-public interface DataModelHeader extends Disposable {
-    List<ColumnInfo> getColumnInfos();
+public interface DataModelHeader<T extends ColumnInfo> extends Disposable {
+    List<T> getColumnInfos();
 
-    ColumnInfo getColumnInfo(int columnIndex);
+    T getColumnInfo(int columnIndex);
 
     int getColumnIndex(String name);
 

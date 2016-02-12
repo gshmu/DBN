@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -63,30 +64,29 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                         //FileSystemView view = FileSystemView.getFileSystemView();
                         //Icon icon = view.getSystemIcon(file);
 
-                        SimpleTask openFileTask = new SimpleTask() {
-                            @Override
-                            protected void execute() {
-                                successCallback.start();
-                                if (getOption() == 1) {
-                                    try {
-                                        Desktop.getDesktop().open(file);
-                                    } catch (IOException e) {
-                                        MessageUtil.showErrorDialog(
-                                                project,
-                                                "Open file",
-                                                "Could not open file " + file.getPath() + ".\n" +
-                                                        "The file type is most probably not associated with any program."
-                                        );
-                                    }
-                                }
-                            }
-                        };
                         MessageUtil.showInfoDialog(
                                 project,
                                 "Export info",
                                 "Content exported to file " + file.getPath(),
                                 new String[]{"OK", "Open File"}, 0,
-                                openFileTask);
+                                new MessageCallback() {
+                                    @Override
+                                    protected void execute() {
+                                        successCallback.start();
+                                        if (getOption() == 1) {
+                                            try {
+                                                Desktop.getDesktop().open(file);
+                                            } catch (IOException e) {
+                                                MessageUtil.showErrorDialog(
+                                                        project,
+                                                        "Open file",
+                                                        "Could not open file " + file.getPath() + ".\n" +
+                                                        "The file type is most probably not associated with any program."
+                                                );
+                                            }
+                                        }
+                                    }
+                                });
                     } else {
                         NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Data Export", "Content exported to file " + file.getPath());
                     }

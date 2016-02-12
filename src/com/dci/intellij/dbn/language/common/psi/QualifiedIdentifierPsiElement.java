@@ -25,9 +25,13 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         return (QualifiedIdentifierElementType) super.getElementType();
     }
 
-    public synchronized List<QualifiedIdentifierVariant> getParseVariants() {
+    public List<QualifiedIdentifierVariant> getParseVariants() {
         if (parseVariants == null || parseVariants.getReferenceElementCount() != getElementsCount()){
-            parseVariants = buildParseVariants();
+            synchronized (this) {
+                if (parseVariants == null || parseVariants.getReferenceElementCount() != getElementsCount()){
+                    parseVariants = buildParseVariants();
+                }
+            }
         }
         return parseVariants.getElements();
     }

@@ -110,7 +110,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         }
     }
 
-    private void applySetting(JTextField textField, String fileTypeId, AtomicBoolean changed) throws ConfigurationException {
+    private void applySetting(JTextField textField, DDLFileTypeId fileTypeId, AtomicBoolean changed) throws ConfigurationException {
         DDLFileType ddlFileType = getConfiguration().getDDLFileType(fileTypeId);
         boolean valueChanged = ddlFileType.setExtensionsAsString(textField.getText().trim());
         if (valueChanged) {
@@ -131,7 +131,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         resetSetting(typeBodyTextField, DDLFileTypeId.TYPE_BODY);
     }
 
-    private void resetSetting(JTextField textField, String fileTypeId) {
+    private void resetSetting(JTextField textField, DDLFileTypeId fileTypeId) {
         textField.setText(getConfiguration().getDDLFileType(fileTypeId).getExtensionsAsString());
     }
 }

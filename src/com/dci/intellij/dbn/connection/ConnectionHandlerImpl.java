@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -19,21 +20,24 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
@@ -61,16 +65,16 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private UncommittedChangeBundle changesBundle;
     private DatabaseConsoleBundle consoleBundle;
     private DBSessionBrowserVirtualFile sessionBrowserFile;
-    private DatabaseLoggingResult logOutput;
+    private ConnectionInstructions instructions = new ConnectionInstructions();
 
     private boolean isActive;
     private boolean isDisposed;
-    private boolean checkingIdleStatus;
-    private boolean allowConnection;
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
     private AuthenticationInfo temporaryAuthenticationInfo = new AuthenticationInfo();
     private ConnectionInfo connectionInfo;
+    private Cache metaDataCache = new Cache(TimeUtil.ONE_MINUTE);
+
 
     private LazyValue<NavigationPsiCache> psiCache = new DisposableLazyValue<NavigationPsiCache>(this) {
         @Override
@@ -104,13 +108,8 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     @Override
-    public boolean isAllowConnection() {
-        return allowConnection;
-    }
-
-    @Override
-    public void setAllowConnection(boolean allowConnection) {
-        this.allowConnection = allowConnection;
+    public ConnectionInstructions getInstructions() {
+        return instructions;
     }
 
     @Override
@@ -148,8 +147,13 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             return false;
         }
 
+        ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
+        if (!databaseSettings.isDatabaseInitialized() && !instructions.isAllowAutoInit()) {
+            return false;
+        }
+
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
-        if (allowConnection || detailSettings.isConnectAutomatically()) {
+        if (detailSettings.isConnectAutomatically() || instructions.isAllowAutoConnect()) {
             if (isAuthenticationProvided()) {
                 return true;
             }
@@ -162,7 +166,10 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return getAuthenticationInfo().isProvided() || getTemporaryAuthenticationInfo().isProvided();
     }
 
-
+    @Override
+    public boolean isDatabaseInitialized() {
+        return getSettings().getDatabaseSettings().isDatabaseInitialized();
+    }
 
     @NotNull
     public ConnectionBundle getConnectionBundle() {
@@ -312,19 +319,32 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     public boolean isValid() {
         if (getConnectionBundle().containsConnection(this)) {
             long currentTimestamp = System.currentTimeMillis();
-            if (validityCheckTimestamp < currentTimestamp - 30000 && !ApplicationManager.getApplication().isDispatchThread()) {
-                validityCheckTimestamp = currentTimestamp;
-                try {
-                    getStandaloneConnection();
-                } catch (SQLException e) {
-                    if (SettingsUtil.isDebugEnabled) {
-                        LOGGER.warn("[DBN-INFO] Could not connect to database [" + getName() + "]: " + e.getMessage());
-                    }
+            if (validityCheckTimestamp < currentTimestamp - 30000) {
+                if (ApplicationManager.getApplication().isDispatchThread()) {
+                    new SimpleBackgroundTask("verify connection") {
+                        @Override
+                        protected void execute() {
+                            checkConnection();
+                        }
+                    }.start();
+                } else {
+                    checkConnection();
                 }
             }
             return connectionStatus.isValid();
         }
         return false;
+    }
+
+    void checkConnection() {
+        validityCheckTimestamp = System.currentTimeMillis();
+        try {
+            getStandaloneConnection();
+        } catch (SQLException e) {
+            if (SettingsUtil.isDebugEnabled) {
+                LOGGER.warn("[DBN-INFO] Could not connect to database [" + getName() + "]: " + e.getMessage());
+            }
+        }
     }
 
     public boolean isVirtual() {
@@ -380,15 +400,25 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     public DBSchema getUserSchema() {
         String userName = getUserName().toUpperCase();
-        DBSchema defaultSchema = getObjectBundle().getSchema(userName);
-        if (defaultSchema == null) {
-            List<DBSchema> schemas = getObjectBundle().getSchemas();
-            if (schemas.size() > 0) {
-                return schemas.get(0);
+        return getObjectBundle().getSchema(userName);
+    }
+
+    @Override
+    public DBSchema getDefaultSchema() {
+        DBSchema schema = getUserSchema();
+        if (schema == null) {
+            String databaseName = getSettings().getDatabaseSettings().getDatabaseInfo().getDatabase();
+            if (StringUtil.isNotEmpty(databaseName)) {
+                schema = getObjectBundle().getSchema(databaseName);
+            }
+            if (schema == null) {
+                List<DBSchema> schemas = getObjectBundle().getSchemas();
+                if (schemas.size() > 0) {
+                    schema = schemas.get(0);
+                }
             }
         }
-
-        return defaultSchema;
+        return schema;
     }
 
     public Connection getStandaloneConnection() throws SQLException {
@@ -403,7 +433,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     public Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException {
         Connection connection = getStandaloneConnection();
-        if (schema != null && !schema.isPublicSchema()) {
+        if (schema != null && !schema.isPublicSchema() && DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) {
             DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
             metadataInterface.setCurrentSchema(schema.getQuotedName(false), connection);
         }
@@ -413,7 +443,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     public Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException {
         Connection connection = getPoolConnection();
         //if (!schema.isPublicSchema()) {
-        if (schema != null) {
+        if (schema != null && DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) {
             DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
             metadataInterface.setCurrentSchema(schema.getQuotedName(false), connection);
         }
@@ -456,6 +486,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         }
         if (interfaceProvider != null) {
             interfaceProvider.setProject(getProject());
+            interfaceProvider.setMetaDataCache(metaDataCache);
         }
 
         // do not initialize

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.logging.action;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
@@ -21,19 +21,17 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputActio
         final DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
         if (project != null && loggingResult != null && !loggingResult.isDisposed()) {
             if (loggingResult.getContext().isActive()) {
-                SimpleTask closeConsoleTask = new SimpleTask() {
-                    @Override
-                    protected void execute() {
-                        if (getOption() == 0) {
-                            closeConsole(loggingResult, project);
-                        }
-                    }
-                };
                 MessageUtil.showQuestionDialog(
                         project,
                         "Process Active",
                         "The process is still active. Closing the log output will interrupt the process. \nAre you sure you want to close the console?",
-                        MessageUtil.OPTIONS_YES_NO, 0, closeConsoleTask);
+                        MessageUtil.OPTIONS_YES_NO, 0,
+                        new MessageCallback(0) {
+                            @Override
+                            protected void execute() {
+                                closeConsole(loggingResult, project);
+                            }
+                        });
             } else {
                 closeConsole(loggingResult, project);
             }

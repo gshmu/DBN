@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.code.common.completion;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -15,6 +16,8 @@ import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 
 public class CodeCompletionContext {
@@ -28,6 +31,7 @@ public class CodeCompletionContext {
     private ConnectionHandler connectionHandler;
     private String userInput;
     private double databaseVersion;
+    private boolean newLine;
 
 
     public CodeCompletionContext(DBLanguagePsiFile file, CompletionParameters parameters, CompletionResultSet result) {
@@ -38,8 +42,9 @@ public class CodeCompletionContext {
         this.connectionHandler = file.getActiveConnection();
 
         PsiElement position = parameters.getPosition();
-        if (parameters.getOffset() > position.getTextOffset()) {
-            userInput = position.getText().substring(0, parameters.getOffset() - position.getTextOffset());
+        int offset = parameters.getOffset();
+        if (offset > position.getTextOffset()) {
+            userInput = position.getText().substring(0, offset - position.getTextOffset());
         }
 
         ProjectSettings projectSettings = ProjectSettingsManager.getSettings(file.getProject());
@@ -50,6 +55,10 @@ public class CodeCompletionContext {
         elementAtCaret = elementAtCaret == null ? file : elementAtCaret;
 
         databaseVersion = file.getDatabaseVersion();
+        Document document = parameters.getEditor().getDocument();
+        int lineStartOffset = document.getLineStartOffset(document.getLineNumber(offset));
+        String text = document.getText(new TextRange(lineStartOffset, offset));
+        newLine = !StringUtil.containsWhitespaces(text.trim());
     }
 
     public String getUserInput() {
@@ -103,5 +112,9 @@ public class CodeCompletionContext {
 
     public double getDatabaseVersion() {
         return databaseVersion;
+    }
+
+    public boolean isNewLine() {
+        return newLine;
     }
 }

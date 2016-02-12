@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.thread;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 
-public abstract class ConditionalLaterInvocator extends SynchronizedTask{
+public abstract class ConditionalLaterInvocator<T> extends SynchronizedTask<T>{
     public final void start() {
         Application application = ApplicationManager.getApplication();
         if (application.isDispatchThread()) {

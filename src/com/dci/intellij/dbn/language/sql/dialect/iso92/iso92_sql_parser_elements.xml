@@ -2,7 +2,7 @@
 <!--<!DOCTYPE element-defs SYSTEM "/../../../common/definition/language-parser-elements.dtd">-->
         
 <element-defs version="SQL 92" language="ORACLE-SQL">
-    <element-def description="SQL block" id="sql_block" attributes="ROOT, STRUCTURE">
+    <element-def description="SQL block" id="sql_block" attributes="ROOT, STRUCTURE" language="SQL">
         <iteration id="000000000">
             <one-of id="000000001" attributes="STATEMENT">
                 <element ref-id="query_specification" />

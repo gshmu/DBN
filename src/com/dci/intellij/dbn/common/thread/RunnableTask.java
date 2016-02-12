@@ -4,5 +4,4 @@ public interface RunnableTask<T> extends Runnable{
     void start();
     void setOption(T handle);
     T getOption();
-
 }

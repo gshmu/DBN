@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
@@ -22,7 +23,6 @@ import com.intellij.openapi.diagnostic.Logger;
 public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorModelCell> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private int resultSetRowIndex;
     private boolean isNew;
     private boolean isInsert;
     private boolean isDeleted;
@@ -30,8 +30,7 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
 
 
     public DatasetEditorModelRow(DatasetEditorModel model, ResultSet resultSet, int resultSetRowIndex) throws SQLException {
-        super(model, resultSet);
-        this.resultSetRowIndex = resultSetRowIndex;
+        super(model, resultSet, resultSetRowIndex);
     }
 
     @NotNull
@@ -76,9 +75,9 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
 
     public void delete() {
         try {
-            EditableResultSetHandler resultSetHandler = getModel().getResultSetHandler();
-            resultSetHandler.scroll(getResultSetRowIndex());
-            resultSetHandler.deleteRow();
+            ResultSetAdapter resultSetAdapter = getModel().getResultSetAdapter();
+            resultSetAdapter.scroll(getResultSetRowIndex());
+            resultSetAdapter.deleteRow();
             isDeleted = true;
             isModified = false;
             isNew = false;
@@ -159,17 +158,22 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
 
 
     public int getResultSetRowIndex() {
-        return isDeleted ? -1 : resultSetRowIndex;
+        return isDeleted ? -1 : super.getResultSetRowIndex();
     }
 
+    @Override
     public void shiftResultSetRowIndex(int delta) {
         assert !isDeleted;
-        resultSetRowIndex = resultSetRowIndex + delta;
+        super.shiftResultSetRowIndex(delta);
     }
 
     @NotNull
     ConnectionHandler getConnectionHandler() {
         return getModel().getConnectionHandler();
+    }
+
+    public boolean isResultSetUpdatable() {
+        return getModel().isResultSetUpdatable();
     }
 
     public boolean isDeleted() {
@@ -199,5 +203,22 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
 
     public boolean isModified() {
         return isModified;
+    }
+
+    public boolean isEmptyData() {
+        for (DatasetEditorModelCell cell : getCells()) {
+            Object userValue = cell.getUserValue();
+            if (userValue != null) {
+                if (userValue instanceof String) {
+                    String stringUserValue = (String) userValue;
+                    if (StringUtils.isNotEmpty(stringUserValue)) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

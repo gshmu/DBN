@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +53,8 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         if (databaseType != DatabaseType.UNKNOWN) {
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo = urlPattern.getDefaultInfo();
-            this.driverSource = DriverSource.BUILTIN;
+            driverSource = DriverSource.BUILTIN;
+            authenticationInfo.setSupported(databaseType.isAuthenticationSupported());
         }
     }
 
@@ -129,6 +132,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
             this.databaseType = databaseType;
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo.setUrlType(urlPattern.getUrlType());
+            authenticationInfo.setSupported(databaseType.isAuthenticationSupported());
         }
     }
 
@@ -163,6 +167,16 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         return databaseInfo;
     }
 
+    public boolean isDatabaseInitialized() {
+        DatabaseInfo databaseInfo = getDatabaseInfo();
+        if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
+            // only for file based databases
+            String file = databaseInfo.getFile();
+            return StringUtils.isNotEmpty(file) && new File(file).exists();
+        }
+        return true;
+    }
+
     public String getConnectionUrl() {
         return configType == ConnectionConfigType.BASIC ?
                 urlPattern.getUrl(databaseInfo) :
@@ -174,7 +188,8 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
             return urlPattern.getUrl(
                     host,
                     port,
-                    databaseInfo.getDatabase());
+                    databaseInfo.getDatabase(),
+                    databaseInfo.getFile());
         } else {
             return databaseInfo.getUrl();
         }
@@ -187,6 +202,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
                 databaseInfo.getHost() +
                 databaseInfo.getPort() +
                 databaseInfo.getDatabase() +
+                databaseInfo.getFile() +
                 databaseInfo.getUrl() +
                 authenticationInfo.getUser() +
                 authenticationInfo.getPassword() +
@@ -276,6 +292,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
             databaseInfo.setHost(getString(element, "host", databaseInfo.getHost()));
             databaseInfo.setPort(getString(element, "port", databaseInfo.getPort()));
             databaseInfo.setDatabase(getString(element, "database", databaseInfo.getDatabase()));
+            databaseInfo.setFile(getString(element, "file", databaseInfo.getFile()));
 
             DatabaseUrlType urlType = getEnum(element, "url-type", databaseType.getDefaultUrlPattern().getUrlType());
             databaseInfo.setUrlType(urlType);
@@ -288,6 +305,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
                 databaseInfo.setUrlType(urlPattern.getUrlType());
                 databaseInfo.setHost(urlPattern.resolveHost(url));
                 databaseInfo.setPort(urlPattern.resolvePort(url));
+                databaseInfo.setFile(urlPattern.resolveFile(url));
                 databaseInfo.setDatabase(urlPattern.resolveDatabase(url));
             }
         }
@@ -300,6 +318,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         authenticationInfo.setPassword(PasswordUtil.decodePassword(getString(element, "password", authenticationInfo.getPassword())));
         authenticationInfo.setEmptyPassword(getBoolean(element, "empty-password", authenticationInfo.isEmptyPassword()));
         authenticationInfo.setOsAuthentication(getBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication()));
+        authenticationInfo.setSupported(databaseType.isAuthenticationSupported());
 
 
         // TODO backward compatibility (to remove)
@@ -336,6 +355,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
             setString(element, "host", nvl(databaseInfo.getHost()));
             setString(element, "port", nvl(databaseInfo.getPort()));
             setString(element, "database", nvl(databaseInfo.getDatabase()));
+            setString(element, "file", nvl(databaseInfo.getFile()));
             setEnum(element, "url-type", databaseInfo.getUrlType());
         } else if (configType == ConnectionConfigType.CUSTOM) {
             setString(element, "url", nvl(databaseInfo.getUrl()));

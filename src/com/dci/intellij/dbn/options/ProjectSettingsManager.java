@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSetting
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -200,12 +200,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                 project, "Default Project Settings",
                 "This will overwrite your default settings with the ones from the current project (including database connections configuration). \nAre you sure you want to continue?",
                 new String[]{"Yes", "No"}, 0,
-                new SimpleTask() {
-                    @Override
-                    protected boolean canExecute() {
-                        return getOption() == 0;
-                    }
-
+                new MessageCallback(0) {
                     @Override
                     protected void execute() {
                         try {
@@ -233,12 +228,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                     project, "Default Project Settings",
                     message,
                     new String[]{"Yes", "No"}, 0,
-                    new SimpleTask() {
-                        @Override
-                        protected boolean canExecute() {
-                            return getOption() == 0;
-                        }
-
+                    new MessageCallback(0) {
                         @Override
                         protected void execute() {
                             try {

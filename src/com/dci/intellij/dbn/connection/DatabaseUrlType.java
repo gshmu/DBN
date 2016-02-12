@@ -11,7 +11,8 @@ public enum DatabaseUrlType implements Presentable{
     SERVICE("Service name"),
     LDAP("LDAP"),
     LDAPS("LDAP over SSL"),
-    DATABASE("Database");
+    DATABASE("Database"),
+    FILE("File");
 
     private String name;
 

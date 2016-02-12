@@ -70,7 +70,7 @@ public class QualifiedIdentifierElementTypeImpl extends AbstractElementType impl
             Element child = (Element) children.get(i);
             String type = child.getName();
             leafElementTypes[i] = (LeafElementType) getElementBundle().resolveElementDefinition(child, type, this);
-            optional[i] = Boolean.parseBoolean(child.getAttributeValue("optional"));
+            optional[i] = getBooleanAttribute(child, "optional");
             leafElementTypes[i].setOptional(optional[i]);
         }
         variants.add(leafElementTypes);

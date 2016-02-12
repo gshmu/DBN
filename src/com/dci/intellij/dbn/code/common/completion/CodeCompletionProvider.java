@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.code.common.completion;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCach
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.path.ASTPathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
@@ -122,7 +123,9 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     private static String getLeafUniqueKey(LeafElementType leaf) {
         if (leaf instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) leaf;
-            return tokenElementType.getTokenType().getId();
+            String text = tokenElementType.getText();
+            String id = tokenElementType.getTokenType().getId();
+            return StringUtils.isEmpty(text) ? id : id + text;
         } else if (leaf instanceof IdentifierElementType){
             IdentifierElementType identifierElementType = (IdentifierElementType) leaf;
             return identifierElementType.getQualifiedObjectTypeName();
@@ -189,6 +192,9 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             LeafElementType elementType = element.getElementType();
             PathNode pathNode = new ASTPathNode(element.getNode());
             ElementLookupContext lookupContext = computeParseBranches(element.getNode(), context.getDatabaseVersion());
+            if (!context.isNewLine()) {
+                lookupContext.addBreakOnAttribute(ElementTypeAttribute.STATEMENT);
+            }
             for (LeafElementType leafElementType : elementType.getNextPossibleLeafs(pathNode, lookupContext)) {
                 String leafUniqueKey = getLeafUniqueKey(leafElementType);
                 if (leafUniqueKey != null) {
@@ -263,7 +269,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         }
     }
 
-    @Nullable
+    @NotNull
     private static ElementLookupContext computeParseBranches(ASTNode astNode, double databaseVersion) {
         ElementLookupContext lookupContext = new ElementLookupContext(databaseVersion);
         while (astNode != null && !(astNode instanceof FileElement)) {
@@ -296,7 +302,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 for (int i = 0; i< aliasNames.length; i++) {
                     while (true) {
                         PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(null, DBObjectType.ANY, aliasNames[i]);
-                        boolean isExisting = lookupAdapter.findInScope(scope) != null;
+                        boolean isExisting = scope != null && lookupAdapter.findInScope(scope) != null;
                         boolean isKeyword = aliasElement.getLanguageDialect().isReservedWord(aliasNames[i]);
                         if (isKeyword || isExisting) {
                             aliasNames[i] = NamingUtil.getNextNumberedName(aliasNames[i], false);

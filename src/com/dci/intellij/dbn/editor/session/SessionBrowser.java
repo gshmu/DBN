@@ -103,6 +103,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
                 @Override
                 protected void cancel() {
+                    super.cancel();
                     setLoading(false);
                     setRefreshInterval(0);
                 }

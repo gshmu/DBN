@@ -585,7 +585,7 @@
 
     <statement-execution-processor id="view-source-code" is-query="true" is-prepared-statement="true">
         <statement>
-            select VIEW_DEFINITION
+            select VIEW_DEFINITION as SOURCE_CODE
             from information_schema.VIEWS
             where
                 TABLE_SCHEMA = {0} and
@@ -603,7 +603,7 @@
                 '\n on ',
                 EVENT_OBJECT_SCHEMA, '.', EVENT_OBJECT_TABLE,
                 '\n for each row ',
-                '\n', ACTION_STATEMENT)
+                '\n', ACTION_STATEMENT) as SOURCE_CODE
             from information_schema.TRIGGERS
             where
                 TRIGGER_SCHEMA = {2} and
@@ -622,7 +622,7 @@
                 case when SQL_DATA_ACCESS = 'READS_SQL_DATA' then '\nREADS SQL DATA'
                      when SQL_DATA_ACCESS = 'CONTAINS_SQL' then '\nREADS SQL DATA' end,
                 '\nSQL SECURITY ', SECURITY_TYPE,
-                '\n', BODY)
+                '\n', BODY) as SOURCE_CODE
             from mysql.proc
             where
                 DB = {0} and

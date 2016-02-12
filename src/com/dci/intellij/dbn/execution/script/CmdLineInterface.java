@@ -1,18 +1,18 @@
 package com.dci.intellij.dbn.execution.script;
 
+import javax.swing.Icon;
+import java.util.UUID;
+import org.jdesktop.swingx.util.OS;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import org.jdesktop.swingx.util.OS;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.UUID;
 
 public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInterface>, PersistentConfiguration, Presentable {
     public static final String DEFAULT_ID = "DEFAULT";
@@ -28,6 +28,7 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
         CmdLineInterface ORACLE = new CmdLineInterface(DEFAULT_ID, DatabaseType.ORACLE, "sqlplus", "Oracle SQL*Plus client", "sqlplus" + extension + "");
         CmdLineInterface MYSQL = new CmdLineInterface(DEFAULT_ID, DatabaseType.MYSQL, "mysql", "MySQL client", "mysql" + extension + "");
         CmdLineInterface POSTGRES = new CmdLineInterface(DEFAULT_ID, DatabaseType.POSTGRES, "psql ", "PostgreSQL terminal", "psql" + extension);
+        CmdLineInterface SQLITE = new CmdLineInterface(DEFAULT_ID, DatabaseType.SQLITE, "sqlite3 ", "SQLite terminal", "sqlite3" + extension);
     }
 
     public static CmdLineInterface getDefault(@Nullable DatabaseType databaseType) {
@@ -36,6 +37,7 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
                 case ORACLE: return Defaults.ORACLE;
                 case MYSQL: return Defaults.MYSQL;
                 case POSTGRES: return Defaults.POSTGRES;
+                case SQLITE: return Defaults.SQLITE;
             }
         }
         return null;

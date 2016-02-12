@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.data.type.LargeObjectDataTypeDefinition;
 import com.dci.intellij.dbn.data.type.LiteralDataTypeDefinition;
 import com.dci.intellij.dbn.data.type.NumericDataTypeDefinition;
+import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
 
 public abstract class DatabaseNativeDataTypes {
     protected List<DataTypeDefinition> dataTypes = new ArrayList<DataTypeDefinition>();
@@ -49,10 +50,15 @@ public abstract class DatabaseNativeDataTypes {
         return dataTypeDefinition;
     }
 
-    protected DataTypeDefinition createDateTimeDefinition(String name, Class typeClass, int sqlType) {
+    protected <T> DataTypeDefinition createDateTimeDefinition(String name, Class<T> typeClass, int sqlType) {
+        return createDateTimeDefinition(name, typeClass, sqlType, null);
+    }
+    protected <T> DataTypeDefinition createDateTimeDefinition(String name, Class<T> typeClass, int sqlType, DataTypeParseAdapter<T> parseAdapter) {
         BasicDataTypeDefinition dataTypeDefinition = new DateTimeDataTypeDefinition(name, typeClass, sqlType);
+        dataTypeDefinition.setParseAdapter(parseAdapter);
         dataTypes.add(dataTypeDefinition);
         return dataTypeDefinition;
+
     }
 
 

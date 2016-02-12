@@ -286,6 +286,8 @@ public class Icons {
     public static final Icon DB_POSTGRESQL_LARGE  = load("/img/database/PostgreSQL_large.png");
     public static final Icon DB_MYSQL             = load("/img/database/MySQL.png");
     public static final Icon DB_MYSQL_LARGE       = load("/img/database/MySQL_large.png");
+    public static final Icon DB_SQLITE            = load("/img/database/SQLite.png");
+    public static final Icon DB_SQLITE_LARGE      = load("/img/database/SQLite_large.png");
 
 
 //    public static final Icon DBO_ARGUMENT_IN         = createRowIcon(DBO_ARGUMENT, COMMON_DIRECTION_IN);

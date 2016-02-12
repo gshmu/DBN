@@ -159,7 +159,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
 
         buffer.insert(0, objectRef.getObjectType().getName().toUpperCase());
         buffer.insert(0, "] ");
-        buffer.insert(0, objectRef.lookupConnectionHandler().getName());
+        ConnectionHandler connectionHandler = objectRef.lookupConnectionHandler();
+        buffer.insert(0, connectionHandler == null ? "UNKNOWN" : connectionHandler.getName());
         buffer.insert(0, '[');
 
         return buffer.toString();
@@ -178,7 +179,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
 
         buffer.insert(0, objectList.getName().toUpperCase() + "LIST");
         buffer.insert(0, "] ");
-        buffer.insert(0, objectList.getConnectionHandler().getName());
+        ConnectionHandler connectionHandler = objectList.getConnectionHandler();
+        buffer.insert(0, connectionHandler == null ? "UNKNOWN" : connectionHandler.getName());
         buffer.insert(0, '[');
 
         return buffer.toString();
@@ -281,17 +283,11 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
 
     }
 
-    protected void deleteFile(Object o, @NotNull VirtualFile virtualFile) throws IOException {
-        throw new UnsupportedOperationException(ERR);
-    }
+    protected void deleteFile(Object o, @NotNull VirtualFile virtualFile) throws IOException {}
 
-    protected void moveFile(Object o, @NotNull VirtualFile virtualFile, @NotNull VirtualFile virtualFile1) throws IOException {
-        throw new UnsupportedOperationException(ERR);
-    }
+    protected void moveFile(Object o, @NotNull VirtualFile virtualFile, @NotNull VirtualFile virtualFile1) throws IOException {}
 
-    protected void renameFile(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {
-        throw new UnsupportedOperationException(ERR);
-    }
+    protected void renameFile(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {}
 
     @NotNull
     protected VirtualFile createChildFile(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {

@@ -44,9 +44,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     ConnectionStatus getConnectionStatus();
     DatabaseConsoleBundle getConsoleBundle();
     DBSessionBrowserVirtualFile getSessionBrowserFile();
-
-    boolean isAllowConnection();
-    void setAllowConnection(boolean allowConnection);
+    ConnectionInstructions getInstructions();
 
     void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo);
 
@@ -62,15 +60,15 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
 
     boolean isAuthenticationProvided();
 
-    @NotNull
-    ConnectionBundle getConnectionBundle();
-    @NotNull
-    ConnectionPool getConnectionPool();
+    boolean isDatabaseInitialized();
+
+    @NotNull ConnectionBundle getConnectionBundle();
+    @NotNull ConnectionPool getConnectionPool();
     ConnectionLoadMonitor getLoadMonitor();
     DatabaseInterfaceProvider getInterfaceProvider();
-    @NotNull
-    DBObjectBundle getObjectBundle();
-    DBSchema getUserSchema();
+    @NotNull DBObjectBundle getObjectBundle();
+    @Nullable DBSchema getUserSchema();
+    @Nullable DBSchema getDefaultSchema();
 
     boolean isValid(boolean check);
     boolean isValid();

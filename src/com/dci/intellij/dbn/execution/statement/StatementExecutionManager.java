@@ -17,11 +17,11 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -249,7 +249,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         @Override
                         protected void execute(@NotNull ProgressIndicator progressIndicator) {
                             boolean showIndeterminateProgress = size < 5;
-                            BackgroundTask.initProgressIndicator(progressIndicator, showIndeterminateProgress);
+                            initProgressIndicator(progressIndicator, showIndeterminateProgress);
                             long lastRefresh = 0;
                             for (int i = 0; i < size; i++) {
                                 if (!progressIndicator.isCanceled()) {
@@ -293,7 +293,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         getProject(),
                         "Multiple Statement Execution",
                         "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
-                        OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, new SimpleTask() {
+                        OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, new MessageCallback() {
                             @Override
                             protected void execute() {
                                 int option = getOption();

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.language.common.ParseException;
@@ -27,6 +28,14 @@ public class TokenElementTypeParser extends AbstractElementTypeParser<TokenEleme
         TokenType tokenType = builder.getTokenType();
         TokenElementType elementType = getElementType();
         if (tokenType == elementType.getTokenType() || isDummyToken(builder.getTokenText())) {
+
+            String text = elementType.getText();
+            if (StringUtils.isNotEmpty(text) && builder.getTokenText().equalsIgnoreCase(text)) {
+                PsiBuilder.Marker marker = builder.mark(null);
+                builder.advanceLexer(parentNode);
+                return stepOut(marker, null, context, depth, ParseResultType.FULL_MATCH, 1);
+            }
+
             SharedTokenTypeBundle sharedTokenTypes = getElementBundle().getTokenTypeBundle().getSharedTokenTypes();
             SimpleTokenType leftParenthesis = sharedTokenTypes.getChrLeftParenthesis();
             SimpleTokenType dot = sharedTokenTypes.getChrDot();

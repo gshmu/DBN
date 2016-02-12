@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -317,12 +317,10 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             MessageUtil.showInfoDialog(getProject(),
                     "No DDL Files found",
                     message.toString(), options, 0,
-                    new SimpleTask() {
+                    new MessageCallback(1) {
                         @Override
                         protected void execute() {
-                            if (getOption() == 1) {
-                                createDDLFile(object);
-                            }
+                            createDDLFile(object);
                         }
             });
         } else {

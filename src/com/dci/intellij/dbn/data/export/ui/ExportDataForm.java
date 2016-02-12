@@ -15,8 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -228,12 +228,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
                 MessageUtil.showQuestionDialog(project, "File exists",
                         "File " + file.getPath() + " already exists. Overwrite?",
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        new SimpleTask() {
-                            @Override
-                            protected boolean canExecute() {
-                                return getOption() == 0;
-                            }
-
+                        new MessageCallback(0) {
                             @Override
                             protected void execute() {
                                 callback.start();

@@ -19,8 +19,6 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.JBColor;
@@ -60,8 +58,6 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
         Project project = getProject();
         EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
-        EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
-
         Disposer.register(this, connectionTabs);
     }
 
@@ -182,20 +178,16 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         }
     };
 
-
-    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
-        @Override
-        public void connectionNameChanged(String connectionId) {
-            for (TabInfo tabInfo : connectionTabs.getTabs()) {
-                SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
-                ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
-                if (connectionHandler.getId().equals(connectionId)) {
-                    tabInfo.setText(connectionHandler.getName());
-                    break;
-                }
-
+    public void refreshTabInfo(String connectionId) {
+        for (TabInfo tabInfo : connectionTabs.getTabs()) {
+            SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
+            ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
+            if (connectionHandler.getId().equals(connectionId)) {
+                tabInfo.setText(connectionHandler.getName());
+                break;
             }
         }
-    };
+
+    }
 }
 

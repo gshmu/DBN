@@ -100,11 +100,11 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         }
     }
 
-    public static void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate) {
+    protected static void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate) {
         initProgressIndicator(progressIndicator, indeterminate, null);
     }
 
-    public static void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate, @Nullable final String text) {
+    protected static void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate, @Nullable final String text) {
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {

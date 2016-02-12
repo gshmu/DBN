@@ -32,6 +32,10 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
         CodeStyleCaseOption kco = styleCaseSettings.getKeywordCaseOption();
         CodeStyleCaseOption oco = styleCaseSettings.getObjectCaseOption();
 
+        if (objectTypeId.isOneOf(DatabaseObjectTypeId.DATABASE_TRIGGER, DatabaseObjectTypeId.DATASET_TRIGGER)) {
+            objectTypeId = DatabaseObjectTypeId.TRIGGER;
+        }
+
         if (objectTypeId == DatabaseObjectTypeId.VIEW) {
             return kco.format("create" + (makeRerunnable ? " or replace" : "") + " view ") + oco.format((useQualified ? schemaName + "." : "") + objectName) + kco.format(" as\n") + code + "\n/";
         } else {
@@ -75,8 +79,8 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
-    public void updateView(String viewName, String oldCode, String newCode, Connection connection) throws SQLException {
-        executeUpdate(connection, "change-view", viewName, newCode);
+    public void updateView(String viewName, String code, Connection connection) throws SQLException {
+        executeUpdate(connection, "change-view", viewName, code);
     }
 
     @Override

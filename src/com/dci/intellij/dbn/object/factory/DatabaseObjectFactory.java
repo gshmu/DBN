@@ -103,30 +103,25 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
     }
 
     public void dropObject(final DBSchemaObject object) {
-        ConnectionAction dropObjectAction = new ConnectionAction("dropping the object", object) {
-            @Override
-            protected boolean canExecute() {
-                return getOption() == 0;
-            }
-
-            @Override
-            protected void execute() {
-                DatabaseFileManager.getInstance(getProject()).closeFile(object);
-
-                new BackgroundTask(getProject(), "Dropping " + object.getQualifiedNameWithType(), false, false) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        doDropObject(object);
-                    }
-                }.start();
-          }
-        };
-
         MessageUtil.showQuestionDialog(
                 getProject(),
                 "Drop object",
                 "Are you sure you want to drop the " + object.getQualifiedNameWithType() + "?",
-                MessageUtil.OPTIONS_YES_NO, 0, dropObjectAction);
+                MessageUtil.OPTIONS_YES_NO, 0,
+                new ConnectionAction("dropping the object", object, 0) {
+                    @Override
+                    protected void execute() {
+                        DatabaseFileManager.getInstance(getProject()).closeFile(object);
+
+                        new BackgroundTask(getProject(), "Dropping " + object.getQualifiedNameWithType(), false, false) {
+                            @Override
+                            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                                doDropObject(object);
+                            }
+                        }.start();
+                    }
+                });
+
     }
 
     private void doDropObject(DBSchemaObject object) {
