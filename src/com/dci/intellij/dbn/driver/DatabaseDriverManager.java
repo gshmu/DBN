@@ -116,7 +116,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
                                 className = className.replace('/', '.').replace('\\', '.');
 
                                 try {
-                                    if (className.contains("Driver")) {
+                                    if (className.contains("Driver") || className.contains("JDBC")) {
                                         Class<?> clazz = classLoader.loadClass(className);
                                         if (Driver.class.isAssignableFrom(clazz)) {
                                             Driver driver = (Driver) clazz.newInstance();
