@@ -55,6 +55,6 @@ public class CompatibilityUtil {
     }
 
     public static void cachePsi(@NotNull Document document, @Nullable PsiFile file) {
-        //PsiDocumentManagerBase.cachePsi(document, null);
+        PsiDocumentManagerBase.cachePsi(document, null);
     }
 }
