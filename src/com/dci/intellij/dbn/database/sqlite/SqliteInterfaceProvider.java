@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.DatabaseInterfaceProviderImpl;
 import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
+import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 
 public class SqliteInterfaceProvider extends DatabaseInterfaceProviderImpl {
@@ -21,7 +22,8 @@ public class SqliteInterfaceProvider extends DatabaseInterfaceProviderImpl {
     private DatabaseNativeDataTypes NATIVE_DATA_TYPES = new SqliteNativeDataTypes();
 
     public SqliteInterfaceProvider() {
-        super(SQLLanguage.INSTANCE.getLanguageDialect(DBLanguageDialectIdentifier.SQLITE_SQL), null);
+        super(SQLLanguage.INSTANCE.getLanguageDialect(DBLanguageDialectIdentifier.SQLITE_SQL),
+                PSQLLanguage.INSTANCE.getLanguageDialect(DBLanguageDialectIdentifier.SQLITE_PSQL));
     }
 
     @Override

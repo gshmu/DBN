@@ -10,6 +10,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 
+import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.dci.intellij.dbn.language.common.element.impl.BasicElementTypeImpl;
@@ -119,14 +120,18 @@ public class ElementTypeBundle {
 
     private void createNamedElementType(Element def) throws ElementTypeDefinitionException {
         String id = determineMandatoryAttribute(def, "id", "Invalid definition of named element type.");
+        String languageId = def.getAttributeValue("language");
         log.debug("Updating complex element definition '" + id + '\'');
         NamedElementType elementType = getNamedElementType(id, null);
         elementType.loadDefinition(def);
         if (elementType.is(ElementTypeAttribute.ROOT)) {
-            if (rootElementType == null) {
-                rootElementType = elementType;
-            } else {
-                throw new ElementTypeDefinitionException("Duplicate root definition");
+            DBLanguage language = DBLanguage.getLanguage(languageId);
+            if (language == languageDialect.getBaseLanguage()) {
+                if (rootElementType == null) {
+                    rootElementType = elementType;
+                } else {
+                    throw new ElementTypeDefinitionException("Duplicate root definition");
+                }
             }
         }
     }
@@ -209,13 +214,19 @@ public class ElementTypeBundle {
         return elementType;
     }*/
 
-    protected synchronized NamedElementType getNamedElementType(String id, ElementType parent) {
+    protected NamedElementType getNamedElementType(String id, ElementType parent) {
         NamedElementType elementType = namedElementTypes.get(id);
         if (elementType == null) {
-            elementType = new NamedElementTypeImpl(this, id);
-            namedElementTypes.put(id, elementType);
-            log.debug("Created named element type '" + id + '\'');
+            synchronized (this) {
+                elementType = namedElementTypes.get(id);
+                if (elementType == null) {
+                    elementType = new NamedElementTypeImpl(this, id);
+                    namedElementTypes.put(id, elementType);
+                    log.debug("Created named element type '" + id + '\'');
+                }
+            }
         }
+
         if (parent != null) elementType.addParent(parent);
         return elementType;
     }

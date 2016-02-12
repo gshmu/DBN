@@ -19,7 +19,7 @@ public class SqliteSQLLanguageDialect extends SQLLanguageDialect {
     }
 
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
-        return new SqliteSQLSyntaxHighlighter(this);
+        return new SqliteSQLHighlighter(this);
 }
     protected SqliteSQLParserDefinition createParserDefinition() {
         SqliteSQLParser parser = new SqliteSQLParser(this);

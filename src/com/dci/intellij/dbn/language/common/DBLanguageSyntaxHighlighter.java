@@ -19,9 +19,13 @@ public abstract class DBLanguageSyntaxHighlighter extends SyntaxHighlighterBase 
     private TokenTypeBundle tokenTypes;
 
     public DBLanguageSyntaxHighlighter(DBLanguageDialect languageDialect, String tokenTypesFile) {
-        Document document = CommonUtil.loadXmlFile(getClass(), tokenTypesFile);
+        Document document = CommonUtil.loadXmlFile(getResourceLookupClass(), tokenTypesFile);
         tokenTypes = new TokenTypeBundle(languageDialect, document);
         this.languageDialect = languageDialect;
+    }
+
+    protected Class getResourceLookupClass() {
+        return getClass();
     }
 
     public DBLanguageDialect getLanguageDialect() {

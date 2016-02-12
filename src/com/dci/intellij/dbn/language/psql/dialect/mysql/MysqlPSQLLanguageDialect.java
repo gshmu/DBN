@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.psql.dialect.mysql;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.common.DBLanguageSyntaxHighlighter;
 import com.dci.intellij.dbn.language.psql.dialect.PSQLLanguageDialect;
-import com.dci.intellij.dbn.language.psql.dialect.oracle.OraclePLSQLSyntaxHighlighter;
+import com.dci.intellij.dbn.language.psql.dialect.oracle.OraclePLSQLHighlighter;
 
 public class MysqlPSQLLanguageDialect extends PSQLLanguageDialect {
     public MysqlPSQLLanguageDialect() {
@@ -11,7 +11,7 @@ public class MysqlPSQLLanguageDialect extends PSQLLanguageDialect {
     }
 
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
-        return new OraclePLSQLSyntaxHighlighter(this);
+        return new OraclePLSQLHighlighter(this);
 }
 
     protected MysqlPSQLParserDefinition createParserDefinition() {

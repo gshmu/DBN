@@ -156,21 +156,30 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         }
     }
 
-    public synchronized boolean containsLandmarkToken(TokenType tokenType) {
+    public boolean containsLandmarkToken(TokenType tokenType) {
         if (elementType.isLeaf()) return containsToken(tokenType);
 
         Boolean value = landmarkTokens.get(tokenType);
         if (value == null) {
-            value = containsLandmarkToken(tokenType, null);
-            landmarkTokens.put(tokenType, value);
+            synchronized (this)  {
+                value = landmarkTokens.get(tokenType);
+                if (value == null) {
+                    value = containsLandmarkToken(tokenType, null);
+                    landmarkTokens.put(tokenType, value);
+                }
+            }
         }
         return value;
     }
 
 
-    public synchronized boolean startsWithIdentifier() {
+    public boolean startsWithIdentifier() {
         if (startsWithIdentifier == null) {
-            startsWithIdentifier =  startsWithIdentifier(null);
+            synchronized (this) {
+                if (startsWithIdentifier == null) {
+                    startsWithIdentifier = startsWithIdentifier(null);
+                }
+            }
         }
         return startsWithIdentifier;
     }

@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.language.psql.dialect.PSQLLanguageDialect;
 import com.dci.intellij.dbn.language.psql.dialect.mysql.MysqlPSQLLanguageDialect;
 import com.dci.intellij.dbn.language.psql.dialect.oracle.OraclePLSQLLanguageDialect;
 import com.dci.intellij.dbn.language.psql.dialect.postgres.PostgresPSQLLanguageDialect;
+import com.dci.intellij.dbn.language.psql.dialect.sqlite.SqlitePSQLLanguageDialect;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
@@ -19,10 +20,12 @@ public class PSQLLanguage extends DBLanguage<PSQLLanguageDialect> {
         PSQLLanguageDialect oraclePLSQLLanguageDialect = new OraclePLSQLLanguageDialect();
         PSQLLanguageDialect mysqlPSQLLanguageDialect = new MysqlPSQLLanguageDialect();
         PSQLLanguageDialect postgresPSQLLanguageDialect = new PostgresPSQLLanguageDialect();
+        PSQLLanguageDialect sqlitePSQLLanguageDialect = new SqlitePSQLLanguageDialect();
         return new PSQLLanguageDialect[]{
                 oraclePLSQLLanguageDialect,
                 mysqlPSQLLanguageDialect,
-                postgresPSQLLanguageDialect};
+                postgresPSQLLanguageDialect,
+                sqlitePSQLLanguageDialect};
     }
 
     public PSQLLanguageDialect getMainLanguageDialect() {

@@ -38,9 +38,9 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
         return "DDL file extension settings";
     }
 
-    public DDLFileType getDDLFileType(String fileTypeId) {
+    public DDLFileType getDDLFileType(DDLFileTypeId fileTypeId) {
         for (DDLFileType fileType : fileTypes) {
-            if (fileType.getId().equals(fileTypeId)) {
+            if (fileType.getId()== fileTypeId) {
                 return fileType;
             }
         }
@@ -80,14 +80,10 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
     public void readConfiguration(Element element) {
         for (Object o : element.getChildren()) {
             Element fileTypeElement = (Element) o;
-            String name = fileTypeElement.getAttributeValue("file-type-id");
+            DDLFileTypeId fileTypeId = getEnumAttribute(fileTypeElement, "file-type-id", DDLFileTypeId.class);
             String extensions = fileTypeElement.getAttributeValue("extensions");
 
-            // workaround after fixing the bad naming of the ddl file types
-            if (name.equals("TRIGGER_SPEC")) name = "PACKAGE_SPEC";
-            if (name.equals("TRIGGER_BODY")) name = "PACKAGE_BODY";
-
-            DDLFileType fileType = getDDLFileType(name);
+            DDLFileType fileType = getDDLFileType(fileTypeId);
             fileType.setExtensions(StringUtil.tokenize(extensions, ","));
         }
     }
@@ -95,7 +91,7 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
     public void writeConfiguration(Element element) {
         for (DDLFileType fileType : fileTypes) {
             Element fileTypeElement = new Element("mapping");
-            fileTypeElement.setAttribute("file-type-id", fileType.getId());
+            setEnumAttribute(fileTypeElement, "file-type-id", fileType.getId());
             String extensions = StringUtil.concatenate(fileType.getExtensions(), ",");
             fileTypeElement.setAttribute("extensions", extensions);
             element.addContent(fileTypeElement);

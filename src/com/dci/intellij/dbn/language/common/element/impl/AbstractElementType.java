@@ -195,16 +195,24 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return branch;
     }
 
-    public synchronized ElementTypeLookupCache getLookupCache() {
+    public ElementTypeLookupCache getLookupCache() {
         if (lookupCache == null) {
-            lookupCache = createLookupCache();
+            synchronized (this) {
+                if (lookupCache == null) {
+                    lookupCache = createLookupCache();
+                }
+            }
         }
         return lookupCache;
     }
 
-    public synchronized  @NotNull ElementTypeParser getParser() {
+    public  @NotNull ElementTypeParser getParser() {
         if (parser == null) {
-            parser = createParser();
+            synchronized (this) {
+                if (parser == null) {
+                    parser = createParser();
+                }
+            }
         }
 
         return parser;

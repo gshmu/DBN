@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.vfs;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -13,7 +14,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.SingleRootFileViewProvider;
-import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.testFramework.LightVirtualFile;
 
 public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
@@ -51,7 +51,7 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
                 forceCachedPsi(psiFile);
                 Document document = DocumentUtil.getDocument(getVirtualFile());
                 if (document != null) {
-                    PsiDocumentManagerImpl.cachePsi(document, psiFile);
+                    CompatibilityUtil.cachePsi(document, psiFile);
                 }
                 return psiFile;
             }
