@@ -1,17 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
@@ -39,6 +27,18 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
+
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<ConnectionDatabaseSettings> {
     private JPanel mainPanel;
@@ -292,6 +292,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                 !CommonUtil.safeEqual(databaseInfo.getPort(), portTextField.getText()) ||
                 !CommonUtil.safeEqual(databaseInfo.getDatabase(), databaseTextField.getText()) ||
                 !CommonUtil.safeEqual(databaseInfo.getUrlType(), urlTypeComboBox.getSelectedValue()) ||
+                !CommonUtil.safeEqual(databaseInfo.getFile(), fileTextField.getText()) ||
                 !CommonUtil.safeEqual(configuration.getAuthenticationInfo().getUser(), authenticationSettingsForm.getUserTextField().getText());
 
 
