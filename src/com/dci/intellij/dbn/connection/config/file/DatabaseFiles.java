@@ -51,6 +51,10 @@ public class DatabaseFiles extends SettingsUtil implements PersistentConfigurati
         return files.get(0);
     }
 
+    public List<DatabaseFile> getSecondaryFiles() {
+        return files.subList(1, files.size());
+    }
+
 
     @Override
     public void readConfiguration(Element element) {
