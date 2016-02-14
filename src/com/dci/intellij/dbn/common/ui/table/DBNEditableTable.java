@@ -23,6 +23,7 @@ import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 
 public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableWithGutter<T> {
+    public static final LineBorder SELECTION_BORDER = new LineBorder(UIUtil.getTableBackground());
 
     public DBNEditableTable(Project project, T model, boolean showHeader) {
         super(project, model, showHeader);
