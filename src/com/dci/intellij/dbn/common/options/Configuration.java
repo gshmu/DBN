@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.diagnostic.Logger;
@@ -89,6 +90,10 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
 
     public void apply() throws ConfigurationException {
         if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
+            if (this instanceof TopLevelConfig) {
+                GUIUtil.stopTableCellEditing(configurationEditorForm.getComponent());
+            }
+
             configurationEditorForm.applyFormChanges();
         }
         isModified = false;
