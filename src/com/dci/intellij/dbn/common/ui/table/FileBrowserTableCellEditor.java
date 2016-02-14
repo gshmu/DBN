@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
@@ -48,7 +47,6 @@ public class FileBrowserTableCellEditor extends AbstractCellEditor implements Ta
         mainPanel.add(button, BorderLayout.EAST);
 
         FileChooserFactory.getInstance().installFileCompletion(textField, fileChooserDescriptor, true, null);
-
     }
 
 
@@ -59,7 +57,7 @@ public class FileBrowserTableCellEditor extends AbstractCellEditor implements Ta
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
                 FileChooserDialog fileChooser = FileChooserFactory.getInstance().createFileChooser(fileChooserDescriptor, null, null);
                 VirtualFile file = LocalFileSystem.getInstance().findFileByIoFile(new File(textField.getText()));
-                VirtualFile[] virtualFiles = fileChooser.choose(file, null);
+                VirtualFile[] virtualFiles = fileChooser.choose(null, file);
                 if (virtualFiles.length > 0) {
                     textField.setText(new File(virtualFiles[0].getPath()).getPath());
                 }
@@ -69,18 +67,12 @@ public class FileBrowserTableCellEditor extends AbstractCellEditor implements Ta
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        if (value instanceof File) {
-            File file = (File) value;
-            textField.setText(file.getPath());
-        } else {
-            textField.setText("");
-        }
+        textField.setText((String) value);
         return mainPanel;
     }
 
     @Override
     public Object getCellEditorValue() {
-        String text = textField.getText();
-        return StringUtil.isEmpty(text) ? null : new File(text);
+        return textField.getText();
     }
 }

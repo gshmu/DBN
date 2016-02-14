@@ -90,7 +90,7 @@ public class DatabaseFilesTable extends DBNTable<DatabaseFilesTableModel> {
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        return true;
+        return !(row == 0 && column == 1);
     }
 
     private void startCellEditing() {

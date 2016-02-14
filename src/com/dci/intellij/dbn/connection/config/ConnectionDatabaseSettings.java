@@ -239,7 +239,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
                     "Database connection url not provided");
         } else {
             if (configType == ConnectionConfigType.BASIC && !urlPattern.isValid(connectionUrl)) {
-                errors.add("Database information incomplete or invalid (host, port, database)");
+                errors.add("Database information incomplete or invalid (host, port, database, file)");
             }
         }
 
