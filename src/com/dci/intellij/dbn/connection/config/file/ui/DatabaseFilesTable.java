@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.config.file.ui;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.FileBrowserTableCellEditor;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFilesBundle;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.ui.TableUtil;
 import com.intellij.util.ui.UIUtil;
@@ -23,12 +23,11 @@ import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 
 public class DatabaseFilesTable extends DBNTable<DatabaseFilesTableModel> {
 
-    public DatabaseFilesTable(DatabaseFilesBundle filesBundle) {
-        super(new DatabaseFilesTableModel(filesBundle), true);
+    public DatabaseFilesTable(DatabaseFiles databaseFiles) {
+        super(new DatabaseFilesTableModel(databaseFiles), true);
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         getSelectionModel().addListSelectionListener(selectionListener);
         setSelectionBackground(UIUtil.getTableBackground());
@@ -36,14 +35,14 @@ public class DatabaseFilesTable extends DBNTable<DatabaseFilesTableModel> {
         setCellSelectionEnabled(true);
         setTableHeader(null);
         setDefaultRenderer(Object.class, new DatabaseFilesTableCellRenderer());
-        setDefaultEditor(File.class, new FileBrowserTableCellEditor(new FileChooserDescriptor(true, true, false, false, false, false)){});
+        getColumnModel().getColumn(0).setCellEditor(new FileBrowserTableCellEditor(new FileChooserDescriptor(true, true, false, false, false, false)));
 
         setFixedWidth(columnModel.getColumn(1), 100);
 
         addMouseListener(mouseListener);
     }
 
-    public void setFilePaths(DatabaseFilesBundle filesBundle) {
+    public void setFilePaths(DatabaseFiles filesBundle) {
         super.setModel(new DatabaseFilesTableModel(filesBundle));
         setFixedWidth(columnModel.getColumn(1), 100);
     }

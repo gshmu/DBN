@@ -3,23 +3,22 @@ package com.dci.intellij.dbn.connection.config.file.ui;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFilesBundle;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import java.io.File;
 
 public class DatabaseFilesTableModel extends DBNEditableTableModel {
-    private DatabaseFilesBundle databaseFiles;
+    private DatabaseFiles databaseFiles;
 
-    public DatabaseFilesTableModel(DatabaseFilesBundle filesBundle) {
-        this.databaseFiles = filesBundle;
+    public DatabaseFilesTableModel(DatabaseFiles databaseFiles) {
+        this.databaseFiles = databaseFiles == null ? new DatabaseFiles(null) : databaseFiles.clone();
         addTableModelListener(defaultModelListener);
     }
 
-    public void setDatabaseFiles(DatabaseFilesBundle filesBundle) {
-        this.databaseFiles = filesBundle;
-        notifyListeners(0, filesBundle.size(), -1);
+    public void setDatabaseFiles(DatabaseFiles databaseFiles) {
+        this.databaseFiles = databaseFiles == null ? new DatabaseFiles(null) : databaseFiles.clone();
+        notifyListeners(0, this.databaseFiles.size(), -1);
     }
 
     public int getRowCount() {
@@ -42,8 +41,7 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
     }
 
     public Class<?> getColumnClass(int columnIndex) {
-        return columnIndex == 0 ? File.class :
-                columnIndex == 1 ? String.class : null;
+        return String.class;
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -53,8 +51,8 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         DatabaseFile filePathOption = databaseFiles.get(rowIndex);
         return
-           columnIndex == 0 ? filePathOption.getFile() :
-           columnIndex == 1 ? filePathOption.getDatabaseName() : null;
+           columnIndex == 0 ? filePathOption.getPath() :
+           columnIndex == 1 ? filePathOption.getSchema() : null;
     }
 
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
@@ -62,23 +60,23 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
         if (!CommonUtil.safeEqual(actualValue, o)) {
             DatabaseFile filePathOption = databaseFiles.get(rowIndex);
             if (columnIndex == 0) {
-                filePathOption.setFile((File) o);
+                filePathOption.setPath((String) o);
             } else if (columnIndex == 1) {
-                filePathOption.setDatabaseName((String) o);
+                filePathOption.setSchema((String) o);
             }
 
             notifyListeners(rowIndex, rowIndex, columnIndex);
         }
     }
 
-    private DatabaseFile getFilePath(int rowIndex) {
+    private DatabaseFile getFile(int rowIndex) {
         while (databaseFiles.size() <= rowIndex) {
             databaseFiles.add(new DatabaseFile());
         }
         return databaseFiles.get(rowIndex);
     }
 
-    public DatabaseFilesBundle getDatabaseFiles() {
+    public DatabaseFiles getDatabaseFiles() {
         return databaseFiles;
     }
 

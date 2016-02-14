@@ -258,7 +258,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public void promptDatabaseInitDialog(ConnectionDatabaseSettings databaseSettings, MessageCallback callback) {
         DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
-            String file = databaseInfo.getFile();
+            String file = databaseInfo.getFiles().getMainFile().getPath();
             if (StringUtils.isEmpty(file)) {
                 MessageUtil.showErrorDialog(getProject(), "Wrong Database Configuration", "Database file not specified");
             } else if (!new File(file).exists()) {
