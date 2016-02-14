@@ -1,36 +1,36 @@
 package com.dci.intellij.dbn.common.properties.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.util.Map;
-
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.util.Map;
+
 public class PropertiesEditorForm extends DBNFormImpl<DBNForm> {
     private JPanel mainPanel;
-    private PropertiesEditorTable propertiesTable;
+    private PropertiesEditorTable table;
 
     public PropertiesEditorForm(DBNForm parentForm, Map<String, String> properties, boolean showMoveButtons) {
         super(parentForm);
-        propertiesTable = new PropertiesEditorTable(properties);
-        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(propertiesTable);
+        table = new PropertiesEditorTable(properties);
+        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(table);
         decorator.setAddAction(new AnActionButtonRunnable() {
             @Override
             public void run(AnActionButton anActionButton) {
-                propertiesTable.insertRow();
+                table.insertRow();
             }
         });
 
         decorator.setRemoveAction(new AnActionButtonRunnable() {
             @Override
             public void run(AnActionButton anActionButton) {
-                propertiesTable.removeRow();
+                table.removeRow();
             }
         });
 
@@ -38,33 +38,34 @@ public class PropertiesEditorForm extends DBNFormImpl<DBNForm> {
             decorator.setMoveUpAction(new AnActionButtonRunnable() {
                 @Override
                 public void run(AnActionButton anActionButton) {
-                    propertiesTable.moveRowUp();
+                    table.moveRowUp();
                 }
             });
 
             decorator.setMoveDownAction(new AnActionButtonRunnable() {
                 @Override
                 public void run(AnActionButton anActionButton) {
-                    propertiesTable.moveRowDown();
+                    table.moveRowDown();
                 }
             });
         }
 
         JPanel propertiesPanel = decorator.createPanel();
-        Container parent = propertiesTable.getParent();
-        parent.setBackground(propertiesTable.getBackground());
+        Container parent = table.getParent();
+        parent.setBackground(table.getBackground());
         mainPanel.add(propertiesPanel, BorderLayout.CENTER);
 /*
         propertiesTableScrollPane.setViewportView(propertiesTable);
         propertiesTableScrollPane.setPreferredSize(new Dimension(200, 80));
 */
-
     }
 
-
+    public PropertiesEditorTable getTable() {
+        return table;
+    }
 
     public void setProperties(Map<String, String> properties) {
-        propertiesTable.setProperties(properties);
+        table.setProperties(properties);
     } 
 
     public JComponent getComponent() {
@@ -76,6 +77,6 @@ public class PropertiesEditorForm extends DBNFormImpl<DBNForm> {
     }
 
     public Map<String, String> getProperties() {
-        return propertiesTable.getModel().exportProperties();
+        return table.getModel().exportProperties();
     }
 }

@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.common.options;
 
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jdom.Element;
 
 public abstract class CompositeConfiguration<T extends CompositeConfigurationEditorForm> extends Configuration<T> {
     private Configuration[] configurations;
@@ -25,6 +26,10 @@ public abstract class CompositeConfiguration<T extends CompositeConfigurationEdi
 
     @Override
     public void apply() throws ConfigurationException {
+        T settingsEditor = getSettingsEditor();
+        if (this instanceof TopLevelConfig && settingsEditor != null) {
+            GUIUtil.stopTableCellEditing(settingsEditor.getComponent());
+        }
         for (Configuration configuration : getConfigurations()) {
             configuration.apply();
         }

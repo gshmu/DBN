@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.common.options.setting;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.util.StringUtil;
 
 public class SettingsUtil {
     public static boolean isDebugEnabled;
@@ -98,6 +97,10 @@ public class SettingsUtil {
 
     public static void setIntegerAttribute(Element element, String attributeName, int value) {
         element.setAttribute(attributeName, Integer.toString(value));
+    }
+
+    public static void setStringAttribute(Element element, String attributeName, String value) {
+        element.setAttribute(attributeName, value == null ? "" : value);
     }
 
 

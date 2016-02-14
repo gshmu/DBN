@@ -1,5 +1,19 @@
 package com.dci.intellij.dbn.browser.options.ui;
 
+import com.dci.intellij.dbn.browser.options.DatabaseBrowserEditorSettings;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.common.editor.DefaultEditorOption;
+import com.dci.intellij.dbn.object.common.editor.DefaultEditorType;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBoxTableRenderer;
+import com.intellij.ui.ColoredTableCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.components.JBScrollPane;
+
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -12,20 +26,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.dci.intellij.dbn.browser.options.DatabaseBrowserEditorSettings;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
-import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.editor.DefaultEditorOption;
-import com.dci.intellij.dbn.object.common.editor.DefaultEditorType;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBoxTableRenderer;
-import com.intellij.ui.ColoredTableCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.components.JBScrollPane;
 
 public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<DatabaseBrowserEditorSettings> {
     private JPanel mainPanel;
@@ -59,7 +59,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
         return mainPanel;
     }
 
-    public class EditorTypeTable extends DBNTable {
+    public class EditorTypeTable extends DBNEditableTable<EditorTypeTableModel> {
 
         public EditorTypeTable(Project project, List<DefaultEditorOption> options) {
             super(project, new EditorTypeTableModel(options), true);
@@ -76,6 +76,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
                     } else {
                         append("");
                     }
+                    setBorder(SELECTION_BORDER);
                 }
             });
 
@@ -84,6 +85,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
                 protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
                     DefaultEditorType editorType = (DefaultEditorType) value;
                     append(editorType.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                    setBorder(SELECTION_BORDER);
                 }
             });
 
@@ -92,7 +94,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
             getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent e) {
                     if (!e.getValueIsAdjusting()) {
-                        editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
+                        //editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
                     }
                 }
             });

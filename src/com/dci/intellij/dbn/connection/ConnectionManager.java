@@ -177,7 +177,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     AuthenticationInfo authenticationInfo = getOption();
                     try {
-                        Connection connection = ConnectionUtil.connect(connectionSettings, authenticationInfo, false, null, ConnectionType.TEST);
+                        Connection connection = ConnectionUtil.connect(connectionSettings, ConnectionType.TEST, null, authenticationInfo, false, null);
                         ConnectionUtil.closeConnection(connection);
                         databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
                         if (showMessageDialog) {
@@ -225,7 +225,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                         protected void execute(@NotNull ProgressIndicator progressIndicator) {
                             AuthenticationInfo authenticationInfo = getOption();
                             try {
-                                Connection connection = ConnectionUtil.connect(connectionSettings, authenticationInfo, false, null, ConnectionType.TEST);
+                                Connection connection = ConnectionUtil.connect(connectionSettings, ConnectionType.TEST, null, authenticationInfo, false, null);
                                 ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
                                 ConnectionUtil.closeConnection(connection);
                                 showConnectionInfoDialog(connectionInfo, connectionName, environmentType);
@@ -258,7 +258,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public void promptDatabaseInitDialog(ConnectionDatabaseSettings databaseSettings, MessageCallback callback) {
         DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
-            String file = databaseInfo.getFile();
+            String file = databaseInfo.getFiles().getMainFile().getPath();
             if (StringUtils.isEmpty(file)) {
                 MessageUtil.showErrorDialog(getProject(), "Wrong Database Configuration", "Database file not specified");
             } else if (!new File(file).exists()) {

@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.common.ui.table;
 
+import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import sun.swing.SwingUtilities2;
+
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -24,25 +37,13 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.font.LineMetrics;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.components.JBScrollPane;
-import com.intellij.util.ui.UIUtil;
-import sun.swing.SwingUtilities2;
 
 public class DBNTable<T extends DBNTableModel> extends JTable implements Disposable{
     private static final int MAX_COLUMN_WIDTH = 300;
     private static final int MIN_COLUMN_WIDTH = 10;
     public static final Color GRID_COLOR = new JBColor(new Color(0xE6E6E6), Color.DARK_GRAY);
     protected DBNTableGutter tableGutter;
-    private Project project;
+    private ProjectRef projectRef;
     private double scrollDistance;
     private JBScrollPane scrollPane;
     private Timer scrollTimer;
@@ -54,9 +55,12 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         super.setModel(dataModel);
     }
 
+    public DBNTable(T tableModel, boolean showHeader) {
+        this(null, tableModel, showHeader);
+    }
     public DBNTable(Project project, T tableModel, boolean showHeader) {
         super(tableModel);
-        this.project = project;
+        projectRef = new ProjectRef(project);
         setGridColor(GRID_COLOR);
         Font font = getFont();//UIUtil.getListFont();
         setFont(font);
@@ -134,7 +138,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     }
 
     public Project getProject() {
-        return project;
+        return projectRef.get();
     }
 
     public Object getValueAtMouseLocation() {
@@ -301,7 +305,6 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            project = null;
             GUIUtil.removeListeners(this);
             listenerList = new EventListenerList();
             columnModel = new DefaultTableColumnModel();

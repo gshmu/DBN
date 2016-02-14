@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
@@ -28,6 +18,16 @@ import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings>{
     private JPanel mainPanel;
@@ -189,7 +189,9 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
             String selectedId = selectedItem == null ? EnvironmentType.DEFAULT.getId() : selectedItem.getId();
             selectedItem = environmentTypes.getEnvironmentType(selectedId);
 
-            environmentTypesComboBox.setValues(environmentTypes.getEnvironmentTypes());
+            List<EnvironmentType> newEnvironmentTypes = new ArrayList<EnvironmentType>(environmentTypes.getEnvironmentTypes());
+            newEnvironmentTypes.add(0, EnvironmentType.DEFAULT);
+            environmentTypesComboBox.setValues(newEnvironmentTypes);
             environmentTypesComboBox.setSelectedValue(selectedItem);
             notifyPresentationChanges();
         }

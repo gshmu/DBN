@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.database;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.DatabaseAttachmentHandler;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.editor.session.SessionStatus;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.object.common.DBObject;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class DatabaseCompatibilityInterface {
     private DatabaseInterfaceProvider provider;
@@ -58,4 +58,8 @@ public abstract class DatabaseCompatibilityInterface {
     public abstract SessionStatus getSessionStatus(String statusName);
 
     public abstract String getExplainPlanStatementPrefix();
+
+    public DatabaseAttachmentHandler getDatabaseAttachmentHandler() {
+        return null;
+    };
 }

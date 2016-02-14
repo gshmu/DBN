@@ -1,12 +1,21 @@
 package com.dci.intellij.dbn.common.ui;
 
+import com.dci.intellij.dbn.common.Colors;
+import com.intellij.openapi.ui.Splitter;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.popup.list.ListPopupImpl;
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.TableCellEditor;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -16,13 +25,6 @@ import java.awt.Point;
 import java.awt.PointerInfo;
 import java.lang.reflect.Method;
 import java.util.EventListener;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.Colors;
-import com.intellij.openapi.ui.Splitter;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.popup.list.ListPopupImpl;
 
 public class GUIUtil{
     public static final Font REGULAR_FONT = com.intellij.util.ui.UIUtil.getLabelFont();
@@ -45,7 +47,23 @@ public class GUIUtil{
                 }
             }
         });
+    }
 
+    public static void stopTableCellEditing(final JComponent root) {
+        if (root instanceof JTable) {
+            JTable table = (JTable) root;
+            TableCellEditor cellEditor = table.getCellEditor();
+            if (cellEditor != null) {
+                cellEditor.stopCellEditing();
+            }
+        } else {
+            Component[] components = root.getComponents();
+            for (Component component : components) {
+                if (component instanceof JComponent) {
+                    stopTableCellEditing((JComponent) component);
+                }
+            }
+        }
     }
     
     public static Point getRelativeMouseLocation(Component component) {
