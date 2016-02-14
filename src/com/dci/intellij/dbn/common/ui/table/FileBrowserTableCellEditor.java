@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
@@ -68,8 +69,13 @@ public class FileBrowserTableCellEditor extends AbstractCellEditor implements Ta
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         textField.setText((String) value);
-        textField.selectAll();
-        textField.requestFocus();
+        new SimpleLaterInvocator() {
+            @Override
+            protected void execute() {
+                textField.selectAll();
+                textField.requestFocus();
+            }
+        }.start();
         return mainPanel;
     }
 
