@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
@@ -107,6 +108,7 @@ public class ObjectPropertiesTable extends DBNTable {
             Dimension dimension = getSize();
             dimension.setSize(dimension.getWidth(), 30);
             setSize(dimension);
+            setBorder(Borders.EMPTY_BORDER);
 
             return component;
         }
