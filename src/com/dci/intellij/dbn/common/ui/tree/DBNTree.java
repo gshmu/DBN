@@ -36,7 +36,6 @@ public class DBNTree extends Tree implements Disposable {
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            setCellRenderer(DEFAULT_CELL_RENDERER);
             setModel(null);
             setSelectionModel(null);
             GUIUtil.removeListeners(this);
