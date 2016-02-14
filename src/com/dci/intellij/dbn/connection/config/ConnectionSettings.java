@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> implements ConnectionRef{
     private ConnectionBundleSettings parent;
@@ -130,17 +130,12 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     }
 
     public ConnectionSettings clone() {
-        try {
-            Element connectionElement = new Element("Connection");
-            writeConfiguration(connectionElement);
-            ConnectionSettings clone = new ConnectionSettings(parent, databaseSettings.getDatabaseType(), databaseSettings.getConfigType());
-            clone.readConfiguration(connectionElement);
-            clone.databaseSettings.setConnectivityStatus(databaseSettings.getConnectivityStatus());
-            clone.generateNewId();
-            return clone;
-        } catch (Exception e) {
-            return null;
-        }
-
+        Element connectionElement = new Element("Connection");
+        writeConfiguration(connectionElement);
+        ConnectionSettings clone = new ConnectionSettings(parent, databaseSettings.getDatabaseType(), databaseSettings.getConfigType());
+        clone.readConfiguration(connectionElement);
+        clone.databaseSettings.setConnectivityStatus(databaseSettings.getConnectivityStatus());
+        clone.generateNewId();
+        return clone;
     }
 }

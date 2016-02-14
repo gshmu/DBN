@@ -1,22 +1,17 @@
 package com.dci.intellij.dbn.common.properties.ui;
 
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.dci.intellij.dbn.common.properties.Property;
-import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 
-public class PropertiesTableModel implements DBNTableModel {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class PropertiesTableModel extends DBNEditableTableModel {
     private List<Property> properties = new ArrayList<Property>();
-    private Set<TableModelListener> listeners = new HashSet<TableModelListener>();
 
     public PropertiesTableModel(Map<String, String> propertiesMap) {
         loadProperties(propertiesMap);
@@ -85,14 +80,6 @@ public class PropertiesTableModel implements DBNTableModel {
         }
     }
 
-    public void addTableModelListener(TableModelListener l) {
-        listeners.add(l);
-    }
-
-    public void removeTableModelListener(TableModelListener l) {
-        listeners.remove(l);
-    }
-
     private String getKey(int rowIndex) {
         Property property = getProperty(rowIndex);
         return property.getKey();
@@ -120,22 +107,5 @@ public class PropertiesTableModel implements DBNTableModel {
             properties.remove(rowIndex);
             notifyListeners(rowIndex, properties.size()-1, -1);
         }
-    }
-
-    private void notifyListeners(int firstRowIndex, int lastRowIndex, int columnIndex) {
-        TableModelEvent modelEvent = new TableModelEvent(this, firstRowIndex, lastRowIndex, columnIndex);
-        for (TableModelListener modelListener : listeners) {
-            modelListener.tableChanged(modelEvent);
-        }
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return false;
-    }
-
-    @Override
-    public void dispose() {
-
     }
 }

@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import org.apache.commons.lang.StringUtils;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
@@ -19,11 +11,20 @@ import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.apache.commons.lang.StringUtils;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
@@ -171,7 +172,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         DatabaseInfo databaseInfo = getDatabaseInfo();
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
             // only for file based databases
-            String file = databaseInfo.getFile();
+            String file = databaseInfo.getMainFile();
             return StringUtils.isNotEmpty(file) && new File(file).exists();
         }
         return true;
@@ -189,7 +190,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
                     host,
                     port,
                     databaseInfo.getDatabase(),
-                    databaseInfo.getFile());
+                    databaseInfo.getMainFile());
         } else {
             return databaseInfo.getUrl();
         }
@@ -202,7 +203,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
                 databaseInfo.getHost() +
                 databaseInfo.getPort() +
                 databaseInfo.getDatabase() +
-                databaseInfo.getFile() +
+                databaseInfo.getFilesForHash() +
                 databaseInfo.getUrl() +
                 authenticationInfo.getUser() +
                 authenticationInfo.getPassword() +
@@ -238,7 +239,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
                     "Database connection url not provided");
         } else {
             if (configType == ConnectionConfigType.BASIC && !urlPattern.isValid(connectionUrl)) {
-                errors.add("Database information incomplete or invalid (host, port, database)");
+                errors.add("Database information incomplete or invalid (host, port, database, file)");
             }
         }
 
@@ -292,11 +293,24 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
             databaseInfo.setHost(getString(element, "host", databaseInfo.getHost()));
             databaseInfo.setPort(getString(element, "port", databaseInfo.getPort()));
             databaseInfo.setDatabase(getString(element, "database", databaseInfo.getDatabase()));
-            databaseInfo.setFile(getString(element, "file", databaseInfo.getFile()));
 
             DatabaseUrlType urlType = getEnum(element, "url-type", databaseType.getDefaultUrlPattern().getUrlType());
             databaseInfo.setUrlType(urlType);
             urlPattern = DatabaseUrlPattern.get(databaseType, urlType);
+
+            if (urlType == DatabaseUrlType.FILE) {
+                Element filesElement = element.getChild("files");
+                if (filesElement != null) {
+                    DatabaseFiles databaseFiles = new DatabaseFiles();
+                    databaseFiles.readConfiguration(filesElement);
+                    databaseInfo.setFiles(databaseFiles);
+                } else {
+                    // TODO remove backward compatibility
+                    String file = getString(element, "file", null);
+                    DatabaseFiles databaseFiles = new DatabaseFiles(file);
+                    databaseInfo.setFiles(databaseFiles);
+                }
+            }
         } else if (configType == ConnectionConfigType.CUSTOM){
             String url = getString(element, "url", databaseInfo.getUrl());
             databaseInfo.setUrl(url);
@@ -305,8 +319,13 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
                 databaseInfo.setUrlType(urlPattern.getUrlType());
                 databaseInfo.setHost(urlPattern.resolveHost(url));
                 databaseInfo.setPort(urlPattern.resolvePort(url));
-                databaseInfo.setFile(urlPattern.resolveFile(url));
                 databaseInfo.setDatabase(urlPattern.resolveDatabase(url));
+
+                String file = urlPattern.resolveFile(url);
+                if (StringUtil.isNotEmptyOrSpaces(file)) {
+                    databaseInfo.setMainFile(file);
+                }
+
             }
         }
 
@@ -352,11 +371,16 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         setString(element, "driver", nvl(driver));
 
         if (configType == ConnectionConfigType.BASIC) {
+            setEnum(element, "url-type", databaseInfo.getUrlType());
             setString(element, "host", nvl(databaseInfo.getHost()));
             setString(element, "port", nvl(databaseInfo.getPort()));
             setString(element, "database", nvl(databaseInfo.getDatabase()));
-            setString(element, "file", nvl(databaseInfo.getFile()));
-            setEnum(element, "url-type", databaseInfo.getUrlType());
+            DatabaseFiles files = databaseInfo.getFiles();
+            if (files != null) {
+                Element filesElement = new Element("files");
+                element.addContent(filesElement);
+                files.writeConfiguration(filesElement);
+            }
         } else if (configType == ConnectionConfigType.CUSTOM) {
             setString(element, "url", nvl(databaseInfo.getUrl()));
         }

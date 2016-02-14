@@ -1,26 +1,15 @@
 package com.dci.intellij.dbn.connection;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.Driver;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLRecoverableException;
-import java.sql.Savepoint;
-import java.sql.Statement;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelConnector;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
@@ -29,6 +18,21 @@ import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.Driver;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class ConnectionUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -105,6 +109,14 @@ public class ConnectionUtil {
         }
     }
 
+    public static void setAutoCommit(Connection connection, boolean autoCommit) throws SQLException {
+        try {
+            connection.setAutoCommit(autoCommit);
+        } catch (SQLException e) {
+            connection.setAutoCommit(autoCommit);
+        }
+    }
+
     public static Connection connect(ConnectionHandler connectionHandler, ConnectionType connectionType) throws SQLException {
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
@@ -124,7 +136,13 @@ public class ConnectionUtil {
         }
 
         try {
-            Connection connection = connect(connectionSettings, connectionHandler.getTemporaryAuthenticationInfo(), propertiesSettings.isEnableAutoCommit(), connectionStatus, connectionType);
+            Connection connection = connect(
+                    connectionSettings,
+                    connectionType,
+                    connectionStatus,
+                    connectionHandler.getTemporaryAuthenticationInfo(),
+                    propertiesSettings.isEnableAutoCommit(),
+                    connectionHandler.getDatabaseAttachmentHandler());
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
             connectionHandler.setConnectionInfo(connectionInfo);
             connectionStatus.setAuthenticationError(null);
@@ -141,13 +159,20 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(final ConnectionSettings connectionSettings, @Nullable AuthenticationInfo temporaryAuthenticationInfo, final boolean autoCommit, @Nullable final ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
+    public static Connection connect(
+            ConnectionSettings connectionSettings,
+            @NotNull ConnectionType connectionType,
+            @Nullable ConnectionStatus connectionStatus,
+            @Nullable AuthenticationInfo temporaryAuthenticationInfo,
+            boolean autoCommit,
+            @Nullable DatabaseAttachmentHandler attachmentHandler) throws SQLException {
         ConnectTimeoutCall connectCall = new ConnectTimeoutCall();
         connectCall.connectionType = connectionType;
         connectCall.temporaryAuthenticationInfo = temporaryAuthenticationInfo;
         connectCall.connectionSettings = connectionSettings;
         connectCall.connectionStatus = connectionStatus;
         connectCall.autoCommit = autoCommit;
+        connectCall.databaseAttachmentHandler = attachmentHandler;
         Connection connection = connectCall.start();
 
         if (connectCall.exception != null) {
@@ -166,6 +191,7 @@ public class ConnectionUtil {
         private AuthenticationInfo temporaryAuthenticationInfo;
         private ConnectionSettings connectionSettings;
         private ConnectionStatus connectionStatus;
+        private DatabaseAttachmentHandler databaseAttachmentHandler;
         private boolean autoCommit;
 
         private SQLException exception;
@@ -219,11 +245,26 @@ public class ConnectionUtil {
                 if (connection == null) {
                     throw new SQLException("Driver refused to create connection for this configuration. No failure information provided.");
                 }
-                connection.setAutoCommit(autoCommit);
+                ConnectionUtil.setAutoCommit(connection, autoCommit);
                 if (connectionStatus != null) {
                     connectionStatus.setStatusMessage(null);
                     connectionStatus.setConnected(true);
                     connectionStatus.setValid(true);
+                }
+
+                if (databaseAttachmentHandler != null) {
+                    List<DatabaseFile> attachedDatabaseFiles = databaseSettings.getDatabaseInfo().getFiles().getSecondaryFiles();
+                    for (DatabaseFile databaseFile : attachedDatabaseFiles) {
+                        String path = databaseFile.getPath();
+                        try {
+                            databaseAttachmentHandler.attachDatabase(connection, path, databaseFile.getSchema());
+                        } catch (Exception e) {
+                            NotificationUtil.sendErrorNotification(
+                                    connectionSettings.getProject(),
+                                    "Database Attachment Failure",
+                                    "Unable to attach database file " + path + ". Cause: " + e.getMessage());
+                        }
+                    }
                 }
 
                 DatabaseType databaseType = getDatabaseType(connection);
@@ -334,7 +375,9 @@ public class ConnectionUtil {
 
     public static void setAutocommit(Connection connection, boolean autoCommit) {
         try {
-            if (connection != null && !connection.isClosed()) connection.setAutoCommit(autoCommit);
+            if (connection != null && !connection.isClosed()) {
+                ConnectionUtil.setAutoCommit(connection, autoCommit);
+            }
         } catch (SQLRecoverableException e){
             // ignore
         } catch (SQLException e) {

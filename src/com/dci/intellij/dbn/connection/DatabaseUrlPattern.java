@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.connection;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public enum DatabaseUrlPattern {
 
@@ -40,7 +40,7 @@ public enum DatabaseUrlPattern {
                 databaseInfo.getHost(),
                 databaseInfo.getPort(),
                 databaseInfo.getDatabase(),
-                databaseInfo.getFile());
+                databaseInfo.getMainFile());
     }
 
     public String getUrl(String host, String port, String database, String file) {

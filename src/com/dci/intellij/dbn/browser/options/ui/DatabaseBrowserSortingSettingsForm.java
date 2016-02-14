@@ -1,5 +1,19 @@
 package com.dci.intellij.dbn.browser.options.ui;
 
+import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
+import com.dci.intellij.dbn.object.common.sorting.SortingType;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBoxTableRenderer;
+import com.intellij.ui.ColoredTableCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.components.JBScrollPane;
+
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -11,20 +25,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
-import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
-import com.dci.intellij.dbn.object.common.sorting.SortingType;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBoxTableRenderer;
-import com.intellij.ui.ColoredTableCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.components.JBScrollPane;
 
 public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<DatabaseBrowserSortingSettings> {
     private JPanel mainPanel;
@@ -58,7 +58,7 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
         return mainPanel;
     }
 
-    public class SortingTypeTable extends DBNTable {
+    public class SortingTypeTable extends DBNEditableTable<SortingTypeTableModel> {
 
         public SortingTypeTable(Project project, List<DBObjectComparator> comparators) {
             super(project, new SortingTypeTableModel(comparators), true);
@@ -75,6 +75,7 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
                     } else {
                         append("");
                     }
+                    setBorder(SELECTION_BORDER);
                 }
             });
 
@@ -83,15 +84,16 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
                 protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
                     SortingType sortingType = (SortingType) value;
                     append(sortingType.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                    setBorder(SELECTION_BORDER);
                 }
             });
 
-            setDefaultEditor(SortingType.class, new ComboBoxTableRenderer<SortingType>(SortingType.values()));
+            setDefaultEditor(SortingType.class, new ComboBoxTableRenderer<SortingType>(SortingType.values()){});
 
             getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent e) {
                     if (!e.getValueIsAdjusting()) {
-                        editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
+                        //editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
                     }
                 }
             });

@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.common.options.ui;
 
+import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.ProjectSupplier;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
+import com.intellij.ui.DocumentAdapter;
+
 import javax.swing.AbstractButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -15,15 +26,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
-import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
-import com.intellij.ui.DocumentAdapter;
-
 public abstract class ConfigurationEditorForm<E extends Configuration> extends DBNFormImpl<ConfigurationEditorForm> {
     public static final String DBN_REGISTERED = "DBN_REGISTERED";
     private ItemListener itemListener;
@@ -33,8 +35,16 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
     private E configuration;
 
     protected ConfigurationEditorForm(E configuration) {
-        super((Project) null);
+        super(getProject(configuration));
         this.configuration = configuration;
+    }
+
+    protected static Project getProject(Configuration configuration) {
+        if (configuration instanceof ProjectSupplier) {
+            ProjectSupplier projectSupplier = (ProjectSupplier) configuration;
+            return projectSupplier.getProject();
+        }
+        return null;
     }
 
     public final E getConfiguration() {
@@ -96,7 +106,9 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
                 comboBox.addListener(new ValueSelectorListener() {
                     @Override
                     public void selectionChanged(Object oldValue, Object newValue) {
-                        getConfiguration().setModified(true);
+                        if (!CommonUtil.safeEqual(oldValue, newValue)) {
+                            getConfiguration().setModified(true);
+                        }
                     }
                 });
             }
