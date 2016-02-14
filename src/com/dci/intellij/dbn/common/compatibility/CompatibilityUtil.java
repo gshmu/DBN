@@ -11,6 +11,7 @@ import com.intellij.psi.impl.PsiDocumentManagerBase;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
@@ -54,7 +55,7 @@ public class CompatibilityUtil {
         }
     }
 
-    public static void cachePsi(@NotNull Document document, @NotNull PsiFile file) {
+    public static void cachePsi(@NotNull Document document, @Nullable PsiFile file) {
         PsiDocumentManagerBase.cachePsi(document, file);
     }
 }
