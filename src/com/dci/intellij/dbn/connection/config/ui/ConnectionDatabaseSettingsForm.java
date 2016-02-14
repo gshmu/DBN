@@ -21,6 +21,8 @@ import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFilesBundle;
+import com.dci.intellij.dbn.connection.config.file.ui.DatabaseFileSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
@@ -57,6 +59,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     private JPanel databaseInfoPanel;
     private JPanel urlPanel;
     private JPanel filePanel;
+    private JPanel attachedDatabasesPanel;
 
     private ConnectionDriverSettingsForm driverSettingsForm;
     private ConnectionAuthenticationSettingsForm authenticationSettingsForm;
@@ -134,6 +137,9 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
             urlTypeComboBox.setSelectedValue(urlTypes[0]);
             urlTypeComboBox.setVisible(urlTypes.length > 1);
         }
+
+        DatabaseFileSettingsForm fileListSettingsForm = new DatabaseFileSettingsForm(new DatabaseFilesBundle());
+        attachedDatabasesPanel.add(fileListSettingsForm.getComponent(), BorderLayout.CENTER);
 
         authenticationSettingsForm = new ConnectionAuthenticationSettingsForm(this);
         //DBNCollapsiblePanel<ConnectionDatabaseSettingsForm> authenticationSettingsPanel = new DBNCollapsiblePanel<ConnectionDatabaseSettingsForm>(this, authenticationSettingsForm.getComponent(), "Authentication", true);
