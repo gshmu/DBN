@@ -295,7 +295,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                 !CommonUtil.safeEqual(databaseInfo.getPort(), portTextField.getText()) ||
                 !CommonUtil.safeEqual(databaseInfo.getDatabase(), databaseTextField.getText()) ||
                 !CommonUtil.safeEqual(databaseInfo.getUrlType(), urlTypeComboBox.getSelectedValue()) ||
-                !CommonUtil.safeEqual(databaseInfo.getMainFile(), databaseFileSettingsForm.getMainFilePath()) ||
+                !CommonUtil.safeEqual(databaseInfo.getFiles(), databaseFileSettingsForm.getDatabaseFiles()) ||
                 !CommonUtil.safeEqual(configuration.getAuthenticationInfo().getUser(), authenticationSettingsForm.getUserTextField().getText());
 
 

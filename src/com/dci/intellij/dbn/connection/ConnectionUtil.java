@@ -109,6 +109,14 @@ public class ConnectionUtil {
         }
     }
 
+    public static void setAutoCommit(Connection connection, boolean autoCommit) throws SQLException {
+        try {
+            connection.setAutoCommit(autoCommit);
+        } catch (SQLException e) {
+            connection.setAutoCommit(autoCommit);
+        }
+    }
+
     public static Connection connect(ConnectionHandler connectionHandler, ConnectionType connectionType) throws SQLException {
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
@@ -237,7 +245,7 @@ public class ConnectionUtil {
                 if (connection == null) {
                     throw new SQLException("Driver refused to create connection for this configuration. No failure information provided.");
                 }
-                connection.setAutoCommit(autoCommit);
+                ConnectionUtil.setAutoCommit(connection, autoCommit);
                 if (connectionStatus != null) {
                     connectionStatus.setStatusMessage(null);
                     connectionStatus.setConnected(true);
@@ -367,7 +375,9 @@ public class ConnectionUtil {
 
     public static void setAutocommit(Connection connection, boolean autoCommit) {
         try {
-            if (connection != null && !connection.isClosed()) connection.setAutoCommit(autoCommit);
+            if (connection != null && !connection.isClosed()) {
+                ConnectionUtil.setAutoCommit(connection, autoCommit);
+            }
         } catch (SQLRecoverableException e){
             // ignore
         } catch (SQLException e) {

@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CopyOnWriteArrayList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -21,6 +11,16 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConnectionPool implements Disposable {
 
@@ -140,7 +140,7 @@ public class ConnectionPool implements Disposable {
         String connectionName = connectionHandler.getName();
         LOGGER.debug("[DBN-INFO] Attempt to create new pool connection for '" + connectionName + "'");
         Connection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.POOL);
-        connection.setAutoCommit(true);
+        ConnectionUtil.setAutoCommit(connection, true);
         connectionStatus.setConnected(true);
         connectionStatus.setValid(true);
 
@@ -326,7 +326,7 @@ public class ConnectionPool implements Disposable {
         }
 
         public void setAutoCommit(boolean autoCommit) throws SQLException {
-            connection.setAutoCommit(autoCommit);
+            ConnectionUtil.setAutoCommit(connection, autoCommit);
         }
 
         public boolean isClosed() throws SQLException {

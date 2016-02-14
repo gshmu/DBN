@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.database;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 
 public class DatabaseInfo implements Cloneable{
@@ -87,6 +88,21 @@ public class DatabaseInfo implements Cloneable{
 
     public String getMainFile() {
         return files == null ? null : files.getMainFile().getPath();
+    }
+
+    public String getFilesForHash() {
+        if (files != null) {
+            StringBuilder builder = new StringBuilder();
+            for (DatabaseFile databaseFile : files.getFiles()) {
+                if (builder.length() > 0) {
+                    builder.append("#");
+                }
+                builder.append(databaseFile.getPath()).append("@").append(databaseFile.getSchema());
+            }
+            return builder.toString();
+
+        }
+        return null;
     }
 
     public void setMainFile(String mainFile) {

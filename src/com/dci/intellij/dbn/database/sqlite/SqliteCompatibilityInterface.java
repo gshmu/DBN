@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database.sqlite;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.DatabaseAttachmentHandler;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -81,14 +82,17 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
             @Override
             public void attachDatabase(Connection connection, String filePath, String schemaName) throws SQLException {
                 boolean autoCommit = connection.getAutoCommit();
+                ConnectionUtil.setAutoCommit(connection, false);
                 connection.setAutoCommit(false);
                 try {
                     connection.rollback();
                     Statement statement = connection.createStatement();
-                    statement.execute("end transaction");
+                    try {
+                        statement.execute("end transaction");
+                    } catch (SQLException ignore) {}
                     statement.executeUpdate("attach database '" + filePath + "' as " + schemaName);
                 } finally {
-                    connection.setAutoCommit(autoCommit);
+                    ConnectionUtil.setAutoCommit(connection, autoCommit);
                 }
             }
         };
