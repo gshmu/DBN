@@ -6,16 +6,10 @@ import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.common.ui.table.IndexTableGutter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.ColoredTableCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.ui.UIUtil;
 
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -48,26 +42,6 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
                 }
             });
         }
-
-        setDefaultRenderer(String.class, new ColoredTableCellRenderer() {
-            @Override
-            protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
-                acquireState(table, false, false, row, column);
-                Color background = table.getBackground();
-                Color foreground = table.getForeground();
-                SimpleTextAttributes attributes = SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES;
-                if (selected && !table.isEditing()) {
-                    background = UIUtil.getListSelectionBackground();
-                    foreground = UIUtil.getListSelectionForeground();
-                    attributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
-
-                }
-                setBorder(new LineBorder(background, 2));
-                setBackground(background);
-                setForeground(foreground);
-                append(value == null ? "" : (String) value, attributes);
-            }
-        });
 
         addKeyListener(keyListener);
     }

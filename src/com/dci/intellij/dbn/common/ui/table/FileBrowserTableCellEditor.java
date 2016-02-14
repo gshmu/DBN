@@ -68,6 +68,8 @@ public class FileBrowserTableCellEditor extends AbstractCellEditor implements Ta
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         textField.setText((String) value);
+        textField.selectAll();
+        textField.requestFocus();
         return mainPanel;
     }
 
