@@ -23,7 +23,7 @@ public class DatabaseFileSettingsForm extends DBNFormImpl<ConnectionDatabaseSett
 
     public DatabaseFileSettingsForm(ConnectionDatabaseSettingsForm parent, DatabaseFiles databaseFiles) {
         super(parent);
-        table = new DatabaseFilesTable(databaseFiles);
+        table = new DatabaseFilesTable(null, databaseFiles);
         Disposer.register(this, table);
 
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(table);
