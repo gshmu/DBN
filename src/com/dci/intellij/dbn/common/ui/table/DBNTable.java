@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.ui.table;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -42,7 +43,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     private static final int MIN_COLUMN_WIDTH = 10;
     public static final Color GRID_COLOR = new JBColor(new Color(0xE6E6E6), Color.DARK_GRAY);
     protected DBNTableGutter tableGutter;
-    private Project project;
+    private ProjectRef projectRef;
     private double scrollDistance;
     private JBScrollPane scrollPane;
     private Timer scrollTimer;
@@ -59,7 +60,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     }
     public DBNTable(Project project, T tableModel, boolean showHeader) {
         super(tableModel);
-        this.project = project;
+        projectRef = new ProjectRef(project);
         setGridColor(GRID_COLOR);
         Font font = getFont();//UIUtil.getListFont();
         setFont(font);
@@ -137,7 +138,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     }
 
     public Project getProject() {
-        return project;
+        return projectRef.get();
     }
 
     public Object getValueAtMouseLocation() {
@@ -304,7 +305,6 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            project = null;
             GUIUtil.removeListeners(this);
             listenerList = new EventListenerList();
             columnModel = new DefaultTableColumnModel();

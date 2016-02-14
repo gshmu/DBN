@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.common.ui.table;
 
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.intellij.openapi.project.Project;
+import com.intellij.ui.TableUtil;
+import com.intellij.util.ui.UIUtil;
+
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
@@ -13,11 +18,6 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.intellij.openapi.project.Project;
-import com.intellij.ui.TableUtil;
-import com.intellij.util.ui.UIUtil;
-
 public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableWithGutter<T> {
 
     public DBNEditableTable(Project project, T model, boolean showHeader) {
@@ -25,6 +25,7 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         getSelectionModel().addListSelectionListener(selectionListener);
         setSelectionBackground(UIUtil.getTableBackground());
+        setSelectionForeground(UIUtil.getTableForeground());
         setCellSelectionEnabled(true);
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     }
@@ -69,7 +70,7 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
             editCellAt(selectedRow, selectedColumn);
         }
     }
-    
+
     @Override
     public void editingStopped(ChangeEvent e) {
         super.editingStopped(e);
@@ -78,17 +79,21 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
     }
 
     public Component prepareEditor(TableCellEditor editor, int rowIndex, int columnIndex) {
-        final JTextField textField = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
-        textField.setBorder(new EmptyBorder(0,3,0,0));
+        final Component component = super.prepareEditor(editor, rowIndex, columnIndex);
+        if (component instanceof JTextField) {
+            final JTextField textField = (JTextField) component;
+            textField.setBorder(new EmptyBorder(0,3,0,0));
 
-        selectCell(rowIndex, columnIndex);
-        new SimpleLaterInvocator() {
-            protected void execute() {
-                textField.grabFocus();
-                textField.selectAll();
-            }
-        }.start();
-        return textField;
+            //selectCell(rowIndex, columnIndex);
+
+            new SimpleLaterInvocator() {
+                protected void execute() {
+                    component.requestFocus();
+                    textField.selectAll();
+                }
+            }.start();
+        }
+        return component;
     }
 
     public void insertRow() {

@@ -8,11 +8,11 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
 import java.awt.Color;
@@ -80,7 +80,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
     @Override
     public Component prepareEditor(final TableCellEditor editor, int rowIndex, int columnIndex) {
         JTextField component = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
-        component.setBorder(new CustomLineBorder(component.getBackground(), 0, 3, 0, 0));
+        component.setBorder(new EmptyBorder(0, 3, 0, 0));
         component.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {

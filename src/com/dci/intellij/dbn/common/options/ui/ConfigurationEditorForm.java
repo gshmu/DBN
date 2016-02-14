@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.ProjectSupplier;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
@@ -34,8 +35,16 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
     private E configuration;
 
     protected ConfigurationEditorForm(E configuration) {
-        super((Project) null);
+        super(getProject(configuration));
         this.configuration = configuration;
+    }
+
+    protected static Project getProject(Configuration configuration) {
+        if (configuration instanceof ProjectSupplier) {
+            ProjectSupplier projectSupplier = (ProjectSupplier) configuration;
+            return projectSupplier.getProject();
+        }
+        return null;
     }
 
     public final E getConfiguration() {
