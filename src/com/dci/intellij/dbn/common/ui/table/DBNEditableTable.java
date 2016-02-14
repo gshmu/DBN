@@ -2,12 +2,16 @@ package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.ColoredTableCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.TableUtil;
 import com.intellij.util.ui.UIUtil;
 
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -28,6 +32,26 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
         setSelectionForeground(UIUtil.getTableForeground());
         setCellSelectionEnabled(true);
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+
+        setDefaultRenderer(String.class, new ColoredTableCellRenderer() {
+            @Override
+            protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+                acquireState(table, false, false, row, column);
+                Color background = table.getBackground();
+                Color foreground = table.getForeground();
+                SimpleTextAttributes attributes = SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES;
+                if (selected && !table.isEditing()) {
+                    background = UIUtil.getListSelectionBackground();
+                    foreground = UIUtil.getListSelectionForeground();
+                    attributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
+
+                }
+                setBorder(new LineBorder(background, 2));
+                setBackground(background);
+                setForeground(foreground);
+                append(value == null ? "" : (String) value, attributes);
+            }
+        });
     }
 
     @Override
@@ -67,7 +91,10 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
             int[] selectedColumns = getSelectedColumns();
             int selectedColumn = selectedColumns.length > 0 ? selectedColumns[0] : 0;
 
-            editCellAt(selectedRow, selectedColumn);
+            TableCellEditor cellEditor = getCellEditor();
+            if (cellEditor == null) {
+                editCellAt(selectedRow, selectedColumn);
+            }
         }
     }
 
