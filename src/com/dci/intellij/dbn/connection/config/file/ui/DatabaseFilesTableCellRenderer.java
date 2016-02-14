@@ -5,19 +5,13 @@ import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.JTable;
-import java.io.File;
 
 public class DatabaseFilesTableCellRenderer extends ColoredTableCellRenderer{
     @Override
     protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
-        if (value instanceof File) {
-            File file = (File) value;
-            append(file.getPath(), file.exists() ? SimpleTextAttributes.REGULAR_ATTRIBUTES : SimpleTextAttributes.ERROR_ATTRIBUTES);
-        } else {
-            String stringValue = (String) value;
-            if (StringUtil.isNotEmpty(stringValue)) {
-                append(stringValue, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            }
+        String stringValue = (String) value;
+        if (StringUtil.isNotEmpty(stringValue)) {
+            append(stringValue, SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
     }
 }

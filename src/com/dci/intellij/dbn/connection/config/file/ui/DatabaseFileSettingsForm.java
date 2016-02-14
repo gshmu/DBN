@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.connection.config.file.ui;
 
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFilesBundle;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.AnActionButtonUpdater;
@@ -13,79 +15,96 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-public class DatabaseFileSettingsForm extends ConfigurationEditorForm<DatabaseFilesBundle> {
+public class DatabaseFileSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm> {
     private JPanel mainPanel;
-    private DatabaseFilesTable databaseFilesTable;
+    private DatabaseFilesTable table;
+    private DatabaseFiles databaseFiles;
 
-    public DatabaseFileSettingsForm(DatabaseFilesBundle filesBundle) {
-        super(filesBundle);
-        databaseFilesTable = new DatabaseFilesTable(filesBundle);
+    public DatabaseFileSettingsForm(ConnectionDatabaseSettingsForm parent, DatabaseFiles databaseFiles) {
+        super(parent);
+        table = new DatabaseFilesTable(databaseFiles);
+        Disposer.register(this, table);
 
-        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(databaseFilesTable);
+        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(table);
         decorator.setAddAction(new AnActionButtonRunnable() {
             @Override
             public void run(AnActionButton anActionButton) {
-                databaseFilesTable.insertRow();
+                table.insertRow();
             }
         });
         decorator.setRemoveAction(new AnActionButtonRunnable() {
             @Override
             public void run(AnActionButton anActionButton) {
-                databaseFilesTable.removeRow();
+                table.removeRow();
             }
         });
         decorator.setRemoveActionUpdater(new AnActionButtonUpdater() {
             @Override
             public boolean isEnabled(AnActionEvent e) {
-                return databaseFilesTable.getSelectedRow() != 0;
+                return table.getSelectedRow() != 0;
             }
         });
         decorator.setMoveUpAction(new AnActionButtonRunnable() {
             @Override
             public void run(AnActionButton anActionButton) {
-                databaseFilesTable.moveRowUp();
+                table.moveRowUp();
             }
         });
 
         decorator.setMoveUpActionUpdater(new AnActionButtonUpdater() {
             @Override
             public boolean isEnabled(AnActionEvent e) {
-                return databaseFilesTable.getSelectedRow() > 1;
+                return table.getSelectedRow() > 1;
             }
         });
         decorator.setMoveDownAction(new AnActionButtonRunnable() {
             @Override
             public void run(AnActionButton anActionButton) {
-                databaseFilesTable.moveRowDown();
+                table.moveRowDown();
             }
         });
         decorator.setMoveDownActionUpdater(new AnActionButtonUpdater() {
             @Override
             public boolean isEnabled(AnActionEvent e) {
-                int selectedRow = databaseFilesTable.getSelectedRow();
-                return selectedRow != 0 && selectedRow < databaseFilesTable.getModel().getRowCount() -1;
+                int selectedRow = table.getSelectedRow();
+                return selectedRow != 0 && selectedRow < table.getModel().getRowCount() -1;
             }
         });
         decorator.setPreferredSize(new Dimension(-1, 300));
         JPanel panel = decorator.createPanel();
         mainPanel.add(panel, BorderLayout.CENTER);
-        databaseFilesTable.getParent().setBackground(databaseFilesTable.getBackground());
-        registerComponents(mainPanel);
+        table.getParent().setBackground(table.getBackground());
     }
     
     public JPanel getComponent() {
         return mainPanel;
     }
-    
-    public void applyFormChanges() throws ConfigurationException {
-        DatabaseFilesBundle settings = getConfiguration();
-        DatabaseFilesTableModel model = databaseFilesTable.getModel();
-        model.validate();
-        settings.setFiles(model.getDatabaseFiles().getFiles());
+
+    public DatabaseFilesTable getTable() {
+        return table;
     }
 
-    public void resetFormChanges() {
-        DatabaseFilesBundle settings = getConfiguration();
-        databaseFilesTable.getModel().setDatabaseFiles(new DatabaseFilesBundle(settings.getFiles()));
+    @Override
+    public void dispose() {
+        super.dispose();
+    }
+
+    public DatabaseFiles getDatabaseFiles() {
+        return table.getModel().getDatabaseFiles();
+    }
+
+    public String getMainFilePath() {
+        return getMainFile().getPath();
+    }
+    public void setMainFilePath(String mainFile) {
+        getMainFile().setPath(mainFile);
+    }
+
+    private DatabaseFile getMainFile() {
+        return getDatabaseFiles().getMainFile();
+    }
+
+    public void setDatabaseFiles(DatabaseFiles databaseFiles) {
+        this.databaseFiles = databaseFiles;
     }
 }

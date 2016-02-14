@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.database;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 
 public class DatabaseInfo implements Cloneable{
     public interface Default {
@@ -16,8 +17,8 @@ public class DatabaseInfo implements Cloneable{
     private String host;
     private String port;
     private String database;
-    private String file;
     private String url;
+    private DatabaseFiles files;
     private DatabaseUrlType urlType = DatabaseUrlType.DATABASE;
 
     public DatabaseInfo() {
@@ -31,12 +32,12 @@ public class DatabaseInfo implements Cloneable{
     }
 
     public DatabaseInfo(String file, DatabaseUrlType urlType) {
-        this.file = file;
+        this.files = new DatabaseFiles(file);
         this.urlType = urlType;
     }
 
     public boolean isEmpty() {
-        return StringUtil.isEmpty(host) && StringUtil.isEmpty(port) && StringUtil.isEmpty(database) && StringUtil.isEmpty(file);
+        return StringUtil.isEmpty(host) && StringUtil.isEmpty(port) && StringUtil.isEmpty(database) && (files == null || StringUtil.isEmpty(files.getMainFile().getPath()));
     }
 
     public void setUrl(String url) {
@@ -71,13 +72,6 @@ public class DatabaseInfo implements Cloneable{
         this.database = database;
     }
 
-    public String getFile() {
-        return file;
-    }
-
-    public void setFile(String file) {
-        this.file = file;
-    }
 
     public DatabaseUrlType getUrlType() {
         return urlType;
@@ -85,6 +79,26 @@ public class DatabaseInfo implements Cloneable{
 
     public void setUrlType(DatabaseUrlType urlType) {
         this.urlType = urlType;
+    }
+
+    public DatabaseFiles getFiles() {
+        return files;
+    }
+
+    public String getMainFile() {
+        return files == null ? null : files.getMainFile().getPath();
+    }
+
+    public void setMainFile(String mainFile) {
+        if (files == null) {
+            files = new DatabaseFiles(mainFile);
+        } else {
+            files.getMainFile().setPath(mainFile);
+        }
+    }
+
+    public void setFiles(DatabaseFiles files) {
+        this.files = files;
     }
 
     @Override

@@ -1,32 +1,35 @@
 package com.dci.intellij.dbn.connection.config.file;
 
-import java.io.File;
-
-public class DatabaseFile {
-    private File file;
-    private String databaseName;
+public class DatabaseFile implements com.dci.intellij.dbn.common.util.Cloneable<DatabaseFile>{
+    private String path;
+    private String schema;
 
     public DatabaseFile() {
     }
 
-    public DatabaseFile(File file, String databaseName) {
-        this.file = file;
-        this.databaseName = databaseName;
+    public DatabaseFile(String path, String schema) {
+        this.path = path;
+        this.schema = schema;
     }
 
-    public File getFile() {
-        return file;
+    public String getPath() {
+        return path;
     }
 
-    public void setFile(File file) {
-        this.file = file;
+    public void setPath(String path) {
+        this.path = path;
     }
 
-    public String getDatabaseName() {
-        return databaseName;
+    public String getSchema() {
+        return schema;
     }
 
-    public void setDatabaseName(String databaseName) {
-        this.databaseName = databaseName;
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
+    @Override
+    public DatabaseFile clone() {
+        return new DatabaseFile(path, schema);
     }
 }
