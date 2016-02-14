@@ -89,4 +89,20 @@ public class DatabaseFiles extends SettingsUtil implements PersistentConfigurati
         }
         return databaseFiles;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DatabaseFiles that = (DatabaseFiles) o;
+
+        return files.equals(that.files);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return files.hashCode();
+    }
 }

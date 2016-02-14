@@ -203,7 +203,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
                 databaseInfo.getHost() +
                 databaseInfo.getPort() +
                 databaseInfo.getDatabase() +
-                databaseInfo.getMainFile() +
+                databaseInfo.getFilesForHash() +
                 databaseInfo.getUrl() +
                 authenticationInfo.getUser() +
                 authenticationInfo.getPassword() +

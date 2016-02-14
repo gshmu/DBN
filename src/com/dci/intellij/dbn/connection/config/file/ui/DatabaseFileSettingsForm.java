@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.config.file.ui;
 
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
@@ -90,6 +91,7 @@ public class DatabaseFileSettingsForm extends DBNFormImpl<ConnectionDatabaseSett
     }
 
     public DatabaseFiles getDatabaseFiles() {
+        GUIUtil.stopTableCellEditing(table);
         return table.getModel().getDatabaseFiles();
     }
 
