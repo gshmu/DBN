@@ -177,7 +177,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     AuthenticationInfo authenticationInfo = getOption();
                     try {
-                        Connection connection = ConnectionUtil.connect(connectionSettings, authenticationInfo, false, null, ConnectionType.TEST);
+                        Connection connection = ConnectionUtil.connect(connectionSettings, ConnectionType.TEST, null, authenticationInfo, false, null);
                         ConnectionUtil.closeConnection(connection);
                         databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
                         if (showMessageDialog) {
@@ -225,7 +225,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                         protected void execute(@NotNull ProgressIndicator progressIndicator) {
                             AuthenticationInfo authenticationInfo = getOption();
                             try {
-                                Connection connection = ConnectionUtil.connect(connectionSettings, authenticationInfo, false, null, ConnectionType.TEST);
+                                Connection connection = ConnectionUtil.connect(connectionSettings, ConnectionType.TEST, null, authenticationInfo, false, null);
                                 ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
                                 ConnectionUtil.closeConnection(connection);
                                 showConnectionInfoDialog(connectionInfo, connectionName, environmentType);
