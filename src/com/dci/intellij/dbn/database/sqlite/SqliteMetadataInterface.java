@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.database.sqlite;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteColumnConstraintsResultSet;
@@ -12,14 +20,6 @@ import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteSchemasResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteTriggerSourceResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteTriggersResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteViewSourceResultSet;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
@@ -227,7 +227,7 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @NotNull
     SqliteDatasetNamesResultSet getDatasetNames(final String ownerName, final Connection connection) throws SQLException {
-        return new SqliteDatasetNamesResultSet() {
+        return new SqliteDatasetNamesResultSet(ownerName) {
             @Override
             protected ResultSet loadTableNames() throws SQLException {
                 return executeQuery(connection, "dataset-names", ownerName);

@@ -64,7 +64,7 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
             protected RawForeignKeyInfo load() throws SQLException {
                 return new RawForeignKeyInfo(loadForeignKeyInfo(datasetName));
             }
-        }.get(datasetName + ".FOREIGN_KEY_INFO");
+        }.get(ownerName + "." + datasetName + ".FOREIGN_KEY_INFO");
     }
 
     private RawTableInfo getTableInfo(final String datasetName) throws SQLException {
@@ -73,7 +73,7 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
             protected RawTableInfo load() throws SQLException {
                 return new RawTableInfo(loadTableInfo(datasetName));
             }
-        }.get(datasetName + ".TABLE_INFO");
+        }.get(ownerName + "." + datasetName + ".TABLE_INFO");
     }
 
     protected abstract ResultSet loadTableInfo(String datasetName) throws SQLException;

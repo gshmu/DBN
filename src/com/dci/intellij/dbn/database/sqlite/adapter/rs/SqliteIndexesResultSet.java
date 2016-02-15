@@ -45,7 +45,7 @@ public abstract class SqliteIndexesResultSet extends SqliteDatasetInfoResultSetS
             protected RawIndexInfo load() throws SQLException {
                 return new RawIndexInfo(loadIndexInfo(tableName));
             }
-        }.get(tableName + ".INDEX_INFO");
+        }.get(ownerName + "." + tableName + ".INDEX_INFO");
     }
 
     protected abstract ResultSet loadIndexInfo(String tableName) throws SQLException;
