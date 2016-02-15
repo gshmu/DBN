@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.common.cache.Cache;
-import com.dci.intellij.dbn.common.cache.CacheAdapter;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-import org.jetbrains.annotations.NotNull;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,7 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.cache.Cache;
+import com.dci.intellij.dbn.common.cache.CacheAdapter;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.*;
 
 public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetElement<T>> extends SqliteDatasetInfoResultSetStub<T> {
@@ -35,7 +34,7 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
     protected abstract ResultSet loadIndexDetailInfo(String ownerName, String indexName) throws SQLException;
 
     protected Map<String, List<SqliteConstraintsLoader.ConstraintColumnInfo>> loadConstraintInfo(final String ownerName, String datasetName) throws SQLException {
-        SqliteConstraintsLoader loader = new SqliteConstraintsLoader(getCache()) {
+        SqliteConstraintsLoader loader = new SqliteConstraintsLoader(ownerName, getCache()) {
             @Override
             public ResultSet loadTableInfo(String datasetName) throws SQLException {
                 return SqliteConstraintInfoResultSetStub.this.loadTableInfo(ownerName, datasetName);
@@ -62,7 +61,8 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
 
 
     public abstract static class SqliteConstraintsLoader {
-        Cache cache;
+        private Cache cache;
+        private String ownerName;
 
         public enum ConstraintType {
             PK,
@@ -70,7 +70,8 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
             UQ
         }
 
-        public SqliteConstraintsLoader(Cache cache) {
+        public SqliteConstraintsLoader(String ownerName, Cache cache) {
+            this.ownerName = ownerName;
             this.cache = cache;
         }
 
@@ -128,7 +129,7 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
                 protected RawForeignKeyInfo load() throws SQLException {
                     return new RawForeignKeyInfo(loadForeignKeyInfo(datasetName));
                 }
-            }.get(datasetName + ".FOREIGN_KEY_INFO");
+            }.get(ownerName + "." + datasetName + ".FOREIGN_KEY_INFO");
         }
 
         private RawTableInfo getTableInfo(final String datasetName) throws SQLException {
@@ -137,7 +138,7 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
                 protected RawTableInfo load() throws SQLException {
                     return new RawTableInfo(loadTableInfo(datasetName));
                 }
-            }.get(datasetName + ".TABLE_INFO");
+            }.get(ownerName + "." + datasetName + ".TABLE_INFO");
         }
 
         private RawIndexInfo getIndexInfo(final String tableName) throws SQLException {
@@ -146,7 +147,7 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
                 protected RawIndexInfo load() throws SQLException {
                     return new RawIndexInfo(loadIndexInfo(tableName));
                 }
-            }.get(tableName + ".INDEX_INFO");
+            }.get(ownerName + "." + tableName + ".INDEX_INFO");
         }
 
         private RawIndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
@@ -155,7 +156,7 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
                 protected RawIndexDetailInfo load() throws SQLException {
                     return new RawIndexDetailInfo(loadIndexDetailInfo(indexName));
                 }
-            }.get(indexName + ".INDEX_DETAIL_INFO");
+            }.get(ownerName + "." + indexName + ".INDEX_DETAIL_INFO");
         }
 
         @NotNull
