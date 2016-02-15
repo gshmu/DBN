@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
@@ -44,14 +52,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.List;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -479,9 +479,9 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public DatabaseInterfaceProvider getInterfaceProvider() {
-        if (interfaceProvider == null || interfaceProvider.getDatabaseType() != getDatabaseType()) {
+        if (!isValidInterfaceProvider()) {
             synchronized (this) {
-                if (interfaceProvider == null || interfaceProvider.getDatabaseType() != getDatabaseType()) {
+                if (!isValidInterfaceProvider()) {
                     try {
                         interfaceProvider = DatabaseInterfaceProviderFactory.getInterfaceProvider(this);
                     } catch (SQLException e) {
@@ -497,6 +497,10 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
         // do not initialize
         return interfaceProvider == null ? DatabaseInterfaceProviderFactory.GENERIC_INTERFACE_PROVIDER : interfaceProvider;
+    }
+
+    boolean isValidInterfaceProvider() {
+        return interfaceProvider != null && interfaceProvider.getDatabaseType() == getDatabaseType();
     }
 
     @Override
