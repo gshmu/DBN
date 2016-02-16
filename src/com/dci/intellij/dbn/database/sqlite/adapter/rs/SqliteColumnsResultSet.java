@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.common.cache.CacheAdapter;
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.common.cache.CacheAdapter;
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawForeignKeyInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawTableInfo;
 
@@ -65,7 +64,7 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
             protected RawForeignKeyInfo load() throws SQLException {
                 return new RawForeignKeyInfo(loadForeignKeyInfo(datasetName));
             }
-        }.get(datasetName + ".FOREIGN_KEY_INFO");
+        }.get(ownerName + "." + datasetName + ".FOREIGN_KEY_INFO");
     }
 
     private RawTableInfo getTableInfo(final String datasetName) throws SQLException {
@@ -74,7 +73,7 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
             protected RawTableInfo load() throws SQLException {
                 return new RawTableInfo(loadTableInfo(datasetName));
             }
-        }.get(datasetName + ".TABLE_INFO");
+        }.get(ownerName + "." + datasetName + ".TABLE_INFO");
     }
 
     protected abstract ResultSet loadTableInfo(String datasetName) throws SQLException;
@@ -217,6 +216,11 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
         @Override
         public int compareTo(Column column) {
             return (datasetName + "." + columnName).compareTo(column.datasetName + "." + column.columnName);
+        }
+
+        @Override
+        public String toString() {
+            return "[COLUMN] \"" + datasetName + "\".\"" + columnName + "\"";
         }
     }
 }

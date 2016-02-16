@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.common.cache.CacheAdapter;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-import org.jetbrains.annotations.NotNull;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.cache.CacheAdapter;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexDetailInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexInfo;
 
@@ -20,7 +19,6 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.Raw
  */
 
 public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResultSetStub<SqliteColumnIndexesResultSet.IndexColumn> {
-
     public SqliteColumnIndexesResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
         super(ownerName, datasetNames, connection);
     }
@@ -54,7 +52,7 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResu
             protected RawIndexInfo load() throws SQLException {
                 return new RawIndexInfo(loadIndexInfo(tableName));
             }
-        }.get(tableName + ".INDEX_INFO");
+        }.get(ownerName + "." + tableName + ".INDEX_INFO");
     }
 
     private RawIndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
@@ -63,7 +61,7 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResu
             protected RawIndexDetailInfo load() throws SQLException {
                 return new RawIndexDetailInfo(loadIndexDetailInfo(indexName));
             }
-        }.get(indexName + ".INDEX_DETAIL_INFO");
+        }.get(ownerName + "." + indexName + ".INDEX_DETAIL_INFO");
     }
 
 

@@ -13,7 +13,9 @@ import com.dci.intellij.dbn.database.sqlite.adapter.SqliteResultSetAdapter;
  */
 
 public abstract class SqliteDatasetNamesResultSet extends SqliteResultSetAdapter<SqliteDatasetNamesResultSet.Dataset> {
-    public SqliteDatasetNamesResultSet() throws SQLException {
+    protected String ownerName;
+    public SqliteDatasetNamesResultSet(String ownerName) throws SQLException {
+        this.ownerName = ownerName;
         TableNames tableNames = getTableNames();
 
         for (TableNames.Row row : tableNames.getRows()) {
@@ -29,7 +31,7 @@ public abstract class SqliteDatasetNamesResultSet extends SqliteResultSetAdapter
             protected TableNames load() throws SQLException {
                 return new TableNames(loadTableNames());
             }
-        }.get("DATASET_NAMES");
+        }.get(ownerName + "." + "DATASET_NAMES");
     }
 
     protected abstract ResultSet loadTableNames() throws SQLException;
