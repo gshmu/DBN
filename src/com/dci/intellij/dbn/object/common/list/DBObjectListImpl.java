@@ -30,6 +30,7 @@ import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
@@ -230,18 +231,22 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         if (isLoading()) {
             return elements;
         } else {
-            boolean scroll = !isTouched();
-            if (!isLoaded()) {
-                loadInBackground(false);
-                return elements;
-            }
+            try {
+                boolean scroll = !isTouched();
+                if (!isLoaded()) {
+                    loadInBackground(false);
+                    return elements;
+                }
 
-            if (elements.size() > 0 && elements.get(0).isDisposed()) {
-                loadInBackground(false);
-                return elements;
-            }
-            if (scroll) {
-                DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
+                if (elements.size() > 0 && elements.get(0).isDisposed()) {
+                    loadInBackground(false);
+                    return elements;
+                }
+                if (scroll) {
+                    DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
+                }
+            } catch (ProcessCanceledException e) {
+                return Collections.emptyList();
             }
             return elements;
         }

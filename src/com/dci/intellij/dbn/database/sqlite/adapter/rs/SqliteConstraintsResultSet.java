@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-import org.jetbrains.annotations.NotNull;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.*;
 
 /**
@@ -141,6 +140,11 @@ public abstract class SqliteConstraintsResultSet extends SqliteConstraintInfoRes
         @Override
         public int compareTo(@NotNull Constraint constraint) {
             return (datasetName + "." + constraintName).compareTo(constraint.datasetName + "." + constraint.constraintName);
+        }
+
+        @Override
+        public String toString() {
+            return "[CONSTRAINT] \"" + datasetName + "\".\"" + constraintName + "\"";
         }
     }
 }

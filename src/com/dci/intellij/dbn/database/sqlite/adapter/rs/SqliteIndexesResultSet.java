@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.common.cache.CacheAdapter;
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.common.cache.CacheAdapter;
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexInfo;
 
 
@@ -46,7 +45,7 @@ public abstract class SqliteIndexesResultSet extends SqliteDatasetInfoResultSetS
             protected RawIndexInfo load() throws SQLException {
                 return new RawIndexInfo(loadIndexInfo(tableName));
             }
-        }.get(tableName + ".INDEX_INFO");
+        }.get(ownerName + "." + tableName + ".INDEX_INFO");
     }
 
     protected abstract ResultSet loadIndexInfo(String tableName) throws SQLException;
@@ -107,6 +106,11 @@ public abstract class SqliteIndexesResultSet extends SqliteDatasetInfoResultSetS
         @Override
         public int compareTo(Index index) {
             return (tableName + "." + indexName).compareTo(index.tableName + "." + index.indexName);
+        }
+
+        @Override
+        public String toString() {
+            return "[INDEX] \"" + tableName + "\".\"" + indexName + "\"";
         }
     }
 }

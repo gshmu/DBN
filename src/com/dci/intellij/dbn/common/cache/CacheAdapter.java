@@ -12,8 +12,13 @@ public abstract class CacheAdapter<T, E extends Throwable> {
     public final T get(String key) throws E {
         T value = cache.get(key);
         if (value == null) {
-            value = load();
-            cache.set(key, value);
+            synchronized (this) {
+                value = cache.get(key);
+                if (value == null) {
+                    value = load();
+                    cache.set(key, value);
+                }
+            }
         }
         return value;
     }
