@@ -10,7 +10,7 @@ class JiraTicketRequest {
 
         // project
         JsonObject project = new JsonObject();
-        project.addProperty("key", "DBN");
+        project.addProperty("key", "DBNE");
 
         // issue type
         JsonObject issueType = new JsonObject();
