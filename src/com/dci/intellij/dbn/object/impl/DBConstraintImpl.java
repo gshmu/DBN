@@ -264,7 +264,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         return new DBOperationExecutor() {
             public void executeOperation(DBOperationType operationType) throws SQLException, DBOperationNotSupportedException {
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                Connection connection = connectionHandler.getStandaloneConnection(getSchema());
+                Connection connection = connectionHandler.getMainConnection(getSchema());
                 DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
                 if (operationType == DBOperationType.ENABLE) {
                     metadataInterface.enableConstraint(

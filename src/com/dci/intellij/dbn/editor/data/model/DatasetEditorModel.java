@@ -76,7 +76,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         int timeout = settings.getGeneralSettings().getFetchTimeout().value();
         final AtomicReference<Statement> statementRef = new AtomicReference<Statement>();
         final ConnectionHandler connectionHandler = getConnectionHandler();
-        Connection connection = connectionHandler.getStandaloneConnection();
+        Connection connection = connectionHandler.getMainConnection();
 
         loaderCall = new CancellableDatabaseCall(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
             @Override
@@ -143,7 +143,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     private ResultSet loadResultSet(boolean useCurrentFilter, AtomicReference<Statement> statementRef) throws SQLException {
         int timeout = settings.getGeneralSettings().getFetchTimeout().value();
         ConnectionHandler connectionHandler = getConnectionHandler();
-        Connection connection = connectionHandler.getStandaloneConnection();
+        Connection connection = connectionHandler.getMainConnection();
         DBDataset dataset = getDataset();
         Project project = dataset.getProject();
         DatasetFilter filter = DatasetFilterManager.EMPTY_FILTER;

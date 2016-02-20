@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.connection;
 
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -11,16 +21,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConnectionPool implements Disposable {
 
@@ -33,28 +33,30 @@ public class ConnectionPool implements Disposable {
     private ConnectionHandlerRef connectionHandlerRef;
 
     private List<ConnectionWrapper> poolConnections = new CopyOnWriteArrayList<ConnectionWrapper>();
-    private ConnectionWrapper standaloneConnection;
+    private ConnectionWrapper mainConnection;
 
     public ConnectionPool(@NotNull ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = connectionHandler.getRef();
         POOL_CLEANER_TASK.registerConnectionPool(this);
     }
 
-    public Connection getStandaloneConnection(boolean recover) throws SQLException {
+    @Nullable
+    public Connection getMainConnection(boolean forceInit) throws SQLException {
         lastAccessTimestamp = System.currentTimeMillis();
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.setLastUsedConnection(connectionHandler);
 
-        if (standaloneConnection != null && recover && (standaloneConnection.isClosed() || !standaloneConnection.isValid())) {
-            standaloneConnection = null;
-        }
-
-        if (standaloneConnection == null) {
+        if (shouldInitMainConnection(forceInit)) {
             synchronized (this) {
-                if (standaloneConnection == null) {
+                if (shouldInitMainConnection(forceInit)) {
                     try {
+                        if (mainConnection != null) {
+                            mainConnection.closeConnection();
+                            mainConnection = null;
+                        }
+
                         Connection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.MAIN);
-                        standaloneConnection = new ConnectionWrapper(connection);
+                        mainConnection = new ConnectionWrapper(connection);
                         NotificationUtil.sendInfoNotification(
                                 getProject(),
                                 Constants.DBN_TITLE_PREFIX + "Connect",
@@ -67,7 +69,11 @@ public class ConnectionPool implements Disposable {
             }
         }
 
-        return standaloneConnection.getConnection();
+        return mainConnection == null ? null : mainConnection.getConnection();
+    }
+
+    boolean shouldInitMainConnection(boolean forceInit) throws SQLException {
+        return forceInit && (mainConnection == null || mainConnection.isClosed() || !mainConnection.isValid());
     }
 
     public long getLastAccessTimestamp() {
@@ -192,9 +198,9 @@ public class ConnectionPool implements Disposable {
         }
         poolConnections.clear();
 
-        if (standaloneConnection != null) {
-            standaloneConnection.closeConnection();
-            standaloneConnection = null;
+        if (mainConnection != null) {
+            mainConnection.closeConnection();
+            mainConnection = null;
         }
     }
 
@@ -209,13 +215,13 @@ public class ConnectionPool implements Disposable {
         }
         poolConnections.clear();
 
-        if (standaloneConnection != null) {
+        if (mainConnection != null) {
             try {
-                standaloneConnection.getConnection().close();
+                mainConnection.getConnection().close();
             } catch (SQLException e) {
                 exception = e;
             }
-            standaloneConnection = null;
+            mainConnection = null;
         }
         if (exception != null) {
             throw exception;
@@ -223,13 +229,13 @@ public class ConnectionPool implements Disposable {
     }
 
     public int getIdleMinutes() {
-        return standaloneConnection == null ? 0 : standaloneConnection.getIdleMinutes();
+        return mainConnection == null ? 0 : mainConnection.getIdleMinutes();
     }
 
     public void keepAlive(boolean check) {
-        if (standaloneConnection != null) {
-            if (check) standaloneConnection.isValid();
-            standaloneConnection.keepAlive();
+        if (mainConnection != null) {
+            if (check) mainConnection.isValid();
+            mainConnection.keepAlive();
         }
     }
 
@@ -249,8 +255,8 @@ public class ConnectionPool implements Disposable {
     }
 
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-        if (standaloneConnection != null && !standaloneConnection.isClosed()) {
-            standaloneConnection.setAutoCommit(autoCommit);
+        if (mainConnection != null && !mainConnection.isClosed()) {
+            mainConnection.setAutoCommit(autoCommit);
         }
     }
 
