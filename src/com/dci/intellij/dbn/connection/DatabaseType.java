@@ -116,7 +116,7 @@ public enum DatabaseType implements Presentable {
             return DatabaseType.ORACLE;
         } else if (name.contains("MYSQL")) {
             return DatabaseType.MYSQL;
-        } else if (name.contains("POSTGRESQL")) {
+        } else if (name.contains("POSTGRESQL") || name.contains("REDSHIFT")) {
             return DatabaseType.POSTGRES;
         } else if (name.contains("SQLITE")) {
             return DatabaseType.SQLITE;
