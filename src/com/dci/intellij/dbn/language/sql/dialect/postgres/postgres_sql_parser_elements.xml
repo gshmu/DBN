@@ -271,75 +271,82 @@
     </element-def>
 
     <!-- ========= CREATE USER ========= -->
-    <element-def attributes="DATA_DEFINITION, SPECIFIC" description="CREATE SEQUENCE statement" id="create_sequence_statement">
+    <element-def attributes="DATA_DEFINITION, SPECIFIC" description="CREATE USER statement" id="create_user_statement">
         <token type-id="KW_USER" id="000000116" />
         <object-def type="USER" id="000000117" />
-        <sequence optional="true" id="000000118">
-            <token optional="true" type-id="KW_WITH" id="000000119" />
-            <iteration id="000000120">
-                <one-of id="000000121">
-                    <token type-id="KW_SUPERUSER" id="000000122" />
-                    <token type-id="KW_NOSUPERUSER" id="000000123" />
-                    <token type-id="KW_CREATEDB" id="000000124" />
-                    <token type-id="KW_NOCREATEDB" id="000000125" />
-                    <token type-id="KW_CREATEROLE" id="000000126" />
-                    <token type-id="KW_NOCREATEROLE" id="000000127" />
-                    <token type-id="KW_CREATEUSER" id="000000128" />
-                    <token type-id="KW_NOCREATEUSER" id="000000129" />
-                    <token type-id="KW_INHERIT" id="000000130" />
-                    <token type-id="KW_NOINHERIT" id="000000131" />
-                    <token type-id="KW_LOGIN" id="000000132" />
-                    <token type-id="KW_NOLOGIN" id="000000133" />
-                    <token type-id="KW_REPLICATION" id="000000134" />
-                    <token type-id="KW_NOREPLICATION" id="000000135" />
-                    <token type-id="KW_BYPASSRLS" id="000000136" />
-                    <token type-id="KW_NOBYPASSRLS" id="000000137" />
-                    <sequence id="000000138">
-                        <token type-id="KW_CONNECTION" id="000000139" />
-                        <token type-id="KW_LIMIT" id="000000140" />
-                        <element ref-id="integer" />
-                    </sequence>
-                    <sequence id="000000141">
-                        <one-of id="000000142">
-                            <token type-id="KW_ENCRYPTED" id="000000143" />
-                            <token type-id="KW_UNENCRYPTED" id="000000144" />
-                        </one-of>
-                        <token type-id="KW_PASSWORD" id="000000145" />
-                        <token id="000000146" original-name="password" type-id="STRING" />
-                    </sequence>
-                    <sequence id="000000147">
-                        <token type-id="KW_VALID" id="000000148" />
-                        <token type-id="KW_UNTIL" id="000000149" />
-                        <token id="000000150" original-name="timestamp" type-id="STRING" />
-                    </sequence>
-                    <sequence id="000000151">
-                        <token type-id="KW_IN" id="000000152" />
-                        <one-of id="000000153">
-                            <token type-id="KW_ROLE" id="000000154" />
-                            <token type-id="KW_GROUP" id="000000155" />
-                        </one-of>
-                        <iteration separator="CHR_COMMA" id="000000156">
-                            <object-ref type="ROLE" id="000000157" />
-                        </iteration>
-                    </sequence>
-                    <sequence id="000000158">
-                        <one-of id="000000159">
-                            <token type-id="KW_ROLE" id="000000160" />
-                            <token type-id="KW_ADMIN" id="000000161" />
-                            <token type-id="KW_USER" id="000000162" />
-                        </one-of>
-                        <iteration separator="CHR_COMMA" id="000000163">
-                            <object-ref type="ROLE" id="000000164" />
-                        </iteration>
-                    </sequence>
-                    <sequence id="000000165">
-                        <token type-id="KW_SYSID" id="000000166" />
-                        <token original-name="uid" type-id="IDENTIFIER" id="000000167" />
-                    </sequence>
-                </one-of>
-            </iteration>
-        </sequence>
+        <element ref-id="user_role_options_clause" optional="true"/>
+    </element-def>
+    <element-def attributes="CLAUSE" id="user_role_options_clause" description="USER ROLE options clause">
+        <token optional="true" type-id="KW_WITH" id="000000119" />
+        <iteration id="000000120">
+            <one-of id="000000121">
+                <token type-id="KW_SUPERUSER" id="000000122" />
+                <token type-id="KW_NOSUPERUSER" id="000000123" />
+                <token type-id="KW_CREATEDB" id="000000124" />
+                <token type-id="KW_NOCREATEDB" id="000000125" />
+                <token type-id="KW_CREATEROLE" id="000000126" />
+                <token type-id="KW_NOCREATEROLE" id="000000127" />
+                <token type-id="KW_CREATEUSER" id="000000128" />
+                <token type-id="KW_NOCREATEUSER" id="000000129" />
+                <token type-id="KW_INHERIT" id="000000130" />
+                <token type-id="KW_NOINHERIT" id="000000131" />
+                <token type-id="KW_LOGIN" id="000000132" />
+                <token type-id="KW_NOLOGIN" id="000000133" />
+                <token type-id="KW_REPLICATION" id="000000134" />
+                <token type-id="KW_NOREPLICATION" id="000000135" />
+                <token type-id="KW_BYPASSRLS" id="000000136" />
+                <token type-id="KW_NOBYPASSRLS" id="000000137" />
+                <sequence id="000000138">
+                    <token type-id="KW_CONNECTION" id="000000139" />
+                    <token type-id="KW_LIMIT" id="000000140" />
+                    <element ref-id="integer" />
+                </sequence>
+                <sequence id="000000141">
+                    <one-of id="000000142">
+                        <token type-id="KW_ENCRYPTED" id="000000143" />
+                        <token type-id="KW_UNENCRYPTED" id="000000144" />
+                    </one-of>
+                    <token type-id="KW_PASSWORD" id="000000145" />
+                    <token id="000000146" original-name="password" type-id="STRING" />
+                </sequence>
+                <sequence id="000000147">
+                    <token type-id="KW_VALID" id="000000148" />
+                    <token type-id="KW_UNTIL" id="000000149" />
+                    <token id="000000150" original-name="timestamp" type-id="STRING" />
+                </sequence>
+                <sequence id="000000151">
+                    <token type-id="KW_IN" id="000000152" />
+                    <one-of id="000000153">
+                        <token type-id="KW_ROLE" id="000000154" />
+                        <token type-id="KW_GROUP" id="000000155" />
+                    </one-of>
+                    <iteration separator="CHR_COMMA" id="000000156">
+                        <object-ref type="ROLE" id="000000157" />
+                    </iteration>
+                </sequence>
+                <sequence id="000000158">
+                    <one-of id="000000159">
+                        <token type-id="KW_ROLE" id="000000160" />
+                        <token type-id="KW_ADMIN" id="000000161" />
+                        <token type-id="KW_USER" id="000000162" />
+                    </one-of>
+                    <iteration separator="CHR_COMMA" id="000000163">
+                        <object-ref type="ROLE" id="000000164" />
+                    </iteration>
+                </sequence>
+                <sequence id="000000165">
+                    <token type-id="KW_SYSID" id="000000166" />
+                    <token original-name="uid" type-id="IDENTIFIER" id="000000167" />
+                </sequence>
+            </one-of>
+        </iteration>
+    </element-def>
 
+    <!-- ========= CREATE ROLE ========= -->
+    <element-def attributes="DATA_DEFINITION, SPECIFIC" description="CREATE ROLE statement" id="create_role_statement">
+        <token type-id="KW_ROLE" id="000000116" />
+        <object-def type="ROLE" id="000000117" />
+        <element ref-id="user_role_options_clause" optional="true"/>
     </element-def>
 
     <!-- ========= ALTER ========= -->
