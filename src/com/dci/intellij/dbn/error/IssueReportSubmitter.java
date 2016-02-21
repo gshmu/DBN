@@ -118,6 +118,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         String exceptionMessage = event.getMessage();
         if (StringUtil.isNotEmpty(exceptionMessage) && !"null".equals(exceptionMessage)) {
             description.append("\n\n");
+            exceptionMessage = exceptionMessage.replace("{", "\\{").replace("}", "\\}").replace("[", "\\[").replace("]", "\\]");
             description.append(exceptionMessage);
             description.append("\n\n");
         }
