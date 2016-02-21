@@ -1,23 +1,23 @@
 package com.dci.intellij.dbn.connection;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public enum DatabaseUrlPattern {
 
-    ORACLE_SID     ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",         "^(jdbc:oracle:(?:thin|oci):@)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)(?<DATABASE>:[\\-$_a-z0-9]+)$",               DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SID),
-    ORACLE_SERVICE ("jdbc:oracle:thin:@//<HOST>:<PORT>/<DATABASE>",       "^(jdbc:oracle:(?:thin|oci):@\\/\\/)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)(?<DATABASE>\\/[\\-$_a-z0-9]+)$",       DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SERVICE),
-    ORACLE_LDAP    ("jdbc:oracle:thin:@ldap://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@ldap\\/\\/)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)(?<DATABASE>\\/[\\-$_a-z0-9]+)$",   DatabaseInfo.Default.ORACLE,   DatabaseUrlType.LDAP),
-    ORACLE_LDAPS   ("jdbc:oracle:thin:@ldaps://<HOST>:<PORT>/<DATABASE>", "^(jdbc:oracle:(?:thin|oci):@ldaps\\/\\/)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)(?<DATABASE>\\/[\\-$_a-z0-9]+)$",  DatabaseInfo.Default.ORACLE,   DatabaseUrlType.LDAPS),
-    MYSQL          ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",              "^(jdbc:mysql:\\/\\/)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)?(?<DATABASE>\\/[\\-$_a-z0-9]*)?$",                    DatabaseInfo.Default.MYSQL,    DatabaseUrlType.DATABASE),
-    POSTGRES       ("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",         "^(jdbc:postgresql:\\/\\/)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)?(?<DATABASE>\\/[\\-$_a-z0-9]*)?$",               DatabaseInfo.Default.POSTGRES, DatabaseUrlType.DATABASE),
-    SQLITE         ("jdbc:sqlite:<FILE>",                                 "^(jdbc:sqlite:)(?<FILE>([a-zA-Z]:)?(\\\\[a-zA-Z0-9_\\.-]+)+\\\\?)$",                                              DatabaseInfo.Default.SQLITE,   DatabaseUrlType.FILE),
-    UNKNOWN        ("jdbc:unknown://<HOST>:<PORT>/<DATABASE>",            "^(jdbc:unknown:\\/\\/)(?<HOST>[._\\-a-z0-9]+)(?<PORT>:[0-9]+)?(?<DATABASE>\\/[\\-$_a-z0-9]*)?$",                  DatabaseInfo.Default.UNKNOWN,  DatabaseUrlType.DATABASE),
+    ORACLE_SID     ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",         "^(jdbc:oracle:(?:thin|oci):@)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>:[\\-$_a-z0-9]{1,1000})$",               DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SID),
+    ORACLE_SERVICE ("jdbc:oracle:thin:@//<HOST>:<PORT>/<DATABASE>",       "^(jdbc:oracle:(?:thin|oci):@\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>\\/[\\-$_a-z0-9]{1,1000})$",       DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SERVICE),
+    ORACLE_LDAP    ("jdbc:oracle:thin:@ldap://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@ldap\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>\\/[\\-$_a-z0-9]{1,1000})$",   DatabaseInfo.Default.ORACLE,   DatabaseUrlType.LDAP),
+    ORACLE_LDAPS   ("jdbc:oracle:thin:@ldaps://<HOST>:<PORT>/<DATABASE>", "^(jdbc:oracle:(?:thin|oci):@ldaps\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>\\/[\\-$_a-z0-9]{1,1000})$",  DatabaseInfo.Default.ORACLE,   DatabaseUrlType.LDAPS),
+    MYSQL          ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",              "^(jdbc:mysql:\\/\\/)(?<HOST>[._\\-a-z0-9]{1, 1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\\/[\\-$_a-z0-9]{0,1000})?$",                   DatabaseInfo.Default.MYSQL,    DatabaseUrlType.DATABASE),
+    POSTGRES       ("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",         "^(jdbc:postgresql:\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\\/[\\-$_a-z0-9]{0,1000})?$",               DatabaseInfo.Default.POSTGRES, DatabaseUrlType.DATABASE),
+    SQLITE         ("jdbc:sqlite:<FILE>",                                 "^(jdbc:sqlite:)(?<FILE>([a-zA-Z]:)?(\\\\[a-zA-Z0-9_\\.-]{1,2000}){1,2000}\\\\?)$",                                                    DatabaseInfo.Default.SQLITE,   DatabaseUrlType.FILE),
+    UNKNOWN        ("jdbc:unknown://<HOST>:<PORT>/<DATABASE>",            "^(jdbc:unknown:\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\\/[\\-$_a-z0-9]{0,1000})?$",                  DatabaseInfo.Default.UNKNOWN,  DatabaseUrlType.DATABASE),
     ;
 
     private DatabaseUrlType urlType;
