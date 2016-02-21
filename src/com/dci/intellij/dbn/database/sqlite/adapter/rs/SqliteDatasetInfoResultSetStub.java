@@ -25,6 +25,7 @@ public abstract class SqliteDatasetInfoResultSetStub<T extends ResultSetElement>
 
     public SqliteDatasetInfoResultSetStub(String ownerName, String datasetName, Connection connection) throws SQLException {
         this.connection = connection;
+        this.ownerName = ownerName;
         init(ownerName, datasetName);
     }
 
