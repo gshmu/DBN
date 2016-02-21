@@ -127,8 +127,13 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         public void connectionChanged(String connectionId) {
             ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
             if (connectionHandler != null) {
-                connectionHandler.getConnectionPool().closeConnectionsSilently();
-                connectionHandler.getObjectBundle().getObjectListContainer().reload(true);
+                new BackgroundTask(getProject(), "Refreshing database objects", true, true) {
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                        connectionHandler.getConnectionPool().closeConnectionsSilently();
+                        connectionHandler.getObjectBundle().getObjectListContainer().reload(true);
+                    }
+                }.start();
             }
         }
     };
