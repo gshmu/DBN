@@ -1,19 +1,11 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import javax.swing.Icon;
-import java.util.HashSet;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -61,6 +53,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class BasePsiElement extends ASTWrapperPsiElement implements ItemPresentation, FormattingProviderPsiElement {
     private ElementType elementType;
@@ -573,7 +571,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return basePsiElement;
     }
 
-    private LazyValue<BasePsiElement> enclosingScopePsiElement = new SimpleLazyValue<BasePsiElement>() {
+/*    private LazyValue<BasePsiElement> enclosingScopePsiElement = new SimpleLazyValue<BasePsiElement>() {
         @Override
         protected BasePsiElement load() {
             PsiElement element = BasePsiElement.this;
@@ -590,12 +588,23 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
             return basePsiElement;
         }
-    };
+    };*/
 
     @Nullable
     public BasePsiElement findEnclosingScopePsiElement() {
-        return enclosingScopePsiElement.get();
-    }
+        PsiElement element = BasePsiElement.this;
+        BasePsiElement basePsiElement = null;
+        while (element != null) {
+            if (element instanceof BasePsiElement) {
+                basePsiElement = (BasePsiElement) element;
+                if (basePsiElement.isScopeBoundary()) {
+                    return basePsiElement;
+                }
+            }
+            element = element.getParent();
+        }
+
+        return basePsiElement;    }
 
     @Nullable
     public <T extends BasePsiElement> T findEnclosingPsiElement(Class<T> psiClass) {

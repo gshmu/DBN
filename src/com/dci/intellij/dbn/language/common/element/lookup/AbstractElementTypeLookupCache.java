@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -18,15 +14,19 @@ import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 public abstract class AbstractElementTypeLookupCache<T extends ElementType> implements ElementTypeLookupCache<T> {
     private T elementType;
 
-    protected Set<LeafElementType> allPossibleLeafs = new THashSet<LeafElementType>();
-    protected Set<LeafElementType> firstPossibleLeafs = new THashSet<LeafElementType>();
-    protected Set<LeafElementType> firstRequiredLeafs = new THashSet<LeafElementType>();
-    protected Set<TokenType> allPossibleTokens = new THashSet<TokenType>();
-    protected Set<TokenType> firstPossibleTokens = new THashSet<TokenType>();
-    protected Set<TokenType> firstRequiredTokens = new THashSet<TokenType>();
+    protected Set<LeafElementType> allPossibleLeafs;
+    protected Set<LeafElementType> firstPossibleLeafs;
+    protected Set<LeafElementType> firstRequiredLeafs;
+    protected Set<TokenType> allPossibleTokens;
+    protected Set<TokenType> firstPossibleTokens;
+    protected Set<TokenType> firstRequiredTokens;
     private Map<TokenType, Boolean> landmarkTokens;
     private Boolean startsWithIdentifier;
 
@@ -35,6 +35,12 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
     public AbstractElementTypeLookupCache(T elementType) {
         this.elementType = elementType;
         if (!elementType.isLeaf()) {
+            allPossibleLeafs = new THashSet<LeafElementType>();
+            firstPossibleLeafs = new THashSet<LeafElementType>();
+            firstRequiredLeafs = new THashSet<LeafElementType>();
+            allPossibleTokens = new THashSet<TokenType>();
+            firstPossibleTokens = new THashSet<TokenType>();
+            firstRequiredTokens = new THashSet<TokenType>();
             landmarkTokens = new THashMap<TokenType, Boolean>();
         }
     }
