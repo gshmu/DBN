@@ -70,7 +70,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                 try {
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     DBSchema currentSchema = getCurrentSchema();
-                    Connection connection = connectionHandler.getStandaloneConnection(currentSchema);
+                    Connection connection = connectionHandler.getMainConnection(currentSchema);
                     Statement statement = connection.createStatement();
                     statement.setQueryTimeout(getExecutionInput().getExecutionTimeout());
                     statement.execute(getExecutionInput().getExecutableStatementText());

@@ -76,7 +76,7 @@ public class AboutComponent extends DBNFormImpl{
         requestTrackerPageLinkLabel.setCursor(handCursor);
         requestTrackerPageLinkLabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                BrowserUtil.browse("http://dci.myjetbrains.com/youtrack/issues");
+                BrowserUtil.browse("https://database-navigator.atlassian.net/browse/DBNE-17?filter=10104");
             }
         });
         IdeaPluginDescriptor ideaPluginDescriptor = PluginManager.getPlugin(PluginId.getId("DBN"));
