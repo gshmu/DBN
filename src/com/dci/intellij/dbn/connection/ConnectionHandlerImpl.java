@@ -244,12 +244,12 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public void commit() throws SQLException {
-        connectionPool.getStandaloneConnection(false).commit();
+        ConnectionUtil.commit(connectionPool.getMainConnection(false));
         changesBundle = null;
     }
 
     public void rollback() throws SQLException {
-        connectionPool.getStandaloneConnection(false).rollback();
+        ConnectionUtil.rollback(connectionPool.getMainConnection(false));
         changesBundle = null;
     }
 
@@ -294,7 +294,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     public boolean isValid(boolean check) {
         if (check) {
             try {
-                getStandaloneConnection();
+                getMainConnection();
             } catch (SQLException e) {
                 return false;
             }
@@ -345,7 +345,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     void checkConnection() {
         validityCheckTimestamp = System.currentTimeMillis();
         try {
-            getStandaloneConnection();
+            getMainConnection();
         } catch (SQLException e) {
             if (SettingsUtil.isDebugEnabled) {
                 LOGGER.warn("[DBN-INFO] Could not connect to database [" + getName() + "]: " + e.getMessage());
@@ -427,9 +427,9 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return schema;
     }
 
-    public Connection getStandaloneConnection() throws SQLException {
+    public Connection getMainConnection() throws SQLException {
         assertCanConnect();
-        return connectionPool.getStandaloneConnection(true);
+        return connectionPool.getMainConnection(true);
     }
 
     public Connection getPoolConnection() throws SQLException {
@@ -437,8 +437,8 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connectionPool.allocateConnection();
     }
 
-    public Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException {
-        Connection connection = getStandaloneConnection();
+    public Connection getMainConnection(@Nullable DBSchema schema) throws SQLException {
+        Connection connection = getMainConnection();
         if (schema != null && !schema.isPublicSchema() && DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) {
             DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
             metadataInterface.setCurrentSchema(schema.getQuotedName(false), connection);

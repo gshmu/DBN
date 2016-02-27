@@ -28,6 +28,11 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Amazon Redshift connectivity support<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.5723</b>
             <ul>
                 - SQLite support<br>

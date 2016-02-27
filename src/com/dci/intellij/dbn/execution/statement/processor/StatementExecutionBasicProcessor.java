@@ -258,7 +258,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
             try {
                 runningStatements.increment();
                 if (connection == null) {
-                    connection = activeConnection.getStandaloneConnection(currentSchema);
+                    connection = activeConnection.getMainConnection(currentSchema);
                 }
 
                 if (!debug && activeConnection.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {

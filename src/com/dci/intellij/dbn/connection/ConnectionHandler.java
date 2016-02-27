@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.connection;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
@@ -21,19 +26,14 @@ import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable {
     @NotNull
     Project getProject();
     Connection getPoolConnection() throws SQLException;
     Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException;
-    Connection getStandaloneConnection() throws SQLException;
-    Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException;
+    Connection getMainConnection() throws SQLException;
+    Connection getMainConnection(@Nullable DBSchema schema) throws SQLException;
     void freePoolConnection(Connection connection);
     void dropPoolConnection(Connection connection);
     ConnectionSettings getSettings();

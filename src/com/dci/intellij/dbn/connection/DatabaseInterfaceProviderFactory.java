@@ -28,7 +28,7 @@ public class DatabaseInterfaceProviderFactory {
             databaseType = databaseSettings.getDatabaseType();
             if (databaseType == null || databaseType == DatabaseType.UNKNOWN) {
                 try {
-                    databaseType = ConnectionUtil.getDatabaseType(connectionHandler.getStandaloneConnection());
+                    databaseType = ConnectionUtil.getDatabaseType(connectionHandler.getMainConnection());
                     databaseSettings.setDatabaseType(databaseType);
                 } catch (SQLException e) {
                     if (databaseSettings.getDatabaseType() == null) {
