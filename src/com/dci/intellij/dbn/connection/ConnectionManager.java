@@ -1,17 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import java.io.File;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.apache.commons.lang.StringUtils;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
@@ -57,6 +45,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.apache.commons.lang.StringUtils;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @State(
         name = "DBNavigator.Project.ConnectionManager",
@@ -125,7 +125,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
         @Override
         public void connectionChanged(String connectionId) {
-            ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
+            final ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
             if (connectionHandler != null) {
                 new BackgroundTask(getProject(), "Refreshing database objects", true, true) {
                     @Override
