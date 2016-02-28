@@ -11,11 +11,9 @@ import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
-import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public abstract class AbstractElementTypeLookupCache<T extends ElementType> implements ElementTypeLookupCache<T> {
@@ -27,7 +25,6 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
     protected Set<TokenType> allPossibleTokens;
     protected Set<TokenType> firstPossibleTokens;
     protected Set<TokenType> firstRequiredTokens;
-    private Map<TokenType, Boolean> landmarkTokens;
     private Boolean startsWithIdentifier;
 
     private Set<TokenType> nextPossibleTokens;
@@ -41,7 +38,6 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
             allPossibleTokens = new THashSet<TokenType>();
             firstPossibleTokens = new THashSet<TokenType>();
             firstRequiredTokens = new THashSet<TokenType>();
-            landmarkTokens = new THashMap<TokenType, Boolean>();
         }
     }
 
@@ -161,23 +157,6 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
             parent.getLookupCache().registerLeaf(leaf, elementType);
         }
     }
-
-    public boolean containsLandmarkToken(TokenType tokenType) {
-        if (elementType.isLeaf()) return containsToken(tokenType);
-
-        Boolean value = landmarkTokens.get(tokenType);
-        if (value == null) {
-            synchronized (this)  {
-                value = landmarkTokens.get(tokenType);
-                if (value == null) {
-                    value = containsLandmarkToken(tokenType, null);
-                    landmarkTokens.put(tokenType, value);
-                }
-            }
-        }
-        return value;
-    }
-
 
     public boolean startsWithIdentifier() {
         if (startsWithIdentifier == null) {

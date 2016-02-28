@@ -37,10 +37,6 @@ public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache
         return tokenTypes;
     }
 
-    public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
-        return false;
-    }
-
     public boolean startsWithIdentifier(PathNode node) {
         return true;
     }

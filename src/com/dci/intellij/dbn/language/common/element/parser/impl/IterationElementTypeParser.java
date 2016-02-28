@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.BasicElementType;
@@ -19,6 +16,9 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import com.intellij.lang.PsiBuilder;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 public class IterationElementTypeParser extends AbstractElementTypeParser<IterationElementType> {
     public IterationElementTypeParser(IterationElementType elementType) {
@@ -147,7 +147,7 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
             if (tokenType.isParserLandmark()) {
                 if (separatorTokens != null) {
                     for (TokenElementType separatorToken : separatorTokens) {
-                        if (separatorToken.getLookupCache().containsLandmarkToken(tokenType)) {
+                        if (separatorToken.getLookupCache().containsToken(tokenType)) {
                             builder.markerDone(marker, unknownElementType);
                             return false;
                         }

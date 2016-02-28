@@ -32,10 +32,6 @@ public class ExecVariableElementTypeLookupCache extends LeafElementTypeLookupCac
         return sharedTokenTypes.getVariable() == tokenType;
     }
 
-    public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
-        return false;
-    }
-
     public boolean startsWithIdentifier(PathNode node) {
         return false;
     }
