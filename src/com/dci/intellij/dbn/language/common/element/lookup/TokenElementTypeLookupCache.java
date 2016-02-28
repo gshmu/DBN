@@ -26,10 +26,6 @@ public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<Toke
         return getElementType().getTokenType() == tokenType;
     }
 
-    public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
-       return containsToken(tokenType);
-    }
-
     public boolean startsWithIdentifier(PathNode node) {
         return getElementType().getTokenType().isIdentifier();
     }

@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public class WrapperElementTypeLookupCache extends AbstractElementTypeLookupCache<WrapperElementType> {
 
@@ -27,13 +27,6 @@ public class WrapperElementTypeLookupCache extends AbstractElementTypeLookupCach
     boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
         ElementTypeLookupCache startTokenLC = getElementType().getBeginTokenElement().getLookupCache();
         return startTokenLC.shouldStartWithLeaf(leaf);
-    }
-
-    public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
-        return
-            getElementType().getBeginTokenElement().getLookupCache().containsLandmarkToken(tokenType) ||
-            getElementType().getEndTokenElement().getLookupCache().containsLandmarkToken(tokenType) ||
-            getElementType().getWrappedElement().getLookupCache().containsLandmarkToken(tokenType, node);
     }
 
     public boolean startsWithIdentifier(PathNode node) {

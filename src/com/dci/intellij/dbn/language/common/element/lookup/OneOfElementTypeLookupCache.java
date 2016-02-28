@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.OneOfElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
+
+import java.util.Set;
 
 public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<OneOfElementType> {
     public OneOfElementTypeLookupCache(OneOfElementType elementType) {
@@ -24,13 +24,6 @@ public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<
     boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
         boolean notInitialized = !firstRequiredLeafs.contains(leaf);
         return notInitialized && source.getLookupCache().shouldStartWithLeaf(leaf);
-    }
-
-    public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
-        for (ElementTypeRef child : getElementType().getChildren()) {
-            if (child.getLookupCache().containsLandmarkToken(tokenType, node)) return true;
-        }
-        return false;
     }
 
     public boolean startsWithIdentifier(PathNode node) {

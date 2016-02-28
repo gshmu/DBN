@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.language.common.element.lookup;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,14 +96,4 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> impl
 
     @Override
     public void registerLeaf(LeafElementType leaf, ElementType source) {}
-
-    @Override
-    public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
-        return false;
-    }
-
-    @Override
-    public boolean containsLandmarkToken(TokenType tokenType) {
-        return false;
-    }
 }
