@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
+
+import java.util.Set;
 
 public class SequenceElementTypeLookupCache<T extends SequenceElementType> extends AbstractElementTypeLookupCache<T> {
 
@@ -50,17 +50,6 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
             if (!child.isOptional()) {
                 return child.getElementType() == elementType;
             }
-        }
-        return false;
-    }
-
-
-    public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
-        //check only first landmarks within first mandatory element
-        ElementTypeRef[] children = getElementType().getChildren();
-        for (ElementTypeRef child : children) {
-            if (child.getLookupCache().containsLandmarkToken(tokenType, node)) return true;
-            if (!child.isOptional()) return false;  // skip if found non optional element
         }
         return false;
     }

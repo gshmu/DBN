@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import java.util.List;
-import java.util.Set;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -21,6 +17,10 @@ import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
+import org.jdom.Element;
+
+import java.util.List;
+import java.util.Set;
 
 public class SequenceElementTypeImpl extends AbstractElementType implements SequenceElementType {
     protected ElementTypeRef[] children;
@@ -100,8 +100,12 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
      *                Cached lookup helpers                  *
      *********************************************************/
     public boolean containsLandmarkTokenFromIndex(TokenType tokenType, int index) {
-        for (int i = index; i < children.length; i++) {
-            if (children[i].getLookupCache().containsLandmarkToken(tokenType)) return true;
+        if (index < children.length) {
+            ElementTypeRef child = children[index];
+            while (child != null) {
+                if (child.getLookupCache().couldStartWithToken(tokenType)) return true;
+                child = child.getNext();
+            }
         }
         return false;
     }
