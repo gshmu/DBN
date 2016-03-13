@@ -5,10 +5,13 @@ import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IterationElementType;
+import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
+import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -23,6 +26,11 @@ public abstract class ElementTypeLookupCacheBase<T extends ElementType> implemen
     @Override
     public T getElementType() {
         return elementType;
+    }
+
+    @Override
+    public void init() {
+
     }
 
     /**
@@ -48,7 +56,7 @@ public abstract class ElementTypeLookupCacheBase<T extends ElementType> implemen
                             if (index < elementsCount) {
                                 ElementTypeRef child = sequenceElementType.getChild(index);
                                 while (child != null) {
-                                    child.getLookupCache().addFirstPossibleTokens(nextPossibleTokens);
+                                    child.getLookupCache().collectFirstPossibleTokens(nextPossibleTokens);
                                     if (!child.isOptional()) {
                                         parentElementType = null;
                                         break;
@@ -85,7 +93,50 @@ public abstract class ElementTypeLookupCacheBase<T extends ElementType> implemen
     }
 
     @Override
-    public void addFirstPossibleTokens(Set<TokenType> target) {
-        target.addAll(getFirstPossibleTokens());
+    public void collectFirstPossibleTokens(Set<TokenType> bucket) {
+        bucket.addAll(getFirstPossibleTokens());
+    }
+
+    @Override
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context) {
+        return collectFirstPossibleLeafs(context.reset(), null);
+    }
+
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context) {
+        return collectFirstPossibleTokens(context.reset(), null);
+    }
+
+    @Override
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
+        WrappingDefinition wrapping = elementType.getWrapping();
+        if (wrapping != null) {
+            bucket = initBucket(bucket);
+            bucket.add(wrapping.getBeginElementType());
+        }
+        return bucket;
+    }
+
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
+        WrappingDefinition wrapping = elementType.getWrapping();
+        if (wrapping != null) {
+            bucket = initBucket(bucket);
+            bucket.add(wrapping.getBeginElementType().getTokenType());
+        }
+        return bucket;
+    }
+
+    @Override
+    public void registerLeaf(LeafElementType leaf, ElementType source) {
+        ElementType parent = elementType.getParent();
+        if (parent != null) {
+            parent.getLookupCache().registerLeaf(leaf, elementType);
+        }
+    }
+
+    protected <E> Set<E> initBucket(Set<E> bucket) {
+        if (bucket == null) bucket = new java.util.HashSet<E>();
+        return bucket;
     }
 }

@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
-import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -36,14 +35,6 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCacheBase<
 */
 
     @Override
-    public void registerLeaf(LeafElementType leaf, ElementType source) {
-        ElementType parent = elementType.getParent();
-        if (parent != null) {
-            parent.getLookupCache().registerLeaf(leaf, elementType);
-        }
-    }
-
-    @Override
     public boolean containsToken(TokenType tokenType) {
         return elementType.isSeparator(tokenType) ||
                 elementType.isWrappingBegin(tokenType) ||
@@ -66,18 +57,6 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCacheBase<
         }
 
         return elementType.isWrappingBegin(leafElementType) || elementType.isWrappingEnd(leafElementType);
-    }
-
-    @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context) {
-        ElementType iteratedElementType = getIteratedElementType();
-        return  iteratedElementType.getLookupCache().collectFirstPossibleLeafs(context);
-    }
-
-    @Override
-    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context) {
-        ElementType iteratedElementType = getIteratedElementType();
-        return  iteratedElementType.getLookupCache().collectFirstPossibleTokens(context);
     }
 
     @Override
@@ -112,7 +91,7 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCacheBase<
 
     @Override
     public Set<LeafElementType> getFirstPossibleLeafs() {
-        HashSet<LeafElementType> firstPossibleLeafs = new HashSet<LeafElementType>(1);
+        Set<LeafElementType> firstPossibleLeafs = initBucket(null);
         firstPossibleLeafs.addAll(getIteratedElementType().getLookupCache().getFirstPossibleLeafs());
         WrappingDefinition wrapping = elementType.getWrapping();
         if (wrapping != null) {
@@ -152,12 +131,14 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCacheBase<
 
     @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
+        bucket = super.collectFirstPossibleLeafs(context, bucket);
         ElementTypeLookupCache lookupCache = getElementType().getIteratedElementType().getLookupCache();
         return lookupCache.collectFirstPossibleLeafs(context, bucket);
     }
 
     @Override
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
+        bucket = super.collectFirstPossibleTokens(context, bucket);
         ElementTypeLookupCache lookupCache = getElementType().getIteratedElementType().getLookupCache();
         return lookupCache.collectFirstPossibleTokens(context, bucket);
     }

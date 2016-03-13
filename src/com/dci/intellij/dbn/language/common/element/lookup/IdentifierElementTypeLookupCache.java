@@ -48,10 +48,10 @@ public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache
     }
 
     @Override
-    public void addFirstPossibleTokens(Set<TokenType> target) {
+    public void collectFirstPossibleTokens(Set<TokenType> bucket) {
         SharedTokenTypeBundle sharedTokenTypes = getSharedTokenTypes();
-        target.add(sharedTokenTypes.getIdentifier());
-        target.add(sharedTokenTypes.getQuotedIdentifier());
+        bucket.add(sharedTokenTypes.getIdentifier());
+        bucket.add(sharedTokenTypes.getQuotedIdentifier());
     }
 
     public boolean startsWithIdentifier(PathNode node) {

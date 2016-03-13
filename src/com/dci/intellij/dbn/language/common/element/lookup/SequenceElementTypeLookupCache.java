@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.language.common.element.path.PathNode;
 
 import java.util.Set;
 
-public class SequenceElementTypeLookupCache<T extends SequenceElementType> extends AbstractElementTypeLookupCache<T> {
+public class SequenceElementTypeLookupCache<T extends SequenceElementType> extends ElementTypeLookupCacheBaseIndexed<T> {
 
     public SequenceElementTypeLookupCache(T elementType) {
         super(elementType);
@@ -70,6 +70,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
 
     @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
+        bucket = super.collectFirstPossibleLeafs(context, bucket);
         bucket = initBucket(bucket);
 
         T elementType = getElementType();
@@ -86,6 +87,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
 
     @Override
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
+        bucket = super.collectFirstPossibleTokens(context, bucket);
         bucket = initBucket(bucket);
 
         T elementType = getElementType();

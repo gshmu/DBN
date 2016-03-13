@@ -56,22 +56,7 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
     @Override
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
         bucket = initBucket(bucket);
-        addFirstPossibleTokens(bucket);
-        return bucket;
-    }
-
-    @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context) {
-        return collectFirstPossibleLeafs(context, null);
-    }
-
-    @Override
-    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context) {
-        return collectFirstPossibleTokens(context, null);
-    }
-
-    protected <E> Set<E> initBucket(Set<E> bucket) {
-        if (bucket == null) bucket = new java.util.HashSet<E>();
+        collectFirstPossibleTokens(bucket);
         return bucket;
     }
 

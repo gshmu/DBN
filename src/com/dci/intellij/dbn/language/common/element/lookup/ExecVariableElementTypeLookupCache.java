@@ -37,8 +37,8 @@ public class ExecVariableElementTypeLookupCache extends LeafElementTypeLookupCac
     }
 
     @Override
-    public void addFirstPossibleTokens(Set<TokenType> target) {
-        target.add(getSharedTokenTypes().getVariable());
+    public void collectFirstPossibleTokens(Set<TokenType> bucket) {
+        bucket.add(getSharedTokenTypes().getVariable());
     }
 
     @Override

@@ -24,7 +24,7 @@ public interface ElementTypeLookupCache<T extends ElementType> {
     Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context);
     Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket);
 
-    void addFirstPossibleTokens(Set<TokenType> target);
+    void collectFirstPossibleTokens(Set<TokenType> bucket);
 
     Set<TokenType> getFirstPossibleTokens();
     Set<TokenType> getFirstRequiredTokens();

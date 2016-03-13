@@ -9,10 +9,9 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashSet;
 
-import java.util.HashSet;
 import java.util.Set;
 
-public abstract class AbstractElementTypeLookupCache<T extends ElementType> extends ElementTypeLookupCacheBase<T> {
+public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> extends ElementTypeLookupCacheBase<T> {
 
     protected Set<LeafElementType> allPossibleLeafs;
     protected Set<LeafElementType> firstPossibleLeafs;
@@ -22,7 +21,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> exte
     protected Set<TokenType> firstRequiredTokens;
     private Boolean startsWithIdentifier;
 
-    public AbstractElementTypeLookupCache(T elementType) {
+    public ElementTypeLookupCacheBaseIndexed(T elementType) {
         super(elementType);
         if (!elementType.isLeaf()) {
             allPossibleLeafs = new THashSet<LeafElementType>();
@@ -33,8 +32,6 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> exte
             firstRequiredTokens = new THashSet<TokenType>();
         }
     }
-
-    public void init() {}
 
     @Override
     public boolean isFirstPossibleToken(TokenType tokenType) {
@@ -58,21 +55,6 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> exte
     @Override
     public boolean containsLeaf(LeafElementType elementType) {
         return allPossibleLeafs != null && allPossibleLeafs.contains(elementType);
-    }
-
-    @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context) {
-        return collectFirstPossibleLeafs(context.reset(), null);
-    }
-
-    @Override
-    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context) {
-        return collectFirstPossibleTokens(context.reset(), null);
-    }
-
-    protected <E> Set<E> initBucket(Set<E> bucket) {
-        if (bucket == null) bucket = new HashSet<E>();
-        return bucket;
     }
 
     @Override
@@ -115,13 +97,13 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> exte
         ElementTypeLookupCache lookupCache = leaf.getLookupCache();
         if (initAsFirstPossibleLeaf) {
             firstPossibleLeafs.add(leaf);
-            lookupCache.addFirstPossibleTokens(firstPossibleTokens);
+            lookupCache.collectFirstPossibleTokens(firstPossibleTokens);
         }
 
         // register first required leafs
         if (initAsFirstRequiredLeaf) {
             firstRequiredLeafs.add(leaf);
-            lookupCache.addFirstPossibleTokens(firstRequiredTokens);
+            lookupCache.collectFirstPossibleTokens(firstRequiredTokens);
         }
 
         if (initAllElements) {
@@ -151,10 +133,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> exte
     }
 
     protected void registerLeafInParent(LeafElementType leaf) {
-        ElementType parent = elementType.getParent();
-        if (parent != null) {
-            parent.getLookupCache().registerLeaf(leaf, elementType);
-        }
+        super.registerLeaf(leaf, null);
     }
 
     public boolean startsWithIdentifier() {
