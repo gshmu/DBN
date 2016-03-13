@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -9,7 +7,9 @@ import com.dci.intellij.dbn.language.common.element.OneOfElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 
-public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<OneOfElementType> {
+import java.util.Set;
+
+public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheBaseIndexed<OneOfElementType> {
     public OneOfElementTypeLookupCache(OneOfElementType elementType) {
         super(elementType);
     }
@@ -26,13 +26,6 @@ public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<
         return notInitialized && source.getLookupCache().shouldStartWithLeaf(leaf);
     }
 
-    public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
-        for (ElementTypeRef child : getElementType().getChildren()) {
-            if (child.getLookupCache().containsLandmarkToken(tokenType, node)) return true;
-        }
-        return false;
-    }
-
     public boolean startsWithIdentifier(PathNode node) {
         for(ElementTypeRef child : getElementType().getChildren()){
             if (child.getLookupCache().startsWithIdentifier(node)) return true;
@@ -42,6 +35,7 @@ public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<
 
     @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
+        bucket = super.collectFirstPossibleLeafs(context, bucket);
         ElementTypeRef[] elementTypeRefs = getElementType().getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {
@@ -53,6 +47,7 @@ public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<
     }
 
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
+        bucket = super.collectFirstPossibleTokens(context, bucket);
         ElementTypeRef[] elementTypeRefs = getElementType().getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {

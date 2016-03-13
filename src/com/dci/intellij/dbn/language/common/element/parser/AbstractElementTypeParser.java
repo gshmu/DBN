@@ -157,4 +157,8 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
     public String toString() {
         return elementType.toString();
     }
+
+    protected SharedTokenTypeBundle getSharedTokenTypes() {
+        return getElementType().getLanguage().getSharedTokenTypes();
+    }
 }

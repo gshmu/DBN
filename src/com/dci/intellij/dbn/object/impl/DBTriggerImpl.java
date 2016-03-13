@@ -113,7 +113,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
         return new DBOperationExecutor() {
             public void executeOperation(DBOperationType operationType) throws SQLException, DBOperationNotSupportedException {
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                Connection connection = connectionHandler.getStandaloneConnection(getSchema());
+                Connection connection = connectionHandler.getMainConnection(getSchema());
                 DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
                 if (operationType == DBOperationType.ENABLE) {
                     metadataInterface.enableTrigger(getSchema().getName(), getName(), connection);

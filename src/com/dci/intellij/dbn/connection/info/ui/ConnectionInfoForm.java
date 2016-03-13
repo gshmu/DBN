@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.connection.info.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.sql.Connection;
+import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -14,18 +26,6 @@ import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
     private JPanel mainPanel;
@@ -101,7 +101,7 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
 
     private void initInfoPanel(ConnectionHandler connectionHandler) {
         try {
-            Connection connection = connectionHandler.getStandaloneConnection();
+            Connection connection = connectionHandler.getMainConnection();
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
 
             initInfoPanel(connectionInfo);
