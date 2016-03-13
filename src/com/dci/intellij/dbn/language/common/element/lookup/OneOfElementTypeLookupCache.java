@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.language.common.element.path.PathNode;
 
 import java.util.Set;
 
-public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<OneOfElementType> {
+public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheBaseIndexed<OneOfElementType> {
     public OneOfElementTypeLookupCache(OneOfElementType elementType) {
         super(elementType);
     }
@@ -35,6 +35,7 @@ public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<
 
     @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
+        bucket = super.collectFirstPossibleLeafs(context, bucket);
         ElementTypeRef[] elementTypeRefs = getElementType().getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {
@@ -46,6 +47,7 @@ public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<
     }
 
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
+        bucket = super.collectFirstPossibleTokens(context, bucket);
         ElementTypeRef[] elementTypeRefs = getElementType().getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {

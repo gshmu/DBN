@@ -36,8 +36,8 @@ public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<Toke
     }
 
     @Override
-    public void addFirstPossibleTokens(Set<TokenType> target) {
-        target.add(getTokenType());
+    public void collectFirstPossibleTokens(Set<TokenType> bucket) {
+        bucket.add(getTokenType());
     }
 
     @Override
