@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import org.jetbrains.annotations.Nullable;
 
-public class QualifiedIdentifierElementTypeLookupCache extends AbstractElementTypeLookupCache<QualifiedIdentifierElementType> {
+import java.util.Set;
+
+public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookupCacheBaseIndexed<QualifiedIdentifierElementType> {
     public QualifiedIdentifierElementTypeLookupCache(QualifiedIdentifierElementType elementType) {
         super(elementType);
     }
@@ -26,15 +26,6 @@ public class QualifiedIdentifierElementTypeLookupCache extends AbstractElementTy
     boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
         for (LeafElementType[] variant : getElementType().getVariants()) {
             if (variant[0] == source && !variant[0].isOptional()) return true;
-        }
-        return false;
-    }
-
-    public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
-        for (LeafElementType[] elementTypes : getElementType().getVariants()) {
-            for (LeafElementType elementType : elementTypes) {
-                if (elementType.getLookupCache().containsLandmarkToken(tokenType, node)) return true;
-            }
         }
         return false;
     }

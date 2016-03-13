@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -27,6 +21,12 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
 
 public abstract class LeafElementTypeImpl extends AbstractElementType implements LeafElementType {
     private TokenType tokenType;
@@ -175,10 +175,9 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                     ElementTypeRef child = sequenceElementType.getChild(position);
                     while (child != null) {
                         ElementTypeLookupCache lookupCache = child.getLookupCache();
-                        Set<TokenType> firstTokens = required ?
-                                lookupCache.getFirstRequiredTokens() :
-                                lookupCache.getFirstPossibleTokens();
-                        if (firstTokens.contains(tokenType)) {
+                        if (required ?
+                                lookupCache.isFirstRequiredToken(tokenType) :
+                                lookupCache.isFirstPossibleToken(tokenType)) {
                             return true;
                         }
 
@@ -193,10 +192,9 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 TokenElementType[] separatorTokens = iterationElementType.getSeparatorTokens();
                 if (separatorTokens == null) {
                     ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
-                    Set<TokenType> firstTokens = required ?
-                            lookupCache.getFirstRequiredTokens() :
-                            lookupCache.getFirstPossibleTokens();
-                    if (firstTokens.contains(tokenType)) {
+                    if (required ?
+                            lookupCache.isFirstRequiredToken(tokenType) :
+                            lookupCache.isFirstPossibleToken(tokenType)) {
                         return true;
                     }
                 }
@@ -228,7 +226,8 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 ElementTypeRef child = sequenceElementType.getChild(position + 1);
                 while (child != null) {
                     if (!child.isOptional()) {
-                        requiredLeafs.addAll(child.getLookupCache().getFirstRequiredLeafs());
+                        ElementTypeLookupCache lookupCache = child.getLookupCache();
+                        requiredLeafs.addAll(lookupCache.getFirstRequiredLeafs());
                         pathNode = null;
                         break;
                     }

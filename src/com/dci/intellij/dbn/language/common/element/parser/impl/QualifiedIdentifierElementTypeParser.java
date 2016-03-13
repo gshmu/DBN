@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -21,6 +16,11 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class QualifiedIdentifierElementTypeParser extends AbstractElementTypeParser<QualifiedIdentifierElementType> {
     public QualifiedIdentifierElementTypeParser(QualifiedIdentifierElementType elementType) {
@@ -69,7 +69,7 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
         QualifiedIdentifierElementType elementType = getElementType();
         TokenType separatorToken = elementType.getSeparatorToken().getTokenType();
         ElementTypeLookupCache lookupCache = elementType.getLookupCache();
-        SharedTokenTypeBundle sharedTokenTypes = getElementType().getLanguage().getSharedTokenTypes();
+        SharedTokenTypeBundle sharedTokenTypes = getSharedTokenTypes();
         TokenType identifier = sharedTokenTypes.getIdentifier();
 
 
@@ -118,7 +118,7 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
         return mostProbableVariant;
     }
 
-/*    private QualifiedIdentifierVariant getMostProbableParseVariant_(ParserBuilder builder, ParsePathNode node) {
+    /*    private QualifiedIdentifierVariant getMostProbableParseVariant_(ParserBuilder builder, ParsePathNode node) {
 
         TokenElementType separatorToken = getElementType().getSeparatorToken();
 

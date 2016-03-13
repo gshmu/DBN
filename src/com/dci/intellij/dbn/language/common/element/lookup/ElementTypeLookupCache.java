@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public interface ElementTypeLookupCache<T extends ElementType> {
     void registerLeaf(LeafElementType leaf, ElementType source);
@@ -24,6 +24,7 @@ public interface ElementTypeLookupCache<T extends ElementType> {
     Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context);
     Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket);
 
+    void collectFirstPossibleTokens(Set<TokenType> bucket);
 
     Set<TokenType> getFirstPossibleTokens();
     Set<TokenType> getFirstRequiredTokens();
@@ -35,15 +36,14 @@ public interface ElementTypeLookupCache<T extends ElementType> {
     Set<LeafElementType> getFirstPossibleLeafs();
     Set<LeafElementType> getFirstRequiredLeafs();
 
-    boolean containsLandmarkToken(TokenType tokenType, PathNode node);
-    boolean containsLandmarkToken(TokenType tokenType);
-
-    boolean startsWithIdentifier(PathNode node);    
+    boolean startsWithIdentifier(PathNode node);
     boolean startsWithIdentifier();
-
-    boolean containsIdentifiers();
 
     Set<TokenType> getNextPossibleTokens();
 
     void init();
+
+    boolean isFirstPossibleToken(TokenType tokenType);
+
+    boolean isFirstRequiredToken(TokenType tokenType);
 }

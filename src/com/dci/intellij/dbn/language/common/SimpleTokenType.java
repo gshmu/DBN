@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.language.common;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinitionFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -12,6 +7,10 @@ import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.Language;
 import com.intellij.psi.tree.IElementType;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SimpleTokenType extends IElementType implements TokenType {
     private String id;
@@ -172,6 +171,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
         //return isCharacter() || isOperator() || !isSuppressibleReservedWord();
     }
 
+    @NotNull
     public TokenTypeCategory getCategory() {
         return category;
     }

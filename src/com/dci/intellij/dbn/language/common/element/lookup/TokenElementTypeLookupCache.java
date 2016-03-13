@@ -1,43 +1,56 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import com.intellij.util.containers.HashSet;
+
+import java.util.Set;
 
 public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<TokenElementType>{
     public TokenElementTypeLookupCache(TokenElementType elementType) {
         super(elementType);
     }
 
-    public void init() {
-        TokenType tokenType = getElementType().getTokenType();
-        allPossibleTokens.add(tokenType);
-        firstPossibleTokens.add(tokenType);
-        firstRequiredTokens.add(tokenType);
+    public void init() {}
+
+    @Override
+    public boolean isFirstPossibleToken(TokenType tokenType) {
+        return getTokenType() == tokenType;
+    }
+
+    protected TokenType getTokenType() {
+        return getElementType().getTokenType();
+    }
+
+    @Override
+    public boolean isFirstRequiredToken(TokenType tokenType) {
+        return getTokenType() == tokenType;
+    }
+
+    @Override
+    public Set<TokenType> getFirstPossibleTokens() {
+        HashSet<TokenType> tokenTypes = new HashSet<TokenType>(1);
+        tokenTypes.add(getTokenType());
+        return tokenTypes;
+    }
+
+    @Override
+    public void collectFirstPossibleTokens(Set<TokenType> bucket) {
+        bucket.add(getTokenType());
     }
 
     @Override
     public boolean containsToken(TokenType tokenType) {
-        return getElementType().getTokenType() == tokenType;
-    }
-
-    @Override
-    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
-        return false;
-    }
-
-    @Override
-    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
-        return false;
-    }
-
-    public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
-       return containsToken(tokenType);
+        return getTokenType() == tokenType;
     }
 
     public boolean startsWithIdentifier(PathNode node) {
-        return getElementType().getTokenType().isIdentifier();
+        return getTokenType().isIdentifier();
+    }
+
+    @Override
+    public boolean startsWithIdentifier() {
+        return false;
     }
 }

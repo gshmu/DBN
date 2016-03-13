@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import javax.swing.Icon;
-import java.util.Set;
-import java.util.StringTokenizer;
-import org.apache.commons.lang.StringUtils;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinitionFactory;
 import com.dci.intellij.dbn.code.common.style.formatting.IndentDefinition;
@@ -17,6 +9,7 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -35,6 +28,14 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import gnu.trove.THashSet;
+import org.apache.commons.lang.StringUtils;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 public abstract class AbstractElementType extends IElementType implements ElementType {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -102,8 +103,18 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     }
 
     @Override
+    public boolean isWrappingBegin(TokenType tokenType) {
+        return wrapping != null && wrapping.getBeginElementType().getTokenType() == tokenType;
+    }
+
+    @Override
     public boolean isWrappingEnd(LeafElementType elementType) {
         return wrapping != null && wrapping.getEndElementType() == elementType;
+    }
+
+    @Override
+    public boolean isWrappingEnd(TokenType tokenType) {
+        return wrapping != null && wrapping.getEndElementType().getTokenType() == tokenType;
     }
 
     protected abstract ElementTypeLookupCache createLookupCache();

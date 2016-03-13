@@ -49,11 +49,11 @@ public class Formatter implements Cloneable{
         numberFormat.setGroupingUsed(groupingUsed);
         numberFormat.setMaximumFractionDigits(10);
 
-        dateFormatPattern = ((SimpleDateFormat) dateFormat).toPattern();
-        timeFormatPattern = ((SimpleDateFormat) timeFormat).toPattern();
-        datetimeFormatPattern = ((SimpleDateFormat) dateTimeFormat).toPattern();
-        numberFormatPattern = ((DecimalFormat) numberFormat).toPattern();
-        integerFormatPattern = ((DecimalFormat) integerFormat).toPattern();
+        dateFormatPattern = ((SimpleDateFormat) dateFormat).toLocalizedPattern();
+        timeFormatPattern = ((SimpleDateFormat) timeFormat).toLocalizedPattern();
+        datetimeFormatPattern = ((SimpleDateFormat) dateTimeFormat).toLocalizedPattern();
+        numberFormatPattern = ((DecimalFormat) numberFormat).toLocalizedPattern();
+        integerFormatPattern = ((DecimalFormat) integerFormat).toLocalizedPattern();
     }
 
     public Formatter(@NotNull Locale locale, String dateFormatPattern, String timeFormatPattern, String numberFormatPattern) {

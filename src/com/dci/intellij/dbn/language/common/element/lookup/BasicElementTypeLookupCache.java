@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.BasicElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import org.jetbrains.annotations.Nullable;
 
-public class BasicElementTypeLookupCache extends AbstractElementTypeLookupCache<BasicElementType> {
+import java.util.Set;
+
+public class BasicElementTypeLookupCache extends ElementTypeLookupCacheBaseIndexed<BasicElementType> {
     public BasicElementTypeLookupCache(BasicElementType elementType) {
         super(elementType);
     }
@@ -29,8 +29,6 @@ public class BasicElementTypeLookupCache extends AbstractElementTypeLookupCache<
         return false;
     }
 
-    public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {return false;}
-    
     public boolean startsWithIdentifier(PathNode node) {return false;}
 
     @Override

@@ -125,10 +125,15 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
         @Override
         public void connectionChanged(String connectionId) {
-            ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
+            final ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
             if (connectionHandler != null) {
-                connectionHandler.getConnectionPool().closeConnectionsSilently();
-                connectionHandler.getObjectBundle().getObjectListContainer().reload(true);
+                new BackgroundTask(getProject(), "Refreshing database objects", true, true) {
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                        connectionHandler.getConnectionPool().closeConnectionsSilently();
+                        connectionHandler.getObjectBundle().getObjectListContainer().reload(true);
+                    }
+                }.start();
             }
         }
     };
@@ -146,7 +151,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         String connectionName = connectionHandler.getName();
         try {
             databaseSettings.checkConfiguration();
-            connectionHandler.getStandaloneConnection();
+            connectionHandler.getMainConnection();
             ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
             connectionStatus.setValid(true);
             connectionStatus.setConnected(true);
