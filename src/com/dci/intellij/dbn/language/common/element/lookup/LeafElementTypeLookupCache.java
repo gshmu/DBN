@@ -8,15 +8,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public abstract class LeafElementTypeLookupCache<T extends LeafElementType> implements ElementTypeLookupCache<T>  {
-    private T elementType;
+public abstract class LeafElementTypeLookupCache<T extends LeafElementType> extends ElementTypeLookupCacheBase<T>  {
     public LeafElementTypeLookupCache(T elementType) {
-        this.elementType = elementType;
-    }
-
-    @Override
-    public T  getElementType() {
-        return elementType;
+        super(elementType);
     }
 
     @Override
@@ -42,18 +36,10 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> impl
         return getFirstPossibleLeafs();
     }
 
-
-    @Override
-    public Set<TokenType> getNextPossibleTokens() {
-        return getFirstPossibleTokens();
-    }
-
     @Override
     public Set<TokenType> getFirstRequiredTokens() {
         return getFirstPossibleTokens();
     }
-
-
 
     @Override
     public boolean couldStartWithToken(TokenType tokenType) {
@@ -70,7 +56,7 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> impl
     @Override
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
         bucket = initBucket(bucket);
-        bucket.addAll(getFirstPossibleTokens());
+        addFirstPossibleTokens(bucket);
         return bucket;
     }
 

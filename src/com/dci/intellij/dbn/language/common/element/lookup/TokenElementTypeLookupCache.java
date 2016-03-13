@@ -15,28 +15,42 @@ public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<Toke
     public void init() {}
 
     @Override
+    public boolean isFirstPossibleToken(TokenType tokenType) {
+        return getTokenType() == tokenType;
+    }
+
+    protected TokenType getTokenType() {
+        return getElementType().getTokenType();
+    }
+
+    @Override
+    public boolean isFirstRequiredToken(TokenType tokenType) {
+        return getTokenType() == tokenType;
+    }
+
+    @Override
     public Set<TokenType> getFirstPossibleTokens() {
         HashSet<TokenType> tokenTypes = new HashSet<TokenType>(1);
-        tokenTypes.add(getElementType().getTokenType());
+        tokenTypes.add(getTokenType());
         return tokenTypes;
     }
 
     @Override
+    public void addFirstPossibleTokens(Set<TokenType> target) {
+        target.add(getTokenType());
+    }
+
+    @Override
     public boolean containsToken(TokenType tokenType) {
-        return getElementType().getTokenType() == tokenType;
+        return getTokenType() == tokenType;
     }
 
     public boolean startsWithIdentifier(PathNode node) {
-        return getElementType().getTokenType().isIdentifier();
+        return getTokenType().isIdentifier();
     }
 
     @Override
     public boolean startsWithIdentifier() {
-        return false;
-    }
-
-    @Override
-    public boolean containsIdentifiers() {
         return false;
     }
 }

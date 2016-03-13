@@ -175,10 +175,9 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                     ElementTypeRef child = sequenceElementType.getChild(position);
                     while (child != null) {
                         ElementTypeLookupCache lookupCache = child.getLookupCache();
-                        Set<TokenType> firstTokens = required ?
-                                lookupCache.getFirstRequiredTokens() :
-                                lookupCache.getFirstPossibleTokens();
-                        if (firstTokens.contains(tokenType)) {
+                        if (required ?
+                                lookupCache.isFirstRequiredToken(tokenType) :
+                                lookupCache.isFirstPossibleToken(tokenType)) {
                             return true;
                         }
 
@@ -193,10 +192,9 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 TokenElementType[] separatorTokens = iterationElementType.getSeparatorTokens();
                 if (separatorTokens == null) {
                     ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
-                    Set<TokenType> firstTokens = required ?
-                            lookupCache.getFirstRequiredTokens() :
-                            lookupCache.getFirstPossibleTokens();
-                    if (firstTokens.contains(tokenType)) {
+                    if (required ?
+                            lookupCache.isFirstRequiredToken(tokenType) :
+                            lookupCache.isFirstPossibleToken(tokenType)) {
                         return true;
                     }
                 }
