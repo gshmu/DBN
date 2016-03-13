@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.common;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -18,6 +14,10 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
 
 public class ChameleonTokenType extends SimpleTokenType implements ElementType {
     private DBLanguageDialect injectedLanguage;
@@ -102,6 +102,16 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
 
     @Override
     public boolean isWrappingEnd(LeafElementType elementType) {
+        return false;
+    }
+
+    @Override
+    public boolean isWrappingBegin(TokenType tokenType) {
+        return false;
+    }
+
+    @Override
+    public boolean isWrappingEnd(TokenType tokenType) {
         return false;
     }
 

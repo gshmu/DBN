@@ -5,19 +5,14 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.SequenceElementType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashSet;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class AbstractElementTypeLookupCache<T extends ElementType> implements ElementTypeLookupCache<T> {
-    private T elementType;
+public abstract class AbstractElementTypeLookupCache<T extends ElementType> extends ElementTypeLookupCacheBase<T> {
 
     protected Set<LeafElementType> allPossibleLeafs;
     protected Set<LeafElementType> firstPossibleLeafs;
@@ -27,10 +22,8 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
     protected Set<TokenType> firstRequiredTokens;
     private Boolean startsWithIdentifier;
 
-    private Set<TokenType> nextPossibleTokens;
-
     public AbstractElementTypeLookupCache(T elementType) {
-        this.elementType = elementType;
+        super(elementType);
         if (!elementType.isLeaf()) {
             allPossibleLeafs = new THashSet<LeafElementType>();
             firstPossibleLeafs = new THashSet<LeafElementType>();
@@ -43,8 +36,14 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
 
     public void init() {}
 
-    public T getElementType() {
-        return elementType;
+    @Override
+    public boolean isFirstPossibleToken(TokenType tokenType) {
+        return firstPossibleTokens.contains(tokenType);
+    }
+
+    @Override
+    public boolean isFirstRequiredToken(TokenType tokenType) {
+        return firstRequiredTokens.contains(tokenType);
     }
 
     private ElementTypeBundle getBundle() {
@@ -116,13 +115,13 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         ElementTypeLookupCache lookupCache = leaf.getLookupCache();
         if (initAsFirstPossibleLeaf) {
             firstPossibleLeafs.add(leaf);
-            firstPossibleTokens.addAll(lookupCache.getFirstPossibleTokens());
+            lookupCache.addFirstPossibleTokens(firstPossibleTokens);
         }
 
         // register first required leafs
         if (initAsFirstRequiredLeaf) {
             firstRequiredLeafs.add(leaf);
-            firstRequiredTokens.addAll(lookupCache.getFirstPossibleTokens());
+            lookupCache.addFirstPossibleTokens(firstRequiredTokens);
         }
 
         if (initAllElements) {
@@ -131,7 +130,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
 
             // register all possible tokens
             if (leaf instanceof IdentifierElementType) {
-                SharedTokenTypeBundle sharedTokenTypes = elementType.getLanguage().getSharedTokenTypes();
+                SharedTokenTypeBundle sharedTokenTypes = getSharedTokenTypes();
                 allPossibleTokens.add(sharedTokenTypes.getIdentifier());
                 allPossibleTokens.add(sharedTokenTypes.getQuotedIdentifier());
             } else {
@@ -167,61 +166,6 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
             }
         }
         return startsWithIdentifier;
-    }
-
-    public boolean containsIdentifiers() {
-        return containsToken(getBundle().getTokenTypeBundle().getIdentifier());
-    }
-
-    /**
-     * This method returns all possible tokens (optional or not) which may follow current element.
-     *
-     * NOTE: to be used only for limited scope, since the tree walk-up
-     * is done only until first named element is hit.
-     * (named elements do not have parents)
-     */
-    public Set<TokenType> getNextPossibleTokens() {
-        if (nextPossibleTokens == null) {
-            synchronized (this) {
-                if (nextPossibleTokens == null) {
-                    nextPossibleTokens = new THashSet<TokenType>();
-                    ElementType elementType = this.elementType;
-                    ElementType parentElementType = elementType.getParent();
-                    while (parentElementType != null) {
-                        if (parentElementType instanceof SequenceElementType) {
-                            SequenceElementType sequenceElementType = (SequenceElementType) parentElementType;
-                            int elementsCount = sequenceElementType.getChildCount();
-                            int index = sequenceElementType.indexOf(elementType, 0) + 1;
-
-                            if (index < elementsCount) {
-                                ElementTypeRef child = sequenceElementType.getChild(index);
-                                while (child != null) {
-                                    nextPossibleTokens.addAll(child.getLookupCache().getFirstPossibleTokens());
-                                    if (!child.isOptional()) {
-                                        parentElementType = null;
-                                        break;
-                                    }
-                                    child = child.getNext();
-                                }
-                            }
-                        } else if (parentElementType instanceof IterationElementType) {
-                            IterationElementType iteration = (IterationElementType) parentElementType;
-                            TokenElementType[] separatorTokens = iteration.getSeparatorTokens();
-                            if (separatorTokens != null) {
-                                for (TokenElementType separatorToken : separatorTokens) {
-                                    nextPossibleTokens.add(separatorToken.getTokenType());
-                                }
-                            }
-                        }
-                        if (parentElementType != null) {
-                            elementType = parentElementType;
-                            parentElementType = elementType.getParent();
-                        }
-                    }
-                }
-            }
-        }
-        return nextPossibleTokens;
     }
 
     protected boolean isWrapperBeginLeaf(LeafElementType leaf) {

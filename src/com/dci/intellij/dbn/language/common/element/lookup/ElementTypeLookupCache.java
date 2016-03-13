@@ -24,6 +24,7 @@ public interface ElementTypeLookupCache<T extends ElementType> {
     Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context);
     Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket);
 
+    void addFirstPossibleTokens(Set<TokenType> target);
 
     Set<TokenType> getFirstPossibleTokens();
     Set<TokenType> getFirstRequiredTokens();
@@ -38,9 +39,11 @@ public interface ElementTypeLookupCache<T extends ElementType> {
     boolean startsWithIdentifier(PathNode node);
     boolean startsWithIdentifier();
 
-    boolean containsIdentifiers();
-
     Set<TokenType> getNextPossibleTokens();
 
     void init();
+
+    boolean isFirstPossibleToken(TokenType tokenType);
+
+    boolean isFirstRequiredToken(TokenType tokenType);
 }
