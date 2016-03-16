@@ -142,7 +142,6 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
             public void actionPerformed(ActionEvent e) {
                 Object source = e.getSource();
                 ConnectionSettings configuration = getConfiguration();
-                ConnectionBundleSettings bundleSettings = configuration.getParent();
                 if (source == testButton || source == infoButton) {
                     ConnectionSettingsForm connectionSettingsForm = configuration.getSettingsEditor();
                     if (connectionSettingsForm != null) {
@@ -160,16 +159,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                             }
                             configuration.getDatabaseSettings().setConnectivityStatus(temporaryConfig.getDatabaseSettings().getConnectivityStatus());
 
-                            ConnectionBundleSettingsForm bundleSettingsForm = bundleSettings.getSettingsEditor();
-                            if (bundleSettingsForm != null) {
-                                JList connectionList = bundleSettingsForm.getList();
-                                connectionList.revalidate();
-                                connectionList.repaint();
-                                ConnectionDatabaseSettingsForm settingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
-                                if (settingsEditor != null) {
-                                    settingsEditor.notifyPresentationChanges();
-                                }
-                            }
+                            refreshConnectionList(configuration);
                         } catch (ConfigurationException e1) {
                             MessageUtil.showErrorDialog(getProject(), "Configuration error", e1.getMessage());
                         }
@@ -177,19 +167,23 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                 }
                 if (source == activeCheckBox) {
                     configuration.setModified(true);
-                    ConnectionBundleSettingsForm bundleSettingsEditor = bundleSettings.getSettingsEditor();
-
-                    if (bundleSettingsEditor != null) {
-                        JList connectionList = bundleSettingsEditor.getList();
-                        connectionList.revalidate();
-                        connectionList.repaint();
-                        ConnectionDatabaseSettingsForm settingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
-                        if (settingsEditor != null) {
-                            settingsEditor.notifyPresentationChanges();
-                        }
-                    }
+                    refreshConnectionList(configuration);
                 }
 
+            }
+
+            protected void refreshConnectionList(ConnectionSettings configuration) {
+                ConnectionBundleSettings bundleSettings = configuration.getParent();
+                ConnectionBundleSettingsForm bundleSettingsEditor = bundleSettings.getSettingsEditor();
+                if (bundleSettingsEditor != null) {
+                    JList connectionList = bundleSettingsEditor.getList();
+                    connectionList.revalidate();
+                    connectionList.repaint();
+                    ConnectionDatabaseSettingsForm settingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
+                    if (settingsEditor != null) {
+                        settingsEditor.notifyPresentationChanges();
+                    }
+                }
             }
         };
     }
