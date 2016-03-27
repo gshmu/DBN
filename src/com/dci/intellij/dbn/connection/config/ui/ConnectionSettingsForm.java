@@ -147,14 +147,13 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                     if (connectionSettingsForm != null) {
                         try {
                             ConnectionSettings temporaryConfig = connectionSettingsForm.getTemporaryConfig();
-                            ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
 
-                            if (source == testButton) connectionManager.testConfigConnection(temporaryConfig, true);
+                            if (source == testButton) ConnectionManager.testConfigConnection(temporaryConfig, true);
                             if (source == infoButton) {
                                 ConnectionDetailSettingsForm detailSettingsForm = configuration.getDetailSettings().getSettingsEditor();
                                 if (detailSettingsForm != null) {
                                     EnvironmentType environmentType = detailSettingsForm.getSelectedEnvironmentType();
-                                    connectionManager.showConnectionInfo(temporaryConfig, environmentType);
+                                    ConnectionManager.showConnectionInfo(temporaryConfig, environmentType);
                                 }
                             }
                             configuration.getDatabaseSettings().setConnectivityStatus(temporaryConfig.getDatabaseSettings().getConnectivityStatus());

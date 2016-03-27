@@ -59,7 +59,7 @@ public class ConnectionCache implements ApplicationComponent{
     private ProjectLifecycleListener projectLifecycleListener = new ProjectLifecycleListener.Adapter() {
 
         @Override
-        public void projectComponentsInitialized(Project project) {
+        public void projectComponentsInitialized(@NotNull Project project) {
             List<ConnectionHandler> connectionHandlers = ConnectionManager.getInstance(project).getConnectionHandlers();
             for (ConnectionHandler connectionHandler : connectionHandlers) {
                 CACHE.put(connectionHandler.getId(), connectionHandler);

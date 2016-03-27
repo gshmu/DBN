@@ -21,8 +21,7 @@ public class TestConnectivityAction extends AbstractConnectionAction {
         new ConnectionAction("testing the connectivity", connectionHandler, taskInstructions) {
             @Override
             protected void execute() {
-                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                connectionManager.testConnection(connectionHandler, true, true);
+                ConnectionManager.testConnection(connectionHandler, true, true);
             }
         }.start();
     }
