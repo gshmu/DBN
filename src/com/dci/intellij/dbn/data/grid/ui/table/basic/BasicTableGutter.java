@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
+
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -10,8 +12,6 @@ import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
-import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 
 public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
     public BasicTableGutter(final T table) {
@@ -73,7 +73,7 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
         public void valueChanged(ListSelectionEvent e) {
             T table = getTable();
             if (hasFocus()) {
-                int lastColumnIndex = table.getColumnCount() - 1;
+                int lastColumnIndex = Math.max(table.getColumnCount() - 1, 0);
                 if (justGainedFocus) {
                     justGainedFocus = false;
                     if (table.isEditing()) table.getCellEditor().cancelCellEditing();
