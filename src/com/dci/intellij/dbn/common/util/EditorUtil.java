@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -52,6 +41,17 @@ import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditorUtil {
     public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, EditorProviderId editorProviderId, boolean requestFocus) {
@@ -181,17 +181,16 @@ public class EditorUtil {
 
     @Nullable
     public static Editor getEditor(FileEditor fileEditor) {
+        Editor editor = null;
         if (fileEditor instanceof TextEditor) {
             TextEditor textEditor = (TextEditor) fileEditor;
-            return textEditor.getEditor();
-        }
-
-        if (fileEditor instanceof BasicTextEditor) {
+            editor = textEditor.getEditor();
+        } else if (fileEditor instanceof BasicTextEditor) {
             BasicTextEditor textEditor = (BasicTextEditor) fileEditor;
-            return textEditor.getEditor();
+            editor = textEditor.getEditor();
 
         }
-        return null;
+        return editor != null && !editor.isDisposed() ? editor : null;
     }
 
     public static FileEditor getFileEditor(Editor editor) {
