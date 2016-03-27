@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import java.lang.ref.WeakReference;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
 
 public class CompilerAction {
     private CompilerActionSource source;
@@ -74,7 +74,7 @@ public class CompilerAction {
         FileEditor fileEditor = this.fileEditorRef == null ? null : this.fileEditorRef.get();
         if (fileEditor != null) {
             Editor editor = EditorUtil.getEditor(fileEditor);
-            if (editor != null && editor.isDisposed()) {
+            if (editor != null) {
                 this.fileEditorRef = null;
             }
         }
