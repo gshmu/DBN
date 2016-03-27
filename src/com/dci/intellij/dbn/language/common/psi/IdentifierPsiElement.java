@@ -330,17 +330,18 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 IdentifierElementType substitutionCandidate = (IdentifierElementType) parseVariantElementType;
                 DBObjectType objectType = substitutionCandidate.getObjectType();
 
+                CharSequence refText = ref.getText();
                 if (parentObject == null) {  // index == 0
                     if (parentObjectElement == null) {
                         if (substitutionCandidate.isObject()) {
                             resolveWithScopeParentLookup(objectType, substitutionCandidate);
                         } else if (substitutionCandidate.isAlias()) {
-                            PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(this, objectType, ref.getText());
+                            PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(this, objectType, refText);
                             BasePsiElement referencedElement = lookupAdapter.findInParentScopeOf(this);
                             updateReference(null, parseVariantElementType, referencedElement);
 
                         } else if (substitutionCandidate.isVariable()) {
-                            PsiLookupAdapter lookupAdapter = new VariableDefinitionLookupAdapter(this, DBObjectType.ANY, ref.getText());
+                            PsiLookupAdapter lookupAdapter = new VariableDefinitionLookupAdapter(this, DBObjectType.ANY, refText);
                             BasePsiElement referencedElement = lookupAdapter.findInParentScopeOf(this);
                             updateReference(null, parseVariantElementType, referencedElement);
 
@@ -349,7 +350,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 } else { // index > 0
                     IdentifierElementType parentElementType = (IdentifierElementType) parseVariant.getLeaf(index - 1);
                     if (parentObject.isOfType(parentElementType.getObjectType())) {
-                        DBObject referencedElement = parentObject.getChildObject(objectType, ref.getText().toString(), false);
+                        DBObject referencedElement = parentObject.getChildObject(objectType, refText.toString(), false);
                         updateReference(parentObjectElement, parseVariantElementType, referencedElement);
 
                     }
