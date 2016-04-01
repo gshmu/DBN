@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.common.about.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.Cursor;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -19,6 +12,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Cursor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class AboutComponent extends DBNFormImpl{
     private JPanel mainPanel;
@@ -76,7 +76,7 @@ public class AboutComponent extends DBNFormImpl{
         requestTrackerPageLinkLabel.setCursor(handCursor);
         requestTrackerPageLinkLabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                BrowserUtil.browse("https://database-navigator.atlassian.net/browse/DBNE-17?filter=10104");
+                BrowserUtil.browse("https://database-navigator.atlassian.net/issues/?filter=10104");
             }
         });
         IdeaPluginDescriptor ideaPluginDescriptor = PluginManager.getPlugin(PluginId.getId("DBN"));
