@@ -135,60 +135,54 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
     "array" {return tt.getDataTypeTokenType(0);}
     "bigint" {return tt.getDataTypeTokenType(1);}
     "bigserial" {return tt.getDataTypeTokenType(2);}
-    "bit"{ws}"varying" {return tt.getDataTypeTokenType(3);}
-    "bool" {return tt.getDataTypeTokenType(4);}
-    "boolean" {return tt.getDataTypeTokenType(5);}
-    "box" {return tt.getDataTypeTokenType(6);}
-    "bytea" {return tt.getDataTypeTokenType(7);}
-    "char" {return tt.getDataTypeTokenType(8);}
-    "character" {return tt.getDataTypeTokenType(9);}
-    "character"{ws}"varying" {return tt.getDataTypeTokenType(10);}
-    "cid" {return tt.getDataTypeTokenType(11);}
-    "cidr" {return tt.getDataTypeTokenType(12);}
-    "circle" {return tt.getDataTypeTokenType(13);}
-    "date" {return tt.getDataTypeTokenType(14);}
-    "decimal" {return tt.getDataTypeTokenType(15);}
-    "double_precision" {return tt.getDataTypeTokenType(16);}
-    "inet" {return tt.getDataTypeTokenType(17);}
-    "int" {return tt.getDataTypeTokenType(18);}
-    "int2" {return tt.getDataTypeTokenType(19);}
-    "int2vector" {return tt.getDataTypeTokenType(20);}
-    "int4" {return tt.getDataTypeTokenType(21);}
-    "int8" {return tt.getDataTypeTokenType(22);}
-    "integer" {return tt.getDataTypeTokenType(23);}
-    "interval" {return tt.getDataTypeTokenType(24);}
-    "json" {return tt.getDataTypeTokenType(25);}
-    "line" {return tt.getDataTypeTokenType(26);}
-    "lseg" {return tt.getDataTypeTokenType(27);}
-    "macaddr" {return tt.getDataTypeTokenType(28);}
-    "money" {return tt.getDataTypeTokenType(29);}
-    "name" {return tt.getDataTypeTokenType(30);}
-    "numeric" {return tt.getDataTypeTokenType(31);}
-    "oid" {return tt.getDataTypeTokenType(32);}
-    "path" {return tt.getDataTypeTokenType(33);}
-    "point" {return tt.getDataTypeTokenType(34);}
-    "polygon" {return tt.getDataTypeTokenType(35);}
-    "real" {return tt.getDataTypeTokenType(36);}
-    "serial" {return tt.getDataTypeTokenType(37);}
-    "serial8" {return tt.getDataTypeTokenType(38);}
-    "smallint" {return tt.getDataTypeTokenType(39);}
-    "smallserial" {return tt.getDataTypeTokenType(40);}
-    "text" {return tt.getDataTypeTokenType(41);}
-    "tid" {return tt.getDataTypeTokenType(42);}
-    "time" {return tt.getDataTypeTokenType(43);}
-    "time"{ws}"with"{ws}"time"{ws}"zone" {return tt.getDataTypeTokenType(44);}
-    "time"{ws}"without"{ws}"time"{ws}"zone" {return tt.getDataTypeTokenType(45);}
-    "timestamp" {return tt.getDataTypeTokenType(46);}
-    "timestamp"{ws}"with"{ws}"time"{ws}"zone" {return tt.getDataTypeTokenType(47);}
-    "timestamp"{ws}"without"{ws}"time"{ws}"zone" {return tt.getDataTypeTokenType(48);}
-    "tsquery" {return tt.getDataTypeTokenType(49);}
-    "tsvector" {return tt.getDataTypeTokenType(50);}
-    "uuid" {return tt.getDataTypeTokenType(51);}
-    "varbit" {return tt.getDataTypeTokenType(52);}
-    "varchar" {return tt.getDataTypeTokenType(53);}
-    "xid" {return tt.getDataTypeTokenType(54);}
-    "xml" {return tt.getDataTypeTokenType(55);}
-    "yaml" {return tt.getDataTypeTokenType(56);}
+    "bool" {return tt.getDataTypeTokenType(3);}
+    "boolean" {return tt.getDataTypeTokenType(4);}
+    "box" {return tt.getDataTypeTokenType(5);}
+    "bytea" {return tt.getDataTypeTokenType(6);}
+    "char" {return tt.getDataTypeTokenType(7);}
+    "character" {return tt.getDataTypeTokenType(8);}
+    "cid" {return tt.getDataTypeTokenType(9);}
+    "cidr" {return tt.getDataTypeTokenType(10);}
+    "circle" {return tt.getDataTypeTokenType(11);}
+    "date" {return tt.getDataTypeTokenType(12);}
+    "decimal" {return tt.getDataTypeTokenType(13);}
+    "double_precision" {return tt.getDataTypeTokenType(14);}
+    "inet" {return tt.getDataTypeTokenType(15);}
+    "int" {return tt.getDataTypeTokenType(16);}
+    "int2" {return tt.getDataTypeTokenType(17);}
+    "int2vector" {return tt.getDataTypeTokenType(18);}
+    "int4" {return tt.getDataTypeTokenType(19);}
+    "int8" {return tt.getDataTypeTokenType(20);}
+    "integer" {return tt.getDataTypeTokenType(21);}
+    "interval" {return tt.getDataTypeTokenType(22);}
+    "json" {return tt.getDataTypeTokenType(23);}
+    "line" {return tt.getDataTypeTokenType(24);}
+    "lseg" {return tt.getDataTypeTokenType(25);}
+    "macaddr" {return tt.getDataTypeTokenType(26);}
+    "money" {return tt.getDataTypeTokenType(27);}
+    "name" {return tt.getDataTypeTokenType(28);}
+    "numeric" {return tt.getDataTypeTokenType(29);}
+    "oid" {return tt.getDataTypeTokenType(30);}
+    "path" {return tt.getDataTypeTokenType(31);}
+    "point" {return tt.getDataTypeTokenType(32);}
+    "polygon" {return tt.getDataTypeTokenType(33);}
+    "real" {return tt.getDataTypeTokenType(34);}
+    "serial" {return tt.getDataTypeTokenType(35);}
+    "serial8" {return tt.getDataTypeTokenType(36);}
+    "smallint" {return tt.getDataTypeTokenType(37);}
+    "smallserial" {return tt.getDataTypeTokenType(38);}
+    "text" {return tt.getDataTypeTokenType(39);}
+    "tid" {return tt.getDataTypeTokenType(40);}
+    "time" {return tt.getDataTypeTokenType(41);}
+    "timestamp" {return tt.getDataTypeTokenType(42);}
+    "tsquery" {return tt.getDataTypeTokenType(43);}
+    "tsvector" {return tt.getDataTypeTokenType(44);}
+    "uuid" {return tt.getDataTypeTokenType(45);}
+    "varbit" {return tt.getDataTypeTokenType(46);}
+    "varchar" {return tt.getDataTypeTokenType(47);}
+    "xid" {return tt.getDataTypeTokenType(48);}
+    "xml" {return tt.getDataTypeTokenType(49);}
+    "yaml" {return tt.getDataTypeTokenType(50);}
 
 
 
@@ -772,104 +766,104 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
     "tablesample" {return tt.getKeywordTokenType(577);}
     "tablespace" {return tt.getKeywordTokenType(578);}
     "table_name" {return tt.getKeywordTokenType(579);}
-"temp" {return tt.getKeywordTokenType(580);}
-"template" {return tt.getKeywordTokenType(581);}
-"temporary" {return tt.getKeywordTokenType(582);}
-"then" {return tt.getKeywordTokenType(583);}
-"ties" {return tt.getKeywordTokenType(584);}
-"timezone_hour" {return tt.getKeywordTokenType(585);}
-"timezone_minute" {return tt.getKeywordTokenType(586);}
-"timing" {return tt.getKeywordTokenType(587);}
-"to" {return tt.getKeywordTokenType(588);}
-"token" {return tt.getKeywordTokenType(589);}
-"top_level_count" {return tt.getKeywordTokenType(590);}
-"trailing" {return tt.getKeywordTokenType(591);}
-"transaction" {return tt.getKeywordTokenType(592);}
-"transactions_committed" {return tt.getKeywordTokenType(593);}
-"transactions_rolled_back" {return tt.getKeywordTokenType(594);}
-"transaction_active" {return tt.getKeywordTokenType(595);}
-"transform" {return tt.getKeywordTokenType(596);}
-"transforms" {return tt.getKeywordTokenType(597);}
-"translate_regex" {return tt.getKeywordTokenType(598);}
-"translation" {return tt.getKeywordTokenType(599);}
-"treat" {return tt.getKeywordTokenType(600);}
-"trigger" {return tt.getKeywordTokenType(601);}
-"trigger_catalog" {return tt.getKeywordTokenType(602);}
-"trigger_name" {return tt.getKeywordTokenType(603);}
-"trigger_schema" {return tt.getKeywordTokenType(604);}
-"trim_array" {return tt.getKeywordTokenType(605);}
-"true" {return tt.getKeywordTokenType(606);}
-"truncate" {return tt.getKeywordTokenType(607);}
-"trusted" {return tt.getKeywordTokenType(608);}
-"type" {return tt.getKeywordTokenType(609);}
-"types" {return tt.getKeywordTokenType(610);}
-"uescape" {return tt.getKeywordTokenType(611);}
-"unbounded" {return tt.getKeywordTokenType(612);}
-"uncommitted" {return tt.getKeywordTokenType(613);}
-"under" {return tt.getKeywordTokenType(614);}
-"unencrypted" {return tt.getKeywordTokenType(615);}
-"union" {return tt.getKeywordTokenType(616);}
-"unique" {return tt.getKeywordTokenType(617);}
-"unknown" {return tt.getKeywordTokenType(618);}
-"unlink" {return tt.getKeywordTokenType(619);}
-"unlisten" {return tt.getKeywordTokenType(620);}
-"unlogged" {return tt.getKeywordTokenType(621);}
-"unnamed" {return tt.getKeywordTokenType(622);}
-"until" {return tt.getKeywordTokenType(623);}
-"untyped" {return tt.getKeywordTokenType(624);}
-"update" {return tt.getKeywordTokenType(625);}
-"uri" {return tt.getKeywordTokenType(626);}
-"usage" {return tt.getKeywordTokenType(627);}
-"user" {return tt.getKeywordTokenType(628);}
-"user_defined_type_catalog" {return tt.getKeywordTokenType(629);}
-"user_defined_type_code" {return tt.getKeywordTokenType(630);}
-"user_defined_type_name" {return tt.getKeywordTokenType(631);}
-"user_defined_type_schema" {return tt.getKeywordTokenType(632);}
-"using" {return tt.getKeywordTokenType(633);}
-"vacuum" {return tt.getKeywordTokenType(634);}
-"valid" {return tt.getKeywordTokenType(635);}
-"validate" {return tt.getKeywordTokenType(636);}
-"validator" {return tt.getKeywordTokenType(637);}
-"value" {return tt.getKeywordTokenType(638);}
-"values" {return tt.getKeywordTokenType(639);}
-"value_of" {return tt.getKeywordTokenType(640);}
-"varbinary" {return tt.getKeywordTokenType(641);}
-"variadic" {return tt.getKeywordTokenType(642);}
-"varying" {return tt.getKeywordTokenType(643);}
-"var_pop" {return tt.getKeywordTokenType(644);}
-"var_samp" {return tt.getKeywordTokenType(645);}
-"verbose" {return tt.getKeywordTokenType(646);}
-"versioning" {return tt.getKeywordTokenType(647);}
-"view" {return tt.getKeywordTokenType(648);}
-"volatile" {return tt.getKeywordTokenType(649);}
-"when" {return tt.getKeywordTokenType(650);}
-"whenever" {return tt.getKeywordTokenType(651);}
-"where" {return tt.getKeywordTokenType(652);}
-"whitespace" {return tt.getKeywordTokenType(653);}
-"window" {return tt.getKeywordTokenType(654);}
-"with" {return tt.getKeywordTokenType(655);}
-"within" {return tt.getKeywordTokenType(656);}
-"without" {return tt.getKeywordTokenType(657);}
-"work" {return tt.getKeywordTokenType(658);}
-"wrapper" {return tt.getKeywordTokenType(659);}
-"write" {return tt.getKeywordTokenType(660);}
-"xmlattributes" {return tt.getKeywordTokenType(661);}
-"xmlbinary" {return tt.getKeywordTokenType(662);}
-"xmlcast" {return tt.getKeywordTokenType(663);}
-"xmldeclaration" {return tt.getKeywordTokenType(664);}
-"xmldocument" {return tt.getKeywordTokenType(665);}
-"xmliterate" {return tt.getKeywordTokenType(666);}
-"xmlnamespaces" {return tt.getKeywordTokenType(667);}
-"xmlparse" {return tt.getKeywordTokenType(668);}
-"xmlquery" {return tt.getKeywordTokenType(669);}
-"xmlschema" {return tt.getKeywordTokenType(670);}
-"xmlserialize" {return tt.getKeywordTokenType(671);}
-"xmltable" {return tt.getKeywordTokenType(672);}
-"xmltext" {return tt.getKeywordTokenType(673);}
-"xmlvalidate" {return tt.getKeywordTokenType(674);}
-"year" {return tt.getKeywordTokenType(675);}
-"yes" {return tt.getKeywordTokenType(676);}
-"zone" {return tt.getKeywordTokenType(677);}
+    "temp" {return tt.getKeywordTokenType(580);}
+    "template" {return tt.getKeywordTokenType(581);}
+    "temporary" {return tt.getKeywordTokenType(582);}
+    "then" {return tt.getKeywordTokenType(583);}
+    "ties" {return tt.getKeywordTokenType(584);}
+    "timezone_hour" {return tt.getKeywordTokenType(585);}
+    "timezone_minute" {return tt.getKeywordTokenType(586);}
+    "timing" {return tt.getKeywordTokenType(587);}
+    "to" {return tt.getKeywordTokenType(588);}
+    "token" {return tt.getKeywordTokenType(589);}
+    "top_level_count" {return tt.getKeywordTokenType(590);}
+    "trailing" {return tt.getKeywordTokenType(591);}
+    "transaction" {return tt.getKeywordTokenType(592);}
+    "transactions_committed" {return tt.getKeywordTokenType(593);}
+    "transactions_rolled_back" {return tt.getKeywordTokenType(594);}
+    "transaction_active" {return tt.getKeywordTokenType(595);}
+    "transform" {return tt.getKeywordTokenType(596);}
+    "transforms" {return tt.getKeywordTokenType(597);}
+    "translate_regex" {return tt.getKeywordTokenType(598);}
+    "translation" {return tt.getKeywordTokenType(599);}
+    "treat" {return tt.getKeywordTokenType(600);}
+    "trigger" {return tt.getKeywordTokenType(601);}
+    "trigger_catalog" {return tt.getKeywordTokenType(602);}
+    "trigger_name" {return tt.getKeywordTokenType(603);}
+    "trigger_schema" {return tt.getKeywordTokenType(604);}
+    "trim_array" {return tt.getKeywordTokenType(605);}
+    "true" {return tt.getKeywordTokenType(606);}
+    "truncate" {return tt.getKeywordTokenType(607);}
+    "trusted" {return tt.getKeywordTokenType(608);}
+    "type" {return tt.getKeywordTokenType(609);}
+    "types" {return tt.getKeywordTokenType(610);}
+    "uescape" {return tt.getKeywordTokenType(611);}
+    "unbounded" {return tt.getKeywordTokenType(612);}
+    "uncommitted" {return tt.getKeywordTokenType(613);}
+    "under" {return tt.getKeywordTokenType(614);}
+    "unencrypted" {return tt.getKeywordTokenType(615);}
+    "union" {return tt.getKeywordTokenType(616);}
+    "unique" {return tt.getKeywordTokenType(617);}
+    "unknown" {return tt.getKeywordTokenType(618);}
+    "unlink" {return tt.getKeywordTokenType(619);}
+    "unlisten" {return tt.getKeywordTokenType(620);}
+    "unlogged" {return tt.getKeywordTokenType(621);}
+    "unnamed" {return tt.getKeywordTokenType(622);}
+    "until" {return tt.getKeywordTokenType(623);}
+    "untyped" {return tt.getKeywordTokenType(624);}
+    "update" {return tt.getKeywordTokenType(625);}
+    "uri" {return tt.getKeywordTokenType(626);}
+    "usage" {return tt.getKeywordTokenType(627);}
+    "user" {return tt.getKeywordTokenType(628);}
+    "user_defined_type_catalog" {return tt.getKeywordTokenType(629);}
+    "user_defined_type_code" {return tt.getKeywordTokenType(630);}
+    "user_defined_type_name" {return tt.getKeywordTokenType(631);}
+    "user_defined_type_schema" {return tt.getKeywordTokenType(632);}
+    "using" {return tt.getKeywordTokenType(633);}
+    "vacuum" {return tt.getKeywordTokenType(634);}
+    "valid" {return tt.getKeywordTokenType(635);}
+    "validate" {return tt.getKeywordTokenType(636);}
+    "validator" {return tt.getKeywordTokenType(637);}
+    "value" {return tt.getKeywordTokenType(638);}
+    "values" {return tt.getKeywordTokenType(639);}
+    "value_of" {return tt.getKeywordTokenType(640);}
+    "varbinary" {return tt.getKeywordTokenType(641);}
+    "variadic" {return tt.getKeywordTokenType(642);}
+    "varying" {return tt.getKeywordTokenType(643);}
+    "var_pop" {return tt.getKeywordTokenType(644);}
+    "var_samp" {return tt.getKeywordTokenType(645);}
+    "verbose" {return tt.getKeywordTokenType(646);}
+    "versioning" {return tt.getKeywordTokenType(647);}
+    "view" {return tt.getKeywordTokenType(648);}
+    "volatile" {return tt.getKeywordTokenType(649);}
+    "when" {return tt.getKeywordTokenType(650);}
+    "whenever" {return tt.getKeywordTokenType(651);}
+    "where" {return tt.getKeywordTokenType(652);}
+    "whitespace" {return tt.getKeywordTokenType(653);}
+    "window" {return tt.getKeywordTokenType(654);}
+    "with" {return tt.getKeywordTokenType(655);}
+    "within" {return tt.getKeywordTokenType(656);}
+    "without" {return tt.getKeywordTokenType(657);}
+    "work" {return tt.getKeywordTokenType(658);}
+    "wrapper" {return tt.getKeywordTokenType(659);}
+    "write" {return tt.getKeywordTokenType(660);}
+    "xmlattributes" {return tt.getKeywordTokenType(661);}
+    "xmlbinary" {return tt.getKeywordTokenType(662);}
+    "xmlcast" {return tt.getKeywordTokenType(663);}
+    "xmldeclaration" {return tt.getKeywordTokenType(664);}
+    "xmldocument" {return tt.getKeywordTokenType(665);}
+    "xmliterate" {return tt.getKeywordTokenType(666);}
+    "xmlnamespaces" {return tt.getKeywordTokenType(667);}
+    "xmlparse" {return tt.getKeywordTokenType(668);}
+    "xmlquery" {return tt.getKeywordTokenType(669);}
+    "xmlschema" {return tt.getKeywordTokenType(670);}
+    "xmlserialize" {return tt.getKeywordTokenType(671);}
+    "xmltable" {return tt.getKeywordTokenType(672);}
+    "xmltext" {return tt.getKeywordTokenType(673);}
+    "xmlvalidate" {return tt.getKeywordTokenType(674);}
+    "year" {return tt.getKeywordTokenType(675);}
+    "yes" {return tt.getKeywordTokenType(676);}
+    "zone" {return tt.getKeywordTokenType(677);}
 
 
 
@@ -1198,24 +1192,24 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
     "upper" {return tt.getFunctionTokenType(319);}
     "upper_inc" {return tt.getFunctionTokenType(320);}
     "upper_inf" {return tt.getFunctionTokenType(321);}
-    "user" {return tt.getFunctionTokenType(322);}
-    "version" {return tt.getFunctionTokenType(323);}
-    "width" {return tt.getFunctionTokenType(324);}
-    "width_bucket" {return tt.getFunctionTokenType(325);}
-    "xip_list" {return tt.getFunctionTokenType(326);}
-    "xmax" {return tt.getFunctionTokenType(327);}
-    "xmin" {return tt.getFunctionTokenType(328);}
-    "xmlagg" {return tt.getFunctionTokenType(329);}
-    "xmlcomment" {return tt.getFunctionTokenType(330);}
-    "xmlconcat" {return tt.getFunctionTokenType(331);}
-    "xmlelement" {return tt.getFunctionTokenType(332);}
-    "xmlexists" {return tt.getFunctionTokenType(333);}
-    "xmlforest" {return tt.getFunctionTokenType(334);}
-    "xmlpi" {return tt.getFunctionTokenType(335);}
-    "xmlroot" {return tt.getFunctionTokenType(336);}
-    "xml_is_well_formed" {return tt.getFunctionTokenType(337);}
-    "xpath" {return tt.getFunctionTokenType(338);}
-    "xpath_exists" {return tt.getFunctionTokenType(339);}
+    "version" {return tt.getFunctionTokenType(322);}
+    "width" {return tt.getFunctionTokenType(323);}
+    "width_bucket" {return tt.getFunctionTokenType(324);}
+    "xip_list" {return tt.getFunctionTokenType(325);}
+    "xmax" {return tt.getFunctionTokenType(326);}
+    "xmin" {return tt.getFunctionTokenType(327);}
+    "xmlagg" {return tt.getFunctionTokenType(328);}
+    "xmlcomment" {return tt.getFunctionTokenType(329);}
+    "xmlconcat" {return tt.getFunctionTokenType(330);}
+    "xmlelement" {return tt.getFunctionTokenType(331);}
+    "xmlexists" {return tt.getFunctionTokenType(332);}
+    "xmlforest" {return tt.getFunctionTokenType(333);}
+    "xmlpi" {return tt.getFunctionTokenType(334);}
+    "xmlroot" {return tt.getFunctionTokenType(335);}
+    "xml_is_well_formed" {return tt.getFunctionTokenType(336);}
+    "xpath" {return tt.getFunctionTokenType(337);}
+    "xpath_exists" {return tt.getFunctionTokenType(338);}
+
 
 
 
