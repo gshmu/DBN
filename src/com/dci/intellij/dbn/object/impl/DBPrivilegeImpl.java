@@ -32,9 +32,12 @@ public abstract class DBPrivilegeImpl extends DBObjectImpl implements DBPrivileg
 
     public List<DBRole> getRoleGrantees() {
         List<DBRole> grantees = new ArrayList<DBRole>();
-        for (DBRole role : getConnectionHandler().getObjectBundle().getRoles()) {
-            if (role.hasPrivilege(this)) {
-                grantees.add(role);
+        List<DBRole> roles = getConnectionHandler().getObjectBundle().getRoles();
+        if (roles != null) {
+            for (DBRole role : roles) {
+                if (role.hasPrivilege(this)) {
+                    grantees.add(role);
+                }
             }
         }
         return grantees;
