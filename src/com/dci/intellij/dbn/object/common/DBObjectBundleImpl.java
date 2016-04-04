@@ -280,28 +280,28 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
     @Nullable
     public DBUser getUser(String name) {
-        return users == null ? null : users.getObject(name);
+        return DBObjectListImpl.getObject(users, name);
     }
 
     @Nullable
     public DBRole getRole(String name) {
-        return roles == null ? null : roles.getObject(name);
+        return DBObjectListImpl.getObject(roles, name);
     }
 
     @Nullable
     @Override
     public DBPrivilege getPrivilege(String name) {
-        return systemPrivileges.getObject(name);
+        return DBObjectListImpl.getObject(systemPrivileges, name);
     }
 
     @Nullable
     public DBSystemPrivilege getSystemPrivilege(String name) {
-        return systemPrivileges.getObject(name);
+        return DBObjectListImpl.getObject(systemPrivileges, name);
     }
 
     @Nullable
     public DBCharset getCharset(String name) {
-        return charsets.getObject(name);
+        return DBObjectListImpl.getObject(charsets, name);
     }
 
     @NotNull
