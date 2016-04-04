@@ -60,9 +60,12 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
 
     public List<DBUser> getUserGrantees() {
         List<DBUser> grantees = new ArrayList<DBUser>();
-        for (DBUser user : getConnectionHandler().getObjectBundle().getUsers()) {
-            if (user.hasRole(this)) {
-                grantees.add(user);
+        List<DBUser> users = getConnectionHandler().getObjectBundle().getUsers();
+        if (users != null) {
+            for (DBUser user : users) {
+                if (user.hasRole(this)) {
+                    grantees.add(user);
+                }
             }
         }
         return grantees;
@@ -70,9 +73,12 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
 
     public List<DBRole> getRoleGrantees() {
         List<DBRole> grantees = new ArrayList<DBRole>();
-        for (DBRole role : getConnectionHandler().getObjectBundle().getRoles()) {
-            if (role.hasRole(this)) {
-                grantees.add(role);
+        List<DBRole> roles = getConnectionHandler().getObjectBundle().getRoles();
+        if (roles != null) {
+            for (DBRole role : roles) {
+                if (role.hasRole(this)) {
+                    grantees.add(role);
+                }
             }
         }
         return grantees;

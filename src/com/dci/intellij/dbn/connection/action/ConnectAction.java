@@ -21,8 +21,7 @@ public class ConnectAction extends AbstractConnectionAction {
         new ConnectionAction("connecting to database", connectionHandler, taskInstructions) {
             @Override
             protected void execute() {
-                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                connectionManager.testConnection(connectionHandler, false, true);
+                ConnectionManager.testConnection(connectionHandler, false, true);
             }
         }.start();
     }

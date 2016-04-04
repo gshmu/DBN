@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.object.common.list;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.BasicDependencyAdapter;
@@ -16,21 +7,31 @@ import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.intellij.openapi.Disposable;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DBObjectListContainer implements Disposable {
     private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
     private Map<DBObjectType, DBObjectList<DBObject>> hiddenObjectLists;
     private GenericDatabaseElement owner;
 
-    public DBObjectListContainer(GenericDatabaseElement owner) {
+    public DBObjectListContainer(@NotNull GenericDatabaseElement owner) {
         this.owner = owner;
     }
 
@@ -141,27 +142,27 @@ public class DBObjectListContainer implements Disposable {
         return null;
     }
 
+    @Nullable
     public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, int overload, boolean lookupHidden) {
+        DBObject object = null;
         if (objectLists != null) {
-            for (DBObjectList objectList : objectLists.values()) {
-                DBObjectType objectType = objectList.getObjectType();
-                if (objectType.getParents().contains(parentObjectType)) {
-                    DBObject object = objectList.getObject(name, overload);
-                    if (object != null) {
-                        return object;
-                    }
-                }
-            }
+            object = findObject(objectLists, parentObjectType, name, overload);
         }
 
-        if (hiddenObjectLists != null && lookupHidden) {
-            for (DBObjectList objectList : hiddenObjectLists.values()) {
-                DBObjectType objectType = objectList.getObjectType();
-                if (objectType.getParents().contains(parentObjectType)) {
-                    DBObject object = objectList.getObject(name, overload);
-                    if (object != null) {
-                        return object;
-                    }
+        if (object == null && hiddenObjectLists != null && lookupHidden) {
+            object = findObject(hiddenObjectLists, parentObjectType, name, overload);
+        }
+        return object;
+    }
+
+    @Nullable
+    private DBObject findObject(Map<DBObjectType, DBObjectList<DBObject>> objectLists, DBObjectType parentObjectType, String name, int overload) {
+        for (DBObjectList objectList : objectLists.values()) {
+            DBObjectType objectType = objectList.getObjectType();
+            if (objectType.getParents().contains(parentObjectType)) {
+                DBObject object = objectList.getObject(name, overload);
+                if (object != null) {
+                    return object;
                 }
             }
         }
@@ -285,22 +286,17 @@ public class DBObjectListContainer implements Disposable {
         }
     }
 
-    public void dispose() {
-        DisposerUtil.dispose(objectLists);
-        DisposerUtil.dispose(hiddenObjectLists);
-        owner = null;
-
-    }
-
     public void reload(boolean recursive) {
         if (objectLists != null)  {
             for (DBObjectList objectList : objectLists.values()) {
                 objectList.reload();
+                checkDisposed();
             }
         }
         if (hiddenObjectLists != null)  {
             for (DBObjectList objectList : hiddenObjectLists.values()) {
                 objectList.reload();
+                checkDisposed();
             }
         }
     }
@@ -309,6 +305,7 @@ public class DBObjectListContainer implements Disposable {
         if (objectLists != null)  {
             for (DBObjectList objectList : objectLists.values()) {
                 objectList.load(false);
+                checkDisposed();
             }
         }
         if (hiddenObjectLists != null)  {
@@ -316,7 +313,14 @@ public class DBObjectListContainer implements Disposable {
                 if (!objectList.getObjectType().isOneOf(DBObjectType.ANY, DBObjectType.OUTGOING_DEPENDENCY, DBObjectType.INCOMING_DEPENDENCY)) {
                     objectList.load(false);
                 }
+                checkDisposed();
             }
+        }
+    }
+
+    private void checkDisposed() {
+        if (isDisposed()) {
+            throw AlreadyDisposedException.INSTANCE;
         }
     }
 
@@ -326,5 +330,16 @@ public class DBObjectListContainer implements Disposable {
         if (objectList != null) {
             objectList.getElements();
         }
+    }
+
+    public void dispose() {
+        owner = null;
+        DisposerUtil.dispose(objectLists);
+        DisposerUtil.dispose(hiddenObjectLists);
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return owner == null;
     }
 }

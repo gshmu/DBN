@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import javax.swing.Icon;
-import java.sql.SQLException;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilderProvider;
 import com.dci.intellij.dbn.common.Referenceable;
@@ -27,6 +21,12 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.intellij.psi.PsiNamedElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.sql.SQLException;
+import java.util.List;
 
 public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicContentElement, LookupItemBuilderProvider, Referenceable, EnvironmentTypeProvider, PresentableConnectionProvider {
     DBObjectType getObjectType();
@@ -71,7 +71,10 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
     DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden);
     DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden);
 
+    @Nullable
     DBObject getChildObject(String name, boolean lookupHidden);
+
+    @Nullable
     DBObject getChildObject(String name, int overload, boolean lookupHidden);
 
     List<DBObjectNavigationList> getNavigationLists();

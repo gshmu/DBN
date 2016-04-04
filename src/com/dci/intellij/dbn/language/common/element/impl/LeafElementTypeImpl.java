@@ -175,10 +175,14 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                     ElementTypeRef child = sequenceElementType.getChild(position);
                     while (child != null) {
                         ElementTypeLookupCache lookupCache = child.getLookupCache();
-                        if (required ?
-                                lookupCache.isFirstRequiredToken(tokenType) :
-                                lookupCache.isFirstPossibleToken(tokenType)) {
-                            return true;
+                        if (required) {
+                            if (lookupCache.isFirstRequiredToken(tokenType) && !child.isOptional()) {
+                                return true;
+                            }
+                        } else {
+                            if (lookupCache.isFirstPossibleToken(tokenType)) {
+                                return true;
+                            }
                         }
 
                         if (!child.isOptional() && !child.isOptionalFromHere()) {
