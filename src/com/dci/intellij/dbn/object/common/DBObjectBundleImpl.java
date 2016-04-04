@@ -1,18 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
@@ -61,6 +48,7 @@ import com.dci.intellij.dbn.object.DBSystemPrivilege;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
+import com.dci.intellij.dbn.object.common.list.DBObjectListImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.impl.DBCharsetImpl;
 import com.dci.intellij.dbn.object.impl.DBGrantedPrivilegeImpl;
@@ -77,6 +65,19 @@ import com.dci.intellij.dbn.object.impl.DBUserRoleRelation;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DBObjectBundleImpl implements DBObjectBundle {
     private ConnectionHandler connectionHandler;
@@ -203,22 +204,27 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return schemas.getAllElements();
     }
 
+    @Nullable
     public List<DBUser> getUsers() {
-        return users.getObjects();
+        return DBObjectListImpl.getObjects(users);
     }
 
+    @Nullable
     public List<DBRole> getRoles() {
-        return roles.getObjects();
+        return DBObjectListImpl.getObjects(roles);
     }
 
+    @Nullable
     public List<DBSystemPrivilege> getSystemPrivileges() {
-        return systemPrivileges.getObjects();
+        return DBObjectListImpl.getObjects(systemPrivileges);
     }
 
+    @Nullable
     public List<DBCharset> getCharsets() {
-        return charsets.getObjects();
+        return DBObjectListImpl.getObjects(charsets);
     }
 
+    @NotNull
     public synchronized List<DBNativeDataType> getNativeDataTypes(){
         if (nativeDataTypes == null) {
             DatabaseInterfaceProvider interfaceProvider = getConnectionHandler().getInterfaceProvider();
@@ -279,7 +285,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
     @Nullable
     public DBRole getRole(String name) {
-        return roles.getObject(name);
+        return roles == null ? null : roles.getObject(name);
     }
 
     @Nullable
