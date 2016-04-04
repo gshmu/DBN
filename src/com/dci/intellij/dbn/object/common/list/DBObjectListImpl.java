@@ -54,6 +54,15 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     }
 
+    @Nullable
+    public static <E extends DBObject> E getObject(@Nullable DBObjectList<E> objectList, String name) {
+        return getObject(objectList, name, 0);
+    }
+
+    public static <E extends DBObject> E getObject(@Nullable DBObjectList<E> objectList, String name, int overload) {
+        return objectList == null ? null : objectList.getObject(name, overload);
+    }
+
     @Override
     public boolean isFiltered() {
         return getFilter() != null;
