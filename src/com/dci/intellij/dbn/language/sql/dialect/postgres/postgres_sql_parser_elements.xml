@@ -2373,7 +2373,7 @@
             <token id="000001434" type-id="DT_XML" />
         </one-of>
         <element optional="true" ref-id="data_type_parameter_list" />
-        <token optional="true" type-id="KW_ARRAY" id="000001435" />
+        <token optional="true" type-id="DT_ARRAY" id="000001435" />
         <iteration id="000001436" optional="true">
             <sequence id="000001437">
                 <token id="000001438" type-id="CHR_LEFT_BRACKET" />
