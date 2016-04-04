@@ -97,7 +97,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
 
     void promptDatabaseInitDialog() {
         final ConnectionHandler connectionHandler = getConnectionHandler();
-        getConnectionManager().promptDatabaseInitDialog(
+        ConnectionManager.promptDatabaseInitDialog(
                 connectionHandler,
                 new MessageCallback() {
                     @Override
@@ -121,7 +121,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
 
     void promptAuthenticationDialog() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        getConnectionManager().promptAuthenticationDialog(
+        ConnectionManager.promptAuthenticationDialog(
                 connectionHandler,
                 connectionHandler.getAuthenticationInfo().clone(),
                 new SimpleTask<AuthenticationInfo>() {
@@ -140,7 +140,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
 
     void promptConnectDialog() {
         final ConnectionHandler connectionHandler = getConnectionHandler();
-        getConnectionManager().promptConnectDialog(
+        ConnectionManager.promptConnectDialog(
                 connectionHandler, description,
                 new MessageCallback() {
                     @Override
@@ -154,10 +154,6 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
                         }
                     }
                 });
-    }
-
-    private ConnectionManager getConnectionManager() {
-        return ConnectionManager.getInstance(getProject());
     }
 
     private void executeAction() {

@@ -160,7 +160,7 @@
                 </constraints>
                 <properties>
                   <font size="10"/>
-                  <text value="http://dci.myjetbrains.com/youtrack/issues"/>
+                  <text value="https://database-navigator.atlassian.net/issues"/>
                 </properties>
               </component>
               <vspacer id="28a9b">

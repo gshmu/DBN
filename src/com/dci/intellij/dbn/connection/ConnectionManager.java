@@ -145,8 +145,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         return connectionBundle;
     }
 
-    public void testConnection(ConnectionHandler connectionHandler, boolean showSuccessMessage, boolean showErrorMessage) {
-        Project project = getProject();
+    public static void testConnection(ConnectionHandler connectionHandler, boolean showSuccessMessage, boolean showErrorMessage) {
+        Project project = connectionHandler.getProject();
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
         String connectionName = connectionHandler.getName();
         try {
@@ -170,7 +170,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void testConfigConnection(final ConnectionSettings connectionSettings, final boolean showMessageDialog) {
+    public static void testConfigConnection(final ConnectionSettings connectionSettings, final boolean showMessageDialog) {
         final Project project = connectionSettings.getProject();
         final ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         final String connectionName = databaseSettings.getName();
@@ -216,7 +216,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void showConnectionInfo(final ConnectionSettings connectionSettings, final EnvironmentType environmentType) {
+    public static void showConnectionInfo(final ConnectionSettings connectionSettings, final EnvironmentType environmentType) {
         final ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         final String connectionName = databaseSettings.getName();
         final Project project = connectionSettings.getProject();
@@ -246,7 +246,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    private void promptTemporaryAuthenticationDialog(ConnectionDatabaseSettings databaseSettings, RunnableTask<AuthenticationInfo> callback) {
+    private static void promptTemporaryAuthenticationDialog(ConnectionDatabaseSettings databaseSettings, RunnableTask<AuthenticationInfo> callback) {
         AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo().clone();
         if (!authenticationInfo.isProvided()) {
             promptAuthenticationDialog(null, authenticationInfo, callback);
@@ -255,20 +255,21 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void promptDatabaseInitDialog(ConnectionHandler connectionHandler, MessageCallback callback) {
+    public static void promptDatabaseInitDialog(ConnectionHandler connectionHandler, MessageCallback callback) {
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
         promptDatabaseInitDialog(databaseSettings, callback);
-
     }
-    public void promptDatabaseInitDialog(ConnectionDatabaseSettings databaseSettings, MessageCallback callback) {
+
+    public static void promptDatabaseInitDialog(ConnectionDatabaseSettings databaseSettings, MessageCallback callback) {
         DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
             String file = databaseInfo.getFiles().getMainFile().getPath();
+            Project project = databaseSettings.getProject();
             if (StringUtils.isEmpty(file)) {
-                MessageUtil.showErrorDialog(getProject(), "Wrong Database Configuration", "Database file not specified");
+                MessageUtil.showErrorDialog(project, "Wrong Database Configuration", "Database file not specified");
             } else if (!new File(file).exists()) {
                 MessageUtil.showWarningDialog(
-                        getProject(),
+                        project,
                         "Database File not Available",
                         "The database file \"" + file + "\" does not exist.\nDo you want to create?",
                         new String[]{"Create", "Cancel"}, 0,
@@ -277,9 +278,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void promptConnectDialog(ConnectionHandler connectionHandler, @Nullable String actionDesc, MessageCallback callback) {
+    public static void promptConnectDialog(ConnectionHandler connectionHandler, @Nullable String actionDesc, MessageCallback callback) {
         MessageUtil.showInfoDialog(
-                getProject(),
+                connectionHandler.getProject(),
                 "Not Connected to Database",
                 "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
                         "If you want to continue" + (actionDesc == null ? "" : " with " + actionDesc) + ", you need to connect.",
@@ -287,28 +288,28 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 callback);
     }
 
-    private void showErrorConnectionMessage(Project project, String connectionName, Exception e) {
+    private static void showErrorConnectionMessage(Project project, String connectionName, Exception e) {
         MessageUtil.showErrorDialog(
                 project,
                 "Connection error",
                 "Cannot connect to \"" + connectionName + "\".\n" + e.getMessage());
     }
 
-    private void showSuccessfulConnectionMessage(Project project, String connectionName) {
+    private static void showSuccessfulConnectionMessage(Project project, String connectionName) {
         MessageUtil.showInfoDialog(
                 project,
                 "Connection successful",
                 "Connection to \"" + connectionName + "\" was successful.");
     }
 
-    private void showInvalidConfigMessage(Project project, ConfigurationException e) {
+    private static void showInvalidConfigMessage(Project project, ConfigurationException e) {
         MessageUtil.showErrorDialog(
                 project,
                 "Invalid configuration",
                 e.getMessage());
     }
 
-    public void showConnectionInfoDialog(final ConnectionHandler connectionHandler) {
+    public static void showConnectionInfoDialog(final ConnectionHandler connectionHandler) {
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
@@ -319,19 +320,19 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }.start();
     }
 
-    private void showConnectionInfoDialog(final ConnectionInfo connectionInfo, final String connectionName, final EnvironmentType environmentType) {
+    private static void showConnectionInfoDialog(final ConnectionInfo connectionInfo, final String connectionName, final EnvironmentType environmentType) {
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
-                ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(getProject(), connectionInfo, connectionName, environmentType);
+                ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(null, connectionInfo, connectionName, environmentType);
                 infoDialog.setModal(true);
                 infoDialog.show();
             }
         }.start();
     }
 
-    public void promptAuthenticationDialog(@Nullable ConnectionHandler connectionHandler, @NotNull AuthenticationInfo authenticationInfo, RunnableTask<AuthenticationInfo> callback) {
-        ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(getProject(), connectionHandler, authenticationInfo);
+    public static void promptAuthenticationDialog(@Nullable ConnectionHandler connectionHandler, @NotNull AuthenticationInfo authenticationInfo, RunnableTask<AuthenticationInfo> callback) {
+        ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(null, connectionHandler, authenticationInfo);
         passwordDialog.show();
         if (passwordDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             AuthenticationInfo newAuthenticationInfo = passwordDialog.getAuthenticationInfo();

@@ -22,10 +22,20 @@ import java.util.List;
 
 public interface DBObjectBundle extends BrowserTreeNode, Disposable {
     List<DBSchema> getSchemas();
+
+    @Nullable
     List<DBUser> getUsers();
+
+    @Nullable
     List<DBRole> getRoles();
+
+    @Nullable
     List<DBSystemPrivilege> getSystemPrivileges();
+
+    @Nullable
     List<DBCharset> getCharsets();
+
+    @NotNull
     List<DBNativeDataType> getNativeDataTypes();
 
     @Nullable

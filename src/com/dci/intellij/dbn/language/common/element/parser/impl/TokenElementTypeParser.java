@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
@@ -15,6 +12,8 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 public class TokenElementTypeParser extends AbstractElementTypeParser<TokenElementType> {
     public TokenElementTypeParser(TokenElementType elementType) {
@@ -47,7 +46,7 @@ public class TokenElementTypeParser extends AbstractElementTypeParser<TokenEleme
                     return stepOut(null, null, context, depth, ParseResultType.NO_MATCH, 0);
                 }
                 if (tokenType.isFunction() && elementType.getFlavor() == null) {
-                    if (nextTokenType != leftParenthesis && elementType.isNextPossibleToken(leftParenthesis, parentNode, context)) {
+                    if (nextTokenType != leftParenthesis && elementType.isNextRequiredToken(leftParenthesis, parentNode, context)) {
                         context.setWavedTokenType(tokenType);
                         return stepOut(null, null, context, depth, ParseResultType.NO_MATCH, 0);
                     }

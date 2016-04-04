@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import java.sql.SQLException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.intellij.openapi.Disposable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class ResultSetAdapter implements Disposable{
+import java.sql.SQLException;
+
+public abstract class ResultSetAdapter implements Disposable {
     private boolean useSavePoints;
     private boolean insertMode;
     private DatasetEditorModel model;
@@ -57,5 +57,10 @@ public abstract class ResultSetAdapter implements Disposable{
     @Override
     public void dispose() {
         model = null;
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return model == null;
     }
 }

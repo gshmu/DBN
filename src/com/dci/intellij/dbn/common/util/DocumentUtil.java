@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import java.util.ArrayList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -36,6 +32,10 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.Range;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 
 public class DocumentUtil {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
@@ -92,7 +92,7 @@ public class DocumentUtil {
     }
 
     @Nullable
-    public static PsiFile getFile(Editor editor) {
+    public static PsiFile getFile(@Nullable Editor editor) {
         Project project = editor == null ? null : editor.getProject();
         return project == null ? null : PsiUtil.getPsiFile(project, editor.getDocument());
     }

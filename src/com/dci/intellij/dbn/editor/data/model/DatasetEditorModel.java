@@ -1,19 +1,5 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
@@ -39,6 +25,20 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow> implements ListSelectionListener {
     private boolean isInserting;
@@ -121,8 +121,9 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         Disposer.register(DatasetEditorModel.this, resultSetAdapter);
     }
 
+    @NotNull
     ResultSetAdapter getResultSetAdapter() {
-        return resultSetAdapter;
+        return FailsafeUtil.get(resultSetAdapter);
     }
 
     private int computeRowCount() {
@@ -340,6 +341,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     }
 
     public void insertRecord(int rowIndex) {
+        ResultSetAdapter resultSetAdapter = getResultSetAdapter();
         DatasetEditorTable editorTable = getEditorTable();
         DBDataset dataset = getDataset();
         try {
@@ -360,6 +362,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     }
 
     public void duplicateRecord(int rowIndex) {
+        ResultSetAdapter resultSetAdapter = getResultSetAdapter();
         DatasetEditorTable editorTable = getEditorTable();
         DBDataset dataset = getDataset();
         try {
@@ -382,6 +385,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     }
 
     public void postInsertRecord(boolean propagateError, boolean rebuild, boolean reset) throws SQLException {
+        ResultSetAdapter resultSetAdapter = getResultSetAdapter();
         DatasetEditorTable editorTable = getEditorTable();
         DatasetEditorModelRow row = getInsertRow();
         if (row != null) {
@@ -409,6 +413,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     }
 
     public void cancelInsert(boolean notifyListeners) {
+        ResultSetAdapter resultSetAdapter = getResultSetAdapter();
         DatasetEditorTable editorTable = getEditorTable();
         try {
             editorTable.fireEditingCancel();
