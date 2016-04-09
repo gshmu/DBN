@@ -98,7 +98,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         this.text = text;
         this.isComboBox = isComboBox;
 
-        setBorder(new EmptyBorder(0, 0, 0, 0));
+        setBorder(Borders.EMPTY_BORDER);
 
         if (isComboBox) {
             defaultBorder = new ValueSelectorBorder(this);

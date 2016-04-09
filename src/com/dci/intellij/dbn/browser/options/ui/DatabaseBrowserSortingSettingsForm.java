@@ -99,17 +99,6 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
             });
         }
 
-        public void columnSelectionChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting()) {
-                int[] selectedRows = getSelectedRows();
-                int[] selectedColumns = getSelectedColumns();
-                if (selectedRows.length > 0 && selectedColumns.length > 0) {
-                    editCellAt(selectedRows[0], selectedColumns[0]);
-                }
-            }
-            super.columnSelectionChanged(e);
-        }
-
         @Override
         protected void processMouseMotionEvent(MouseEvent e) {
             Point mouseLocation = e.getPoint();

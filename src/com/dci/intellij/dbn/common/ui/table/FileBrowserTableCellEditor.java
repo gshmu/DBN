@@ -1,20 +1,10 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDialog;
-import com.intellij.openapi.fileChooser.FileChooserFactory;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -25,6 +15,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDialog;
+import com.intellij.openapi.fileChooser.FileChooserFactory;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ui.UIUtil;
 import static com.dci.intellij.dbn.data.editor.ui.DataEditorComponent.BUTTON_BORDER;
 
 public class FileBrowserTableCellEditor extends AbstractCellEditor implements TableCellEditor{
@@ -34,7 +32,7 @@ public class FileBrowserTableCellEditor extends AbstractCellEditor implements Ta
 
     public FileBrowserTableCellEditor(FileChooserDescriptor fileChooserDescriptor) {
         this.fileChooserDescriptor = fileChooserDescriptor;
-        textField.setBorder(new EmptyBorder(0,3,0,0));
+        textField.setBorder(DBNEditableTable.TEXT_FIELD_BORDER);
 
         JLabel button = new JLabel(Icons.DATA_EDITOR_BROWSE);
         button.setBorder(BUTTON_BORDER);
