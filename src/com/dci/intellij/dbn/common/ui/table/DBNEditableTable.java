@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.intellij.openapi.project.Project;
-import com.intellij.ui.ColoredTableCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.TableUtil;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -19,11 +12,17 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.event.MouseEvent;
+
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.intellij.openapi.project.Project;
+import com.intellij.ui.ColoredTableCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.TableUtil;
+import com.intellij.util.ui.UIUtil;
 
 public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableWithGutter<T> {
     public static final LineBorder SELECTION_BORDER = new LineBorder(UIUtil.getTableBackground());
+    public static final EmptyBorder TEXT_FIELD_BORDER = new EmptyBorder(0, 3, 0, 0);
 
     public DBNEditableTable(Project project, T model, boolean showHeader) {
         super(project, model, showHeader);
@@ -55,17 +54,6 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
         });
     }
 
-    @Override
-    protected void processMouseMotionEvent(MouseEvent e) {
-        Object value = getValueAtMouseLocation();
-        if (value instanceof Color) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        } else {
-            setCursor(Cursor.getDefaultCursor());
-        }
-    }
-    
-
     private ListSelectionListener selectionListener = new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting() && getSelectedRowCount() == 1) {
@@ -86,15 +74,14 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
 
     private void startCellEditing() {
         if (getModel().getRowCount() > 0) {
-            int[] selectedRows = getSelectedRows();
-            int selectedRow = selectedRows.length > 0 ? selectedRows[0] : 0;
+            int selectedRow = getSelectedRow();
+            int selectedColumn = getSelectedColumn();
 
-            int[] selectedColumns = getSelectedColumns();
-            int selectedColumn = selectedColumns.length > 0 ? selectedColumns[0] : 0;
-
-            TableCellEditor cellEditor = getCellEditor();
-            if (cellEditor == null) {
-                editCellAt(selectedRow, selectedColumn);
+            if (selectedRow > -1 && selectedColumn > -1) {
+                TableCellEditor cellEditor = getCellEditor();
+                if (cellEditor == null) {
+                    editCellAt(selectedRow, selectedColumn);
+                }
             }
         }
     }
@@ -110,7 +97,7 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
         final Component component = super.prepareEditor(editor, rowIndex, columnIndex);
         if (component instanceof JTextField) {
             final JTextField textField = (JTextField) component;
-            textField.setBorder(new EmptyBorder(0,3,0,0));
+            textField.setBorder(TEXT_FIELD_BORDER);
 
             //selectCell(rowIndex, columnIndex);
 

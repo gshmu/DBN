@@ -1,14 +1,6 @@
 package com.dci.intellij.dbn.common.ui.list;
 
-import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
-import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
-import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
-import com.dci.intellij.dbn.common.ui.table.IndexTableGutter;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.openapi.project.Project;
-
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
 import java.awt.Component;
 import java.awt.event.FocusAdapter;
@@ -19,6 +11,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
+import com.dci.intellij.dbn.common.ui.table.IndexTableGutter;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.intellij.openapi.project.Project;
 
 public class EditableStringList extends DBNEditableTable<EditableStringList.EditableListModel> {
     private boolean sorted;
@@ -54,7 +53,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
     @Override
     public Component prepareEditor(final TableCellEditor editor, int rowIndex, int columnIndex) {
         JTextField component = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
-        component.setBorder(new EmptyBorder(0, 3, 0, 0));
+        component.setBorder(TEXT_FIELD_BORDER);
         component.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
