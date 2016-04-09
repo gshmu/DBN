@@ -321,7 +321,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
             boolean addConnectionElement = false;
             DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-            if (objectBundle.getObjectListContainer().getObjectList(DBObjectType.SCHEMA).isLoaded()) {
+            DBObjectList schemas = objectBundle.getObjectListContainer().getObjectList(DBObjectType.SCHEMA);
+            if (schemas != null && schemas.isLoaded()) {
                 for (DBSchema schema : objectBundle.getSchemas()) {
                     List<DBObjectType> objectTypes = new ArrayList<DBObjectType>();
                     DBObjectListContainer childObjects = schema.getChildObjects();
