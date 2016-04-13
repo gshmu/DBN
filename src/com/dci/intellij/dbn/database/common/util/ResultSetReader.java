@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionUtil;
 public abstract class ResultSetReader {
     public ResultSetReader(ResultSet resultSet) throws SQLException {
         try {
-            if (resultSet != null && !resultSet.isClosed()) {
+            if (resultSet != null && !ConnectionUtil.isClosed(resultSet)) {
                 while (resultSet.next()) {
                     processRow(resultSet);
                 }
