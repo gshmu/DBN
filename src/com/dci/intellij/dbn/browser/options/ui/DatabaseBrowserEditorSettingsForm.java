@@ -89,7 +89,9 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
                 }
             });
 
-            setDefaultEditor(DefaultEditorType.class, new ComboBoxTableRenderer<DefaultEditorType>(DefaultEditorType.values()));
+            ComboBoxTableRenderer<DefaultEditorType> editor = new ComboBoxTableRenderer<DefaultEditorType>(DefaultEditorType.values());
+            editor.setBorder(TEXT_FIELD_BORDER);
+            setDefaultEditor(DefaultEditorType.class, editor);
 
             getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent e) {
@@ -110,13 +112,6 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
                 return new ComboBoxTableRenderer<DefaultEditorType>(editorTypes);
             }
             return null;
-        }
-
-        public void columnSelectionChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting()) {
-                editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
-            }
-            super.columnSelectionChanged(e);
         }
 
         @Override
