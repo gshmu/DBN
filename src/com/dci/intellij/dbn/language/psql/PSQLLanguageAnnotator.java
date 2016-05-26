@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.code.psql.color.PSQLTextAttributesKeys;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
+import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -86,7 +87,13 @@ public class PSQLLanguageAnnotator implements Annotator {
      private static void annotateIdentifier(final PsiElement psiElement, final AnnotationHolder holder) {
         IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
         if (identifierPsiElement.isReference()) {
-            identifierPsiElement.resolve();
+            boolean ensureDataLoaded = DatabaseLoadMonitor.isEnsureDataLoaded();
+            DatabaseLoadMonitor.setEnsureDataLoaded(false);
+            try {
+                identifierPsiElement.resolve();
+            } finally {
+                DatabaseLoadMonitor.setEnsureDataLoaded(ensureDataLoaded);
+            }
         }
 
          if (identifierPsiElement.isAlias()) {

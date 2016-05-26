@@ -40,12 +40,10 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
         DBObjectType objectType = DBObjectType.getObjectType(resultSet.getString("OBJECT_TYPE"), DBObjectType.ANY);
 
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
-            if (schema != null) {
-                DBObjectRef schemaRef = schema.getRef();
-                underlyingObject = new DBObjectRef<DBObject>(schemaRef, objectType, objectName);
-            }
+        DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
+        if (schema != null) {
+            DBObjectRef schemaRef = schema.getRef();
+            underlyingObject = new DBObjectRef<DBObject>(schemaRef, objectType, objectName);
         }
 
 
