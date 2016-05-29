@@ -39,36 +39,43 @@ import com.intellij.psi.PsiElement;
 public class PSQLLanguageAnnotator implements Annotator {
 
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-        if (psiElement instanceof BasePsiElement) {
-            BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-            ElementType elementType = basePsiElement.getElementType();
-            if (elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) || elementType.is(ElementTypeAttribute.OBJECT_DECLARATION)) {
-                annotateSpecDeclarationNavigable(basePsiElement, holder);
+        boolean ensureDataLoaded = DatabaseLoadMonitor.isEnsureDataLoaded();
+        DatabaseLoadMonitor.setEnsureDataLoaded(false);
+        try {
+            if (psiElement instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) psiElement;
+                ElementType elementType = basePsiElement.getElementType();
+                if (elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) || elementType.is(ElementTypeAttribute.OBJECT_DECLARATION)) {
+                    annotateSpecDeclarationNavigable(basePsiElement, holder);
+                }
+
+            }
+            if (psiElement instanceof TokenPsiElement) {
+                annotateToken((TokenPsiElement) psiElement, holder);
+            }
+            else if (psiElement instanceof IdentifierPsiElement) {
+                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
+                ConnectionHandler connectionHandler = identifierPsiElement.getActiveConnection();
+                if (connectionHandler != null) {
+                    annotateIdentifier(psiElement, holder);
+                }
+            }
+            else if (psiElement instanceof NamedPsiElement) {
+                NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
+                if (namedPsiElement.hasErrors()) {
+                    holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
+                }
+            }
+            else if (psiElement instanceof ChameleonPsiElement) {
+                Annotation annotation = holder.createInfoAnnotation(psiElement, null);
+                annotation.setTextAttributes(SQLTextAttributesKeys.CHAMELEON);
             }
 
-        }
-        if (psiElement instanceof TokenPsiElement) {
-            annotateToken((TokenPsiElement) psiElement, holder);
-        }
-        else if (psiElement instanceof IdentifierPsiElement) {
-            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
-            ConnectionHandler connectionHandler = identifierPsiElement.getActiveConnection();
-            if (connectionHandler != null) {
-                annotateIdentifier(psiElement, holder);
-            }
-        }
-        else if (psiElement instanceof NamedPsiElement) {
-            NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
-            if (namedPsiElement.hasErrors()) {
-                holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
-            }
-        }
-        else if (psiElement instanceof ChameleonPsiElement) {
-            Annotation annotation = holder.createInfoAnnotation(psiElement, null);
-            annotation.setTextAttributes(SQLTextAttributesKeys.CHAMELEON);
-        }
+            if (psiElement instanceof ExecutablePsiElement)  annotateExecutable(psiElement, holder);
 
-        if (psiElement instanceof ExecutablePsiElement)  annotateExecutable(psiElement, holder);
+        } finally {
+            DatabaseLoadMonitor.setEnsureDataLoaded(ensureDataLoaded);
+        }
     }
 
     private static void annotateToken(TokenPsiElement tokenPsiElement, AnnotationHolder holder) {
@@ -87,13 +94,7 @@ public class PSQLLanguageAnnotator implements Annotator {
      private static void annotateIdentifier(final PsiElement psiElement, final AnnotationHolder holder) {
         IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
         if (identifierPsiElement.isReference()) {
-            boolean ensureDataLoaded = DatabaseLoadMonitor.isEnsureDataLoaded();
-            DatabaseLoadMonitor.setEnsureDataLoaded(false);
-            try {
-                identifierPsiElement.resolve();
-            } finally {
-                DatabaseLoadMonitor.setEnsureDataLoaded(ensureDataLoaded);
-            }
+            identifierPsiElement.resolve();
         }
 
          if (identifierPsiElement.isAlias()) {
