@@ -146,9 +146,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     @Override
     public final void loadInBackground(final boolean force) {
-        if (!isLoadingInBackground && shouldLoad(force)) {
+        if (shouldLoadInBackground(force)) {
             synchronized (this) {
-                if (!isLoadingInBackground && shouldLoad(force)) {
+                if (shouldLoadInBackground(force)) {
                     isLoadingInBackground = true;
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     String connectionString = " (" + connectionHandler.getName() + ')';
@@ -167,6 +167,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
                 }
             }
         }
+    }
+
+    boolean shouldLoadInBackground(boolean force) {
+        return !isLoadingInBackground && shouldLoad(force);
     }
 
     private void performLoad() throws InterruptedException {
