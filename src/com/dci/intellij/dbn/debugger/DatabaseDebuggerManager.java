@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfig;
@@ -447,7 +448,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
     public String getDebuggerVersion(ConnectionHandler connectionHandler) {
 
-        if (connectionHandler != null) {
+        if (connectionHandler != null && DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
             DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
             Connection connection = null;
             try {

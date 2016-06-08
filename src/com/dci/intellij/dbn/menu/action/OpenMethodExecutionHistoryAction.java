@@ -13,7 +13,7 @@ public class OpenMethodExecutionHistoryAction extends DumbAwareAction {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
             MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-            executionManager.showExecutionHistoryDialog(true);
+            executionManager.showExecutionHistoryDialog(true, false);
         }
     }
 

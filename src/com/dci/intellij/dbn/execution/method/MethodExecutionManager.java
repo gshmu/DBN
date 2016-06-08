@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.execution.method;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -40,6 +31,15 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Set;
 
 @State(
     name = "DBNavigator.Project.MethodExecutionManager",
@@ -143,20 +143,20 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     }
 
 
-    public MethodExecutionHistoryDialog showExecutionHistoryDialog(boolean editable) {
-        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, null, editable);
+    public MethodExecutionHistoryDialog showExecutionHistoryDialog(boolean editable, boolean debug) {
+        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, null, editable, debug);
         executionHistoryDialog.show();
         return executionHistoryDialog;
     }
 
-    public MethodExecutionHistoryDialog showExecutionHistoryDialog(MethodExecutionInput selectedExecutionInput, boolean editable) {
-        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, selectedExecutionInput, editable);
+    public MethodExecutionHistoryDialog showExecutionHistoryDialog(MethodExecutionInput selectedExecutionInput, boolean editable, boolean debug) {
+        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, selectedExecutionInput, editable, debug);
         executionHistoryDialog.show();
         return executionHistoryDialog;
     }
 
-    public MethodExecutionInput selectHistoryMethodExecutionInput(@Nullable MethodExecutionInput selectedExecutionInput) {
-        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, selectedExecutionInput, false);
+    public MethodExecutionInput selectHistoryMethodExecutionInput(@Nullable MethodExecutionInput selectedExecutionInput, boolean debug) {
+        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, selectedExecutionInput, false, debug);
         executionHistoryDialog.show();
         if (executionHistoryDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             return executionHistoryDialog.getSelectedExecutionInput();   
