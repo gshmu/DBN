@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
@@ -34,6 +25,16 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchemaObject {
@@ -84,11 +85,11 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     }
 
     public List<DBObject> getReferencedObjects() {
-        return referencedObjects.getObjects();
+        return referencedObjects == null ? Collections.<DBObject>emptyList() : referencedObjects.getObjects();
     }
 
     public List<DBObject> getReferencingObjects() {
-        return referencingObjects.getObjects();
+        return referencingObjects == null ? Collections.<DBObject>emptyList() : referencingObjects.getObjects();
     }
 
     protected List<DBObjectNavigationList> createNavigationLists() {

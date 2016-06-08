@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp.config.ui;
 
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -17,6 +8,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
@@ -28,6 +20,7 @@ import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
 import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserDialog;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionInputForm;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -40,6 +33,15 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.Range;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Color;
 
 public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodJdwpRunConfig>{
     private JPanel headerPanel;
@@ -100,7 +102,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
                 BackgroundTask backgroundTask = new BackgroundTask(project, "Loading executable elements", false) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                        final MethodBrowserSettings settings = MethodExecutionManager.getInstance(project).getBrowserSettings();
+                        MethodBrowserSettings settings = MethodExecutionManager.getInstance(project).getBrowserSettings();
                         MethodExecutionInput executionInput = getExecutionInput();
                         DBMethod currentMethod = executionInput == null ? null : executionInput.getMethod();
                         if (currentMethod != null) {
@@ -109,12 +111,15 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
                             settings.setMethod(currentMethod);
                         }
 
-                        final ObjectTreeModel objectTreeModel = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), settings.getMethod());
+                        DBSchema schema = settings.getSchema();
+                        final ObjectTreeModel objectTreeModel = DatabaseFeature.DEBUGGING.isSupported(schema) ?
+                                new ObjectTreeModel(schema, settings.getVisibleObjectTypes(), settings.getMethod()) :
+                                new ObjectTreeModel(null, settings.getVisibleObjectTypes(), null);
 
                         new SimpleLaterInvocator() {
                             @Override
                             protected void execute() {
-                                final MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, settings, objectTreeModel);
+                                final MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
                                 browserDialog.show();
                                 if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
                                     DBMethod method = browserDialog.getSelectedMethod();
@@ -143,7 +148,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
             Project project = ActionUtil.getProject(e);
             if (project != null) {
                 MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                MethodExecutionInput methodExecutionInput = methodExecutionManager.selectHistoryMethodExecutionInput(getExecutionInput());
+                MethodExecutionInput methodExecutionInput = methodExecutionManager.selectHistoryMethodExecutionInput(getExecutionInput(), true);
                 if (methodExecutionInput != null) {
                     setExecutionInput(methodExecutionInput, true);
                 }

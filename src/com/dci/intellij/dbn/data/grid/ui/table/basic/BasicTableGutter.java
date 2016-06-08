@@ -73,11 +73,11 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
         public void valueChanged(ListSelectionEvent e) {
             T table = getTable();
             if (hasFocus()) {
-                int lastColumnIndex = Math.max(table.getColumnCount() - 1, 0);
                 if (justGainedFocus) {
                     justGainedFocus = false;
                     if (table.isEditing()) table.getCellEditor().cancelCellEditing();
                     table.clearSelection();
+                    int lastColumnIndex = Math.max(table.getColumnCount() - 1, 0);
                     table.setColumnSelectionInterval(0, lastColumnIndex);
                 }
 

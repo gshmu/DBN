@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.ui.Presentable;
 
 public enum DBDateFormat implements Presentable {
+    FULL("Full", DateFormat.FULL),
     SHORT("Short", DateFormat.SHORT),
     MEDIUM("Medium", DateFormat.MEDIUM),
     LONG("Long", DateFormat.LONG),

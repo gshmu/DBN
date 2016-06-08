@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import java.awt.event.ActionEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -14,6 +8,12 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import java.awt.event.ActionEvent;
 
 public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHistoryForm> {
     private SelectAction selectAction;
@@ -24,17 +24,17 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     private boolean editable;
     private MethodExecutionInput selectedExecutionInput;
 
-    public MethodExecutionHistoryDialog(Project project, MethodExecutionHistory executionHistory, @Nullable MethodExecutionInput selectedExecutionInput, boolean editable) {
+    public MethodExecutionHistoryDialog(Project project, MethodExecutionHistory executionHistory, @Nullable MethodExecutionInput selectedExecutionInput, boolean editable, boolean debug) {
         super(project, "Method Execution History", true);
         this.editable = editable;
         setModal(true);
         setResizable(true);
-        component = new MethodExecutionHistoryForm(this, executionHistory);
+        component = new MethodExecutionHistoryForm(this, executionHistory, debug);
         if (selectedExecutionInput == null) {
             selectedExecutionInput = executionHistory.getLastSelection();
         }
 
-        if (selectedExecutionInput != null && !selectedExecutionInput.isObsolete()) {
+        if (selectedExecutionInput != null && !selectedExecutionInput.isObsolete() && (!debug || DatabaseFeature.DEBUGGING.isSupported(selectedExecutionInput))) {
             showMethodExecutionPanel(selectedExecutionInput);
             this.selectedExecutionInput = selectedExecutionInput;
             component.setSelectedInput(selectedExecutionInput);

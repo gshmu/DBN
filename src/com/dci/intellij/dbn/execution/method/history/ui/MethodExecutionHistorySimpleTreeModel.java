@@ -1,24 +1,27 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-
 public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistoryTreeModel {
-    public MethodExecutionHistorySimpleTreeModel(List<MethodExecutionInput> executionInputs) {
+    public MethodExecutionHistorySimpleTreeModel(List<MethodExecutionInput> executionInputs, boolean debug) {
         super(executionInputs);
         for (MethodExecutionInput executionInput : executionInputs) {
-            RootTreeNode rootNode = getRoot();
+            if (!executionInput.isObsolete() && (!debug || DatabaseFeature.DEBUGGING.isSupported(executionInput.getConnectionHandler()))) {
+                RootTreeNode rootNode = getRoot();
 
-            ConnectionTreeNode connectionNode = rootNode.getConnectionNode(executionInput);
-            SchemaTreeNode schemaNode = connectionNode.getSchemaNode(executionInput);
-            schemaNode.getMethodNode(executionInput);
+                ConnectionTreeNode connectionNode = rootNode.getConnectionNode(executionInput);
+                SchemaTreeNode schemaNode = connectionNode.getSchemaNode(executionInput);
+                schemaNode.getMethodNode(executionInput);
+            }
         }
     }
 
