@@ -68,7 +68,8 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         dateFormatComboBox.setValues(
                 DBDateFormat.SHORT,
                 DBDateFormat.MEDIUM,
-                DBDateFormat.LONG);
+                DBDateFormat.LONG,
+                DBDateFormat.FULL);
 
         ValueSelectorListener previewListener = new ValueSelectorListener() {
             @Override

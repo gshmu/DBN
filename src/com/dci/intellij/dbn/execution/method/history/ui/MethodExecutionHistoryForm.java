@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.BorderLayout;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -31,6 +21,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBSplitter;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHistoryDialog> {
     private JPanel mainPanel;
@@ -40,12 +40,14 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     private JPanel contentPanel;
     private MethodExecutionHistory executionHistory;
     private ChangeListener changeListener;
+    private boolean debug;
 
     private Map<MethodExecutionInput, MethodExecutionInputForm> methodExecutionForms;
 
-    public MethodExecutionHistoryForm(MethodExecutionHistoryDialog parentComponent, MethodExecutionHistory executionHistory) {
+    public MethodExecutionHistoryForm(MethodExecutionHistoryDialog parentComponent, MethodExecutionHistory executionHistory, boolean debug) {
         super(parentComponent);
         this.executionHistory = executionHistory;
+        this.debug = debug;
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
                 new ShowGroupedTreeAction(),
                 new DeleteHistoryEntryAction(),
@@ -70,7 +72,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
 
     private void createUIComponents() {
         boolean group = executionHistory.isGroupEntries();
-        executionInputsTree = new MethodExecutionHistoryTree(getParentComponent(), executionHistory, group);
+        executionInputsTree = new MethodExecutionHistoryTree(getParentComponent(), executionHistory, group, debug);
         Disposer.register(this, (Disposable) executionInputsTree);
     }
 

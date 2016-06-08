@@ -2,11 +2,11 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.5866.3</version>
+    <version>3.0.5901.3</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
-    <idea-version since-build="138.0001" until-build="139.9999"/>
+    <idea-version since-build="138.0001" until-build="139.*"/>
     <description><![CDATA[
             <b>Database development, scripting and navigation tool</b><br>
             This product adds extensive database development and maintenance capabilities to the IntelliJ IDEA development environment and related products.
@@ -28,6 +28,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.5901</b>
+            <ul>
+                - Support for latest IDE releases<br>
+                - Optimizations: more responsive code editors<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.5866</b>
             <ul>
                 - Fixed SQLite connection issues with Mac OSX<br>

@@ -1,18 +1,12 @@
 package com.dci.intellij.dbn.execution.method.browser.ui;
 
-import javax.swing.JPanel;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
 import com.dci.intellij.dbn.execution.method.browser.action.SelectConnectionComboBoxAction;
 import com.dci.intellij.dbn.execution.method.browser.action.SelectSchemaComboBoxAction;
@@ -27,6 +21,13 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.JPanel;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
 
 public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrowserDialog> {
 
@@ -36,11 +37,10 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
 
     private MethodBrowserSettings settings;
 
-    public MethodExecutionBrowserForm(MethodExecutionBrowserDialog parentComponent, MethodBrowserSettings settings, ObjectTreeModel model) {
+    public MethodExecutionBrowserForm(MethodExecutionBrowserDialog parentComponent, ObjectTreeModel model, boolean debug) {
         super(parentComponent);
-        this.settings = settings;
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
-                new SelectConnectionComboBoxAction(this),
+                new SelectConnectionComboBoxAction(this, debug),
                 new SelectSchemaComboBoxAction(this),
                 ActionUtil.SEPARATOR,
                 new ShowObjectTypeToggleAction(this, DBObjectType.PROCEDURE),
@@ -56,16 +56,18 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
     }
 
     public MethodBrowserSettings getSettings() {
-        return settings;
+        MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
+        return methodExecutionManager.getBrowserSettings();
     }
 
     public void setObjectsVisible(DBObjectType objectType, boolean state) {
-        if (settings.setObjectVisibility(objectType, state)) {
+        if (getSettings().setObjectVisibility(objectType, state)) {
             updateTree();
         }
     }
 
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
+        MethodBrowserSettings settings = getSettings();
         if (settings.getConnectionHandler() != connectionHandler) {
             settings.setConnectionHandler(connectionHandler);
             if (settings.getSchema() != null) {
@@ -77,6 +79,7 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
     }
 
     public void setSchema(final DBSchema schema) {
+        MethodBrowserSettings settings = getSettings();
         if (settings.getSchema() != schema) {
             settings.setSchema(schema);
             updateTree();
@@ -107,6 +110,7 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
         BackgroundTask backgroundTask = new BackgroundTask(getProject(), "Loading executable components", false) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                MethodBrowserSettings settings = getSettings();
                 final ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
                 new SimpleLaterInvocator() {
                     @Override
