@@ -47,6 +47,7 @@ public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>
             progressIndicator.pushState();
             progressIndicator.setIndeterminate(true);
             execute(progressIndicator);
+        } catch (ProcessCanceledException ignore){
         } finally {
             progressIndicator.popState();
         }
