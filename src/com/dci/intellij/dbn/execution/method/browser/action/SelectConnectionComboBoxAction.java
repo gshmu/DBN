@@ -1,25 +1,28 @@
 package com.dci.intellij.dbn.execution.method.browser.action;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
 
 public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
-    MethodExecutionBrowserForm browserComponent;
+    private MethodExecutionBrowserForm browserComponent;
+    private boolean debug;
 
-    public SelectConnectionComboBoxAction(MethodExecutionBrowserForm browserComponent) {
+    public SelectConnectionComboBoxAction(MethodExecutionBrowserForm browserComponent, boolean debug) {
         this.browserComponent = browserComponent;
+        this.debug = debug;
     }
 
     @NotNull
@@ -28,16 +31,18 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
         Project project = ActionUtil.getProject(component);
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
+/*        for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
             SelectConnectionAction connectionAction = new SelectConnectionAction(browserComponent, virtualConnectionHandler);
             actionGroup.add(connectionAction);
-        }
+        }*/
 
         if (connectionBundle.getConnectionHandlers().size() > 0) {
-            actionGroup.addSeparator();
+            //actionGroup.addSeparator();
             for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                SelectConnectionAction connectionAction = new SelectConnectionAction(browserComponent, connectionHandler);
-                actionGroup.add(connectionAction);
+                if (!debug || DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
+                    SelectConnectionAction connectionAction = new SelectConnectionAction(browserComponent, connectionHandler);
+                    actionGroup.add(connectionAction);
+                }
             }
         }
 

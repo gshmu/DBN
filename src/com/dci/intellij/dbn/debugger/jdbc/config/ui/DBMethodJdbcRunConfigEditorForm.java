@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdbc.config.ui;
 
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -36,6 +29,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
 
 public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodJdbcRunConfig> {
     private JPanel headerPanel;
@@ -94,7 +94,8 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
                 BackgroundTask backgroundTask = new BackgroundTask(project, "Loading executable elements", false) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                        final MethodBrowserSettings settings = MethodExecutionManager.getInstance(project).getBrowserSettings();
+                        final MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
+                        final MethodBrowserSettings settings = executionManager.getBrowserSettings();
                         MethodExecutionInput executionInput = getExecutionInput();
                         DBMethod currentMethod = executionInput == null ? null : executionInput.getMethod();
                         if (currentMethod != null) {
@@ -108,12 +109,11 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
                         new SimpleLaterInvocator() {
                             @Override
                             protected void execute() {
-                                final MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, settings, objectTreeModel);
+                                final MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
                                 browserDialog.show();
                                 if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
                                     DBMethod method = browserDialog.getSelectedMethod();
-                                    MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                                    MethodExecutionInput methodExecutionInput = methodExecutionManager.getExecutionInput(method);
+                                    MethodExecutionInput methodExecutionInput = executionManager.getExecutionInput(method);
                                     if (methodExecutionInput != null) {
                                         setExecutionInput(methodExecutionInput, true);
                                     }
@@ -138,7 +138,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
             if (project != null) {
                 MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
                 MethodExecutionInput executionInput = getExecutionInput();
-                MethodExecutionInput methodExecutionInput = methodExecutionManager.selectHistoryMethodExecutionInput(executionInput);
+                MethodExecutionInput methodExecutionInput = methodExecutionManager.selectHistoryMethodExecutionInput(executionInput, true);
                 if (methodExecutionInput != null) {
                     setExecutionInput(methodExecutionInput, true);
                 }
