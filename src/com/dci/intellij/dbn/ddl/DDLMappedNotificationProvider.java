@@ -4,6 +4,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
@@ -31,7 +32,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
         this.project = project;
 
         EventUtil.subscribe(project, project, DDLFileAttachmentManagerListener.TOPIC, ddlFileAttachmentManagerListener);
-        EventUtil.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListner);
+        EventUtil.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
         EventUtil.subscribe(project, project, DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener);
     }
 
@@ -53,7 +54,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
         }
     };
 
-    FileEditorManagerListener fileEditorManagerListner = new FileEditorManagerAdapter() {
+    FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerAdapter() {
         @Override
         public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
             updateDdlFileHeaders(file);
@@ -106,7 +107,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
                     DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
                     DBSchemaObject editableObject = editableObjectFile.getObject();
                     DDLFileEditor ddlFileEditor = (DDLFileEditor) fileEditor;
-                    VirtualFile ddlVirtualFile = ddlFileEditor.getVirtualFile();
+                    VirtualFile ddlVirtualFile = FailsafeUtil.get(ddlFileEditor.getVirtualFile());
                     return createPanel(ddlVirtualFile, editableObject);
                 }
                 return null;
