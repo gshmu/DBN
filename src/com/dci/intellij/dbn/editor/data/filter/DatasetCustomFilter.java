@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetCustomFilterForm;
@@ -72,12 +73,9 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
         Element conditionElement = element.getChild("condition");
-        if (conditionElement.getContentSize() > 0) {
-            CDATA cdata = (CDATA) conditionElement.getContent(0);
-            condition = cdata.getText();
-            condition = StringUtil.replace(condition, "<br>", "\n");
-            condition = StringUtil.replace(condition, "<sp>", "  ");
-        }
+        condition = SettingsUtil.readCdata(conditionElement);
+        condition = StringUtil.replace(condition, "<br>", "\n");
+        condition = StringUtil.replace(condition, "<sp>", "  ");
     }
 
     public void writeConfiguration(Element element) {
