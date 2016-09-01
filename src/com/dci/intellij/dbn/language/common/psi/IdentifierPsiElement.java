@@ -1,6 +1,15 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
+import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -32,14 +41,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.IncorrectOperationException;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElement {
     public IdentifierPsiElement(ASTNode astNode, IdentifierElementType elementType) {
@@ -491,9 +492,12 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             return ref.getReferencedElement();
         }
         if (ref.isDirty()) {
-            try {
-                //DatabaseLoadMonitor.setEnsureDataLoaded(false);
+            boolean ensureDataLoaded = DatabaseLoadMonitor.isEnsureDataLoaded();
+            if (Thread.currentThread().getName().contains("JobScheduler")) {
+                DatabaseLoadMonitor.setEnsureDataLoaded(false);
+            }
 
+            try {
                 ref.preResolve(this);
                 if (getParent() instanceof QualifiedIdentifierPsiElement) {
                     QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) getParent();
@@ -503,7 +507,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 }
            } finally {
                 ref.postResolve();
-                //DatabaseLoadMonitor.setEnsureDataLoaded(false);
+                DatabaseLoadMonitor.setEnsureDataLoaded(ensureDataLoaded);
             }
         }
         return ref.getReferencedElement();
