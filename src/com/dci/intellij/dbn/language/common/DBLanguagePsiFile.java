@@ -70,6 +70,12 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     private DBSchema currentSchema;
     private DBObjectRef<DBSchemaObject> underlyingObjectRef;
 
+    @Override
+    public PsiElement getPrevSibling() {
+        return null;
+        //return super.getPrevSibling();
+    }
+
     public DBLanguagePsiFile(FileViewProvider viewProvider, DBLanguageFileType fileType, DBLanguage language) {
         super(viewProvider);
         this.language = findLanguage(language);
