@@ -85,9 +85,10 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
                 }
 
                 for (int i = e.getFirstIndex(); i <= e.getLastIndex(); i++) {
+                    ListSelectionModel selectionModel = table.getSelectionModel();
                     if (isSelectedIndex(i))
-                        table.getSelectionModel().addSelectionInterval(i, i); else
-                        table.getSelectionModel().removeSelectionInterval(i, i);
+                        selectionModel.addSelectionInterval(i, i); else
+                        selectionModel.removeSelectionInterval(i, i);
                 }
             }
         }
