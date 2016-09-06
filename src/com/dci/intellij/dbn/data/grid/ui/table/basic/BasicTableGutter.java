@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
-
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -12,6 +10,8 @@ import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 
 public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
     public BasicTableGutter(final T table) {
@@ -77,14 +77,18 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
                     justGainedFocus = false;
                     if (table.isEditing()) table.getCellEditor().cancelCellEditing();
                     table.clearSelection();
-                    int lastColumnIndex = Math.max(table.getColumnCount() - 1, 0);
-                    table.setColumnSelectionInterval(0, lastColumnIndex);
+                    int columnCount = table.getColumnCount();
+                    if (columnCount > 0) {
+                        int lastColumnIndex = Math.max(columnCount - 1, 0);
+                        table.setColumnSelectionInterval(0, lastColumnIndex);
+                    }
                 }
 
                 for (int i = e.getFirstIndex(); i <= e.getLastIndex(); i++) {
+                    ListSelectionModel selectionModel = table.getSelectionModel();
                     if (isSelectedIndex(i))
-                        table.getSelectionModel().addSelectionInterval(i, i); else
-                        table.getSelectionModel().removeSelectionInterval(i, i);
+                        selectionModel.addSelectionInterval(i, i); else
+                        selectionModel.removeSelectionInterval(i, i);
                 }
             }
         }

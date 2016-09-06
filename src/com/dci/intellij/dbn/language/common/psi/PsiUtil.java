@@ -249,7 +249,7 @@ public class PsiUtil {
         };
     }
 
-    public static int getChildrenCount(@NotNull PsiElement element) {
+    public static int getChildCount(@NotNull PsiElement element) {
         int count = 0;
         PsiElement current = element.getFirstChild();
         while (current != null) {
@@ -265,6 +265,33 @@ public class PsiUtil {
             nextPsiElement = nextPsiElement.getNextSibling();
         }
         return nextPsiElement;
+    }
+
+    @Nullable
+    public static PsiElement getFirstLeaf(PsiElement psiElement) {
+        PsiElement childPsiElement = psiElement.getFirstChild();
+        if (childPsiElement == null) {
+            return psiElement;
+        } else if (ignore(childPsiElement)) {
+            return getNextLeaf(childPsiElement);
+        }
+        return getFirstLeaf(childPsiElement);
+    }
+
+    @Nullable
+    public static PsiElement getNextLeaf(PsiElement psiElement) {
+        if (psiElement == null) {
+            return null;
+        } else {
+            PsiElement nextElement = psiElement.getNextSibling();
+            if (nextElement == null) {
+                return getNextLeaf(psiElement.getParent());
+            }
+            else if (ignore(nextElement)) {
+                return getNextLeaf(nextElement);
+            }
+            return getFirstLeaf(nextElement);
+        }
     }
 
     @Nullable

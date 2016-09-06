@@ -2642,6 +2642,7 @@
             <element ref-id="raise_statement" />
             <element ref-id="return_statement" />
             <element ref-id="sql_statement" />
+            <element ref-id="pipe_row_statement" />
             <!--<element ref-id="assignment_statement" />-->
             <!--<element ref-id="method_call_statement" />-->
             <element ref-id="method_call_assignment_statement" />
@@ -2881,6 +2882,14 @@
             <token id="000001425" type-id="KW_SAVE" />
             <token id="000001426" type-id="KW_EXCEPTIONS" />
         </sequence>
+    </element-def>
+
+    <element-def attributes="SPECIFIC" description="PIPE ROW statement" id="pipe_row_statement">
+        <token type-id="KW_PIPE"/>
+        <token type-id="KW_ROW"/>
+        <wrapper template="PARENTHESES">
+            <element ref-id="expression"/>
+        </wrapper>
     </element-def>
 
     <element-def attributes="CLAUSE" description="BOUNDS clause" id="bounds_clause">

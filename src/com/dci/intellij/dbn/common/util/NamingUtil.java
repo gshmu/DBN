@@ -156,12 +156,25 @@ public class NamingUtil {
         if (string.length() > 1) {
             char firstChar = string.charAt(0);
             char lastChar = string.charAt(string.length() - 1);
-            if ((firstChar =='"' && lastChar == '"') || (firstChar == '`' && lastChar == '`')) {
+            if ((firstChar =='"' && lastChar == '"') || (firstChar == '`' && lastChar == '`') || (firstChar == '\'' && lastChar == '\'')) {
                 return string.substring(1, string.length() - 1);
             }
             return string;
         } else {
             return string;
+        }
+    }
+
+    public static CharSequence unquote(CharSequence charSequence) {
+        if (charSequence.length() > 1) {
+            char firstChar = charSequence.charAt(0);
+            char lastChar = charSequence.charAt(charSequence.length() - 1);
+            if ((firstChar =='"' && lastChar == '"') || (firstChar == '`' && lastChar == '`') || (firstChar == '\'' && lastChar == '\'')) {
+                return charSequence.subSequence(1, charSequence.length() - 1);
+            }
+            return charSequence;
+        } else {
+            return charSequence;
         }
     }
 

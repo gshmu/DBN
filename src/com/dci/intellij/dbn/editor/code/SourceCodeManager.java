@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -41,6 +42,7 @@ import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -73,6 +75,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeFrame;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.text.DateFormatUtil;
 
 @State(
@@ -246,7 +249,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 DocumentUtil.saveDocument(document);
 
                 String content = sourceCodeFile.getContent().toString();
-                if (isValidObjectTypeAndName(content, object, contentType)) {
+                DBLanguagePsiFile psiFile = sourceCodeFile.getPsiFile();
+                if (psiFile == null || isValidObjectTypeAndName(psiFile, object, contentType)) {
                     ProgressMonitor.setTaskDescription("Checking for third party changes on " + object.getQualifiedNameWithType());
                     boolean isChangedInDatabase = sourceCodeFile.isChangedInDatabase(true);
                     if (isChangedInDatabase && sourceCodeFile.isMergeRequired()) {
@@ -303,6 +307,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         return sourceCodeContent;
     }
 
+    @Deprecated
     private boolean isValidObjectTypeAndName(String text, DBSchemaObject object, DBContentType contentType) {
         ConnectionHandler connectionHandler = object.getConnectionHandler();
         DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
@@ -345,6 +350,52 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             }
             if (!StringUtil.isEmptyOrSpaces(typeNameGap)) return false;
             if (!Character.isWhitespace(text.charAt(nameEndIndex)) && text.charAt(nameEndIndex) != '(') return false;
+        }
+        return true;
+    }
+
+    private boolean isValidObjectTypeAndName(@NotNull DBLanguagePsiFile psiFile, DBSchemaObject object, DBContentType contentType) {
+        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+        if (ddlInterface.includesTypeAndNameInSourceContent(object.getObjectType().getTypeId())) {
+            PsiElement psiElement = PsiUtil.getFirstLeaf(psiFile);
+
+            String typeName = object.getTypeName();
+            String subtypeName = contentType.getObjectTypeSubname();
+            String objectName = object.getName();
+            String schemaName = object.getSchema().getName();
+
+            if (psiElement == null || !StringUtil.equalsIgnoreCase(psiElement.getText(), typeName)) {
+                return false;
+            }
+
+            if (subtypeName != null) {
+                psiElement = PsiUtil.getNextLeaf(psiElement);
+                if (psiElement == null || !StringUtil.equalsIgnoreCase(psiElement.getText(), subtypeName)) {
+                    return false;
+                }
+            }
+
+            psiElement = PsiUtil.getNextLeaf(psiElement);
+            if (psiElement == null) {
+                return false;
+            }
+
+            if (StringUtil.equalsIgnoreCase(NamingUtil.unquote(psiElement.getText()), schemaName)) {
+                psiElement = PsiUtil.getNextLeaf(psiElement) ;
+                if (psiElement == null || !psiElement.getText().equals(".")) {
+                    return false;
+                } else {
+                    psiElement = PsiUtil.getNextLeaf(psiElement);
+                    if (!StringUtil.equalsIgnoreCase(NamingUtil.unquote(psiElement.getText()), objectName)) {
+                        return false;
+                    }
+                }
+            } else {
+                if (!StringUtil.equalsIgnoreCase(NamingUtil.unquote(psiElement.getText()), objectName)) {
+                    return false;
+                }
+            }
         }
         return true;
     }

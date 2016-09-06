@@ -22,7 +22,7 @@ public class IterationChopDownIfNotSinglePreset extends IterationAbstractPreset 
             IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
             ElementType elementType = psiElement.getElementType();
 
-            boolean shouldWrap = PsiUtil.getChildrenCount(parentPsiElement) > 1;
+            boolean shouldWrap = PsiUtil.getChildCount(parentPsiElement) > 1;
             return getWrap(elementType, iterationElementType, shouldWrap);
         }
 
@@ -36,7 +36,7 @@ public class IterationChopDownIfNotSinglePreset extends IterationAbstractPreset 
             IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
             ElementType elementType = psiElement.getElementType();
 
-            boolean shouldWrap = PsiUtil.getChildrenCount(parentPsiElement) > 1;
+            boolean shouldWrap = PsiUtil.getChildCount(parentPsiElement) > 1;
             return getSpacing(iterationElementType, elementType, shouldWrap);
         }
         return null;
