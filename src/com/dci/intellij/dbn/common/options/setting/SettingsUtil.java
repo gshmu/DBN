@@ -1,8 +1,11 @@
 package com.dci.intellij.dbn.common.options.setting;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import org.jdom.Content;
 import org.jdom.Element;
+import org.jdom.Text;
 import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.util.StringUtil;
 
 public class SettingsUtil {
     public static boolean isDebugEnabled;
@@ -35,6 +38,19 @@ public class SettingsUtil {
         Element element = parent.getChild(childName);
         String stringValue = getStringValue(element);
         return stringValue == null ? originalValue : (T) T.valueOf((Class<T>) originalValue.getClass(), stringValue);
+    }
+
+    public static String readCdata(Element parent) {
+        StringBuilder builder = new StringBuilder();
+        int contentSize = parent.getContentSize();
+        for (int i=0; i<contentSize; i++) {
+            Content content = parent.getContent(i);
+            if (content instanceof Text) {
+                Text cdata = (Text) content;
+                builder.append(cdata.getText());
+            }
+        }
+        return builder.toString();
     }
 
     private static String getStringValue(Element element) {

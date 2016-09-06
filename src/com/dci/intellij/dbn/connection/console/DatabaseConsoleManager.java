@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.connection.console;
 
+import java.util.List;
+import org.jdom.CDATA;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -23,15 +30,6 @@ import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.util.EventDispatcher;
-import org.jdom.CDATA;
-import org.jdom.Content;
-import org.jdom.Element;
-import org.jdom.Text;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 @State(
         name = "DBNavigator.Project.DatabaseConsoleManager",
@@ -155,15 +153,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                     String consoleName = consoleElement.getAttributeValue("name");
                     DBConsoleType consoleType = SettingsUtil.getEnumAttribute(consoleElement, "type", DBConsoleType.class);
 
-                    String consoleText = "";
-                    int contentSize = consoleElement.getContentSize();
-                    for (int i=0; i<contentSize; i++) {
-                        Content content = consoleElement.getContent(i);
-                        if (content instanceof Text) {
-                            Text cdata = (Text) content;
-                            consoleText = consoleText + cdata.getText();
-                        }
-                    }
+                    String consoleText = SettingsUtil.readCdata(consoleElement);
 
                     DBConsoleVirtualFile consoleVirtualFile = consoleBundle.getConsole(consoleName, consoleType, true);
                     consoleVirtualFile.setText(consoleText);

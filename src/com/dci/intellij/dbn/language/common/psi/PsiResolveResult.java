@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -53,6 +54,9 @@ public class PsiResolveResult {
         this.currentSchema = DBObjectRef.from(psiElement.getCurrentSchema());
         BasePsiElement enclosingScopePsiElement = psiElement.findEnclosingScopePsiElement();
         this.scopeTextLength = enclosingScopePsiElement == null ? 0 : enclosingScopePsiElement.getTextLength();
+        if (StringUtil.isEmpty(text)) {
+            text = "";
+        }
     }
 
     public void postResolve() {

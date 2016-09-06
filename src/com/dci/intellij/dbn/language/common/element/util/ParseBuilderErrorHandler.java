@@ -11,38 +11,40 @@ import gnu.trove.THashSet;
 
 public class ParseBuilderErrorHandler {
     public static void updateBuilderError(Set<TokenType> expectedTokens, ParserContext context) {
-        ParserBuilder builder = context.getBuilder();
-        int offset = builder.getCurrentOffset();
-        if (ParseBuilderErrorWatcher.show(offset, context.getTimestamp())) {
+        if (expectedTokens != null) {
+            ParserBuilder builder = context.getBuilder();
+            int offset = builder.getCurrentOffset();
+            if (ParseBuilderErrorWatcher.show(offset, context.getTimestamp())) {
 
-            Set<String> tokenDescriptions = new THashSet<String>(expectedTokens.size());
-            for (TokenType tokenType : expectedTokens) {
-                if (tokenType.isFunction()) {
-                    tokenDescriptions.add("function");
-                    continue;
+                Set<String> tokenDescriptions = new THashSet<String>(expectedTokens.size());
+                for (TokenType tokenType : expectedTokens) {
+                    if (tokenType.isFunction()) {
+                        tokenDescriptions.add("function");
+                        continue;
+                    }
+                    String value = tokenType.getValue();
+                    String description =
+                            tokenType.isIdentifier() ? "identifier" :
+                                    StringUtil.isNotEmptyOrSpaces(value) ? value.toUpperCase() : tokenType.getTypeName();
+
+                    tokenDescriptions.add(description);
                 }
-                String value = tokenType.getValue();
-                String description =
-                        tokenType.isIdentifier() ? "identifier" :
-                        StringUtil.isNotEmptyOrSpaces(value) ? value.toUpperCase() : tokenType.getTypeName();
 
-                tokenDescriptions.add(description);
-            }
+                String [] tokenDesc = tokenDescriptions.toArray(new String[tokenDescriptions.size()]);
+                Arrays.sort(tokenDesc);
 
-            String [] tokenDesc = tokenDescriptions.toArray(new String[tokenDescriptions.size()]);
-            Arrays.sort(tokenDesc);
+                StringBuilder buffer = new StringBuilder("expected");
+                buffer.append(tokenDesc.length > 1 ? " one of the following: " : ": ");
 
-            StringBuilder buffer = new StringBuilder("expected");
-            buffer.append(tokenDesc.length > 1 ? " one of the following: " : ": ");
-
-            for (int i=0; i<tokenDesc.length; i++) {
-                buffer.append(tokenDesc[i]);
-                if (i < tokenDesc.length - 1) {
-                    buffer.append(" ");
+                for (int i=0; i<tokenDesc.length; i++) {
+                    buffer.append(tokenDesc[i]);
+                    if (i < tokenDesc.length - 1) {
+                        buffer.append(" ");
+                    }
                 }
+                //buffer.append("\n");
+                builder.error(buffer.toString());
             }
-            //buffer.append("\n");
-            builder.error(buffer.toString());
         }
     }
 }

@@ -3,11 +3,10 @@ package com.dci.intellij.dbn.execution.method;
 import java.util.ArrayList;
 import java.util.List;
 import org.jdom.CDATA;
-import org.jdom.Content;
 import org.jdom.Element;
-import org.jdom.Text;
 
 import com.dci.intellij.dbn.common.list.MostRecentStack;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -60,15 +59,9 @@ public class MethodExecutionArgumentValue implements PersistentStateElement<Elem
 
         List<Element> valueElements = element.getChildren();
         for (Element valueElement : valueElements) {
-            if (valueElement.getContentSize() > 0) {
-                Content content = valueElement.getContent(0);
-                if (content instanceof Text) {
-                    Text cdata = (Text) content;
-                    value = cdata.getText();
-                    if (StringUtil.isNotEmpty(value)) {
-                        values.add(value);
-                    }
-                }
+            value = SettingsUtil.readCdata(valueElement);
+            if (StringUtil.isNotEmpty(value)) {
+                values.add(value);
             }
         }
         valueHistory = new MostRecentStack<String>(values);
