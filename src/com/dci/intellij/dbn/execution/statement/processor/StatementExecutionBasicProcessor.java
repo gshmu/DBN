@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
@@ -255,6 +256,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     executionInput.getDebugExecutionTimeout() :
                     executionInput.getExecutionTimeout();
 
+            ExecutionContext executionContext = executionInput.getExecutionContext();
             try {
                 runningStatements.increment();
                 if (connection == null) {
@@ -265,7 +267,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
                 }
                 final Statement statement = connection.createStatement();
-                closeOnErrorStatement = statement;
+                executionContext.setStatement(statement);
 
                 statement.setQueryTimeout(timeout);
                 final String executable = executableStatementText;
@@ -313,7 +315,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     }
                 }
             } catch (SQLException e) {
-                ConnectionUtil.closeStatement(closeOnErrorStatement);
+                executionContext.dismissStatement();
                 executionResult = createErrorExecutionResult(e.getMessage());
                 executionException = e;
             } finally {
