@@ -91,7 +91,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return isDisposed() ? null : columnForms.get(0).getEditorComponent();
+        return isDisposed() || columnForms.size() == 0 ? null : columnForms.get(0).getEditorComponent();
     }
 
     public JPanel getComponent() {
