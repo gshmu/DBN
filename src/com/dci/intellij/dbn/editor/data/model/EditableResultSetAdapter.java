@@ -25,12 +25,12 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
-                        resultSet.absolute(rowIndex);
+                        absolute(resultSet, rowIndex);
                         return null;
                     }
                 }.start();
             } else {
-                resultSet.absolute(rowIndex);
+                absolute(resultSet, rowIndex);
             }
         }
     }
@@ -42,12 +42,12 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
-                        resultSet.updateRow();
+                        updateRow(resultSet);
                         return null;
                     }
                 }.start();
             } else {
-                resultSet.updateRow();
+                updateRow(resultSet);
             }
         }
     }
@@ -59,12 +59,12 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
-                        resultSet.refreshRow();
+                        refreshRow(resultSet);
                         return null;
                     }
                 }.start();
             } else {
-                resultSet.refreshRow();
+                refreshRow(resultSet);
             }
         }
     }
@@ -76,13 +76,13 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
-                        resultSet.moveToInsertRow();
+                        moveToInsertRow(resultSet);
                         setInsertMode(true);
                         return null;
                     }
                 }.start();
             } else {
-                resultSet.moveToInsertRow();
+                moveToInsertRow(resultSet);
                 setInsertMode(true);
             }
         }
@@ -95,13 +95,13 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
-                        resultSet.moveToCurrentRow();
+                        moveToCurrentRow(resultSet);
                         setInsertMode(false);
                         return null;
                     }
                 }.start();
             } else {
-                resultSet.moveToCurrentRow();
+                moveToCurrentRow(resultSet);
                 setInsertMode(false);
             }
         }
@@ -114,15 +114,15 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
-                        resultSet.insertRow();
-                        resultSet.moveToCurrentRow();
+                        insertRow(resultSet);
+                        moveToCurrentRow(resultSet);
                         setInsertMode(false);
                         return null;
                     }
                 }.start();
             } else {
-                resultSet.insertRow();
-                resultSet.moveToCurrentRow();
+                insertRow(resultSet);
+                moveToCurrentRow(resultSet);
                 setInsertMode(false);
             }
         }
@@ -135,12 +135,12 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
                 new ConnectionSavepointCall(resultSet) {
                     @Override
                     public Object execute() throws SQLException {
-                        resultSet.deleteRow();
+                        deleteRow(resultSet);
                         return null;
                     }
                 }.start();
             } else {
-                resultSet.deleteRow();
+                deleteRow(resultSet);
             }
         }
     }
