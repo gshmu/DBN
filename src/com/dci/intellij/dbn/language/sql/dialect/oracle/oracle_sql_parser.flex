@@ -127,6 +127,8 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
     "begin"                         { plsqlBlockMonitor.mark(Marker.BEGIN); }
     "function"{ws}{IDENTIFIER}      { plsqlBlockMonitor.mark(Marker.METHOD); }
     "procedure"{ws}{IDENTIFIER}     { plsqlBlockMonitor.mark(Marker.METHOD); }
+    "case"                          { plsqlBlockMonitor.mark(Marker.CASE); }
+    "end"                           { plsqlBlockMonitor.end(false);}
     {IDENTIFIER}                    {}
     {INTEGER}                       {}
     {NUMBER}                        {}

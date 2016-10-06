@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
@@ -44,14 +52,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.List;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -244,18 +244,18 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public void commit() throws SQLException {
-        ConnectionUtil.commit(connectionPool.getMainConnection(false));
+        ConnectionUtil.commit(getConnectionPool().getMainConnection(false));
         changesBundle = null;
     }
 
     public void rollback() throws SQLException {
-        ConnectionUtil.rollback(connectionPool.getMainConnection(false));
+        ConnectionUtil.rollback(getConnectionPool().getMainConnection(false));
         changesBundle = null;
     }
 
     @Override
     public void ping(boolean check) {
-        connectionPool.keepAlive(check);
+        getConnectionPool().keepAlive(check);
     }
 
     public void notifyChanges(VirtualFile virtualFile) {
@@ -373,13 +373,13 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-        connectionPool.setAutoCommit(autoCommit);
+        getConnectionPool().setAutoCommit(autoCommit);
         connectionSettings.getPropertiesSettings().setEnableAutoCommit(autoCommit);
     }
 
     public void disconnect() throws SQLException {
         try {
-            connectionPool.closeConnections();
+            getConnectionPool().closeConnections();
             changesBundle = null;
             temporaryAuthenticationInfo = new AuthenticationInfo();
         } finally {
@@ -429,12 +429,12 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     public Connection getMainConnection() throws SQLException {
         assertCanConnect();
-        return connectionPool.getMainConnection(true);
+        return getConnectionPool().getMainConnection(true);
     }
 
     public Connection getPoolConnection() throws SQLException {
         assertCanConnect();
-        return connectionPool.allocateConnection();
+        return getConnectionPool().allocateConnection();
     }
 
     public Connection getMainConnection(@Nullable DBSchema schema) throws SQLException {

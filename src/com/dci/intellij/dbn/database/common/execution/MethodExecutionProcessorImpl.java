@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -83,8 +84,8 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         final DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
         Counter runningMethods = connectionHandler.getLoadMonitor().getRunningMethods();
         runningMethods.increment();
-        PreparedStatement closeOnErrorStatement = null;
 
+        ExecutionContext executionContext = executionInput.getExecutionContext();
         try {
             String command = buildExecutionCommand(executionInput);
             T method = getMethod();
@@ -97,7 +98,8 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             final PreparedStatement statement = isQuery() ?
                     connection.prepareStatement(command) :
                     connection.prepareCall(command);
-            closeOnErrorStatement = statement;
+
+            executionContext.setStatement(statement);
 
             bindParameters(executionInput, statement);
 
@@ -132,7 +134,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
             if (!usePoolConnection) connectionHandler.notifyChanges(method.getVirtualFile());
         } catch (SQLException e) {
-            ConnectionUtil.closeStatement(closeOnErrorStatement);
+            executionContext.dismissStatement();
             throw e;
         } finally {
             runningMethods.decrement();

@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.database.postgres;
 
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Array;
@@ -10,6 +7,9 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 
 public class PostgresNativeDataTypes extends DatabaseNativeDataTypes {
     {
@@ -44,6 +44,7 @@ public class PostgresNativeDataTypes extends DatabaseNativeDataTypes {
         createLiteralDefinition("VARCHAR", String.class, Types.VARCHAR);
         createLiteralDefinition("CHARACTER", String.class, Types.CHAR);
         createLiteralDefinition("CHAR", String.class, Types.CHAR);
+        createLiteralDefinition("BPCHAR", String.class, Types.CHAR);
         createLiteralDefinition("TEXT", String.class, Types.VARCHAR);
         createLiteralDefinition("NAME", String.class, Types.VARCHAR);
 
