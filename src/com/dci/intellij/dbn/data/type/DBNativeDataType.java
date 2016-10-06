@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
@@ -100,8 +101,12 @@ public class DBNativeDataType implements DynamicContentElement{
         } catch (SQLException e) {
             Object object = resultSet.getObject(columnIndex);
             String objectClass = object == null ? "" : object.getClass().getName();
-            LOGGER.error("Error resolving result-set value for " + objectClass + " '" + object + "'. (data type definition " + dataTypeDefinition + ')', e);
-            return object;
+            if (object instanceof String && StringUtils.isEmpty((String) object)) {
+                return null;
+            } else {
+                LOGGER.error("Error resolving result-set value for " + objectClass + " \"" + object + "\". (data type definition " + dataTypeDefinition + ')', e);
+                return object;
+            }
         }
     }
 
