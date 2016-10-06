@@ -1,5 +1,19 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -20,20 +34,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewerDialog> {
     private JPanel actionsPanel;
@@ -240,11 +240,14 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
 
         public void actionPerformed(AnActionEvent e) {
             ResultSetDataModelRow row = getRow();
-            if (row.getIndex() > 0) {
-                int index = row.getIndex() - 1;
+            int index = row.getIndex();
+            if (index > 0) {
+                index--;
                 ResultSetDataModelRow previousRow = (ResultSetDataModelRow) row.getModel().getRowAtIndex(index);
-                setRow(previousRow);
-                table.selectRow(index);
+                if (row != null) {
+                    setRow(previousRow);
+                    table.selectRow(index);
+                }
             }
         }
 
