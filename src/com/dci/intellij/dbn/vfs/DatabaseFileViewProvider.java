@@ -19,10 +19,12 @@ import com.intellij.testFramework.LightVirtualFile;
 public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     public DatabaseFileViewProvider(@NotNull PsiManager manager, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled) {
         super(manager, virtualFile, eventSystemEnabled);
+        //virtualFile.putUserData(FREE_THREADED, true);
     }
 
     public DatabaseFileViewProvider(@NotNull PsiManager psiManager, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled, @NotNull Language language) {
         super(psiManager, virtualFile, eventSystemEnabled, language);
+        //virtualFile.putUserData(FREE_THREADED, true);
     }
 
     @Override

@@ -8,7 +8,8 @@ public abstract class OraclePLSQLBlockMonitor {
         BEGIN,
         CREATE,
         DECLARE,
-        METHOD}
+        METHOD,
+        CASE}
 
     private Deque<Marker> stack = new ArrayDeque<Marker>();
 

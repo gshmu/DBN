@@ -165,7 +165,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     }
 
     public void accept(@NotNull PsiElementVisitor visitor) {
-        visitor.visitFile(this);
+        // TODO: check if any visitor relevant
+        //visitor.visitFile(this);
     }
 
     @NotNull

@@ -99,7 +99,8 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 try {
                     resultSetAdapter.refreshRow();
                 } catch (SQLException e) {
-                    LOGGER.error("Error refreshing row", e);
+                    DatasetEditorError error = new DatasetEditorError(connectionHandler, e);
+                    getRow().notifyError(error, false, !bulk);
                 }
             }
 

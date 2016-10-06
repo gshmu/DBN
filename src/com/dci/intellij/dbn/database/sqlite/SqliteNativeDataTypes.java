@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.database.sqlite;
 
-import com.dci.intellij.dbn.common.util.LazyThreadLocal;
-import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
-import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
-import org.jetbrains.annotations.NotNull;
-
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -13,6 +7,11 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.util.LazyThreadLocal;
+import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
+import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
 
 public class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
     private static final LazyThreadLocal<SimpleDateFormat> DATE_FORMAT = new LazyThreadLocal<SimpleDateFormat>() {
@@ -44,9 +43,9 @@ public class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
         createNumericDefinition("REAL", Double.class, Types.DOUBLE);
         createNumericDefinition("DOUBLE", Double.class, Types.DOUBLE);
         createNumericDefinition("DOUBLE PRECISION", Double.class, Types.DOUBLE);
-        createNumericDefinition("FLOAT", BigDecimal.class, Types.FLOAT);
-        createNumericDefinition("NUMERIC", BigDecimal.class, Types.NUMERIC);
-        createNumericDefinition("DECIMAL", BigDecimal.class, Types.NUMERIC);
+        createNumericDefinition("FLOAT", Double.class, Types.FLOAT);
+        createNumericDefinition("NUMERIC", Double.class, Types.NUMERIC);
+        createNumericDefinition("DECIMAL", Double.class, Types.NUMERIC);
         createNumericDefinition("BOOLEAN", Integer.class, Types.INTEGER);
 
         createLiteralDefinition("CHARACTER", String.class, Types.CHAR);

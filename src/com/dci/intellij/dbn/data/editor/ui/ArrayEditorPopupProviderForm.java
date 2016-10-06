@@ -111,7 +111,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         try {
             Object userValue = userValueHolder.getUserValue();
             ArrayValue array = (ArrayValue) userValue;
-            List<String> values = array.read();
+            List<String> values = array == null ? null : array.read();
             if (values != null) {
                 stringValues.addAll(values);
             }

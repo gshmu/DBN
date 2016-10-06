@@ -1,7 +1,10 @@
 package com.dci.intellij.dbn.common.editor;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.openapi.editor.Document;
@@ -18,8 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 public class BasicTextEditorState implements FileEditorState {
     private int line;
@@ -77,7 +78,7 @@ public class BasicTextEditorState implements FileEditorState {
         }
     }
 
-    public void loadFromEditor(@NotNull FileEditorStateLevel level, @NotNull TextEditor textEditor) {
+    public void loadFromEditor(@NotNull FileEditorStateLevel level, @NotNull final TextEditor textEditor) {
         Editor editor = textEditor.getEditor();
         SelectionModel selectionModel = editor.getSelectionModel();
         LogicalPosition logicalPosition = editor.getCaretModel().getLogicalPosition();
@@ -89,12 +90,17 @@ public class BasicTextEditorState implements FileEditorState {
             selectionStart = selectionModel.getSelectionStart();
             selectionEnd = selectionModel.getSelectionEnd();
 
-            Project project = textEditor.getEditor().getProject();
-            if(project != null){
-                PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
-                CodeFoldingState foldingState = CodeFoldingManager.getInstance(project).saveFoldingState(editor);
-                this.foldingState = foldingState;
-            }
+            new WriteActionRunner() {
+                @Override
+                public void run() {
+                    Editor editor = textEditor.getEditor();
+                    Project project = editor.getProject();
+                    if (project != null && !editor.isDisposed()) {
+                        PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+                        foldingState = CodeFoldingManager.getInstance(project).saveFoldingState(editor);
+                    }
+                }
+            }.start();
         }
         verticalScrollProportion = level != FileEditorStateLevel.UNDO ? EditorUtil.calcVerticalScrollProportion(editor) : -1F;
     }
@@ -109,7 +115,7 @@ public class BasicTextEditorState implements FileEditorState {
         editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
         if (verticalScrollProportion != -1F)
             EditorUtil.setVerticalScrollProportion(editor, verticalScrollProportion);
-        Document document = editor.getDocument();
+        final Document document = editor.getDocument();
         if (selectionStart == selectionEnd) {
             selectionModel.removeSelection();
         } else {
@@ -119,14 +125,16 @@ public class BasicTextEditorState implements FileEditorState {
         }
         editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
 
-        final Project project = editor.getProject();
-        if (project != null && foldingState != null) {
-            PsiDocumentManager.getInstance(project).commitDocument(document);
-            new SimpleLaterInvocator() {
+        if (foldingState != null) {
+            new WriteActionRunner() {
                 @Override
-                protected void execute() {
-                    CodeFoldingManager.getInstance(project).
-                            restoreFoldingState(editor, getFoldingState());
+                public void run() {
+                    Project project = editor.getProject();
+                    if (project != null) {
+                        PsiDocumentManager.getInstance(project).commitDocument(document);
+                        CodeFoldingManager.getInstance(project).
+                                restoreFoldingState(editor, getFoldingState());
+                    }
                 }
             }.start();
             //editor.getFoldingModel().runBatchFoldingOperation(runnable);

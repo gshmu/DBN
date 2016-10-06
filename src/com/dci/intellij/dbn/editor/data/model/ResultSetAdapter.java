@@ -1,16 +1,17 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.data.value.ValueAdapter;
-import com.dci.intellij.dbn.database.DatabaseFeature;
+import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ResultSetUtil;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 
-public abstract class ResultSetAdapter implements Disposable {
+public abstract class ResultSetAdapter extends ResultSetUtil implements Disposable {
     private boolean useSavePoints;
     private boolean insertMode;
     private DatasetEditorModel model;

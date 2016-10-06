@@ -24,6 +24,7 @@ public interface DataModel<T extends DataModelRow> extends DBNTableWithGutterMod
 
     int indexOfRow(T row);
 
+    @Nullable
     T getRowAtIndex(int index);
 
     DataModelHeader getHeader();
