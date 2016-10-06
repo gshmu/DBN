@@ -79,7 +79,7 @@ public class BasicTextEditorState implements FileEditorState {
     }
 
     public void loadFromEditor(@NotNull FileEditorStateLevel level, @NotNull final TextEditor textEditor) {
-        final Editor editor = textEditor.getEditor();
+        Editor editor = textEditor.getEditor();
         SelectionModel selectionModel = editor.getSelectionModel();
         LogicalPosition logicalPosition = editor.getCaretModel().getLogicalPosition();
 
@@ -93,8 +93,9 @@ public class BasicTextEditorState implements FileEditorState {
             new WriteActionRunner() {
                 @Override
                 public void run() {
-                    Project project = textEditor.getEditor().getProject();
-                    if (project != null) {
+                    Editor editor = textEditor.getEditor();
+                    Project project = editor.getProject();
+                    if (project != null && !editor.isDisposed()) {
                         PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
                         foldingState = CodeFoldingManager.getInstance(project).saveFoldingState(editor);
                     }
