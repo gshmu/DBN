@@ -87,6 +87,20 @@ public class Formatter implements Cloneable{
         return RegionalSettings.getInstance(project).getFormatter();
     }
 
+    public static ThreadLocal<Formatter> init(@NotNull final Project project) {
+        return new ThreadLocal<Formatter>(){
+            @Override
+            public Formatter get() {
+                Formatter formatter = super.get();
+                if (formatter == null) {
+                    formatter = getInstance(project);
+                    set(formatter);
+                }
+                return formatter;
+            }
+        };
+    }
+
     public String getDateFormatPattern() {
         return dateFormatPattern;
     }

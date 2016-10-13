@@ -3,14 +3,26 @@ package com.dci.intellij.dbn.database.common;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.cache.Cache;
+import com.dci.intellij.dbn.common.util.LazyThreadLocal;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.logging.ExecutionLogOutput;
 
 public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseMetadataInterface {
+    protected static final LazyThreadLocal<SimpleDateFormat> META_DATE_FORMAT = new LazyThreadLocal<SimpleDateFormat>() {
+        @NotNull
+        @Override
+        protected SimpleDateFormat load() {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        }
+    };
+
+
     public DatabaseMetadataInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
         super(fileName, provider);
     }
