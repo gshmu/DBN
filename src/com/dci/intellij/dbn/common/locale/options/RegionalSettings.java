@@ -26,7 +26,7 @@ public class RegionalSettings extends ProjectConfiguration<RegionalSettingsEdito
     private StringSetting customDateFormat = new StringSetting("custom-date-format", null);
     private StringSetting customTimeFormat = new StringSetting("custom-time-format", null);
 
-    private Formatter formatter;
+    private ThreadLocal<Formatter> formatter = new ThreadLocal<Formatter>();
 
     public RegionalSettings(Project project) {
         super(project);
@@ -40,19 +40,17 @@ public class RegionalSettings extends ProjectConfiguration<RegionalSettingsEdito
 
     @Override
     public void apply() throws ConfigurationException {
-        formatter = null;
+        formatter.set(null);
         super.apply();
     }
 
     public Formatter getFormatter(){
+        Formatter formatter = this.formatter.get();
         if (formatter == null) {
-            synchronized (this) {
-                if (formatter == null) {
-                    formatter = useCustomFormats.value() ?
-                            new Formatter(locale, customDateFormat.value(), customTimeFormat.value(), customNumberFormat.value()) :
-                            new Formatter(locale, dateFormatOption, numberFormatOption);
-                }
-            }
+            formatter = useCustomFormats.value() ?
+                    new Formatter(locale, customDateFormat.value(), customTimeFormat.value(), customNumberFormat.value()) :
+                    new Formatter(locale, dateFormatOption, numberFormatOption);
+            this.formatter.set(formatter);
         }
         return formatter;
     }
@@ -111,7 +109,7 @@ public class RegionalSettings extends ProjectConfiguration<RegionalSettingsEdito
     }
 
     public void readConfiguration(Element element) {
-        formatter = null;
+        formatter.set(null);
         String localeString = SettingsUtil.getString(element, "locale", Locale.getDefault().toString());
         boolean useSystemLocale = localeString.equals("SYSTEM_DEFAULT");
         if (useSystemLocale) {
