@@ -1,20 +1,10 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -43,6 +33,17 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.LocalTimeCounter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.util.List;
 
 public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentListener, DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -75,12 +76,17 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         content.importContent(text);
         final Document document = DocumentUtil.getDocument(this);
         if (document != null) {
-            DocumentUtil.setText(document, content.getText());
-            GuardedBlockMarkers guardedBlocks = content.getOffsets().getGuardedBlocks();
-            if (!guardedBlocks.isEmpty()) {
-                DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
-                DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
-            }
+            new WriteActionRunner() {
+                @Override
+                public void run() {
+                    DocumentUtil.setText(document, content.getText());
+                    GuardedBlockMarkers guardedBlocks = content.getOffsets().getGuardedBlocks();
+                    if (!guardedBlocks.isEmpty()) {
+                        DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
+                        DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
+                    }
+                }
+            }.start();
         }
     }
 
@@ -243,8 +249,6 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         try {
             return contentsToByteArray().length;
         } catch (IOException e) {
-            e.printStackTrace();
-            assert false;
             return 0;
         }
     }
@@ -279,7 +283,9 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         if (document instanceof DocumentEx) {
             DocumentEx documentEx = (DocumentEx) document;
             List<RangeMarker> blocks = documentEx.getGuardedBlocks();
-            content.getOffsets().setGuardedBlocks(blocks);
+            if (!blocks.isEmpty()) {
+                content.getOffsets().setGuardedBlocks(blocks);
+            }
         }
     }
 }

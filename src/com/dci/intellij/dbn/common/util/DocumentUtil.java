@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.thread.ConditionalWriteActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DocumentUtil {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
@@ -117,7 +118,7 @@ public class DocumentUtil {
 
     public static void createGuardedBlock(final Document document, final GuardedBlockType type, final int startOffset, final int endOffset, final String reason) {
         if (startOffset != endOffset) {
-            new WriteActionRunner() {
+            new ConditionalWriteActionRunner() {
                 @Override
                 public void run() {
                     int textLength = document.getTextLength();
@@ -133,21 +134,21 @@ public class DocumentUtil {
         }
     }
 
-    public static void removeGuardedBlocks(final Document document, GuardedBlockType type) {
+    public static void removeGuardedBlocks(final Document document, final GuardedBlockType type) {
         if (document instanceof DocumentEx) {
-            DocumentEx documentEx = (DocumentEx) document;
-            ArrayList<RangeMarker> guardedBlocks = new ArrayList<RangeMarker>(documentEx.getGuardedBlocks());
-            for (final RangeMarker block : guardedBlocks) {
-                if (block.getUserData(GuardedBlockType.KEY) == type) {
-                    new WriteActionRunner() {
-                        @Override
-                        public void run() {
+            final DocumentEx documentEx = (DocumentEx) document;
+            new ConditionalWriteActionRunner() {
+                @Override
+                public void run() {
+                    List<RangeMarker> guardedBlocks = new ArrayList<RangeMarker>(documentEx.getGuardedBlocks());
+                    for (final RangeMarker block : guardedBlocks) {
+                        if (block.getUserData(GuardedBlockType.KEY) == type) {
                             document.removeGuardedBlock(block);
                         }
-                    }.start();
+                    }
+                    document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);
                 }
-            }
-            document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);
+            }.start();
         }
     }
 
@@ -186,7 +187,7 @@ public class DocumentUtil {
     }
 
     public static void setText(final @NotNull Document document, final CharSequence text) {
-        new WriteActionRunner() {
+        new ConditionalWriteActionRunner() {
             public void run() {
                 FileDocumentManager manager = FileDocumentManager.getInstance();
                 VirtualFile file = manager.getFile(document);
@@ -201,7 +202,7 @@ public class DocumentUtil {
     }
 
     public static void saveDocument(final  @NotNull Document document) {
-        new WriteActionRunner() {
+        new ConditionalWriteActionRunner() {
             @Override
             public void run() {
                 FileDocumentManager.getInstance().saveDocument(document);
