@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.database.common;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.util.LazyThreadLocal;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.logging.ExecutionLogOutput;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseMetadataInterface {
     protected static final LazyThreadLocal<SimpleDateFormat> META_DATE_FORMAT = new LazyThreadLocal<SimpleDateFormat>() {
@@ -430,5 +430,19 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
         return true;
     }
 
-
+    @Override
+    public boolean hasPendingTransactions(Connection connection) {
+        try {
+            ResultSet resultSet = executeQuery(connection, true, "count-pending-transactions");
+            try {
+                resultSet.next();
+                int count = resultSet.getInt("COUNT");
+                return count > 0;
+            } finally {
+                ConnectionUtil.closeResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            return isValid(connection);
+        }
+    }
 }

@@ -656,4 +656,6 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
     boolean isValid(Connection connection);
 
     String createDateString(Date date);
+
+    boolean hasPendingTransactions(Connection connection);
 }
