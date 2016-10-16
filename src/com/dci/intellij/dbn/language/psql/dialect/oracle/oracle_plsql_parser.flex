@@ -69,7 +69,7 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 {LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
 {REM_LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
 
-"wrapped"            { yybegin(WRAPPED); return tt.getSharedTokenTypes().getBlockComment();}
+"wrapped"            { yybegin(WRAPPED); return tt.getTokenType("KW_WRAPPED");}
 
 {VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
 {SQLP_VARIABLE}     {return tt.getSharedTokenTypes().getVariable(); }
@@ -569,13 +569,15 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 "wnps" {return tt.getKeywordTokenType(406);}
 "work" {return tt.getKeywordTokenType(407);}
 "write" {return tt.getKeywordTokenType(408);}
-"xml" {return tt.getKeywordTokenType(409);}
-"xmlnamespaces" {return tt.getKeywordTokenType(410);}
-"year" {return tt.getKeywordTokenType(411);}
-"yes" {return tt.getKeywordTokenType(412);}
-"zone" {return tt.getKeywordTokenType(413);}
-"false" {return tt.getKeywordTokenType(414);}
-"true" {return tt.getKeywordTokenType(415);}
+"wrapped" {return tt.getKeywordTokenType(409);}
+"xml" {return tt.getKeywordTokenType(410);}
+"xmlnamespaces" {return tt.getKeywordTokenType(411);}
+"year" {return tt.getKeywordTokenType(412);}
+"yes" {return tt.getKeywordTokenType(413);}
+"zone" {return tt.getKeywordTokenType(414);}
+"false" {return tt.getKeywordTokenType(415);}
+"true" {return tt.getKeywordTokenType(416);}
+
 
 
 
