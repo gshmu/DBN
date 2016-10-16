@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.database.postgres;
 
+import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
-import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 
 
 public class PostgresMetadataInterface extends DatabaseMetadataInterfaceImpl {
@@ -27,5 +27,15 @@ public class PostgresMetadataInterface extends DatabaseMetadataInterfaceImpl {
     @Override
     public void killSession(Object sessionId, Object serialNumber, boolean immediate, Connection connection) throws SQLException {
         executeStatement(connection, "kill-session", sessionId);
+    }
+
+    @Override
+    public boolean hasPendingTransactions(Connection connection) {
+        try {
+            Integer state = (Integer) connection.getClass().getMethod("getTransactionState").invoke(connection);
+            return state != 0;
+        } catch (Exception e) {
+            return true;
+        }
     }
 }
