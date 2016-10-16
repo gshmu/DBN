@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
@@ -15,6 +11,10 @@ import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 public class ParserBuilder {
     private PsiBuilder builder;
@@ -62,7 +62,8 @@ public class ParserBuilder {
     }
 
     public TokenType getTokenType() {
-        return (TokenType) builder.getTokenType();
+        IElementType tokenType = builder.getTokenType();
+        return tokenType instanceof TokenType ? (TokenType) tokenType : null;
     }
 
     public boolean eof() {
