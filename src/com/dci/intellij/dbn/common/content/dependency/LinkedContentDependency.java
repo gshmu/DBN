@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.common.content.dependency;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.content.VoidDynamicContent;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import org.jetbrains.annotations.NotNull;
 
 public class LinkedContentDependency extends ContentDependency {
     private GenericDatabaseElement sourceContentOwner;
@@ -25,7 +24,7 @@ public class LinkedContentDependency extends ContentDependency {
                 return sourceContent;
             }
         }
-        throw AlreadyDisposedException.INSTANCE;
+        return VoidDynamicContent.INSTANCE;
     }
 
     public void dispose() {
