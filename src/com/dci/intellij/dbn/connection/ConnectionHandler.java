@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
+import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Set;
 
 public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable {
     @NotNull
@@ -114,4 +116,5 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
 
     DatabaseInfo getDatabaseInfo();
     AuthenticationInfo getAuthenticationInfo();
+    Set<TransactionAction> getPendingActions();
 }

@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
+import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -27,8 +28,10 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
     public static final ConnectionStatus CONNECTION_STATUS = new ConnectionStatus();
@@ -242,6 +245,11 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override
     public DatabaseInfo getDatabaseInfo() {
         return databaseType.getUrlPatterns()[0].getDefaultInfo();
+    }
+
+    @Override
+    public Set<TransactionAction> getPendingActions() {
+        return Collections.emptySet();
     }
 
     @Override
