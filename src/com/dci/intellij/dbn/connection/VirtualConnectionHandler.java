@@ -161,8 +161,8 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override public String getUserName() {return "root";}
 
-    @Override public Connection getPoolConnection() throws SQLException {return null;}
-    @Override public Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException {return null;}
+    @Override public Connection getPoolConnection(boolean readonly) throws SQLException {return null;}
+    @Override public Connection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {return null;}
     @Override public Connection getMainConnection() throws SQLException {return null;}
     @Override public Connection getMainConnection(@Nullable DBSchema schema) throws SQLException {return null;}
     @Override public void freePoolConnection(Connection connection) {}

@@ -32,8 +32,8 @@ import java.util.Set;
 public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable {
     @NotNull
     Project getProject();
-    Connection getPoolConnection() throws SQLException;
-    Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException;
+    Connection getPoolConnection(boolean readonly) throws SQLException;
+    Connection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException;
     Connection getMainConnection() throws SQLException;
     Connection getMainConnection(@Nullable DBSchema schema) throws SQLException;
     void freePoolConnection(Connection connection);

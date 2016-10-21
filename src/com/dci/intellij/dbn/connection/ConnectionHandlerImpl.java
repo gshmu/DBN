@@ -447,9 +447,9 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return getConnectionPool().getMainConnection(true);
     }
 
-    public Connection getPoolConnection() throws SQLException {
+    public Connection getPoolConnection(boolean readonly) throws SQLException {
         assertCanConnect();
-        return getConnectionPool().allocateConnection();
+        return getConnectionPool().allocateConnection(readonly);
     }
 
     public Connection getMainConnection(@Nullable DBSchema schema) throws SQLException {
@@ -461,8 +461,8 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connection;
     }
 
-    public Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException {
-        Connection connection = getPoolConnection();
+    public Connection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {
+        Connection connection = getPoolConnection(readonly);
         //if (!schema.isPublicSchema()) {
         if (schema != null && DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) {
             DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();

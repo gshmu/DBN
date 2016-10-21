@@ -1,19 +1,5 @@
 package com.dci.intellij.dbn.editor.session;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -48,6 +34,20 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @State(
     name = "DBNavigator.Project.SessionEditorManager",
@@ -91,7 +91,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         ResultSet resultSet = null;
         try {
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-            connection = connectionHandler.getPoolConnection();
+            connection = connectionHandler.getPoolConnection(true);
             resultSet = metadataInterface.loadSessions(connection);
             return new SessionBrowserModel(connectionHandler, resultSet);
         } catch (SQLException e) {
@@ -113,7 +113,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
             if (DatabaseFeature.SESSION_CURRENT_SQL.isSupported(connectionHandler)) {
                 DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
 
-                connection = connectionHandler.getPoolConnection();
+                connection = connectionHandler.getPoolConnection(true);
                 resultSet = metadataInterface.loadSessionCurrentSql(sessionId, connection);
                 if (resultSet.next()) {
                     return resultSet.getString(1);
@@ -165,7 +165,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                 Project project = connectionHandler.getProject();
                 Connection connection = null;
                 try {
-                    connection = connectionHandler.getPoolConnection();
+                    connection = connectionHandler.getPoolConnection(true);
                     Map<Object, SQLException> errors = new HashMap<Object, SQLException>();
                     final DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
 

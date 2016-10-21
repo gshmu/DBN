@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.editor.data;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.object.DBColumn;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatasetEditorUtils {
     public static List<String> loadDistinctColumnValues(@NotNull DBColumn column) {
@@ -18,7 +18,7 @@ public class DatasetEditorUtils {
         Connection connection = null;
         ResultSet resultSet = null;
         try {
-            connection = connectionHandler.getPoolConnection();
+            connection = connectionHandler.getPoolConnection(true);
             resultSet = connectionHandler.getInterfaceProvider().getMetadataInterface().getDistinctValues(
                     column.getDataset().getSchema().getName(),
                     column.getDataset().getName(),
