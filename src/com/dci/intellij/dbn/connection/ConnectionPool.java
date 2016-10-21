@@ -101,8 +101,8 @@ public class ConnectionPool implements Disposable {
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.setLastUsedConnection(connectionHandler);
 
-        Connection connectionWrapper = lookupConnection();
-        if (connectionWrapper == null)  {
+        Connection connection = lookupConnection();
+        if (connection == null)  {
             ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
             if (poolConnections.size() >= detailSettings.getMaxConnectionPoolSize() && !ApplicationManager.getApplication().isDispatchThread()) {
                 try {
@@ -112,10 +112,10 @@ public class ConnectionPool implements Disposable {
                     throw new SQLException("Could not allocate connection for '" + connectionHandler.getName() + "'. ");
                 }
             }
-            connectionWrapper = createConnection();
+            connection = createConnection();
         }
 
-        return connectionWrapper;
+        return connection;
     }
 
     @Nullable
