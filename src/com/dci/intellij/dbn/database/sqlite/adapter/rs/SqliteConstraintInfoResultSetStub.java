@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
+import com.dci.intellij.dbn.common.cache.Cache;
+import com.dci.intellij.dbn.common.cache.CacheAdapter;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,12 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.cache.Cache;
-import com.dci.intellij.dbn.common.cache.CacheAdapter;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.*;
 
 public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetElement<T>> extends SqliteDatasetInfoResultSetStub<T> {
@@ -105,7 +106,7 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
             }
 
             for (RawIndexInfo.Row row : indexInfo.getRows()) {
-                if (row.getUnique() == 1 && !row.getOrigin().equals("pk")) {
+                if (row.getUnique() == 1 && !"pk".equals(row.getOrigin())) {
                     String indexId = "UQ" + row.getSeq();
                     String indexName = row.getName();
                     RawIndexDetailInfo detailInfo = getIndexDetailInfo(indexName);

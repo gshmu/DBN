@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
+import com.dci.intellij.dbn.common.cache.CacheAdapter;
+import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.dci.intellij.dbn.common.cache.CacheAdapter;
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawForeignKeyInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawTableInfo;
 
@@ -50,11 +51,15 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
             addElement(element);
         }
 
-        RawForeignKeyInfo foreignKeyInfo = getForeignKeyInfo(datasetName);
-        for (RawForeignKeyInfo.Row row : foreignKeyInfo.getRows()) {
-            String columnName = row.getFrom();
-            Column column = getElement(datasetName + "." + columnName);
-            column.setForeignKey(true);
+        try {
+            RawForeignKeyInfo foreignKeyInfo = getForeignKeyInfo(datasetName);
+            for (RawForeignKeyInfo.Row row : foreignKeyInfo.getRows()) {
+                String columnName = row.getFrom();
+                Column column = getElement(datasetName + "." + columnName);
+                column.setForeignKey(true);
+            }
+        } catch (SQLException ignore) {
+
         }
     }
 
