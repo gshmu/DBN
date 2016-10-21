@@ -452,10 +452,10 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
             Connection connection = null;
             try {
-                connection = connectionHandler.getPoolConnection();
+                connection = connectionHandler.getPoolConnection(true);
                 DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(connection);
                 return debuggerVersion.getVersion();
-            } catch (Exception e) {
+            } catch (Exception ignore) {
 
             } finally {
                 connectionHandler.freePoolConnection(connection);

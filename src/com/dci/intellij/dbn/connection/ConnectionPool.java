@@ -96,7 +96,7 @@ public class ConnectionPool implements Disposable {
     }
 
     @NotNull
-    public Connection allocateConnection() throws SQLException {
+    public Connection allocateConnection(boolean readonly) throws SQLException {
         lastAccessTimestamp = System.currentTimeMillis();
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.setLastUsedConnection(connectionHandler);
@@ -107,14 +107,14 @@ public class ConnectionPool implements Disposable {
             if (poolConnections.size() >= detailSettings.getMaxConnectionPoolSize() && !ApplicationManager.getApplication().isDispatchThread()) {
                 try {
                     Thread.sleep(TimeUtil.ONE_SECOND);
-                    return allocateConnection();
+                    return allocateConnection(readonly);
                 } catch (InterruptedException e) {
                     throw new SQLException("Could not allocate connection for '" + connectionHandler.getName() + "'. ");
                 }
             }
             connection = createConnection();
         }
-
+        ConnectionUtil.setReadonly(connection, readonly);
         return connection;
     }
 
@@ -147,6 +147,7 @@ public class ConnectionPool implements Disposable {
         LOGGER.debug("[DBN-INFO] Attempt to create new pool connection for '" + connectionName + "'");
         Connection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.POOL);
         ConnectionUtil.setAutoCommit(connection, true);
+        ConnectionUtil.setReadonly(connection, true);
         connectionStatus.setConnected(true);
         connectionStatus.setValid(true);
 
@@ -171,6 +172,7 @@ public class ConnectionPool implements Disposable {
                 if (connectionWrapper.getConnection() == connection) {
                     ConnectionUtil.rollback(connection);
                     ConnectionUtil.setAutocommit(connection, true);
+                    ConnectionUtil.setReadonly(connection, true);
                     connectionWrapper.setBusy(false);
                     break;
                 }

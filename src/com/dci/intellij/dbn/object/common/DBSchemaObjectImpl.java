@@ -144,7 +144,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     public List<DBSchema> getReferencingSchemas() throws SQLException {
         List<DBSchema> schemas = new ArrayList<DBSchema>();
         ConnectionHandler connectionHandler = getConnectionHandler();
-        Connection connection = connectionHandler.getPoolConnection(getSchema());
+        Connection connection = connectionHandler.getPoolConnection(getSchema(), true);
         ResultSet resultSet = null;
         try {
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
@@ -169,7 +169,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
 
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        Connection connection = connectionHandler.getPoolConnection(getSchema());
+        Connection connection = connectionHandler.getPoolConnection(getSchema(), true);
         try {
             DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
             ddlInterface.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, connection);

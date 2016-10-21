@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.editor.session.model;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -19,6 +10,15 @@ import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterType;
 import com.dci.intellij.dbn.editor.session.SessionBrowserState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelRow>{
     private long timestamp = System.currentTimeMillis();
@@ -46,7 +46,7 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
         DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
         Connection connection = null;
         try {
-            connection = connectionHandler.getPoolConnection();
+            connection = connectionHandler.getPoolConnection(true);
             newResultSet =  metadataInterface.loadSessions(connection);
             checkDisposed();
 

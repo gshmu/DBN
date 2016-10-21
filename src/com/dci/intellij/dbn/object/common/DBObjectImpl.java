@@ -467,7 +467,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
         ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
         try {
-            connection = connectionHandler.getPoolConnection();
+            connection = connectionHandler.getPoolConnection(true);
             statement = connection.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
             statement.registerOutParameter(1, Types.CLOB);
             statement.setString(2, getTypeName().toUpperCase());
