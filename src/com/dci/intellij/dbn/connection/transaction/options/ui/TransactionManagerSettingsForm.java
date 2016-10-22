@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.connection.transaction.options.ui;
 
-import javax.swing.JPanel;
-
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.intellij.openapi.options.ConfigurationException;
+
+import javax.swing.JPanel;
 
 public class TransactionManagerSettingsForm extends ConfigurationEditorForm<TransactionManagerSettings> {
     private JPanel mainPanel;
@@ -45,7 +45,7 @@ public class TransactionManagerSettingsForm extends ConfigurationEditorForm<Tran
 
         multipleChangesOnRollbackComboBox.setValues(
                 TransactionOption.ASK,
-                TransactionOption.COMMIT,
+                TransactionOption.ROLLBACK,
                 TransactionOption.REVIEW_CHANGES);
 
         resetFormChanges();
