@@ -2130,6 +2130,22 @@
         </statement>
     </statement-execution-processor>
 
+    <statement-execution-processor id="count-pending-transactions" is-query="true" is-prepared-statement="true">
+        <statement>
+            select count(*) as COUNT
+              from V$TRANSACTION t,
+                   V$SESSION s,
+                   V$MYSTAT m
+             where t.SES_ADDR = s.SADDR
+               and s.SID = m.SID
+        </statement>
+        <statement>
+            select count(DBMS_TRANSACTION.LOCAL_TRANSACTION_ID) as COUNT
+              from DUAL
+             where DBMS_TRANSACTION.LOCAL_TRANSACTION_ID is not null;
+        </statement>
+    </statement-execution-processor>
+
 
 
 </data-dictionary>

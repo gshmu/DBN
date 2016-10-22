@@ -9,6 +9,7 @@ public enum ElementTypeAttribute {
     EXECUTABLE("EXECUTABLE", "Executable statement"),
     DEBUGGABLE("DEBUGGABLE", "Debuggable"),
     TRANSACTIONAL("TRANSACTIONAL", "Transactional statement"),
+    POTENTIALLY_TRANSACTIONAL("POTENTIALLY_TRANSACTIONAL", "Transactional statement"),
     QUERY("QUERY", "Query statement", true),
     DATA_DEFINITION("DATA_DEFINITION", "Data definition statement", true),
     DATA_MANIPULATION("DATA_MANIPULATION", "Data manipulation statement", true),

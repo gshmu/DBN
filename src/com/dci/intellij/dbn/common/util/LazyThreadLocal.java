@@ -2,15 +2,14 @@ package com.dci.intellij.dbn.common.util;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class LazyThreadLocal<T> {
-    private ThreadLocal<T> localValue = new ThreadLocal<T>();
+public abstract class LazyThreadLocal<T> extends ThreadLocal<T>{
 
     @NotNull
     public final T get() {
-        T value = localValue.get();
+        T value = super.get();
         if (value == null) {
             value = load();
-            localValue.set(value);
+            set(value);
         }
         return value;
     }

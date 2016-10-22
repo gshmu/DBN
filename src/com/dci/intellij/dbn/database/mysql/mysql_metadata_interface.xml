@@ -672,4 +672,13 @@
         </statement>
     </statement-execution-processor>
 
+    <statement-execution-processor id="count-pending-transactions" is-query="true" is-prepared-statement="true">
+        <statement>
+            select count(1) as COUNT
+              from INFORMATION_SCHEMA.INNODB_TRX
+        </statement>
+    </statement-execution-processor>
+
+
+
 </data-dictionary>

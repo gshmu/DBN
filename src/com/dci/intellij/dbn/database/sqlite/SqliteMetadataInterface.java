@@ -3,8 +3,6 @@ package com.dci.intellij.dbn.database.sqlite;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.jetbrains.annotations.NotNull;
 
@@ -246,9 +244,8 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
         return new SqliteTriggerSourceResultSet(resultSet);
     }
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public String createDateString(Date date) {
-        String dateString = DATE_FORMAT.format(date);
+        String dateString = META_DATE_FORMAT.get().format(date);
         return "str_to_date('" + dateString + "', '%Y-%m-%d %T')";
     }
 

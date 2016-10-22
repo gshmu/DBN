@@ -1,13 +1,6 @@
 package com.dci.intellij.dbn.data.record;
 
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.Map;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
@@ -15,6 +8,13 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.Disposable;
 import gnu.trove.THashMap;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Map;
 
 public class DatasetRecord implements Disposable {
     private ResultSet resultSet;
@@ -60,7 +60,7 @@ public class DatasetRecord implements Disposable {
         ConnectionHandler connectionHandler = dataset.getConnectionHandler();
         Connection connection = null;
         try {
-            connection = connectionHandler.getPoolConnection();
+            connection = connectionHandler.getPoolConnection(true);
             PreparedStatement statement = connection.prepareStatement(selectStatement.toString());
 
             int index = 1;

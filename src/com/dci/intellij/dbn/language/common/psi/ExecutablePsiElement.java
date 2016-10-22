@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import javax.swing.Icon;
-import java.lang.ref.WeakReference;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -14,6 +10,10 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.lang.ref.WeakReference;
 
 public class ExecutablePsiElement extends NamedPsiElement{
     private WeakReference<StatementExecutionProcessor> executionProcessor;
@@ -47,6 +47,10 @@ public class ExecutablePsiElement extends NamedPsiElement{
 
     public boolean isTransactional() {
         return is(ElementTypeAttribute.TRANSACTIONAL) || getSpecificElementType().is(ElementTypeAttribute.TRANSACTIONAL);
+    }
+
+    public boolean isPotentiallyTransactional() {
+        return is(ElementTypeAttribute.POTENTIALLY_TRANSACTIONAL) || getSpecificElementType().is(ElementTypeAttribute.POTENTIALLY_TRANSACTIONAL);
     }
 
     public boolean isTransactionControl() {

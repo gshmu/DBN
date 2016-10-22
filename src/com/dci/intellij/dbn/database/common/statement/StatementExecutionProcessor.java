@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.database.common.statement;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.intellij.openapi.diagnostic.Logger;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,15 +18,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
-import com.intellij.openapi.diagnostic.Logger;
 
 public class StatementExecutionProcessor {
     private DatabaseInterfaceProvider interfaceProvider;
@@ -124,7 +124,11 @@ public class StatementExecutionProcessor {
                             statement.setQueryTimeout(timeout);
                             statement.execute(statementText);
                             if (isQuery) {
-                                return statement.getResultSet();
+                                try {
+                                    return statement.getResultSet();
+                                } catch (SQLException e) {
+                                    return null;
+                                }
                             } else {
                                 ConnectionUtil.closeStatement(statement);
                                 return null;

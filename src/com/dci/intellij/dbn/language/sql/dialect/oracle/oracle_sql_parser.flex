@@ -1313,8 +1313,8 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
     {NUMBER}      { return tt.getSharedTokenTypes().getNumber(); }
     {STRING}      { return tt.getSharedTokenTypes().getString(); }
 
-    {IDENTIFIER}         { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-    {QUOTED_IDENTIFIER}  { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+    {IDENTIFIER}         { return tt.getSharedTokenTypes().getIdentifier(); }
+    {QUOTED_IDENTIFIER}  { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
 
-    .                    { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
+    .                    { return tt.getSharedTokenTypes().getIdentifier(); }
 }

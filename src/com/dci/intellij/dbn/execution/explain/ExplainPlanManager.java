@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.execution.explain;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -24,6 +16,14 @@ import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class ExplainPlanManager extends AbstractProjectComponent {
     private ExplainPlanManager(Project project) {
@@ -59,7 +59,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                 try {
                     DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
                     DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
-                    connection = connectionHandler.getPoolConnection(currentSchema);
+                    connection = connectionHandler.getPoolConnection(currentSchema, true);
                     metadataInterface.clearExplainPlanData(connection);
 
                     DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
