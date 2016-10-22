@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.locale.FormatterProvider;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
@@ -41,13 +42,13 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private List<T> rows = new ArrayList<T>();
     private Project project;
     private Filter<T> filter;
-    private Formatter formatter;
+    private FormatterProvider formatter;
     private boolean isEnvironmentReadonly;
 
     private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
         @Override
         public void settingsChanged() {
-            BasicDataModel.this.formatter = Formatter.getInstance(project).clone();
+            formatter = new FormatterProvider(project);
         }
     };
 
@@ -69,7 +70,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
 
     public BasicDataModel(Project project) {
         this.project = project;
-        this.formatter = Formatter.getInstance(project).clone();
+        formatter = new FormatterProvider(project);
         EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
 
@@ -88,7 +89,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
 
     @NotNull
     public Formatter getFormatter() {
-        return formatter;
+        return formatter.get();
     }
 
     @Override

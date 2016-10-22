@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.database.sqlite.adapter;
 
+import com.dci.intellij.dbn.database.common.util.ResultSetReader;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 
 public class SqliteRawMetaData {
     public static class RawForeignKeyInfo extends RawMetaData<RawForeignKeyInfo.Row> {
@@ -77,9 +77,9 @@ public class SqliteRawMetaData {
             Row (ResultSet resultSet) throws SQLException {
                 seq = resultSet.getInt("seq");
                 name = resultSet.getString("name");
-                unique = resultSet.getInt("unique");
-                partial = resultSet.getInt("partial");
-                origin = resultSet.getString("origin");
+                try {unique = resultSet.getInt("unique");} catch (SQLException ignore) {}
+                try {partial = resultSet.getInt("partial");} catch (SQLException ignore) {}
+                try {origin = resultSet.getString("origin");} catch (SQLException ignore) {}
             }
 
             public int getSeq() {

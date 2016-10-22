@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
@@ -63,6 +53,16 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
     protected WeakReference<FileEditor> fileEditorRef;
@@ -288,9 +288,19 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                 VirtualFile virtualFile = getPsiFile().getVirtualFile();
                 if (executablePsiElement != null) {
                     if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(virtualFile);
+                    if (executablePsiElement.isPotentiallyTransactional()) {
+                        if (activeConnection.hasPendingTransactions(connection)) {
+                            activeConnection.notifyChanges(virtualFile);
+                        }
+                    }
                     if (executablePsiElement.isTransactionControl()) activeConnection.resetChanges();
                 } else{
-                    if (executionResult.getUpdateCount() > 0) activeConnection.notifyChanges(virtualFile);
+                    if (executionResult.getUpdateCount() > 0) {
+                        activeConnection.notifyChanges(virtualFile);
+                    } else if (activeConnection.hasPendingTransactions(connection)) {
+                        activeConnection.notifyChanges(virtualFile);
+                    }
+
                 }
 
                 executionResult.setLoggingActive(loggingEnabled);

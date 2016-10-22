@@ -12,7 +12,7 @@ public abstract class WriteActionRunner {
     public WriteActionRunner() {
     }
 
-    public final void start() {
+    public void start() {
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {

@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.connection.transaction;
 
-import java.sql.SQLException;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -26,6 +21,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 public class DatabaseTransactionManager extends AbstractProjectComponent implements ProjectManagerListener{
 
@@ -38,17 +42,24 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     }
 
     public void execute(final ConnectionHandler connectionHandler, boolean background, final TransactionAction... actions) {
-        Project project = connectionHandler.getProject();
-        String connectionName = connectionHandler.getName();
-        if (ApplicationManager.getApplication().isDisposeInProgress()) {
-            executeActions(connectionHandler, actions);
-        } else {
-            new BackgroundTask(project, "Performing " + actions[0].getName() + " on connection " + connectionName, background) {
-                @Override
-                protected void execute(@NotNull ProgressIndicator indicator) {
-                    executeActions(connectionHandler, actions);
-                }
-            }.start();
+        final List<TransactionAction> actionList = new ArrayList<TransactionAction>(Arrays.asList(actions));
+        Set<TransactionAction> pendingActions = connectionHandler.getPendingActions();
+
+        actionList.removeAll(pendingActions);
+        if (actionList.size() > 0) {
+            pendingActions.addAll(actionList);
+            Project project = connectionHandler.getProject();
+            String connectionName = connectionHandler.getName();
+            if (ApplicationManager.getApplication().isDisposeInProgress()) {
+                executeActions(connectionHandler, actionList);
+            } else {
+                new BackgroundTask(project, "Performing " + actionList.get(0) + " on connection " + connectionName, background) {
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator indicator) {
+                        executeActions(connectionHandler, actionList);
+                    }
+                }.start();
+            }
         }
     }
 
@@ -56,48 +67,51 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         return ProjectSettingsManager.getInstance(getProject()).getOperationSettings().getTransactionManagerSettings();
     }
 
-    public void executeActions(ConnectionHandler connectionHandler, TransactionAction... actions) {
+    public void executeActions(ConnectionHandler connectionHandler, List<TransactionAction> actions) {
         Project project = getProject();
         String connectionName = connectionHandler.getName();
         TransactionListener transactionListener = EventUtil.notify(project, TransactionListener.TOPIC);
         for (TransactionAction action : actions) {
-            if (action != null) {
-                boolean success = true;
-                try {
-                    // notify pre-action
-                    transactionListener.beforeAction(connectionHandler, action);
-                    ProgressMonitor.setTaskDescription("Performing " + action.getName() + " on connection " + connectionName);
+            executeAction(connectionHandler, project, connectionName, transactionListener, action);
+        }
+    }
 
-                    action.execute(connectionHandler);
-                    if (action.getNotificationType() != null) {
-                        NotificationUtil.sendNotification(
-                                project,
-                                action.getNotificationType(),
-                                Constants.DBN_TITLE_PREFIX + action.getName(),
-                                action.getSuccessNotificationMessage(),
-                                connectionName);
-                    }
-                } catch (SQLException ex) {
-                    NotificationUtil.sendNotification(
-                            project,
-                            action.getFailureNotificationType(),
-                            Constants.DBN_TITLE_PREFIX + action.getName(),
-                            action.getFailureNotificationMessage(),
-                            connectionName,
-                            ex.getMessage());
-                    success = false;
-                } finally {
-                    if (!project.isDisposed()) {
-                        // notify post-action
-                        transactionListener.afterAction(connectionHandler, action, success);
+    protected void executeAction(ConnectionHandler connectionHandler, Project project, String connectionName, TransactionListener transactionListener, TransactionAction action) {
+        boolean success = true;
+        try {
+            // notify pre-action
+            transactionListener.beforeAction(connectionHandler, action);
+            ProgressMonitor.setTaskDescription("Performing " + action.getName() + " on connection " + connectionName);
 
-                        if (action.isStatusChange()) {
-                            ConnectionStatusListener statusListener = EventUtil.notify(project, ConnectionStatusListener.TOPIC);
-                            statusListener.statusChanged(connectionHandler.getId());
-                        }
-                    }
+            action.execute(connectionHandler);
+            if (action.getNotificationType() != null) {
+                NotificationUtil.sendNotification(
+                        project,
+                        action.getNotificationType(),
+                        Constants.DBN_TITLE_PREFIX + action.getName(),
+                        action.getSuccessNotificationMessage(),
+                        connectionName);
+            }
+        } catch (SQLException ex) {
+            NotificationUtil.sendNotification(
+                    project,
+                    action.getFailureNotificationType(),
+                    Constants.DBN_TITLE_PREFIX + action.getName(),
+                    action.getFailureNotificationMessage(),
+                    connectionName,
+                    ex.getMessage());
+            success = false;
+        } finally {
+            if (!project.isDisposed()) {
+                // notify post-action
+                transactionListener.afterAction(connectionHandler, action, success);
+
+                if (action.isStatusChange()) {
+                    ConnectionStatusListener statusListener = EventUtil.notify(project, ConnectionStatusListener.TOPIC);
+                    statusListener.statusChanged(connectionHandler.getId());
                 }
             }
+            connectionHandler.getPendingActions().remove(action);
         }
     }
 

@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
@@ -33,6 +25,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
+import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
@@ -52,6 +45,16 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -74,6 +77,13 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private AuthenticationInfo temporaryAuthenticationInfo = new AuthenticationInfo();
     private ConnectionInfo connectionInfo;
     private Cache metaDataCache = new Cache(TimeUtil.ONE_MINUTE);
+
+    @Override
+    public Set<TransactionAction> getPendingActions() {
+        return pendingActions;
+    }
+
+    private Set<TransactionAction> pendingActions = new HashSet<TransactionAction>();
 
 
     private LazyValue<NavigationPsiCache> psiCache = new DisposableLazyValue<NavigationPsiCache>(this) {
@@ -367,6 +377,11 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connectionSettings.getDetailSettings().isEnableDatabaseLogging();
     }
 
+    @Override
+    public boolean hasPendingTransactions(Connection connection) {
+        return getInterfaceProvider().getMetadataInterface().hasPendingTransactions(connection);
+    }
+
     public void setLoggingEnabled(boolean loggingEnabled) {
         connectionSettings.getDetailSettings().setEnableDatabaseLogging(loggingEnabled);
     }
@@ -432,9 +447,9 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return getConnectionPool().getMainConnection(true);
     }
 
-    public Connection getPoolConnection() throws SQLException {
+    public Connection getPoolConnection(boolean readonly) throws SQLException {
         assertCanConnect();
-        return getConnectionPool().allocateConnection();
+        return getConnectionPool().allocateConnection(readonly);
     }
 
     public Connection getMainConnection(@Nullable DBSchema schema) throws SQLException {
@@ -446,8 +461,8 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connection;
     }
 
-    public Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException {
-        Connection connection = getPoolConnection();
+    public Connection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {
+        Connection connection = getPoolConnection(readonly);
         //if (!schema.isPublicSchema()) {
         if (schema != null && DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) {
             DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();

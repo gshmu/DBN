@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
@@ -17,6 +9,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
+import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -29,6 +22,16 @@ import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
     public static final ConnectionStatus CONNECTION_STATUS = new ConnectionStatus();
@@ -158,8 +161,8 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override public String getUserName() {return "root";}
 
-    @Override public Connection getPoolConnection() throws SQLException {return null;}
-    @Override public Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException {return null;}
+    @Override public Connection getPoolConnection(boolean readonly) throws SQLException {return null;}
+    @Override public Connection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {return null;}
     @Override public Connection getMainConnection() throws SQLException {return null;}
     @Override public Connection getMainConnection(@Nullable DBSchema schema) throws SQLException {return null;}
     @Override public void freePoolConnection(Connection connection) {}
@@ -185,6 +188,8 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public boolean canConnect() {
         return false;
     }
+
+    @Override public boolean hasPendingTransactions(Connection connection) {return false;}
 
     @NotNull
     @Override
@@ -240,6 +245,11 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override
     public DatabaseInfo getDatabaseInfo() {
         return databaseType.getUrlPatterns()[0].getDefaultInfo();
+    }
+
+    @Override
+    public Set<TransactionAction> getPendingActions() {
+        return Collections.emptySet();
     }
 
     @Override
