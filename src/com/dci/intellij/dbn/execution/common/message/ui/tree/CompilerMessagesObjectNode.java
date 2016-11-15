@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
+import javax.swing.tree.TreePath;
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.tree.TreePath;
-import java.util.List;
 
 public class CompilerMessagesObjectNode extends BundleTreeNode {
     private DBObjectRef<DBSchemaObject> objectRef;
@@ -63,5 +63,10 @@ public class CompilerMessagesObjectNode extends BundleTreeNode {
     @Override
     public void dispose() {
         super.dispose();
+    }
+
+    @Override
+    public String toString() {
+        return objectRef.toString();
     }
 }
