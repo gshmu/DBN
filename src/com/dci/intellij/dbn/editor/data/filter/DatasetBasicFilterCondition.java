@@ -125,7 +125,7 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
             }
             else if (StringUtil.isNotEmptyOrSpaces(value)) {
                 ConnectionHandler connectionHandler = FailsafeUtil.get(dataset.getConnectionHandler());
-                if (genericDataType == GenericDataType.LITERAL) {
+                if (genericDataType == GenericDataType.LITERAL || genericDataType == GenericDataType.CLOB) {
                     value = quoteValue(value);
                 } else if (genericDataType == GenericDataType.DATE_TIME) {
                     DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
