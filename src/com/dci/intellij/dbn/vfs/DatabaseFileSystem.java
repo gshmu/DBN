@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -77,35 +78,52 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
             ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
             if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isActive()) {
                 String objectPath = url.substring(index + 1);
-                if (objectPath.startsWith("null")) {
-                    return null;
-                } else if (objectPath.startsWith("console#")) {
-                    String consoleName = objectPath.substring(8);
-                    return connectionHandler.getConsoleBundle().getConsole(consoleName);
-                } else if (objectPath.startsWith("session_browser#")) {
-                    return connectionHandler.getSessionBrowserFile();
-                } else if (objectPath.startsWith("object#")) {
-                    String identifier = objectPath.substring(7);
-                    DBObjectRef objectRef = new DBObjectRef(connectionId, identifier);
-                    DBObject object = objectRef.get();
-                    if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
-                        return findOrCreateDatabaseFile((DBSchemaObject) object);
-                    }
-                } else if (objectPath.startsWith("object_")) {
-                    int typeEndIndex = objectPath.indexOf("#");
-                    String contentTypeStr = objectPath.substring(7, typeEndIndex);
-                    DBContentType contentType = DBContentType.valueOf(contentTypeStr.toUpperCase());
-                    String identifier = objectPath.substring(typeEndIndex + 1);
-                    DBObjectRef objectRef = new DBObjectRef(connectionId, identifier);
-                    DBObject object = objectRef.get();
-                    if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
-                        DBEditableObjectVirtualFile virtualFile = findOrCreateDatabaseFile((DBSchemaObject) object);
-                        return virtualFile.getContentFile(contentType);
+                if (isValidPath(objectPath) && allowFileLookup(connectionHandler)) {
+                    if (objectPath.startsWith("console#")) {
+                        String consoleName = objectPath.substring(8);
+                        return connectionHandler.getConsoleBundle().getConsole(consoleName);
+
+                    } else if (objectPath.startsWith("session_browser#")) {
+                        return connectionHandler.getSessionBrowserFile();
+
+                    } else if (objectPath.startsWith("object#")) {
+                        String identifier = objectPath.substring(7);
+                        DBObjectRef objectRef = new DBObjectRef(connectionId, identifier);
+                        DBObject object = objectRef.get();
+                        if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
+                            return findOrCreateDatabaseFile((DBSchemaObject) object);
+                        }
+                    } else if (objectPath.startsWith("object_")) {
+                        int typeEndIndex = objectPath.indexOf("#");
+                        String contentTypeStr = objectPath.substring(7, typeEndIndex);
+                        DBContentType contentType = DBContentType.valueOf(contentTypeStr.toUpperCase());
+                        String identifier = objectPath.substring(typeEndIndex + 1);
+                        DBObjectRef objectRef = new DBObjectRef(connectionId, identifier);
+                        DBObject object = objectRef.get();
+                        if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
+                            DBEditableObjectVirtualFile virtualFile = findOrCreateDatabaseFile((DBSchemaObject) object);
+                            return virtualFile.getContentFile(contentType);
+                        }
                     }
                 }
             }
         }
         return null;
+    }
+
+    boolean isValidPath(String objectPath) {
+        return !objectPath.startsWith("null");
+    }
+
+    private boolean allowFileLookup(ConnectionHandler connectionHandler) {
+        ConnectionDetailSettings connectionDetailSettings = connectionHandler.getSettings().getDetailSettings();
+        if (connectionDetailSettings.isRestoreWorkspace()) {
+            return true;
+        } else {
+            Project project = connectionHandler.getProject();
+            DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
+            return !databaseFileManager.isProjectInitializing();
+        }
     }
 
     private static DBEditableObjectVirtualFile createDatabaseFile(final DBSchemaObject object) {

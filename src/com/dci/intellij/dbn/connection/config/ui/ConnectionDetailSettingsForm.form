@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="12" left="4" bottom="4" right="4"/>
     <constraints>
-      <xy x="20" y="20" width="341" height="341"/>
+      <xy x="20" y="20" width="341" height="381"/>
     </constraints>
     <properties/>
     <border type="none">
@@ -11,7 +11,7 @@
       <title-color color="-16777216"/>
     </border>
     <children>
-      <grid id="a15ae" binding="generalGroupPanel" layout-manager="GridLayoutManager" row-count="11" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="a15ae" binding="generalGroupPanel" layout-manager="GridLayoutManager" row-count="12" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="8" left="8" bottom="8" right="8"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -104,7 +104,7 @@
           </component>
           <grid id="62aa8" binding="autoConnectHintPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints>
-              <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -112,15 +112,15 @@
           </grid>
           <component id="23ddb" class="javax.swing.JCheckBox" binding="autoConnectCheckBox" default-binding="true">
             <constraints>
-              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Connect automatically"/>
+              <text value="Connect &amp;automatically"/>
             </properties>
           </component>
           <vspacer id="6202f">
             <constraints>
-              <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
           <component id="5d6e3" class="javax.swing.JCheckBox" binding="databaseLoggingCheckBox">
@@ -177,6 +177,14 @@
               <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
+          <component id="a0187" class="javax.swing.JCheckBox" binding="restoreWorkspaceCheckBox">
+            <constraints>
+              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Enable workspace &amp;restore"/>
+            </properties>
+          </component>
         </children>
       </grid>
     </children>
