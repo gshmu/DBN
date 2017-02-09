@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.database.oracle.execution;
 
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -11,11 +16,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
-
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
 
 public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl<DBMethod> {
     public OracleMethodExecutionProcessor(DBMethod method) {
@@ -256,7 +256,9 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
                 if (dataType.isPurelyDeclared()) {
                     if (dataType.getDeclaredType().isCollection()) {
                         DBNativeDataType nativeDataType = dataType.getNativeDataType();
-                        Object result = nativeDataType.getValueFromStatement(callableStatement, parameterIndex);
+                        Object result = nativeDataType == null ?
+                                callableStatement.getObject(parameterIndex) :
+                                nativeDataType.getValueFromStatement(callableStatement, parameterIndex);
                         executionResult.addArgumentValue(argument, result);
                         parameterIndex++;
                     } else {
@@ -265,7 +267,10 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
                         for (DBTypeAttribute attribute : attributes) {
                             // TODO assuming type attributes are all native
                             DBNativeDataType nativeDataType = attribute.getDataType().getNativeDataType();
-                            Object result = nativeDataType.getValueFromStatement(callableStatement, parameterIndex);
+                            Object result = nativeDataType == null ?
+                                    callableStatement.getObject(parameterIndex) :
+                                    nativeDataType.getValueFromStatement(callableStatement, parameterIndex);
+
                             executionResult.addArgumentValue(argument, attribute, result);
                             parameterIndex++;
                         }
