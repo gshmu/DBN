@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -66,16 +67,19 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                 initProgressIndicator(progressIndicator, true, "Reloading results for " + getExecutionProcessor().getStatementName());
 
                 resultPanel.highlightLoading(true);
-                getExecutionInput().initExecution();
+                StatementExecutionInput executionInput = getExecutionInput();
+                executionInput.initExecution();
                 try {
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     DBSchema currentSchema = getCurrentSchema();
                     Connection connection = connectionHandler.getMainConnection(currentSchema);
                     Statement statement = connection.createStatement();
-                    statement.setQueryTimeout(getExecutionInput().getExecutionTimeout());
-                    statement.execute(getExecutionInput().getExecutableStatementText());
+                    statement.setQueryTimeout(executionInput.getExecutionTimeout());
+                    statement.execute(executionInput.getExecutableStatementText());
                     ResultSet resultSet = statement.getResultSet();
-                    loadResultSet(resultSet);
+                    if (resultSet != null) {
+                        loadResultSet(resultSet);
+                    }
                 } catch (final SQLException e) {
                     MessageUtil.showErrorDialog(getProject(), "Could not perform reload operation.", e);
                 }
