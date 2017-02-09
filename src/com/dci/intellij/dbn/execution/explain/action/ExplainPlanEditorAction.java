@@ -55,9 +55,11 @@ public class ExplainPlanEditorAction extends AnAction {
                 ConnectionHandler activeConnection = languagePsiFile.getActiveConnection();
                 visible = isVisible(e) && DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
 
-                ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-                if (executable != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
-                    enabled = true;
+                if (visible) {
+                    ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
+                    if (executable != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
+                        enabled = true;
+                    }
                 }
             }
         }
