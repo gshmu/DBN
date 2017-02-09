@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
@@ -22,16 +32,6 @@ import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
     public static final ConnectionStatus CONNECTION_STATUS = new ConnectionStatus();
@@ -161,6 +161,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override public String getUserName() {return "root";}
 
+    @Override public Connection createTestConnection() throws SQLException {return null;}
     @Override public Connection getPoolConnection(boolean readonly) throws SQLException {return null;}
     @Override public Connection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {return null;}
     @Override public Connection getMainConnection() throws SQLException {return null;}
@@ -177,12 +178,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Nullable
     @Override public ConnectionInfo getConnectionInfo() { return null;}
-
-    @Nullable
-    @Override
-    public DatabaseAttachmentHandler getDatabaseAttachmentHandler() {
-        return null;
-    }
 
     @Override public void setConnectionInfo(ConnectionInfo connectionInfo) {}
     @Override public boolean canConnect() {
