@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,14 +28,18 @@ public class DatabaseInterfaceProviderFactory {
             ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
             databaseType = databaseSettings.getDatabaseType();
             if (databaseType == null || databaseType == DatabaseType.UNKNOWN) {
+                Connection testConnection = null;
                 try {
-                    databaseType = ConnectionUtil.getDatabaseType(connectionHandler.getMainConnection());
+                    testConnection = connectionHandler.createTestConnection();
+                    databaseType = ConnectionUtil.getDatabaseType(testConnection);
                     databaseSettings.setDatabaseType(databaseType);
                 } catch (SQLException e) {
                     if (databaseSettings.getDatabaseType() == null) {
                         databaseSettings.setDatabaseType(DatabaseType.UNKNOWN);
                     }
                     throw e;
+                } finally {
+                    ConnectionUtil.closeConnection(testConnection);
                 }
             }
         }
