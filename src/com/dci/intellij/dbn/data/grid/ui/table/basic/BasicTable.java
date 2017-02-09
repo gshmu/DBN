@@ -175,11 +175,14 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     }
 
     public void selectRow(int index) {
-        clearSelection();
-        int lastColumnIndex = Math.max(0, getModel().getColumnCount() - 1);
-        setColumnSelectionInterval(0, lastColumnIndex);
-        getSelectionModel().setSelectionInterval(index, index);
-        scrollRectToVisible(getCellRect(index, 0, true));
+        int columnCount = getModel().getColumnCount();
+        if (columnCount > 0) {
+            clearSelection();
+            int lastColumnIndex = Math.max(0, columnCount - 1);
+            setColumnSelectionInterval(0, lastColumnIndex);
+            getSelectionModel().setSelectionInterval(index, index);
+            scrollRectToVisible(getCellRect(index, 0, true));
+        }
     }
 
     public TableCellRenderer getCellRenderer(int i, int i1) {
