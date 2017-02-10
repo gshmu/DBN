@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.connection.transaction.UncommittedChange;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.ui.ColoredTableCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
-
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
@@ -18,6 +10,14 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
+import com.dci.intellij.dbn.connection.transaction.UncommittedChange;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.ui.ColoredTableCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
+
 public class UncommittedChangesTable extends DBNTable {
     private static final Border EMPTY_BORDER = new EmptyBorder(0, 2, 0, 2);
 
@@ -26,7 +26,7 @@ public class UncommittedChangesTable extends DBNTable {
         setDefaultRenderer(UncommittedChange.class, new CellRenderer());
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setCellSelectionEnabled(true);
-        setRowHeight(getRowHeight() + 2);
+        adjustRowHeight(2);
         accommodateColumnsSize();
         addMouseListener(new MouseListener());
     }

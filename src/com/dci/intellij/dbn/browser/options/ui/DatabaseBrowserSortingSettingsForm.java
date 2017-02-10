@@ -63,7 +63,7 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
         public SortingTypeTable(Project project, List<DBObjectComparator> comparators) {
             super(project, new SortingTypeTableModel(comparators), true);
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            setRowHeight(20);
+            adjustRowHeight(3);
 
             setDefaultRenderer(DBObjectType.class, new ColoredTableCellRenderer() {
                 @Override

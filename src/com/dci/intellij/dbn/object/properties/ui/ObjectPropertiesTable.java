@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.MouseUtil;
-import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
-import com.dci.intellij.dbn.object.properties.PresentableProperty;
-import com.intellij.openapi.project.Project;
-import com.intellij.pom.Navigatable;
-
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -21,12 +13,21 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.MouseUtil;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
+import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
+import com.dci.intellij.dbn.object.properties.PresentableProperty;
+import com.intellij.openapi.project.Project;
+import com.intellij.pom.Navigatable;
+
 public class ObjectPropertiesTable extends DBNTable {
 
     public ObjectPropertiesTable(Project project, DBNTableModel tableModel) {
         super(project, tableModel, false);
         setDefaultRenderer(String.class, cellRenderer);
         setDefaultRenderer(PresentableProperty.class, cellRenderer);
+        adjustRowHeight(3);
 
         addMouseListener(mouseListener);
         addKeyListener(keyListener);
