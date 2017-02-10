@@ -8,7 +8,6 @@ import javax.swing.table.TableColumn;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -82,8 +81,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
                 Object newProperty = e.getNewValue();
                 if (newProperty instanceof Font) {
                     Font font = (Font) newProperty;
-                    FontMetrics fontMetrics = getFontMetrics(font);
-                    setRowHeight(fontMetrics.getHeight() + 2);
+                    adjustRowHeight();
                     JTableHeader tableHeader = getTableHeader();
                     if (tableHeader != null) {
                         TableCellRenderer defaultRenderer = tableHeader.getDefaultRenderer();

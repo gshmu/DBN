@@ -1,18 +1,5 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.components.JBScrollPane;
-import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import sun.swing.SwingUtilities2;
-
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -37,6 +24,19 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.font.LineMetrics;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.UIUtil;
+import sun.swing.SwingUtilities2;
 
 public class DBNTable<T extends DBNTableModel> extends JTable implements Disposable{
     private static final int MAX_COLUMN_WIDTH = 300;
@@ -47,6 +47,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     private double scrollDistance;
     private JBScrollPane scrollPane;
     private Timer scrollTimer;
+    private int rowVerticalPadding;
 
     @Override
     public void setModel(@NotNull TableModel dataModel) {
@@ -66,9 +67,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         setFont(font);
         setBackground(UIUtil.getTextFieldBackground());
 
-        LineMetrics lineMetrics = font.getLineMetrics("ABC", SwingUtilities2.getFontRenderContext(this));
-        int fontHeight = Math.round(lineMetrics.getHeight());
-        setRowHeight(fontHeight + 2);
+        adjustRowHeight(1);
 
         final JTableHeader tableHeader = getTableHeader();
         if (!showHeader) {
@@ -101,6 +100,19 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         }
 
         Disposer.register(this, tableModel);
+    }
+
+    protected void adjustRowHeight(int padding) {
+        rowVerticalPadding = padding;
+        adjustRowHeight();
+    }
+
+    protected void adjustRowHeight() {
+        Font font = getFont();
+        LineMetrics lineMetrics = font.getLineMetrics("ABC", SwingUtilities2.getFontRenderContext(this));
+        int fontHeight = Math.round(lineMetrics.getHeight());
+        setRowHeight(fontHeight + (rowVerticalPadding * 2));
+
     }
 
     @Override
