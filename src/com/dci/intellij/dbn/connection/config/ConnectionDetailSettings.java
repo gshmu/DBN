@@ -17,7 +17,8 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     private String environmentTypeId = EnvironmentType.DEFAULT.getId();
     private boolean enableDdlFileBinding = true;
     private boolean enableDatabaseLogging = false;
-    protected boolean connectAutomatically = true;
+    private boolean connectAutomatically = true;
+    private boolean restoreWorkspace = true;
     private int idleTimeToDisconnect = 30;
     private int passwordExpiryTime = 10;
     private int maxConnectionPoolSize = 7;
@@ -76,6 +77,14 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
 
     public void setEnableDatabaseLogging(boolean enableDatabaseLogging) {
         this.enableDatabaseLogging = enableDatabaseLogging;
+    }
+
+    public boolean isRestoreWorkspace() {
+        return restoreWorkspace;
+    }
+
+    public void setRestoreWorkspace(boolean restoreWorkspace) {
+        this.restoreWorkspace = restoreWorkspace;
     }
 
     public boolean isConnectAutomatically() {
@@ -140,6 +149,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         enableDdlFileBinding = getBoolean(element, "ddl-file-binding", enableDdlFileBinding);
         enableDatabaseLogging = getBoolean(element, "database-logging", enableDatabaseLogging);
         connectAutomatically = getBoolean(element, "connect-automatically", connectAutomatically);
+        restoreWorkspace = getBoolean(element, "restore-workspace", restoreWorkspace);
         environmentTypeId = getString(element, "environment-type", EnvironmentType.DEFAULT.getId());
         idleTimeToDisconnect = getInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         passwordExpiryTime = getInteger(element, "password-expiry-time", passwordExpiryTime);
@@ -153,12 +163,13 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         
         setBoolean(element, "ddl-file-binding", enableDdlFileBinding);
         setBoolean(element, "database-logging", enableDatabaseLogging);
+        setBoolean(element, "connect-automatically", connectAutomatically);
+        setBoolean(element, "restore-workspace", restoreWorkspace);
         setString(element, "environment-type", environmentTypeId);
         setInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         setInteger(element, "password-expiry-time", passwordExpiryTime);
         setInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
         setString(element, "alternative-statement-delimiter", CommonUtil.nvl(alternativeStatementDelimiter, ""));
-        setBoolean(element, "connect-automatically", connectAutomatically);
     }
 
     public Project getProject() {

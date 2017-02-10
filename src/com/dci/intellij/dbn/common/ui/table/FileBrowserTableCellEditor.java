@@ -17,6 +17,7 @@ import java.io.File;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
@@ -32,7 +33,7 @@ public class FileBrowserTableCellEditor extends AbstractCellEditor implements Ta
 
     public FileBrowserTableCellEditor(FileChooserDescriptor fileChooserDescriptor) {
         this.fileChooserDescriptor = fileChooserDescriptor;
-        textField.setBorder(DBNEditableTable.TEXT_FIELD_BORDER);
+        textField.setBorder(Borders.TEXT_FIELD_BORDER);
 
         JLabel button = new JLabel(Icons.DATA_EDITOR_BROWSE);
         button.setBorder(BUTTON_BORDER);

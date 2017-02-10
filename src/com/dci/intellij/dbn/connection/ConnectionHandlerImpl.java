@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
@@ -45,16 +55,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -131,12 +131,6 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     @Nullable
     public ConnectionInfo getConnectionInfo() {
         return connectionInfo;
-    }
-
-    @Nullable
-    @Override
-    public DatabaseAttachmentHandler getDatabaseAttachmentHandler() {
-        return getInterfaceProvider().getCompatibilityInterface().getDatabaseAttachmentHandler();
     }
 
     @Override
@@ -254,12 +248,14 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public void commit() throws SQLException {
-        ConnectionUtil.commit(getConnectionPool().getMainConnection(false));
+        Connection mainConnection = getConnectionPool().getMainConnection(false);
+        ConnectionUtil.commit(mainConnection);
         changesBundle = null;
     }
 
     public void rollback() throws SQLException {
-        ConnectionUtil.rollback(getConnectionPool().getMainConnection(false));
+        Connection mainConnection = getConnectionPool().getMainConnection(false);
+        ConnectionUtil.rollback(mainConnection);
         changesBundle = null;
     }
 
@@ -442,6 +438,12 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return schema;
     }
 
+    @Override
+    public Connection createTestConnection() throws SQLException {
+        assertCanConnect();
+        return getConnectionPool().createTestConnection();
+    }
+
     public Connection getMainConnection() throws SQLException {
         assertCanConnect();
         return getConnectionPool().getMainConnection(true);
@@ -480,7 +482,9 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public void freePoolConnection(Connection connection) {
-        getConnectionPool().releaseConnection(connection);
+        if (!isDisposed()) {
+            getConnectionPool().releaseConnection(connection);
+        }
     }
 
     @Override

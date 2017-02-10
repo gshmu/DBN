@@ -37,7 +37,6 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
         super(parentForm);
         //ActionToolbar objectPropertiesActionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.Browser.ObjectProperties");
         //closeActionPanel.add(objectPropertiesActionToolbar.getComponent(), BorderLayout.CENTER);
-        objectPropertiesTable.setRowHeight(objectPropertiesTable.getRowHeight() + 2);
         objectPropertiesTable.setRowSelectionAllowed(false);
         objectPropertiesTable.setCellSelectionEnabled(true);
         objectPropertiesScrollPane.getViewport().setBackground(objectPropertiesTable.getBackground());

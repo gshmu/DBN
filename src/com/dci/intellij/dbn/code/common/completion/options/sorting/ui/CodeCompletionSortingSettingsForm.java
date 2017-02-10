@@ -82,7 +82,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
         sortingItemsList.setEnabled(getConfiguration().isEnabled());
         sortingItemsList.setBackground(
                 enableCheckBox.isSelected() ?
-                        UIUtil.getListBackground() :
+                        UIUtil.getTextFieldBackground() :
                         UIUtil.getComboBoxDisabledBackground());
     }
 

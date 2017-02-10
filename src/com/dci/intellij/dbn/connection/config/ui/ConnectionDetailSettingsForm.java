@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
@@ -19,16 +29,6 @@ import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
 public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings>{
     private JPanel mainPanel;
     private DBNComboBox<CharsetOption> encodingComboBox;
@@ -36,12 +36,13 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JPanel generalGroupPanel;
     private JTextField maxPoolSizeTextField;
     private JTextField idleTimeTextField;
-    private JCheckBox ddlFileBindingCheckBox;
     private JTextField alternativeStatementDelimiterTextField;
-    private JCheckBox autoConnectCheckBox;
     private JPanel autoConnectHintPanel;
-    private JCheckBox databaseLoggingCheckBox;
     private JTextField passwordExpiryTextField;
+    private JCheckBox databaseLoggingCheckBox;
+    private JCheckBox ddlFileBindingCheckBox;
+    private JCheckBox autoConnectCheckBox;
+    private JCheckBox restoreWorkspaceCheckBox;
 
     public ConnectionDetailSettingsForm(final ConnectionDetailSettings configuration) {
         super(configuration);
@@ -68,7 +69,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         DBNHintForm hintForm = new DBNHintForm(autoConnectHintText, MessageType.INFO, false);
         autoConnectHintPanel.add(hintForm.getComponent());
 
-        boolean visibleHint = !autoConnectCheckBox.isSelected();
+        boolean visibleHint = !autoConnectCheckBox.isSelected() && restoreWorkspaceCheckBox.isSelected();
         autoConnectHintPanel.setVisible(visibleHint);
 
 
@@ -92,8 +93,8 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         return new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Object source = e.getSource();
-                if (source == autoConnectCheckBox){
-                    boolean visibleHint = !autoConnectCheckBox.isSelected();
+                if (source == autoConnectCheckBox || source == restoreWorkspaceCheckBox){
+                    boolean visibleHint = !autoConnectCheckBox.isSelected() && restoreWorkspaceCheckBox.isSelected();
                     autoConnectHintPanel.setVisible(visibleHint);
                 }
                 getConfiguration().setModified(true);
@@ -157,9 +158,10 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
         configuration.setEnvironmentTypeId(environmentType == null ? "" : environmentType.getId());
         configuration.setCharset(charsetOption == null ? null : charsetOption.getCharset());
+        configuration.setRestoreWorkspace(restoreWorkspaceCheckBox.isSelected());
         configuration.setConnectAutomatically(autoConnectCheckBox.isSelected());
         configuration.setEnableDdlFileBinding(ddlFileBindingCheckBox.isSelected());
-        configuration.setEnableDatabaseLogging(ddlFileBindingCheckBox.isSelected());
+        configuration.setEnableDatabaseLogging(databaseLoggingCheckBox.isSelected());
         configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
         int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle time to disconnect (minutes)", true, 0, 60, "");
         int passwordExpiryTime = ConfigurationEditorUtil.validateIntegerInputValue(passwordExpiryTextField, "Password expiry time (minutes)", true, 0, 60, "");
@@ -175,6 +177,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         ddlFileBindingCheckBox.setSelected(configuration.isEnableDdlFileBinding());
         databaseLoggingCheckBox.setSelected(configuration.isEnableDatabaseLogging());
         autoConnectCheckBox.setSelected(configuration.isConnectAutomatically());
+        restoreWorkspaceCheckBox.setSelected(configuration.isRestoreWorkspace());
         environmentTypesComboBox.setSelectedValue(configuration.getEnvironmentType());
         idleTimeTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnect()));
         passwordExpiryTextField.setText(Integer.toString(configuration.getPasswordExpiryTime()));
