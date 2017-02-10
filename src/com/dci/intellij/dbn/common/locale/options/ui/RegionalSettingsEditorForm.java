@@ -6,6 +6,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -26,6 +27,7 @@ import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
@@ -80,6 +82,13 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
 
         resetFormChanges();
         updatePreview();
+
+        Font labelFont = EditorUtil.getEditorFont();
+        Font previewFont = labelFont.deriveFont((float) (labelFont.getSize() * 1.2));
+        numberPreviewLabel.setFont(previewFont);
+        integerPreviewLabel.setFont(previewFont);
+        datePreviewLabel.setFont(previewFont);
+        timePreviewLabel.setFont(previewFont);
 
         numberFormatComboBox.addListener(previewListener);
         dateFormatComboBox.addListener(previewListener);
