@@ -14,6 +14,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.ex.dummy.DummyFileIdGenerator;
 
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable {
     private static AtomicInteger ID_STORE = new AtomicInteger(0);
@@ -25,7 +26,8 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     private ProjectRef projectRef;
 
     public DBVirtualFileImpl(Project project) {
-        id = ID_STORE.getAndIncrement();
+        //id = ID_STORE.getAndIncrement();
+        id = DummyFileIdGenerator.next();
         projectRef = new ProjectRef(project);
     }
 
