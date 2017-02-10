@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter.ui;
 
-import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
+import javax.swing.Icon;
+import javax.swing.JTree;
+
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterOption;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterOptionBundle;
+import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.intellij.ui.CheckboxTree;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.SimpleTextAttributes;
-
-import javax.swing.JTree;
-import javax.swing.Icon;
+import com.intellij.util.ui.UIUtil;
 
 public class CodeCompletionFilterTreeCellRenderer extends CheckboxTree.CheckboxTreeCellRenderer { //implements TreeCellEditor {
     public static final CodeCompletionFilterTreeCellRenderer CELL_RENDERER = new CodeCompletionFilterTreeCellRenderer();
@@ -33,6 +34,8 @@ public class CodeCompletionFilterTreeCellRenderer extends CheckboxTree.CheckboxT
             CodeCompletionFilterSettings codeCompletionFilterSettings = (CodeCompletionFilterSettings) userObject;
             getTextRenderer().append(codeCompletionFilterSettings.getDisplayName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
+
+        setBackground(UIUtil.getTextFieldBackground());
     }
 }
 
