@@ -396,7 +396,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             }
         }
 
-        public Timestamp getTimestamp(int rowIndex, int columnIndex) {
+        Timestamp getTimestamp(int rowIndex, int columnIndex) {
             Calendar calendar = (Calendar) activeMonth.clone();
             if (isFromPreviousMonth(rowIndex,  columnIndex)) {
                 calendar.add(Calendar.MONTH, -1);
