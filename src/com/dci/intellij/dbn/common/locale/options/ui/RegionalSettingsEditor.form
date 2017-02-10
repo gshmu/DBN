@@ -22,11 +22,9 @@
         <children>
           <component id="fbf82" class="javax.swing.JLabel" binding="datePreviewLabel">
             <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="12"/>
-              <foreground color="-16777216"/>
               <text value="[date]"/>
             </properties>
           </component>
@@ -58,11 +56,9 @@
           </component>
           <component id="bb794" class="javax.swing.JLabel" binding="numberPreviewLabel">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="12"/>
-              <foreground color="-16777216"/>
               <text value="[number]"/>
             </properties>
           </component>
@@ -71,8 +67,6 @@
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="12"/>
-              <foreground color="-16777216"/>
               <text value="[time]"/>
             </properties>
           </component>
@@ -86,11 +80,9 @@
           </component>
           <component id="5bf2" class="javax.swing.JLabel" binding="integerPreviewLabel">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="12"/>
-              <foreground color="-16777216"/>
               <text value="[integer]"/>
             </properties>
           </component>
