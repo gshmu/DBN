@@ -17,6 +17,7 @@ import java.awt.Cursor;
 import java.awt.Font;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableColors;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
@@ -33,7 +34,7 @@ public class DatasetEditorTableGutterRenderer extends JPanel implements ListCell
     private static final Cursor HAND_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
     boolean isDarkScheme = UIUtil.isUnderDarcula();
 
-    private Border border = new CompoundBorder(new CustomLineBorder(UIUtil.getPanelBackground(), 0, 0, 1, 1), new EmptyBorder(0, 3, 0, 3));
+    private Border border = new CompoundBorder(new CustomLineBorder(UIUtil.getPanelBackground(), 0, 0, 1, 1), Borders.TEXT_FIELD_BORDER);
 
     public DatasetEditorTableGutterRenderer() {
         setBackground(UIUtil.getPanelBackground());

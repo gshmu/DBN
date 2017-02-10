@@ -15,6 +15,7 @@ import java.util.List;
 
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserEditorSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -89,7 +90,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
             });
 
             ComboBoxTableRenderer<DefaultEditorType> editor = new ComboBoxTableRenderer<DefaultEditorType>(DefaultEditorType.values());
-            editor.setBorder(TEXT_FIELD_BORDER);
+            editor.setBorder(Borders.TEXT_FIELD_BORDER);
             setDefaultEditor(DefaultEditorType.class, editor);
 
             getSelectionModel().addListSelectionListener(new ListSelectionListener() {

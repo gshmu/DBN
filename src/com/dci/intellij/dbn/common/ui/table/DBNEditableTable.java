@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.ui.table;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -14,6 +13,7 @@ import java.awt.Color;
 import java.awt.Component;
 
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
@@ -22,7 +22,6 @@ import com.intellij.util.ui.UIUtil;
 
 public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableWithGutter<T> {
     public static final LineBorder SELECTION_BORDER = new LineBorder(UIUtil.getTableBackground());
-    public static final EmptyBorder TEXT_FIELD_BORDER = new EmptyBorder(0, 3, 0, 0);
 
     public DBNEditableTable(Project project, T model, boolean showHeader) {
         super(project, model, showHeader);
@@ -97,7 +96,7 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
         final Component component = super.prepareEditor(editor, rowIndex, columnIndex);
         if (component instanceof JTextField) {
             final JTextField textField = (JTextField) component;
-            textField.setBorder(TEXT_FIELD_BORDER);
+            textField.setBorder(Borders.TEXT_FIELD_BORDER);
 
             //selectCell(rowIndex, columnIndex);
 

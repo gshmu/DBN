@@ -2,14 +2,13 @@ package com.dci.intellij.dbn.connection.transaction.ui;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import java.awt.Cursor;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChange;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -19,8 +18,6 @@ import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 
 public class UncommittedChangesTable extends DBNTable {
-    private static final Border EMPTY_BORDER = new EmptyBorder(0, 2, 0, 2);
-
     public UncommittedChangesTable(UncommittedChangesTableModel model) {
         super(model.getProject(), model, false);
         setDefaultRenderer(UncommittedChange.class, new CellRenderer());
@@ -64,7 +61,7 @@ public class UncommittedChangesTable extends DBNTable {
             } else if (column == 1) {
                 append(change.getChangesCount() + " uncommitted changes", SimpleTextAttributes.REGULAR_ATTRIBUTES);
             }
-            setBorder(EMPTY_BORDER);
+            setBorder(Borders.TEXT_FIELD_BORDER);
 
         }
     }

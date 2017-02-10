@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
@@ -53,7 +54,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
     @Override
     public Component prepareEditor(final TableCellEditor editor, int rowIndex, int columnIndex) {
         JTextField component = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
-        component.setBorder(TEXT_FIELD_BORDER);
+        component.setBorder(Borders.TEXT_FIELD_BORDER);
         component.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
