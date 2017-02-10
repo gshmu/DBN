@@ -50,8 +50,7 @@ import com.intellij.psi.impl.file.impl.FileManagerImpl;
 )
 public class DatabaseFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private Map<DBObjectRef, DBEditableObjectVirtualFile> openFiles = new HashMap<DBObjectRef, DBEditableObjectVirtualFile>();
-    private boolean projectInitializing = true;
-
+    private boolean projectInitialized = false;
     private String sessionId;
 
     private DatabaseFileManager(final Project project) {
@@ -68,7 +67,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
             @Override
             public void run() {
-                projectInitializing = false;
+                projectInitialized = true;
             }
         });
     }
@@ -77,14 +76,8 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         return FailsafeUtil.getComponent(project, DatabaseFileManager.class);
     }
 
-    public boolean isProjectInitializing() {
-        return projectInitializing;
-    }
-
-    @Override
-    public void projectClosed() {
-        super.projectClosed();
-        projectInitializing = false;
+    public boolean isProjectInitialized() {
+        return projectInitialized;
     }
 
     /**

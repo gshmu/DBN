@@ -122,7 +122,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         } else {
             Project project = connectionHandler.getProject();
             DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
-            return !databaseFileManager.isProjectInitializing();
+            return databaseFileManager.isProjectInitialized();
         }
     }
 
