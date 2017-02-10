@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.pom.Navigatable;
 
 public class ObjectPropertiesTable extends DBNTable {
-
     public ObjectPropertiesTable(Project project, DBNTableModel tableModel) {
         super(project, tableModel, false);
         setDefaultRenderer(String.class, cellRenderer);
@@ -109,7 +108,7 @@ public class ObjectPropertiesTable extends DBNTable {
             Dimension dimension = getSize();
             dimension.setSize(dimension.getWidth(), 30);
             setSize(dimension);
-            setBorder(Borders.EMPTY_BORDER);
+            setBorder(Borders.TEXT_FIELD_BORDER);
 
             return component;
         }

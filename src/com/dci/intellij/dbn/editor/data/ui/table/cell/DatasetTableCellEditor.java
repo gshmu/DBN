@@ -19,6 +19,7 @@
 
  import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
  import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+ import com.dci.intellij.dbn.common.ui.Borders;
  import com.dci.intellij.dbn.common.ui.MouseUtil;
  import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
  import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
@@ -34,7 +35,6 @@
  import com.intellij.ui.SimpleTextAttributes;
 
  public class DatasetTableCellEditor extends AbstractDatasetTableCellEditor implements KeyListener{
-    public static final Border EMPTY_BORDER = new EmptyBorder(0, 3, 0, 3);
     private static final Border ERROR_BORDER = new CompoundBorder(new LineBorder(JBColor.RED, 1), new EmptyBorder(0, 2, 0, 2));
     private static final Border POPUP_BORDER = new CompoundBorder(new LineBorder(JBColor.BLUE, 1), new EmptyBorder(0, 2, 0, 2));
 
@@ -92,7 +92,7 @@
 
     public void highlight(int type) {
         switch (type) {
-            case HIGHLIGHT_TYPE_NONE: getEditorComponent().setBorder(EMPTY_BORDER); break;
+            case HIGHLIGHT_TYPE_NONE: getEditorComponent().setBorder(Borders.TEXT_FIELD_BORDER); break;
             case HIGHLIGHT_TYPE_POPUP: getEditorComponent().setBorder(POPUP_BORDER); break;
             case HIGHLIGHT_TYPE_ERROR: getEditorComponent().setBorder(ERROR_BORDER); break;
         }
