@@ -7462,6 +7462,9 @@
     <element-def description="INTERVAL Expression" id="interval_expression">
         <token flavor="keyword" id="000004080" type-id="DT_INTERVAL" />
         <element ref-id="expression" />
+        <element ref-id="interval_expression_qualifier" />
+    </element-def>
+    <element-def description="INTERVAL expression qualifier" id="interval_expression_qualifier">
         <one-of id="000004081">
             <sequence id="000004082">
                 <one-of id="000004083">
@@ -8254,6 +8257,7 @@
                             </one-of>
                             <token id="000004504" type-id="KW_FROM" />
                             <element original-name="datetime_value_expression, interval_value_expression" ref-id="expression" />
+                            <element optional="true" ref-id="interval_expression_qualifier" />
                         </sequence>
                         <iteration elements-count="2-3" id="000004505" separator="CHR_COMMA">
                             <element ref-id="expression" />
