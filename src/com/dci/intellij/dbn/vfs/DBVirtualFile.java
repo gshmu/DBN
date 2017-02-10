@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.intellij.openapi.project.Project;
 
-public interface DBVirtualFile extends EnvironmentTypeProvider, ConnectionProvider, Disposable {
+public interface DBVirtualFile extends /*VirtualFileWithId, */EnvironmentTypeProvider, ConnectionProvider, Disposable {
     @Nullable
     Project getProject();
 

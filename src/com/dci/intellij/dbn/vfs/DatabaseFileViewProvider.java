@@ -2,14 +2,11 @@ package com.dci.intellij.dbn.vfs;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.lang.Language;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -51,10 +48,10 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
                 }
             } else {
                 forceCachedPsi(psiFile);
-                Document document = DocumentUtil.getDocument(getVirtualFile());
+/*                Document document = DocumentUtil.getDocument(getVirtualFile());
                 if (document != null) {
                     CompatibilityUtil.cachePsi(document, psiFile);
-                }
+                }*/
                 return psiFile;
             }
         }

@@ -35,6 +35,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
@@ -49,15 +50,34 @@ import com.intellij.psi.impl.file.impl.FileManagerImpl;
 )
 public class DatabaseFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private Map<DBObjectRef, DBEditableObjectVirtualFile> openFiles = new HashMap<DBObjectRef, DBEditableObjectVirtualFile>();
-
+    private boolean projectInitialized = false;
     private String sessionId;
 
-    private DatabaseFileManager(Project project) {
+    private DatabaseFileManager(final Project project) {
         super(project);
         sessionId = UUID.randomUUID().toString();
+/*
+        StartupManager.getInstance(project).registerPreStartupActivity(new Runnable() {
+            @Override
+            public void run() {
+                projectInitializing = true;
+            }
+        });
+*/
+        StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
+            @Override
+            public void run() {
+                projectInitialized = true;
+            }
+        });
     }
+
     public static DatabaseFileManager getInstance(@NotNull Project project) {
         return FailsafeUtil.getComponent(project, DatabaseFileManager.class);
+    }
+
+    public boolean isProjectInitialized() {
+        return projectInitialized;
     }
 
     /**
@@ -121,7 +141,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     /*********************************************
      *            FileEditorManagerListener       *
      *********************************************/
-    FileEditorManagerListener.Before fileEditorManagerListenerBefore = new FileEditorManagerListener.Before() {
+    private FileEditorManagerListener.Before fileEditorManagerListenerBefore = new FileEditorManagerListener.Before() {
         @Override
         public void beforeFileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
         }

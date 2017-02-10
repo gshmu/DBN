@@ -1,19 +1,5 @@
 package com.dci.intellij.dbn.browser.options.ui;
 
-import com.dci.intellij.dbn.browser.options.DatabaseBrowserEditorSettings;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
-import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.editor.DefaultEditorOption;
-import com.dci.intellij.dbn.object.common.editor.DefaultEditorType;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBoxTableRenderer;
-import com.intellij.ui.ColoredTableCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.components.JBScrollPane;
-
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -26,6 +12,21 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dci.intellij.dbn.browser.options.DatabaseBrowserEditorSettings;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.common.editor.DefaultEditorOption;
+import com.dci.intellij.dbn.object.common.editor.DefaultEditorType;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBoxTableRenderer;
+import com.intellij.ui.ColoredTableCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.components.JBScrollPane;
 
 public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<DatabaseBrowserEditorSettings> {
     private JPanel mainPanel;
@@ -64,8 +65,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
         public EditorTypeTable(Project project, List<DefaultEditorOption> options) {
             super(project, new EditorTypeTableModel(options), true);
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            setRowHeight(20);
-
+            adjustRowHeight(3);
             setDefaultRenderer(DBObjectType.class, new ColoredTableCellRenderer() {
                 @Override
                 protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
@@ -90,7 +90,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
             });
 
             ComboBoxTableRenderer<DefaultEditorType> editor = new ComboBoxTableRenderer<DefaultEditorType>(DefaultEditorType.values());
-            editor.setBorder(TEXT_FIELD_BORDER);
+            editor.setBorder(Borders.TEXT_FIELD_BORDER);
             setDefaultEditor(DefaultEditorType.class, editor);
 
             getSelectionModel().addListSelectionListener(new ListSelectionListener() {

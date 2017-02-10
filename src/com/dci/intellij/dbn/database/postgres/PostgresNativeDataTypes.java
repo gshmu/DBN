@@ -19,14 +19,14 @@ public class PostgresNativeDataTypes extends DatabaseNativeDataTypes {
         createNumericDefinition("TID", BigDecimal.class, Types.NUMERIC);
 
         createNumericDefinition("SMALLINT", Integer.class, Types.SMALLINT);
-        createNumericDefinition("INTEGER", Integer.class, Types.INTEGER);
+        createNumericDefinition("INTEGER", Long.class, Types.BIGINT);
         createNumericDefinition("INT", Integer.class, Types.INTEGER);
         createNumericDefinition("INT2", Integer.class, Types.INTEGER);
         createNumericDefinition("INT4", Integer.class, Types.INTEGER);
         createNumericDefinition("INT8", Long.class, Types.NUMERIC);
         createNumericDefinition("BIGINT", BigInteger.class, Types.BIGINT);
         createNumericDefinition("SMALLSERIAL", Integer.class, Types.SMALLINT);
-        createNumericDefinition("SERIAL", Long.class, Types.INTEGER);
+        createNumericDefinition("SERIAL", Long.class, Types.BIGINT);
         createNumericDefinition("BIGSERIAL", Long.class, Types.BIGINT);
         createNumericDefinition("INT8", Long.class, Types.BIGINT);
         createNumericDefinition("SERIAL2", Long.class, Types.BIGINT);

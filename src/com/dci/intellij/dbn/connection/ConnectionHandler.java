@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.connection;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
@@ -22,20 +28,15 @@ import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Set;
 
 public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable {
     @NotNull
     Project getProject();
-    Connection getPoolConnection(boolean readonly) throws SQLException;
-    Connection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException;
+    Connection createTestConnection() throws SQLException;
     Connection getMainConnection() throws SQLException;
     Connection getMainConnection(@Nullable DBSchema schema) throws SQLException;
+    Connection getPoolConnection(boolean readonly) throws SQLException;
+    Connection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException;
     void freePoolConnection(Connection connection);
     void dropPoolConnection(Connection connection);
     ConnectionSettings getSettings();
@@ -52,9 +53,6 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
 
     @Nullable
     ConnectionInfo getConnectionInfo();
-
-    @Nullable
-    DatabaseAttachmentHandler getDatabaseAttachmentHandler();
 
     void setConnectionInfo(ConnectionInfo connectionInfo);
 

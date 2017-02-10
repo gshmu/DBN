@@ -23,6 +23,14 @@
         </context>
     </template>
 
+    <template name="sel:d" description="Select distinct from dataset" value="select distinct $COLUMN$ from $TABLE$ where $END$;" toReformat="true">
+        <variable name="TABLE" expression="complete()" defaultValue="" alwaysStopAt="true"/>
+        <variable name="COLUMN" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="SQL" value="true"/>
+        </context>
+    </template>
+
     <template name="ins:v" description="INSERT INTO dataset VALUES" value="insert into $TABLE$ ($COLUMNS$) values ($END$);" toReformat="true">
         <variable name="TABLE" expression="complete()" defaultValue="" alwaysStopAt="true"/>
         <variable name="COLUMNS" expression="complete()" defaultValue="" alwaysStopAt="true"/>

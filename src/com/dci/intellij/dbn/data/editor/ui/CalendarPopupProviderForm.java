@@ -396,7 +396,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             }
         }
 
-        public Timestamp getTimestamp(int rowIndex, int columnIndex) {
+        Timestamp getTimestamp(int rowIndex, int columnIndex) {
             Calendar calendar = (Calendar) activeMonth.clone();
             if (isFromPreviousMonth(rowIndex,  columnIndex)) {
                 calendar.add(Calendar.MONTH, -1);
@@ -520,7 +520,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
     private static class CalendarTableHeaderCellRenderer extends DefaultTableCellRenderer {
         static final Border EMPTY_BORDER = new EmptyBorder(1, 1, 1, 9);
-        public static final Color FOREGROUND_COLOR = new Color(67, 123, 203);
+        static final Color FOREGROUND_COLOR = new JBColor(new Color(67, 123, 203), new Color(67, 123, 203));
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
