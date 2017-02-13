@@ -28,6 +28,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Workspace restore option<br>
+                - Spellchecking support for database file editors<br>
+                - Bug fixes and cosmetics<br>
+            </ul>
             <li><b>3.0.6112</b>
             <ul>
                 - More accurate transaction status handling<br>
@@ -334,6 +340,8 @@
     <extensions defaultExtensionNs="com.intellij">
         <debugger.nodeRenderer order="first" implementation="com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpNodeRenderer"/>
         <debugger.positionManagerFactory id="dbJdwpPositionManagerFactory" order="first" implementation="com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugPositionManagerFactory"/>
+        <spellchecker.support language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLSpellcheckingStrategy"/>
+        <spellchecker.support language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLSpellcheckingStrategy"/>
 
         <projectConfigurable provider="com.dci.intellij.dbn.options.ProjectSettingsProvider" bundle="com.dci.intellij.dbn.common.DBNBundle" groupId="tools" dynamic="true" id="DBNavigator.Settings"/>
 
