@@ -341,14 +341,15 @@
     <extensions defaultExtensionNs="com.intellij">
         <debugger.nodeRenderer order="first" implementation="com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpNodeRenderer"/>
         <debugger.positionManagerFactory id="dbJdwpPositionManagerFactory" order="first" implementation="com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugPositionManagerFactory"/>
-<!--
         <spellchecker.support language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLSpellcheckingStrategy"/>
         <spellchecker.support language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLSpellcheckingStrategy"/>
-        <todoIndexer filetype="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLTodoIndexer"/>
-        <todoIndexer filetype="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLTodoIndexer"/>
-        <lang.findUsagesProvider language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLFindUsagesProvider"/>
-        <lang.findUsagesProvider language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLFindUsagesProvider"/>
--->
+
+        <!--
+                <todoIndexer filetype="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLTodoIndexer"/>
+                <todoIndexer filetype="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLTodoIndexer"/>
+                <lang.findUsagesProvider language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLFindUsagesProvider"/>
+                <lang.findUsagesProvider language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLFindUsagesProvider"/>
+        -->
 
         <projectConfigurable provider="com.dci.intellij.dbn.options.ProjectSettingsProvider" bundle="com.dci.intellij.dbn.common.DBNBundle" groupId="tools" dynamic="true" id="DBNavigator.Settings"/>
 
