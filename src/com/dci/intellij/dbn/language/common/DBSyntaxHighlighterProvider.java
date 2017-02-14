@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.intellij.openapi.fileTypes.FileType;
@@ -7,9 +10,10 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+/**
+ * @deprecated see {@link DBSyntaxHighlighterFactory}
+ */
 public class DBSyntaxHighlighterProvider implements SyntaxHighlighterProvider {
     @Nullable
     public SyntaxHighlighter create(@NotNull FileType fileType, @Nullable Project project, @Nullable VirtualFile virtualFile) {
