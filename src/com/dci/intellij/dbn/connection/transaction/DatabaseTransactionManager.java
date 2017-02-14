@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.connection.transaction;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.jetbrains.annotations.NonNls;
@@ -42,7 +41,13 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     }
 
     public void execute(final ConnectionHandler connectionHandler, boolean background, final TransactionAction... actions) {
-        final List<TransactionAction> actionList = new ArrayList<TransactionAction>(Arrays.asList(actions));
+        final List<TransactionAction> actionList = new ArrayList<TransactionAction>();
+        for (TransactionAction action : actions) {
+            if (action != null) {
+                actionList.add(action);
+            }
+        }
+
         Set<TransactionAction> pendingActions = connectionHandler.getPendingActions();
 
         actionList.removeAll(pendingActions);
@@ -53,7 +58,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             if (ApplicationManager.getApplication().isDisposeInProgress()) {
                 executeActions(connectionHandler, actionList);
             } else {
-                new BackgroundTask(project, "Performing " + actionList.get(0) + " on connection " + connectionName, background) {
+                new BackgroundTask(project, "Performing \"" + actionList.get(0).getName() + "\" on connection " + connectionName, background) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator indicator) {
                         executeActions(connectionHandler, actionList);
@@ -67,7 +72,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         return ProjectSettingsManager.getInstance(getProject()).getOperationSettings().getTransactionManagerSettings();
     }
 
-    public void executeActions(ConnectionHandler connectionHandler, List<TransactionAction> actions) {
+    private void executeActions(ConnectionHandler connectionHandler, List<TransactionAction> actions) {
         Project project = getProject();
         String connectionName = connectionHandler.getName();
         TransactionListener transactionListener = EventUtil.notify(project, TransactionListener.TOPIC);
@@ -76,7 +81,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         }
     }
 
-    protected void executeAction(ConnectionHandler connectionHandler, Project project, String connectionName, TransactionListener transactionListener, TransactionAction action) {
+    private void executeAction(ConnectionHandler connectionHandler, Project project, String connectionName, TransactionListener transactionListener, TransactionAction action) {
         boolean success = true;
         try {
             // notify pre-action
@@ -110,8 +115,8 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                     ConnectionStatusListener statusListener = EventUtil.notify(project, ConnectionStatusListener.TOPIC);
                     statusListener.statusChanged(connectionHandler.getId());
                 }
+                connectionHandler.getPendingActions().remove(action);
             }
-            connectionHandler.getPendingActions().remove(action);
         }
     }
 

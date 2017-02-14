@@ -15,13 +15,17 @@
  */
 package com.dci.intellij.dbn.language.sql;
 
-import com.intellij.lexer.Lexer;
-import com.intellij.psi.impl.cache.impl.OccurrenceConsumer;
-import com.intellij.psi.impl.cache.impl.todo.LexerBasedTodoIndexer;
+import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
-public class SQLTodoIndexer extends LexerBasedTodoIndexer {
+import com.intellij.psi.impl.cache.impl.todo.PlainTextTodoIndexer;
+import com.intellij.psi.impl.cache.impl.todo.TodoIndexEntry;
+import com.intellij.util.indexing.FileContent;
+
+public class SQLTodoIndexer extends PlainTextTodoIndexer {
+    @NotNull
     @Override
-    public Lexer createLexer(OccurrenceConsumer consumer) {
-        return null; // TODO
+    public Map<TodoIndexEntry, Integer> map(@NotNull FileContent inputData) {
+        return super.map(inputData);
     }
 }

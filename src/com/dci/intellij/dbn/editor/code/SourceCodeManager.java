@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.editor.code;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -14,12 +16,12 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
+import com.dci.intellij.dbn.common.ide.IdeMonitor;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -55,7 +57,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
-import com.intellij.ide.impl.ProjectUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.SettingsSavingComponent;
 import com.intellij.openapi.components.State;
@@ -72,9 +74,9 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeFrame;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.text.DateFormatUtil;
 
@@ -99,21 +101,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
         EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
         EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        ApplicationManager.getApplication().addApplicationListener(this);
     }
-
-    private Runnable closeProjectRunnable = new Runnable() {
-        @Override
-        public void run() {
-            new SimpleLaterInvocator() {
-                @Override
-                protected void execute() {
-                    ProjectUtil.closeAndDispose(getProject());
-                    WelcomeFrame.showIfNoProjectOpened();
-                }
-            }.start();
-
-        }
-    };
 
 
     private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
@@ -206,8 +195,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             protected void execute() {
                 boolean initialLoad = !sourceCodeFile.isLoaded();
                 if (!sourceCodeFile.isLoading() && (initialLoad || force)) {
-                    EditorUtil.setEditorsReadonly(sourceCodeFile, true);
                     sourceCodeFile.setLoading(true);
+                    EditorUtil.setEditorsReadonly(sourceCodeFile, true);
                     Project project = getProject();
                     DBSchemaObject object = sourceCodeFile.getObject();
 
@@ -219,8 +208,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         sourceCodeFile.setModified(false);
                         NotificationUtil.sendErrorNotification(project, "Source Load Error", "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database. Cause: " + e.getMessage());
                     } finally {
-                        EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoaded(sourceCodeFile, initialLoad);
                         sourceCodeFile.setLoading(false);
+                        EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoaded(sourceCodeFile, initialLoad);
                     }
                 }
             }
@@ -248,7 +237,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 Document document = FailsafeUtil.get(DocumentUtil.getDocument(sourceCodeFile));
                 DocumentUtil.saveDocument(document);
 
-                String content = sourceCodeFile.getContent().toString();
                 DBLanguagePsiFile psiFile = sourceCodeFile.getPsiFile();
                 if (psiFile == null || isValidObjectTypeAndName(psiFile, object, contentType)) {
                     ProgressMonitor.setTaskDescription("Checking for third party changes on " + object.getQualifiedNameWithType());
@@ -453,11 +441,27 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     @Override
     public boolean canCloseProject(final Project project) {
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-        VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
+        return canClose(project, IdeMonitor.getInstance().getProjectCloseCallback(project));
+    }
 
-        CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(getProject()).getConfirmationSettings();
-        InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChanges();
+    @Override
+    public boolean canExitApplication() {
+        return canClose(null, IdeMonitor.getInstance().getAppCloseCallback());
+    }
+
+    private boolean canClose(Project project, Runnable successCallback) {
+        List<VirtualFile> openFiles = new ArrayList<VirtualFile>();
+        if (project == null) {
+            ProjectManager projectManager = ProjectManager.getInstance();
+            Project[] projects = projectManager.getOpenProjects();
+            for (Project openProject : projects) {
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(openProject);
+                openFiles.addAll(Arrays.asList(fileEditorManager.getOpenFiles()));
+            }
+        } else {
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            openFiles.addAll(Arrays.asList(fileEditorManager.getOpenFiles()));
+        }
 
         boolean canClose = true;
         for (VirtualFile openFile : openFiles) {
@@ -467,16 +471,20 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     canClose = false;
                     if (!databaseFile.isSaving()) {
                         DBSchemaObject object = databaseFile.getObject();
+                        Project objectProject = object.getProject();
+                        CodeEditorSettings codeEditorSettings = CodeEditorSettings.getInstance(objectProject);
+                        CodeEditorConfirmationSettings confirmationSettings = codeEditorSettings.getConfirmationSettings();
+                        InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChanges();
                         CodeEditorChangesOption option = optionHandler.resolve(object.getQualifiedNameWithType());
 
                         switch (option) {
-                            case SAVE: saveSourceCodeChanges(databaseFile, closeProjectRunnable); break;
-                            case DISCARD: revertSourceCodeChanges(databaseFile, closeProjectRunnable); break;
+                            case SAVE: saveSourceCodeChanges(databaseFile, successCallback); break;
+                            case DISCARD: revertSourceCodeChanges(databaseFile, successCallback); break;
                             case SHOW: {
                                 List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                                 for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
                                     if (sourceCodeFile.isModified()) {
-                                        SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+                                        SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(objectProject);
                                         diffManager.opedDatabaseDiffWindow(sourceCodeFile);
                                     }
                                 }
@@ -519,7 +527,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 try {
                     List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                     for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                        loadSourceFromDatabase(sourceCodeFile, true);
+                        sourceCodeFile.revertLocalChanges();
                     }
                 } finally {
                     if (successCallback != null) {

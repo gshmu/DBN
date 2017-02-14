@@ -15,13 +15,18 @@
  */
 package com.dci.intellij.dbn.language.psql;
 
-import com.intellij.lexer.Lexer;
-import com.intellij.psi.impl.cache.impl.OccurrenceConsumer;
-import com.intellij.psi.impl.cache.impl.todo.LexerBasedTodoIndexer;
+import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
-public class PSQLTodoIndexer extends LexerBasedTodoIndexer {
+import com.intellij.psi.impl.cache.impl.todo.PlainTextTodoIndexer;
+import com.intellij.psi.impl.cache.impl.todo.TodoIndexEntry;
+import com.intellij.util.indexing.FileContent;
+
+public class PSQLTodoIndexer extends PlainTextTodoIndexer {
+
+    @NotNull
     @Override
-    public Lexer createLexer(OccurrenceConsumer consumer) {
-        return null; // TODO
+    public Map<TodoIndexEntry, Integer> map(@NotNull FileContent inputData) {
+        return super.map(inputData);
     }
 }
