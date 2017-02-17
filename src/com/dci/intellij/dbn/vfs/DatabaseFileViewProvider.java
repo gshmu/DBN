@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.vfs;
 
+import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguageParserDefinition;
@@ -7,6 +8,8 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.lang.Language;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -60,6 +63,8 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
         DBLanguageParserDefinition parserDefinition = languageDialect.getParserDefinition();
         DBLanguagePsiFile file = (DBLanguagePsiFile) parserDefinition.createFile(this);
         forceCachedPsi(file);
+        Document document = DocumentUtil.getDocument(file);// cache hard reference to document (??)
+        FileDocumentManagerImpl.registerDocument(document, getVirtualFile());
         return file;
     }
 
