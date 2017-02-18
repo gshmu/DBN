@@ -4,12 +4,13 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.intellij.openapi.application.ApplicationAdapter;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 
-public abstract class AbstractProjectComponent implements ProjectComponent, ProjectManagerListener, Disposable{
+public abstract class AbstractProjectComponent extends ApplicationAdapter implements ProjectComponent, ProjectManagerListener, Disposable{
     private Project project;
 
     protected AbstractProjectComponent(Project project) {
