@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.ddl;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -30,6 +24,12 @@ import com.intellij.openapi.fileTypes.FileTypeEvent;
 import com.intellij.openapi.fileTypes.FileTypeListener;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @State(
     name = "DBNavigator.Project.DDLFileManager",
@@ -80,7 +80,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     public String createDDLStatement(DBSourceCodeVirtualFile sourceCodeFile, DBContentType contentType) {
         DBSchemaObject object = sourceCodeFile.getObject();
-        String content = sourceCodeFile.getContent().toString().trim();
+        String content = sourceCodeFile.getOriginalContent().toString().trim();
         if (content.length() > 0) {
             Project project = getProject();
 
