@@ -1,19 +1,5 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -60,6 +46,20 @@ import com.intellij.ui.tabs.JBTabsPosition;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.impl.TabLabel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExecutionConsoleForm extends DBNFormImpl{
     private JPanel mainPanel;
@@ -76,22 +76,25 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     public ExecutionConsoleForm(Project project) {
         super(project);
-        resultTabs = new TabbedPane(this);
-        mainPanel.add(resultTabs, BorderLayout.CENTER);
-        resultTabs.setFocusable(false);
-        //resultTabs.setAdjustBorders(false);
-        resultTabs.addTabMouseListener(mouseListener);
-        resultTabs.addListener(tabsListener);
-        resultTabs.setPopupGroup(new ExecutionConsolePopupActionGroup(this), "place", false);
-        resultTabs.setTabsPosition(JBTabsPosition.bottom);
-        resultTabs.setBorder(null);
         EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
         EventUtil.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
-
-        Disposer.register(this, resultTabs);
     }
 
     public TabbedPane getResultTabs() {
+        if (!isDisposed() && (resultTabs == null || resultTabs.isDisposed())) {
+            resultTabs = new TabbedPane(this);
+            mainPanel.removeAll();
+            mainPanel.add(resultTabs, BorderLayout.CENTER);
+            resultTabs.setFocusable(false);
+            //resultTabs.setAdjustBorders(false);
+            resultTabs.addTabMouseListener(mouseListener);
+            resultTabs.addListener(tabsListener);
+            resultTabs.setPopupGroup(new ExecutionConsolePopupActionGroup(this), "place", false);
+            resultTabs.setTabsPosition(JBTabsPosition.bottom);
+            resultTabs.setBorder(null);
+            Disposer.register(this, resultTabs);
+            return resultTabs;
+        }
         return FailsafeUtil.get(resultTabs);
     }
 
