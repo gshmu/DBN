@@ -28,6 +28,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Workspace restore option<br>
+                - Spellchecking support for database file editors<br>
+                - Bug fixes and cosmetics<br>
+            </ul>
             <li><b>3.0.6112</b>
             <ul>
                 - More accurate transaction status handling<br>
@@ -89,6 +95,7 @@
         <component><implementation-class>com.dci.intellij.dbn.connection.ConnectionCache</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.ssh.SshTunnelManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.options.DefaultProjectSettingsManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.common.ide.IdeMonitor</implementation-class></component>
     </application-components>
     <project-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.options.GlobalProjectSettings</implementation-class></component>-->
@@ -334,6 +341,15 @@
     <extensions defaultExtensionNs="com.intellij">
         <debugger.nodeRenderer order="first" implementation="com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpNodeRenderer"/>
         <debugger.positionManagerFactory id="dbJdwpPositionManagerFactory" order="first" implementation="com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugPositionManagerFactory"/>
+        <spellchecker.support language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLSpellcheckingStrategy"/>
+        <spellchecker.support language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLSpellcheckingStrategy"/>
+
+        <!--
+                <todoIndexer filetype="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLTodoIndexer"/>
+                <todoIndexer filetype="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLTodoIndexer"/>
+                <lang.findUsagesProvider language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLFindUsagesProvider"/>
+                <lang.findUsagesProvider language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLFindUsagesProvider"/>
+        -->
 
         <projectConfigurable provider="com.dci.intellij.dbn.options.ProjectSettingsProvider" bundle="com.dci.intellij.dbn.common.DBNBundle" groupId="tools" dynamic="true" id="DBNavigator.Settings"/>
 
@@ -349,11 +365,13 @@
         <colorSettingsPage implementation="com.dci.intellij.dbn.data.grid.color.DataGridColorSettingsPage"/>
         <colorSettingsPage implementation="com.dci.intellij.dbn.editor.session.color.SessionBrowserColorSettingsPage"/>
 
+<!--
         <syntaxHighlighter key="DBN-SQL" factoryClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterProvider"/>
         <syntaxHighlighter key="DBN-PSQL" factoryClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterProvider"/>
+-->
 
-        <lang.syntaxHighlighterFactory language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterFactory"/>
-        <lang.syntaxHighlighterFactory language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterFactory"/>
+        <lang.syntaxHighlighterFactory key="DBN-SQL" language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterFactory"/>
+        <lang.syntaxHighlighterFactory key="DBN-PSQL" language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterFactory"/>
 
         <codeStyleSettingsProvider implementation="com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettingsProvider"/>
         <codeStyleSettingsProvider implementation="com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettingsProvider"/>
