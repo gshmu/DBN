@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import java.util.Iterator;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -28,6 +23,11 @@ import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Iterator;
+import java.util.Set;
 
 public class PsiUtil {
 
