@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.6112.1</version>
+    <version>3.0.6877.1</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -28,8 +28,9 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.0.NEXT</b>
+            <li><b>3.0.6877</b>
             <ul>
+                - Support for latest IDE releases<br>
                 - Workspace restore option<br>
                 - Spellchecking support for database file editors<br>
                 - Bug fixes and cosmetics<br>
