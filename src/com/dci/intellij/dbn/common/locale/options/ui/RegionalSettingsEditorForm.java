@@ -1,5 +1,23 @@
 package com.dci.intellij.dbn.common.locale.options.ui;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.locale.DBDateFormat;
+import com.dci.intellij.dbn.common.locale.DBNumberFormat;
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -13,24 +31,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Date;
 import java.util.Locale;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.locale.DBDateFormat;
-import com.dci.intellij.dbn.common.locale.DBNumberFormat;
-import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
-import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
-import com.intellij.openapi.editor.ex.util.EditorUtil;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.ui.UIUtil;
 
 public class RegionalSettingsEditorForm extends ConfigurationEditorForm<RegionalSettings> {
     private JPanel mainPanel;
@@ -83,7 +83,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         resetFormChanges();
         updatePreview();
 
-        Font labelFont = EditorUtil.getEditorFont();
+        Font labelFont = GUIUtil.getEditorFont();
         Font previewFont = labelFont.deriveFont((float) (labelFont.getSize() * 1.2));
         numberPreviewLabel.setFont(previewFont);
         integerPreviewLabel.setFont(previewFont);
