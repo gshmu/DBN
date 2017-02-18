@@ -1,20 +1,17 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-import java.util.concurrent.atomic.AtomicInteger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Presentable;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.ex.dummy.DummyFileIdGenerator;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable {
     private static AtomicInteger ID_STORE = new AtomicInteger(0);
@@ -128,8 +125,6 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     @Override
     public void dispose() {
         disposed = true;
-        Document cachedDocument = FileDocumentManager.getInstance().getCachedDocument(this);
-        if (cachedDocument != null) CompatibilityUtil.cachePsi(cachedDocument, null);
         putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
     }
 

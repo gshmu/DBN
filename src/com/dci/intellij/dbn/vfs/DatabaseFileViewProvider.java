@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.vfs;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.common.DBLanguageParserDefinition;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.lang.Language;
@@ -12,6 +12,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.testFramework.LightVirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     public DatabaseFileViewProvider(@NotNull PsiManager manager, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled) {
@@ -47,16 +48,19 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
                     parseableFile.initializePsiFile(this, language);
                 }
             } else {
-                forceCachedPsi(psiFile);
-/*                Document document = DocumentUtil.getDocument(getVirtualFile());
-                if (document != null) {
-                    CompatibilityUtil.cachePsi(document, psiFile);
-                }*/
                 return psiFile;
             }
         }
 
         return super.getPsiInner(language);
+    }
+
+    @NotNull
+    public DBLanguagePsiFile createPsiFile(@NotNull DBLanguageDialect languageDialect) {
+        DBLanguageParserDefinition parserDefinition = languageDialect.getParserDefinition();
+        DBLanguagePsiFile file = (DBLanguagePsiFile) parserDefinition.createFile(this);
+        forceCachedPsi(file);
+        return file;
     }
 
     private static DBParseableVirtualFile getParseableFile(VirtualFile virtualFile) {
