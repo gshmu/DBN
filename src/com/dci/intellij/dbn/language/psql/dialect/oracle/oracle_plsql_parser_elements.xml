@@ -37,10 +37,8 @@
 
     <element-def attributes="EXECUTABLE, DEBUGGABLE, STRUCTURE, FOLDABLE_BLOCK, SCOPE_ISOLATION, STATEMENT, GENERIC, DATABASE_LOG_PRODUCER, POTENTIALLY_TRANSACTIONAL" description="DECLARE block" formatting-indent="ABSOLUTE_NONE" id="declare_block">
         <element ref-id="anonymous_block" />
-        <sequence optional="true" id="000000009">
-            <token id="000000010" type-id="CHR_SEMICOLON" />
-            <element optional="true" ref-id="end" />
-        </sequence>
+        <token optional="true" id="000000010" type-id="CHR_SEMICOLON" />
+        <element optional="true" ref-id="end" />
     </element-def>
     <element-def attributes="SPECIFIC, SCOPE_DEMARCATION" description="Anonymous block" formatting-indent="ABSOLUTE_NONE" id="anonymous_block">
         <sequence id="000000011" optional="true">
