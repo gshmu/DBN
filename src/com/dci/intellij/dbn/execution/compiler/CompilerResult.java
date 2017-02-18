@@ -57,7 +57,7 @@ public class CompilerResult implements Disposable {
             while (resultSet != null && resultSet.next()) {
                 CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
                 isError = true;
-                if (!compilerAction.isDDL() || contentType == errorMessage.getContentType()) {
+                if (/*!compilerAction.isDDL() || */contentType == errorMessage.getContentType()) {
                     compilerMessages.add(errorMessage);
                 }
             }
@@ -70,7 +70,11 @@ public class CompilerResult implements Disposable {
         }
 
         if (compilerMessages.size() == 0) {
-            String message = "The " + objectRef.getQualifiedNameWithType() + " was " + (compilerAction.isSave() ? "updated" : "compiled") + " successfully.";
+            String contentDesc =
+                    contentType == DBContentType.CODE_SPEC ? "spec of " :
+                    contentType == DBContentType.CODE_BODY ? "body of " : "";
+
+            String message = "The " + contentDesc + objectRef.getQualifiedNameWithType() + " was " + (compilerAction.isSave() ? "updated" : "compiled") + " successfully.";
             CompilerMessage compilerMessage = new CompilerMessage(this, contentType, message);
             compilerMessages.add(compilerMessage);
         } else {

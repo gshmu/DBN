@@ -1,8 +1,14 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
@@ -31,13 +37,6 @@ import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider {
 
@@ -93,16 +92,9 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         if (parseRootId != null) {
             DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
             if (languageDialect != null) {
-                DBSchemaObject underlyingObject = getObject();
                 fileViewProvider.getVirtualFile().putUserData(PARSE_ROOT_ID_KEY, getParseRootId());
-
-                DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
-                file.setUnderlyingObject(underlyingObject);
-                fileViewProvider.forceCachedPsi(file);
-                Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-                if (document != null) {
-                    CompatibilityUtil.cachePsi(document, file);
-                }
+                DBLanguagePsiFile file = fileViewProvider.createPsiFile(languageDialect);
+                file.setUnderlyingObject(getObject());
                 return file;
             }
         }
@@ -260,7 +252,16 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         status = Status.OK;
     }
 
-    void updateOffsets() {
+    public void revertLocalChanges() {
+        localContent.setText(originalContent.getText());
+        databaseContent = null;
+        updateOffsets();
+        setModified(false);
+        sourceLoadError = null;
+        status = Status.OK;
+    }
+
+    private void updateOffsets() {
         final Document document = DocumentUtil.getDocument(this);
         if (document != null) {
             new WriteActionRunner() {
@@ -278,7 +279,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         }
     }
 
-    boolean isChangeTracingSupported() {
+    private boolean isChangeTracingSupported() {
         return DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(getObject());
     }
 

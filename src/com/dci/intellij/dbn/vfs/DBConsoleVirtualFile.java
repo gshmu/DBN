@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.vfs;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -15,7 +14,6 @@ import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -93,16 +91,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
-        if (languageDialect != null) {
-            DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
-            fileViewProvider.forceCachedPsi(file);
-            Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-            if (document != null) {
-                CompatibilityUtil.cachePsi(document, file);
-            }
-            return file;
-        }
-        return null;
+        return languageDialect == null ? null : fileViewProvider.createPsiFile(languageDialect);
     }
 
     public void setName(String name) {
