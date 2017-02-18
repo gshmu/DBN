@@ -58,17 +58,16 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                 boolean isCompilable = object.getProperties().is(DBObjectProperty.COMPILABLE);
 
                 if (isCompilable) {
-                    DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-                    CompileType compileType = compilerManager.getCompileType(object, contentType);
+                    CompileType compileType = getCompileType(object, contentType);
 
                     CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, sourceCodeFile, fileEditor);
                     if (compileType == CompileType.DEBUG) {
-                        compilerManager.compileObject(object, compileType, compilerAction);
+                        compileObject(object, compileType, compilerAction);
                     }
                     ConnectionHandler connectionHandler = object.getConnectionHandler();
                     EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
 
-                    compilerManager.createCompilerResult(object, compilerAction);
+                    createCompilerResult(object, compilerAction);
                 }
             }
         }
@@ -167,7 +166,6 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         DBObjectStatusHolder objectStatus = object.getStatus();
         objectStatus.set(contentType, DBObjectStatus.COMPILING, true);
         Connection connection = null;
-        DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(getProject());
         ConnectionHandler connectionHandler = object.getConnectionHandler();
         boolean verbose = compilerAction.getSource() != CompilerActionSource.BULK_COMPILE;
         try {
@@ -211,9 +209,9 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                             connection);
             }
 
-            if (verbose) compilerManager.createCompilerResult(object, compilerAction);
+            if (verbose) createCompilerResult(object, compilerAction);
         } catch (SQLException e) {
-            if (verbose) compilerManager.createErrorCompilerResult(compilerAction, object, contentType, e);
+            if (verbose) createErrorCompilerResult(compilerAction, object, contentType, e);
         }  finally{
             connectionHandler.freePoolConnection(connection);
             objectStatus.set(contentType, DBObjectStatus.COMPILING, false);

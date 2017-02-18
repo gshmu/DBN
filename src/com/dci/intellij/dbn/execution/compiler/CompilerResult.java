@@ -57,7 +57,7 @@ public class CompilerResult implements Disposable {
             while (resultSet != null && resultSet.next()) {
                 CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
                 isError = true;
-                if (!compilerAction.isDDL() || contentType == errorMessage.getContentType()) {
+                if (/*!compilerAction.isDDL() || */contentType == errorMessage.getContentType()) {
                     compilerMessages.add(errorMessage);
                 }
             }
