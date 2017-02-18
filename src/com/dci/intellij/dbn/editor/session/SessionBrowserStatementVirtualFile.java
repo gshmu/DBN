@@ -1,13 +1,10 @@
 package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -16,7 +13,6 @@ import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
@@ -53,17 +49,7 @@ public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implem
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
         ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
-
-        if (languageDialect != null) {
-            DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
-            fileViewProvider.forceCachedPsi(file);
-            Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-            if (document != null) {
-                CompatibilityUtil.cachePsi(document, file);
-            }
-            return file;
-        }
-        return null;
+        return languageDialect == null ? null : fileViewProvider.createPsiFile(languageDialect);
     }
 
     public SessionBrowser getSessionBrowser() {

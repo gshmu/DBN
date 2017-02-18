@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
@@ -93,16 +92,9 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         if (parseRootId != null) {
             DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
             if (languageDialect != null) {
-                DBSchemaObject underlyingObject = getObject();
                 fileViewProvider.getVirtualFile().putUserData(PARSE_ROOT_ID_KEY, getParseRootId());
-
-                DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
-                file.setUnderlyingObject(underlyingObject);
-                fileViewProvider.forceCachedPsi(file);
-                Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-                if (document != null) {
-                    CompatibilityUtil.cachePsi(document, file);
-                }
+                DBLanguagePsiFile file = fileViewProvider.createPsiFile(languageDialect);
+                file.setUnderlyingObject(getObject());
                 return file;
             }
         }
