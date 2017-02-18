@@ -1,17 +1,13 @@
 package com.dci.intellij.dbn.common.compatibility;
 
 import com.intellij.find.editorHeaderActions.Utils;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.PsiDocumentManagerBase;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
@@ -53,10 +49,5 @@ public class CompatibilityUtil {
         } catch (Error e) {
             return UIManager.getLookAndFeel().getName().contains("IntelliJ");
         }
-    }
-
-    @Deprecated
-    public static void cachePsi(@NotNull Document document, @Nullable PsiFile file) {
-        PsiDocumentManagerBase.cachePsi(document, file);
     }
 }

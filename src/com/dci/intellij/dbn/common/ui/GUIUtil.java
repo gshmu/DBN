@@ -1,10 +1,13 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Colors;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.popup.list.ListPopupImpl;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JComponent;
@@ -209,5 +212,11 @@ public class GUIUtil{
         return new Color(red, green, blue, alpha);
 
     }
+
+    public static Font getEditorFont() {
+        EditorColorsScheme scheme = EditorColorsManager.getInstance().getGlobalScheme();
+        return new Font(scheme.getEditorFontName(), Font.PLAIN, UIUtil.getLabelFont().getSize());
+    }
+
 
 }
