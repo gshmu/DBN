@@ -19,6 +19,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -508,7 +509,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
             if (UIUtil.isUnderDarcula() || CompatibilityUtil.isUnderIntelliJLaF()) {
                 if (isFocused || isShowingPopup) {
-                    DarculaUIUtil.paintFocusRing(g, 2, 2, width - 4, height - 4);
+                    DarculaUIUtil.paintFocusRing(g, new Rectangle(2, 2, width - 4, height - 4));
                 } else {
                     boolean editable = valueSelector.isEnabled;
                     g.setColor(getBorderColor(c.isEnabled() && editable));
