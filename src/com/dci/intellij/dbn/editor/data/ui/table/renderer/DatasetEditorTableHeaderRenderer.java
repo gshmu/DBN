@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModel;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.intellij.util.ui.UIUtil;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -51,25 +52,24 @@ public class DatasetEditorTableHeaderRenderer implements BasicTableHeaderRendere
 
         nameLabel.setText(columnName);
         DBDataset dataset = model.getDataset();
-        if (dataset != null) {
-            DBColumn column = dataset.getColumn(columnName);
-            if (column != null) {
-                boolean primaryKey = column.isPrimaryKey();
-                boolean foreignKey = column.isForeignKey();
-                Icon icon = null;
-                if (primaryKey && foreignKey) {
-                    icon = Icons.DBO_LABEL_PK_FK;
-                } else if (primaryKey) {
-                    icon = Icons.DBO_LABEL_PK;
-                } else if (foreignKey) {
-                    icon = Icons.DBO_LABEL_FK;
-                }
-                nameLabel.setIcon(icon);
-                if (icon != null) {
-                    width += icon.getIconWidth();
-                }
+        DBColumn column = dataset.getColumn(columnName);
+        if (column != null) {
+            boolean primaryKey = column.isPrimaryKey();
+            boolean foreignKey = column.isForeignKey();
+            Icon icon = null;
+            if (primaryKey && foreignKey) {
+                icon = Icons.DBO_LABEL_PK_FK;
+            } else if (primaryKey) {
+                icon = Icons.DBO_LABEL_PK;
+            } else if (foreignKey) {
+                icon = Icons.DBO_LABEL_FK;
+            }
+            nameLabel.setIcon(icon);
+            if (icon != null) {
+                width += icon.getIconWidth();
             }
         }
+        nameLabel.setForeground(UIUtil.getLabelForeground());
 
         FontMetrics fontMetrics = nameLabel.getFontMetrics(nameLabel.getFont());
         width += fontMetrics.stringWidth(columnName) + 20;
