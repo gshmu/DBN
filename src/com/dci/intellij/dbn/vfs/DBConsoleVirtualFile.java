@@ -91,7 +91,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
-        return languageDialect == null ? null : fileViewProvider.createPsiFile(languageDialect);
+        return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
 
     public void setName(String name) {
