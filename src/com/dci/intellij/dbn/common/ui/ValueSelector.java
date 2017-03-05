@@ -59,7 +59,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
-    public static Color COMBO_BOX_BACKGROUND = UIUtil.getTextFieldBackground();
     private Set<ValueSelectorListener<T>> listeners = new HashSet<ValueSelectorListener<T>>();
     private T selectedValue;
     private JLabel label;
@@ -132,7 +131,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 label.setText(getName(selectedValue));
             }
 
-            innerPanel.setBackground(COMBO_BOX_BACKGROUND);
+            innerPanel.setBackground(UIUtil.getTextFieldBackground());
             innerPanel.add(new JLabel(Icons.COMMON_ARROW_DOWN), BorderLayout.EAST);
 
             innerPanel.setFocusable(true);
@@ -226,7 +225,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         label.setCursor(isEnabled ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR): Cursor.getDefaultCursor());
         innerPanel.setCursor(isEnabled ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
 
-        innerPanel.setBackground(isComboBox && isEnabled ? COMBO_BOX_BACKGROUND : UIUtil.getPanelBackground());
+        innerPanel.setBackground(isComboBox && isEnabled ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
         innerPanel.setFocusable(isEnabled);
         label.setForeground(isEnabled ? UIUtil.getTextFieldForeground() : UIUtil.getLabelDisabledForeground());
     }
@@ -251,7 +250,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             if (!isShowingPopup && !isComboBox) {
                 innerPanel.setBorder(defaultBorder);
                 //innerPanel.setBorder(new EmptyBorder(21 - icon.getIconHeight(), 6, 21 - icon.getIconHeight(), 6));
-                innerPanel.setBackground(isComboBox ? COMBO_BOX_BACKGROUND : UIUtil.getPanelBackground());
+                innerPanel.setBackground(isComboBox ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
 
                 revalidate();
                 repaint();
@@ -300,7 +299,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                     public void run() {
 
                         innerPanel.setBorder(defaultBorder);
-                        innerPanel.setBackground(isComboBox ? COMBO_BOX_BACKGROUND : UIUtil.getPanelBackground());
+                        innerPanel.setBackground(isComboBox ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
                         innerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
