@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
@@ -57,7 +58,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
 
     public RegionalSettingsEditorForm(RegionalSettings regionalSettings) {
         super(regionalSettings);
-        previewPanel.setBorder(UIUtil.getTextFieldBorder());
+        previewPanel.setBorder(Borders.COMPONENT_LINE_BORDER);
         previewPanel.setBackground(UIUtil.getToolTipBackground());
         errorLabel.setVisible(false);
         updateBorderTitleForeground(mainPanel);
