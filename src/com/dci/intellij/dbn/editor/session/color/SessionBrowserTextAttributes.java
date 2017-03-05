@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.editor.session.color;
 
-import java.awt.Color;
-
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
@@ -10,6 +8,8 @@ import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.SimpleTextAttributes;
+
+import java.awt.Color;
 
 public class SessionBrowserTextAttributes extends CommonUtil implements DataGridTextAttributes {
     private SimpleTextAttributes activeSession;
@@ -37,7 +37,7 @@ public class SessionBrowserTextAttributes extends CommonUtil implements DataGrid
 
     public void load() {
         EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
-        caretRowBgColor = globalScheme.getColor(DataGridTextAttributesKeys.CARET_ROW_BACKGROUND);
+        caretRowBgColor = globalScheme.getAttributes(DataGridTextAttributesKeys.CARET_ROW).getBackgroundColor();
 
         activeSession = TextAttributesUtil.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.ACTIVE_SESSION);
         inactiveSession = TextAttributesUtil.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.INACTIVE_SESSION);

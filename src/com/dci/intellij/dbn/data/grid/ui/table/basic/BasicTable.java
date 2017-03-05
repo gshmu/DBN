@@ -1,23 +1,5 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableModelEvent;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -42,6 +24,24 @@ import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.ui.components.JBViewport;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> implements EditorColorsListener, Disposable {
     private BasicTableCellRenderer cellRenderer;
@@ -97,6 +97,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         });
 
         EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
+        //EventUtil.subscribe(this, UISettingsListener.TOPIC, this);
     }
 
     private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
@@ -232,7 +233,6 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     @Override
     public void globalSchemeChange(EditorColorsScheme scheme) {
         cellRenderer.getAttributes().load();
-
         revalidate();
         repaint();
     }
@@ -343,4 +343,5 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     public T getModel() {
         return super.getModel();
     }
+
 }
