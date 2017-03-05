@@ -228,10 +228,8 @@ public class GUIUtil{
         } catch (Throwable e) {
             try {
                 Method paintFocusRing = DarculaUIUtil.class.getMethod("paintFocusRing", Graphics.class, int.class, int.class, int.class, int.class);
-                paintFocusRing.invoke(null, g, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
-            } catch (Throwable ignore) {
-
-            }
+                paintFocusRing.invoke(null, g, (int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
+            } catch (Throwable ignore) {}
         }
     }
 }
