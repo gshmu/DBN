@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
@@ -37,6 +30,13 @@ import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider {
 
@@ -93,7 +93,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
             if (languageDialect != null) {
                 fileViewProvider.getVirtualFile().putUserData(PARSE_ROOT_ID_KEY, getParseRootId());
-                DBLanguagePsiFile file = fileViewProvider.createPsiFile(languageDialect);
+                DBLanguagePsiFile file = fileViewProvider.initializePsiFile(languageDialect);
                 file.setUnderlyingObject(getObject());
                 return file;
             }

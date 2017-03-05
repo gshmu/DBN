@@ -48,7 +48,7 @@ public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBPar
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
         ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
-        return languageDialect == null ? null : fileViewProvider.createPsiFile(languageDialect);
+        return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
 
     public DBDataset getDataset() {

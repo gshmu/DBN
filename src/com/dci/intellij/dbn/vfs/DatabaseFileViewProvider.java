@@ -59,12 +59,15 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     }
 
     @NotNull
-    public DBLanguagePsiFile createPsiFile(@NotNull DBLanguageDialect languageDialect) {
-        DBLanguageParserDefinition parserDefinition = languageDialect.getParserDefinition();
-        DBLanguagePsiFile file = (DBLanguagePsiFile) parserDefinition.createFile(this);
-        forceCachedPsi(file);
-        Document document = DocumentUtil.getDocument(file);// cache hard reference to document (??)
-        FileDocumentManagerImpl.registerDocument(document, getVirtualFile());
+    public DBLanguagePsiFile initializePsiFile(@NotNull DBLanguageDialect languageDialect) {
+        DBLanguagePsiFile file = (DBLanguagePsiFile) getCachedPsi(languageDialect);
+        if (file == null) {
+            DBLanguageParserDefinition parserDefinition = languageDialect.getParserDefinition();
+            file = (DBLanguagePsiFile) parserDefinition.createFile(this);
+            forceCachedPsi(file);
+            Document document = DocumentUtil.getDocument(file);// cache hard reference to document (??)
+            FileDocumentManagerImpl.registerDocument(document, getVirtualFile());
+        }
         return file;
     }
 
