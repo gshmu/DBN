@@ -390,7 +390,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                                     }
                                     EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
                                 }
-
+                                // TODO do in background
                                 object.reload();
                             }
 
