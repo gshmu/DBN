@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Colors;
+import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.ui.Splitter;
@@ -23,9 +24,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
+import java.awt.Rectangle;
 import java.lang.reflect.Method;
 import java.util.EventListener;
 
@@ -218,5 +221,17 @@ public class GUIUtil{
         return new Font(scheme.getEditorFontName(), Font.PLAIN, UIUtil.getLabelFont().getSize());
     }
 
+    public static void paintFocusRing(Graphics g, Rectangle bounds) {
+        try {
+            Method paintFocusRing = DarculaUIUtil.class.getMethod("paintFocusRing", Graphics.class, Rectangle.class);
+            paintFocusRing.invoke(null, g, bounds);
+        } catch (Throwable e) {
+            try {
+                Method paintFocusRing = DarculaUIUtil.class.getMethod("paintFocusRing", Graphics.class, int.class, int.class, int.class, int.class);
+                paintFocusRing.invoke(null, g, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+            } catch (Throwable ignore) {
 
+            }
+        }
+    }
 }

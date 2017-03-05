@@ -1,5 +1,28 @@
 package com.dci.intellij.dbn.common.ui;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.thread.SimpleCallback;
+import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.ui.GraphicsConfig;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.util.Condition;
+import com.intellij.ui.Gray;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.RoundedLineBorder;
+import com.intellij.util.IconUtil;
+import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,30 +57,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
-import com.dci.intellij.dbn.common.thread.SimpleCallback;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.ide.DataManager;
-import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.ui.GraphicsConfig;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.openapi.util.Condition;
-import com.intellij.ui.Gray;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.RoundedLineBorder;
-import com.intellij.util.IconUtil;
-import com.intellij.util.ui.UIUtil;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
     public static Color COMBO_BOX_BACKGROUND = UIUtil.getTextFieldBackground();
@@ -509,7 +508,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
             if (UIUtil.isUnderDarcula() || CompatibilityUtil.isUnderIntelliJLaF()) {
                 if (isFocused || isShowingPopup) {
-                    DarculaUIUtil.paintFocusRing(g, new Rectangle(2, 2, width - 4, height - 4));
+                    GUIUtil.paintFocusRing(g, new Rectangle(2, 2, width - 4, height - 4));
                 } else {
                     boolean editable = valueSelector.isEnabled;
                     g.setColor(getBorderColor(c.isEnabled() && editable));
