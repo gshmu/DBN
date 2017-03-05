@@ -78,7 +78,7 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
         return "Remember option";
     }
 
-    public T resolve(String ... messageArgs) {
+    public T resolve(Object ... messageArgs) {
         if (selectedOption != null && !selectedOption.isAsk()) {
             return selectedOption;
         } else {
