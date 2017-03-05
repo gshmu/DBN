@@ -233,8 +233,14 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     @Override
     public void globalSchemeChange(EditorColorsScheme scheme) {
         cellRenderer.getAttributes().load();
+        updateBackground(isLoading);
         revalidate();
         repaint();
+/*        JBScrollPane scrollPane = UIUtil.getParentOfType(JBScrollPane.class, this);
+        if (scrollPane != null) {
+            scrollPane.revalidate();
+            scrollPane.repaint();
+        }*/
     }
 
     /*********************************************************
