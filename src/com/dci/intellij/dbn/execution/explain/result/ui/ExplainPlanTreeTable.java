@@ -1,25 +1,5 @@
 package com.dci.intellij.dbn.execution.explain.result.ui;
 
-import javax.swing.JTable;
-import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.tree.TreePath;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.font.LineMetrics;
-import java.math.BigDecimal;
-
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
@@ -43,7 +23,27 @@ import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.ui.treeStructure.treetable.TreeTableCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
-import sun.swing.SwingUtilities2;
+
+import javax.swing.JTable;
+import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.tree.TreePath;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
+import java.math.BigDecimal;
 
 public class ExplainPlanTreeTable extends TreeTable{
     private static final int MAX_TREE_COLUMN_WIDTH = 900;
@@ -68,7 +68,8 @@ public class ExplainPlanTreeTable extends TreeTable{
         setBackground(plainDataAttributes.getBgColor());
 
         Font font = getFont();
-        LineMetrics lineMetrics = font.getLineMetrics("ABC", SwingUtilities2.getFontRenderContext(this));
+        FontRenderContext fontRenderContext = getFontMetrics(font).getFontRenderContext();
+        LineMetrics lineMetrics = font.getLineMetrics("ABC", fontRenderContext);
         int fontHeight = Math.round(lineMetrics.getHeight());
         setRowHeight(fontHeight + 2);
 
