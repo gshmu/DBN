@@ -34,6 +34,9 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
+import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
+import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
 import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.object.DBCharset;
@@ -62,6 +65,7 @@ import com.dci.intellij.dbn.object.impl.DBSystemPrivilegeImpl;
 import com.dci.intellij.dbn.object.impl.DBUserImpl;
 import com.dci.intellij.dbn.object.impl.DBUserPrivilegeRelation;
 import com.dci.intellij.dbn.object.impl.DBUserRoleRelation;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -141,6 +145,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
         Project project = connectionHandler.getProject();
         EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
+        EventUtil.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
         EventUtil.subscribe(project, this, CompileManagerListener.TOPIC, compileManagerListener);
     }
 
@@ -179,6 +184,20 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                     }
                 }
             }
+        }
+    };
+
+    private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+        @Override
+        public void sourceCodeSaved(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
+            new BackgroundTask(getProject(), "Reloading database object", true) {
+
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                    DBObject object = sourceCodeFile.getObject();
+                    object.reload();
+                }
+            }.start();
         }
     };
 

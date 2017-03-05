@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.common.content;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
@@ -23,6 +16,13 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> implements DynamicContent<T> {
     public static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));
@@ -131,6 +131,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
                     isLoading = true;
                     try {
                         performReload();
+                        List<T> elements = getAllElements();
+                        for (T element : elements) {
+                            checkDisposed();
+                            element.reload();
+                        }
                         isLoaded = true;
                     } catch (InterruptedException e) {
                         setElements(EMPTY_CONTENT);

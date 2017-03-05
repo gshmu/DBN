@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.editor.code;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -79,6 +70,15 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.text.DateFormatUtil;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @State(
     name = "DBNavigator.Project.SourceCodeManager",
@@ -397,8 +397,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 try {
                     sourceCodeFile.saveSourceToDatabase();
                     EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeSaved(sourceCodeFile, fileEditor);
-
-                    object.reload();
                 } catch (SQLException e) {
                     MessageUtil.showErrorDialog(project, "Could not save changes to database.", e);
                 } finally {
