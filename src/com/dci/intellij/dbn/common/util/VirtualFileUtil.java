@@ -28,7 +28,7 @@ public class VirtualFileUtil {
     }
 
     public static boolean isDatabaseFileSystem(@NotNull VirtualFile file) {
-        return file.getFileSystem() == DatabaseFileSystem.getInstance();
+        return file.getFileSystem() instanceof DatabaseFileSystem;
     }
 
     public static boolean isLocalFileSystem(@NotNull VirtualFile file) {

@@ -55,12 +55,6 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
     }
 
     @NotNull
-    public DatabaseFileSystem getFileSystem() {
-        return DatabaseFileSystem.getInstance();
-    }
-
-
-    @NotNull
     @Override
     protected String createPath() {
         return DatabaseFileSystem.createPath(getConnectionHandler());

@@ -23,7 +23,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileSystem;
 
 public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements FileConnectionMappingProvider  {
     protected DBEditableObjectVirtualFile mainDatabaseFile;
@@ -114,11 +113,6 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     @NotNull
     public FileType getFileType() {
         return fileType;
-    }
-
-    @NotNull
-    public VirtualFileSystem getFileSystem() {
-        return DatabaseFileSystem.getInstance();
     }
 
     @NotNull
