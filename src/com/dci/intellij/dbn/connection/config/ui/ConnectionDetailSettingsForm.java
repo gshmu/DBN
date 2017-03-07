@@ -43,6 +43,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JCheckBox ddlFileBindingCheckBox;
     private JCheckBox autoConnectCheckBox;
     private JCheckBox restoreWorkspaceCheckBox;
+    private JCheckBox restoreWorkspaceDeepCheckBox;
 
     public ConnectionDetailSettingsForm(final ConnectionDetailSettings configuration) {
         super(configuration);
@@ -65,7 +66,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
             }
         });
 
-        String autoConnectHintText = "NOTE: If \"Connect automatically\" is not selected, the system will not restore the entire workspace the next time you open the project (i.e. all open editors for this connection will not be reopened automatically).";
+        String autoConnectHintText = "NOTE: If \"Connect automatically\" is not selected, the system will not restore the workspace the next time you open the project (i.e. all open editors for this connection will not be reopened automatically).";
         DBNHintForm hintForm = new DBNHintForm(autoConnectHintText, MessageType.INFO, false);
         autoConnectHintPanel.add(hintForm.getComponent());
 
@@ -96,6 +97,12 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
                 if (source == autoConnectCheckBox || source == restoreWorkspaceCheckBox){
                     boolean visibleHint = !autoConnectCheckBox.isSelected() && restoreWorkspaceCheckBox.isSelected();
                     autoConnectHintPanel.setVisible(visibleHint);
+                }
+                if (source == restoreWorkspaceCheckBox) {
+                    restoreWorkspaceDeepCheckBox.setEnabled(restoreWorkspaceCheckBox.isSelected());
+                    if (!restoreWorkspaceCheckBox.isSelected()) {
+                        restoreWorkspaceDeepCheckBox.setSelected(false);
+                    }
                 }
                 getConfiguration().setModified(true);
             }
@@ -159,12 +166,13 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         configuration.setEnvironmentTypeId(environmentType == null ? "" : environmentType.getId());
         configuration.setCharset(charsetOption == null ? null : charsetOption.getCharset());
         configuration.setRestoreWorkspace(restoreWorkspaceCheckBox.isSelected());
+        configuration.setRestoreWorkspaceDeep(restoreWorkspaceDeepCheckBox.isSelected());
         configuration.setConnectAutomatically(autoConnectCheckBox.isSelected());
         configuration.setEnableDdlFileBinding(ddlFileBindingCheckBox.isSelected());
         configuration.setEnableDatabaseLogging(databaseLoggingCheckBox.isSelected());
         configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
         int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle time to disconnect (minutes)", true, 0, 60, "");
-        int passwordExpiryTime = ConfigurationEditorUtil.validateIntegerInputValue(passwordExpiryTextField, "Password expiry time (minutes)", true, 0, 60, "");
+        int passwordExpiryTime = ConfigurationEditorUtil.validateIntegerInputValue(passwordExpiryTextField, "Idle time to request password (minutes)", true, 0, 60, "");
         int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max connection pool size", true, 3, 20, "");
         configuration.setIdleTimeToDisconnect(idleTimeToDisconnect);
         configuration.setPasswordExpiryTime(passwordExpiryTime);
@@ -178,6 +186,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         databaseLoggingCheckBox.setSelected(configuration.isEnableDatabaseLogging());
         autoConnectCheckBox.setSelected(configuration.isConnectAutomatically());
         restoreWorkspaceCheckBox.setSelected(configuration.isRestoreWorkspace());
+        restoreWorkspaceDeepCheckBox.setSelected(configuration.isRestoreWorkspaceDeep());
         environmentTypesComboBox.setSelectedValue(configuration.getEnvironmentType());
         idleTimeTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnect()));
         passwordExpiryTextField.setText(Integer.toString(configuration.getPasswordExpiryTime()));
