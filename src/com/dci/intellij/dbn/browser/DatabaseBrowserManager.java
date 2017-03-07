@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -317,35 +318,38 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
         for (ConnectionHandler connectionHandler : connectionHandlers) {
-            Element connectionElement = new Element("connection");
+            ConnectionDetailSettings settings = connectionHandler.getSettings().getDetailSettings();
+            if (settings.isRestoreWorkspaceDeep()) {
+                Element connectionElement = new Element("connection");
 
-            boolean addConnectionElement = false;
-            DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-            DBObjectList schemas = objectBundle.getObjectListContainer().getObjectList(DBObjectType.SCHEMA);
-            if (schemas != null && schemas.isLoaded()) {
-                for (DBSchema schema : objectBundle.getSchemas()) {
-                    List<DBObjectType> objectTypes = new ArrayList<DBObjectType>();
-                    DBObjectListContainer childObjects = schema.getChildObjects();
-                    if (childObjects != null) {
-                        List<DBObjectList<DBObject>> allObjectLists = childObjects.getAllObjectLists();
-                        for (DBObjectList<DBObject> objectList : allObjectLists) {
-                            if (objectList.isLoaded() || objectList.isLoading()) {
-                                objectTypes.add(objectList.getObjectType());
+                boolean addConnectionElement = false;
+                DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+                DBObjectList schemas = objectBundle.getObjectListContainer().getObjectList(DBObjectType.SCHEMA);
+                if (schemas != null && schemas.isLoaded()) {
+                    for (DBSchema schema : objectBundle.getSchemas()) {
+                        List<DBObjectType> objectTypes = new ArrayList<DBObjectType>();
+                        DBObjectListContainer childObjects = schema.getChildObjects();
+                        if (childObjects != null) {
+                            List<DBObjectList<DBObject>> allObjectLists = childObjects.getAllObjectLists();
+                            for (DBObjectList<DBObject> objectList : allObjectLists) {
+                                if (objectList.isLoaded() || objectList.isLoading()) {
+                                    objectTypes.add(objectList.getObjectType());
+                                }
                             }
                         }
+                        if (objectTypes.size() > 0) {
+                            Element schemaElement = new Element("schema");
+                            schemaElement.setAttribute("name", schema.getName());
+                            schemaElement.setAttribute("object-types", DBObjectType.toCommaSeparated(objectTypes));
+                            connectionElement.addContent(schemaElement);
+                            addConnectionElement = true;
+                        }
                     }
-                    if (objectTypes.size() > 0) {
-                        Element schemaElement = new Element("schema");
-                        schemaElement.setAttribute("name", schema.getName());
-                        schemaElement.setAttribute("object-types", DBObjectType.toCommaSeparated(objectTypes));
-                        connectionElement.addContent(schemaElement);
-                        addConnectionElement = true;
-                    }
-                }
 
-                if (addConnectionElement) {
-                    connectionElement.setAttribute("connection-id", connectionHandler.getId());
-                    nodesElement.addContent(connectionElement);
+                    if (addConnectionElement) {
+                        connectionElement.setAttribute("connection-id", connectionHandler.getId());
+                        nodesElement.addContent(connectionElement);
+                    }
                 }
             }
         }
@@ -362,28 +366,32 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                 String connectionId = connectionElement.getAttributeValue("connection-id");
                 final ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
                 if (connectionHandler != null) {
-                    String connectionString = " (" + connectionHandler.getName() + ")";
-                    new BackgroundTask(project, "Loading data dictionary" + connectionString, true) {
+                    ConnectionDetailSettings settings = connectionHandler.getSettings().getDetailSettings();
+                    if (settings.isRestoreWorkspaceDeep()) {
+                        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+                        String connectionString = " (" + connectionHandler.getName() + ")";
+                        List<Element> schemaElements = connectionElement.getChildren();
+                        for (final Element schemaElement : schemaElements) {
+                            String schemaName = schemaElement.getAttributeValue("name");
+                            final DBSchema schema = objectBundle.getSchema(schemaName);
 
-                        @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                            List<Element> schemaElements = connectionElement.getChildren();
-                            for (Element schemaElement : schemaElements) {
-                                String schemaName = schemaElement.getAttributeValue("name");
-                                DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
-                                if (schema != null) {
-                                    String objectTypesAttr = schemaElement.getAttributeValue("object-types");
-                                    List<DBObjectType> objectTypes = DBObjectType.fromCommaSeparated(objectTypesAttr);
-                                    for (DBObjectType objectType : objectTypes) {
-                                        DBObjectListContainer childObjects = schema.getChildObjects();
-                                        if (childObjects != null) {
-                                            childObjects.loadObjectList(objectType);
+                            if (schema != null) {
+                                new BackgroundTask(project, "Loading data dictionary" + connectionString, true) {
+                                    @Override
+                                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                                        String objectTypesAttr = schemaElement.getAttributeValue("object-types");
+                                        List<DBObjectType> objectTypes = DBObjectType.fromCommaSeparated(objectTypesAttr);
+                                        for (DBObjectType objectType : objectTypes) {
+                                            DBObjectListContainer childObjects = schema.getChildObjects();
+                                            if (childObjects != null) {
+                                                childObjects.loadObjectList(objectType);
+                                            }
                                         }
                                     }
-                                }
+                                }.start();
                             }
                         }
-                    }.start();
+                    }
                 }
             }
         }
