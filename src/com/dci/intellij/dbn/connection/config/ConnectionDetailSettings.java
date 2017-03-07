@@ -89,7 +89,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     }
 
     public boolean isRestoreWorkspaceDeep() {
-        return restoreWorkspaceDeep;
+        return restoreWorkspace && restoreWorkspaceDeep;
     }
 
     public void setRestoreWorkspaceDeep(boolean restoreWorkspaceDeep) {
