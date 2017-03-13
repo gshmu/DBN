@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
@@ -10,14 +18,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class CompilerResult implements Disposable {
     private DBObjectRef<DBSchemaObject> objectRef;
@@ -57,7 +57,7 @@ public class CompilerResult implements Disposable {
             while (resultSet != null && resultSet.next()) {
                 CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
                 isError = true;
-                if (/*!compilerAction.isDDL() || */contentType == errorMessage.getContentType()) {
+                if (/*!compilerAction.isDDL() || */contentType.isBundle() || contentType == errorMessage.getContentType()) {
                     compilerMessages.add(errorMessage);
                 }
             }
