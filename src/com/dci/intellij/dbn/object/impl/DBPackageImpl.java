@@ -187,33 +187,27 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
     }
 
     private class SpecSourceCodeLoader extends DBSourceCodeLoader {
-        protected SpecSourceCodeLoader(DBObject object) {
+        SpecSourceCodeLoader(DBObject object) {
             super(object, false);
         }
 
         public ResultSet loadSourceCode(Connection connection) throws SQLException {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler != null) {
-                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                return metadataInterface.loadObjectSourceCode(
-                        getSchema().getName(), getName(), "PACKAGE", connection);
-            }
-            return null;
+            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+            return metadataInterface.loadObjectSourceCode(
+                    getSchema().getName(), getName(), "PACKAGE", connection);
         }
     }
 
     private class BodySourceCodeLoader extends DBSourceCodeLoader {
-        protected BodySourceCodeLoader(DBObject object) {
+        BodySourceCodeLoader(DBObject object) {
             super(object, true);
         }
 
         public ResultSet loadSourceCode(Connection connection) throws SQLException {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler != null) {
-                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                return metadataInterface.loadObjectSourceCode(getSchema().getName(), getName(), "PACKAGE BODY",connection);
-            }
-            return null;
+            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+            return metadataInterface.loadObjectSourceCode(getSchema().getName(), getName(), "PACKAGE BODY",connection);
         }
     }
 
