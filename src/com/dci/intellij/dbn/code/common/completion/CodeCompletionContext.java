@@ -31,7 +31,7 @@ public class CodeCompletionContext {
     private ConnectionHandler connectionHandler;
     private String userInput;
     private double databaseVersion;
-    private boolean newLine;
+    private boolean newLine = true;
 
 
     public CodeCompletionContext(DBLanguagePsiFile file, CompletionParameters parameters, CompletionResultSet result) {
@@ -56,9 +56,13 @@ public class CodeCompletionContext {
 
         databaseVersion = file.getDatabaseVersion();
         Document document = parameters.getEditor().getDocument();
-        int lineStartOffset = document.getLineStartOffset(document.getLineNumber(offset));
-        String text = document.getText(new TextRange(lineStartOffset, offset));
-        newLine = !StringUtil.containsWhitespaces(text.trim());
+        int lineNumber = document.getLineNumber(offset);
+        int lineStartOffset = document.getLineStartOffset(lineNumber);
+        int lineEndOffset = Math.min(offset, document.getTextLength());
+        if (lineStartOffset < lineEndOffset) {
+            String text = document.getText(new TextRange(lineStartOffset, lineEndOffset));
+            newLine = !StringUtil.containsWhitespaces(text.trim());
+        }
     }
 
     public String getUserInput() {
