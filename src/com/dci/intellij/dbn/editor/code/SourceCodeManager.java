@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.editor.code;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -70,15 +79,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.text.DateFormatUtil;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @State(
     name = "DBNavigator.Project.SourceCodeManager",
@@ -180,8 +180,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public void ensureSourcesLoaded(@NotNull final DBSchemaObject schemaObject) {
-        DBEditableObjectVirtualFile virtualFile = schemaObject.getVirtualFile();
-        List<DBSourceCodeVirtualFile> sourceCodeFiles = virtualFile.getSourceCodeFiles();
+        DBEditableObjectVirtualFile editableObjectFile = schemaObject.getEditableVirtualFile();
+        List<DBSourceCodeVirtualFile> sourceCodeFiles = editableObjectFile.getSourceCodeFiles();
         for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
             if (!sourceCodeFile.isLoaded()) {
                 loadSourceFromDatabase(sourceCodeFile, false);
@@ -409,8 +409,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public BasePsiElement getObjectNavigationElement(DBSchemaObject parentObject, DBContentType contentType, DBObjectType objectType, CharSequence objectName) {
-        DBEditableObjectVirtualFile databaseFile = parentObject.getVirtualFile();
-        DBContentVirtualFile contentFile = databaseFile.getContentFile(contentType);
+        DBEditableObjectVirtualFile editableObjectFile = parentObject.getEditableVirtualFile();
+        DBContentVirtualFile contentFile = editableObjectFile.getContentFile(contentType);
         if (contentFile != null) {
             PSQLFile file = (PSQLFile) PsiUtil.getPsiFile(getProject(), contentFile);
             if (file != null) {
@@ -419,19 +419,20 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     contentType == DBContentType.CODE_SPEC ? file.lookupObjectSpecification(objectType, objectName) : null;
             }
         }
+
         return null;
     }
 
     public void navigateToObject(DBSchemaObject parentObject, BasePsiElement basePsiElement) {
-        DBEditableObjectVirtualFile databaseFile = parentObject.getVirtualFile();
-        VirtualFile virtualFile = basePsiElement.getFile().getVirtualFile();
-        if (virtualFile instanceof DBSourceCodeVirtualFile) {
-            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+        DBEditableObjectVirtualFile editableObjectFile = parentObject.getEditableVirtualFile();
+        VirtualFile elementVirtualFile = basePsiElement.getFile().getVirtualFile();
+        if (elementVirtualFile instanceof DBSourceCodeVirtualFile) {
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) elementVirtualFile;
             BasicTextEditor textEditor = EditorUtil.getTextEditor(sourceCodeFile);
             if (textEditor != null) {
                 Project project = getProject();
                 EditorProviderId editorProviderId = textEditor.getEditorProviderId();
-                FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, databaseFile, editorProviderId, true);
+                FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, editableObjectFile, editorProviderId, true);
                 basePsiElement.navigateInEditor(fileEditor, true);
             }
         }

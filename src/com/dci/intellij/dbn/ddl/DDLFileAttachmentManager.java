@@ -239,8 +239,8 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                         try {
                             VirtualFile virtualFile = parentDirectory.createChildData(this, fileName);
                             attachDDLFile(object, virtualFile);
-                            DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
-                            updateDDLFiles(databaseFile);
+                            DBEditableObjectVirtualFile editableObjectFile = object.getEditableVirtualFile();
+                            updateDDLFiles(editableObjectFile);
                             DatabaseFileSystem.getInstance().reopenEditor(object);
                         } catch (IOException e) {
                             MessageUtil.showErrorDialog(project, "Could not create file " + parentDirectory + File.separator + fileName + ".", e);
