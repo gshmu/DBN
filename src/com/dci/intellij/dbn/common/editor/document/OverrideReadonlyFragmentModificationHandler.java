@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.editor.document;
 
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -23,7 +24,7 @@ public class OverrideReadonlyFragmentModificationHandler implements
 
     }
 
-    public void handle(ReadOnlyFragmentModificationException e) {
+    public void handle(final ReadOnlyFragmentModificationException e) {
         Document document = e.getGuardedBlock().getDocument();
         String message = document.getUserData(GUARDED_BLOCK_REASON);
         if (message != null) {
@@ -33,7 +34,12 @@ public class OverrideReadonlyFragmentModificationHandler implements
             if (virtualFile instanceof DBSourceCodeVirtualFile || virtualFile instanceof LightVirtualFile || virtualFile instanceof DBConsoleVirtualFile) {
                 //Messages.showErrorDialog("You're not allowed to change name and type of the edited component.", "Action denied");
             } else {
-                originalHandler.handle(e);
+                new SimpleLaterInvocator() {
+                    @Override
+                    protected void execute() {
+                        originalHandler.handle(e);
+                    }
+                }.start();
             }
         }
     }
