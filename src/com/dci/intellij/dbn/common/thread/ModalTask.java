@@ -1,14 +1,12 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
+import org.jetbrains.annotations.NotNull;
+
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>{
     private T option;
@@ -56,18 +54,6 @@ public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>
     protected abstract void execute(@NotNull ProgressIndicator progressIndicator);
 
     public void start() {
-        final ProgressManager progressManager = ProgressManager.getInstance();
-        Application application = ApplicationManager.getApplication();
-
-        if (application.isDispatchThread()) {
-            progressManager.run(ModalTask.this);
-        } else {
-            Runnable runnable = new Runnable() {
-                public void run() {
-                    progressManager.run(ModalTask.this);
-                }
-            };
-            application.invokeLater(runnable, ModalityState.NON_MODAL);
-        }
+        TaskUtil.startTask(this, getProject());
     }
 }

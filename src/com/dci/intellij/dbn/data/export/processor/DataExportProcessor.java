@@ -58,7 +58,7 @@ public abstract class DataExportProcessor {
 
     public abstract DataExportFormat getFormat();
 
-    protected void writeContent(DataExportInstructions instructions, String content) throws DataExportException {
+    void writeContent(DataExportInstructions instructions, String content) throws DataExportException {
         if (instructions.getDestination() == DataExportInstructions.Destination.CLIPBOARD) {
             writeToClipboard(content);
         } else {
@@ -66,7 +66,7 @@ public abstract class DataExportProcessor {
         }
     }
 
-    public void writeToFile(File file, String content, Charset charset) throws DataExportException {
+    private void writeToFile(File file, String content, Charset charset) throws DataExportException {
         try {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), charset));
             writer.write(content);
@@ -78,7 +78,7 @@ public abstract class DataExportProcessor {
         }
     }
 
-    public void writeToClipboard(String content) {
+    private void writeToClipboard(String content) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(createClipboardContent(content), null);
     }
@@ -102,7 +102,7 @@ public abstract class DataExportProcessor {
             calendar.get(Calendar.MILLISECOND) != 0;
     }
 
-    protected void checkCancelled() throws InterruptedException {
+    void checkCancelled() throws InterruptedException {
         ProgressManager progressManager = ProgressManager.getInstance();
         ProgressIndicator progressIndicator = progressManager.getProgressIndicator();
         if (progressIndicator != null) {
