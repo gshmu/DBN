@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.object.common;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
@@ -69,19 +82,6 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DBObjectBundleImpl implements DBObjectBundle {
     private ConnectionHandler connectionHandler;
@@ -155,7 +155,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
             if (schema.getConnectionHandler() == getConnectionHandler()) {
                 DBObjectList childObjectList = schema.getChildObjectList(objectType);
                 if (childObjectList != null && childObjectList.isLoaded()) {
-                    childObjectList.reload();
+                    childObjectList.refresh();
                 }
 
                 Set<DBObjectType> childObjectTypes = objectType.getChildren();
@@ -164,7 +164,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                     if (childObjects != null) {
                         childObjectList = childObjects.getHiddenObjectList(childObjectType);
                         if (childObjectList != null && childObjectList.isLoaded()) {
-                            childObjectList.reload();
+                            childObjectList.refresh();
                         }
                     }
                 }
@@ -179,7 +179,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                     List<DBObjectList<DBObject>> objectLists = childObjects.getAllObjectLists();
                     for (DBObjectList objectList : objectLists) {
                         if (objectList.isLoaded()) {
-                            objectList.reload();
+                            objectList.refresh();
                         }
                     }
                 }
@@ -195,7 +195,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                     DBObject object = sourceCodeFile.getObject();
-                    object.reload();
+                    object.refresh();
                 }
             }.start();
         }

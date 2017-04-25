@@ -30,10 +30,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     public static final List EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(new ArrayList(0));
 
     private long changeTimestamp = 0;
-    private volatile boolean isLoading = false;
-    private volatile boolean isLoadingInBackground = false;
-    private volatile boolean isLoaded = false;
-    private volatile boolean isDirty = false;
+    private volatile boolean loading = false;
+    private volatile boolean loadingInBackground = false;
+    private volatile boolean loaded = false;
+    private volatile boolean dirty = false;
     private volatile boolean disposed = false;
 
     private GenericDatabaseElement parent;
@@ -74,7 +74,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     public boolean isLoaded() {
-        return isLoaded;
+        return loaded;
     }
 
     /**
@@ -90,34 +90,42 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     public boolean isLoading() {
-        return isLoading;
+        return loading;
     }
 
     public boolean isDirty() {
-        return isDirty || dependencyAdapter.isDirty();
+        return dirty || dependencyAdapter.isDirty();
     }
 
     public boolean isDisposed() {
         return disposed;
     }
 
-    public void setDirty(boolean dirty) {
-        isDirty = dirty;
+    public void markDirty() {
+        dirty = true;
+    }
+
+    private boolean shouldReload() {
+        return !disposed && loaded && !loading;
+    }
+
+    private boolean shouldRefresh() {
+        return !disposed && /*loaded && */!loading;
     }
 
     public final void load(boolean force) {
         if (shouldLoad(force)) {
             synchronized (this) {
                 if (shouldLoad(force)) {
-                    isLoading = true;
+                    loading = true;
                     try {
                         performLoad();
-                        isLoaded = true;
+                        loaded = true;
                     } catch (InterruptedException e) {
                         setElements(EMPTY_CONTENT);
-                        isDirty = true;
+                        dirty = true;
                     } finally {
-                        isLoading = false;
+                        loading = false;
                         updateChangeTimestamp();
                     }
                 }
@@ -126,25 +134,38 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     public final void reload() {
-        if (!disposed && !isLoading) {
+        if (shouldReload()) {
             synchronized (this) {
-                if (!disposed && !isLoading) {
-                    isLoading = true;
+                if (shouldReload()) {
+                    loading = true;
                     try {
                         performReload();
                         List<T> elements = getAllElements();
                         for (T element : elements) {
                             checkDisposed();
-                            element.reload();
+                            element.refresh();
                         }
-                        isLoaded = true;
+                        loaded = true;
                     } catch (InterruptedException e) {
                         setElements(EMPTY_CONTENT);
-                        isDirty = true;
+                        dirty = true;
                     } finally {
-                        isLoading = false;
+                        loading = false;
                         updateChangeTimestamp();
                     }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void refresh() {
+        if(shouldRefresh()) {
+            synchronized (this) {
+                if(shouldRefresh()) {
+                    ContentDependencyAdapter dependencyAdapter = getDependencyAdapter();
+                    dependencyAdapter.markSourcesDirty();
+                    markDirty();
                 }
             }
         }
@@ -155,7 +176,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         if (shouldLoadInBackground(force)) {
             synchronized (this) {
                 if (shouldLoadInBackground(force)) {
-                    isLoadingInBackground = true;
+                    loadingInBackground = true;
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     String connectionString = " (" + connectionHandler.getName() + ')';
                     new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
@@ -166,7 +187,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
                                 load(force);
                             } finally {
                                 DatabaseLoadMonitor.endBackgroundLoad();
-                                isLoadingInBackground = false;
+                                loadingInBackground = false;
                             }
                         }
                     }.start();
@@ -176,7 +197,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     boolean shouldLoadInBackground(boolean force) {
-        return !isLoadingInBackground && shouldLoad(force);
+        return !loadingInBackground && shouldLoad(force);
     }
 
     private void performLoad() throws InterruptedException {
@@ -186,10 +207,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         try {
             // mark first the dirty status since dirty dependencies may
             // become valid due to parallel background load
-            isDirty = false;
+            dirty = false;
             loader.loadContent(this, false);
         } catch (DynamicContentLoadException e) {
-            isDirty = !e.isModelException();
+            dirty = !e.isModelException();
         }
         checkDisposed();
         dependencyAdapter.afterLoad();
@@ -203,7 +224,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
             checkDisposed();
             loader.reloadContent(this);
         } catch (DynamicContentLoadException e) {
-            isDirty = !e.isModelException();
+            dirty = !e.isModelException();
         }
         checkDisposed();
         dependencyAdapter.afterReload(this);
@@ -257,10 +278,22 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         return elements;
     }
 
+    public List getElementsNoLoad() {
+        return elements;
+    }
+
     @NotNull
     @Override
     public List<T> getAllElements() {
         List<T> elements = getElements();
+        if (elements instanceof FiltrableList) {
+            FiltrableList<T> filteredElements = (FiltrableList<T>) elements;
+            return filteredElements.getFullList();
+        }
+        return elements;
+    }
+
+    public List<T> getAllElementsNoLoad() {
         if (elements instanceof FiltrableList) {
             FiltrableList<T> filteredElements = (FiltrableList<T>) elements;
             return filteredElements.getFullList();
@@ -328,12 +361,12 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     public boolean shouldLoad(boolean force) {
-        if (isLoading || disposed) {
+        if (loading || disposed) {
             return false;
         }
 
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (force || !isLoaded) {
+        if (force || !loaded) {
             return dependencyAdapter.canConnect(connectionHandler);
         }
 

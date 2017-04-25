@@ -180,12 +180,6 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
         }
     };
 
-    @Override
-    public void reload() {
-        super.reload();
-        types.reload();
-    }
-
     private class SpecSourceCodeLoader extends DBSourceCodeLoader {
         SpecSourceCodeLoader(DBObject object) {
             super(object, false);

@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
@@ -53,16 +63,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
     protected WeakReference<FileEditor> fileEditorRef;
@@ -390,8 +390,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                                     }
                                     EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
                                 }
-                                // TODO do in background
-                                object.reload();
+                                object.refresh();
                             }
 
                             executionResult.setCompilerResult(compilerResult);

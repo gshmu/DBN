@@ -135,7 +135,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                         connectionHandler.getConnectionPool().closeConnectionsSilently();
-                        connectionHandler.getObjectBundle().getObjectListContainer().reload(true);
+                        connectionHandler.getObjectBundle().getObjectListContainer().reload();
                     }
                 }.start();
             }
