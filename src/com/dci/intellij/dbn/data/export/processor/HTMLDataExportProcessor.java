@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.data.type.GenericDataType;
 
 
 public class HTMLDataExportProcessor extends DataExportProcessor{
-    protected DataExportFormat getFormat() {
+    public DataExportFormat getFormat() {
         return DataExportFormat.HTML;
     }
 

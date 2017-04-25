@@ -16,7 +16,14 @@ import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.export.processor.CSVDataExportProcessor;
+import com.dci.intellij.dbn.data.export.processor.CustomDataExportProcessor;
 import com.dci.intellij.dbn.data.export.processor.DataExportProcessor;
+import com.dci.intellij.dbn.data.export.processor.ExcelDataExportProcessor;
+import com.dci.intellij.dbn.data.export.processor.ExcelXDataExportProcessor;
+import com.dci.intellij.dbn.data.export.processor.HTMLDataExportProcessor;
+import com.dci.intellij.dbn.data.export.processor.SQLDataExportProcessor;
+import com.dci.intellij.dbn.data.export.processor.XMLDataExportProcessor;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -42,6 +49,24 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
         return FailsafeUtil.getComponent(project, DataExportManager.class);
     }
 
+    private static DataExportProcessor[] PROCESSORS =  new DataExportProcessor[] {
+            new SQLDataExportProcessor(),
+            new ExcelDataExportProcessor(),
+            new ExcelXDataExportProcessor(),
+            new CSVDataExportProcessor(),
+            new HTMLDataExportProcessor(),
+            new XMLDataExportProcessor(),
+            new CustomDataExportProcessor()};
+
+    public static DataExportProcessor getExportProcessor(DataExportFormat format) {
+        for (DataExportProcessor exportProcessor : PROCESSORS) {
+            if (exportProcessor.getFormat() == format) {
+                return exportProcessor;
+            }
+        }
+        return null;
+    }
+
     public void exportSortableTableContent(
             SortableTable table,
             DataExportInstructions instructions,
@@ -51,7 +76,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
         boolean isSelection = instructions.getScope() == DataExportInstructions.Scope.SELECTION;
         DataExportModel exportModel = new SortableTableExportModel(isSelection, table);
         try {
-            DataExportProcessor processor = DataExportProcessor.getExportProcessor(instructions.getFormat());
+            DataExportProcessor processor = getExportProcessor(instructions.getFormat());
             if (processor != null) {
                 processor.export(exportModel, instructions, connectionHandler);
                 DataExportInstructions.Destination destination = instructions.getDestination();

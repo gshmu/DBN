@@ -15,7 +15,7 @@ import com.dci.intellij.dbn.data.type.GenericDataType;
 
 
 public class XMLDataExportProcessor extends DataExportProcessor{
-    protected DataExportFormat getFormat() {
+    public DataExportFormat getFormat() {
         return DataExportFormat.XML;
     }
 
