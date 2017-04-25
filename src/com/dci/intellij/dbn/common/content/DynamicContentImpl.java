@@ -103,6 +103,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     public void markDirty() {
         dirty = true;
+        ContentDependencyAdapter dependencyAdapter = getDependencyAdapter();
+        dependencyAdapter.markSourcesDirty();
     }
 
     private boolean shouldReload() {
@@ -163,8 +165,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         if(shouldRefresh()) {
             synchronized (this) {
                 if(shouldRefresh()) {
-                    ContentDependencyAdapter dependencyAdapter = getDependencyAdapter();
-                    dependencyAdapter.markSourcesDirty();
                     markDirty();
                 }
             }
