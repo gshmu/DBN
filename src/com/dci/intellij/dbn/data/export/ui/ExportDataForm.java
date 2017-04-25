@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.config.ui.CharsetOption;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
+import com.dci.intellij.dbn.data.export.DataExportManager;
 import com.dci.intellij.dbn.data.export.processor.DataExportProcessor;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -248,7 +249,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
     };
 
     private void enableDisableFields() {
-        DataExportProcessor processor = DataExportProcessor.getExportProcessor(getExportInstructions().getFormat());
+        DataExportProcessor processor = DataExportManager.getExportProcessor(getExportInstructions().getFormat());
 
         boolean canCreateHeader = processor != null && processor.canCreateHeader();
         boolean canQuoteValues = processor != null && processor.canQuoteValues();

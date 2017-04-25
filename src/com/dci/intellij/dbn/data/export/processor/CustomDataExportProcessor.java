@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 
 public class CustomDataExportProcessor extends DataExportProcessor{
-    protected DataExportFormat getFormat() {
+    public DataExportFormat getFormat() {
         return DataExportFormat.CUSTOM;
     }
 

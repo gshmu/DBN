@@ -31,24 +31,6 @@ public abstract class DataExportProcessor {
     public abstract boolean supportsFileEncoding();
     public abstract void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException;
 
-    private static DataExportProcessor[] PROCESSORS =  new DataExportProcessor[] {
-            new SQLDataExportProcessor(),
-            new ExcelDataExportProcessor(),
-            new ExcelXDataExportProcessor(),
-            new CSVDataExportProcessor(),
-            new HTMLDataExportProcessor(),
-            new XMLDataExportProcessor(),
-            new CustomDataExportProcessor()};
-
-    public static DataExportProcessor getExportProcessor(DataExportFormat format) {
-        for (DataExportProcessor exportProcessor : PROCESSORS) {
-            if (exportProcessor.getFormat() == format) {
-                return exportProcessor;
-            }
-        }
-        return null;
-    }
-
     Formatter getFormatter(Project project) {
         return Formatter.getInstance(project).clone();
     }
@@ -74,7 +56,7 @@ public abstract class DataExportProcessor {
         }
     }
 
-    protected abstract DataExportFormat getFormat();
+    public abstract DataExportFormat getFormat();
 
     protected void writeContent(DataExportInstructions instructions, String content) throws DataExportException {
         if (instructions.getDestination() == DataExportInstructions.Destination.CLIPBOARD) {

@@ -27,7 +27,7 @@ import com.intellij.openapi.project.Project;
 
 public class ExcelDataExportProcessor extends DataExportProcessor{
 
-    protected DataExportFormat getFormat() {
+    public DataExportFormat getFormat() {
         return DataExportFormat.EXCEL;
     }
 
