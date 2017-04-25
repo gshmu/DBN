@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.common.content;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
@@ -8,11 +13,6 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class VoidDynamicContent implements DynamicContent{
     private List elements = new ArrayList();
@@ -41,6 +41,11 @@ public class VoidDynamicContent implements DynamicContent{
 
     @Override
     public void reload() {
+
+    }
+
+    @Override
+    public void refresh() {
 
     }
 
@@ -80,7 +85,7 @@ public class VoidDynamicContent implements DynamicContent{
     }
 
     @Override
-    public void setDirty(boolean dirty) {
+    public void markDirty() {
 
     }
 

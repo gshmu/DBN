@@ -86,6 +86,11 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
     public void reload() {
     }
 
+    @Override
+    public void refresh() {
+
+    }
+
     public int compareTo(@NotNull Object o) {
         DBObjectRelationImpl remote = (DBObjectRelationImpl) o;
         return sourceObject.compareTo(remote.sourceObject);

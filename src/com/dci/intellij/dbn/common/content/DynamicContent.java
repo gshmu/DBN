@@ -34,6 +34,11 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
     void reload();
 
     /**
+     * Soft reload. Mark sources dirty
+     */
+    void refresh();
+
+    /**
      * The timestamp of the last change on the content.
      */
     long getChangeTimestamp();
@@ -59,7 +64,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
 
     boolean isDisposed();
 
-    void setDirty(boolean dirty);
+    void markDirty();
 
     Project getProject();
     String getContentDescription();
