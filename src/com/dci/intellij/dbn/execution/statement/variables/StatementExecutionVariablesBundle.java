@@ -11,6 +11,7 @@ import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -29,8 +30,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 
-public class StatementExecutionVariablesBundle implements Disposable{
-    public static final Comparator<StatementExecutionVariable> NAME_LENGTH_COMPARATOR = new Comparator<StatementExecutionVariable>() {
+public class StatementExecutionVariablesBundle extends DisposableBase implements Disposable{
+    private static final Comparator<StatementExecutionVariable> NAME_LENGTH_COMPARATOR = new Comparator<StatementExecutionVariable>() {
         @Override
         public int compare(StatementExecutionVariable o1, StatementExecutionVariable o2) {
             return o2.getName().length() - o1.getName().length();
@@ -190,15 +191,8 @@ public class StatementExecutionVariablesBundle implements Disposable{
         return errorMap == null ? null : errorMap.get(variable);
     }
 
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     @Override
     public void dispose() {
-        disposed = true;
+        super.dispose();
     }
 }

@@ -57,7 +57,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.SettingsSavingComponent;
 import com.intellij.openapi.components.State;
@@ -101,7 +100,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
         EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
         EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        ApplicationManager.getApplication().addApplicationListener(this);
     }
 
 

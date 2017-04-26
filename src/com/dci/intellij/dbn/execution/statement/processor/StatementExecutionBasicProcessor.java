@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Counter;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
@@ -64,13 +65,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 
-public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
-    protected WeakReference<FileEditor> fileEditorRef;
+public class StatementExecutionBasicProcessor extends DisposableBase implements StatementExecutionProcessor {
     protected DBLanguagePsiFile psiFile;
-    protected ExecutablePsiElement cachedExecutable;
+    private WeakReference<FileEditor> fileEditorRef;
+    private ExecutablePsiElement cachedExecutable;
     private EditorProviderId editorProviderId;
 
-    protected String resultName;
+    private String resultName;
     protected int index;
 
     private StatementExecutionInput executionInput;
@@ -472,7 +473,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public boolean canExecute() {
-        return !disposed;
+        return !isDisposed();
     }
 
     public void navigateToResult() {
@@ -585,20 +586,10 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
-
     @Override
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            cachedExecutable = null;
-            psiFile = null;
-
-        }
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
+        super.dispose();
+        cachedExecutable = null;
+        psiFile = null;
     }
 }

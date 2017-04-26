@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterType;
 import com.dci.intellij.dbn.editor.data.options.DataEditorFilterSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DataEditorFilterSettingsForm extends ConfigurationEditorForm<DataEditorFilterSettings> {
     private JPanel mainPanel;

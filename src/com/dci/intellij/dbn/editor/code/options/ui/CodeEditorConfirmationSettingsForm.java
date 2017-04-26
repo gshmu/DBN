@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CodeEditorConfirmationSettingsForm extends ConfigurationEditorForm<CodeEditorConfirmationSettings> {
     private JPanel mainPanel;

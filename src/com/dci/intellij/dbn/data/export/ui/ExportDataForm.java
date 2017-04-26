@@ -36,6 +36,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.util.ui.UIUtil;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
     private static final FileChooserDescriptor DIRECTORY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, true, false, false, false, false);

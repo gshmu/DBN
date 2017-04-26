@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
-import com.dci.intellij.dbn.data.editor.text.ui.TextEditorDialog;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -28,6 +17,17 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
+import com.dci.intellij.dbn.data.editor.text.ui.TextEditorDialog;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.keymap.KeymapUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.ui.UIUtil;
 
 public class TextFieldWithTextEditor extends JPanel implements DataEditorComponent, TextEditorAdapter {
     private JTextField textField;
@@ -182,17 +182,17 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean isDisposed;
+    private boolean disposed;
 
     @Override
     public boolean isDisposed() {
-        return isDisposed;
+        return disposed;
     }
 
     @Override
     public void dispose() {
-        if (!isDisposed) {
-            isDisposed = true;
+        if (!disposed) {
+            disposed = true;
             userValueHolder = null;
             project = null;
         }

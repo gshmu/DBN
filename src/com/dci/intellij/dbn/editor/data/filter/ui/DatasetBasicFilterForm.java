@@ -1,5 +1,22 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -33,23 +50,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasicFilter> {
     private JPanel conditionsPanel;
@@ -203,7 +203,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
                 SyntaxHighlighter syntaxHighlighter = dataset.getLanguageDialect(SQLLanguage.INSTANCE).getSyntaxHighlighter();
                 EditorColorsScheme colorsScheme = viewer.getColorsScheme();
                 viewer.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
-                viewer.setBackgroundColor(GUIUtil.adjust(viewer.getBackgroundColor(), -0.01));
+                viewer.setBackgroundColor(GUIUtil.adjustColor(viewer.getBackgroundColor(), -0.01));
                 viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
                 viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
                 //viewerScrollPane.setBorder(null);

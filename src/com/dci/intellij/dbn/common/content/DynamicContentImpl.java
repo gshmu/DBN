@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -25,7 +26,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
 import gnu.trove.THashMap;
 
-public abstract class DynamicContentImpl<T extends DynamicContentElement> implements DynamicContent<T> {
+public abstract class DynamicContentImpl<T extends DynamicContentElement> extends DisposableBase implements DynamicContent<T> {
     public static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));
     public static final List EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(new ArrayList(0));
 
@@ -34,7 +35,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     private volatile boolean loadingInBackground = false;
     private volatile boolean loaded = false;
     private volatile boolean dirty = false;
-    private volatile boolean disposed = false;
 
     private GenericDatabaseElement parent;
     protected DynamicContentLoader<T> loader;
@@ -97,10 +97,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         return dirty || dependencyAdapter.isDirty();
     }
 
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     public void markDirty() {
         dirty = true;
         ContentDependencyAdapter dependencyAdapter = getDependencyAdapter();
@@ -108,11 +104,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     private boolean shouldReload() {
-        return !disposed && loaded && !loading;
+        return !isDisposed() && loaded && !loading;
     }
 
     private boolean shouldRefresh() {
-        return !disposed && /*loaded && */!loading;
+        return !isDisposed() && /*loaded && */!loading;
     }
 
     public final void load(boolean force) {
@@ -241,7 +237,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     public abstract void notifyChangeListeners();
 
     public void setElements(List<T> elements) {
-        if (disposed || elements == null || elements.size() == 0) {
+        if (isDisposed() || elements == null || elements.size() == 0) {
             elements = EMPTY_CONTENT;
             index = null;
         } else {
@@ -361,7 +357,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     public boolean shouldLoad(boolean force) {
-        if (loading || disposed) {
+        if (loading || isDisposed()) {
             return false;
         }
 
@@ -378,12 +374,12 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     public void checkDisposed() throws InterruptedException {
-        if (disposed) throw new InterruptedException();
+        if (isDisposed()) throw new InterruptedException();
     }
 
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
+        if (!isDisposed()) {
+            super.dispose();
             if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
                 if (dependencyAdapter.isSubContent())
                     elements.clear(); else

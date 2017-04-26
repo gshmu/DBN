@@ -78,7 +78,6 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
     private boolean treeChildrenLoaded;
-    private boolean isDisposed = false;
 
     protected String name;
     protected DBObjectRef objectRef;
@@ -267,7 +266,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
 
     public String getToolTip() {
-        if (isDisposed) {
+        if (isDisposed()) {
             return null;
         }
         return new HtmlToolTipBuilder() {
@@ -782,25 +781,20 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     public boolean isValid() {
-        return !isDisposed;
+        return !isDisposed();
     }
 
     /*********************************************************
     *               DynamicContentElement                    *
     *********************************************************/
     public void dispose() {
-        if (!isDisposed) {
-            isDisposed = true;
+        if (!isDisposed()) {
+            super.dispose();
             DisposerUtil.dispose(childObjects);
             DisposerUtil.dispose(childObjectRelations);
             CollectionUtil.clearCollection(visibleTreeChildren);
             CollectionUtil.clearCollection(allPossibleTreeChildren);
         }
-    }
-
-
-    public boolean isDisposed() {
-        return isDisposed;
     }
 
     public String getDescription() {

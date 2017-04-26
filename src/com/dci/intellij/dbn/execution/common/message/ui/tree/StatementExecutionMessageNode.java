@@ -4,13 +4,14 @@ import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class StatementExecutionMessageNode implements MessageTreeNode {
+public class StatementExecutionMessageNode extends DisposableBase implements MessageTreeNode {
     private StatementExecutionMessage executionMessage;
     private StatementExecutionMessagesFileNode parent;
 
@@ -82,6 +83,7 @@ public class StatementExecutionMessageNode implements MessageTreeNode {
     }
 
     public void dispose() {
+        super.dispose();
         executionMessage = null;
         parent = null;
     }

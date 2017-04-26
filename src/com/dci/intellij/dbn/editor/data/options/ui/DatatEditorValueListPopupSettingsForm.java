@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.editor.data.options.DataEditorValueListPopupSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerInputValue;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorForm<DataEditorValueListPopupSettings> {
     private JTextField elementCountThresholdTextBox;

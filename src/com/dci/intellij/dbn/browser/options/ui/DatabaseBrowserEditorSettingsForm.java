@@ -27,6 +27,7 @@ import com.intellij.openapi.ui.ComboBoxTableRenderer;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<DatabaseBrowserEditorSettings> {
     private JPanel mainPanel;

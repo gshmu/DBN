@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.editor.session.options.SessionInterruptionOption;
 import com.intellij.openapi.options.ConfigurationException;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionBrowserSettings> {
     private JPanel mainPanel;
