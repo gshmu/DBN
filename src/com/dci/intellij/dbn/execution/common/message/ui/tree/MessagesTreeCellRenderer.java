@@ -6,6 +6,7 @@ import java.awt.Color;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -28,6 +29,10 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
     public static final SimpleTextAttributes HIGHLIGHT_ERROR_ATTRIBUTES = SimpleTextAttributes.ERROR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, HIGHLIGHT_BACKGROUND, null);
 
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        if (value instanceof Disposable) {
+            Disposable disposable = (Disposable) value;
+            if (disposable.isDisposed()) return;;
+        }
         Icon icon = null;
         Color background = null;
         if (value instanceof StatementExecutionMessagesNode) {
