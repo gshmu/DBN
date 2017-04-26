@@ -214,9 +214,9 @@ public class EditorUtil {
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
-                editor.setBackgroundColor(readonly ? GUIUtil.adjust(defaultBackground, -0.03) : defaultBackground);
+                editor.setBackgroundColor(readonly ? GUIUtil.adjustColor(defaultBackground, -0.03) : defaultBackground);
                 scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
-                        GUIUtil.adjust(defaultBackground, -0.03) :
+                        GUIUtil.adjustColor(defaultBackground, -0.03) :
                         EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
             }
         }.start();

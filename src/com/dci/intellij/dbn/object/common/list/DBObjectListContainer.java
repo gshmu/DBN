@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapte
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -26,7 +27,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import gnu.trove.THashMap;
 
-public class DBObjectListContainer implements Disposable {
+public class DBObjectListContainer extends DisposableBase implements Disposable {
     private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
     private Map<DBObjectType, DBObjectList<DBObject>> hiddenObjectLists;
     private GenericDatabaseElement owner;
@@ -348,13 +349,11 @@ public class DBObjectListContainer implements Disposable {
     }
 
     public void dispose() {
-        owner = null;
-        DisposerUtil.dispose(objectLists);
-        DisposerUtil.dispose(hiddenObjectLists);
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return owner == null;
+        if (!isDisposed()) {
+            super.dispose();
+            owner = null;
+            DisposerUtil.dispose(objectLists);
+            DisposerUtil.dispose(hiddenObjectLists);
+        }
     }
 }

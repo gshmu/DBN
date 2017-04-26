@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -83,13 +84,12 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
-public class DBObjectBundleImpl implements DBObjectBundle {
+public class DBObjectBundleImpl extends DisposableBase implements DBObjectBundle {
     private ConnectionHandler connectionHandler;
     private BrowserTreeNode treeParent;
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
     private boolean treeChildrenLoaded;
-    private boolean isDisposed;
 
     private DBObjectList<DBSchema> schemas;
     private DBObjectList<DBUser> users;
@@ -101,8 +101,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     private List<DBNativeDataType> nativeDataTypes;
     private List<DBDataType> cachedDataTypes = new CopyOnWriteArrayList<DBDataType>();
 
-    protected DBObjectListContainer objectLists;
-    protected DBObjectRelationListContainer objectRelationLists;
+    private DBObjectListContainer objectLists;
+    private DBObjectRelationListContainer objectRelationLists;
     private int connectionConfigHash;
 
     public DBObjectBundleImpl(ConnectionHandler connectionHandler, BrowserTreeNode treeParent) {
@@ -685,10 +685,6 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return null;
     }
 
-    public boolean isDisposed() {
-        return isDisposed;
-    }
-
     public void initTreeElement() {}
 
     @Override
@@ -697,8 +693,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     }
 
     public void dispose() {
-        if (!isDisposed) {
-            isDisposed = true;
+        if (!isDisposed()) {
+            super.dispose();
             DisposerUtil.dispose(objectLists);
             DisposerUtil.dispose(objectRelationLists);
             CollectionUtil.clearCollection(visibleTreeChildren);

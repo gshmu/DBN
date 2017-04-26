@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -31,7 +32,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
-public class ExplainPlanResult implements ExecutionResult, DataProviderSupplier {
+public class ExplainPlanResult extends DisposableBase implements ExecutionResult, DataProviderSupplier {
     private String planId;
     private Date timestamp;
     private ExplainPlanEntry root;
@@ -159,17 +160,12 @@ public class ExplainPlanResult implements ExecutionResult, DataProviderSupplier 
     /********************************************************
      *                    Disposable                   *
      ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     @Override
     public void dispose() {
-        disposed = true;
-        resultForm = null;
-        DisposerUtil.dispose(root);
+        if (!isDisposed()) {
+            super.dispose();
+            resultForm = null;
+            DisposerUtil.dispose(root);
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.transaction.ui;
 
 import javax.swing.event.TableModelListener;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -9,7 +10,7 @@ import com.dci.intellij.dbn.connection.transaction.UncommittedChange;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.intellij.openapi.project.Project;
 
-public class UncommittedChangesTableModel implements DBNTableModel {
+public class UncommittedChangesTableModel extends DisposableBase implements DBNTableModel {
     private ConnectionHandlerRef connectionHandlerRef;
 
     public UncommittedChangesTableModel(ConnectionHandler connectionHandler) {
@@ -58,17 +59,8 @@ public class UncommittedChangesTableModel implements DBNTableModel {
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-        }
+        super.dispose();
     }
 
 }

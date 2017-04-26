@@ -4,12 +4,13 @@ package com.dci.intellij.dbn.data.model.basic;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.intellij.openapi.util.Disposer;
 
-public class BasicDataModelHeader<T extends ColumnInfo> implements DataModelHeader<T> {
+public class BasicDataModelHeader<T extends ColumnInfo> extends DisposableBase implements DataModelHeader<T> {
     private List<T> columnInfos = new ArrayList<T>();
 
 
@@ -52,17 +53,10 @@ public class BasicDataModelHeader<T extends ColumnInfo> implements DataModelHead
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     @Override
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
+        if (!isDisposed()) {
+            super.dispose();
             columnInfos.clear();
         }
     }

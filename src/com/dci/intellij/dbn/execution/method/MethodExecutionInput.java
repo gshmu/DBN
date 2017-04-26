@@ -309,15 +309,8 @@ public class MethodExecutionInput extends ExecutionInput implements Comparable<M
         return executionInput;
     }
 
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     public void dispose() {
-        disposed = true;
+        super.dispose();
         executionResult = null;
         argumentValues.clear();
         inputArgumentValues.clear();

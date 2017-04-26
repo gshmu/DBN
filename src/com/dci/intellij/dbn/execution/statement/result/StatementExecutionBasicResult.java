@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -22,7 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 
-public class StatementExecutionBasicResult implements StatementExecutionResult{
+public class StatementExecutionBasicResult extends DisposableBase implements StatementExecutionResult{
     private String resultName;
     private StatementExecutionMessage executionMessage;
     private StatementExecutionStatus executionStatus;
@@ -184,25 +185,18 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         this.loggingActive = loggingActive;
     }
 
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    public void dispose() {
-        disposed = true;
-        executionProcessor = null;
-        executionMessage = null;
-    }
-
     @Nullable
     @Override
     public DataProvider getDataProvider() {
         return null;
+    }
+
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+    public void dispose() {
+        super.dispose();
+        executionProcessor = null;
+        executionMessage = null;
     }
 }
