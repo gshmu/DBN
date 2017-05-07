@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -22,7 +23,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
-public class DatabaseLoggingResult implements ExecutionResult {
+public class DatabaseLoggingResult extends DisposableBase implements ExecutionResult {
     private LogOutputContext context;
     private DatabaseLoggingResultForm logOutputForm;
 
@@ -132,15 +133,8 @@ public class DatabaseLoggingResult implements ExecutionResult {
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     public void dispose() {
-        disposed = true;
+        super.dispose();
         logOutputForm = null;
         context = null;
     }

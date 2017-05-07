@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.object.common;
 
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.lang.ASTNode;
@@ -19,11 +24,8 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public abstract class DBObjectPsiAbstraction implements PsiNamedElement {
+public abstract class DBObjectPsiAbstraction extends DisposableBase implements PsiNamedElement {
     private static PsiFile DUMMY_FILE;
 
     /*********************************************************

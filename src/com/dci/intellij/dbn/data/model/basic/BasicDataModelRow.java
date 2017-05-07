@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.intellij.openapi.project.Project;
 
-public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<T> {
+public class BasicDataModelRow<T extends DataModelCell> extends DisposableBase implements DataModelRow<T> {
     protected BasicDataModel model;
     protected List<T> cells;
     private int index;
@@ -81,16 +82,9 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
+        if (!isDisposed()) {
+            super.dispose();
             DisposerUtil.dispose(cells);
             cells = null;
             model = null;

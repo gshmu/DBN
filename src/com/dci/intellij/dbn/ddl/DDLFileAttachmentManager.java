@@ -78,7 +78,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
-            if (!initialLoad) {
+            if (!initialLoad && DatabaseFileSystem.isFileOpened(sourceCodeFile.getObject())) {
                 updateDDLFiles(sourceCodeFile.getMainDatabaseFile());
             }
         }
@@ -98,7 +98,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             for (String filePath : filePaths) {
                 VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
                 if (virtualFile == null || !virtualFile.isValid()) {
-                    mappings.remove(filePath);    
+                    mappings.remove(filePath);
                 } else {
                     if (virtualFiles == null) virtualFiles = new ArrayList<VirtualFile>();
                     virtualFiles.add(virtualFile);
@@ -239,8 +239,8 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                         try {
                             VirtualFile virtualFile = parentDirectory.createChildData(this, fileName);
                             attachDDLFile(object, virtualFile);
-                            DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
-                            updateDDLFiles(databaseFile);
+                            DBEditableObjectVirtualFile editableObjectFile = object.getEditableVirtualFile();
+                            updateDDLFiles(editableObjectFile);
                             DatabaseFileSystem.getInstance().reopenEditor(object);
                         } catch (IOException e) {
                             MessageUtil.showErrorDialog(project, "Could not create file " + parentDirectory + File.separator + fileName + ".", e);

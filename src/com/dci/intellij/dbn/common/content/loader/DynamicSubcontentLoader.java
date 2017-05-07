@@ -31,7 +31,7 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> i
         DynamicContent sourceContent = dependencyAdapter.getSourceContent();
         boolean isBackgroundLoad = DatabaseLoadMonitor.isLoadingInBackground();
         DynamicContentLoader<T> alternativeLoader = getAlternativeLoader();
-        if ((sourceContent.isLoaded() && !sourceContent.isLoading() && !force) || isBackgroundLoad || alternativeLoader == null) {
+        if ((sourceContent.isLoaded() && !sourceContent.isLoading() && !sourceContent.isDirty() && !force) || isBackgroundLoad || alternativeLoader == null) {
             //load from sub-content
             boolean matchedOnce = false;
             List<T> list = null;

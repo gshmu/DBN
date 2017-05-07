@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
 
@@ -52,7 +51,6 @@ public class SequencePsiElement extends BasePsiElement {
             PsiLookupAdapter lookupAdapter,
             int scopeCrossCount) {
 
-        ProgressIndicatorProvider.checkCanceled();
         PsiElement child = getFirstChild();
         while (child != null) {
             if (child instanceof BasePsiElement) {

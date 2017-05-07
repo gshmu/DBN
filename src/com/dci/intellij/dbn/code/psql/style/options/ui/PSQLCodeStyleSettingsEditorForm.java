@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.code.psql.style.options.ui;
 
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
-
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class PSQLCodeStyleSettingsEditorForm extends CompositeConfigurationEditorForm<CodeStyleCustomSettings> {
     private JPanel mainPanel;

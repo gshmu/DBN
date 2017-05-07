@@ -218,6 +218,11 @@ public class DBNativeDataType implements DynamicContentElement{
     public void reload() {
     }
 
+    @Override
+    public void refresh() {
+
+    }
+
     public void dispose() {
 
     }

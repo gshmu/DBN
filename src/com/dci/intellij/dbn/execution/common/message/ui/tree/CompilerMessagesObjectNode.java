@@ -21,8 +21,11 @@ public class CompilerMessagesObjectNode extends BundleTreeNode {
 
     @Nullable
     public DBEditableObjectVirtualFile getVirtualFile() {
-        DBSchemaObject object = getObject();
-        return object == null ? null : object.getVirtualFile();
+        DBSchemaObject schemaObject = getObject();
+        if (schemaObject != null) {
+            return schemaObject.getEditableVirtualFile();
+        }
+        return null;
     }
 
     @Nullable

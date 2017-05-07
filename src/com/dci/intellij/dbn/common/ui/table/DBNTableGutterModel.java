@@ -8,9 +8,10 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 
-public class DBNTableGutterModel<T extends DBNTableWithGutterModel> implements ListModel, Disposable{
+public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends DisposableBase implements ListModel, Disposable{
     private T tableModel;
     private Set<ListDataListener> listeners = new HashSet<ListDataListener>();
 
@@ -52,18 +53,9 @@ public class DBNTableGutterModel<T extends DBNTableWithGutterModel> implements L
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            listeners.clear();
-            tableModel = null;
-        }
+        super.dispose();
+        listeners.clear();
+        tableModel = null;
     }
 }

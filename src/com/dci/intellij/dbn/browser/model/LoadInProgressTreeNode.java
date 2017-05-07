@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.load.LoadIcon;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -19,7 +20,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
 
-public class LoadInProgressTreeNode implements BrowserTreeNode {
+public class LoadInProgressTreeNode extends DisposableBase implements BrowserTreeNode {
     private BrowserTreeNode parent;
     private List list;
 
@@ -166,14 +167,8 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
     }
 
 
-    private boolean disposed;
-
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     public void dispose() {
-        disposed = true;
+        super.dispose();
         parent = null;
     }
 

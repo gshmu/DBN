@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.object.common.list;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.BasicDependencyAdapter;
@@ -9,6 +18,7 @@ import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapte
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -16,17 +26,8 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-public class DBObjectListContainer implements Disposable {
+public class DBObjectListContainer extends DisposableBase implements Disposable {
     private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
     private Map<DBObjectType, DBObjectList<DBObject>> hiddenObjectLists;
     private GenericDatabaseElement owner;
@@ -286,7 +287,7 @@ public class DBObjectListContainer implements Disposable {
         }
     }
 
-    public void reload(boolean recursive) {
+    public void reload() {
         if (objectLists != null)  {
             for (DBObjectList objectList : objectLists.values()) {
                 objectList.reload();
@@ -296,6 +297,21 @@ public class DBObjectListContainer implements Disposable {
         if (hiddenObjectLists != null)  {
             for (DBObjectList objectList : hiddenObjectLists.values()) {
                 objectList.reload();
+                checkDisposed();
+            }
+        }
+    }
+
+    public void refresh() {
+        if (objectLists != null)  {
+            for (DBObjectList objectList : objectLists.values()) {
+                objectList.refresh();
+                checkDisposed();
+            }
+        }
+        if (hiddenObjectLists != null)  {
+            for (DBObjectList objectList : hiddenObjectLists.values()) {
+                objectList.refresh();
                 checkDisposed();
             }
         }
@@ -333,13 +349,11 @@ public class DBObjectListContainer implements Disposable {
     }
 
     public void dispose() {
-        owner = null;
-        DisposerUtil.dispose(objectLists);
-        DisposerUtil.dispose(hiddenObjectLists);
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return owner == null;
+        if (!isDisposed()) {
+            super.dispose();
+            owner = null;
+            DisposerUtil.dispose(objectLists);
+            DisposerUtil.dispose(hiddenObjectLists);
+        }
     }
 }

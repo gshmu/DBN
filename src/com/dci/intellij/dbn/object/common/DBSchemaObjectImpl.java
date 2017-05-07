@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.object.common;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
@@ -23,18 +33,9 @@ import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 
 public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchemaObject {
@@ -130,8 +131,21 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     }
 
     @NotNull
-    public DBEditableObjectVirtualFile getVirtualFile() {
-        return DatabaseFileSystem.getInstance().findOrCreateDatabaseFile(this);
+    public DBObjectVirtualFile getVirtualFile() {
+        if (getParentObject() instanceof DBSchema) {
+            return DatabaseFileSystem.getInstance().findOrCreateDatabaseFile(this);
+        }
+        return super.getVirtualFile();
+    }
+
+    @Override
+    public DBEditableObjectVirtualFile getEditableVirtualFile() {
+        DBObject parentObject = getParentObject();
+        if (parentObject instanceof DBSchema) {
+            return (DBEditableObjectVirtualFile) getVirtualFile();
+        } else {
+            return (DBEditableObjectVirtualFile) parentObject.getVirtualFile();
+        }
     }
 
     @Nullable

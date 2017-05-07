@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.config.ui.CharsetOption;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
+import com.dci.intellij.dbn.data.export.DataExportManager;
 import com.dci.intellij.dbn.data.export.processor.DataExportProcessor;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -35,6 +36,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.util.ui.UIUtil;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
     private static final FileChooserDescriptor DIRECTORY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, true, false, false, false, false);
@@ -248,7 +250,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
     };
 
     private void enableDisableFields() {
-        DataExportProcessor processor = DataExportProcessor.getExportProcessor(getExportInstructions().getFormat());
+        DataExportProcessor processor = DataExportManager.getExportProcessor(getExportInstructions().getFormat());
 
         boolean canCreateHeader = processor != null && processor.canCreateHeader();
         boolean canQuoteValues = processor != null && processor.canQuoteValues();

@@ -4,6 +4,7 @@ import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
@@ -14,7 +15,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
-public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends GUIUtil implements DBNForm {
+public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends DisposableBase implements DBNForm {
     private boolean disposed;
     private Project project;
     private P parentComponent;
@@ -55,11 +56,6 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
     }
 
     @Override
-    public final boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
         return null;
@@ -67,7 +63,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
 
     @Override
     public void dispose() {
-        disposed = true;
+        super.dispose();
         project = null;
         parentComponent = null;
     }

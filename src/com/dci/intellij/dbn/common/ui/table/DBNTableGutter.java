@@ -1,13 +1,18 @@
 package com.dci.intellij.dbn.common.ui.table;
 
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.util.EventUtil;
+import com.intellij.openapi.editor.colors.EditorColorsListener;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.intellij.util.ui.UIUtil;
-
-public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList implements Disposable {
+public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList implements Disposable, EditorColorsListener {
     private boolean disposed;
     private T table;
 
@@ -19,11 +24,15 @@ public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList
         setBackground(UIUtil.getPanelBackground());
 
         setCellRenderer(createCellRenderer());
+        EventUtil.subscribe(this, EditorColorsManager.TOPIC, this);
     }
 
     protected abstract ListCellRenderer createCellRenderer();
 
-
+    @Override
+    public void globalSchemeChange(@Nullable EditorColorsScheme scheme) {
+        setCellRenderer(createCellRenderer());
+    }
 
     @Override
     public ListModel getModel() {

@@ -1,35 +1,28 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
+import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorFontType;
+import com.intellij.ui.border.CustomLineBorder;
+import com.intellij.util.ui.UIUtil;
+
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
-import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
 
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.colors.EditorFontType;
-import com.intellij.ui.border.CustomLineBorder;
-import com.intellij.util.ui.UIUtil;
-
 public class BasicTableGutterCellRenderer extends JPanel implements ListCellRenderer {
 
-    static EditorColorsScheme getGlobalScheme() {
-        return EditorColorsManager.getInstance().getGlobalScheme();
-    }
-
-    private static final Border BORDER = new CompoundBorder(new CustomLineBorder(UIUtil.getPanelBackground(), 0, 0, 1, 1), Borders.TEXT_FIELD_BORDER);
     private JLabel textLabel;
 
     public BasicTableGutterCellRenderer() {
         setBackground(UIUtil.getPanelBackground());
-        setBorder(BORDER);
+        setBorder(new CompoundBorder(new CustomLineBorder(UIUtil.getPanelBackground(), 0, 0, 1, 1), Borders.TEXT_FIELD_BORDER));
         setLayout(new BorderLayout());
         textLabel = new JLabel();
         textLabel.setForeground(BasicTableColors.getLineNumberColor());

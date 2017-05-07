@@ -3,10 +3,11 @@ package com.dci.intellij.dbn.editor.session.details;
 import javax.swing.event.TableModelListener;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 
-public class SessionDetailsTableModel implements DBNTableModel {
+public class SessionDetailsTableModel extends DisposableBase implements DBNTableModel {
     private String sessionId = "";
     private String user = "";
     private String schema = "";
@@ -102,17 +103,9 @@ public class SessionDetailsTableModel implements DBNTableModel {
     /********************************************************
      *                     Disposable                       *
      ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
 
     @Override
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-        }
+        super.dispose();
     }
 }

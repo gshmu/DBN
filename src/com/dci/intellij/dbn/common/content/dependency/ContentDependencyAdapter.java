@@ -14,6 +14,8 @@ public interface ContentDependencyAdapter extends Disposable {
      */
     boolean canLoad(ConnectionHandler connectionHandler);
 
+    void markSourcesDirty();
+
     boolean isDirty();
 
     /**

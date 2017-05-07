@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodExecutionSettings> {
     private JPanel mainPanel;

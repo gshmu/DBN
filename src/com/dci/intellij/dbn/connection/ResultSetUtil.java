@@ -3,7 +3,9 @@ package com.dci.intellij.dbn.connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ResultSetUtil {
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
+
+public class ResultSetUtil extends DisposableBase{
     public static void insertRow(final ResultSet resultSet) throws SQLException {
         try {
             resultSet.insertRow();

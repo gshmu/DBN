@@ -103,12 +103,8 @@ public class ScriptExecutionInput extends ExecutionInput{
     }
 
     @Override
-    public boolean isDisposed() {
-        return false;
-    }
-
-    @Override
     public void dispose() {
-
+        super.dispose();
+        sourceFile = null;
     }
 }

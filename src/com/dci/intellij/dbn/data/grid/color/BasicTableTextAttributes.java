@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.data.grid.color;
 
-import java.awt.Color;
-
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.intellij.openapi.editor.colors.EditorColors;
@@ -9,6 +7,8 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
+
+import java.awt.Color;
 
 public class BasicTableTextAttributes extends CommonUtil implements DataGridTextAttributes {
     private SimpleTextAttributes plainData;
@@ -48,7 +48,7 @@ public class BasicTableTextAttributes extends CommonUtil implements DataGridText
 
     public void load() {
         EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
-        caretRowBgColor = globalScheme.getColor(DataGridTextAttributesKeys.CARET_ROW_BACKGROUND);
+        caretRowBgColor = globalScheme.getAttributes(DataGridTextAttributesKeys.CARET_ROW).getBackgroundColor();
 
         deletedData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.DELETED_DATA);
         errorData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.ERROR_DATA);

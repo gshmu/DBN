@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.util.ui.UIUtil;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
     private JPanel mainPanel;

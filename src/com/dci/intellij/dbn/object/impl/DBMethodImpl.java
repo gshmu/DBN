@@ -127,11 +127,6 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     }
 
     @Override
-    public void reload() {
-        arguments.reload();
-    }
-
-    @Override
     public int compareTo(@NotNull Object o) {
         int result = super.compareTo(o);
         if (result == 0) {

@@ -64,11 +64,6 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     }
 
     @NotNull
-    public DatabaseFileSystem getFileSystem() {
-        return DatabaseFileSystem.getInstance();
-    }
-
-    @NotNull
     @Override
     protected String createPath() {
         return DatabaseFileSystem.createPath(objectRef);

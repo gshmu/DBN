@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettingsChangeListener;
 import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<DataGridTrackingColumnSettings> {
     private JPanel mainPanel;

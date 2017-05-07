@@ -65,11 +65,6 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     }
 
     @NotNull
-    public DatabaseFileSystem getFileSystem() {
-        return DatabaseFileSystem.getInstance();
-    }
-
-    @NotNull
     @Override
     protected String createPath() {
         return DatabaseFileSystem.createPath(objectList);

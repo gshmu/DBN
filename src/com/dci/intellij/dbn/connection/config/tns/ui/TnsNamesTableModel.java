@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.connection.config.tns.ui;
 
-import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
-import com.dci.intellij.dbn.connection.config.tns.TnsName;
-
 import javax.swing.event.TableModelListener;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TnsNamesTableModel implements DBNTableModel {
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
+import com.dci.intellij.dbn.connection.config.tns.TnsName;
+
+public class TnsNamesTableModel extends DisposableBase implements DBNTableModel {
     private TnsName[] tnsNames;
     private Set<TableModelListener> listeners = new HashSet<TableModelListener>();
 
@@ -82,16 +83,9 @@ public class TnsNamesTableModel implements DBNTableModel {
     }
 
 
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     @Override
     public void dispose() {
-        disposed = true;
+        super.dispose();
         listeners.clear();
         tnsNames = new TnsName[0];
     }

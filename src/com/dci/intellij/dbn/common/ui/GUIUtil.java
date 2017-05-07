@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.Colors;
-import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.ui.Splitter;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.popup.list.ListPopupImpl;
-import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -31,6 +20,17 @@ import java.awt.PointerInfo;
 import java.awt.Rectangle;
 import java.lang.reflect.Method;
 import java.util.EventListener;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.Colors;
+import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.ui.Splitter;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.popup.list.ListPopupImpl;
+import com.intellij.util.ui.UIUtil;
 
 public class GUIUtil{
     public static final Font REGULAR_FONT = com.intellij.util.ui.UIUtil.getLabelFont();
@@ -198,7 +198,7 @@ public class GUIUtil{
         popup.show(new RelativePoint(sourceComponent, new Point(0, sourceComponent.getHeight() + verticalShift)));
     }
 
-    public static Color adjust(Color color, double shift) {
+    public static Color adjustColor(Color color, double shift) {
         if (isDarkLookAndFeel()) {
             shift = -shift;
         }

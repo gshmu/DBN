@@ -5,6 +5,11 @@
             <option name="BACKGROUND" value="FFFFFF"/>
         </value>
     </option>
+    <option name="DBNavigator.DefaultTextAttributes.DataEditor.CaretRow">
+        <value>
+            <option name="BACKGROUND" value="FFFAE3"/>
+        </value>
+    </option>
     <option name="DBNavigator.DefaultTextAttributes.DataEditor.TrackingData">
         <value>
             <option name="BACKGROUND" value="FFFFFF"/>

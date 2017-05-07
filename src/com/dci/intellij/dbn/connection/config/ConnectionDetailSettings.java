@@ -19,6 +19,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     private boolean enableDatabaseLogging = false;
     private boolean connectAutomatically = true;
     private boolean restoreWorkspace = true;
+    private boolean restoreWorkspaceDeep = true;
     private int idleTimeToDisconnect = 30;
     private int passwordExpiryTime = 10;
     private int maxConnectionPoolSize = 7;
@@ -87,6 +88,14 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         this.restoreWorkspace = restoreWorkspace;
     }
 
+    public boolean isRestoreWorkspaceDeep() {
+        return restoreWorkspace && restoreWorkspaceDeep;
+    }
+
+    public void setRestoreWorkspaceDeep(boolean restoreWorkspaceDeep) {
+        this.restoreWorkspaceDeep = restoreWorkspaceDeep;
+    }
+
     public boolean isConnectAutomatically() {
         return connectAutomatically;
     }
@@ -150,6 +159,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         enableDatabaseLogging = getBoolean(element, "database-logging", enableDatabaseLogging);
         connectAutomatically = getBoolean(element, "connect-automatically", connectAutomatically);
         restoreWorkspace = getBoolean(element, "restore-workspace", restoreWorkspace);
+        restoreWorkspaceDeep = getBoolean(element, "restore-workspace-deep", restoreWorkspaceDeep);
         environmentTypeId = getString(element, "environment-type", EnvironmentType.DEFAULT.getId());
         idleTimeToDisconnect = getInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         passwordExpiryTime = getInteger(element, "password-expiry-time", passwordExpiryTime);
@@ -165,6 +175,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         setBoolean(element, "database-logging", enableDatabaseLogging);
         setBoolean(element, "connect-automatically", connectAutomatically);
         setBoolean(element, "restore-workspace", restoreWorkspace);
+        setBoolean(element, "restore-workspace-deep", restoreWorkspaceDeep);
         setString(element, "environment-type", environmentTypeId);
         setInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         setInteger(element, "password-expiry-time", passwordExpiryTime);

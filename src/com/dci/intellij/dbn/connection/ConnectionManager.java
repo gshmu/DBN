@@ -47,7 +47,6 @@ import com.dci.intellij.dbn.connection.ui.ConnectionAuthenticationDialog;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -84,7 +83,6 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         super(project);
         connectionBundle = new ConnectionBundle(project);
         Disposer.register(this, connectionBundle);
-        ApplicationManager.getApplication().addApplicationListener(this);
     }
 
     @Override
@@ -135,7 +133,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                         connectionHandler.getConnectionPool().closeConnectionsSilently();
-                        connectionHandler.getObjectBundle().getObjectListContainer().reload(true);
+                        connectionHandler.getObjectBundle().getObjectListContainer().reload();
                     }
                 }.start();
             }
