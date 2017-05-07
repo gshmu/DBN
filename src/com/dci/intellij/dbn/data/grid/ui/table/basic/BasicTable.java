@@ -97,7 +97,9 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         });
 
         EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
-        EventUtil.subscribe(this, EditorColorsManager.TOPIC, this);
+        //EventUtil.subscribe(this, EditorColorsManager.TOPIC, this);
+        EditorColorsManager.getInstance().addEditorColorsListener(this, this);
+
         //EventUtil.subscribe(this, UISettingsListener.TOPIC, this);
     }
 
