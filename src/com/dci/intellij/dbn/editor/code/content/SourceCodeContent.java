@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.editor.code.content;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.openapi.diff.impl.ComparisonPolicy;
-import com.intellij.openapi.diff.impl.processing.ByWord;
+import com.intellij.diff.comparison.ByWord;
+import com.intellij.diff.comparison.ComparisonPolicy;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.Charset;
@@ -48,8 +50,8 @@ public class SourceCodeContent{
     public boolean matches(SourceCodeContent content, boolean soft) {
         if (soft) {
             try {
-                ByWord byWord = new ByWord(ComparisonPolicy.IGNORE_SPACE);
-                return byWord.buildFragments(text.toString(), content.text.toString()).length == 0;
+                ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+                return ByWord.compare(text, content.text, ComparisonPolicy.IGNORE_WHITESPACES, progressIndicator).isEmpty();
             } catch (Exception ignore) {
             }
         }

@@ -214,7 +214,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
         debuggerSession.getContextManager().addListener(new DebuggerContextListener() {
             @Override
-            public void changeEvent(DebuggerContextImpl newContext, int event) {
+            public void changeEvent(DebuggerContextImpl newContext, DebuggerSession.Event event) {
                 SuspendContextImpl suspendContext = newContext.getSuspendContext();
                 overwriteSuspendContext(suspendContext);
             }

@@ -12,6 +12,11 @@ import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.intellij.diff.DiffManager;
+import com.intellij.diff.DiffRequestFactory;
+import com.intellij.diff.InvalidDiffRequestException;
+import com.intellij.diff.merge.MergeRequest;
+import com.intellij.diff.merge.MergeResult;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -21,17 +26,10 @@ import com.intellij.openapi.diff.ActionButtonPresentation;
 import com.intellij.openapi.diff.SimpleContent;
 import com.intellij.openapi.diff.SimpleDiffRequest;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.Consumer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-/*
-import com.intellij.diff.DiffManager;
-import com.intellij.diff.DiffRequestFactory;
-import com.intellij.diff.InvalidDiffRequestException;
-import com.intellij.diff.merge.MergeRequest;
-import com.intellij.diff.merge.MergeResult;
-*/
 
 @State(
         name = "DBNavigator.Project.SourceCodeDiffManager",
@@ -49,7 +47,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
 
     @Deprecated
-    public void openCodeMergeDialog(final String databaseContent, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor fileEditor, final MergeAction action) {
+    public void openCodeMergeDialogOld(final String databaseContent, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor fileEditor, final MergeAction action) {
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
@@ -99,7 +97,6 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
         }.start();
     }
 
-/*
     public void openCodeMergeDialog(final String databaseContent, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor fileEditor, final MergeAction action) {
         new SimpleLaterInvocator() {
             @Override
@@ -156,7 +153,6 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
             }
         }.start();
     }
-*/
 
 
     public void openDiffWindow(@NotNull final DBSourceCodeVirtualFile sourceCodeFile,  final String referenceText, final String referenceTitle, final String windowTitle) {
