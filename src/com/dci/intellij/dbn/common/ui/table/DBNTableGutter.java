@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -24,7 +23,9 @@ public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList
         setBackground(UIUtil.getPanelBackground());
 
         setCellRenderer(createCellRenderer());
-        EventUtil.subscribe(this, EditorColorsManager.TOPIC, this);
+        //EventUtil.subscribe(this, EditorColorsManager.TOPIC, this);
+        EditorColorsManager.getInstance().addEditorColorsListener(this, this);
+
     }
 
     protected abstract ListCellRenderer createCellRenderer();
