@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn;
 
-import java.net.ProxySelector;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -25,6 +17,14 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.util.proxy.CommonProxy;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.net.ProxySelector;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @State(
     name = "DBNavigator.Application.Settings",
@@ -132,7 +132,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
                     ProxySelector.setDefault(defaultProxy);
                 }
 
-                List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadPluginsFromRepository(null);
+                List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadCachedPlugins();
                 if (descriptors != null) {
                     for (IdeaPluginDescriptor descriptor : descriptors) {
                         if (descriptor.getPluginId().toString().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {

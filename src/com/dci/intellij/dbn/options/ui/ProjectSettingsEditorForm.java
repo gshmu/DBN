@@ -25,13 +25,13 @@ import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginInstaller;
 import com.intellij.ide.plugins.PluginManagerMain;
 import com.intellij.ide.plugins.PluginNode;
 import com.intellij.ide.plugins.RepositoryHelper;
-import com.intellij.openapi.application.ex.ApplicationInfoEx;
-import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -118,18 +118,17 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                         protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                             try {
                                 final List<PluginNode> updateDescriptors = new ArrayList<PluginNode>();
-                                final List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadPluginsFromRepository(null);
+                                final List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadCachedPlugins();
+                                final List<PluginId> pluginIds = new ArrayList<PluginId>();
                                 if (descriptors != null) {
                                     for (IdeaPluginDescriptor descriptor : descriptors) {
+                                        pluginIds.add(descriptor.getPluginId());
                                         if (descriptor.getPluginId().toString().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {
                                             PluginNode pluginNode = new PluginNode(descriptor.getPluginId());
                                             pluginNode.setName(descriptor.getName());
                                             pluginNode.setSize("-1");
-                                            ApplicationInfoEx appInfo = ApplicationInfoImpl.getShadowInstance();
-                                            String url = appInfo.getPluginsListUrl() + "?build=" + appInfo.getApiVersion();
-                                            pluginNode.setRepositoryName(url);
+                                            pluginNode.setRepositoryName(PluginInstaller.UNKNOWN_HOST_MARKER);
                                             updateDescriptors.add(pluginNode);
-                                            break;
                                         }
                                     }
                                 }
@@ -138,17 +137,15 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                                     @Override
                                     protected void execute() {
                                         try {
-                                            PluginManagerMain.downloadPlugins(updateDescriptors, descriptors, new Runnable() {
+                                            PluginManagerMain.downloadPlugins(updateDescriptors, pluginIds, new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    PluginManagerMain.notifyPluginsWereUpdated("Database Navigator Plugin", project);
+                                                    PluginManagerMain.notifyPluginsUpdated(project);
                                                 }
                                             }, null);
                                         } catch (IOException e1) {
                                             NotificationUtil.sendErrorNotification(project, "Update Error", "Error updating DBN plugin: " + e1.getMessage());
                                         }
-                                        //UpdateChecker.updateAndShowResult(generalSettings.getProject(), UpdateSettings.getInstance());
-
                                     }
                                 }.start();
                             } catch (Exception ex) {
