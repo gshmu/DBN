@@ -85,9 +85,9 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
 
     @Nullable
     public DBEditableObjectVirtualFile getDatabaseFile() {
-        DBSchemaObject object = compilerResult.getObject();
-        if (databaseFile == null && object != null) {
-            databaseFile = object.getVirtualFile();
+        DBSchemaObject schemaObject = compilerResult.getObject();
+        if (databaseFile == null && schemaObject != null) {
+            databaseFile = schemaObject.getEditableVirtualFile();
         }
         return databaseFile;
     }

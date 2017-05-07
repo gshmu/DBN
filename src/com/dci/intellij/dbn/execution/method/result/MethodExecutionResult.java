@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -34,7 +35,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 
-public class MethodExecutionResult implements ExecutionResult, Disposable {
+public class MethodExecutionResult extends DisposableBase implements ExecutionResult, Disposable {
     private MethodExecutionInput executionInput;
     private MethodExecutionResultForm resultPanel;
     private List<ArgumentValue> argumentValues = new ArrayList<ArgumentValue>();
@@ -191,16 +192,8 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     public void dispose() {
-        disposed = true;
-
+        super.dispose();
         resultPanel = null;
         executionInput = null;
         CollectionUtil.clearMap(cursorModels);

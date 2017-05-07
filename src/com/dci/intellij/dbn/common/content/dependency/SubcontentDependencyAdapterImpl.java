@@ -25,6 +25,11 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
         return canConnect(connectionHandler) && contentDependency.getSourceContent().isLoaded();
     }
 
+    @Override
+    public void markSourcesDirty() {
+        contentDependency.markSourcesDirty();
+    }
+
     public boolean isDirty() {
         return contentDependency.isDirty();
     }

@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.vfs;
 
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
@@ -28,20 +39,8 @@ import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.LocalTimeCounter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.util.List;
 
 public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentListener, DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -91,7 +90,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
-        return languageDialect == null ? null : fileViewProvider.createPsiFile(languageDialect);
+        return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
 
     public void setName(String name) {
@@ -152,12 +151,6 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
 
     public DBConsoleType getType() {
         return type;
-    }
-
-    @NotNull
-    @Override
-    public VirtualFileSystem getFileSystem() {
-        return DatabaseFileSystem.getInstance();
     }
 
     @NotNull

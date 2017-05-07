@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.data.grid.options.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.grid.options.DataGridGeneralSettings;
 import com.intellij.openapi.options.ConfigurationException;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DataGridGeneralSettingsForm extends ConfigurationEditorForm<DataGridGeneralSettings> {
     private JPanel mainPanel;

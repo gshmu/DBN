@@ -17,7 +17,7 @@ import com.intellij.openapi.util.text.StringUtil;
 
 
 public class SQLDataExportProcessor extends DataExportProcessor{
-    protected DataExportFormat getFormat() {
+    public DataExportFormat getFormat() {
         return DataExportFormat.SQL;
     }
 

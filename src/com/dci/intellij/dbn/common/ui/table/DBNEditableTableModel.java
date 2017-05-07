@@ -7,10 +7,11 @@ import javax.swing.event.TableModelListener;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.LazyValue;
 
-public abstract class DBNEditableTableModel implements DBNTableWithGutterModel {
+public abstract class DBNEditableTableModel extends DisposableBase implements DBNTableWithGutterModel {
     private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
     private LazyValue<DBNTableGutterModel> listModel = new DisposableLazyValue<DBNTableGutterModel>(this) {
         @Override
@@ -51,17 +52,8 @@ public abstract class DBNEditableTableModel implements DBNTableWithGutterModel {
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            tableModelListeners.clear();
-        }
+        super.dispose();
+        tableModelListeners.clear();
     }
 }

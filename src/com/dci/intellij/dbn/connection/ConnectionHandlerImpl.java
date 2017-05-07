@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -56,7 +57,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class ConnectionHandlerImpl implements ConnectionHandler {
+public class ConnectionHandlerImpl extends DisposableBase implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private ConnectionSettings connectionSettings;
@@ -70,8 +71,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private ConnectionInstructions instructions = new ConnectionInstructions();
 
-    private boolean isActive;
-    private boolean isDisposed;
+    private boolean active;
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
     private AuthenticationInfo temporaryAuthenticationInfo = new AuthenticationInfo();
@@ -104,7 +104,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     public ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
         this.connectionBundle = connectionBundle;
         this.connectionSettings = connectionSettings;
-        this.isActive = connectionSettings.isActive();
+        this.active = connectionSettings.isActive();
         ref = new ConnectionHandlerRef(this);
 
         connectionStatus = new ConnectionStatus();
@@ -153,7 +153,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     @Override
     public boolean canConnect() {
-        if (isDisposed) {
+        if (isDisposed()) {
             return false;
         }
 
@@ -193,7 +193,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     @Override
     public void setSettings(ConnectionSettings connectionSettings) {
         this.connectionSettings = connectionSettings;
-        this.isActive = connectionSettings.isActive();
+        this.active = connectionSettings.isActive();
     }
 
     @NotNull
@@ -216,7 +216,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
     public DatabaseType getDatabaseType() {
@@ -588,8 +588,8 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     *                      Disposable                       *
     *********************************************************/
     public void dispose() {
-        if (!isDisposed) {
-            isDisposed = true;
+        if (!isDisposed()) {
+            super.dispose();
             connectionPool = null;
             connectionBundle = null;
             changesBundle = null;
@@ -597,10 +597,6 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             sessionBrowserFile = null;
             psiCache = null;
         }
-    }
-
-    public boolean isDisposed() {
-        return isDisposed || connectionBundle == null || connectionBundle.isDisposed();
     }
 
     public void setConnectionConfig(final ConnectionSettings connectionSettings) {

@@ -57,7 +57,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.SettingsSavingComponent;
 import com.intellij.openapi.components.State;
@@ -101,7 +100,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
         EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
         EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        ApplicationManager.getApplication().addApplicationListener(this);
     }
 
 
@@ -180,8 +178,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public void ensureSourcesLoaded(@NotNull final DBSchemaObject schemaObject) {
-        DBEditableObjectVirtualFile virtualFile = schemaObject.getVirtualFile();
-        List<DBSourceCodeVirtualFile> sourceCodeFiles = virtualFile.getSourceCodeFiles();
+        DBEditableObjectVirtualFile editableObjectFile = schemaObject.getEditableVirtualFile();
+        List<DBSourceCodeVirtualFile> sourceCodeFiles = editableObjectFile.getSourceCodeFiles();
         for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
             if (!sourceCodeFile.isLoaded()) {
                 loadSourceFromDatabase(sourceCodeFile, false);
@@ -397,8 +395,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 try {
                     sourceCodeFile.saveSourceToDatabase();
                     EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeSaved(sourceCodeFile, fileEditor);
-
-                    object.reload();
                 } catch (SQLException e) {
                     MessageUtil.showErrorDialog(project, "Could not save changes to database.", e);
                 } finally {
@@ -411,8 +407,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public BasePsiElement getObjectNavigationElement(DBSchemaObject parentObject, DBContentType contentType, DBObjectType objectType, CharSequence objectName) {
-        DBEditableObjectVirtualFile databaseFile = parentObject.getVirtualFile();
-        DBContentVirtualFile contentFile = databaseFile.getContentFile(contentType);
+        DBEditableObjectVirtualFile editableObjectFile = parentObject.getEditableVirtualFile();
+        DBContentVirtualFile contentFile = editableObjectFile.getContentFile(contentType);
         if (contentFile != null) {
             PSQLFile file = (PSQLFile) PsiUtil.getPsiFile(getProject(), contentFile);
             if (file != null) {
@@ -421,19 +417,20 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     contentType == DBContentType.CODE_SPEC ? file.lookupObjectSpecification(objectType, objectName) : null;
             }
         }
+
         return null;
     }
 
     public void navigateToObject(DBSchemaObject parentObject, BasePsiElement basePsiElement) {
-        DBEditableObjectVirtualFile databaseFile = parentObject.getVirtualFile();
-        VirtualFile virtualFile = basePsiElement.getFile().getVirtualFile();
-        if (virtualFile instanceof DBSourceCodeVirtualFile) {
-            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+        DBEditableObjectVirtualFile editableObjectFile = parentObject.getEditableVirtualFile();
+        VirtualFile elementVirtualFile = basePsiElement.getFile().getVirtualFile();
+        if (elementVirtualFile instanceof DBSourceCodeVirtualFile) {
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) elementVirtualFile;
             BasicTextEditor textEditor = EditorUtil.getTextEditor(sourceCodeFile);
             if (textEditor != null) {
                 Project project = getProject();
                 EditorProviderId editorProviderId = textEditor.getEditorProviderId();
-                FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, databaseFile, editorProviderId, true);
+                FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, editableObjectFile, editorProviderId, true);
                 basePsiElement.navigateInEditor(fileEditor, true);
             }
         }

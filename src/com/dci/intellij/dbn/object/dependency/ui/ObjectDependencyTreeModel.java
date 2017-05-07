@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -18,7 +19,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
-public class ObjectDependencyTreeModel implements TreeModel, Disposable{
+public class ObjectDependencyTreeModel extends DisposableBase implements TreeModel, Disposable{
     private Set<TreeModelListener> listeners = new HashSet<TreeModelListener>();
     private ObjectDependencyTreeNode root;
     private ObjectDependencyType dependencyType;
@@ -102,27 +103,20 @@ public class ObjectDependencyTreeModel implements TreeModel, Disposable{
         listeners.remove(l);
     }
 
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     @Override
     public void dispose() {
-        disposed = true;
+        super.dispose();
         listeners.clear();
         tree = null;
         root = null;
     }
 
-    public void refreshLoadInProgressNode(ObjectDependencyTreeNode node) {
+    void refreshLoadInProgressNode(ObjectDependencyTreeNode node) {
         TreePath treePath = new TreePath(node.getTreePath());
         TreeUtil.notifyTreeModelListeners(node, listeners, treePath, TreeEventType.STRUCTURE_CHANGED);
     }
 
-    public void notifyNodeLoaded(ObjectDependencyTreeNode node) {
+    void notifyNodeLoaded(ObjectDependencyTreeNode node) {
         TreePath treePath = new TreePath(node.getTreePath());
         TreeUtil.notifyTreeModelListeners(node, listeners, treePath, TreeEventType.STRUCTURE_CHANGED);
     }

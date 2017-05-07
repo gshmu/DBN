@@ -36,8 +36,7 @@ public class StatementExecutionInput extends ExecutionInput {
     private String originalStatementText;
     private String executableStatementText;
     private ExecutablePsiElement executablePsiElement;
-    private boolean isBulkExecution = false;
-    private boolean isDisposed;
+    private boolean bulkExecution = false;
 
     private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
         @Override
@@ -179,23 +178,19 @@ public class StatementExecutionInput extends ExecutionInput {
     }
 
     public boolean isBulkExecution() {
-        return isBulkExecution;
+        return bulkExecution;
     }
 
     public void setBulkExecution(boolean isBulkExecution) {
-        this.isBulkExecution = isBulkExecution;
+        this.bulkExecution = isBulkExecution;
     }
 
     public void dispose() {
-        if (!isDisposed) {
-            isDisposed = true;
+        if (!isDisposed()) {
+            super.dispose();
             executionProcessor = null;
             executablePsiElement = null;
         }
-    }
-
-    public boolean isDisposed() {
-        return isDisposed;
     }
 
     public String getStatementDescription() {

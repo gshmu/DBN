@@ -8,4 +8,5 @@ public interface DynamicContentElement extends Disposable, Comparable {
     int getOverload();
     String getDescription();
     void reload();
+    void refresh();
 }

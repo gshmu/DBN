@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.util.LocalTimeCounter;
 
 public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Comparable<DBSessionBrowserVirtualFile> {
@@ -55,12 +54,6 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     public boolean isValid() {
         return super.isValid() && connectionHandlerRef.isValid();
     }    
-
-    @NotNull
-    @Override
-    public VirtualFileSystem getFileSystem() {
-        return DatabaseFileSystem.getInstance();
-    }
 
     @NotNull
     @Override

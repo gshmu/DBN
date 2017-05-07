@@ -21,6 +21,10 @@ public class VoidContentDependencyAdapter implements ContentDependencyAdapter{
     }
 
     @Override
+    public void markSourcesDirty() {
+    }
+
+    @Override
     public boolean isDirty() {
         return false;
     }

@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
@@ -32,7 +33,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
-public class ConnectionBundle implements BrowserTreeNode, Disposable {
+public class ConnectionBundle extends DisposableBase implements BrowserTreeNode, Disposable {
 
     public static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER = new Filter<ConnectionHandler>() {
         public boolean accepts(ConnectionHandler connectionHandler) {
@@ -202,15 +203,8 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         return connectionHandlers.getFullList();
     }
 
-    boolean disposed;
-
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-
     public void dispose() {
-        disposed = true;
+        super.dispose();
         connectionHandlers.clear();
         virtualConnections.clear();
     }

@@ -106,12 +106,4 @@ public abstract class DBProgramImpl<P extends DBProcedure, F extends DBFunction>
                 contentType == DBContentType.CODE_SPEC ||
                 contentType == DBContentType.CODE_BODY);
     }
-
-    @Override
-    public void reload() {
-        if (functions != null) functions.reload();
-        if (procedures != null) procedures.reload();
-    }
-
-
 }

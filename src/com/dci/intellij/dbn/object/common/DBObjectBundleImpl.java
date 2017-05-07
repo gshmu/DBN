@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.object.common;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
@@ -11,6 +24,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -34,6 +48,9 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
+import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
+import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
 import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.object.DBCharset;
@@ -62,30 +79,17 @@ import com.dci.intellij.dbn.object.impl.DBSystemPrivilegeImpl;
 import com.dci.intellij.dbn.object.impl.DBUserImpl;
 import com.dci.intellij.dbn.object.impl.DBUserPrivilegeRelation;
 import com.dci.intellij.dbn.object.impl.DBUserRoleRelation;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-public class DBObjectBundleImpl implements DBObjectBundle {
+public class DBObjectBundleImpl extends DisposableBase implements DBObjectBundle {
     private ConnectionHandler connectionHandler;
     private BrowserTreeNode treeParent;
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
     private boolean treeChildrenLoaded;
-    private boolean isDisposed;
 
     private DBObjectList<DBSchema> schemas;
     private DBObjectList<DBUser> users;
@@ -97,8 +101,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     private List<DBNativeDataType> nativeDataTypes;
     private List<DBDataType> cachedDataTypes = new CopyOnWriteArrayList<DBDataType>();
 
-    protected DBObjectListContainer objectLists;
-    protected DBObjectRelationListContainer objectRelationLists;
+    private DBObjectListContainer objectLists;
+    private DBObjectRelationListContainer objectRelationLists;
     private int connectionConfigHash;
 
     public DBObjectBundleImpl(ConnectionHandler connectionHandler, BrowserTreeNode treeParent) {
@@ -141,6 +145,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
         Project project = connectionHandler.getProject();
         EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
+        EventUtil.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
         EventUtil.subscribe(project, this, CompileManagerListener.TOPIC, compileManagerListener);
     }
 
@@ -150,7 +155,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
             if (schema.getConnectionHandler() == getConnectionHandler()) {
                 DBObjectList childObjectList = schema.getChildObjectList(objectType);
                 if (childObjectList != null && childObjectList.isLoaded()) {
-                    childObjectList.reload();
+                    childObjectList.refresh();
                 }
 
                 Set<DBObjectType> childObjectTypes = objectType.getChildren();
@@ -159,7 +164,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                     if (childObjects != null) {
                         childObjectList = childObjects.getHiddenObjectList(childObjectType);
                         if (childObjectList != null && childObjectList.isLoaded()) {
-                            childObjectList.reload();
+                            childObjectList.refresh();
                         }
                     }
                 }
@@ -174,11 +179,25 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                     List<DBObjectList<DBObject>> objectLists = childObjects.getAllObjectLists();
                     for (DBObjectList objectList : objectLists) {
                         if (objectList.isLoaded()) {
-                            objectList.reload();
+                            objectList.refresh();
                         }
                     }
                 }
             }
+        }
+    };
+
+    private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+        @Override
+        public void sourceCodeSaved(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
+            new BackgroundTask(getProject(), "Reloading database object", true) {
+
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                    DBObject object = sourceCodeFile.getObject();
+                    object.refresh();
+                }
+            }.start();
         }
     };
 
@@ -666,10 +685,6 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return null;
     }
 
-    public boolean isDisposed() {
-        return isDisposed;
-    }
-
     public void initTreeElement() {}
 
     @Override
@@ -678,8 +693,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     }
 
     public void dispose() {
-        if (!isDisposed) {
-            isDisposed = true;
+        if (!isDisposed()) {
+            super.dispose();
             DisposerUtil.dispose(objectLists);
             DisposerUtil.dispose(objectRelationLists);
             CollectionUtil.clearCollection(visibleTreeChildren);

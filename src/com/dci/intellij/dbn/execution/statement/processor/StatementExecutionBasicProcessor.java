@@ -1,6 +1,17 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Counter;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
@@ -53,24 +64,14 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
-    protected WeakReference<FileEditor> fileEditorRef;
+public class StatementExecutionBasicProcessor extends DisposableBase implements StatementExecutionProcessor {
     protected DBLanguagePsiFile psiFile;
-    protected ExecutablePsiElement cachedExecutable;
+    private WeakReference<FileEditor> fileEditorRef;
+    private ExecutablePsiElement cachedExecutable;
     private EditorProviderId editorProviderId;
 
-    protected String resultName;
+    private String resultName;
     protected int index;
 
     private StatementExecutionInput executionInput;
@@ -390,8 +391,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                                     }
                                     EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
                                 }
-
-                                object.reload();
+                                object.refresh();
                             }
 
                             executionResult.setCompilerResult(compilerResult);
@@ -473,7 +473,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public boolean canExecute() {
-        return !disposed;
+        return !isDisposed();
     }
 
     public void navigateToResult() {
@@ -586,20 +586,10 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
-
     @Override
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            cachedExecutable = null;
-            psiFile = null;
-
-        }
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
+        super.dispose();
+        cachedExecutable = null;
+        psiFile = null;
     }
 }

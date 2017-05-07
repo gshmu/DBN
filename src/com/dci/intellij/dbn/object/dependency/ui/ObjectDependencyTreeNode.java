@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -14,7 +15,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
-public class ObjectDependencyTreeNode implements Disposable {
+public class ObjectDependencyTreeNode extends DisposableBase implements Disposable {
     private DBObjectRef<DBObject> objectRef;
     private List<ObjectDependencyTreeNode> dependencies;
     private ObjectDependencyTreeModel model;
@@ -151,13 +152,11 @@ public class ObjectDependencyTreeNode implements Disposable {
 
     @Override
     public void dispose() {
-        DisposerUtil.dispose(dependencies);
-        model = null;
-        parent = null;
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return parent == null && model == null;
+        if (!isDisposed()) {
+            super.dispose();
+            DisposerUtil.dispose(dependencies);
+            model = null;
+            parent = null;
+        }
     }
 }

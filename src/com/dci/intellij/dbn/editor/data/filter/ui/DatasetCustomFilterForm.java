@@ -1,15 +1,9 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
-import java.awt.BorderLayout;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.data.filter.DatasetCustomFilter;
@@ -28,6 +22,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+import java.awt.BorderLayout;
+
 public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCustomFilter> {
     private JPanel mainPanel;
     private JPanel actionsPanel;
@@ -43,6 +44,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
     public DatasetCustomFilterForm(DBDataset dataset, DatasetCustomFilter filter) {
         super(filter);
         nameTextField.setText(filter.getDisplayName());
+        GUIUtil.updateBorderTitleForeground(mainPanel);
         Project project = dataset.getProject();
 
         StringBuilder selectStatement = new StringBuilder("select * from ");

@@ -74,7 +74,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                 Object lastPathComponent = treePath.getLastPathComponent();
                 if (lastPathComponent instanceof MessageTreeNode) {
                     MessageTreeNode node = (MessageTreeNode) lastPathComponent;
-                    if (node.getMessage().isNew()) {
+                    if (!node.isDisposed() && node.getMessage().isNew()) {
                         Rectangle r = getRowBounds(i);
                         g.setColor(MessagesTreeCellRenderer.HIGHLIGHT_BACKGROUND);
                         g.fillRect(0, r.y, getWidth(), r.height);

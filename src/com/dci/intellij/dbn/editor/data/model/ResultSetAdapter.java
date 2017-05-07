@@ -57,11 +57,7 @@ public abstract class ResultSetAdapter extends ResultSetUtil implements Disposab
 
     @Override
     public void dispose() {
+        super.dispose();
         model = null;
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return model == null;
     }
 }

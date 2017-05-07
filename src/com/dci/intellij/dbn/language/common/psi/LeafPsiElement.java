@@ -91,21 +91,24 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
     }
 
     public static Set<DBObject> identifyPotentialParentObjects(DBObjectType objectType, @Nullable ObjectTypeFilter filter, @NotNull BasePsiElement sourceScope, LeafPsiElement lookupIssuer) {
-        ConnectionHandler connectionHandler = sourceScope.getActiveConnection();
         Set<DBObject> parentObjects = null;
         Set<DBObjectType> parentTypes = objectType.getGenericParents();
         if (parentTypes.size() > 0) {
-            if (objectType.isSchemaObject() && connectionHandler != null && !connectionHandler.isVirtual()) {
-                DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+            if (objectType.isSchemaObject()) {
+                ConnectionHandler connectionHandler = sourceScope.getActiveConnection();
 
-                if (filter == null || filter.acceptsCurrentSchemaObject(objectType)) {
-                    DBSchema currentSchema = sourceScope.getCurrentSchema();
-                    parentObjects = addObjectToSet(parentObjects, currentSchema);
-                }
+                if (connectionHandler != null && !connectionHandler.isVirtual()) {
+                    DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
 
-                if (filter == null || filter.acceptsPublicSchemaObject(objectType)) {
-                    DBSchema publicSchema = objectBundle.getPublicSchema();
-                    parentObjects = addObjectToSet(parentObjects, publicSchema);
+                    if (filter == null || filter.acceptsCurrentSchemaObject(objectType)) {
+                        DBSchema currentSchema = sourceScope.getCurrentSchema();
+                        parentObjects = addObjectToSet(parentObjects, currentSchema);
+                    }
+
+                    if (filter == null || filter.acceptsPublicSchemaObject(objectType)) {
+                        DBSchema publicSchema = objectBundle.getPublicSchema();
+                        parentObjects = addObjectToSet(parentObjects, publicSchema);
+                    }
                 }
             }
 

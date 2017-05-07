@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.common.option;
 
 
-import java.text.MessageFormat;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.text.MessageFormat;
 
 public class ConfirmationOptionHandler implements DialogWrapper.DoNotAskOption, PersistentConfiguration{
     private String configName;
@@ -59,7 +59,7 @@ public class ConfirmationOptionHandler implements DialogWrapper.DoNotAskOption, 
         return "Do not ask again";
     }
 
-    public boolean resolve(String ... messageArgs) {
+    public boolean resolve(Object ... messageArgs) {
         if (confirm) {
             int optionIndex = Messages.showDialog(
                     MessageFormat.format(message, messageArgs),

@@ -15,6 +15,11 @@ public class BasicDependencyAdapter implements ContentDependencyAdapter {
         return canConnect(connectionHandler);
     }
 
+    @Override
+    public void markSourcesDirty() {
+
+    }
+
     public boolean isDirty() {
         return false;
     }

@@ -11,6 +11,7 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -34,7 +35,7 @@ import com.dci.intellij.dbn.data.model.DataModelState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
-public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
+public class BasicDataModel<T extends DataModelRow> extends DisposableBase implements DataModel<T> {
     private DataModelHeader<? extends ColumnInfo> header;
     private DataModelState state;
     private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
@@ -279,7 +280,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     }
 
     public int getColumnCount() {
-        return disposed ? 0 : getHeader().getColumnCount();
+        return isDisposed() ? 0 : getHeader().getColumnCount();
     }
 
     public String getColumnName(int columnIndex) {
@@ -338,16 +339,9 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
+        if (!isDisposed()) {
+            super.dispose();
             DisposerUtil.dispose(rows);
             tableModelListeners.clear();
             dataModelListeners.clear();

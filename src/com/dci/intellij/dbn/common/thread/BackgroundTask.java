@@ -5,9 +5,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -84,20 +81,8 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     protected abstract void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException;
 
     public final void start() {
-        final ProgressManager progressManager = ProgressManager.getInstance();
         final BackgroundTask task = BackgroundTask.this;
-        Application application = ApplicationManager.getApplication();
-
-        if (application.isDispatchThread()) {
-            progressManager.run(task);
-        } else {
-            Runnable runnable = new Runnable() {
-                public void run() {
-                    progressManager.run(task);
-                }
-            };
-            application.invokeLater(runnable, ModalityState.NON_MODAL);
-        }
+        TaskUtil.startTask(task, getProject());
     }
 
     protected static void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate) {

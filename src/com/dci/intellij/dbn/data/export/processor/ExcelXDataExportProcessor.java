@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.data.export.DataExportFormat;
 
 public class ExcelXDataExportProcessor extends ExcelDataExportProcessor{
 
-    protected DataExportFormat getFormat() {
+    public DataExportFormat getFormat() {
         return DataExportFormat.EXCELX;
     }
 

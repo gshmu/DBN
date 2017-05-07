@@ -88,6 +88,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
 
         nameTextField.addKeyListener(createKeyListener());
         registerComponent(mainPanel);
+        GUIUtil.updateBorderTitleForeground(mainPanel);
 
         if (filter.getError() == null) {
             errorLabel.setText("");
@@ -202,7 +203,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
                 SyntaxHighlighter syntaxHighlighter = dataset.getLanguageDialect(SQLLanguage.INSTANCE).getSyntaxHighlighter();
                 EditorColorsScheme colorsScheme = viewer.getColorsScheme();
                 viewer.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
-                viewer.setBackgroundColor(GUIUtil.adjust(viewer.getBackgroundColor(), -0.01));
+                viewer.setBackgroundColor(GUIUtil.adjustColor(viewer.getBackgroundColor(), -0.01));
                 viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
                 viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
                 //viewerScrollPane.setBorder(null);

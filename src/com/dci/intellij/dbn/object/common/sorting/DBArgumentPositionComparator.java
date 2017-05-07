@@ -13,10 +13,13 @@ public class DBArgumentPositionComparator extends DBObjectComparator<DBArgument>
     public int compare(DBArgument argument1, DBArgument argument2) {
         DBMethod method1 = argument1.getMethod();
         DBMethod method2 = argument2.getMethod();
-        if (method1.equals(method2)) {
-            return argument1.getPosition() - argument2.getPosition();
-        } else {
-            return method1.compareTo(method2);
+        if (method1 != null) {
+            if (method1.equals(method2)) {
+                return argument1.getPosition() - argument2.getPosition();
+            } else {
+                return method1.compareTo(method2);
+            }
         }
+        return -1;
     }
 }

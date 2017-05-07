@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -14,7 +15,7 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.intellij.openapi.project.Project;
 
-public abstract class ExecutionInput implements Disposable, ConnectionProvider, PersistentConfiguration {
+public abstract class ExecutionInput extends DisposableBase implements Disposable, ConnectionProvider, PersistentConfiguration {
     private ExecutionTimeout executionTimeout;
     private ExecutionTimeout debugExecutionTimeout;
     private ProjectRef projectRef;

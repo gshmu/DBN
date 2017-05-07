@@ -42,7 +42,7 @@ public class DBDebugUtil {
     @Nullable
     public static DBEditableObjectVirtualFile getMainDatabaseFile(DBMethod method) {
         DBSchemaObject schemaObject = getMainDatabaseObject(method);
-        return schemaObject == null ? null : schemaObject.getVirtualFile();
+        return schemaObject == null ? null : (DBEditableObjectVirtualFile) schemaObject.getVirtualFile();
     }
 
     @Nullable

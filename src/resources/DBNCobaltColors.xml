@@ -5,6 +5,11 @@
             <option name="BACKGROUND" value="002240"/>
         </value>
     </option>
+    <option name="DBNavigator.DefaultTextAttributes.DataEditor.CaretRow">
+        <value>
+            <option name="BACKGROUND" value="323232"/>
+        </value>
+    </option>
     <option name="DBNavigator.DefaultTextAttributes.DataEditor.TrackingData">
         <value>
             <option name="FOREGROUND" value="6A6A6A"/>
