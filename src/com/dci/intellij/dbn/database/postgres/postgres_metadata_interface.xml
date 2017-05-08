@@ -12,6 +12,15 @@
     <statement-execution-processor id="schemas" is-query="true" is-prepared-statement="true">
         <statement>
             select
+                NSPNAME as SCHEMA_NAME,
+                case when lower(NSPNAME)='pg_catalog' then 'Y' else 'N' end as IS_PUBLIC,
+                case when lower(NSPNAME)='information_schema' then 'Y' else 'N' end as IS_SYSTEM,
+                'N' as IS_EMPTY
+            from PG_CATALOG.PG_NAMESPACE
+            order by NSPNAME asc
+        </statement>
+        <statement>
+            select
                 SCHEMA_NAME,
                 case when lower(SCHEMA_NAME)='pg_catalog' then 'Y' else 'N' end as IS_PUBLIC,
                 case when lower(SCHEMA_NAME)='information_schema' then 'Y' else 'N' end as IS_SYSTEM,
