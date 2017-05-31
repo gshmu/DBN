@@ -77,7 +77,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         super(astNode);
         this.elementType = elementType;
         isScopeIsolation = elementType.is(ElementTypeAttribute.SCOPE_ISOLATION);
-        isScopeDemarcation = elementType.is(ElementTypeAttribute.SCOPE_DEMARCATION);
+        isScopeDemarcation = elementType.is(ElementTypeAttribute.SCOPE_DEMARCATION) || elementType.is(ElementTypeAttribute.STATEMENT);
     }
 
     public FormattingAttributes getFormattingAttributes() {
