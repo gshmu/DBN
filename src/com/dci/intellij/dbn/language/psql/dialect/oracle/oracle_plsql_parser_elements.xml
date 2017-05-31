@@ -1388,7 +1388,7 @@
         <token id="000000708" type-id="CHR_SEMICOLON" />
     </element-def>
 
-    <element-def attributes="STATEMENT" description="CURSOR declaration" id="cursor_declaration" virtual-object="CURSOR">
+    <element-def attributes="STATEMENT, OBJECT_DECLARATION" description="CURSOR declaration" id="cursor_declaration" virtual-object="CURSOR">
         <token id="000000709" type-id="KW_CURSOR" />
         <variable-def attributes="SUBJECT" id="000000710" original-name="cursor_name" type="CURSOR" />
         <wrapper id="000000711" optional="true" template="PARENTHESES">

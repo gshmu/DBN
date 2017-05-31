@@ -330,6 +330,16 @@ public enum DBObjectType implements DynamicContentType {
         return list;
     }
 
+    public boolean matchesOneOf(DBObjectType ... objectTypes) {
+        for (DBObjectType objectType : objectTypes) {
+            if (matches(objectType)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean matches(DBObjectType objectType) {
         if (this == ANY || objectType == ANY) {
             return true;
