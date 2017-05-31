@@ -15,6 +15,7 @@
         formatting-spacing-after (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
         original-name CDATA #IMPLIED
         icon CDATA #IMPLIED
+        language (SQL|PSQL)
         truncate-on-execution CDATA #IMPLIED
         virtual-object CDATA #IMPLIED
 <!ELEMENT token (#PCDATA)>
