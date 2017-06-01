@@ -245,7 +245,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
      *                     TreeElement                       *
      *********************************************************/
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 

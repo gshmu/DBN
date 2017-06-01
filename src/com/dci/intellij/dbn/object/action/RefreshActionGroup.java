@@ -11,7 +11,7 @@ public class RefreshActionGroup  extends DefaultActionGroup {
     public RefreshActionGroup(DBObject object) {
         super("Refresh", true);
         getTemplatePresentation().setIcon(Icons.ACTION_REFRESH);
-        DBObjectList objectList = (DBObjectList) object.getTreeParent();
+        DBObjectList objectList = (DBObjectList) object.getParent();
         add(new ReloadObjectsAction(objectList));
         if (object instanceof DBSchemaObject && DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
             add(new RefreshObjectsStatusAction(object.getConnectionHandler()));

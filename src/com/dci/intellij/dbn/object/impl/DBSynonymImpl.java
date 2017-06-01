@@ -143,7 +143,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
      *                     TreeElement                       *
      *********************************************************/
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 

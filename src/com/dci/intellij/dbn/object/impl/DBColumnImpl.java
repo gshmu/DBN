@@ -314,7 +314,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
      *                     TreeElement                       *
      *********************************************************/
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 

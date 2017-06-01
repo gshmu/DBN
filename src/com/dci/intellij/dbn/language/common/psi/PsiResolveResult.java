@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.util.Key;
@@ -112,9 +113,9 @@ public class PsiResolveResult {
         if (parent != null) {
             if (!parent.isValid()) {
                 return true;
-            } else if (referencedElement instanceof DBObject) {
-                DBObject object = (DBObject) referencedElement;
-                if (object.getParentObject() != parent.resolveUnderlyingObject()) {
+            } else if (referencedElement instanceof DBObjectPsiElement) {
+                DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) referencedElement;
+                if (objectPsiElement.getObject().getParentObject() != parent.resolveUnderlyingObject()) {
                     return true;
                 }
             }
@@ -165,9 +166,9 @@ public class PsiResolveResult {
 
     public DBObjectType getObjectType() {
         PsiElement referencedElement = getReferencedElement();
-        if (referencedElement instanceof DBObject) {
-            DBObject object = (DBObject) referencedElement;
-            return object.getObjectType();
+        if (referencedElement instanceof DBObjectPsiElement) {
+            DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) referencedElement;
+            return objectPsiElement.getObject().getObjectType();
         }
         if (referencedElement instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;

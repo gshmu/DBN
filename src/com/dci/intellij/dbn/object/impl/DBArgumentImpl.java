@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.object.impl;
 
+import javax.swing.Icon;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
@@ -15,14 +23,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
     private DBDataType dataType;
@@ -84,7 +84,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
         return output;
     }
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 

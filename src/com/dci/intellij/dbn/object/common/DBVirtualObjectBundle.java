@@ -1,6 +1,13 @@
 package com.dci.intellij.dbn.object.common;
 
+import javax.swing.Icon;
+import java.util.Collections;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
@@ -20,14 +27,8 @@ import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.util.Collections;
-import java.util.List;
-
-public class DBVirtualObjectBundle implements DBObjectBundle{
+public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObjectBundle{
     private VirtualConnectionHandler connectionHandler;
 
     public DBVirtualObjectBundle(VirtualConnectionHandler connectionHandler) {
@@ -199,18 +200,18 @@ public class DBVirtualObjectBundle implements DBObjectBundle{
     }
 
     @Override
-    public BrowserTreeNode getTreeChild(int index) {
+    public BrowserTreeNode getChildAt(int index) {
         return null;
     }
 
     @Nullable
     @Override
-    public BrowserTreeNode getTreeParent() {
+    public BrowserTreeNode getParent() {
         return null;
     }
 
     @Override
-    public List<? extends BrowserTreeNode> getTreeChildren() {
+    public List<? extends BrowserTreeNode> getChildren() {
         return null;
     }
 
@@ -225,17 +226,17 @@ public class DBVirtualObjectBundle implements DBObjectBundle{
     }
 
     @Override
-    public int getTreeChildCount() {
+    public int getChildCount() {
         return 0;
     }
 
     @Override
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return false;
     }
 
     @Override
-    public int getIndexOfTreeChild(BrowserTreeNode child) {
+    public int getIndex(BrowserTreeNode child) {
         return 0;
     }
 
@@ -292,16 +293,6 @@ public class DBVirtualObjectBundle implements DBObjectBundle{
     @Override
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         return null;
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return false;
-    }
-
-    @Override
-    public void dispose() {
-
     }
 
     @Nullable

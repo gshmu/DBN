@@ -36,7 +36,7 @@ public class DBClusterImpl extends DBSchemaObjectImpl implements DBCluster {
      *                     TreeElement                       *
      *********************************************************/
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 

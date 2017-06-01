@@ -136,9 +136,9 @@ public class DatabaseBrowserTree extends DBNTree {
                         break;
                     }
 
-                    if (!treeNode.isLeafTreeElement() && !treeNode.isTreeStructureLoaded()) {
+                    if (!treeNode.isLeaf() && !treeNode.isTreeStructureLoaded()) {
                         selectPath(DatabaseBrowserUtils.createTreePath(treeNode));
-                        treeNode.getTreeChildren();
+                        treeNode.getChildren();
                         return;
                     }
                 }
@@ -229,8 +229,8 @@ public class DatabaseBrowserTree extends DBNTree {
     public void expand(BrowserTreeNode treeNode) {
         if (treeNode.canExpand()) {
             expandPath(DatabaseBrowserUtils.createTreePath(treeNode));
-            for (int i = 0; i < treeNode.getTreeChildCount(); i++) {
-                BrowserTreeNode childTreeNode = treeNode.getTreeChild(i);
+            for (int i = 0; i < treeNode.getChildCount(); i++) {
+                BrowserTreeNode childTreeNode = treeNode.getChildAt(i);
                 expand(childTreeNode);
             }
         }
@@ -242,9 +242,9 @@ public class DatabaseBrowserTree extends DBNTree {
     }
 
     public void collapse(BrowserTreeNode treeNode) {
-        if (!treeNode.isLeafTreeElement() && treeNode.isTreeStructureLoaded()) {
-            for (int i = 0; i < treeNode.getTreeChildCount(); i++) {
-                BrowserTreeNode childTreeNode = treeNode.getTreeChild(i);
+        if (!treeNode.isLeaf() && treeNode.isTreeStructureLoaded()) {
+            for (int i = 0; i < treeNode.getChildCount(); i++) {
+                BrowserTreeNode childTreeNode = treeNode.getChildAt(i);
                 collapse(childTreeNode);
                 collapsePath(DatabaseBrowserUtils.createTreePath(childTreeNode));
             }

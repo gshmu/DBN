@@ -26,7 +26,7 @@ public class DatabaseBrowserUtils {
             path[isTabbedMode ? treeDepth -2 : treeDepth] = treeNode;
             if (treeNode instanceof DatabaseBrowserManager) break;
             if (isTabbedMode && treeNode instanceof DBObjectBundle) break;
-            treeNode = treeNode.getTreeParent();
+            treeNode = treeNode.getParent();
         }
         return new TreePath(path);
     }

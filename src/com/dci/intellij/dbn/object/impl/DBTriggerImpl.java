@@ -146,7 +146,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
      *                     TreeElement                       *
      *********************************************************/
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 

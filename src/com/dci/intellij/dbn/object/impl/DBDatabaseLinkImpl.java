@@ -55,7 +55,7 @@ public class DBDatabaseLinkImpl extends DBSchemaObjectImpl implements DBDatabase
      *                     TreeElement                       *
      *********************************************************/
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 

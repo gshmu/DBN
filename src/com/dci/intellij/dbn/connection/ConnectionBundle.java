@@ -9,13 +9,13 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
@@ -33,7 +33,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
-public class ConnectionBundle extends DisposableBase implements BrowserTreeNode, Disposable {
+public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, Disposable {
 
     public static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER = new Filter<ConnectionHandler>() {
         public boolean accepts(ConnectionHandler connectionHandler) {
@@ -255,13 +255,13 @@ public class ConnectionBundle extends DisposableBase implements BrowserTreeNode,
     }
 
     @Nullable
-    public BrowserTreeNode getTreeParent() {
+    public BrowserTreeNode getParent() {
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
         DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
         return browserManager.isTabbedMode() ? null : activeBrowserTree == null ? null : activeBrowserTree.getModel().getRoot();
     }
 
-    public List<? extends BrowserTreeNode> getTreeChildren() {
+    public List<? extends BrowserTreeNode> getChildren() {
         return null;  //should never be used
     }
 
@@ -277,19 +277,19 @@ public class ConnectionBundle extends DisposableBase implements BrowserTreeNode,
         }
     }
 
-    public BrowserTreeNode getTreeChild(int index) {
+    public BrowserTreeNode getChildAt(int index) {
         return connectionHandlers.get(index).getObjectBundle();
     }
 
-    public int getTreeChildCount() {
+    public int getChildCount() {
         return connectionHandlers.size();
     }
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return connectionHandlers.size() == 0;
     }
 
-    public int getIndexOfTreeChild(BrowserTreeNode child) {
+    public int getIndex(BrowserTreeNode child) {
         DBObjectBundle objectBundle = (DBObjectBundle) child;
         return connectionHandlers.indexOf(objectBundle.getConnectionHandler());
     }

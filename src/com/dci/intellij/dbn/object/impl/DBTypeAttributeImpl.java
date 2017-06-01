@@ -92,7 +92,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute
      *                     TreeElement                       *
      *********************************************************/
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 

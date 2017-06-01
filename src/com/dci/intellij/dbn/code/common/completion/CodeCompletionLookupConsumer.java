@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public class CodeCompletionLookupConsumer implements LookupConsumer {
@@ -36,6 +37,10 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
         if (object instanceof DBObject) {
             DBObject dbObject = (DBObject) object;
             lookupItemBuilder = dbObject.getLookupItemBuilder(context.getLanguage());
+        }
+        else if (object instanceof DBObjectPsiElement) {
+            DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) object;
+            lookupItemBuilder = objectPsiElement.getObject().getLookupItemBuilder(context.getLanguage());
 
         } else if (object instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) object;

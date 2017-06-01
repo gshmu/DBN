@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
@@ -24,7 +25,6 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -84,7 +84,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
-public class DBObjectBundleImpl extends DisposableBase implements DBObjectBundle {
+public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle {
     private ConnectionHandler connectionHandler;
     private BrowserTreeNode treeParent;
     private List<BrowserTreeNode> allPossibleTreeChildren;
@@ -337,23 +337,23 @@ public class DBObjectBundleImpl extends DisposableBase implements DBObjectBundle
     }
 
     public boolean canExpand() {
-        return treeChildrenLoaded && getTreeChild(0).isTreeStructureLoaded();
+        return treeChildrenLoaded && getChildAt(0).isTreeStructureLoaded();
     }
 
     public int getTreeDepth() {
         return treeParent == null ? 0 : treeParent.getTreeDepth() + 1;
     }
 
-    public BrowserTreeNode getTreeChild(int index) {
-        return getTreeChildren().get(index);
+    public BrowserTreeNode getChildAt(int index) {
+        return getChildren().get(index);
     }
 
     @Nullable
-    public BrowserTreeNode getTreeParent() {
+    public BrowserTreeNode getParent() {
         return treeParent;
     }
 
-    public List<? extends BrowserTreeNode> getTreeChildren() {
+    public List<? extends BrowserTreeNode> getChildren() {
         if (visibleTreeChildren == null) {
             synchronized (this) {
                 if (visibleTreeChildren == null) {
@@ -426,16 +426,16 @@ public class DBObjectBundleImpl extends DisposableBase implements DBObjectBundle
         }
     }
 
-    public int getTreeChildCount() {
-        return getTreeChildren().size();
+    public int getChildCount() {
+        return getChildren().size();
     }
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return false;
     }
 
-    public int getIndexOfTreeChild(BrowserTreeNode child) {
-        return getTreeChildren().indexOf(child);
+    public int getIndex(BrowserTreeNode child) {
+        return getChildren().indexOf(child);
     }
 
     public Icon getIcon(int flags) {

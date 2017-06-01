@@ -87,7 +87,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     public VirtualFile getParent() {
         if (CommonUtil.isCalledThrough(NavBarPresentation.class)) {
             T object = getObject();
-            BrowserTreeNode treeParent = object.getTreeParent();
+            BrowserTreeNode treeParent = object.getParent();
             if (treeParent instanceof DBObjectList<?>) {
                 DBObjectList objectList = (DBObjectList) treeParent;
                 return NavigationPsiCache.getPsiDirectory(objectList).getVirtualFile();

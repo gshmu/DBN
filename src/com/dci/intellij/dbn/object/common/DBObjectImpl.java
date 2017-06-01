@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.browser.ui.ToolTipProvider;
@@ -71,8 +72,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 
-public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBObject, ToolTipProvider {
-    public static final List<DBObject> EMPTY_OBJECT_LIST = Collections.unmodifiableList(new ArrayList<DBObject>(0));
+public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
+    private static final List<DBObject> EMPTY_OBJECT_LIST = Collections.unmodifiableList(new ArrayList<DBObject>(0));
     public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<BrowserTreeNode>(0));
 
     private List<BrowserTreeNode> allPossibleTreeChildren;
@@ -85,6 +86,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     private DBObjectProperties properties;
     private DBObjectListContainer childObjects;
     private DBObjectRelationListContainer childObjectRelations;
+    private DBObjectPsiElement psi;
 
     private LookupItemBuilder sqlLookupItemBuilder;
     private LookupItemBuilder psqlLookupItemBuilder;
@@ -131,14 +133,14 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     protected void initLists() {}
 
-    @Override
+/*    @Override
     public PsiElement getParent() {
         PsiFile containingFile = getContainingFile();
         if (containingFile != null) {
             return containingFile.getParent();
         }
         return null;
-    }
+    }*/
 
     public DBContentType getContentType() {
         return DBContentType.NONE;
@@ -147,6 +149,18 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     @Override
     public DBObjectRef getRef() {
         return objectRef;
+    }
+
+    @Override
+    public PsiElement getPsi() {
+        if (psi == null) {
+            synchronized (this) {
+                if (psi == null) {
+                    psi = new DBObjectPsiElement(objectRef);
+                }
+            }
+        }
+        return psi;
     }
 
     @Override
@@ -564,7 +578,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     public boolean canExpand() {
-        return !isLeafTreeElement() && treeChildrenLoaded && getTreeChild(0).isTreeStructureLoaded();
+        return !isLeaf() && treeChildrenLoaded && getChildAt(0).isTreeStructureLoaded();
     }
 
     public Icon getIcon(int flags) {
@@ -584,7 +598,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     @NotNull
-    public BrowserTreeNode getTreeParent() {
+    public BrowserTreeNode getParent() {
         DBObjectType objectType = getObjectType();
         if (parentObjectRef != null){
             DBObject object = parentObjectRef.get();
@@ -607,7 +621,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
 
     public int getTreeDepth() {
-        BrowserTreeNode treeParent = getTreeParent();
+        BrowserTreeNode treeParent = getParent();
         return treeParent.getTreeDepth() + 1;
     }
 
@@ -626,7 +640,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
 
 
-    public List<? extends BrowserTreeNode> getTreeChildren() {
+    public List<? extends BrowserTreeNode> getChildren() {
         if (visibleTreeChildren == null) {
             synchronized (this) {
                 if (visibleTreeChildren == null) {
@@ -708,7 +722,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     @NotNull
     public abstract List<BrowserTreeNode> buildAllPossibleTreeChildren();
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         if (visibleTreeChildren == null) {
             ConnectionHandler connectionHandler = getConnectionHandler();
             Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
@@ -723,16 +737,16 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         }
     }
 
-    public BrowserTreeNode getTreeChild(int index) {
-        return getTreeChildren().get(index);
+    public BrowserTreeNode getChildAt(int index) {
+        return getChildren().get(index);
     }
 
-    public int getTreeChildCount() {
-        return getTreeChildren().size();
+    public int getChildCount() {
+        return getChildren().size();
     }
 
-    public int getIndexOfTreeChild(BrowserTreeNode child) {
-        return getTreeChildren().indexOf(child);
+    public int getIndex(BrowserTreeNode child) {
+        return getChildren().indexOf(child);
     }
 
     @Override
@@ -817,8 +831,13 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
      *                   PsiElement                          *
      *********************************************************/
 
-    @Override
+    //@Override
     public PsiFile getContainingFile() throws PsiInvalidElementAccessException {
         return NavigationPsiCache.getPsiFile(this);
+    }
+
+    @Override
+    public boolean canNavigateToSource() {
+        return false;
     }
 }
