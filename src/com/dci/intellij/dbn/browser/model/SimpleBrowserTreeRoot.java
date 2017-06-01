@@ -21,7 +21,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
 
-public class SimpleBrowserTreeRoot implements BrowserTreeNode {
+public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements BrowserTreeNode {
     private List<ConnectionBundle> rootChildren;
     private ProjectRef projectRef;
 
@@ -62,41 +62,41 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
     }
 
     @Nullable
-    public BrowserTreeNode getTreeParent() {
+    public BrowserTreeNode getParent() {
         return null;
     }
 
-    public List<ConnectionBundle> getTreeChildren() {
+    public List<ConnectionBundle> getChildren() {
         return FailsafeUtil.get(rootChildren);
     }
 
     @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
-        for (ConnectionBundle connectionBundle : getTreeChildren()) {
+        for (ConnectionBundle connectionBundle : getChildren()) {
             connectionBundle.refreshTreeChildren(objectTypes);
         }
     }
 
     public void rebuildTreeChildren() {
-        for (ConnectionBundle connectionBundle : getTreeChildren()) {
+        for (ConnectionBundle connectionBundle : getChildren()) {
             connectionBundle.rebuildTreeChildren();
         }
     }
 
-    public BrowserTreeNode getTreeChild(int index) {
-        return getTreeChildren().get(index);
+    public BrowserTreeNode getChildAt(int index) {
+        return getChildren().get(index);
     }
 
-    public int getTreeChildCount() {
-        return getTreeChildren().size();
+    public int getChildCount() {
+        return getChildren().size();
     }
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return false;
     }
 
-    public int getIndexOfTreeChild(BrowserTreeNode child) {
-        return getTreeChildren().indexOf(child);
+    public int getIndex(BrowserTreeNode child) {
+        return getChildren().indexOf(child);
     }
 
     public Icon getIcon(int flags) {
@@ -130,10 +130,6 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
     @Nullable
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         return null;
-    }
-
-    public boolean isDisposed() {
-        return false;
     }
 
    /*********************************************************
@@ -187,6 +183,7 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
      *                       Disposable                      *
      *********************************************************/
     public void dispose() {
+        super.dispose();
         if (rootChildren != null) {
             rootChildren.clear();
             rootChildren = null;

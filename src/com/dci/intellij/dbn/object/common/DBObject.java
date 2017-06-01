@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.object.common;
 
+import javax.swing.Icon;
+import java.sql.SQLException;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilderProvider;
 import com.dci.intellij.dbn.common.Referenceable;
@@ -20,15 +26,9 @@ import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
-import com.intellij.psi.PsiNamedElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.PsiElement;
 
-import javax.swing.Icon;
-import java.sql.SQLException;
-import java.util.List;
-
-public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicContentElement, LookupItemBuilderProvider, Referenceable, EnvironmentTypeProvider, PresentableConnectionProvider {
+public interface DBObject extends BrowserTreeNode, DynamicContentElement, LookupItemBuilderProvider, Referenceable, EnvironmentTypeProvider, PresentableConnectionProvider {
     DBObjectType getObjectType();
     boolean isOfType(DBObjectType objectType);
 
@@ -98,9 +98,13 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
     List<PresentableProperty> getPresentableProperties();
     DBObjectRef getRef();
 
+    boolean isValid();
+
+    PsiElement getPsi();
+
     boolean isParentOf(DBObject object);
 
     @NotNull
     @Override
-    BrowserTreeNode getTreeParent();
+    BrowserTreeNode getParent();
 }

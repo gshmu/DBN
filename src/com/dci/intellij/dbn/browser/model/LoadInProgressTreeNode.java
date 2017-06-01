@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.load.LoadIcon;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -20,7 +19,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
 
-public class LoadInProgressTreeNode extends DisposableBase implements BrowserTreeNode {
+public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements BrowserTreeNode {
     private BrowserTreeNode parent;
     private List list;
 
@@ -52,19 +51,19 @@ public class LoadInProgressTreeNode extends DisposableBase implements BrowserTre
     }
 
     public int getTreeDepth() {
-        return getTreeParent().getTreeDepth() + 1;
+        return getParent().getTreeDepth() + 1;
     }
 
-    public BrowserTreeNode getTreeChild(int index) {
+    public BrowserTreeNode getChildAt(int index) {
         return null;
     }
 
     @NotNull
-    public BrowserTreeNode getTreeParent() {
+    public BrowserTreeNode getParent() {
         return FailsafeUtil.get(parent);
     }
 
-    public List getTreeChildren() {
+    public List getChildren() {
         return null;
     }
 
@@ -73,15 +72,15 @@ public class LoadInProgressTreeNode extends DisposableBase implements BrowserTre
 
     public void rebuildTreeChildren() {}
 
-    public int getTreeChildCount() {
+    public int getChildCount() {
         return 0;
     }
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 
-    public int getIndexOfTreeChild(BrowserTreeNode child) {
+    public int getIndex(BrowserTreeNode child) {
         return -1;
     }
 
@@ -102,12 +101,12 @@ public class LoadInProgressTreeNode extends DisposableBase implements BrowserTre
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(getTreeParent().getConnectionHandler());
+        return FailsafeUtil.get(getParent().getConnectionHandler());
     }
 
     @NotNull
     public Project getProject() {
-        return getTreeParent().getProject();
+        return getParent().getProject();
     }
 
     @Nullable

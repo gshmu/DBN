@@ -55,7 +55,7 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl implements DBGrantedPri
     /*********************************************************
      *                     TreeElement                       *
      *********************************************************/
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 

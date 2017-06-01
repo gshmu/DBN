@@ -91,7 +91,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
      *                   TreeeElement                       *
      * ******************************************************/
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 

@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.object.common.list;
 
 import javax.swing.Icon;
+import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -194,7 +196,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     public void notifyChangeListeners() {
         Project project = getProject();
-        BrowserTreeNode treeParent = getTreeParent();
+        BrowserTreeNode treeParent = getParent();
         if (!hidden && isTouched() && FailsafeUtil.softCheck(project) && treeParent != null && treeParent.isTreeStructureLoaded()) {
             EventUtil.notify(project, BrowserTreeEventListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
         }
@@ -204,8 +206,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
      *                   LoadableContent                     *
      *********************************************************/
     public String getContentDescription() {
-        if (getTreeParent() instanceof DBObject) {
-            DBObject object = (DBObject) getTreeParent();
+        if (getParent() instanceof DBObject) {
+            DBObject object = (DBObject) getParent();
             return getName() + " of " + object.getQualifiedNameWithType();
         }
         ConnectionHandler connectionHandler = getConnectionHandler();
@@ -225,24 +227,39 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     public boolean canExpand() {
-        return isTouched() && getTreeChildCount() > 0;
+        return isTouched() && getChildCount() > 0;
     }
 
     public int getTreeDepth() {
-        BrowserTreeNode treeParent = getTreeParent();
+        BrowserTreeNode treeParent = getParent();
         return treeParent == null ? 0 : treeParent.getTreeDepth() + 1;
     }
 
-    public BrowserTreeNode getTreeChild(int index) {
-        return getTreeChildren().get(index);
+    public BrowserTreeNode getChildAt(int index) {
+        return getChildren().get(index);
     }
 
     @Nullable
-    public BrowserTreeNode getTreeParent() {
+    public BrowserTreeNode getParent() {
         return (BrowserTreeNode) getParentElement();
     }
 
-    public List<? extends BrowserTreeNode> getTreeChildren() {
+    @Override
+    public int getIndex(TreeNode node) {
+        return getIndex((BrowserTreeNode) node);
+    }
+
+    @Override
+    public boolean getAllowsChildren() {
+        return !isLeaf();
+    }
+
+    @Override
+    public Enumeration children() {
+        return Collections.enumeration(getChildren());
+    }
+
+    public List<? extends BrowserTreeNode> getChildren() {
         if (isLoading()) {
             return elements;
         } else {
@@ -287,16 +304,16 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
-    public int getTreeChildCount() {
-        return getTreeChildren().size();
+    public int getChildCount() {
+        return getChildren().size();
     }
 
-    public boolean isLeafTreeElement() {
-        return getTreeChildren().size() == 0;
+    public boolean isLeaf() {
+        return getChildren().size() == 0;
     }
 
-    public int getIndexOfTreeChild(BrowserTreeNode child) {
-        return getTreeChildren().indexOf(child);
+    public int getIndex(BrowserTreeNode child) {
+        return getChildren().indexOf(child);
     }
 
 
@@ -313,7 +330,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     public String getPresentableTextDetails() {
-        int elementCount = getTreeChildCount();
+        int elementCount = getChildCount();
         int unfilteredElementCount = getAllElementsNoLoad().size();
         return unfilteredElementCount > 0 ? "(" + elementCount + (elementCount != unfilteredElementCount ? "/"+ unfilteredElementCount : "") + ")" : null;
     }

@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
@@ -41,8 +42,9 @@ public class AliasObjectResolver extends UnderlyingObjectResolver{
             } else if (aliasedObject instanceof IdentifierPsiElement) {
                 IdentifierPsiElement aliasedPsiElement = (IdentifierPsiElement) aliasedObject;
                 PsiElement underlyingPsiElement = aliasedPsiElement.resolve();
-                if (underlyingPsiElement instanceof DBObject) {
-                    return (DBObject) underlyingPsiElement;
+                if (underlyingPsiElement instanceof DBObjectPsiElement) {
+                    DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) underlyingPsiElement;
+                    return objectPsiElement.getObject();
                 }
 
                 if (underlyingPsiElement instanceof IdentifierPsiElement && underlyingPsiElement != identifierPsiElement) {

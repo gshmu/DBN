@@ -32,6 +32,7 @@ import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdap
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
@@ -419,12 +420,12 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                 if (basePsiElement instanceof IdentifierPsiElement) {
                     IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
                     PsiElement reference = identifierPsiElement.resolve();
-                    if (reference instanceof DBObject) {
-                        DBObject object = (DBObject) reference;
+                    if (reference instanceof DBObjectPsiElement) {
+                        DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) reference;
                         if (objects == null) {
                             objects = new HashSet<DBObject>();
                         }
-                        objects.add(object);
+                        objects.add(objectPsiElement.getObject());
                     }
                 }
             }

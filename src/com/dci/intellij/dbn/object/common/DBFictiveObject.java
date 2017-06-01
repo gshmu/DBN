@@ -13,6 +13,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 
 public class DBFictiveObject extends DBObjectImpl implements PsiReference {
+    private String name;
     private DBObjectType objectType;
     public DBFictiveObject(DBObjectType objectType, String name) {
         super(null, name);
@@ -57,7 +58,7 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
     }
 
     public TextRange getRangeInElement() {
-        return new TextRange(0, getTextLength());
+        return new TextRange(0, name.length());
     }
 
     public PsiElement resolve() {
@@ -66,7 +67,7 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     public String getCanonicalText() {
-        return null;
+        return name;
     }
 
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {

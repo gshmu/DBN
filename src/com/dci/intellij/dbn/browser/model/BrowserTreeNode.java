@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.browser.model;
 
 import javax.swing.Icon;
+import javax.swing.tree.TreeNode;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +12,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 
-public interface BrowserTreeNode extends NavigationItem, ItemPresentation, ToolTipProvider, GenericDatabaseElement {
+public interface BrowserTreeNode extends TreeNode, NavigationItem, ItemPresentation, ToolTipProvider, GenericDatabaseElement {
 
     enum LoadStatus {
         NEW,
@@ -27,22 +28,11 @@ public interface BrowserTreeNode extends NavigationItem, ItemPresentation, ToolT
 
     boolean isTreeStructureLoaded();
 
-    BrowserTreeNode getTreeChild(int index);
-
-    @Nullable
-    BrowserTreeNode getTreeParent();
-
-    List<? extends BrowserTreeNode> getTreeChildren();
+    List<? extends BrowserTreeNode> getChildren();
 
     void refreshTreeChildren(@NotNull DBObjectType... objectTypes);
 
     void rebuildTreeChildren();
-
-    int getTreeChildCount();
-
-    boolean isLeafTreeElement();
-
-    int getIndexOfTreeChild(BrowserTreeNode child);
 
     Icon getIcon(int flags);
 
@@ -51,4 +41,11 @@ public interface BrowserTreeNode extends NavigationItem, ItemPresentation, ToolT
     String getPresentableTextDetails();
 
     String getPresentableTextConditionalDetails();
+
+    BrowserTreeNode getChildAt(int index);
+
+    @Nullable
+    BrowserTreeNode getParent();
+
+    int getIndex(BrowserTreeNode child);
 }

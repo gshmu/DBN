@@ -69,7 +69,7 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
      *                     TreeElement                       *
      *********************************************************/
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 

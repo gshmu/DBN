@@ -11,7 +11,7 @@ public class DBObjectListFromRelationListLoader<T extends DynamicContentElement>
     public T resolveElement(DynamicContent<T> dynamicContent, DynamicContentElement sourceElement) {
         DBObjectList objectList = (DBObjectList) dynamicContent;
         DBObjectRelation objectRelation = (DBObjectRelation) sourceElement;
-        DBObject object = (DBObject) objectList.getTreeParent();
+        DBObject object = (DBObject) objectList.getParent();
 
         if (object.equals(objectRelation.getSourceObject())) {
             return (T) objectRelation.getTargetObject();

@@ -85,7 +85,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
 
         public CacheKey(DBObjectList objectList) {
             connectionId = objectList.getConnectionHandler().getId();
-            BrowserTreeNode treeParent = objectList.getTreeParent();
+            BrowserTreeNode treeParent = objectList.getParent();
             if (treeParent instanceof DBSchema) {
                 schemaName = treeParent.getName();
             } else {

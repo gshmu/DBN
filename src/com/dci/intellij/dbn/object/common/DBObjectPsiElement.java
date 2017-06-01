@@ -8,8 +8,11 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
@@ -28,14 +31,24 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.IncorrectOperationException;
 
-public class DBObjectPsiAbstraction extends DisposableBase implements PsiNamedElement {
+public class DBObjectPsiElement extends DisposableBase implements PsiNamedElement, NavigationItem {
     private static PsiFile DUMMY_FILE;
-    protected String name;
+    private DBObjectRef objectRef;
+
+    public DBObjectPsiElement(DBObjectRef objectRef) {
+        this.objectRef = objectRef;
+    }
 
     @Nullable
     @Override
     public String getName() {
-        return name;
+        return objectRef.getObjectName();
+    }
+
+    @Nullable
+    @Override
+    public ItemPresentation getPresentation() {
+        return getObject().getPresentation();
     }
 
     /*********************************************************
@@ -158,7 +171,7 @@ public class DBObjectPsiAbstraction extends DisposableBase implements PsiNamedEl
     @NotNull
     @Override
     public Project getProject() throws PsiInvalidElementAccessException {
-        throw new PsiInvalidElementAccessException(this, "");
+        return getObject().getProject();
     }
 
     @NotNull
@@ -184,12 +197,31 @@ public class DBObjectPsiAbstraction extends DisposableBase implements PsiNamedEl
         return getText().toCharArray();
     }
 
+
+
+
+
+    @Override
+    public void navigate(boolean requestFocus) {
+        getObject().navigate(requestFocus);
+    }
+
+    @Override
+    public boolean canNavigate() {
+        return true;
+    }
+
     public boolean canNavigateToSource() {
         return false;
     }
 
     @Override
     public Icon getIcon(int flags) {
-        return null;
+        return getObject().getIcon();
+    }
+
+    @NotNull
+    public DBObject getObject() {
+        return DBObjectRef.getnn(objectRef);
     }
 }

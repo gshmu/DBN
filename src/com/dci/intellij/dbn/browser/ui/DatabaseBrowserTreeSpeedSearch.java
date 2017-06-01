@@ -65,7 +65,7 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
                 }
             }
             else {
-                for (BrowserTreeNode treeNode : browserTreeNode.getTreeChildren()) {
+                for (BrowserTreeNode treeNode : browserTreeNode.getChildren()) {
                     if (treeNode instanceof DBObject) {
                         nodes.add(treeNode);
                     }

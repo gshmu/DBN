@@ -103,7 +103,7 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
     }
 
     public Object getChild(Object parent, int index) {
-        BrowserTreeNode treeChild = ((BrowserTreeNode) parent).getTreeChild(index);
+        BrowserTreeNode treeChild = ((BrowserTreeNode) parent).getChildAt(index);
         if (treeChild instanceof LoadInProgressTreeNode) {
             registerLoadInProgressNode((LoadInProgressTreeNode) treeChild);
         }
@@ -111,15 +111,15 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
     }
 
     public int getChildCount(Object parent) {
-        return ((BrowserTreeNode) parent).getTreeChildCount();
+        return ((BrowserTreeNode) parent).getChildCount();
     }
 
     public boolean isLeaf(Object node) {
-        return ((BrowserTreeNode) node).isLeafTreeElement();
+        return ((BrowserTreeNode) node).isLeaf();
     }
 
     public int getIndexOfChild(Object parent, Object child) {
-        return ((BrowserTreeNode) parent).getIndexOfTreeChild((BrowserTreeNode) child);
+        return ((BrowserTreeNode) parent).getIndex((BrowserTreeNode) child);
     }
 
     public void valueForPathChanged(TreePath path, Object newValue) {

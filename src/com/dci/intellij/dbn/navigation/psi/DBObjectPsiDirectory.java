@@ -83,7 +83,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
 
     public PsiDirectory getParent() {
         DBObject object = getObject();
-        GenericDatabaseElement parent = object.getTreeParent();
+        GenericDatabaseElement parent = object.getParent();
         if (parent instanceof DBObjectList) {
             DBObjectList objectList = (DBObjectList) parent;
             return NavigationPsiCache.getPsiDirectory(objectList);

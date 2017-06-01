@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.psi.PsiElement;
@@ -16,9 +17,9 @@ public class PSQLDocumentationProvider implements DocumentationProvider {
 
     @Nullable
     public String getQuickNavigateInfo(PsiElement element) {
-        if (element instanceof DBObject) {
-            DBObject object = (DBObject) element;
-            return object.getNavigationTooltipText();
+        if (element instanceof DBObjectPsiElement) {
+            DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) element;
+            return objectPsiElement.getObject().getNavigationTooltipText();
         } else if (element instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) element;
              if (identifierPsiElement.isAlias()) {

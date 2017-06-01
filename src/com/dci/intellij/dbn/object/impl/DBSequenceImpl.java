@@ -45,7 +45,7 @@ public class DBSequenceImpl extends DBSchemaObjectImpl implements DBSequence {
      *                     TreeElement                       *
      *********************************************************/
 
-    public boolean isLeafTreeElement() {
+    public boolean isLeaf() {
         return true;
     }
 

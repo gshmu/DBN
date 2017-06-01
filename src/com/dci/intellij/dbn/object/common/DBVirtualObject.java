@@ -47,7 +47,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 
 public class DBVirtualObject extends DBObjectImpl implements PsiReference {
-    public static final PsiLookupAdapter CHR_STAR_LOOKUP_ADAPTER = new PsiLookupAdapter() {
+    private static final PsiLookupAdapter CHR_STAR_LOOKUP_ADAPTER = new PsiLookupAdapter() {
         @Override
         public boolean matches(BasePsiElement element) {
             if (element instanceof TokenPsiElement) {
@@ -62,7 +62,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
             return true;
         }
     };
-    public static final ObjectReferenceLookupAdapter DATASET_LOOKUP_ADAPTER = new ObjectReferenceLookupAdapter(null, DBObjectType.DATASET, null);
+    private static final ObjectReferenceLookupAdapter DATASET_LOOKUP_ADAPTER = new ObjectReferenceLookupAdapter(null, DBObjectType.DATASET, null);
 
     private DBObjectType objectType;
     private BasePsiElement underlyingPsiElement;
@@ -124,6 +124,11 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
+    }
+
+    @Override
+    public PsiElement getPsi() {
+        return underlyingPsiElement;
     }
 
     public boolean isValid() {
@@ -295,7 +300,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     public TextRange getRangeInElement() {
-        return new TextRange(0, getTextLength());
+        return new TextRange(0, name.length());
     }
 
     public PsiElement resolve() {
@@ -312,7 +317,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     public String getCanonicalText() {
-        return getText();
+        return name;
     }
 
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
@@ -336,4 +341,8 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         return false;
     }
 
+    @Override
+    public boolean canNavigateToSource() {
+        return false;
+    }
 }

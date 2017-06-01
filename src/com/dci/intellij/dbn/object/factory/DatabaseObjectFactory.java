@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.object.factory;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -24,13 +31,6 @@ import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseObjectFactory extends AbstractProjectComponent {
 
@@ -148,7 +148,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                 ddlInterface.dropObject(objectTypeName, objectName, connection);
             }
 
-            DBObjectList objectList = (DBObjectList) object.getTreeParent();
+            DBObjectList objectList = (DBObjectList) object.getParent();
             objectList.reload();
 
             notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));

@@ -36,6 +36,7 @@ import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.common.ObjectTypeFilter;
@@ -227,9 +228,9 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                                 if (psiElement instanceof IdentifierPsiElement) {
                                     IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
                                     PsiElement referencedPsiElement = identifierPsiElement.resolve();
-                                    if (referencedPsiElement instanceof DBObject) {
-                                        DBObject object = (DBObject) referencedPsiElement;
-                                        consumer.consume(object);
+                                    if (referencedPsiElement instanceof DBObjectPsiElement) {
+                                        DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) referencedPsiElement;
+                                        consumer.consume(objectPsiElement);
                                     } else {
                                         consumer.consume(identifierPsiElement);
                                     }

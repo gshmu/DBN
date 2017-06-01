@@ -32,6 +32,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSynonym;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.intellij.lang.ASTNode;
@@ -251,9 +252,9 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
             PsiElement psiReferenceElement = resolve();
             if (psiReferenceElement != this) {
-                if (psiReferenceElement instanceof DBObject) {
-                    DBObject underlyingObject = (DBObject) psiReferenceElement;
-                    return resolveActualObject(underlyingObject.getUndisposedElement());
+                if (psiReferenceElement instanceof DBObjectPsiElement) {
+                    DBObjectPsiElement underlyingObject = (DBObjectPsiElement) psiReferenceElement;
+                    return resolveActualObject(underlyingObject.getObject().getUndisposedElement());
                 }
 
                 if (psiReferenceElement instanceof IdentifierPsiElement) {
@@ -357,8 +358,8 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 } else { // index > 0
                     IdentifierElementType parentElementType = (IdentifierElementType) parseVariant.getLeaf(index - 1);
                     if (parentObject.isOfType(parentElementType.getObjectType())) {
-                        DBObject referencedElement = parentObject.getChildObject(objectType, refText.toString(), false);
-                        if (updateReference(parentObjectElement, elementType, referencedElement)) return;
+                        DBObject referencedObject = parentObject.getChildObject(objectType, refText.toString(), false);
+                        if (updateReference(parentObjectElement, elementType, referencedObject)) return;
 
                     }
                 }
@@ -375,8 +376,8 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 if (parentPsiElement != null) {
                     DBObject object = parentPsiElement.resolveUnderlyingObject();
                     if (object != null && object != getFile().getUnderlyingObject()) {
-                        PsiElement referencedElement = object.getChildObject(refText.toString(), 0, false);
-                        if (updateReference(null, elementType, referencedElement)) return;
+                        DBObject referencedObject = object.getChildObject(refText.toString(), 0, false);
+                        if (updateReference(null, elementType, referencedObject)) return;
                     }
                 }
             }
@@ -396,21 +397,21 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 Set<DBObject> parentObjects = identifyPotentialParentObjects(objectType, null, this, this);
                 if (parentObjects != null && parentObjects.size() > 0) {
                     for (DBObject parentObject : parentObjects) {
-                        PsiElement referencedElement = parentObject.getChildObject(objectType, objectName, false);
-                        if (updateReference(null, elementType, referencedElement)) return;
+                        DBObject referencedObject = parentObject.getChildObject(objectType, objectName, false);
+                        if (updateReference(null, elementType, referencedObject)) return;
                     }
                 }
 
                 DBObjectBundle objectBundle = activeConnection.getObjectBundle();
-                PsiElement referencedElement = objectBundle.getObject(objectType, objectName, 0);
-                if (updateReference(null, elementType, referencedElement)) {
+                DBObject referencedObject = objectBundle.getObject(objectType, objectName, 0);
+                if (updateReference(null, elementType, referencedObject)) {
                     return;
                 }
 
                 DBSchema schema = getCurrentSchema();
                 if (schema != null && objectType.isSchemaObject()) {
-                    referencedElement = schema.getChildObject(objectType, objectName, false);
-                    if (updateReference(null, elementType, referencedElement)) return;
+                    referencedObject = schema.getChildObject(objectType, objectName, false);
+                    if (updateReference(null, elementType, referencedObject)) return;
                 }
             }
 
@@ -436,21 +437,11 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return false;
     }
 
-    private boolean isValidReference(PsiElement referencedElement) {
-        if (referencedElement != null && referencedElement != this) {
-            if (referencedElement instanceof DBVirtualObject) {
-                DBVirtualObject object = (DBVirtualObject) referencedElement;
-                if (object.getUnderlyingPsiElement().containsPsiElement(this)) {
-                    return false;
-                }
-            }
-            // check if inside same scope
-            if (referencedElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;
-                if (identifierPsiElement.isReference() && identifierPsiElement.isReferenceable()) {
-                    return identifierPsiElement.findEnclosingScopePsiElement() == findEnclosingScopePsiElement();
-                }
-            }
+    private boolean updateReference(@Nullable BasePsiElement parent, ElementType elementType, DBObject referenceObject) {
+        if (isValidReference(referenceObject)) {
+            ref.setParent(parent);
+            ref.setReferencedElement(referenceObject.getPsi());
+            setElementType(elementType);
             return true;
         }
         return false;
@@ -458,21 +449,33 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
     private boolean updateReference(@Nullable BasePsiElement parent, ElementType elementType, PsiElement referencedElement) {
         if (isValidReference(referencedElement)) {
-/*            if (referencedElement instanceof DBObject) {
-                DBObject object = (DBObject) referencedElement;
-                DBLanguagePsiFile file = getFile();
-                if (object.getParentObject() == file.getUnderlyingObject()) {
-                    BasePsiElement scopeIsolationPsiElement = findEnclosingScopeIsolationPsiElement();
-                    BasePsiElement objectDeclaration = scopeIsolationPsiElement.findPsiElement(new ObjectDefinitionLookupAdapter(this, object.getObjectType(), object.getName()), 100);
-                    if (objectDeclaration != null) {
-                        referencedElement = objectDeclaration;
-                    }
-                }
-            }*/
-
             ref.setParent(parent);
             ref.setReferencedElement(referencedElement);
             setElementType(elementType);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isValidReference(DBObject referencedObject) {
+        if (referencedObject instanceof DBVirtualObject) {
+            DBVirtualObject object = (DBVirtualObject) referencedObject;
+            if (object.getUnderlyingPsiElement().containsPsiElement(this)) {
+                return false;
+            }
+        }
+        return referencedObject != null;
+    }
+
+    private boolean isValidReference(PsiElement referencedElement) {
+        if (referencedElement != null && referencedElement != this) {
+            // check if inside same scope
+            if (referencedElement instanceof IdentifierPsiElement) {
+                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;
+                if (identifierPsiElement.isReference() && identifierPsiElement.isReferenceable()) {
+                    return identifierPsiElement.findEnclosingScopePsiElement() == findEnclosingScopePsiElement();
+                }
+            }
             return true;
         }
         return false;
