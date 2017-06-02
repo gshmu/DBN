@@ -93,6 +93,10 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         IFileElementType nodeType = parserDefinition.getFileNodeType();
         //assert nodeType.getLanguage() == this.language;
         init(nodeType, nodeType);
+/*        if (viewProvider instanceof SingleRootFileViewProvider) {
+            SingleRootFileViewProvider singleRootFileViewProvider = (SingleRootFileViewProvider) viewProvider;
+            singleRootFileViewProvider.forceCachedPsi(this);
+        }*/
     }
 
     @Nullable

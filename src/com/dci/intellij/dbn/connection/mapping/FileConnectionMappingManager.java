@@ -98,6 +98,8 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                         String currentSchemaName = mapping.getCurrentSchema();
                         DBSchema schema = connectionHandler.isVirtual() || currentSchemaName == null ? null : connectionHandler.getObjectBundle().getSchema(currentSchemaName);
                         setCurrentSchema(virtualFile, schema);
+                    } else {
+                        setCurrentSchema(virtualFile, null);
                     }
                     return true;
                 }
@@ -110,8 +112,13 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         if (VirtualFileUtil.isLocalFileSystem(virtualFile) || VirtualFileUtil.isVirtualFileSystem(virtualFile)) {
             virtualFile.putUserData(CURRENT_SCHEMA_KEY, schema == null ? null : schema.getRef());
             FileConnectionMapping mapping = lookupMapping(virtualFile);
-            if (schema != null && mapping != null && !schema.getName().equals(mapping.getCurrentSchema())) {
-                mapping.setCurrentSchema(schema.getName());
+            if (mapping != null) {
+                if (schema == null) {
+                    mapping.setCurrentSchema(null);
+                } else if (!schema.getName().equals(mapping.getCurrentSchema())){
+                    mapping.setCurrentSchema(schema.getName());
+                }
+
                 return true;
             }
         }
@@ -302,17 +309,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                             new MessageCallback(0) {
                                 @Override
                                 protected void execute() {
-                                    promptConnectionSelector(file, false, true,
-                                            new SimpleTask() {
-                                                @Override
-                                                protected void execute() {
-                                                    if (file.getCurrentSchema() == null) {
-                                                        promptSchemaSelector(file, callback);
-                                                    } else {
-                                                        callback.start();
-                                                    }
-                                                }
-                                            });
+                                    promptConnectionSelector(file, false, true, true, callback);
                                 }
                             });
 
@@ -344,7 +341,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     /***************************************************
      *             Select connection popup             *
      ***************************************************/
-    public void promptConnectionSelector(DBLanguagePsiFile psiFile, boolean showVirtualConnections, boolean showCreateOption, SimpleTask callback) {
+    public void promptConnectionSelector(DBLanguagePsiFile psiFile, boolean showVirtualConnections, boolean showCreateOption, boolean promptSchemaSelection, SimpleTask callback) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         FiltrableList<ConnectionHandler> connectionHandlers = connectionBundle.getConnectionHandlers();
@@ -352,7 +349,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         if (connectionHandlers.size() > 0) {
             for (ConnectionHandler connectionHandler : connectionHandlers) {
-                SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler, psiFile, callback);
+                SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler, psiFile, promptSchemaSelection, callback);
                 actionGroup.add(connectionAction);
             }
         }
@@ -360,7 +357,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         if (showVirtualConnections) {
             actionGroup.addSeparator();
             for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
-                SelectConnectionAction connectionAction = new SelectConnectionAction(virtualConnectionHandler, psiFile, callback);
+                SelectConnectionAction connectionAction = new SelectConnectionAction(virtualConnectionHandler, psiFile, promptSchemaSelection, callback);
                 actionGroup.add(connectionAction);
             }
         }
@@ -384,24 +381,34 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     private class SelectConnectionAction extends AbstractConnectionAction {
         private WeakReference<DBLanguagePsiFile> fileRef;
         private SimpleTask callback;
+        private boolean promptSchemaSelection = false;
 
-        private SelectConnectionAction(ConnectionHandler connectionHandler, DBLanguagePsiFile file, SimpleTask callback) {
+        private SelectConnectionAction(ConnectionHandler connectionHandler, DBLanguagePsiFile file, boolean promptSchemaSelection, SimpleTask callback) {
             super(connectionHandler.getName(), null, connectionHandler.getIcon(), connectionHandler);
             this.fileRef = new WeakReference<DBLanguagePsiFile>(file);
             this.callback = callback;
+            this.promptSchemaSelection = promptSchemaSelection;
         }
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            DBSchema defaultSchema = connectionHandler.getDefaultSchema();
             DBLanguagePsiFile file = fileRef.get();
+
             if (file != null) {
                 file.setActiveConnection(connectionHandler);
-                file.setCurrentSchema(defaultSchema);
-                if (callback != null) {
-                    callback.start();
+                if (promptSchemaSelection) {
+                    promptSchemaSelector(file, callback);
+                } else {
+                    if (file.getCurrentSchema() == null) {
+                        DBSchema defaultSchema = connectionHandler.getDefaultSchema();
+                        file.setCurrentSchema(defaultSchema);
+                    }
+                    if (callback != null) {
+                        callback.start();
+                    }
                 }
+
             }
         }
     }
