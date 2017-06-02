@@ -11,8 +11,10 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
+import com.dci.intellij.dbn.vfs.DatabaseFileViewProviderFactory;
 import com.intellij.lang.FileASTNode;
 import com.intellij.lang.Language;
 import com.intellij.navigation.ItemPresentation;
@@ -361,7 +363,13 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
 
     @NotNull
     public FileViewProvider getViewProvider() {
-        return new DatabaseFileViewProvider(PsiManager.getInstance(getProject()), getVirtualFile(), true);
+        DBVirtualFile virtualFile = (DBVirtualFile) getVirtualFile();
+        DatabaseFileViewProvider viewProvider = virtualFile.getUserData(DatabaseFileViewProviderFactory.CACHED_VIEW_PROVIDER);
+        if (viewProvider == null) {
+            viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(getProject()), getVirtualFile(), true);
+            virtualFile.putUserData(DatabaseFileViewProviderFactory.CACHED_VIEW_PROVIDER, viewProvider);
+        }
+        return viewProvider;
     }
 
     public void subtreeChanged() {
