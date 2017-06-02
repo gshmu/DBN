@@ -43,7 +43,7 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction impl
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            connectionMappingManager.promptConnectionSelector(dbLanguageFile, true, true, null);
+            connectionMappingManager.promptConnectionSelector(dbLanguageFile, true, true, false, null);
         }
     }
 
