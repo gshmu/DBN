@@ -470,7 +470,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     @Nullable
     public BasePsiElement findEnclosingPsiElement(ElementTypeAttribute attribute) {
         PsiElement element = this;
-        while (element != null) {
+        while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) element;
                 if (basePsiElement.getElementType().is(attribute)) {
@@ -485,7 +485,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     @Nullable
     public BasePsiElement findEnclosingVirtualObjectPsiElement(DBObjectType objectType) {
         PsiElement element = this;
-        while (element != null) {
+        while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) element;
                 if (basePsiElement.getElementType().getVirtualObjectType() == objectType) {
@@ -500,7 +500,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     @Nullable
     public BasePsiElement findEnclosingPsiElement(ElementTypeAttribute[] typeAttributes) {
         PsiElement element = this;
-        while (element != null) {
+        while (element != null && !(element instanceof PsiFile)) {
             if (element  instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) element;
                 for (ElementTypeAttribute typeAttribute : typeAttributes) {
@@ -517,24 +517,24 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     @Nullable
     public NamedPsiElement findEnclosingNamedPsiElement() {
-        PsiElement parent = getParent();
-        while (parent != null) {
-            if (parent instanceof NamedPsiElement) {
-                return (NamedPsiElement) parent;
+        PsiElement element = getParent();
+        while (element != null && !(element instanceof PsiFile)) {
+            if (element instanceof NamedPsiElement) {
+                return (NamedPsiElement) element;
             }
-            parent = parent.getParent();
+            element = element.getParent();
         }
         return null;
     }
 
     @Nullable
     public SequencePsiElement findEnclosingSequencePsiElement() {
-        PsiElement parent = getParent();
-        while (parent != null) {
-            if (parent instanceof SequencePsiElement) {
-                return (SequencePsiElement) parent;
+        PsiElement element = getParent();
+        while (element != null && !(element instanceof PsiFile)) {
+            if (element instanceof SequencePsiElement) {
+                return (SequencePsiElement) element;
             }
-            parent = parent.getParent();
+            element = element.getParent();
         }
         return null;
     }
@@ -542,7 +542,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     public BasePsiElement findEnclosingScopeIsolationPsiElement() {
         PsiElement element = this;
         BasePsiElement basePsiElement = null;
-        while (element != null) {
+        while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof BasePsiElement) {
                 basePsiElement = (BasePsiElement) element;
                 if (basePsiElement.isScopeIsolation) {
@@ -559,7 +559,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     public BasePsiElement findEnclosingScopeDemarcationPsiElement() {
         PsiElement element = this;
         BasePsiElement basePsiElement = null;
-        while (element != null) {
+        while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof BasePsiElement) {
                 basePsiElement = (BasePsiElement) element;
                 //return elementType.is(ElementTypeAttribute.SCOPE_DEMARCATION);
@@ -596,7 +596,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     public BasePsiElement findEnclosingScopePsiElement() {
         PsiElement element = BasePsiElement.this;
         BasePsiElement basePsiElement = null;
-        while (element != null) {
+        while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof BasePsiElement) {
                 basePsiElement = (BasePsiElement) element;
                 if (basePsiElement.isScopeBoundary()) {
@@ -606,45 +606,46 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
             element = element.getParent();
         }
 
-        return basePsiElement;    }
+        return basePsiElement;
+    }
 
     @Nullable
     public <T extends BasePsiElement> T findEnclosingPsiElement(Class<T> psiClass) {
-        PsiElement parent = getParent();
-        while (parent != null) {
-            if (parent instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) parent;
+        PsiElement element = getParent();
+        while (element != null && !(element instanceof PsiFile)) {
+            if (element instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) element;
                 if (psiClass.isAssignableFrom(basePsiElement.getClass())) {
-                    return (T) parent;
+                    return (T) element;
                 }
             }
-            parent = parent.getParent();
+            element = element.getParent();
         }
         return null;
     }
 
     @Nullable
     public NamedPsiElement findEnclosingRootPsiElement() {
-        PsiElement parent = getParent();
-        while (parent != null) {
-            if (parent instanceof NamedPsiElement) {
-                NamedPsiElement namedPsiElement = (NamedPsiElement) parent;
+        PsiElement element = getParent();
+        while (element != null && !(element instanceof PsiFile)) {
+            if (element instanceof NamedPsiElement) {
+                NamedPsiElement namedPsiElement = (NamedPsiElement) element;
                 if (namedPsiElement.getElementType().is(ElementTypeAttribute.ROOT)) {
                     return namedPsiElement;
                 }
             }
-            parent = parent.getParent();
+            element = element.getParent();
         }
         return null;
     }
  
     public boolean isParentOf(BasePsiElement basePsiElement) {
-        PsiElement parent = basePsiElement.getParent();
-        while (parent != null) {
-            if (parent == this) {
+        PsiElement element = basePsiElement.getParent();
+        while (element != null && !(element instanceof PsiFile)) {
+            if (element == this) {
                 return true;
             }
-            parent = parent.getParent();
+            element = element.getParent();
         }
         return false;
     }
