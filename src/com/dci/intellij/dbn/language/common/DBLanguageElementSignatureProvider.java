@@ -42,7 +42,7 @@ public class DBLanguageElementSignatureProvider implements ElementSignatureProvi
                 }
             }
 
-            while (psiElement != null) {
+            while (psiElement != null && !(psiElement instanceof PsiFile)) {
                 int elementStartOffset = psiElement.getTextOffset();
                 int elementEndOffset = elementStartOffset + psiElement.getTextLength();
                 if (elementStartOffset < startOffset || elementEndOffset > endOffset) {

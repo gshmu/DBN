@@ -84,7 +84,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     @Nullable
     public static BasePsiElement lookupHandlerElement(PsiFile file, int offset) {
         PsiElement psiElement = file.findElementAt(offset);
-        while (psiElement != null) {
+        while (psiElement != null && !(psiElement instanceof PsiFile)) {
             if (psiElement instanceof BasePsiElement) {
                 ElementType elementType = PsiUtil.getElementType(psiElement);
                 if (elementType instanceof WrapperElementType) {
