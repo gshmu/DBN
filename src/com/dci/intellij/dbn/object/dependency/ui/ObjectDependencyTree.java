@@ -89,7 +89,9 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
                         new SimpleLaterInvocator() {
                             @Override
                             protected void execute() {
-                                popupMenu.show(ObjectDependencyTree.this, event.getX(), event.getY());
+                                if (isShowing()) {
+                                    popupMenu.show(ObjectDependencyTree.this, event.getX(), event.getY());
+                                }
                             }
                         }.start();
                     }

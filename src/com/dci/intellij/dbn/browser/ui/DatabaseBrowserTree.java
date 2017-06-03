@@ -374,7 +374,9 @@ public class DatabaseBrowserTree extends DBNTree {
                                 new SimpleLaterInvocator() {
                                     @Override
                                     protected void execute() {
-                                        popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
+                                        if (isShowing()) {
+                                            popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
+                                        }
                                     }
                                 }.start();
                             } else {

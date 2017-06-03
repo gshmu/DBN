@@ -188,26 +188,29 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
             final MouseEvent event,
             final SessionBrowserModelCell cell,
             final SessionBrowserColumnInfo columnInfo) {
-        ActionGroup actionGroup = new SessionBrowserTableActionGroup(sessionBrowser, cell, columnInfo);
-        ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
-        JPopupMenu popupMenu = actionPopupMenu.getComponent();
-        popupMenu.addPopupMenuListener(new PopupMenuListenerAdapter() {
-            @Override
-            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                sessionBrowser.setPreventLoading(true);
-            }
+        Component eventSource = (Component) event.getSource();
+        if (eventSource.isShowing()) {
+            ActionGroup actionGroup = new SessionBrowserTableActionGroup(sessionBrowser, cell, columnInfo);
+            ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
+            JPopupMenu popupMenu = actionPopupMenu.getComponent();
+            popupMenu.addPopupMenuListener(new PopupMenuListenerAdapter() {
+                @Override
+                public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                    sessionBrowser.setPreventLoading(true);
+                }
 
-            @Override
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                sessionBrowser.setPreventLoading(false);
-            }
+                @Override
+                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                    sessionBrowser.setPreventLoading(false);
+                }
 
-            @Override
-            public void popupMenuCanceled(PopupMenuEvent e) {
-                sessionBrowser.setPreventLoading(false);
-            }
-        });
-        popupMenu.show((Component) event.getSource(), event.getX(), event.getY());
+                @Override
+                public void popupMenuCanceled(PopupMenuEvent e) {
+                    sessionBrowser.setPreventLoading(false);
+                }
+            });
+            popupMenu.show(eventSource, event.getX(), event.getY());
+        }
     }
 
 
