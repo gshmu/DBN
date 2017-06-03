@@ -60,7 +60,8 @@ public class BasicDataModelRow<T extends DataModelCell> extends DisposableBase i
 
 
     public T getCellAtIndex(int index) {
-        return getCells().get(index);
+        List<T> cells = getCells();
+        return cells.size()> index ? cells.get(index) : null;
     }
 
     public int getIndex() {
