@@ -31,18 +31,20 @@ public class SortableDataModelRow<T extends SortableDataModelCell> extends Basic
         for (SortingInstruction sortingInstruction : sortingState.getSortingInstructions()) {
             int columnIndex = model.getColumnIndex(sortingInstruction.getColumnName());
 
-            SortableDataModelCell local = getCellAtIndex(columnIndex);
-            SortableDataModelCell remote = row.getCellAtIndex(columnIndex);
+            if (columnIndex > -1) {
+                SortableDataModelCell local = getCellAtIndex(columnIndex);
+                SortableDataModelCell remote = row.getCellAtIndex(columnIndex);
 
-            int compareIndex = sortingInstruction.getDirection().getCompareAdj();
+                int compareIndex = sortingInstruction.getDirection().getCompareAdj();
 
-            int result =
-                    remote == null && local == null ? 0 :
-                    local == null ? -compareIndex :
-                    remote == null ? columnIndex :
-                    compareIndex * local.compareTo(remote);
+                int result =
+                        remote == null && local == null ? 0 :
+                        local == null ? -compareIndex :
+                        remote == null ? columnIndex :
+                                compareIndex * local.compareTo(remote);
 
-            if (result != 0) return result;
+                if (result != 0) return result;
+            }
         }
         return 0;
 
