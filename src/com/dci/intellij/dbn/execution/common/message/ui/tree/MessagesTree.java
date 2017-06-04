@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -108,31 +109,31 @@ public class MessagesTree extends DBNTree implements Disposable {
         Disposer.dispose(oldModel);
     }
 
-    public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, boolean select, boolean focus) {
-        TreePath treePath = getModel().addExecutionMessage(executionMessage);
+    public TreePath addExecutionMessage(StatementExecutionMessage message, boolean select, boolean focus) {
+        TreePath treePath = getModel().addExecutionMessage(message);
         scrollToPath(treePath, select, focus);
         return treePath;
     }
 
-    public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean select) {
-        TreePath treePath = getModel().addCompilerMessage(compilerMessage);
+    public TreePath addCompilerMessage(CompilerMessage message, boolean select) {
+        TreePath treePath = getModel().addCompilerMessage(message);
         scrollToPath(treePath, select, false);
         return treePath;
     }
 
-    public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage, boolean select) {
-        TreePath treePath = getModel().addExplainPlanMessage(explainPlanMessage);
+    public TreePath addExplainPlanMessage(ExplainPlanMessage message, boolean select) {
+        TreePath treePath = getModel().addExplainPlanMessage(message);
         scrollToPath(treePath, select, false);
         return treePath;
     }
 
-    public void selectCompilerMessage(CompilerMessage compilerMessage) {
-        TreePath treePath = getModel().getTreePath(compilerMessage);
+    public void selectCompilerMessage(CompilerMessage message) {
+        TreePath treePath = getModel().getTreePath(message);
         scrollToPath(treePath, true, false);
     }
 
-    public void selectExecutionMessage(StatementExecutionMessage statementExecutionMessage, boolean focus) {
-        TreePath treePath = getModel().getTreePath(statementExecutionMessage);
+    public void selectExecutionMessage(StatementExecutionMessage messsage, boolean focus) {
+        TreePath treePath = getModel().getTreePath(messsage);
         scrollToPath(treePath, true, focus);
     }
 
@@ -142,11 +143,16 @@ public class MessagesTree extends DBNTree implements Disposable {
                 @Override
                 protected void execute() {
                     scrollPathToVisible(treePath);
+                    TreeSelectionModel selectionModel = getSelectionModel();
                     if (select) {
-                        getSelectionModel().setSelectionPath(treePath);
+                        selectionModel.setSelectionPath(treePath);
+                    } else {
+                        selectionModel.clearSelection();
                     }
                     if (focus) {
                         requestFocus();
+                    } else {
+                        navigateToCode(treePath.getLastPathComponent(), true);
                     }
                 }
             }.start();

@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.common.message;
 
-public class Message {
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
+
+public class Message extends DisposableBase{
     protected MessageType type;
     protected String text;
 

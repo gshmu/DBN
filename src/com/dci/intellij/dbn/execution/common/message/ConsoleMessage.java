@@ -6,6 +6,7 @@ import com.intellij.openapi.Disposable;
 
 public abstract class ConsoleMessage extends Message implements Disposable {
     private boolean isNew = true;
+
     public ConsoleMessage(MessageType type, String text) {
         super(type, text);
     }

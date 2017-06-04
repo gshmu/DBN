@@ -260,7 +260,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     public List<? extends BrowserTreeNode> getChildren() {
-        if (isLoading()) {
+        if (isLoading() || isDisposed()) {
             return elements;
         } else {
             try {

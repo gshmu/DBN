@@ -44,6 +44,7 @@ public class MethodExecutionMessage extends ConsoleMessage {
     }
 
     public void dispose() {
+        super.dispose();
         executionProcessor = null;
         databaseFile = null;
         contentFile = null;

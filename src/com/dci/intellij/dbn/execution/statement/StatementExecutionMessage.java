@@ -46,6 +46,7 @@ public class StatementExecutionMessage extends ConsoleMessage {
     }
 
     public void dispose() {
+        super.dispose();
         executionResult = null;
     }
 
