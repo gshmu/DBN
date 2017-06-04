@@ -266,10 +266,12 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
     @NotNull
     public List<T> getElements() {
-        if (parent instanceof DBVirtualObject || isSubContent() || DatabaseLoadMonitor.isEnsureDataLoaded() || DatabaseLoadMonitor.isLoadingInBackground()) {
-            load(false);
-        } else{
-            loadInBackground(false);
+        if (!isDisposed()) {
+            if (parent instanceof DBVirtualObject || isSubContent() || DatabaseLoadMonitor.isEnsureDataLoaded() || DatabaseLoadMonitor.isLoadingInBackground()) {
+                load(false);
+            } else{
+                loadInBackground(false);
+            }
         }
         return elements;
     }

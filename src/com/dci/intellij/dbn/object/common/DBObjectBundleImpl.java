@@ -624,7 +624,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     public void refreshObjectsStatus(final @Nullable DBSchemaObject requester) {
         if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(getConnectionHandler())) {
-            new BackgroundTask(getProject(), "Updating objects status", true) {
+            new BackgroundTask(getProject(), "Updating objects status", true, true) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     try {
@@ -632,13 +632,15 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
                         int size = schemas.size();
                         for (int i=0; i<size; i++) {
-                            DBSchema schema = schemas.get(i);
-                            if (size > 3) {
-                                progressIndicator.setIndeterminate(false);
-                                progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, size));
+                            if (!progressIndicator.isCanceled()) {
+                                DBSchema schema = schemas.get(i);
+                                if (size > 3) {
+                                    progressIndicator.setIndeterminate(false);
+                                    progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, size));
+                                }
+                                progressIndicator.setText("Updating object status in schema " + schema.getName() + "... ");
+                                schema.refreshObjectsStatus();
                             }
-                            progressIndicator.setText("Updating object status in schema " + schema.getName() + "... ");
-                            schema.refreshObjectsStatus();
                         }
                     } catch (SQLException e) {
                         NotificationUtil.sendErrorNotification(getProject(), "Object Status Refresh", "Could not refresh object status. Cause: " + e.getMessage());

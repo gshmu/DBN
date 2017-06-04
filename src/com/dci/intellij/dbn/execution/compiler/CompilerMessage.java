@@ -144,6 +144,7 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
     }
 
     public void dispose() {
+        super.dispose();
         compilerResult = null;
         databaseFile = null;
         contentFile = null;

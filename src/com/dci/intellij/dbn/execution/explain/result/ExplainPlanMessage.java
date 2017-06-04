@@ -24,6 +24,7 @@ public class ExplainPlanMessage extends ConsoleMessage {
     }
 
     public void dispose() {
+        super.dispose();
         explainPlanResult = null;
     }
 
