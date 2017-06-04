@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.Key;
@@ -10,10 +8,11 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.FileViewProviderFactory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.SingleRootFileViewProvider;
+import org.jetbrains.annotations.NotNull;
 
 public class DatabaseFileViewProviderFactory implements FileViewProviderFactory{
 
-    public static final Key<DatabaseFileViewProvider> CACHED_VIEW_PROVIDER = new Key<>("CACHED_VIEW_PROVIDER");
+    public static final Key<DatabaseFileViewProvider> CACHED_VIEW_PROVIDER = new Key<DatabaseFileViewProvider>("CACHED_VIEW_PROVIDER");
 
     @NotNull
     public FileViewProvider createFileViewProvider(@NotNull VirtualFile file, Language language, @NotNull PsiManager manager, boolean eventSystemEnabled) {
