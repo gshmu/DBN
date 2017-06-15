@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.debugger;
 
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -67,17 +78,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
 
 @State(
     name = "DBNavigator.Project.DebuggerManager",
@@ -358,7 +358,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         DBDebuggerType debuggerType;
 
         public DebuggerStarter() {
-            setOption(0);
+            setData(0);
         }
 
         public DBDebuggerType getDebuggerType() {
@@ -371,7 +371,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
         @Override
         protected boolean canExecute() {
-            return getOption() == 0;
+            return getData() == 0;
         }
 
     }

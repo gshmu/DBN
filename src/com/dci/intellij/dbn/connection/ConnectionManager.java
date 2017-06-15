@@ -182,7 +182,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             final ModalTask<AuthenticationInfo> connectCallback = new ModalTask<AuthenticationInfo>(project, "Connecting to " + connectionName, false) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                    AuthenticationInfo authenticationInfo = getOption();
+                    AuthenticationInfo authenticationInfo = getData();
                     try {
                         Connection connection = ConnectionUtil.connect(connectionSettings, ConnectionType.TEST, null, authenticationInfo, false, null);
                         ConnectionUtil.closeConnection(connection);
@@ -230,7 +230,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     new ModalTask<AuthenticationInfo>(project, "Connecting to " + connectionName, false) {
                         @Override
                         protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                            AuthenticationInfo authenticationInfo = getOption();
+                            AuthenticationInfo authenticationInfo = getData();
                             try {
                                 Connection connection = ConnectionUtil.connect(connectionSettings, ConnectionType.TEST, null, authenticationInfo, false, null);
                                 ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
@@ -351,7 +351,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 }
                 connectionHandler.getInstructions().setAllowAutoConnect(true);
             }
-            callback.setOption(newAuthenticationInfo);
+            callback.setData(newAuthenticationInfo);
             callback.start();
         }
     }

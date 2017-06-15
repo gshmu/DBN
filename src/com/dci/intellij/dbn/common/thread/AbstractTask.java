@@ -1,30 +1,21 @@
 package com.dci.intellij.dbn.common.thread;
 
 public abstract class AbstractTask<T> implements RunnableTask<T>{
-    private T option;
-    private T executeOption;
+    private T data;
 
     private boolean cancelled;
 
     public AbstractTask() {
     }
 
-    public AbstractTask(T executeOption) {
-        this.executeOption = executeOption;
-    }
-
-    public T getExecuteOption() {
-        return executeOption;
+    @Override
+    public final T getData() {
+        return data;
     }
 
     @Override
-    public final T getOption() {
-        return option;
-    }
-
-    @Override
-    public final void setOption(T option) {
-        this.option = option;
+    public final void setData(T data) {
+        this.data = data;
     }
 
     protected void cancel() {

@@ -323,7 +323,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                             new MessageCallback() {
                                 @Override
                                 protected void execute() {
-                                    Integer result = getOption();
+                                    Integer result = getData();
                                     if (result == 0) {
                                         callback.start();
                                     } else if (result == 1) {

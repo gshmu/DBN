@@ -3,11 +3,7 @@ package com.dci.intellij.dbn.common.thread;
 import com.intellij.openapi.progress.ProcessCanceledException;
 
 public abstract class SimpleTask<T> extends AbstractTask<T>{
-    public SimpleTask() {
-    }
-
-    public SimpleTask(T executeOption) {
-        super(executeOption);
+    protected SimpleTask() {
     }
 
     public void start() {
@@ -15,7 +11,7 @@ public abstract class SimpleTask<T> extends AbstractTask<T>{
     }
 
     protected boolean canExecute() {
-        return getExecuteOption() == null || getExecuteOption().equals(getOption());
+        return true;
     }
 
     public void run() {
