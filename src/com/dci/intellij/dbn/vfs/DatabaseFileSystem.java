@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.EditorStateManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeMainEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
+import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -388,7 +389,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                         Project project = object.getProject();
                         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                         fileEditorManager.openFile(databaseFile, focusEditor);
-                        EditorUtil.selectEditor(project, null, databaseFile, editorProviderId, focusEditor);
+                        NavigationInstruction navigationInstruction = focusEditor ? NavigationInstruction.FOCUS_SCROLL : NavigationInstruction.SCROLL;
+                        EditorUtil.selectEditor(project, null, databaseFile, editorProviderId, navigationInstruction);
                         DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(true);
                     }
                 }
@@ -413,7 +415,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                         for (FileEditor fileEditor : fileEditors) {
                             if (fileEditor instanceof SourceCodeMainEditor) {
                                 SourceCodeMainEditor sourceCodeEditor = (SourceCodeMainEditor) fileEditor;
-                                EditorUtil.selectEditor(project, fileEditor, databaseFile, editorProviderId, focusEditor);
+                                NavigationInstruction navigationInstruction = focusEditor ? NavigationInstruction.FOCUS_SCROLL : NavigationInstruction.SCROLL;
+                                EditorUtil.selectEditor(project, fileEditor, databaseFile, editorProviderId, navigationInstruction);
                                 sourceCodeEditor.navigateTo(object);
                                 break;
                             }

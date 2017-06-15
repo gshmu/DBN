@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionContext;
+import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -82,8 +83,8 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         return getExecutionInput().getExecutionContext();
     }
 
-    public void navigateToEditor(boolean requestFocus) {
-          getExecutionProcessor().navigateToEditor(requestFocus);
+    public void navigateToEditor(NavigationInstruction instruction) {
+          getExecutionProcessor().navigateToEditor(instruction);
     }
 
     public int getExecutionDuration() {

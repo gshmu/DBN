@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.SessionBrowserStatementVirtualFile;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserForm;
+import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -51,7 +52,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -332,7 +332,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                         if (textEditor != null) {
                             Editor editor = textEditor.getEditor();
                             descriptor.navigateIn(editor);
-                            if (requestFocus) focusEditor(editor);
+                            if (requestFocus) EditorUtil.focusEditor(editor);
                         }
                         return;
                     }
@@ -343,7 +343,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                         if (textEditor != null) {
                             Editor editor = textEditor.getEditor();
                             descriptor.navigateIn(editor);
-                            if (requestFocus) focusEditor(editor);
+                            if (requestFocus) EditorUtil.focusEditor(editor);
                         }
                         return;
                     }
@@ -356,7 +356,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                             EditorEx viewer = editorForm.getDetailsForm().getCurrentSqlPanel().getViewer();
                             if (viewer != null) {
                                 descriptor.navigateIn(viewer);
-                                if (requestFocus) focusEditor(viewer);
+                                if (requestFocus) EditorUtil.focusEditor(viewer);
                             }
                         }
                         return;
@@ -369,7 +369,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                             if (textEditor.getVirtualFile().equals(virtualFile)) {
                                 Editor editor = textEditor.getEditor();
                                 descriptor.navigateIn(editor);
-                                if (requestFocus) focusEditor(editor);
+                                if (requestFocus) EditorUtil.focusEditor(editor);
                                 return;
                             }
 
@@ -382,21 +382,16 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         }
     }
 
-    public void navigateInEditor(@NotNull FileEditor fileEditor, boolean requestFocus) {
+    public void navigateInEditor(@NotNull FileEditor fileEditor, NavigationInstruction instruction) {
         OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
         if (descriptor != null) {
             Editor editor = EditorUtil.getEditor(fileEditor);
             if (editor != null) {
-                descriptor.navigateIn(editor);
-                if (requestFocus) focusEditor(editor);
+                if (instruction.isScroll()) descriptor.navigateIn(editor);
+                if (instruction.isFocus()) EditorUtil.focusEditor(editor);
+                //TODO instruction.isOpen();
             }
         }
-    }
-
-
-    private static void focusEditor(@NotNull Editor editor) {
-        Project project = editor.getProject();
-        IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
     }
 
     /*********************************************************

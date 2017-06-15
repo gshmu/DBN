@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.common.util;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -11,6 +22,7 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
+import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
@@ -41,20 +53,9 @@ import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.util.ArrayList;
-import java.util.List;
 
 public class EditorUtil {
-    public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, EditorProviderId editorProviderId, boolean requestFocus) {
+    public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, EditorProviderId editorProviderId, NavigationInstruction instruction) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         if (fileEditor != null) {
             if (fileEditor instanceof DDLFileEditor) {
@@ -64,7 +65,7 @@ public class EditorUtil {
                     virtualFile = editableObject.getVirtualFile();
                 }
             }
-            fileEditorManager.openFile(virtualFile, requestFocus);
+            fileEditorManager.openFile(virtualFile, instruction.isFocus());
 
             if (fileEditor instanceof BasicTextEditor) {
                 BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
@@ -86,32 +87,36 @@ public class EditorUtil {
             }
 
             if (editableObjectFile != null) {
-                FileEditor[] fileEditors = fileEditorManager.openFile(editableObjectFile, requestFocus);
-                fileEditorManager.setSelectedEditor(editableObjectFile, editorProviderId.getId());
+                FileEditor[] fileEditors = instruction.isOpen() ?
+                        fileEditorManager.openFile(editableObjectFile, instruction.isFocus()) :
+                        fileEditorManager.getEditors(editableObjectFile);
 
-                for (FileEditor openFileEditor : fileEditors) {
-                    if (openFileEditor instanceof BasicTextEditor) {
-                        BasicTextEditor basicTextEditor = (BasicTextEditor) openFileEditor;
-                        if (basicTextEditor.getEditorProviderId().equals(editorProviderId)) {
-                            fileEditor = basicTextEditor;
-                            break;
+                if (fileEditors.length > 0) {
+                    fileEditorManager.setSelectedEditor(editableObjectFile, editorProviderId.getId());
+
+                    for (FileEditor openFileEditor : fileEditors) {
+                        if (openFileEditor instanceof BasicTextEditor) {
+                            BasicTextEditor basicTextEditor = (BasicTextEditor) openFileEditor;
+                            if (basicTextEditor.getEditorProviderId().equals(editorProviderId)) {
+                                fileEditor = basicTextEditor;
+                                break;
+                            }
                         }
                     }
                 }
 
             }
         } else if (virtualFile.isInLocalFileSystem()) {
-            FileEditor[] fileEditors = fileEditorManager.openFile(virtualFile, requestFocus);
+            FileEditor[] fileEditors = instruction.isOpen() ?
+                    fileEditorManager.openFile(virtualFile, instruction.isFocus()) :
+                    fileEditorManager.getEditors(virtualFile);
             if (fileEditors.length > 0) {
                 fileEditor = fileEditors[0];
             }
         }
 
-        if (requestFocus && fileEditor != null) {
-            Editor editor = getEditor(fileEditor);
-            if (editor != null) {
-                IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
-            }
+        if (instruction.isFocus() && fileEditor != null) {
+            focusEditor(fileEditor);
         }
 
         return fileEditor;
@@ -344,6 +349,24 @@ public class EditorUtil {
             }
         }
         return null;
+    }
+
+    public static void focusEditor(@Nullable FileEditor fileEditor) {
+        if (fileEditor != null) {
+            Editor editor = getEditor(fileEditor);
+            focusEditor(editor);
+        }
+    }
+    public static void focusEditor(@Nullable final Editor editor) {
+        new SimpleLaterInvocator() {
+            @Override
+            protected void execute() {
+                if (editor != null) {
+                    Project project = editor.getProject();
+                    IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
+                }
+            }
+        }.start();
     }
 
     public static VirtualFile getSelectedFile(Project project) {
