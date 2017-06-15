@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -12,7 +14,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class ConnectionAction extends SimpleTask<Integer> {
     public static final String[] OPTIONS_CONNECT_CANCEL = new String[]{"Connect", "Cancel"};
@@ -20,15 +21,16 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     private String description;
     private ConnectionProvider connectionProvider;
     private TaskInstructions taskInstructions;
+    private Integer executeOption;
 
     public ConnectionAction(String description, ConnectionProvider connectionProvider) {
         this(description, connectionProvider, (Integer) null);
     }
 
     public ConnectionAction(String description, ConnectionProvider connectionProvider, Integer executeOption) {
-        super(executeOption);
         this.description = description;
         this.connectionProvider = connectionProvider;
+        this.executeOption = executeOption;
     }
 
     public ConnectionAction(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions) {
@@ -36,10 +38,14 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     }
 
     public ConnectionAction(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions, Integer executeOption) {
-        super(executeOption);
         this.description = description;
         this.connectionProvider = connectionProvider;
         this.taskInstructions = taskInstructions;
+        this.executeOption = executeOption;
+    }
+
+    protected boolean canExecute() {
+        return executeOption == null || executeOption.equals(getData());
     }
 
     @NotNull
@@ -102,7 +108,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
                 new MessageCallback() {
                     @Override
                     protected void execute() {
-                        if (getOption() == 0) {
+                        if (getData() == 0) {
                             ConnectionInstructions instructions = connectionHandler.getInstructions();
                             instructions.setAllowAutoInit(true);
                             instructions.setAllowAutoConnect(true);
@@ -127,7 +133,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
                 new SimpleTask<AuthenticationInfo>() {
                     @Override
                     protected void execute() {
-                        AuthenticationInfo authenticationInfo = getOption();
+                        AuthenticationInfo authenticationInfo = getData();
                         if (authenticationInfo != null) {
                             executeAction();
                         } else {
@@ -145,7 +151,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
                 new MessageCallback() {
                     @Override
                     protected void execute() {
-                        if (getOption() == 0) {
+                        if (getData() == 0) {
                             connectionHandler.getInstructions().setAllowAutoConnect(true);
                             executeAction();
                         } else {

@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -28,14 +36,6 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseCompilerManager extends AbstractProjectComponent {
     private DatabaseCompilerManager(Project project) {
@@ -146,7 +146,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                 BackgroundTask<CompileType> compileTask = new BackgroundTask<CompileType>(project, "Compiling " + object.getObjectType().getName(), true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                        CompileType compileType = getOption();
+                        CompileType compileType = getData();
                         doCompileObject(object, compileType, compilerAction);
                         ConnectionHandler connectionHandler = object.getConnectionHandler();
                         EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
@@ -234,7 +234,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                 promptCompileTypeSelection(compileType, null, new BackgroundTask<CompileType>(project, "Compiling invalid objects", false, true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        CompileType compileType = getOption();
+                        CompileType compileType = getData();
                         doCompileInvalidObjects(schema.getPackages(), "packages", progressIndicator, compileType);
                         doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, compileType);
                         doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, compileType);
@@ -311,11 +311,11 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                     OperationSettings operationSettings = OperationSettings.getInstance(getProject());
                     operationSettings.getCompilerSettings().setCompileType(compileType);
                 }
-                callback.setOption(compileType);
+                callback.setData(compileType);
                 callback.start();
             }
         } else {
-            callback.setOption(compileType);
+            callback.setData(compileType);
             callback.start();
         }
     }

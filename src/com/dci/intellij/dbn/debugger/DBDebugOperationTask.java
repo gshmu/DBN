@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.common.thread.AbstractTask;
 import com.intellij.openapi.project.Project;
 
 public abstract class DBDebugOperationTask<T> extends AbstractTask<T> {
-    public static final ExecutorService POOL = Executors.newCachedThreadPool(new ThreadFactory() {
+    private static final ExecutorService POOL = Executors.newCachedThreadPool(new ThreadFactory() {
         @Override
         public Thread newThread(@NotNull Runnable runnable) {
             Thread thread = new Thread(runnable, "DBN - Database Debug Thread");

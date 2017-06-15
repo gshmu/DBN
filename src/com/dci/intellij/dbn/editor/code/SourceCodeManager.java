@@ -251,7 +251,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         BackgroundTask<Integer> openMergeDialogTask = new BackgroundTask<Integer>(project, "Loading database source code", false) {
                             @Override
                             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                                if (getOption() == 0) {
+                                if (getData() == 0) {
                                     try {
                                         SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
                                         String databaseContent = sourceCodeContent.getText().toString();
