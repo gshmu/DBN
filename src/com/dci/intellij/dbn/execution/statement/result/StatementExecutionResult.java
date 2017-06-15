@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionResult;
+import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
@@ -27,7 +28,7 @@ public interface StatementExecutionResult extends ExecutionResult {
 
 
 
-    void navigateToEditor(boolean requestFocus);
+    void navigateToEditor(NavigationInstruction instruction);
 
     int getUpdateCount();
 

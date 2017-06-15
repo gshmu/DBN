@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
@@ -45,8 +46,7 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     void navigateToResult();
 
-    @Deprecated
-    void navigateToEditor(boolean requestFocus);
+    void navigateToEditor(NavigationInstruction instruction);
 
     void execute() throws SQLException;
 

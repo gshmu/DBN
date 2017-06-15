@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
+import com.dci.intellij.dbn.common.thread.ConditionalWriteActionRunner;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
@@ -187,15 +188,19 @@ public class DocumentUtil {
     }
 
     public static void setText(final @NotNull Document document, final CharSequence text) {
-        new WriteActionRunner() {
+        new ConditionalWriteActionRunner() {
             public void run() {
                 FileDocumentManager manager = FileDocumentManager.getInstance();
                 VirtualFile file = manager.getFile(document);
                 if (file != null && file.isValid()) {
                     boolean isReadonly = !document.isWritable();
-                    document.setReadOnly(false);
-                    document.setText(text);
-                    document.setReadOnly(isReadonly);
+                    try {
+                        document.setReadOnly(false);
+                        document.setText(text);
+                    } finally {
+                        document.setReadOnly(isReadonly);
+                    }
+
                 }
             }
         }.start();

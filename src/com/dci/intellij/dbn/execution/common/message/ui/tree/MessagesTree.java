@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
+import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
@@ -51,6 +52,7 @@ import com.intellij.util.ui.UIUtil;
 
 public class MessagesTree extends DBNTree implements Disposable {
     private Project project;
+    private boolean ignoreSelectionEvent = false;
     public MessagesTree(Project project) {
         super(new MessagesTreeModel());
         this.project = project;
@@ -145,14 +147,19 @@ public class MessagesTree extends DBNTree implements Disposable {
                     scrollPathToVisible(treePath);
                     TreeSelectionModel selectionModel = getSelectionModel();
                     if (select) {
-                        selectionModel.setSelectionPath(treePath);
+                        try {
+                            ignoreSelectionEvent = true;
+                            selectionModel.setSelectionPath(treePath);
+                        } finally {
+                            ignoreSelectionEvent = false;
+                        }
                     } else {
                         selectionModel.clearSelection();
                     }
                     if (focus) {
                         requestFocus();
                     } else {
-                        navigateToCode(treePath.getLastPathComponent(), true);
+                        navigateToCode(treePath.getLastPathComponent(), NavigationInstruction.FOCUS);
                     }
                 }
             }.start();
@@ -169,7 +176,7 @@ public class MessagesTree extends DBNTree implements Disposable {
     }
 */
 
-    private void navigateToCode(Object object, boolean requestFocus) {
+    private void navigateToCode(Object object, NavigationInstruction instruction) {
         if (object instanceof StatementExecutionMessageNode) {
             StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) object;
             StatementExecutionMessage executionMessage = execMessageNode.getExecutionMessage();
@@ -179,11 +186,11 @@ public class MessagesTree extends DBNTree implements Disposable {
                 EditorProviderId editorProviderId = executionProcessor.getEditorProviderId();
                 VirtualFile virtualFile = executionProcessor.getVirtualFile();
                 FileEditor fileEditor = executionProcessor.getFileEditor();
-                fileEditor = EditorUtil.selectEditor(project, fileEditor, virtualFile, editorProviderId, requestFocus);
+                fileEditor = EditorUtil.selectEditor(project, fileEditor, virtualFile, editorProviderId, instruction);
                 if (fileEditor != null) {
                     ExecutablePsiElement cachedExecutable = executionProcessor.getCachedExecutable();
                     if (cachedExecutable != null) {
-                        cachedExecutable.navigateInEditor(fileEditor, requestFocus);
+                        cachedExecutable.navigateInEditor(fileEditor, instruction);
                     }
                 }
             }
@@ -196,23 +203,26 @@ public class MessagesTree extends DBNTree implements Disposable {
             if (compilerAction.isSave() || compilerAction.isCompile() || compilerAction.isBulkCompile()) {
                 DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
                 if (databaseFile != null) {
-                    navigateInObjectEditor(compilerMessage, requestFocus);
+                    navigateInObjectEditor(compilerMessage, instruction);
                 }
             } else if (compilerAction.isDDL()) {
                 VirtualFile virtualFile = compilerAction.getVirtualFile();
                 if (virtualFile instanceof DBConsoleVirtualFile) {
                     DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-                    navigateInConsoleEditor(compilerMessage, consoleVirtualFile, requestFocus);
+                    navigateInConsoleEditor(compilerMessage, consoleVirtualFile, instruction);
                 } else if (virtualFile != null) {
-                    navigateInScriptEditor(compilerMessage, virtualFile, requestFocus);
+                    navigateInScriptEditor(compilerMessage, virtualFile, instruction);
                 }
             }
         }
     }
 
-    private void navigateInConsoleEditor(CompilerMessage compilerMessage, DBConsoleVirtualFile virtualFile, boolean requestFocus) {
+    private void navigateInConsoleEditor(CompilerMessage compilerMessage, DBConsoleVirtualFile virtualFile, NavigationInstruction instruction) {
         FileEditorManager editorManager = getFileEditorManager();
-        editorManager.openFile(virtualFile, requestFocus);
+        if (instruction.isOpen()) {
+            editorManager.openFile(virtualFile, instruction.isFocus());
+        }
+
         FileEditor consoleFileEditor = compilerMessage.getCompilerResult().getCompilerAction().getFileEditor();
         if (consoleFileEditor == null) {
             FileEditor[] fileEditors = editorManager.getAllEditors(virtualFile);
@@ -222,53 +232,43 @@ public class MessagesTree extends DBNTree implements Disposable {
                 }
             }
         }
-        if (consoleFileEditor != null) {
-            Editor editor = EditorUtil.getEditor(consoleFileEditor);
-            if (editor != null) {
-                int lineShifting = 1;
-                Document document = editor.getDocument();
-                CharSequence documentText = document.getCharsSequence();
-                String objectName = compilerMessage.getObjectName();
-                CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
-                int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, compilerAction.getSourceStartOffset());
-                if (objectStartOffset > -1) {
-                    lineShifting = document.getLineNumber(objectStartOffset);
-                }
-
-                navigateInEditor(editor, compilerMessage, lineShifting);
-            }
-
-        }
+        navigateInFileEditor(consoleFileEditor, compilerMessage, instruction);
     }
 
-    private FileEditorManager getFileEditorManager() {
-        return FileEditorManager.getInstance(project);
-    }
-
-    private void navigateInScriptEditor(CompilerMessage compilerMessage, VirtualFile virtualFile, boolean requestFocus) {
+    private void navigateInScriptEditor(CompilerMessage compilerMessage, VirtualFile virtualFile, NavigationInstruction instruction) {
         CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
         FileEditor fileEditor = compilerAction.getFileEditor();
         EditorProviderId editorProviderId = compilerAction.getEditorProviderId();
-        fileEditor = EditorUtil.selectEditor(project, fileEditor, virtualFile, editorProviderId, requestFocus);
+        fileEditor = EditorUtil.selectEditor(project, fileEditor, virtualFile, editorProviderId, instruction);
 
+        navigateInFileEditor(fileEditor, compilerMessage, instruction);
+    }
+
+    private void navigateInFileEditor(FileEditor fileEditor, CompilerMessage compilerMessage, NavigationInstruction instruction) {
+        CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
         if (fileEditor != null) {
             Editor editor = EditorUtil.getEditor(fileEditor);
             if (editor != null) {
-                int lineShifting = 1;
-                Document document = editor.getDocument();
-                CharSequence documentText = document.getCharsSequence();
-                String objectName = compilerMessage.getObjectName();
-                int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, compilerAction.getSourceStartOffset());
-                if (objectStartOffset > -1) {
-                    lineShifting = document.getLineNumber(objectStartOffset);
+                if (!instruction.isOpen() && instruction.isFocus()) {
+                    EditorUtil.focusEditor(editor);
                 }
 
-                navigateInEditor(editor, compilerMessage, lineShifting);
+                if (instruction.isScroll()) {
+                    int lineShifting = 1;
+                    Document document = editor.getDocument();
+                    CharSequence documentText = document.getCharsSequence();
+                    String objectName = compilerMessage.getObjectName();
+                    int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, compilerAction.getSourceStartOffset());
+                    if (objectStartOffset > -1) {
+                        lineShifting = document.getLineNumber(objectStartOffset);
+                    }
+                    navigateInEditor(editor, compilerMessage, lineShifting);
+                }
             }
         }
     }
 
-    private void navigateInObjectEditor(CompilerMessage compilerMessage, boolean requestFocus) {
+    private void navigateInObjectEditor(CompilerMessage compilerMessage, NavigationInstruction instruction) {
         DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
         if (databaseFile != null && !databaseFile.isDisposed()) {
             DBContentVirtualFile contentFile = compilerMessage.getContentFile();
@@ -284,15 +284,17 @@ public class MessagesTree extends DBNTree implements Disposable {
                         case CODE_BODY: editorProviderId = EditorProviderId.CODE_BODY; break;
                     }
                 }
-                objectFileEditor = EditorUtil.selectEditor(project, objectFileEditor, databaseFile, editorProviderId, requestFocus);
+                objectFileEditor = EditorUtil.selectEditor(project, objectFileEditor, databaseFile, editorProviderId, instruction);
 
                 if (objectFileEditor != null && objectFileEditor instanceof SourceCodeEditor) {
                     SourceCodeEditor codeEditor = (SourceCodeEditor) objectFileEditor;
                     Editor editor = EditorUtil.getEditor(codeEditor);
                     if (editor != null) {
-                        Document document = editor.getDocument();
-                        int lineShifting = document.getLineNumber(codeEditor.getHeaderEndOffset());
-                        navigateInEditor(editor, compilerMessage, lineShifting);
+                        if (instruction.isScroll()) {
+                            Document document = editor.getDocument();
+                            int lineShifting = document.getLineNumber(codeEditor.getHeaderEndOffset());
+                            navigateInEditor(editor, compilerMessage, lineShifting);
+                        }
                         VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
                         if (virtualFile != null) {
                             OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
@@ -330,15 +332,20 @@ public class MessagesTree extends DBNTree implements Disposable {
         }
     }
 
+
+    private FileEditorManager getFileEditorManager() {
+        return FileEditorManager.getInstance(project);
+    }
+
     /*********************************************************
      *                   TreeSelectionListener               *
      *********************************************************/
     private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
         @Override
         public void valueChanged(TreeSelectionEvent event) {
-            if (event.isAddedPath()) {
+            if (event.isAddedPath() && !ignoreSelectionEvent) {
                 Object object = event.getPath().getLastPathComponent();
-                navigateToCode(object, false/*object instanceof CompilerMessageNode*/);
+                navigateToCode(object, NavigationInstruction.OPEN_SCROLL);
                 //grabFocus();
             }
         }
@@ -354,7 +361,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                 TreePath selectionPath = getSelectionPath();
                 if (selectionPath != null) {
                     Object value = selectionPath.getLastPathComponent();
-                    navigateToCode(value, true);
+                    navigateToCode(value, NavigationInstruction.OPEN_FOCUS_SCROLL);
                 }
             }
         }
@@ -370,7 +377,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                 TreePath selectionPath = getSelectionPath();
                 if (selectionPath != null) {
                     Object value = selectionPath.getLastPathComponent();
-                    navigateToCode(value, true);
+                    navigateToCode(value, NavigationInstruction.OPEN_FOCUS_SCROLL);
                 }
             }
         }

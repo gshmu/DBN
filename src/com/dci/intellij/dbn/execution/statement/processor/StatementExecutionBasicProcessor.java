@@ -29,6 +29,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
+import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
@@ -484,13 +485,13 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         }
     }
 
-    public void navigateToEditor(boolean requestFocus) {
+    public void navigateToEditor(NavigationInstruction instruction) {
         FileEditor fileEditor = getFileEditor();
         if (cachedExecutable != null) {
             if (fileEditor != null) {
-                cachedExecutable.navigateInEditor(fileEditor, requestFocus);
+                cachedExecutable.navigateInEditor(fileEditor, instruction);
             } else {
-                cachedExecutable.navigate(requestFocus);
+                cachedExecutable.navigate(instruction.isFocus());
             }
         }
     }
