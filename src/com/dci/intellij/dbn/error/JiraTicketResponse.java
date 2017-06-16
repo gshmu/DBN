@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 class JiraTicketResponse implements TicketResponse{
@@ -24,7 +25,11 @@ class JiraTicketResponse implements TicketResponse{
 
     @Nullable
     public String getTicketId() {
-        return response == null ? null : response.get("key").getAsString();
+        if (response == null) {
+            return null;
+        }
+        JsonElement key = response.get("key");
+        return key == null ? null : key.getAsString();
     }
 
     @Override
