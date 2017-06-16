@@ -820,7 +820,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     *********************************************************/
     public void navigate(boolean requestFocus) {
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
-        browserManager.navigateToElement(this, requestFocus);
+        browserManager.navigateToElement(this, requestFocus, true);
     }
 
     public boolean canNavigate() {

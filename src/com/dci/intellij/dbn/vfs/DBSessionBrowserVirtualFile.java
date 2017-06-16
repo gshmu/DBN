@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.LocalTimeCounter;
@@ -36,6 +37,11 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
+    }
+
+    @Override
+    public DBSchema getCurrentSchema() {
+        return null;
     }
 
     @NotNull

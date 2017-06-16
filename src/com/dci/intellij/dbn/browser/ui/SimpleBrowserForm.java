@@ -58,8 +58,8 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         return browserTree;
     }
 
-    public void selectElement(BrowserTreeNode treeNode, boolean requestFocus) {
-        browserTree.selectElement(treeNode, requestFocus);
+    public void selectElement(BrowserTreeNode treeNode, boolean focus, boolean scroll) {
+        browserTree.selectElement(treeNode, focus);
     }
 
     @Override
