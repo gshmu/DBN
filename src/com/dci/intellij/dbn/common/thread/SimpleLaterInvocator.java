@@ -5,7 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 public abstract class SimpleLaterInvocator extends SynchronizedTask{
 
     public void start() {
-        ApplicationManager.getApplication().invokeLater(this/*, ModalityState.NON_MODAL*/);
+        ApplicationManager.getApplication().invokeLater(this, ApplicationManager.getApplication().getDefaultModalityState()/*, ModalityState.NON_MODAL*/);
     }
 
     @Override

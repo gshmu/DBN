@@ -8,22 +8,28 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.text.actions.TextContentTypeComboBoxAction;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
-import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.PsiManagerEx;
+import com.intellij.psi.impl.file.impl.FileManager;
+import com.intellij.testFramework.LightVirtualFile;
 
 public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
     private JPanel mainPanel;
@@ -33,8 +39,10 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
     private EditorEx editor;
     private UserValueHolder userValueHolder;
     private String error;
+    private String text;
 
     private TextEditorAdapter textEditorAdapter;
+    private DocumentListener documentListener;
 
 
     public JComponent getComponent() {
@@ -43,6 +51,7 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
 
     public TextEditorForm(TextEditorDialog parent, DocumentListener documentListener, UserValueHolder userValueHolder, TextEditorAdapter textEditorAdapter) throws SQLException {
         super(parent);
+        this.documentListener = documentListener;
         this.userValueHolder = userValueHolder;
         this.textEditorAdapter = textEditorAdapter;
 
@@ -56,15 +65,63 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
                 new TextContentTypeComboBoxAction(this));
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
 
-        String text = readUserValue();
-        Document document = EditorFactory.getInstance().createDocument(text == null ? "" : StringUtil.removeCharacter(text, '\r'));
-        document.addDocumentListener(documentListener);
+        text = StringUtil.removeCharacter(CommonUtil.nvl(readUserValue(), ""), '\r');
+        initEditor();
+    }
 
-        editor = (EditorEx) EditorFactory.getInstance().createEditor(document, project, userValueHolder.getContentType().getFileType(), false);
+    private void initEditor() {
+        Document document = null;
+        EditorEx oldEditor = editor;
+        if (oldEditor != null) {
+            document = oldEditor.getDocument();
+            document.removeDocumentListener(documentListener);
+            text = document.getText();
+            document = null;
+        }
+
+        Project project = getProject();
+        FileType fileType = userValueHolder.getContentType().getFileType();
+        if (fileType instanceof LanguageFileType) {
+            LanguageFileType languageFileType = (LanguageFileType) fileType;
+
+            VirtualFile virtualFile = new LightVirtualFile("text_editor_file", fileType, text);
+
+            FileManager fileManager = PsiManagerEx.getInstanceEx(project).getFileManager();
+            FileViewProvider viewProvider = fileManager.createFileViewProvider(virtualFile, true);
+            PsiFile psiFile = viewProvider.getPsi(languageFileType.getLanguage());
+            document = psiFile == null ? null : DocumentUtil.getDocument(psiFile);
+        }
+
+        if (document == null) {
+            document = EditorFactory.getInstance().createDocument(text);
+        }
+
+        document.addDocumentListener(documentListener);
+        editor = (EditorEx) EditorFactory.getInstance().createEditor(document, project, fileType, false);
         editor.setEmbeddedIntoDialogWrapper(true);
         editor.getContentComponent().setFocusTraversalKeysEnabled(false);
 
+        if (oldEditor!= null) {
+            editorPanel.remove(oldEditor.getComponent());
+            EditorFactory.getInstance().releaseEditor(oldEditor);
+
+        }
         editorPanel.add(editor.getComponent(), BorderLayout.CENTER);
+    }
+
+    public void setContentType(TextContentType contentType){
+        if (userValueHolder.getContentType() != contentType) {
+            userValueHolder.setContentType(contentType);
+            initEditor();
+        }
+
+/*
+        SyntaxHighlighter syntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(contentType.getFileType(), userValueHolder.getProject(), null);
+        EditorColorsScheme colorsScheme = editor.getColorsScheme();
+        editor.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
+*/
+
+
     }
 
     @Nullable
@@ -89,16 +146,11 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
         return userValueHolder.getContentType();
     }
 
-    public void setContentType(TextContentType contentType) {
-        SyntaxHighlighter syntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(contentType.getFileType(), userValueHolder.getProject(), null);
-        EditorColorsScheme colorsScheme = editor.getColorsScheme();
-        editor.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
-        userValueHolder.setContentType(contentType);
-    }
-
     public void dispose() {
         super.dispose();
         EditorFactory.getInstance().releaseEditor(editor);
+        editor = null;
+        documentListener = null;
         //editor = null;
 
     }
