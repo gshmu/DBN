@@ -1,12 +1,14 @@
 package com.dci.intellij.dbn.connection.ssh;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import org.apache.commons.lang.StringUtils;
-
-import java.io.IOException;
-import java.net.ServerSocket;
 
 public class SshTunnelConnector {
     private String proxyHost;
@@ -52,17 +54,21 @@ public class SshTunnelConnector {
         }
 
         JSch jsch = new JSch();
+        JSch.setConfig("kex", "diffie-hellman-group1-sha1,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group-exchange-sha256");
         session = jsch.getSession(proxyUser, proxyHost, proxyPort);
 
         if(authType == SshAuthType.KEY_PAIR) {
-            if (StringUtils.isNotEmpty(keyPassphrase)) {
-                jsch.addIdentity(keyFile, keyPassphrase);
-            }
+            jsch.addIdentity(keyFile, CommonUtil.nvl(keyPassphrase, ""));;
         } else {
             session.setPassword(proxyPassword);
         }
 
-        session.setConfig("StrictHostKeyChecking", "no");
+        Properties config = new Properties();
+        config.put("StrictHostKeyChecking", "no");
+        config.put("TCPKeepAlive", "yes");
+        session.setConfig(config);
+        session.setServerAliveInterval((int) TimeUnit.MINUTES.toMillis(2L));
+        session.setServerAliveCountMax(1000);
         session.connect();
 
         session.setPortForwardingL(localPort, remoteHost, remotePort);
