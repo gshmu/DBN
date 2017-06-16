@@ -115,8 +115,8 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
         boolean enabled = activeCheckBox.isSelected();
         configuration.setActive(enabled);
         configuration.setHost(ConfigurationEditorUtil.validateStringInputValue(hostTextField, "Host", enabled));
-        int port = ConfigurationEditorUtil.validateIntegerInputValue(portTextField, "Port", enabled, 0, 999999, null);
-        configuration.setPort(Integer.toString(port));
+        ConfigurationEditorUtil.validateIntegerInputValue(portTextField, "Port", enabled, 0, 999999, null);
+        configuration.setPort(portTextField.getText());
         configuration.setUser(userTextField.getText());
         SshAuthType authType = authTypeComboBox.getSelectedValue();
 

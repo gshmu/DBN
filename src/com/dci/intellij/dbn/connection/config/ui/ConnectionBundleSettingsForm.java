@@ -107,16 +107,19 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
     public void applyFormChanges() throws ConfigurationException {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
-        List<ConnectionSettings> connections = connectionBundleSettings.getConnections();
-        connections.clear();
 
+        List<ConnectionSettings> newConnections = new ArrayList<>();
         ConnectionListModel listModel = (ConnectionListModel) connectionsList.getModel();
         for (int i=0; i< listModel.getSize(); i++) {
             ConnectionSettings connection = (ConnectionSettings) listModel.getElementAt(i);
             connection.apply();
             connection.setNew(false);
-            connections.add(connection);
+            newConnections.add(connection);
         }
+
+        List<ConnectionSettings> connections = connectionBundleSettings.getConnections();
+        connections.clear();
+        connections.addAll(newConnections);
     }
 
     public void resetFormChanges() {
