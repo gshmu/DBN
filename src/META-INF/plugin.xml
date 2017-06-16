@@ -32,6 +32,7 @@
             <ul>
                 - Support for latest IDE EAP versions<br>
                 - Source editor breadcrumbs<br>
+                - Data editor - qualified CLOB / TEXT editor<br>
                 - Bug fixes and performance improvements<br>
             </ul>
             <li><b>3.0.6893</b>
