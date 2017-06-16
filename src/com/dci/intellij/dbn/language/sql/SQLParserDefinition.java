@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.sql;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.language.common.DBLanguageParser;
 import com.dci.intellij.dbn.language.common.DBLanguageParserDefinition;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
@@ -7,7 +9,6 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
 
 
 public class SQLParserDefinition extends DBLanguageParserDefinition {
