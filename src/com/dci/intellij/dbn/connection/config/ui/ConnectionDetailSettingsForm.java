@@ -177,7 +177,8 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max connection pool size", true, 3, 20, "");
         configuration.setIdleTimeToDisconnect(idleTimeToDisconnect);
         configuration.setPasswordExpiryTime(passwordExpiryTime);
-        configuration.setMaxConnectionPoolSize(maxPoolSize);    }
+        configuration.setMaxConnectionPoolSize(maxPoolSize);
+    }
 
     @Override
     public void resetFormChanges() {

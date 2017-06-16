@@ -4,6 +4,7 @@ import javax.swing.JTextField;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.options.ConfigurationException;
 
 public class ConfigurationEditorUtil {
@@ -11,14 +12,17 @@ public class ConfigurationEditorUtil {
         try {
 
             String value = inputField.getText();
-            if (required && value.length() == 0) {
+            if (required && StringUtil.isEmpty(value)) {
                 String message = "Input value for \"" + name + "\" must be specified";
                 throw new ConfigurationException(message, "Invalid config value");
             }
 
-            int integer = Integer.parseInt(value);
-            if (min > integer || max < integer) throw new NumberFormatException("Number not in range");
-            return integer;
+            if (StringUtil.isNotEmpty(value)) {
+                int integer = Integer.parseInt(value);
+                if (min > integer || max < integer) throw new NumberFormatException("Number not in range");
+                return integer;
+            }
+            return 0;
         } catch (NumberFormatException e) {
             inputField.grabFocus();
             inputField.selectAll();
