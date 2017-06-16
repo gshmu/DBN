@@ -96,6 +96,11 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
         boolean databaseLoadActive = objectsLookupSettings.getForceDatabaseLoad().value();
         boolean forceLoad = checkBoxState && databaseLoadActive;
 
+        if (!forceLoad && selectedSchema != null) {
+            // touch the schema for next load
+            selectedSchema.get().getChildren();
+        }
+
         ObjectNamesCollector collector = new ObjectNamesCollector(forceLoad);
         scanObjectLists(collector);
 
