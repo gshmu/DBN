@@ -1,17 +1,5 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.components.JBScrollPane;
-import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -37,6 +25,18 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.UIUtil;
 
 public class DBNTable<T extends DBNTableModel> extends JTable implements Disposable{
     private static final int MAX_COLUMN_WIDTH = 300;
@@ -245,15 +245,13 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     }
 
     public void selectCell(int rowIndex, int columnIndex) {
-        if (getRowCount() > rowIndex && getColumnCount() > columnIndex) {
+        if (rowIndex > -1 && columnIndex > -1 && rowIndex < getRowCount() && columnIndex < getColumnCount()) {
             Rectangle cellRect = getCellRect(rowIndex, columnIndex, true);
             if (!getVisibleRect().contains(cellRect)) {
                 scrollRectToVisible(cellRect);
             }
             if (getSelectedRowCount() != 1 || getSelectedRow() != rowIndex) {
-                if (rowIndex < getModel().getRowCount()) {
-                    setRowSelectionInterval(rowIndex, rowIndex);
-                }
+                setRowSelectionInterval(rowIndex, rowIndex);
             }
 
             if (getSelectedColumnCount() != 1 || getSelectedColumn() != columnIndex) {
