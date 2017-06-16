@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import java.awt.BorderLayout;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -28,18 +40,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComponent {
     private JPanel actionsPanel;
@@ -108,7 +108,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     }
 
     public DatasetEditorTable beforeRebuild() throws SQLException {
-        DatasetEditorTable oldEditorTable = datasetEditorTable;
+        DatasetEditorTable oldEditorTable = getEditorTable();
         datasetEditorTable = new DatasetEditorTable(datasetEditor);
         Disposer.register(this, datasetEditorTable);
 
