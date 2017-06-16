@@ -13,7 +13,7 @@ public abstract class WriteActionRunner {
     }
 
     public void start() {
-        new ConditionalLaterInvocator() {
+        new SimpleLaterInvocator() {
             @Override
             protected void execute() {
                 Runnable writeAction = new Runnable() {

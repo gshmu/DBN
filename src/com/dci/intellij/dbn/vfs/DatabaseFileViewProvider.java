@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.vfs;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -10,21 +12,25 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.testFramework.LightVirtualFile;
-import org.jetbrains.annotations.NotNull;
 
 public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
+    public static final Key<DatabaseFileViewProvider> CACHED_VIEW_PROVIDER = new Key<DatabaseFileViewProvider>("CACHED_VIEW_PROVIDER");
+
     public DatabaseFileViewProvider(@NotNull PsiManager manager, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled) {
         super(manager, virtualFile, eventSystemEnabled);
+        virtualFile.putUserData(CACHED_VIEW_PROVIDER, this);
         //virtualFile.putUserData(FREE_THREADED, true);
     }
 
     public DatabaseFileViewProvider(@NotNull PsiManager psiManager, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled, @NotNull Language language) {
         super(psiManager, virtualFile, eventSystemEnabled, language);
+        virtualFile.putUserData(CACHED_VIEW_PROVIDER, this);
         //virtualFile.putUserData(FREE_THREADED, true);
     }
 
