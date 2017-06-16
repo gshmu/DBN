@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -27,9 +21,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.testFramework.LightVirtualFile;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.sql.SQLException;
 
 public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
     private JPanel mainPanel;
@@ -86,7 +87,7 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
 
             VirtualFile virtualFile = new LightVirtualFile("text_editor_file", fileType, text);
 
-            FileManager fileManager = PsiManagerEx.getInstanceEx(project).getFileManager();
+            FileManager fileManager = ((PsiManagerEx)PsiManager.getInstance(project)).getFileManager();
             FileViewProvider viewProvider = fileManager.createFileViewProvider(virtualFile, true);
             PsiFile psiFile = viewProvider.getPsi(languageFileType.getLanguage());
             document = psiFile == null ? null : DocumentUtil.getDocument(psiFile);
