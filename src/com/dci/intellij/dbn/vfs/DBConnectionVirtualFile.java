@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -27,6 +28,11 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
+    }
+
+    @Override
+    public DBSchema getCurrentSchema() {
+        return null;
     }
 
     @NotNull

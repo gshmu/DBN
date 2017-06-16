@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -37,6 +38,16 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return objectList.getConnectionHandler();
+    }
+
+    @Override
+    public DBSchema getCurrentSchema() {
+        GenericDatabaseElement parent = objectList.getParentElement();
+        if (parent instanceof DBObject) {
+            DBObject object = (DBObject) parent;
+            return object.getSchema();
+        }
+        return null;
     }
 
     @NotNull

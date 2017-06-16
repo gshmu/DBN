@@ -186,7 +186,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public boolean isValid() {
-        return true;
+        return !isDisposed();
     }
 
     public void selectNotify() {

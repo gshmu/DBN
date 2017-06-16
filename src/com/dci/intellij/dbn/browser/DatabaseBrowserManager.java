@@ -41,6 +41,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
@@ -126,18 +127,18 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return "DB Browser";
     }
 
-    public void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean requestFocus) {
+    public void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean focus, boolean scroll) {
         ToolWindow toolWindow = getBrowserToolWindow();
 
         toolWindow.show(null);
         if (treeNode != null) {
-            getToolWindowForm().getBrowserForm().selectElement(treeNode, requestFocus);
+            getToolWindowForm().getBrowserForm().selectElement(treeNode, focus, scroll);
         }
     }
 
-    public void navigateToElement(@Nullable BrowserTreeNode treeNode) {
+    public void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean scroll) {
         if (treeNode != null) {
-            getToolWindowForm().getBrowserForm().selectElement(treeNode, false);
+            getToolWindowForm().getBrowserForm().selectElement(treeNode, false, scroll);
         }
     }
 
@@ -233,12 +234,12 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
             if (scroll()) {
                 if (file instanceof DBEditableObjectVirtualFile) {
                     DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
-                    navigateToElement(databaseFile.getObject());
+                    navigateToElement(databaseFile.getObject(), true);
                 }
                 else  if (file instanceof DBVirtualFileImpl) {
                     DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) file;
                     ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
-                    navigateToElement(connectionHandler.getObjectBundle());
+                    navigateToElement(connectionHandler.getObjectBundle(), false);
                 }
             }
         }
@@ -251,12 +252,17 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                 if (oldFile != null && !oldFile.equals(newFile)) {
                     if (newFile instanceof DBEditableObjectVirtualFile) {
                         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) newFile;
-                        navigateToElement(databaseFile.getObject());
+                        navigateToElement(databaseFile.getObject(), true);
                     }
                     else  if (newFile instanceof DBVirtualFileImpl) {
                         DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) newFile;
                         ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
-                        navigateToElement(connectionHandler.getObjectBundle());
+                        FileEditor oldEditor = event.getOldEditor();
+                        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+                        DBSchema currentSchema = databaseVirtualFile.getCurrentSchema();
+                        boolean scroll = oldEditor != null && oldEditor.isValid();
+                        BrowserTreeNode treeNode = currentSchema == null ? objectBundle : currentSchema;
+                        navigateToElement(treeNode, scroll);
                     }
                 }
             }
