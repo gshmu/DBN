@@ -1,14 +1,18 @@
 package com.dci.intellij.dbn.language.common;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class DBLanguageParserDefinition implements ParserDefinition {
     private DBLanguageParser parser;
@@ -56,4 +60,12 @@ public abstract class DBLanguageParserDefinition implements ParserDefinition {
     public TokenSet getStringLiteralElements() {
         return parser.getTokenTypes().getSharedTokenTypes().getStringTokens();
     }
+
+    public final PsiFile createFile(FileViewProvider viewProvider) {
+        // ensure the document is initialized
+        FileDocumentManager.getInstance().getDocument(viewProvider.getVirtualFile());
+        return createPsiFile(viewProvider);
+    }
+
+    protected abstract PsiFile createPsiFile(FileViewProvider viewProvider);
 }

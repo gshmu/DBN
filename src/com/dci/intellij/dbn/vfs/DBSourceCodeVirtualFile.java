@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
@@ -30,13 +37,6 @@ import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider {
 
@@ -227,15 +227,16 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         DBSchemaObject object = getObject();
         Project project = object.getProject();
         SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-        localContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
-        originalContent.setText(localContent.getText().toString());
-        databaseContent = null;
+        SourceCodeContent newContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
         databaseTimestamp = object.loadChangeTimestamp(contentType);
 
-        updateOffsets();
-        setModified(false);
+        updateFileContent(newContent, null);
+        originalContent.setText(newContent.getText());
+
+        databaseContent = null;
         sourceLoadError = null;
         status = Status.OK;
+        setModified(false);
     }
 
     public void saveSourceToDatabase() throws SQLException {
@@ -243,30 +244,35 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         String oldContent = getOriginalContent().toString();
         String newContent = getContent().toString();
         object.executeUpdateDDL(contentType, oldContent, newContent);
-        originalContent.setText(newContent);
-        databaseContent = null;
         databaseTimestamp = object.loadChangeTimestamp(contentType);
+        originalContent.setText(newContent);
 
-        setModified(false);
+        databaseContent = null;
         sourceLoadError = null;
         status = Status.OK;
+        setModified(false);
     }
 
     public void revertLocalChanges() {
-        localContent.setText(originalContent.getText());
+        updateFileContent(null, originalContent.getText());
         databaseContent = null;
-        updateOffsets();
-        setModified(false);
         sourceLoadError = null;
         status = Status.OK;
+        setModified(false);
     }
 
-    private void updateOffsets() {
-        final Document document = DocumentUtil.getDocument(this);
-        if (document != null) {
-            new WriteActionRunner() {
-                @Override
-                public void run() {
+    private void updateFileContent(final SourceCodeContent newContent, final CharSequence newText) {
+        new WriteActionRunner() {
+            @Override
+            public void run() {
+                if (newContent != null) {
+                    localContent = newContent;
+                } else {
+                    localContent.setText(newText);
+                }
+
+                Document document = DocumentUtil.getDocument(DBSourceCodeVirtualFile.this);
+                if (document != null) {
                     DocumentUtil.setText(document, localContent.getText());
                     SourceCodeOffsets offsets = localContent.getOffsets();
                     GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
@@ -275,8 +281,8 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                         DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
                     }
                 }
-            }.start();
-        }
+            }
+        }.start();
     }
 
     private boolean isChangeTracingSupported() {

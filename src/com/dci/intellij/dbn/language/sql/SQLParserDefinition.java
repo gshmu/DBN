@@ -39,7 +39,7 @@ public class SQLParserDefinition extends DBLanguageParserDefinition {
         return getParser().getTokenTypes();
     }
 
-    public PsiFile createFile(FileViewProvider viewProvider) {
+    public PsiFile createPsiFile(FileViewProvider viewProvider) {
         return new SQLFile(viewProvider, SQLLanguage.INSTANCE);
     }
 }

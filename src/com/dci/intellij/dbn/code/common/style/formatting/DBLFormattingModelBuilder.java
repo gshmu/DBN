@@ -4,7 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -14,6 +16,7 @@ import com.intellij.formatting.FormattingModelBuilder;
 import com.intellij.formatting.FormattingModelProvider;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -28,6 +31,13 @@ public class DBLFormattingModelBuilder implements FormattingModelBuilder {
         DBLanguage language = (DBLanguage) PsiUtil.getLanguage(element);
 
         PsiFile psiFile = element.getContainingFile();
+        Document document = DocumentUtil.getDocument(psiFile);
+        if (document != null && document.getTextLength() != psiFile.getTextLength()) {
+            // TODO check why this happens (during startup)
+            throw AlreadyDisposedException.INSTANCE;
+        }
+
+
         CodeStyleCustomSettings settings = language.getCodeStyleSettings(element.getProject());
 
         boolean deliberate = CommonUtil.isCalledThrough(CodeFormatterFacade.class);

@@ -21,9 +21,13 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
 
     @NotNull
     public final FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
-        List<FoldingDescriptor> descriptors = new ArrayList<FoldingDescriptor>();
-        createFoldingDescriptors(node.getPsi(), document, descriptors, 0);
-        return descriptors.toArray(new FoldingDescriptor[descriptors.size()]);
+        if (node.getTextLength() == 0) {
+            return FoldingDescriptor.EMPTY;
+        } else  {
+            List<FoldingDescriptor> descriptors = new ArrayList<FoldingDescriptor>();
+            createFoldingDescriptors(node.getPsi(), document, descriptors, 0);
+            return descriptors.toArray(new FoldingDescriptor[descriptors.size()]);
+        }
     }
 
     protected abstract void createFoldingDescriptors(PsiElement psiElement, Document document, List<FoldingDescriptor> descriptors, int nestingIndex);
