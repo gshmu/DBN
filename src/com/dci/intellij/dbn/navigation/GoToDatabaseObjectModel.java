@@ -8,6 +8,8 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -22,15 +24,14 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListVisitor;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.ide.util.gotoByName.ChooseByNameModel;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import gnu.trove.THashSet;
 
-public class GoToDatabaseObjectModel implements ChooseByNameModel {
-    private Project project;
-    private boolean cancelled = false;
+public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByNameModel {
+    private ProjectRef project;
     private ConnectionHandler selectedConnection;
     private DBObjectRef<DBSchema> selectedSchema;
     private ObjectsLookupSettings objectsLookupSettings;
@@ -39,7 +40,7 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
 
 
     public GoToDatabaseObjectModel(@NotNull Project project, @Nullable ConnectionHandler selectedConnection, DBSchema selectedSchema) {
-        this.project = project;
+        this.project = new ProjectRef(project);
         this.selectedConnection = selectedConnection;
         this.selectedSchema = DBObjectRef.from(selectedSchema);
         objectsLookupSettings = ProjectSettingsManager.getSettings(project).getNavigationSettings().getObjectsLookupSettings();
@@ -79,10 +80,6 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
         return new DatabaseObjectListCellRenderer();
     }
 
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
-    }
-
     public boolean willOpenEditor() {
         return false;
     }
@@ -100,8 +97,10 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
             // touch the schema for next load
             selectedSchema.get().getChildren();
         }
+        FailsafeUtil.check(this);
 
         ObjectNamesCollector collector = new ObjectNamesCollector(forceLoad);
+        Disposer.register(this, collector);
         scanObjectLists(collector);
 
         Set<String> bucket = collector.getBucket();
@@ -110,20 +109,26 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
                 bucket.toArray(new String[bucket.size()]);
     }
 
+    public Project getProject() {
+        return project.get();
+    }
+
     @NotNull
     public Object[] getElementsByName(String name, boolean checkBoxState, String pattern) {
         boolean forceLoad = checkBoxState && objectsLookupSettings.getForceDatabaseLoad().value();
+        FailsafeUtil.check(this);
         ObjectCollector collector = new ObjectCollector(name, forceLoad);
+        Disposer.register(this, collector);
         scanObjectLists(collector);
         return collector.getBucket() == null ? EMPTY_ARRAY : collector.getBucket().toArray();
     }
 
     private void scanObjectLists(DBObjectListVisitor visitor) {
         if (selectedConnection == null || selectedConnection instanceof VirtualConnectionHandler) {
-            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+            ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
             for (ConnectionHandler connectionHandler : connectionHandlers) {
-                if (breakLoad()) break;
+                FailsafeUtil.check(this);
                 DBObjectListContainer objectListContainer = connectionHandler.getObjectBundle().getObjectListContainer();
                 objectListContainer.visitLists(visitor, false);
             }
@@ -139,7 +144,7 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
         }
     }
 
-    private class ObjectNamesCollector implements DBObjectListVisitor {
+    private class ObjectNamesCollector extends DisposableBase implements DBObjectListVisitor {
         private boolean forceLoad;
         private DBObject parentObject;
         private Set<String> bucket;
@@ -155,7 +160,7 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
                     boolean isLookupEnabled = objectsLookupSettings.isEnabled(objectType);
                     DBObject originalParentObject = parentObject;
                     for (DBObject object : objectList.getElements()) {
-                        if (breakLoad()) break;
+                        FailsafeUtil.check(this);
                         if (isLookupEnabled) {
                             if (bucket == null) bucket = new THashSet<String>();
                             bucket.add(object.getName());
@@ -181,6 +186,8 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
         public Set<String> getBucket() {
             return bucket;
         }
+
+
     }
 
     private boolean isLookupEnabled(DBObjectType objectType) {
@@ -197,7 +204,7 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
     }
 
 
-    private class ObjectCollector implements DBObjectListVisitor {
+    private class ObjectCollector extends DisposableBase implements DBObjectListVisitor {
         private String objectName;
         private boolean forceLoad;
         private DBObject parentObject;
@@ -215,7 +222,7 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
                     boolean isLookupEnabled = objectsLookupSettings.isEnabled(objectType);
                     DBObject originalParentObject = parentObject;
                     for (DBObject object : objectList.getObjects()) {
-                        if (breakLoad()) break;
+                        FailsafeUtil.check(this);
                         if (isLookupEnabled && object.getName().equals(objectName)) {
                             if (bucket == null) bucket = new ArrayList<DBObject>();
                             bucket.add(object);
@@ -243,10 +250,6 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
         }
     }
 
-
-    private boolean breakLoad() {
-        return cancelled || !ApplicationManager.getApplication().isActive();
-    }
 
     public String getElementName(Object element) {
         if (element instanceof DBObject) {
@@ -284,5 +287,11 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
                 }
             } else append(value.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        selectedConnection = null;
     }
 }

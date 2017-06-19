@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -274,6 +275,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         @Override
         public void onClose() {
             removeActionLock();
+            DisposerUtil.dispose(model);
             latestUsedText = popup.getEnteredText();
             popup = null;
         }
