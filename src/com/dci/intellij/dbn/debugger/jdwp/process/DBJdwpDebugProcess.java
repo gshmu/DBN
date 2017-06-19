@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
+import java.net.Inet4Address;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.StringTokenizer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -50,14 +58,6 @@ import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.sun.jdi.Location;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.net.Inet4Address;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.StringTokenizer;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     public static final Key<DBJdwpDebugProcess> KEY = new Key<DBJdwpDebugProcess>("DBNavigator.JdwpDebugProcess");
@@ -248,7 +248,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         }.start();
     }
 
-    void initializeResources() {
+    private void initializeResources() {
         new ReadActionRunner() {
             @Override
             protected Object run() {
@@ -261,7 +261,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         }.start();
     }
 
-    void initializeBreakpoints() {
+    private void initializeBreakpoints() {
         new ReadActionRunner() {
             @Override
             protected Object run() {
@@ -273,7 +273,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         }.start();
     }
 
-    void overwriteSuspendContext(final @Nullable XSuspendContext suspendContext) {
+    private void overwriteSuspendContext(final @Nullable XSuspendContext suspendContext) {
         if (suspendContext != null && suspendContext != lastSuspendContext && !(suspendContext instanceof DBJdwpDebugSuspendContext)) {
             lastSuspendContext = suspendContext;
             final XDebugSession session = getSession();
@@ -423,7 +423,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     }
 
     @Nullable
-    Location getLocation(@Nullable XStackFrame stackFrame) {
+    private Location getLocation(@Nullable XStackFrame stackFrame) {
         if (stackFrame instanceof JavaStackFrame) {
             return ((JavaStackFrame) stackFrame).getDescriptor().getLocation();
         }

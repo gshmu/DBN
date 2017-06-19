@@ -43,6 +43,7 @@ public class ExplainPlanResultForm extends DBNFormImpl implements ExecutionResul
         panel.setBorder(UIUtil.getTableHeaderCellBorder());
 
         Disposer.register(this, explainPlanResult);
+        Disposer.register(this, explainPlanTreeTable);
         ActionUtil.registerDataProvider(mainPanel, explainPlanResult);
     }
 

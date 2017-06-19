@@ -1,29 +1,5 @@
 package com.dci.intellij.dbn.execution.explain.result.ui;
 
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
-import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
-import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
-import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
-import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.codeInsight.template.impl.TemplateColors;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupAdapter;
-import com.intellij.openapi.ui.popup.LightweightWindowEvent;
-import com.intellij.ui.ColoredTableCellRenderer;
-import com.intellij.ui.ColoredTreeCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.treeStructure.treetable.TreeTable;
-import com.intellij.ui.treeStructure.treetable.TreeTableCellRenderer;
-import com.intellij.ui.treeStructure.treetable.TreeTableModel;
-import com.intellij.ui.treeStructure.treetable.TreeTableTree;
-
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
@@ -45,12 +21,38 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.math.BigDecimal;
 
-public class ExplainPlanTreeTable extends TreeTable{
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
+import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
+import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
+import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
+import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.codeInsight.template.impl.TemplateColors;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupAdapter;
+import com.intellij.openapi.ui.popup.LightweightWindowEvent;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.ColoredTableCellRenderer;
+import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.treeStructure.treetable.TreeTable;
+import com.intellij.ui.treeStructure.treetable.TreeTableCellRenderer;
+import com.intellij.ui.treeStructure.treetable.TreeTableModel;
+import com.intellij.ui.treeStructure.treetable.TreeTableTree;
+
+public class ExplainPlanTreeTable extends TreeTable implements Disposable{
     private static final int MAX_TREE_COLUMN_WIDTH = 900;
     private static final int MAX_COLUMN_WIDTH = 250;
     private static final int MIN_COLUMN_WIDTH = 10;
 
-    BasicTableTextAttributes textAttributes = new BasicTableTextAttributes();
+    private BasicTableTextAttributes textAttributes = new BasicTableTextAttributes();
     private SimpleTextAttributes operationAttributes;
     private JBPopup largeValuePopup;
 
@@ -199,6 +201,7 @@ public class ExplainPlanTreeTable extends TreeTable{
                             }
                         }
                 );
+                Disposer.register(ExplainPlanTreeTable.this, largeValuePopup);
             }
         }
     }
@@ -256,5 +259,17 @@ public class ExplainPlanTreeTable extends TreeTable{
             column.setPreferredWidth(preferredWidth);
         }
 
+    }
+
+    private boolean disposed;
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    @Override
+    public void dispose() {
+        disposed = true;
     }
 }

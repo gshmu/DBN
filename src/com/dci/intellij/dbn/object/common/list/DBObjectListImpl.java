@@ -206,12 +206,16 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
      *                   LoadableContent                     *
      *********************************************************/
     public String getContentDescription() {
-        if (getParent() instanceof DBObject) {
-            DBObject object = (DBObject) getParent();
-            return getName() + " of " + object.getQualifiedNameWithType();
+        if (isDisposed()) {
+            return "disposed";
+        } else {
+            if (getParent() instanceof DBObject) {
+                DBObject object = (DBObject) getParent();
+                return getName() + " of " + object.getQualifiedNameWithType();
+            }
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            return getName() + " from " + connectionHandler.getName();
         }
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        return getName() + " from " + connectionHandler.getName();
     }
 
     /*********************************************************
