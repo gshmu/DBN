@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import java.awt.BorderLayout;
+
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -21,13 +28,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import java.awt.BorderLayout;
 
 public class StatementExecutionResultForm extends DBNFormImpl implements ExecutionResultForm<StatementExecutionCursorResult>, SearchableDataComponent {
     private JPanel mainPanel;
@@ -72,6 +72,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         ActionUtil.registerDataProvider(mainPanel, executionResult);
 
         Disposer.register(this, executionResult);
+        Disposer.register(this, resultTable);
     }
 
     public void setExecutionResult(StatementExecutionCursorResult executionResult) {

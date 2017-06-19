@@ -5,14 +5,15 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.tabs.TabInfo;
-import com.intellij.ui.tabs.impl.JBTabsImpl;
+import com.intellij.ui.tabs.impl.JBEditorTabs;
 
-public class TabbedPane extends JBTabsImpl implements com.dci.intellij.dbn.common.dispose.Disposable{
+public class TabbedPane extends JBEditorTabs implements com.dci.intellij.dbn.common.dispose.Disposable{
     public TabbedPane(@NotNull Disposable disposable) {
-        super(null, null, disposable);
+        super(null, ActionManager.getInstance(), null, disposable);
     }
 
     public void select(JComponent component, boolean requestFocus) {
