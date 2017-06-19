@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -484,7 +485,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         return updater.getRefreshNodes();
     }
 
-    class ObjectStatusUpdater implements DBObjectListVisitor {
+    class ObjectStatusUpdater extends DisposableBase implements DBObjectListVisitor {
         private Set<BrowserTreeNode> refreshNodes = new HashSet<BrowserTreeNode>();
 
         public void visitObjectList(DBObjectList<DBObject> objectList) {

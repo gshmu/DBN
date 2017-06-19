@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -55,11 +56,13 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
     public void visitLists(DBObjectListVisitor visitor, boolean visitHidden) {
         if (objectLists != null) {
             for (DBObjectList<DBObject> objectList : objectLists.values()) {
+                FailsafeUtil.check(visitor);
                 visitor.visitObjectList(objectList);
             }
         }
         if (visitHidden && hiddenObjectLists != null) {
             for (DBObjectList<DBObject> objectList : hiddenObjectLists.values()) {
+                FailsafeUtil.check(visitor);
                 visitor.visitObjectList(objectList);
             }
         }
