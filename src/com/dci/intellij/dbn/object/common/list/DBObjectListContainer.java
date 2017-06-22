@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import gnu.trove.THashMap;
 
 public class DBObjectListContainer extends DisposableBase implements Disposable {
@@ -54,18 +55,20 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
     }
 
     public void visitLists(DBObjectListVisitor visitor, boolean visitHidden) {
-        if (objectLists != null) {
-            for (DBObjectList<DBObject> objectList : objectLists.values()) {
-                FailsafeUtil.check(visitor);
-                visitor.visitObjectList(objectList);
+        try {
+            if (objectLists != null) {
+                for (DBObjectList<DBObject> objectList : objectLists.values()) {
+                    FailsafeUtil.check(visitor);
+                    visitor.visitObjectList(objectList);
+                }
             }
-        }
-        if (visitHidden && hiddenObjectLists != null) {
-            for (DBObjectList<DBObject> objectList : hiddenObjectLists.values()) {
-                FailsafeUtil.check(visitor);
-                visitor.visitObjectList(objectList);
+            if (visitHidden && hiddenObjectLists != null) {
+                for (DBObjectList<DBObject> objectList : hiddenObjectLists.values()) {
+                    FailsafeUtil.check(visitor);
+                    visitor.visitObjectList(objectList);
+                }
             }
-        }
+        } catch (ProcessCanceledException ignore) {}
     }
 
     @NotNull

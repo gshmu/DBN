@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListVisitor;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.ide.util.gotoByName.ChooseByNameModel;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredListCellRenderer;
@@ -90,23 +91,27 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
 
     @NotNull
     public String[] getNames(boolean checkBoxState) {
-        boolean databaseLoadActive = objectsLookupSettings.getForceDatabaseLoad().value();
-        boolean forceLoad = checkBoxState && databaseLoadActive;
+        try {
+            boolean databaseLoadActive = objectsLookupSettings.getForceDatabaseLoad().value();
+            boolean forceLoad = checkBoxState && databaseLoadActive;
 
-        if (!forceLoad && selectedSchema != null) {
-            // touch the schema for next load
-            selectedSchema.get().getChildren();
+            if (!forceLoad && selectedSchema != null) {
+                // touch the schema for next load
+                selectedSchema.get().getChildren();
+            }
+            FailsafeUtil.check(this);
+
+            ObjectNamesCollector collector = new ObjectNamesCollector(forceLoad);
+            Disposer.register(this, collector);
+            scanObjectLists(collector);
+
+            Set<String> bucket = collector.getBucket();
+            return bucket == null ?
+                    EMPTY_STRING_ARRAY :
+                    bucket.toArray(new String[bucket.size()]);
+        } catch (ProcessCanceledException e) {
+            return new String[0];
         }
-        FailsafeUtil.check(this);
-
-        ObjectNamesCollector collector = new ObjectNamesCollector(forceLoad);
-        Disposer.register(this, collector);
-        scanObjectLists(collector);
-
-        Set<String> bucket = collector.getBucket();
-        return bucket == null ?
-                EMPTY_STRING_ARRAY :
-                bucket.toArray(new String[bucket.size()]);
     }
 
     public Project getProject() {
@@ -115,12 +120,16 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
 
     @NotNull
     public Object[] getElementsByName(String name, boolean checkBoxState, String pattern) {
-        boolean forceLoad = checkBoxState && objectsLookupSettings.getForceDatabaseLoad().value();
-        FailsafeUtil.check(this);
-        ObjectCollector collector = new ObjectCollector(name, forceLoad);
-        Disposer.register(this, collector);
-        scanObjectLists(collector);
-        return collector.getBucket() == null ? EMPTY_ARRAY : collector.getBucket().toArray();
+        try {
+            boolean forceLoad = checkBoxState && objectsLookupSettings.getForceDatabaseLoad().value();
+            FailsafeUtil.check(this);
+            ObjectCollector collector = new ObjectCollector(name, forceLoad);
+            Disposer.register(this, collector);
+            scanObjectLists(collector);
+            return collector.getBucket() == null ? EMPTY_ARRAY : collector.getBucket().toArray();
+        } catch (ProcessCanceledException e) {
+            return new Object[0];
+        }
     }
 
     private void scanObjectLists(DBObjectListVisitor visitor) {
