@@ -13,10 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHistoryTreeModel {
-    private List<MethodExecutionInput> executionInputs;
     public MethodExecutionHistoryGroupedTreeModel(List<MethodExecutionInput> executionInputs, boolean debug) {
         super(executionInputs);
-        this.executionInputs = executionInputs;
         for (MethodExecutionInput executionInput : executionInputs) {
             if (!executionInput.isObsolete() && (!debug || DatabaseFeature.DEBUGGING.isSupported(executionInput.getConnectionHandler()))) {
                 RootTreeNode rootNode = getRoot();
