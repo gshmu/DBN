@@ -1,20 +1,22 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.util.List;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-
-public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
+public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel implements Disposable {
     protected List<MethodExecutionInput> executionInputs;
 
     public MethodExecutionHistoryTreeModel(List<MethodExecutionInput> executionInputs) {
@@ -55,27 +57,30 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
     }
 
     protected class ConnectionTreeNode extends MethodExecutionHistoryTreeNode {
-        ConnectionHandler connectionHandler;
+        ConnectionHandlerRef connectionHandler;
         ConnectionTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
             super(parent, MethodExecutionHistoryTreeNode.Type.CONNECTION, null);
-            this.connectionHandler = executionInput.getConnectionHandler();
+            this.connectionHandler = ConnectionHandlerRef.from(executionInput.getConnectionHandler());
         }
 
         ConnectionHandler getConnectionHandler() {
-            return connectionHandler;
+            return ConnectionHandlerRef.get(connectionHandler);
         }
 
         public String getConnectionHandlerId() {
+            ConnectionHandler connectionHandler = getConnectionHandler();
             return connectionHandler == null ? "unknown" : connectionHandler.getId();
         }
 
         @Override
         public String getName() {
+            ConnectionHandler connectionHandler = getConnectionHandler();
             return connectionHandler == null ? "[unknown]" : connectionHandler.getName();
         }
 
         @Override
         public Icon getIcon() {
+            ConnectionHandler connectionHandler = getConnectionHandler();
             return connectionHandler == null ? Icons.CONNECTION_INVALID : connectionHandler.getIcon();
         }
 
@@ -170,6 +175,24 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
         @Override
         public boolean isValid() {
             return !executionInput.isObsolete();
+        }
+    }
+
+
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+    boolean disposed;
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    @Override
+    public void dispose() {
+        if (!disposed) {
+            disposed = true;
         }
     }
 }

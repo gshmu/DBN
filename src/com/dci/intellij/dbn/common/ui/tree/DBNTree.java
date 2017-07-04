@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.UIUtil;
@@ -21,6 +22,8 @@ public class DBNTree extends Tree implements Disposable {
         super(treemodel);
         setTransferHandler(new DBNTreeTransferHandler());
         setFont(UIUtil.getLabelFont());
+
+        DisposerUtil.register(this, treemodel);
     }
 
     public DBNTree(TreeNode root) {
@@ -36,10 +39,10 @@ public class DBNTree extends Tree implements Disposable {
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            setModel(null);
-            setSelectionModel(null);
             GUIUtil.removeListeners(this);
+            //setModel(null);
             getUI().uninstallUI(this);
+            setSelectionModel(null);
 
         }
     }
