@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.common.dispose;
 
-import java.util.Collection;
-import java.util.Map;
-
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+
+import java.util.Collection;
+import java.util.Map;
 
 public class DisposerUtil {
 
@@ -50,6 +50,12 @@ public class DisposerUtil {
     public static void register(Disposable parent, Collection<? extends Disposable> collection) {
         for (Disposable disposable : collection) {
             Disposer.register(parent, disposable);
+        }
+    }
+
+    public static void register(Disposable parent, Object disposable) {
+        if (disposable instanceof Disposable) {
+            Disposer.register(parent, (Disposable) disposable);
         }
     }
 

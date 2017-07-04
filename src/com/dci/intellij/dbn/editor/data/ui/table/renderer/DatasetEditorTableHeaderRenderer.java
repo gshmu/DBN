@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
@@ -10,14 +11,8 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
+import javax.swing.*;
+import java.awt.*;
 
 public class DatasetEditorTableHeaderRenderer implements BasicTableHeaderRenderer {
     private JPanel mainPanel;
@@ -76,7 +71,34 @@ public class DatasetEditorTableHeaderRenderer implements BasicTableHeaderRendere
         int height = fontMetrics.getHeight() + 2;
         mainPanel.setPreferredSize(new Dimension(width, height));
 
+        updateTooltip(column);
+
+
         return mainPanel;
+    }
+
+    protected void updateTooltip(DBColumn column) {
+        if (column != null) {
+            DataGridSettings dataGridSettings = DataGridSettings.getInstance(column.getProject());
+            if (dataGridSettings.getGeneralSettings().isColumnTooltipEnabled()) {
+                String toolTipText = "<b>" + column.getName() + "</b><br>" + column.getDataType().getQualifiedName() + "";
+
+                StringBuilder attributes  = new StringBuilder();
+                if (column.isPrimaryKey()) attributes.append("PK");
+                if (column.isForeignKey()) attributes.append(" FK");
+                if (!column.isPrimaryKey() && !column.isNullable()) attributes.append(" not null");
+
+                if (attributes.length() > 0) {
+                    toolTipText += "<br>" + attributes + "";
+                }
+
+                mainPanel.setToolTipText(toolTipText);
+            } else {
+                mainPanel.setToolTipText(null);
+            }
+        } else {
+            mainPanel.setToolTipText(null);
+        }
     }
 
 
