@@ -2633,10 +2633,10 @@
             <sequence id="000001309">
                 <element original-name="source_string" ref-id="expression" />
                 <token id="000001310" type-id="CHR_COMMA" />
-                <element original-name="pattern" ref-id="simple_expression" />
+                <element original-name="pattern" ref-id="expression" />
                 <sequence id="000001311" optional="true">
                     <token id="000001312" type-id="CHR_COMMA" />
-                    <element original-name="match_parameter" ref-id="simple_expression" />
+                    <element original-name="match_parameter" ref-id="expression" />
                 </sequence>
             </sequence>
         </wrapper>
