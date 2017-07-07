@@ -485,7 +485,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
             statement.registerOutParameter(1, Types.CLOB);
             statement.setString(2, getTypeName().toUpperCase());
             statement.setString(3, name);
-            statement.setString(4, getParentObject().getName());
+            statement.setString(4, getSchema().getName());
 
             statement.execute();
             ddl = statement.getString(1);
