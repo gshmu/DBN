@@ -3,23 +3,38 @@ package com.dci.intellij.dbn.execution.statement.options;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
+import com.dci.intellij.dbn.execution.TargetConnectionOption;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.execution.statement.options.ui.StatementExecutionSettingsForm;
 
 public class StatementExecutionSettings extends Configuration implements ExecutionTimeoutSettings {
+    public static final String REMEMBER_OPTION_HINT = "\n\n(you can remember your option and change it at any time in Settings > Execution Engine > Statement Execution)";
+
     private ExecutionEngineSettings parent;
     private int resultSetFetchBlockSize = 100;
     private int executionTimeout = 20;
     private int debugExecutionTimeout = 600;
     private boolean focusResult = false;
     private boolean promptExecution = false;
+
+    private InteractiveOptionHandler<TargetConnectionOption> targetConnection =
+            new InteractiveOptionHandler<TargetConnectionOption>(
+                    "target-connection",
+                    "Target connection",
+                    "Please specify the connection to use for executing the statement(s)." +
+                            REMEMBER_OPTION_HINT,
+                    TargetConnectionOption.ASK,
+                    TargetConnectionOption.MAIN,
+                    TargetConnectionOption.POOL,
+                    TargetConnectionOption.CANCEL);
 
     public StatementExecutionSettings(ExecutionEngineSettings parent) {
         this.parent = parent;
@@ -89,6 +104,10 @@ public class StatementExecutionSettings extends Configuration implements Executi
         this.promptExecution = promptExecution;
     }
 
+    public InteractiveOptionHandler<TargetConnectionOption> getTargetConnection() {
+        return targetConnection;
+    }
+
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
@@ -108,7 +127,7 @@ public class StatementExecutionSettings extends Configuration implements Executi
         debugExecutionTimeout = SettingsUtil.getInteger(element, "debug-execution-timeout", debugExecutionTimeout);
         focusResult = SettingsUtil.getBoolean(element, "focus-result", focusResult);
         promptExecution = SettingsUtil.getBoolean(element, "prompt-execution", promptExecution);
-
+        targetConnection.readConfiguration(element);
     }
 
     public void writeConfiguration(Element element) {
@@ -117,5 +136,6 @@ public class StatementExecutionSettings extends Configuration implements Executi
         SettingsUtil.setInteger(element, "debug-execution-timeout", debugExecutionTimeout);
         SettingsUtil.setBoolean(element, "focus-result", focusResult);
         SettingsUtil.setBoolean(element, "prompt-execution", promptExecution);
+        targetConnection.writeConfiguration(element);
     }
 }

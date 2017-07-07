@@ -24,7 +24,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.execution.common.ui.ExecutionTimeoutForm;
+import com.dci.intellij.dbn.execution.common.ui.ExecutionOptionsForm;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionInput;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
@@ -44,7 +44,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
     private JPanel executionTimeoutPanel;
 
     private DBNHeaderForm headerForm;
-    private ExecutionTimeoutForm executionTimeoutForm;
+    private ExecutionOptionsForm executionOptionsForm;
 
     public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull final ScriptExecutionInput executionInput) {
         super(parentComponent);
@@ -85,13 +85,13 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
             }
         });
         clearOutputCheckBox.setSelected(executionInput.isClearOutput());
-        executionTimeoutForm = new ExecutionTimeoutForm(executionInput, DBDebuggerType.NONE) {
+        executionOptionsForm = new ExecutionOptionsForm(executionInput, DBDebuggerType.NONE) {
             @Override
             protected void handleChange(boolean hasError) {
                 updateButtons();
             }
         };
-        executionTimeoutPanel.add(executionTimeoutForm.getComponent());
+        executionTimeoutPanel.add(executionOptionsForm.getComponent());
 
         updateControls(executionInput);
         clearOutputCheckBox.addActionListener(new ActionListener() {
@@ -104,7 +104,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         connectionComboBox.addListener(new ValueSelectorListener<ConnectionHandler>() {
             @Override
             public void selectionChanged(ConnectionHandler oldValue, ConnectionHandler newValue) {
-                executionInput.setConnectionHandler(newValue);
+                executionInput.setTargetConnection(newValue);
                 updateControls(executionInput);
             }
         });
@@ -156,7 +156,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
 
             }
 
-            executionInput.setConnectionHandler(connectionHandler);
+            executionInput.setTargetConnection(connectionHandler);
             executionInput.setSchema(schema);
             executionInput.setCmdLineInterface(cmdLineInterface);
         } else {
@@ -172,7 +172,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
                 connectionComboBox.getSelectedValue() != null &&
                 schemaComboBox.getSelectedValue() != null &&
                 cmdLineExecutableComboBox.getSelectedValue() != null &&
-                !executionTimeoutForm.hasErrors());
+                !executionOptionsForm.hasErrors());
     }
 
     @Override

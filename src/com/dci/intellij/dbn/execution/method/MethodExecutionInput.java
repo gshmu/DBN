@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
@@ -17,8 +16,8 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
-import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
+import com.dci.intellij.dbn.execution.LocalExecutionInput;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -30,13 +29,9 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import gnu.trove.THashSet;
 
-public class MethodExecutionInput extends ExecutionInput implements Comparable<MethodExecutionInput> {
+public class MethodExecutionInput extends LocalExecutionInput implements Comparable<MethodExecutionInput> {
     private DBObjectRef<DBMethod> methodRef;
-    private DBObjectRef<DBSchema> executionSchema;
     private Set<MethodExecutionArgumentValue> argumentValues = new THashSet<MethodExecutionArgumentValue>();
-    private boolean usePoolConnection = true;
-    private boolean commitAfterExecution = true;
-    private boolean enableLogging = false;
 
     private transient MethodExecutionResult executionResult;
     private transient List<ArgumentValue> inputArgumentValues = new ArrayList<ArgumentValue>();
@@ -59,7 +54,7 @@ public class MethodExecutionInput extends ExecutionInput implements Comparable<M
                 @Nullable
                 @Override
                 public DBSchema getTargetSchema() {
-                    return getExecutionSchema();
+                    return MethodExecutionInput.this.getTargetSchema();
                 }
             };
         }
@@ -68,16 +63,16 @@ public class MethodExecutionInput extends ExecutionInput implements Comparable<M
     public MethodExecutionInput(Project project) {
         super(project, ExecutionTarget.METHOD);
         methodRef = new DBObjectRef<DBMethod>();
-        executionSchema = new DBObjectRef<DBSchema>();
+        targetSchemaRef = new DBObjectRef<DBSchema>();
     }
 
     public MethodExecutionInput(Project project, DBMethod method) {
         super(project, ExecutionTarget.METHOD);
         this.methodRef = new DBObjectRef<DBMethod>(method);
-        this.executionSchema = method.getSchema().getRef();
+        this.targetSchemaRef = method.getSchema().getRef();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
-            enableLogging = FailsafeUtil.get(method.getConnectionHandler()).isLoggingEnabled();
+            setEnableLogging(FailsafeUtil.get(method.getConnectionHandler()).isLoggingEnabled());
         }
     }
 
@@ -103,7 +98,7 @@ public class MethodExecutionInput extends ExecutionInput implements Comparable<M
 
     @Nullable
     public DBMethod getMethod() {
-        return methodRef.get();
+        return DBObjectRef.get(methodRef);
     }
 
     public DBObjectRef<DBMethod> getMethodRef() {
@@ -114,17 +109,9 @@ public class MethodExecutionInput extends ExecutionInput implements Comparable<M
         return methodRef.getConnectionId();
     }
 
-    public DBSchema getExecutionSchema() {
-        return DBObjectRef.get(executionSchema);
-    }
-
     public boolean isObsolete() {
         ConnectionHandler connectionHandler = methodRef.lookupConnectionHandler();
         return connectionHandler == null || getMethod() == null;
-    }
-
-    public void setExecutionSchema(DBSchema schema) {
-        executionSchema = schema.getRef();
     }
 
     public void setInputValue(@NotNull DBArgument argument, DBTypeAttribute typeAttribute, String value) {
@@ -214,30 +201,6 @@ public class MethodExecutionInput extends ExecutionInput implements Comparable<M
         this.executionResult = executionResult;
     }
 
-    public boolean isUsePoolConnection() {
-        return usePoolConnection;
-    }
-
-    public void setUsePoolConnection(boolean usePoolConnection) {
-        this.usePoolConnection = usePoolConnection;
-    }
-
-    public boolean isCommitAfterExecution() {
-        return commitAfterExecution;
-    }
-
-    public void setCommitAfterExecution(boolean commitAfterExecution) {
-        this.commitAfterExecution = commitAfterExecution;
-    }
-
-    public boolean isEnableLogging() {
-        return enableLogging;
-    }
-
-    public void setEnableLogging(boolean enableLogging) {
-        this.enableLogging = enableLogging;
-    }
-
     /*********************************************************
      *                 PersistentConfiguration               *
      *********************************************************/
@@ -245,10 +208,7 @@ public class MethodExecutionInput extends ExecutionInput implements Comparable<M
         super.readConfiguration(element);
         methodRef.readState(element);
         String schemaName = element.getAttributeValue("execution-schema");
-        executionSchema = new DBObjectRef<DBSchema>(methodRef.getConnectionId(), DBObjectType.SCHEMA, schemaName);
-        usePoolConnection = SettingsUtil.getBooleanAttribute(element, "use-pool-connection", true);
-        commitAfterExecution = SettingsUtil.getBooleanAttribute(element, "commit-after-execution", true);
-        enableLogging = SettingsUtil.getBooleanAttribute(element, "enable-logging", true);
+        targetSchemaRef = new DBObjectRef<DBSchema>(methodRef.getConnectionId(), DBObjectType.SCHEMA, schemaName);
         Element argumentsElement = element.getChild("argument-list");
         for (Object object : argumentsElement.getChildren()) {
             Element argumentElement = (Element) object;
@@ -260,10 +220,7 @@ public class MethodExecutionInput extends ExecutionInput implements Comparable<M
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         methodRef.writeState(element);
-        element.setAttribute("execution-schema", CommonUtil.nvl(executionSchema.getPath(), ""));
-        SettingsUtil.setBooleanAttribute(element, "use-pool-connection", usePoolConnection);
-        SettingsUtil.setBooleanAttribute(element, "commit-after-execution", commitAfterExecution);
-        SettingsUtil.setBooleanAttribute(element, "enable-logging", enableLogging);
+        element.setAttribute("execution-schema", CommonUtil.nvl(targetSchemaRef.getPath(), ""));
 
         Element argumentsElement = new Element("argument-list");
         element.addContent(argumentsElement);
@@ -298,10 +255,10 @@ public class MethodExecutionInput extends ExecutionInput implements Comparable<M
     public MethodExecutionInput clone() {
         MethodExecutionInput executionInput = new MethodExecutionInput(getProject());
         executionInput.methodRef = methodRef;
-        executionInput.executionSchema = executionSchema;
-        executionInput.usePoolConnection = usePoolConnection;
-        executionInput.commitAfterExecution = commitAfterExecution;
-        executionInput.enableLogging = enableLogging;
+        executionInput.targetSchemaRef = targetSchemaRef;
+        executionInput.setUsePoolConnection(isUsePoolConnection());
+        executionInput.setCommitAfterExecution(isCommitAfterExecution());
+        executionInput.setEnableLogging(isEnableLogging());
         executionInput.argumentValues = new THashSet<MethodExecutionArgumentValue>();
         for (MethodExecutionArgumentValue executionVariable : argumentValues) {
             executionInput.argumentValues.add(executionVariable.clone());

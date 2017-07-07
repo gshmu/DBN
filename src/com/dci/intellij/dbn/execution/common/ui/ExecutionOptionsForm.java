@@ -9,11 +9,13 @@ import java.awt.BorderLayout;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
+import com.dci.intellij.dbn.execution.TargetConnectionOption;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -23,19 +25,20 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 
-public abstract class ExecutionTimeoutForm extends DBNFormImpl{
+public abstract class ExecutionOptionsForm extends DBNFormImpl{
     private JTextField executionTimeoutTextField;
     private JPanel mainPanel;
-    private JLabel executionTimeoutLabel;
     private JPanel actionsPanel;
     private JLabel hintLabel;
+    private DBNComboBox<TargetConnectionOption> targetConnectionComboBox;
+
     private boolean hasErrors;
     private transient int timeout;
 
     private ExecutionInput executionInput;
     private DBDebuggerType debuggerType;
 
-    public ExecutionTimeoutForm(final ExecutionInput executionInput, final DBDebuggerType debuggerType) {
+    public ExecutionOptionsForm(final ExecutionInput executionInput, final DBDebuggerType debuggerType) {
         this.executionInput = executionInput;
         this.debuggerType = debuggerType;
 
@@ -44,6 +47,10 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
         executionTimeoutTextField.setForeground(timeout == getSettingsTimeout() ?
                 UIUtil.getLabelDisabledForeground() :
                 UIUtil.getTextFieldForeground());
+
+        targetConnectionComboBox.setValues(
+                TargetConnectionOption.MAIN,
+                TargetConnectionOption.POOL);
 
 
         executionTimeoutTextField.getDocument().addDocumentListener(new DocumentAdapter() {

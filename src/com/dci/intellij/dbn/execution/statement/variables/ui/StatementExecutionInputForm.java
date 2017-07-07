@@ -25,7 +25,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
-import com.dci.intellij.dbn.execution.common.ui.ExecutionTimeoutForm;
+import com.dci.intellij.dbn.execution.common.ui.ExecutionOptionsForm;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
@@ -54,7 +54,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     private JCheckBox reuseVariablesCheckBox;
     private JPanel executionTimeoutForm;
     private JPanel headerPanel;
-    private JPanel debuggerVversionPanel;
+    private JPanel debuggerVersionPanel;
     private JLabel debuggerVersionLabel;
     private JLabel debuggerTypeLabel;
     private Document previewDocument;
@@ -72,14 +72,14 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
 
         ConnectionHandler connectionHandler = executionProcessor.getConnectionHandler();
         if (debuggerType.isDebug()) {
-            debuggerVversionPanel.setVisible(true);
-            debuggerVversionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
+            debuggerVersionPanel.setVisible(true);
+            debuggerVersionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
             DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
             String debuggerVersion = debuggerManager.getDebuggerVersion(connectionHandler);
             debuggerVersionLabel.setText(debuggerVersion);
             debuggerTypeLabel.setText(debuggerType.name());
         } else {
-            debuggerVversionPanel.setVisible(false);
+            debuggerVersionPanel.setVisible(false);
         }
 
         DBLanguagePsiFile psiFile = executionProcessor.getPsiFile();
@@ -115,13 +115,13 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
             headerSeparatorPanel.setVisible(false);
         }
 
-        ExecutionTimeoutForm executionTimeoutForm = new ExecutionTimeoutForm(executionProcessor.getExecutionInput(), DBDebuggerType.NONE) {
+        ExecutionOptionsForm executionOptionsForm = new ExecutionOptionsForm(executionProcessor.getExecutionInput(), DBDebuggerType.NONE) {
             @Override
             protected void handleChange(boolean hasError) {
                 parentComponent.setActionEnabled(!hasError);
             }
         };
-        this.executionTimeoutForm.add(executionTimeoutForm.getComponent());
+        this.executionTimeoutForm.add(executionOptionsForm.getComponent());
         updatePreview();
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
 

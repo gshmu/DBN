@@ -9,17 +9,24 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 
 public abstract class ExecutionInput extends DisposableBase implements Disposable, ConnectionProvider, PersistentConfiguration {
     private ExecutionTimeout executionTimeout;
     private ExecutionTimeout debugExecutionTimeout;
-    private ProjectRef projectRef;
     private ExecutionTarget executionTarget;
+
+    private ProjectRef projectRef;
+    protected ConnectionHandlerRef targetConnectionRef;
+    protected DBObjectRef<DBSchema> targetSchemaRef;
 
     private final TimeoutSettingsListener timeoutSettingsListener = new TimeoutSettingsListener() {
         @Override
@@ -50,6 +57,22 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
 
     public Project getProject() {
         return projectRef.get();
+    }
+
+    public DBSchema getTargetSchema() {
+        return DBObjectRef.get(targetSchemaRef);
+    }
+
+    public void setTargetSchema(DBSchema schema){
+        targetSchemaRef = schema.getRef();
+    }
+
+    public ConnectionHandler getTargetConnection() {
+        return ConnectionHandlerRef.get(targetConnectionRef);
+    }
+
+    public void setTargetConnection(ConnectionHandler connectionHandler) {
+        this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
     }
 
     @NotNull

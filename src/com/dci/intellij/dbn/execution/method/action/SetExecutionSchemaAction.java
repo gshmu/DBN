@@ -22,6 +22,6 @@ public class SetExecutionSchemaAction extends AnObjectAction<DBSchema> {
     }
 
     public void actionPerformed(AnActionEvent e) {
-        executionInput.setExecutionSchema(getSchema());
+        executionInput.setTargetSchema(getSchema());
     }
 }

@@ -7,8 +7,10 @@ import javax.swing.JTextField;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
+import com.dci.intellij.dbn.execution.TargetConnectionOption;
 import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.intellij.openapi.options.ConfigurationException;
@@ -21,10 +23,16 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
     private JCheckBox focusResultCheckBox;
     private JTextField debugExecutionTimeoutTextField;
     private JCheckBox promptExecutionCheckBox;
+    private DBNComboBox<TargetConnectionOption> targetConnectionComboBox;
 
     public StatementExecutionSettingsForm(StatementExecutionSettings settings) {
         super(settings);
         updateBorderTitleForeground(mainPanel);
+
+        targetConnectionComboBox.setValues(
+                TargetConnectionOption.ASK,
+                TargetConnectionOption.MAIN,
+                TargetConnectionOption.POOL);
 
         resetFormChanges();
         registerComponent(mainPanel);
@@ -42,6 +50,8 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
 
         settings.setFocusResult(focusResultCheckBox.isSelected());
         settings.setPromptExecution(promptExecutionCheckBox.isSelected());
+
+        settings.getTargetConnection().set(targetConnectionComboBox.getSelectedValue());
 
         boolean timeoutSettingsChanged = settings.setExecutionTimeout(executionTimeout);
         timeoutSettingsChanged = settings.setDebugExecutionTimeout(debugExecutionTimeout) || timeoutSettingsChanged;
@@ -62,5 +72,6 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
         debugExecutionTimeoutTextField.setText(Integer.toString(settings.getDebugExecutionTimeout()));
         focusResultCheckBox.setSelected(settings.isFocusResult());
         promptExecutionCheckBox.setSelected(settings.isPromptExecution());
+        targetConnectionComboBox.setSelectedValue(settings.getTargetConnection().get());
     }
 }
