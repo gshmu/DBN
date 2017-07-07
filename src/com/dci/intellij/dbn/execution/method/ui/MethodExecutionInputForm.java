@@ -35,7 +35,7 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
-import com.dci.intellij.dbn.execution.common.ui.ExecutionOptionsForm;
+import com.dci.intellij.dbn.execution.common.ui.ExecutionTimeoutForm;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -96,7 +96,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         connectionLabel.setIcon(connectionHandler.getIcon());
         autoCommitLabel.setConnectionHandler(connectionHandler);
 
-        ExecutionOptionsForm timeoutForm = new ExecutionOptionsForm(executionInput, debuggerType) {
+        ExecutionTimeoutForm timeoutForm = new ExecutionTimeoutForm(executionInput, debuggerType) {
             @Override
             protected void handleChange(boolean hasError) {
                 super.handleChange(hasError);

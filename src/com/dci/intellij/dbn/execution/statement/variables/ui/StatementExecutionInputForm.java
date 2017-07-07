@@ -25,7 +25,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
-import com.dci.intellij.dbn.execution.common.ui.ExecutionOptionsForm;
+import com.dci.intellij.dbn.execution.common.ui.ExecutionTimeoutForm;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
@@ -115,13 +115,13 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
             headerSeparatorPanel.setVisible(false);
         }
 
-        ExecutionOptionsForm executionOptionsForm = new ExecutionOptionsForm(executionProcessor.getExecutionInput(), DBDebuggerType.NONE) {
+        ExecutionTimeoutForm executionTimeoutForm = new ExecutionTimeoutForm(executionProcessor.getExecutionInput(), DBDebuggerType.NONE) {
             @Override
             protected void handleChange(boolean hasError) {
                 parentComponent.setActionEnabled(!hasError);
             }
         };
-        this.executionTimeoutForm.add(executionOptionsForm.getComponent());
+        this.executionTimeoutForm.add(executionTimeoutForm.getComponent());
         updatePreview();
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
 
