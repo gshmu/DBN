@@ -6,20 +6,17 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionContext;
-import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
+import com.dci.intellij.dbn.execution.RemoteExecutionInput;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class ScriptExecutionInput extends ExecutionInput{
+public class ScriptExecutionInput extends RemoteExecutionInput {
     private CmdLineInterface cmdLineInterface;
     private VirtualFile sourceFile;
-    private ConnectionHandlerRef connectionHandlerRef;
-    private DBObjectRef<DBSchema> schemaRef;
     private boolean clearOutput;
 
     private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
@@ -51,7 +48,7 @@ public class ScriptExecutionInput extends ExecutionInput{
     public ScriptExecutionInput(Project project, VirtualFile sourceFile, ConnectionHandler connectionHandler, DBSchema schema, boolean clearOutput) {
         super(project, ExecutionTarget.SCRIPT);
         this.sourceFile = sourceFile;
-        setConnectionHandler(connectionHandler);
+        setTargetConnection(connectionHandler);
         setSchema(schema);
         this.clearOutput = clearOutput;
     }
@@ -73,19 +70,15 @@ public class ScriptExecutionInput extends ExecutionInput{
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return ConnectionHandlerRef.get(connectionHandlerRef);
-    }
-
-    public void setConnectionHandler(ConnectionHandler connectionHandler) {
-        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        return getTargetConnection();
     }
 
     public DBSchema getSchema() {
-        return DBObjectRef.get(schemaRef);
+        return DBObjectRef.get(targetSchemaRef);
     }
 
     public void setSchema(DBSchema schema) {
-        this.schemaRef = DBObjectRef.from(schema);
+        this.targetSchemaRef = DBObjectRef.from(schema);
     }
 
     public boolean isClearOutput() {

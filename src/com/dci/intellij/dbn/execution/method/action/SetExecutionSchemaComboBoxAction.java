@@ -16,7 +16,7 @@ public class SetExecutionSchemaComboBoxAction extends ComboBoxAction {
 
     public SetExecutionSchemaComboBoxAction(MethodExecutionInput executionInput) {
         this.executionInput = executionInput;
-        DBSchema schema = executionInput.getExecutionSchema();
+        DBSchema schema = executionInput.getTargetSchema();
         if (schema != null) {
             Presentation presentation = getTemplatePresentation();
             presentation.setText(schema.getName(), false);
@@ -38,7 +38,7 @@ public class SetExecutionSchemaComboBoxAction extends ComboBoxAction {
     }
 
     public void update(AnActionEvent e) {
-        DBSchema schema = executionInput.getExecutionSchema();
+        DBSchema schema = executionInput.getTargetSchema();
         Presentation presentation = e.getPresentation();
         presentation.setText(schema.getName(), false);
         presentation.setIcon(schema.getIcon());

@@ -35,7 +35,7 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
-import com.dci.intellij.dbn.execution.common.ui.ExecutionTimeoutForm;
+import com.dci.intellij.dbn.execution.common.ui.ExecutionOptionsForm;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -96,7 +96,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         connectionLabel.setIcon(connectionHandler.getIcon());
         autoCommitLabel.setConnectionHandler(connectionHandler);
 
-        ExecutionTimeoutForm timeoutForm = new ExecutionTimeoutForm(executionInput, debuggerType) {
+        ExecutionOptionsForm timeoutForm = new ExecutionOptionsForm(executionInput, debuggerType) {
             @Override
             protected void handleChange(boolean hasError) {
                 super.handleChange(hasError);
@@ -164,11 +164,11 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
 
     private class SchemaSelector extends ValueSelector<DBSchema> {
         public SchemaSelector() {
-            super(Icons.DBO_SCHEMA, "Select Schema...", executionInput.getExecutionSchema(), true, ValueSelectorOption.HIDE_DESCRIPTION);
+            super(Icons.DBO_SCHEMA, "Select Schema...", executionInput.getTargetSchema(), true, ValueSelectorOption.HIDE_DESCRIPTION);
             addListener(new ValueSelectorListener<DBSchema>() {
                 @Override
                 public void selectionChanged(DBSchema oldValue, DBSchema newValue) {
-                    executionInput.setExecutionSchema(newValue);
+                    executionInput.setTargetSchema(newValue);
                     notifyChangeListeners();
                 }
             });

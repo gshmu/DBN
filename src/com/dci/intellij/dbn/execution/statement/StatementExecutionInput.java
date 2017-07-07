@@ -12,8 +12,8 @@ import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionContext;
-import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
+import com.dci.intellij.dbn.execution.LocalExecutionInput;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -27,11 +27,9 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
-public class StatementExecutionInput extends ExecutionInput {
+public class StatementExecutionInput extends LocalExecutionInput {
     private StatementExecutionProcessor executionProcessor;
     private StatementExecutionVariablesBundle executionVariables;
-    private ConnectionHandlerRef connectionHandlerRef;
-    private DBObjectRef<DBSchema> currentSchemaRef;
 
     private String originalStatementText;
     private String executableStatementText;
@@ -67,8 +65,8 @@ public class StatementExecutionInput extends ExecutionInput {
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
         super(executionProcessor.getProject(), ExecutionTarget.STATEMENT);
         this.executionProcessor = executionProcessor;
-        this.connectionHandlerRef = ConnectionHandlerRef.from(executionProcessor.getConnectionHandler());
-        this.currentSchemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
+        this.targetConnectionRef = ConnectionHandlerRef.from(executionProcessor.getConnectionHandler());
+        this.targetSchemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
         this.originalStatementText = originalStatementText;
         this.executableStatementText = executableStatementText;
     }
@@ -157,24 +155,24 @@ public class StatementExecutionInput extends ExecutionInput {
 
     @Nullable
     public ConnectionHandler getConnectionHandler() {
-        return ConnectionHandlerRef.get(connectionHandlerRef);
+        return ConnectionHandlerRef.get(targetConnectionRef);
     }
 
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
-        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
     }
 
     public String getConnectionId() {
-        return connectionHandlerRef == null ? null : connectionHandlerRef.getConnectionId();
+        return targetConnectionRef == null ? null : targetConnectionRef.getConnectionId();
     }
 
     @Nullable
     public DBSchema getCurrentSchema() {
-        return DBObjectRef.get(currentSchemaRef);
+        return DBObjectRef.get(targetSchemaRef);
     }
 
     public void setCurrentSchema(DBSchema currentSchema) {
-        this.currentSchemaRef = DBObjectRef.from(currentSchema);
+        this.targetSchemaRef = DBObjectRef.from(currentSchema);
     }
 
     public boolean isBulkExecution() {
