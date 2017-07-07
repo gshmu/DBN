@@ -24,7 +24,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.execution.common.ui.ExecutionOptionsForm;
+import com.dci.intellij.dbn.execution.common.ui.ExecutionTimeoutForm;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionInput;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
@@ -44,7 +44,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
     private JPanel executionTimeoutPanel;
 
     private DBNHeaderForm headerForm;
-    private ExecutionOptionsForm executionOptionsForm;
+    private ExecutionTimeoutForm executionTimeoutForm;
 
     public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull final ScriptExecutionInput executionInput) {
         super(parentComponent);
@@ -85,13 +85,13 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
             }
         });
         clearOutputCheckBox.setSelected(executionInput.isClearOutput());
-        executionOptionsForm = new ExecutionOptionsForm(executionInput, DBDebuggerType.NONE) {
+        executionTimeoutForm = new ExecutionTimeoutForm(executionInput, DBDebuggerType.NONE) {
             @Override
             protected void handleChange(boolean hasError) {
                 updateButtons();
             }
         };
-        executionTimeoutPanel.add(executionOptionsForm.getComponent());
+        executionTimeoutPanel.add(executionTimeoutForm.getComponent());
 
         updateControls(executionInput);
         clearOutputCheckBox.addActionListener(new ActionListener() {
@@ -172,7 +172,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
                 connectionComboBox.getSelectedValue() != null &&
                 schemaComboBox.getSelectedValue() != null &&
                 cmdLineExecutableComboBox.getSelectedValue() != null &&
-                !executionOptionsForm.hasErrors());
+                !executionTimeoutForm.hasErrors());
     }
 
     @Override
