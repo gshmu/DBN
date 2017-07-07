@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -27,7 +27,7 @@ public class GenerateStatementActionGroup extends DefaultActionGroup {
         }
 
         if (object instanceof DBSchemaObject &&
-                object.getParentObject() instanceof DBSchema &&
+                !(object.getParentObject() instanceof DBProgram) &&
                 DatabaseFeature.OBJECT_DDL_EXTRACTION.isSupported(object)) {
             if (getChildrenCount() > 1) {
                 addSeparator();
