@@ -335,6 +335,10 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             DBObject parentObject = parent.get();
             if (parentObject != null) {
                 object = parentObject.getChildObject(objectType, objectName, overload, true);
+                DBObjectType genericType = objectType.getGenericType();
+                if (object == null && genericType != objectType) {
+                    object = parentObject.getChildObject(genericType, objectName, overload, true);
+                }
             }
         }
         return (T) object;
