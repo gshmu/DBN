@@ -237,13 +237,13 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     public abstract void notifyChangeListeners();
 
     public void setElements(List<T> elements) {
+        final List<T> oldElements = this.elements;
         if (isDisposed() || elements == null || elements.size() == 0) {
             elements = EMPTY_CONTENT;
             index = null;
         } else {
             sortElements(elements);
         }
-        List<T> oldElements = this.elements;
         this.elements = new AbstractFiltrableList<T>(elements) {
             @Nullable
             @Override
@@ -256,7 +256,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             notifyChangeListeners();
         }
         if (!dependencyAdapter.isSubContent() && oldElements.size() > 0 ) {
-            DisposerUtil.dispose(oldElements);
+            DisposerUtil.disposeInBackground(oldElements);
         }
     }
 

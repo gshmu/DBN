@@ -4,8 +4,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.data.state.DatasetEditorState;
@@ -20,7 +20,6 @@ import com.intellij.openapi.fileEditor.FileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class DatasetEditorProvider implements FileEditorProvider, ApplicationComponent, DumbAware {
@@ -48,12 +47,7 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
 
     public void disposeEditor(@NotNull final FileEditor editor) {
         // expensive task. start in background
-        new SimpleBackgroundTask("dispose dataset editor") {
-            @Override
-            protected void execute() {
-                Disposer.dispose(editor);
-            }
-        }.start();
+        DisposerUtil.disposeInBackground(editor);
     }
 
     @NotNull

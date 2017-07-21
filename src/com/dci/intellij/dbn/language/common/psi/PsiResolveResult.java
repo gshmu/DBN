@@ -168,7 +168,7 @@ public class PsiResolveResult {
         PsiElement referencedElement = getReferencedElement();
         if (referencedElement instanceof DBObjectPsiElement) {
             DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) referencedElement;
-            return objectPsiElement.getObject().getObjectType();
+            return objectPsiElement.getObjectType();
         }
         if (referencedElement instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;
