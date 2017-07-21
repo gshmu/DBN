@@ -224,4 +224,8 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
     public DBObject getObject() {
         return DBObjectRef.getnn(objectRef);
     }
+
+    public DBObjectType getObjectType() {
+        return objectRef.getObjectType();
+    }
 }
