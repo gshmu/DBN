@@ -29,7 +29,7 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     ConnectionHandler getConnectionHandler();
 
     @Nullable
-    DBSchema getCurrentSchema();
+    DBSchema getTargetSchema();
 
     @NotNull
     Project getProject();

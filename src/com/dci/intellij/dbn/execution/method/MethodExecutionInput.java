@@ -101,8 +101,13 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     }
 
     @Override
-    public boolean allowSchemaSelection() {
+    public boolean isSchemaSelectionAllowed() {
         return DatabaseFeature.AUTHID_METHOD_EXECUTION.isSupported(getConnectionHandler());
+    }
+
+    @Override
+    public boolean isDatabaseLogProducer() {
+        return true;
     }
 
     @Nullable

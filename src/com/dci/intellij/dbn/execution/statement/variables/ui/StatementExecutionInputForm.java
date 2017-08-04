@@ -167,7 +167,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
 
     protected void updatePreview() {
         ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
-        DBSchema currentSchema = executionProcessor.getCurrentSchema();
+        DBSchema currentSchema = executionProcessor.getTargetSchema();
         Project project = connectionHandler.getProject();
         String previewText = this.statementText;
 

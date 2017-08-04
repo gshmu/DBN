@@ -107,7 +107,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     public boolean isDirty(){
         if (getConnectionHandler() != executionInput.getConnectionHandler() || // connection changed since execution
-            getCurrentSchema() != executionInput.getCurrentSchema()) { // current schema changed since execution)
+            getTargetSchema() != executionInput.getCurrentSchema()) { // current schema changed since execution)
             return true;
 
         } else {
@@ -214,7 +214,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             executionInput.setOriginalStatementText(cachedExecutable.getText());
             executionInput.setExecutableStatementText(cachedExecutable.prepareStatementText());
             executionInput.setConnectionHandler(getConnectionHandler());
-            executionInput.setCurrentSchema(getCurrentSchema());
+            executionInput.setCurrentSchema(getTargetSchema());
             executionInput.setBulkExecution(bulkExecution);
         }
 
@@ -229,7 +229,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         ProgressMonitor.setTaskDescription("Executing " + getStatementName());
         resultName = null;
         ConnectionHandler activeConnection = getConnectionHandler();
-        DBSchema currentSchema = getCurrentSchema();
+        DBSchema currentSchema = getTargetSchema();
         Statement closeOnErrorStatement = null;
 
         boolean continueExecution = true;
@@ -265,7 +265,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                     connection = activeConnection.getMainConnection(currentSchema);
                 }
 
-                if (!debug && activeConnection.isLoggingEnabled() && executionInput.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
+                if (!debug && executionInput.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
                     loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
                 }
                 final Statement statement = connection.createStatement();
@@ -441,7 +441,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     }
 
     @Nullable
-    public DBSchema getCurrentSchema() {
+    public DBSchema getTargetSchema() {
         return getPsiFile().getCurrentSchema();
     }
 
@@ -508,7 +508,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         if (isDataDefinitionStatement()) {
             IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
             if (subjectPsiElement != null) {
-                DBSchema currentSchema = getCurrentSchema();
+                DBSchema currentSchema = getTargetSchema();
                 if (currentSchema != null) {
                     DBObjectListContainer childObjects = currentSchema.getChildObjects();
                     if (childObjects != null) {
@@ -538,7 +538,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                 }
             }
         }
-        return getCurrentSchema();
+        return getTargetSchema();
     }
 
     @Nullable

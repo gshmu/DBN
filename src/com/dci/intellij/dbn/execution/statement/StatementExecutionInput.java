@@ -5,12 +5,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
@@ -65,10 +67,17 @@ public class StatementExecutionInput extends LocalExecutionInput {
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
         super(executionProcessor.getProject(), ExecutionTarget.STATEMENT);
         this.executionProcessor = executionProcessor;
-        this.targetConnectionRef = ConnectionHandlerRef.from(executionProcessor.getConnectionHandler());
-        this.targetSchemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
+        ConnectionHandler connectionHandler = executionProcessor.getConnectionHandler();
+        DBSchema currentSchema = executionProcessor.getTargetSchema();
+
+        this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
+        this.targetSchemaRef = DBObjectRef.from(currentSchema);
         this.originalStatementText = originalStatementText;
         this.executableStatementText = executableStatementText;
+
+        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
+            setLoggingEnabled(FailsafeUtil.get(connectionHandler).isLoggingEnabled());
+        }
     }
 
     public int getExecutableLineNumber() {
@@ -164,12 +173,15 @@ public class StatementExecutionInput extends LocalExecutionInput {
     }
 
     @Override
-    public boolean allowSchemaSelection() {
+    public boolean isSchemaSelectionAllowed() {
         return false;
     }
 
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
         this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
+        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
+            setLoggingEnabled(FailsafeUtil.get(connectionHandler).isLoggingEnabled());
+        }
     }
 
     public String getConnectionId() {
@@ -206,6 +218,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         return executablePsiElement == null ? "SQL Statement" : executablePsiElement.getPresentableText();
     }
 
+    @Override
     public boolean isDatabaseLogProducer() {
         return executablePsiElement != null && executablePsiElement.getElementType().is(ElementTypeAttribute.DATABASE_LOG_PRODUCER);
     }

@@ -46,7 +46,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         this.executionProcessor = executionProcessor;
         this.updateCount = updateCount;
         this.connectionHandlerRef = FailsafeUtil.get(executionProcessor.getConnectionHandler()).getRef();
-        this.currentSchemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
+        this.currentSchemaRef = DBObjectRef.from(executionProcessor.getTargetSchema());
     }
 
     @Override
