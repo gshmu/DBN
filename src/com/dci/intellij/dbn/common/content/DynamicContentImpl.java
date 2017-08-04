@@ -51,7 +51,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         this.indexed = indexed;
     }
 
-    @Nullable
+    @NotNull
     public GenericDatabaseElement getParentElement() {
         return FailsafeUtil.get(parent);
     }
