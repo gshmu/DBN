@@ -47,6 +47,9 @@ public abstract class LocalExecutionInput extends ExecutionInput{
         this.enableLogging = enableLogging;
     }
 
+    public abstract boolean hasExecutionVariables();
+
+    public abstract boolean allowSchemaSelection();
 
     /*********************************************************
      *                 PersistentConfiguration               *
