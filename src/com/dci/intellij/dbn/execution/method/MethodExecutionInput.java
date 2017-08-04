@@ -72,7 +72,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         this.targetSchemaRef = method.getSchema().getRef();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
-            setEnableLogging(FailsafeUtil.get(method.getConnectionHandler()).isLoggingEnabled());
+            setLoggingEnabled(FailsafeUtil.get(method.getConnectionHandler()).isLoggingEnabled());
         }
     }
 
@@ -267,7 +267,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         executionInput.targetSchemaRef = targetSchemaRef;
         executionInput.setUsePoolConnection(isUsePoolConnection());
         executionInput.setCommitAfterExecution(isCommitAfterExecution());
-        executionInput.setEnableLogging(isEnableLogging());
+        executionInput.setLoggingEnabled(isLoggingEnabled());
         executionInput.argumentValues = new THashSet<MethodExecutionArgumentValue>();
         for (MethodExecutionArgumentValue executionVariable : argumentValues) {
             executionInput.argumentValues.add(executionVariable.clone());

@@ -265,7 +265,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                     connection = activeConnection.getMainConnection(currentSchema);
                 }
 
-                if (!debug && activeConnection.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
+                if (!debug && activeConnection.isLoggingEnabled() && executionInput.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
                     loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
                 }
                 final Statement statement = connection.createStatement();

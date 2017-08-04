@@ -75,7 +75,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         usePoolConnectionCheckBox.setEnabled(!debuggerType.isDebug());
 
         enableLoggingCheckBox.setEnabled(!debuggerType.isDebug());
-        enableLoggingCheckBox.setSelected(!debuggerType.isDebug() && executionInput.isEnableLogging());
+        enableLoggingCheckBox.setSelected(!debuggerType.isDebug() && executionInput.isLoggingEnabled());
         enableLoggingCheckBox.setVisible(DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler));
         DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
         String databaseLogName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();
@@ -109,6 +109,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
     public void updateExecutionInput() {
         executionInput.setUsePoolConnection(usePoolConnectionCheckBox.isSelected());
         executionInput.setCommitAfterExecution(commitCheckBox.isSelected());
+        executionInput.setLoggingEnabled(enableLoggingCheckBox.isSelected());
         //DBSchema schema = (DBSchema) schemaList.getSelectedValue();
         //executionInput.setExecutionSchema(schema);
     }
