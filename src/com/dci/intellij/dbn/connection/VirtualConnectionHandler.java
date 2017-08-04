@@ -161,11 +161,11 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override public String getUserName() {return "root";}
 
-    @Override public Connection createTestConnection() throws SQLException {return null;}
-    @Override public Connection getPoolConnection(boolean readonly) throws SQLException {return null;}
-    @Override public Connection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {return null;}
-    @Override public Connection getMainConnection() throws SQLException {return null;}
-    @Override public Connection getMainConnection(@Nullable DBSchema schema) throws SQLException {return null;}
+    @Override public DBNConnection createTestConnection() throws SQLException {return null;}
+    @Override public DBNConnection getPoolConnection(boolean readonly) throws SQLException {return null;}
+    @Override public DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {return null;}
+    @Override public DBNConnection getMainConnection() throws SQLException {return null;}
+    @Override public DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException {return null;}
     @Override public void freePoolConnection(Connection connection) {}
     @Override public void dropPoolConnection(Connection connection) {}
 
@@ -181,6 +181,16 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override public void setConnectionInfo(ConnectionInfo connectionInfo) {}
     @Override public boolean canConnect() {
+        return false;
+    }
+
+    @Override
+    public boolean isMainConnection(Connection connection) {
+        return false;
+    }
+
+    @Override
+    public boolean isPoolConnection(Connection connection) {
         return false;
     }
 

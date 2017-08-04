@@ -374,6 +374,16 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @Override
+    public boolean isMainConnection(Connection connection) {
+        return getConnectionPool().isMainConnection(connection);
+    }
+
+    @Override
+    public boolean isPoolConnection(Connection connection) {
+        return getConnectionPool().isPoolConnection(connection);
+    }
+
+    @Override
     public boolean hasPendingTransactions(Connection connection) {
         return getInterfaceProvider().getMetadataInterface().hasPendingTransactions(connection);
     }
@@ -439,23 +449,23 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @Override
-    public Connection createTestConnection() throws SQLException {
+    public DBNConnection createTestConnection() throws SQLException {
         assertCanConnect();
         return getConnectionPool().createTestConnection();
     }
 
-    public Connection getMainConnection() throws SQLException {
+    public DBNConnection getMainConnection() throws SQLException {
         assertCanConnect();
         return getConnectionPool().getMainConnection(true);
     }
 
-    public Connection getPoolConnection(boolean readonly) throws SQLException {
+    public DBNConnection getPoolConnection(boolean readonly) throws SQLException {
         assertCanConnect();
         return getConnectionPool().allocateConnection(readonly);
     }
 
-    public Connection getMainConnection(@Nullable DBSchema schema) throws SQLException {
-        Connection connection = getMainConnection();
+    public DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException {
+        DBNConnection connection = getMainConnection();
         if (schema != null && !schema.isPublicSchema() && DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) {
             DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
             metadataInterface.setCurrentSchema(schema.getQuotedName(false), connection);
@@ -463,8 +473,8 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return connection;
     }
 
-    public Connection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {
-        Connection connection = getPoolConnection(readonly);
+    public DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {
+        DBNConnection connection = getPoolConnection(readonly);
         //if (!schema.isPublicSchema()) {
         if (schema != null && DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) {
             DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();

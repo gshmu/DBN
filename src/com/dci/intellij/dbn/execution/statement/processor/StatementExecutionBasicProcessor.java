@@ -230,7 +230,6 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         resultName = null;
         ConnectionHandler activeConnection = getConnectionHandler();
         DBSchema currentSchema = getTargetSchema();
-        Statement closeOnErrorStatement = null;
 
         boolean continueExecution = true;
 
