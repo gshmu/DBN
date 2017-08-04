@@ -32,11 +32,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable {
     @NotNull
     Project getProject();
-    Connection createTestConnection() throws SQLException;
-    Connection getMainConnection() throws SQLException;
-    Connection getMainConnection(@Nullable DBSchema schema) throws SQLException;
-    Connection getPoolConnection(boolean readonly) throws SQLException;
-    Connection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException;
+    DBNConnection createTestConnection() throws SQLException;
+    DBNConnection getMainConnection() throws SQLException;
+    DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException;
+    DBNConnection getPoolConnection(boolean readonly) throws SQLException;
+    DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException;
     void freePoolConnection(Connection connection);
     void dropPoolConnection(Connection connection);
     ConnectionSettings getSettings();
@@ -78,6 +78,8 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     boolean isVirtual();
     boolean isAutoCommit();
     boolean isLoggingEnabled();
+    boolean isMainConnection(Connection connection);
+    boolean isPoolConnection(Connection connection);
     boolean hasPendingTransactions(Connection connection);
     void setAutoCommit(boolean autoCommit) throws SQLException;
     void setLoggingEnabled(boolean loggingEnabled);

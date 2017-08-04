@@ -127,7 +127,7 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(ConnectionHandler connectionHandler, ConnectionType connectionType) throws SQLException {
+    public static DBNConnection connect(ConnectionHandler connectionHandler, ConnectionType connectionType) throws SQLException {
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
@@ -160,7 +160,7 @@ public class ConnectionUtil {
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
             connectionHandler.setConnectionInfo(connectionInfo);
             connectionStatus.setAuthenticationError(null);
-            return connection;
+            return new DBNConnection(connection, connectionType);
         } catch (SQLException e) {
             if (interfaceProvider != null) {
                 DatabaseMessageParserInterface messageParserInterface = interfaceProvider.getMessageParserInterface();
@@ -173,7 +173,7 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(
+    public static DBNConnection connect(
             ConnectionSettings connectionSettings,
             @NotNull ConnectionType connectionType,
             @Nullable ConnectionStatus connectionStatus,
@@ -197,7 +197,7 @@ public class ConnectionUtil {
             throw new SQLException("Could not connect to database. Communication timeout");
         }
 
-        return connection;
+        return new DBNConnection(connection, connectionType);
     }
 
     private static class ConnectTimeoutCall extends SimpleTimeoutCall<Connection> {

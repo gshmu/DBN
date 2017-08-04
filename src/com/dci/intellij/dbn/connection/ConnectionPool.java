@@ -40,12 +40,12 @@ public class ConnectionPool implements Disposable {
         POOL_CLEANER_TASK.registerConnectionPool(this);
     }
 
-    public Connection createTestConnection() throws SQLException {
+    public DBNConnection createTestConnection() throws SQLException {
         return ConnectionUtil.connect(getConnectionHandler(), ConnectionType.TEST);
     }
 
     @Nullable
-    public Connection getMainConnection(boolean forceInit) throws SQLException {
+    public DBNConnection getMainConnection(boolean forceInit) throws SQLException {
         lastAccessTimestamp = System.currentTimeMillis();
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.setLastUsedConnection(connectionHandler);
@@ -59,7 +59,7 @@ public class ConnectionPool implements Disposable {
                             mainConnection = null;
                         }
 
-                        Connection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.MAIN);
+                        DBNConnection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.MAIN);
                         mainConnection = new ConnectionWrapper(connection);
                         NotificationUtil.sendInfoNotification(
                                 getProject(),
@@ -100,12 +100,12 @@ public class ConnectionPool implements Disposable {
     }
 
     @NotNull
-    public Connection allocateConnection(boolean readonly) throws SQLException {
+    public DBNConnection allocateConnection(boolean readonly) throws SQLException {
         lastAccessTimestamp = System.currentTimeMillis();
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.setLastUsedConnection(connectionHandler);
 
-        Connection connection = lookupConnection();
+        DBNConnection connection = lookupConnection();
         if (connection == null)  {
             ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
             if (poolConnections.size() >= detailSettings.getMaxConnectionPoolSize() && !ApplicationManager.getApplication().isDispatchThread()) {
@@ -123,7 +123,7 @@ public class ConnectionPool implements Disposable {
     }
 
     @Nullable
-    private Connection lookupConnection() throws SQLException {
+    private DBNConnection lookupConnection() throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
 
@@ -144,12 +144,12 @@ public class ConnectionPool implements Disposable {
     }
 
     @NotNull
-    private Connection createConnection() throws SQLException {
+    private DBNConnection createConnection() throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         String connectionName = connectionHandler.getName();
         LOGGER.debug("[DBN-INFO] Attempt to create new pool connection for '" + connectionName + "'");
-        Connection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.POOL);
+        DBNConnection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.POOL);
         ConnectionUtil.setAutoCommit(connection, true);
         ConnectionUtil.setReadonly(connection, true);
         connectionStatus.setConnected(true);
@@ -270,6 +270,20 @@ public class ConnectionPool implements Disposable {
         }
     }
 
+    boolean isMainConnection(Connection connection) {
+        return mainConnection != null && mainConnection.getConnection() == connection;
+    }
+
+    boolean isPoolConnection(Connection connection) {
+        for (ConnectionWrapper poolConnection : poolConnections) {
+            if (poolConnection.getConnection() == connection) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static class ConnectionPoolCleanTask extends TimerTask {
         List<WeakReference<ConnectionPool>> connectionPools = new CopyOnWriteArrayList<WeakReference<ConnectionPool>>();
 
@@ -304,13 +318,13 @@ public class ConnectionPool implements Disposable {
 
 
     private class ConnectionWrapper {
-        private Connection connection;
+        private DBNConnection connection;
         private long lastCheckTimestamp;
         private long lastAccessTimestamp;
         private boolean isValid = true;
         private boolean isBusy = false;
 
-        public ConnectionWrapper(Connection connection) {
+        ConnectionWrapper(DBNConnection connection) {
             this.connection = connection;
             long currentTimeMillis = System.currentTimeMillis();
             lastCheckTimestamp = currentTimeMillis;
@@ -327,17 +341,17 @@ public class ConnectionPool implements Disposable {
             return isValid;
         }
 
-        public int getIdleMinutes() {
+        int getIdleMinutes() {
             long idleTimeMillis = System.currentTimeMillis() - lastAccessTimestamp;
             return (int) (idleTimeMillis / TimeUtil.ONE_MINUTE);
         }
 
-        public Connection getConnection() {
+        public DBNConnection getConnection() {
             lastAccessTimestamp = System.currentTimeMillis();
             return connection;
         }
 
-        public void closeConnection() {
+        void closeConnection() {
             ConnectionUtil.closeConnection(connection);
         }
 
@@ -345,19 +359,19 @@ public class ConnectionPool implements Disposable {
             ConnectionUtil.setAutoCommit(connection, autoCommit);
         }
 
-        public boolean isClosed() throws SQLException {
+        boolean isClosed() throws SQLException {
             return ConnectionUtil.isClosed(connection);
         }
 
-        public boolean isBusy() {
+        boolean isBusy() {
             return isBusy;
         }
 
-        public void setBusy(boolean isFree) {
+        void setBusy(boolean isFree) {
             this.isBusy = isFree;
         }
 
-        public void keepAlive() {
+        void keepAlive() {
             lastAccessTimestamp = System.currentTimeMillis();
         }
     }
