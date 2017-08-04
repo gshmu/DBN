@@ -95,6 +95,15 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         return method == null ? null : method.getConnectionHandler();
     }
 
+    @Override
+    public boolean hasExecutionVariables() {
+        return false;
+    }
+
+    @Override
+    public boolean allowSchemaSelection() {
+        return DatabaseFeature.AUTHID_METHOD_EXECUTION.isSupported(getConnectionHandler());
+    }
 
     @Nullable
     public DBMethod getMethod() {

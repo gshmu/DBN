@@ -55,7 +55,7 @@ public class StatementExecutionInputsDialog extends DBNDialog<StatementExecution
         }
 
         public void actionPerformed(ActionEvent e) {
-            component.saveValues();
+            component.updateExecutionInput();
             StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
             Project project = getProject();
             if (executionVariables != null) {

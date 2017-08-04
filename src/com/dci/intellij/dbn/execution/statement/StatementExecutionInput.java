@@ -158,6 +158,16 @@ public class StatementExecutionInput extends LocalExecutionInput {
         return ConnectionHandlerRef.get(targetConnectionRef);
     }
 
+    @Override
+    public boolean hasExecutionVariables() {
+        return true;
+    }
+
+    @Override
+    public boolean allowSchemaSelection() {
+        return false;
+    }
+
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
         this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
     }
