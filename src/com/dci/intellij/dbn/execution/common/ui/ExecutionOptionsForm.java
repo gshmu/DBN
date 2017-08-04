@@ -52,7 +52,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
 
         ConnectionHandler connectionHandler = FailsafeUtil.get(executionInput.getConnectionHandler());
 
-        if (executionInput.allowSchemaSelection()) {
+        if (executionInput.isSchemaSelectionAllowed()) {
             //ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SetExecutionSchemaComboBoxAction(executionInput));
             targetSchemaPanel.add(new SchemaSelector(), BorderLayout.CENTER);
             targetSchemaLabel.setVisible(false);
@@ -74,13 +74,16 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         usePoolConnectionCheckBox.addActionListener(actionListener);
         usePoolConnectionCheckBox.setEnabled(!debuggerType.isDebug());
 
-        enableLoggingCheckBox.setEnabled(!debuggerType.isDebug());
-        enableLoggingCheckBox.setSelected(!debuggerType.isDebug() && executionInput.isLoggingEnabled());
-        enableLoggingCheckBox.setVisible(DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler));
-        DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
-        String databaseLogName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();
-        if (StringUtil.isNotEmpty(databaseLogName)) {
-            enableLoggingCheckBox.setText("Enable logging (" + databaseLogName + ")");
+        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler) && executionInput.isDatabaseLogProducer()) {
+            enableLoggingCheckBox.setEnabled(!debuggerType.isDebug());
+            enableLoggingCheckBox.setSelected(!debuggerType.isDebug() && executionInput.isLoggingEnabled());
+            DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
+            String databaseLogName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();
+            if (StringUtil.isNotEmpty(databaseLogName)) {
+                enableLoggingCheckBox.setText("Enable logging (" + databaseLogName + ")");
+            }
+        } else{
+            enableLoggingCheckBox.setVisible(false);
         }
 
         Disposer.register(this, autoCommitLabel);

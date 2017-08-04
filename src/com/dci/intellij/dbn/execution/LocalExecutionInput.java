@@ -49,7 +49,9 @@ public abstract class LocalExecutionInput extends ExecutionInput{
 
     public abstract boolean hasExecutionVariables();
 
-    public abstract boolean allowSchemaSelection();
+    public abstract boolean isSchemaSelectionAllowed();
+
+    public abstract boolean isDatabaseLogProducer();
 
     /*********************************************************
      *                 PersistentConfiguration               *
