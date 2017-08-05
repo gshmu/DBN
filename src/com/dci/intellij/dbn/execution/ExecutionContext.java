@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public abstract class ExecutionContext {
@@ -15,6 +16,7 @@ public abstract class ExecutionContext {
     private transient boolean executing = false;
     private transient boolean executionCancelled = false;
     private transient long executionTimestamp;
+    private transient SQLException executionException;
     private transient DBNConnection connection;
     private transient Statement statement;
 
@@ -64,6 +66,14 @@ public abstract class ExecutionContext {
         this.executionTimestamp = executionTimestamp;
     }
 
+    public SQLException getExecutionException() {
+        return executionException;
+    }
+
+    public void setExecutionException(SQLException executionException) {
+        this.executionException = executionException;
+    }
+
     public DBNConnection getConnection() {
         return connection;
     }
@@ -91,6 +101,8 @@ public abstract class ExecutionContext {
         executing = false;
         executionCancelled = false;
         executionTimestamp = 0;
+        executionException = null;
         connection = null;
+        statement = null;
     }
 }
