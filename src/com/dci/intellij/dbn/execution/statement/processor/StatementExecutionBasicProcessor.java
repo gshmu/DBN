@@ -276,23 +276,24 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                     }
                 }.start();
 
-                ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-                VirtualFile virtualFile = getPsiFile().getVirtualFile();
-                if (executablePsiElement != null) {
-                    if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(virtualFile);
-                    if (executablePsiElement.isPotentiallyTransactional()) {
-                        if (activeConnection.hasPendingTransactions(connection)) {
+                if (connection.isMainConnection()) {
+                    ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+                    VirtualFile virtualFile = getPsiFile().getVirtualFile();
+                    if (executablePsiElement != null) {
+                        if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(virtualFile);
+                        if (executablePsiElement.isPotentiallyTransactional()) {
+                            if (activeConnection.hasPendingTransactions(connection)) {
+                                activeConnection.notifyChanges(virtualFile);
+                            }
+                        }
+                        if (executablePsiElement.isTransactionControl()) activeConnection.resetChanges();
+                    } else{
+                        if (executionResult.getUpdateCount() > 0) {
+                            activeConnection.notifyChanges(virtualFile);
+                        } else if (activeConnection.hasPendingTransactions(connection)) {
                             activeConnection.notifyChanges(virtualFile);
                         }
                     }
-                    if (executablePsiElement.isTransactionControl()) activeConnection.resetChanges();
-                } else{
-                    if (executionResult.getUpdateCount() > 0) {
-                        activeConnection.notifyChanges(virtualFile);
-                    } else if (activeConnection.hasPendingTransactions(connection)) {
-                        activeConnection.notifyChanges(virtualFile);
-                    }
-
                 }
 
                 executionResult.setLoggingActive(loggingEnabled);

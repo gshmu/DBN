@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
@@ -28,6 +22,12 @@ import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Set;
 
 public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable {
     @NotNull
@@ -78,8 +78,6 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     boolean isVirtual();
     boolean isAutoCommit();
     boolean isLoggingEnabled();
-    boolean isMainConnection(Connection connection);
-    boolean isPoolConnection(Connection connection);
     boolean hasPendingTransactions(Connection connection);
     void setAutoCommit(boolean autoCommit) throws SQLException;
     void setLoggingEnabled(boolean loggingEnabled);
