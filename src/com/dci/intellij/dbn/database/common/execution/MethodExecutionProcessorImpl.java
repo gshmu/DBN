@@ -85,7 +85,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         Counter runningMethods = connectionHandler.getLoadMonitor().getRunningMethods();
         runningMethods.increment();
 
-        ExecutionContext executionContext = executionInput.getExecutionContext();
+        ExecutionContext executionContext = executionInput.getExecutionContext(true);
         try {
             String command = buildExecutionCommand(executionInput);
             T method = getMethod();
@@ -132,7 +132,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 }
             }
 
-            if (!usePoolConnection) connectionHandler.notifyChanges(method.getVirtualFile());
+            if (!usePoolConnection) connectionHandler.notifyDataChanges(method.getVirtualFile());
         } catch (SQLException e) {
             executionContext.resetStatement();
             throw e;

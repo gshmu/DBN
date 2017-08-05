@@ -61,7 +61,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private ConnectionPool connectionPool;
     private ConnectionLoadMonitor loadMonitor;
     private DatabaseInterfaceProvider interfaceProvider;
-    private UncommittedChangeBundle changesBundle;
+    private UncommittedChangeBundle dataChanges;
     private DatabaseConsoleBundle consoleBundle;
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private ConnectionInstructions instructions = new ConnectionInstructions();
@@ -239,19 +239,19 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     public boolean hasUncommittedChanges() {
-        return changesBundle != null && !changesBundle.isEmpty();
+        return dataChanges != null && !dataChanges.isEmpty();
     }
 
     public void commit() throws SQLException {
         Connection mainConnection = getConnectionPool().getMainConnection(false);
         ConnectionUtil.commit(mainConnection);
-        changesBundle = null;
+        dataChanges = null;
     }
 
     public void rollback() throws SQLException {
         Connection mainConnection = getConnectionPool().getMainConnection(false);
         ConnectionUtil.rollback(mainConnection);
-        changesBundle = null;
+        dataChanges = null;
     }
 
     @Override
@@ -259,23 +259,23 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         getConnectionPool().keepAlive(check);
     }
 
-    public void notifyChanges(VirtualFile virtualFile) {
+    public void notifyDataChanges(VirtualFile virtualFile) {
         if (!isAutoCommit()) {
-            if (changesBundle == null) {
-                changesBundle = new UncommittedChangeBundle();
+            if (dataChanges == null) {
+                dataChanges = new UncommittedChangeBundle();
             }
-            changesBundle.notifyChange(virtualFile);
+            dataChanges.notifyChange(virtualFile);
         }
     }
 
     @Override
-    public void resetChanges() {
-        changesBundle = null;
+    public void resetDataChanges() {
+        dataChanges = null;
     }
 
     @Override
-    public UncommittedChangeBundle getUncommittedChanges() {
-        return changesBundle;
+    public UncommittedChangeBundle getDataChanges() {
+        return dataChanges;
     }
 
     @Override
@@ -386,7 +386,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     public void disconnect() throws SQLException {
         try {
             getConnectionPool().closeConnections();
-            changesBundle = null;
+            dataChanges = null;
             temporaryAuthenticationInfo = new AuthenticationInfo();
         } finally {
             connectionStatus.setConnected(false);
@@ -587,7 +587,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
             super.dispose();
             connectionPool = null;
             connectionBundle = null;
-            changesBundle = null;
+            dataChanges = null;
             loadMonitor = null;
             sessionBrowserFile = null;
             psiCache = null;

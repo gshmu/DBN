@@ -133,7 +133,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public void setAutoCommit(boolean autoCommit) throws SQLException {}
     @Override public void setLoggingEnabled(boolean loggingEnabled) {}
 
-    @Override public UncommittedChangeBundle getUncommittedChanges() {return null;}
+    @Override public UncommittedChangeBundle getDataChanges() {return null;}
     @Override public boolean isConnected() {return false;}
     @Override public boolean isDisposed() {
         return false;
@@ -184,7 +184,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return false;
     }
 
-    @Override public boolean hasPendingTransactions(Connection connection) {return false;}
+    @Override public boolean hasPendingTransactions(@NotNull Connection connection) {return false;}
 
     @NotNull
     @Override
@@ -253,8 +253,8 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     }
 
     public ConnectionHandler clone() {return null;}
-    public void notifyChanges(VirtualFile virtualFile) {}
-    public void resetChanges() {}
+    public void notifyDataChanges(VirtualFile virtualFile) {}
+    public void resetDataChanges() {}
     public boolean hasUncommittedChanges() {return false;}
     public void commit() throws SQLException {}
     public void rollback() throws SQLException {}

@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -231,65 +232,72 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         resultName.reset();
         executionInput.initExecution();
 
-        ConnectionHandler targetConnection = getTargetConnection();
-        boolean allowExecution = true;
+        ConnectionHandler connectionHandler = getTargetConnection();
 
+
+        ExecutionContext context = executionInput.getExecutionContext(true);
+        try {
+            String statementText = initStatementText();
+            if (statementText != null) {
+                Counter runningStatements = connectionHandler.getLoadMonitor().getRunningStatements();
+
+                try {
+                    runningStatements.increment();
+                    initConnection(context, connection);
+                    initTimeout(context, debug);
+                    initLogging(context, debug);
+
+                    executionResult = executeStatement(context, statementText);
+
+                    // post execution activities
+                    if (executionResult != null) {
+                        executionResult.calculateExecDuration();
+                        consumeLoggerOutput(context);
+                        notifyDataManipulationChanges(context);
+                        notifyDataDefinitionChanges(context);
+                    }
+                } catch (SQLException e) {
+                    context.resetStatement();
+                    context.setExecutionException(e);
+                    executionResult = createErrorExecutionResult(e.getMessage());
+                    executionResult.calculateExecDuration();
+                } finally {
+                    runningStatements.decrement();
+                    disableLogging(context);
+                }
+            }
+
+            if (executionResult != null) {
+                Project project = getProject();
+                ExecutionManager executionManager = ExecutionManager.getInstance(project);
+                executionManager.addExecutionResult(executionResult);
+            }
+
+            SQLException executionException = context.getExecutionException();
+            if (executionException != null && debug) {
+                throw executionException;
+            }
+
+        } finally {
+            context.reset();
+        }
+    }
+
+    private String initStatementText() {
+        ConnectionHandler connectionHandler = getTargetConnection();
         String statementText = executionInput.getExecutableStatementText();
         StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();
         if (executionVariables != null) {
-            statementText = executionVariables.prepareStatementText(targetConnection, statementText, false);
+            statementText = executionVariables.prepareStatementText(connectionHandler, statementText, false);
             executionInput.setExecutableStatementText(statementText);
 
             if (executionVariables.hasErrors()) {
                 executionResult = createErrorExecutionResult("Could not bind all variables.");
-                allowExecution = false;
+                return null; // cancel execution
             }
         }
-
-        Project project = getProject();
-        SQLException executionException = null;
-        if (allowExecution) {
-            DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
-            Counter runningStatements = targetConnection.getLoadMonitor().getRunningStatements();
-
-            ExecutionContext context = executionInput.getExecutionContext();
-            try {
-                runningStatements.increment();
-                initTimeout(context, debug);
-                initConnection(context, connection);
-                initLogging(context, debug);
-
-                executionResult = executeStatement(context, statementText);
-
-                // post execution activities
-                if (executionResult != null) {
-                    consumeLoggerOutput(context);
-                    notifyTransactionalChanges(context);
-                    notifyDataDefinitionChanges(context);
-                }
-            } catch (SQLException e) {
-                context.resetStatement();
-                executionResult = createErrorExecutionResult(e.getMessage());
-                executionException = e;
-            } finally {
-                context.reset();
-                runningStatements.decrement();
-                if (context.isLogging()) {
-                    loggingManager.disableLogger(targetConnection, connection);
-                }
-            }
-        }
-
-        if (executionResult != null) {
-            executionResult.calculateExecDuration();
-            ExecutionManager executionManager = ExecutionManager.getInstance(project);
-            executionManager.addExecutionResult(executionResult);
-        }
-        if (executionException != null && debug) {
-            throw executionException;
-        }
+        return statementText;
     }
-
 
     private void initTimeout(ExecutionContext context, boolean debug) throws SQLException {
         int timeout = debug ?
@@ -299,10 +307,10 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     }
 
     private void initConnection(ExecutionContext context, DBNConnection connection) throws SQLException {
-        ConnectionHandler targetConnection = getTargetConnection();
-        DBSchema targetSchema = getTargetSchema();
+        ConnectionHandler connectionHandler = getTargetConnection();
+        DBSchema schema = getTargetSchema();
         if (connection == null) {
-            connection = targetConnection.getMainConnection(targetSchema);
+            connection = connectionHandler.getMainConnection(schema);
         }
         context.setConnection(connection);
     }
@@ -357,26 +365,56 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         }
     }
 
-    private void notifyTransactionalChanges(ExecutionContext context) {
-        DBNConnection connection = context.getConnection();
-        if (connection.isMainConnection()) {
-            ConnectionHandler targetConnection = getTargetConnection();
-            ExecutablePsiElement psiElement = executionInput.getExecutablePsiElement();
-            VirtualFile virtualFile = getPsiFile().getVirtualFile();
-            if (psiElement != null) {
-                if (psiElement.isTransactional()) targetConnection.notifyChanges(virtualFile);
-                if (psiElement.isPotentiallyTransactional()) {
-                    if (targetConnection.hasPendingTransactions(connection)) {
-                        targetConnection.notifyChanges(virtualFile);
-                    }
+    private void notifyDataManipulationChanges(ExecutionContext context) {
+        final DBNConnection connection = context.getConnection();
+        ConnectionHandler connectionHandler = getTargetConnection();
+        ExecutablePsiElement psiElement = executionInput.getExecutablePsiElement();
+        boolean notifyChanges = false;
+        boolean resetChanges = false;
+
+        if (psiElement != null) {
+            if (psiElement.isTransactional()) {
+                notifyChanges = true;
+            }
+            else if (psiElement.isPotentiallyTransactional()) {
+                if (connectionHandler.hasPendingTransactions(connection)) {
+                    notifyChanges = true;
                 }
-                if (psiElement.isTransactionControl()) targetConnection.resetChanges();
-            } else{
-                if (executionResult.getUpdateCount() > 0) {
-                    targetConnection.notifyChanges(virtualFile);
-                } else if (targetConnection.hasPendingTransactions(connection)) {
-                    targetConnection.notifyChanges(virtualFile);
-                }
+            }
+            else if (psiElement.isTransactionControl()) {
+                resetChanges = true;
+            }
+        } else{
+            if (executionResult.getUpdateCount() > 0) {
+                notifyChanges = true;
+            } else if (connectionHandler.hasPendingTransactions(connection)) {
+                notifyChanges = true;
+            }
+        }
+
+        if (notifyChanges) {
+            if (connection.isMainConnection()) {
+                VirtualFile virtualFile = getPsiFile().getVirtualFile();
+                connectionHandler.notifyDataChanges(virtualFile);
+            } else if (connection.isPoolConnection()) {
+                MessageUtil.showQuestionDialog(
+                        getProject(),
+                        "Commit or Rollback",
+                        "You executed this statement in a pool connection. You cannot leave the transactional status of this connection inconsistent. Please choose whether to commit or rollback the changes.",
+                        new String[]{"Commit", "Rollback"},
+                        0,
+                        new MessageCallback() {
+                            @Override
+                            protected void execute() {
+                                int option = getData();
+                                if (option == 0) ConnectionUtil.commit(connection); else
+                                if (option == 1) ConnectionUtil.rollback(connection);
+                            }
+                        });
+            }
+        } else if (resetChanges) {
+            if (connection.isMainConnection()) {
+                connectionHandler.resetDataChanges();
             }
         }
     }
@@ -396,6 +434,16 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                     listener.dataDefinitionChanged(affectedSchema, subjectPsiElement.getObjectType());
                 }
             }
+        }
+    }
+
+    private void disableLogging(ExecutionContext context) {
+        DBNConnection connection = context.getConnection();
+        ConnectionHandler connectionHandler = getTargetConnection();
+        if (context.isLogging()) {
+            Project project = getProject();
+            DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
+            loggingManager.disableLogger(connectionHandler, connection);
         }
     }
 

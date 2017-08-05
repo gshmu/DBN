@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -25,6 +14,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class UncommittedChangesOverviewForm extends DBNFormImpl<UncommittedChangesOverviewDialog> {
     private JPanel mainPanel;
@@ -116,7 +114,7 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl<UncommittedChang
             ConnectionHandler connectionHandler = (ConnectionHandler) value;
             setIcon(connectionHandler.getIcon());
             append(connectionHandler.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            UncommittedChangeBundle uncommittedChanges = connectionHandler.getUncommittedChanges();
+            UncommittedChangeBundle uncommittedChanges = connectionHandler.getDataChanges();
             int changes = uncommittedChanges == null ? 0 : uncommittedChanges.size();
             append(" (" + changes + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
 

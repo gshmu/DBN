@@ -88,8 +88,8 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     String getPresentableText();
     String getQualifiedName();
 
-    void notifyChanges(VirtualFile virtualFile);
-    void resetChanges();
+    void notifyDataChanges(VirtualFile virtualFile);
+    void resetDataChanges();
     boolean hasUncommittedChanges();
     void commit() throws SQLException;
     void rollback() throws SQLException;
@@ -106,7 +106,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     Filter<BrowserTreeNode> getObjectTypeFilter();
     NavigationPsiCache getPsiCache();
 
-    UncommittedChangeBundle getUncommittedChanges();
+    UncommittedChangeBundle getDataChanges();
     boolean isConnected();
     int getIdleMinutes();
 
