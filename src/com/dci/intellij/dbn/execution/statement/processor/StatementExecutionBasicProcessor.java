@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -24,6 +14,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -31,12 +22,7 @@ import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
-import com.dci.intellij.dbn.execution.compiler.CompileType;
-import com.dci.intellij.dbn.execution.compiler.CompilerAction;
-import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
-import com.dci.intellij.dbn.execution.compiler.CompilerResult;
-import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
+import com.dci.intellij.dbn.execution.compiler.*;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -47,11 +33,7 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.*;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -65,6 +47,15 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class StatementExecutionBasicProcessor extends DisposableBase implements StatementExecutionProcessor {
     protected DBLanguagePsiFile psiFile;
@@ -224,7 +215,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         execute(null, false);
     }
 
-    public void execute(@Nullable Connection connection, boolean debug) throws SQLException {
+    public void execute(@Nullable DBNConnection connection, boolean debug) throws SQLException {
         executionInput.initExecution();
         ProgressMonitor.setTaskDescription("Executing " + getStatementName());
         resultName = null;

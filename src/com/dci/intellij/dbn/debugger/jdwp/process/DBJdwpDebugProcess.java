@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
-import java.net.Inet4Address;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.StringTokenizer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -15,6 +7,7 @@ import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.DBDebugOperationTask;
@@ -36,11 +29,7 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.debugger.DebuggerManager;
-import com.intellij.debugger.engine.DebugProcessAdapter;
-import com.intellij.debugger.engine.JavaDebugProcess;
-import com.intellij.debugger.engine.JavaStackFrame;
-import com.intellij.debugger.engine.SuspendContext;
-import com.intellij.debugger.engine.SuspendContextImpl;
+import com.intellij.debugger.engine.*;
 import com.intellij.debugger.impl.DebuggerContextImpl;
 import com.intellij.debugger.impl.DebuggerContextListener;
 import com.intellij.debugger.impl.DebuggerSession;
@@ -58,10 +47,17 @@ import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.sun.jdi.Location;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.net.Inet4Address;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     public static final Key<DBJdwpDebugProcess> KEY = new Key<DBJdwpDebugProcess>("DBNavigator.JdwpDebugProcess");
-    protected Connection targetConnection;
+    protected DBNConnection targetConnection;
     private ConnectionHandlerRef connectionHandlerRef;
     private DBDebugProcessStatus status = new DBDebugProcessStatus();
     private int localTcpPort = 4000;
@@ -126,7 +122,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         return getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
     }
 
-    public Connection getTargetConnection() {
+    public DBNConnection getTargetConnection() {
         return targetConnection;
     }
 
