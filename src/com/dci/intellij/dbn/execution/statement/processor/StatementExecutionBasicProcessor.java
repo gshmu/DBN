@@ -8,10 +8,7 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.DBNConnection;
@@ -63,7 +60,21 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     private ExecutablePsiElement cachedExecutable;
     private EditorProviderId editorProviderId;
 
-    private String resultName;
+    private LazyValue<String> resultName = new SimpleLazyValue<String>() {
+        @Override
+        protected String load() {
+            String resultName = null;
+            ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+            if (executablePsiElement!= null) {
+                resultName = executablePsiElement.createSubjectList();
+            }
+            if (StringUtil.isEmptyOrSpaces(resultName)) {
+                resultName = "Result " + index;
+            }
+            return resultName;
+        }
+    };
+
     protected int index;
 
     private StatementExecutionInput executionInput;
@@ -216,124 +227,175 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     }
 
     public void execute(@Nullable DBNConnection connection, boolean debug) throws SQLException {
-        executionInput.initExecution();
         ProgressMonitor.setTaskDescription("Executing " + getStatementName());
-        resultName = null;
-        ConnectionHandler activeConnection = getConnectionHandler();
-        DBSchema currentSchema = getTargetSchema();
+        resultName.reset();
+        executionInput.initExecution();
 
-        boolean continueExecution = true;
+        ConnectionHandler targetConnection = getTargetConnection();
+        boolean allowExecution = true;
 
-        String executableStatementText = executionInput.getExecutableStatementText();
+        String statementText = executionInput.getExecutableStatementText();
         StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();
         if (executionVariables != null) {
-            executableStatementText = executionVariables.prepareStatementText(activeConnection, executableStatementText, false);
-            executionInput.setExecutableStatementText(executableStatementText);
+            statementText = executionVariables.prepareStatementText(targetConnection, statementText, false);
+            executionInput.setExecutableStatementText(statementText);
 
             if (executionVariables.hasErrors()) {
                 executionResult = createErrorExecutionResult("Could not bind all variables.");
-                continueExecution = false;
+                allowExecution = false;
             }
         }
 
-        SQLException executionException = null;
         Project project = getProject();
-        boolean loggingEnabled = false;
-        if (continueExecution) {
+        SQLException executionException = null;
+        if (allowExecution) {
             DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
-            activeConnection = FailsafeUtil.get(activeConnection);
-            Counter runningStatements = activeConnection.getLoadMonitor().getRunningStatements();
+            Counter runningStatements = targetConnection.getLoadMonitor().getRunningStatements();
 
-            int timeout = debug ?
-                    executionInput.getDebugExecutionTimeout() :
-                    executionInput.getExecutionTimeout();
-
-            ExecutionContext executionContext = executionInput.getExecutionContext();
+            ExecutionContext context = executionInput.getExecutionContext();
             try {
                 runningStatements.increment();
-                if (connection == null) {
-                    connection = activeConnection.getMainConnection(currentSchema);
-                }
+                initTimeout(context, debug);
+                initConnection(context, connection);
+                initLogging(context, debug);
 
-                if (!debug && executionInput.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
-                    loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
-                }
-                final Statement statement = connection.createStatement();
-                executionContext.setStatement(statement);
+                executionResult = executeStatement(context, statementText);
 
-                statement.setQueryTimeout(timeout);
-                final String executable = executableStatementText;
-                executionResult = new CancellableDatabaseCall<StatementExecutionResult>(activeConnection, connection, timeout, TimeUnit.SECONDS) {
-                    @Override
-                    public StatementExecutionResult execute() throws Exception{
-                        statement.execute(executable);
-                        return createExecutionResult(statement, executionInput);
-                    }
-
-                    @Override
-                    public void cancel() throws Exception {
-                        ConnectionUtil.cancelStatement(statement);
-                    }
-                }.start();
-
-                if (connection.isMainConnection()) {
-                    ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-                    VirtualFile virtualFile = getPsiFile().getVirtualFile();
-                    if (executablePsiElement != null) {
-                        if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(virtualFile);
-                        if (executablePsiElement.isPotentiallyTransactional()) {
-                            if (activeConnection.hasPendingTransactions(connection)) {
-                                activeConnection.notifyChanges(virtualFile);
-                            }
-                        }
-                        if (executablePsiElement.isTransactionControl()) activeConnection.resetChanges();
-                    } else{
-                        if (executionResult.getUpdateCount() > 0) {
-                            activeConnection.notifyChanges(virtualFile);
-                        } else if (activeConnection.hasPendingTransactions(connection)) {
-                            activeConnection.notifyChanges(virtualFile);
-                        }
-                    }
-                }
-
-                executionResult.setLoggingActive(loggingEnabled);
-                if (loggingEnabled) {
-                    String logOutput = loggingManager.readLoggerOutput(activeConnection, connection);
-                    executionResult.setLoggingOutput(logOutput);
-                }
-
-
-                if (isDataDefinitionStatement()) {
-                    DBSchemaObject affectedObject = getAffectedObject();
-                    if (affectedObject != null) {
-                        DataDefinitionChangeListener listener = EventUtil.notify(project, DataDefinitionChangeListener.TOPIC);
-                        listener.dataDefinitionChanged(affectedObject);
-                    } else {
-                        DBSchema affectedSchema = getAffectedSchema();
-                        IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
-                        if (affectedSchema != null && subjectPsiElement != null) {
-                            DataDefinitionChangeListener listener = EventUtil.notify(project, DataDefinitionChangeListener.TOPIC);
-                            listener.dataDefinitionChanged(affectedSchema, subjectPsiElement.getObjectType());
-                        }
-                    }
+                // post execution activities
+                if (executionResult != null) {
+                    consumeLoggerOutput(context);
+                    notifyTransactionalChanges(context);
+                    notifyDataDefinitionChanges(context);
                 }
             } catch (SQLException e) {
-                executionContext.dismissStatement();
+                context.resetStatement();
                 executionResult = createErrorExecutionResult(e.getMessage());
                 executionException = e;
             } finally {
+                context.reset();
                 runningStatements.decrement();
-                if (loggingEnabled) {
-                    loggingManager.disableLogger(activeConnection, connection);
+                if (context.isLogging()) {
+                    loggingManager.disableLogger(targetConnection, connection);
                 }
             }
         }
 
-        executionResult.calculateExecDuration();
-        ExecutionManager executionManager = ExecutionManager.getInstance(project);
-        executionManager.addExecutionResult(executionResult);
+        if (executionResult != null) {
+            executionResult.calculateExecDuration();
+            ExecutionManager executionManager = ExecutionManager.getInstance(project);
+            executionManager.addExecutionResult(executionResult);
+        }
         if (executionException != null && debug) {
             throw executionException;
+        }
+    }
+
+
+    private void initTimeout(ExecutionContext context, boolean debug) throws SQLException {
+        int timeout = debug ?
+                executionInput.getDebugExecutionTimeout() :
+                executionInput.getExecutionTimeout();
+        context.setTimeout(timeout);
+    }
+
+    private void initConnection(ExecutionContext context, DBNConnection connection) throws SQLException {
+        ConnectionHandler targetConnection = getTargetConnection();
+        DBSchema targetSchema = getTargetSchema();
+        if (connection == null) {
+            connection = targetConnection.getMainConnection(targetSchema);
+        }
+        context.setConnection(connection);
+    }
+
+    private void initLogging(ExecutionContext context, boolean debug) {
+        boolean logging = false;
+        if (!debug && executionInput.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
+            ConnectionHandler connectionHandler = getTargetConnection();
+            DBNConnection connection = context.getConnection();
+
+            DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(getProject());
+            logging = loggingManager.enableLogger(connectionHandler, connection);
+        }
+        context.setLogging(logging);
+
+    }
+
+    @Nullable
+    private StatementExecutionResult executeStatement(ExecutionContext context, final String statementText) throws SQLException {
+        DBNConnection connection = context.getConnection();
+        ConnectionHandler connectionHandler = getTargetConnection();
+        final Statement statement = connection.createStatement();
+        context.setStatement(statement);
+
+        int timeout = context.getTimeout();
+        statement.setQueryTimeout(timeout);
+        return new CancellableDatabaseCall<StatementExecutionResult>(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
+            @Override
+            public StatementExecutionResult execute() throws Exception{
+                statement.execute(statementText);
+                return createExecutionResult(statement, executionInput);
+            }
+
+            @Override
+            public void cancel() throws Exception {
+                ConnectionUtil.cancelStatement(statement);
+            }
+        }.start();
+    }
+
+    private void consumeLoggerOutput(ExecutionContext context) {
+        boolean logging = context.isLogging();
+        executionResult.setLoggingActive(logging);
+        if (logging) {
+            Project project = getProject();
+            DBNConnection connection = context.getConnection();
+            ConnectionHandler connectionHandler = getTargetConnection();
+
+            DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
+            String logOutput = loggingManager.readLoggerOutput(connectionHandler, connection);
+            executionResult.setLoggingOutput(logOutput);
+        }
+    }
+
+    private void notifyTransactionalChanges(ExecutionContext context) {
+        DBNConnection connection = context.getConnection();
+        if (connection.isMainConnection()) {
+            ConnectionHandler targetConnection = getTargetConnection();
+            ExecutablePsiElement psiElement = executionInput.getExecutablePsiElement();
+            VirtualFile virtualFile = getPsiFile().getVirtualFile();
+            if (psiElement != null) {
+                if (psiElement.isTransactional()) targetConnection.notifyChanges(virtualFile);
+                if (psiElement.isPotentiallyTransactional()) {
+                    if (targetConnection.hasPendingTransactions(connection)) {
+                        targetConnection.notifyChanges(virtualFile);
+                    }
+                }
+                if (psiElement.isTransactionControl()) targetConnection.resetChanges();
+            } else{
+                if (executionResult.getUpdateCount() > 0) {
+                    targetConnection.notifyChanges(virtualFile);
+                } else if (targetConnection.hasPendingTransactions(connection)) {
+                    targetConnection.notifyChanges(virtualFile);
+                }
+            }
+        }
+    }
+
+    private void notifyDataDefinitionChanges(ExecutionContext context) {
+        Project project = getProject();
+        if (isDataDefinitionStatement()) {
+            DBSchemaObject affectedObject = getAffectedObject();
+            if (affectedObject != null) {
+                DataDefinitionChangeListener listener = EventUtil.notify(project, DataDefinitionChangeListener.TOPIC);
+                listener.dataDefinitionChanged(affectedObject);
+            } else {
+                DBSchema affectedSchema = getAffectedSchema();
+                IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
+                if (affectedSchema != null && subjectPsiElement != null) {
+                    DataDefinitionChangeListener listener = EventUtil.notify(project, DataDefinitionChangeListener.TOPIC);
+                    listener.dataDefinitionChanged(affectedSchema, subjectPsiElement.getObjectType());
+                }
+            }
         }
     }
 
@@ -342,6 +404,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         return executionInput.getExecutionVariables();
     }
 
+    @NotNull
     protected StatementExecutionResult createExecutionResult(Statement statement, final StatementExecutionInput executionInput) throws SQLException {
         final StatementExecutionBasicResult executionResult = new StatementExecutionBasicResult(this, getResultName(), statement.getUpdateCount());
         boolean isDdlStatement = isDataDefinitionStatement();
@@ -431,6 +494,11 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         return getPsiFile().getActiveConnection();
     }
 
+    @NotNull
+    public ConnectionHandler getTargetConnection() {
+        return FailsafeUtil.get(getConnectionHandler());
+    }
+
     @Nullable
     public DBSchema getTargetSchema() {
         return getPsiFile().getCurrentSchema();
@@ -442,17 +510,8 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     }
 
     @NotNull
-    public synchronized String getResultName() {
-        if (resultName == null) {
-            ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-            if (executablePsiElement!= null) {
-                 resultName = executablePsiElement.createSubjectList();
-            }
-            if (StringUtil.isEmptyOrSpaces(resultName)) {
-                resultName = "Result " + index;
-            }
-        }
-        return resultName;
+    public String getResultName() {
+        return resultName.get();
     }
 
     public String getStatementName() {

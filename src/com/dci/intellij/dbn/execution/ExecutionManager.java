@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.execution;
 
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -22,11 +16,7 @@ import com.dci.intellij.dbn.execution.logging.LogOutputContext;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -34,6 +24,12 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentFactoryImpl;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @State(
     name = "DBNavigator.Project.ExecutionManager",
@@ -137,7 +133,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         }.start();
     }
 
-    public void addExecutionResult(final StatementExecutionResult executionResult) {
+    public void addExecutionResult(@NotNull final StatementExecutionResult executionResult) {
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {

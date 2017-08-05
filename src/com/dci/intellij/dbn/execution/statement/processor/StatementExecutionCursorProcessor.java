@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
@@ -12,6 +8,11 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.openapi.fileEditor.FileEditor;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class StatementExecutionCursorProcessor extends StatementExecutionBasicProcessor {
 
@@ -23,6 +24,7 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
         super(fileEditor, file, sqlStatement,  index);
     }
 
+    @NotNull
     protected StatementExecutionResult createExecutionResult(Statement statement, StatementExecutionInput executionInput) throws SQLException {
         ResultSet resultSet = statement.getResultSet();
         int updateCount = statement.getUpdateCount();
