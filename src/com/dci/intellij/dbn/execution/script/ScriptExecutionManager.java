@@ -25,11 +25,7 @@ import com.dci.intellij.dbn.execution.script.options.ScriptExecutionSettings;
 import com.dci.intellij.dbn.execution.script.ui.CmdLineInterfaceInputDialog;
 import com.dci.intellij.dbn.execution.script.ui.ScriptExecutionInputDialog;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -133,8 +129,8 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     }
 
     private void doExecuteScript(final ScriptExecutionInput input) throws Exception {
-        ExecutionContext executionContext = input.getExecutionContext();
-        executionContext.setExecuting(true);
+        ExecutionContext context = input.getExecutionContext();
+        context.setExecuting(true);
         ConnectionHandler connectionHandler = FailsafeUtil.get(input.getConnectionHandler());
         final VirtualFile sourceFile = input.getSourceFile();
         activeProcesses.put(sourceFile, null);
@@ -255,7 +251,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 throw e;
             }
         } finally {
-            executionContext.setExecuting(false);
+            context.setExecuting(false);
             outputContext.finish();
             BufferedReader consoleReader = logReader.get();
             if (consoleReader != null) consoleReader.close();

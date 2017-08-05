@@ -431,7 +431,7 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
     }
 
     @Override
-    public boolean hasPendingTransactions(Connection connection) {
+    public boolean hasPendingTransactions(@NotNull Connection connection) {
         try {
             ResultSet resultSet = executeQuery(connection, true, "count-pending-transactions");
             try {

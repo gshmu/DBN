@@ -369,7 +369,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @Override
-    public boolean hasPendingTransactions(Connection connection) {
+    public boolean hasPendingTransactions(@NotNull Connection connection) {
         return getInterfaceProvider().getMetadataInterface().hasPendingTransactions(connection);
     }
 

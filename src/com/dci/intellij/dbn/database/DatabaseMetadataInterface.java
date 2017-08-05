@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.database;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -657,5 +659,5 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
 
     String createDateString(Date date);
 
-    boolean hasPendingTransactions(Connection connection);
+    boolean hasPendingTransactions(@NotNull Connection connection);
 }

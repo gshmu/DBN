@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.database.postgres;
 
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -30,7 +31,7 @@ public class PostgresMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public boolean hasPendingTransactions(Connection connection) {
+    public boolean hasPendingTransactions(@NotNull Connection connection) {
         try {
             Integer state = (Integer) connection.getClass().getMethod("getTransactionState").invoke(connection);
             return state != 0;

@@ -78,7 +78,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     boolean isVirtual();
     boolean isAutoCommit();
     boolean isLoggingEnabled();
-    boolean hasPendingTransactions(Connection connection);
+    boolean hasPendingTransactions(@NotNull Connection connection);
     void setAutoCommit(boolean autoCommit) throws SQLException;
     void setLoggingEnabled(boolean loggingEnabled);
     void disconnect() throws SQLException;

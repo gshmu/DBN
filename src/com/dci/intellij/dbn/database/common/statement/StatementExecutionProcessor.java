@@ -7,14 +7,10 @@ import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -79,11 +75,11 @@ public class StatementExecutionProcessor {
         return id;
     }
 
-    public ResultSet executeQuery(Connection connection, Object... arguments) throws SQLException {
+    public ResultSet executeQuery(@NotNull Connection connection, Object... arguments) throws SQLException {
         return executeQuery(connection, false, arguments);
     }
 
-    public ResultSet executeQuery(Connection connection, boolean forceExecution, Object... arguments) throws SQLException {
+    public ResultSet executeQuery(@NotNull Connection connection, boolean forceExecution, Object... arguments) throws SQLException {
         if (statementDefinition != null) {
             return executeQuery(statementDefinition, connection, forceExecution, arguments);
         } else {
@@ -99,7 +95,7 @@ public class StatementExecutionProcessor {
         }
     }
 
-    private ResultSet executeQuery(final StatementDefinition statementDefinition, final Connection connection, boolean forceExecution, final Object... arguments) throws SQLException {
+    private ResultSet executeQuery(final StatementDefinition statementDefinition, @NotNull final Connection connection, boolean forceExecution, final Object... arguments) throws SQLException {
         if (forceExecution || statementDefinition.canExecute(connection)) {
             return new StatementExecutor<ResultSet>(timeout) {
                 private Statement statement;
@@ -165,7 +161,7 @@ public class StatementExecutionProcessor {
         }
     }
 
-    public <T extends CallableStatementOutput> T executeCall(Connection connection, @Nullable T outputReader, Object... arguments) throws SQLException {
+    public <T extends CallableStatementOutput> T executeCall(@NotNull Connection connection, @Nullable T outputReader, Object... arguments) throws SQLException {
         if (statementDefinition != null) {
             return executeCall(statementDefinition, connection, outputReader, arguments);
         } else {
@@ -182,7 +178,7 @@ public class StatementExecutionProcessor {
         }
     }
 
-    private <T extends CallableStatementOutput> T executeCall(final StatementDefinition statementDefinition, final Connection connection, @Nullable final T outputReader, final Object... arguments) throws SQLException {
+    private <T extends CallableStatementOutput> T executeCall(final StatementDefinition statementDefinition, @NotNull final Connection connection, @Nullable final T outputReader, final Object... arguments) throws SQLException {
         return new StatementExecutor<T>(timeout) {
             CallableStatement statement;
             @Override
@@ -233,7 +229,7 @@ public class StatementExecutionProcessor {
         }
     }
 
-    private void executeUpdate(final StatementDefinition statementDefinition, final Connection connection, final Object... arguments) throws SQLException {
+    private void executeUpdate(final StatementDefinition statementDefinition, @NotNull final Connection connection, final Object... arguments) throws SQLException {
         new StatementExecutor(timeout) {
             private Statement statement;
             @Override
@@ -265,7 +261,7 @@ public class StatementExecutionProcessor {
         }.start();
     }
 
-    public boolean executeStatement(Connection connection, Object... arguments) throws SQLException {
+    public boolean executeStatement(@NotNull Connection connection, Object... arguments) throws SQLException {
         if (statementDefinition != null) {
             return executeStatement(statementDefinition, connection, arguments);
         } else {
@@ -281,7 +277,7 @@ public class StatementExecutionProcessor {
         }
     }
 
-    private boolean executeStatement(final StatementDefinition statementDefinition, final Connection connection, final Object... arguments) throws SQLException {
+    private boolean executeStatement(final StatementDefinition statementDefinition, @NotNull final Connection connection, final Object... arguments) throws SQLException {
         return new StatementExecutor<Boolean>(timeout) {
             private Statement statement;
             @Override

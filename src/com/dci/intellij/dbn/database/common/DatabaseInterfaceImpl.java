@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.database.common;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -20,6 +10,16 @@ import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
 import com.dci.intellij.dbn.database.common.statement.StatementExecutionProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DatabaseInterfaceImpl implements DatabaseInterface{
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -46,32 +46,32 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
         }
     }
 
-    protected ResultSet executeQuery(Connection connection, String loaderId, @Nullable Object... arguments) throws SQLException {
+    protected ResultSet executeQuery(@NotNull Connection connection, String loaderId, @Nullable Object... arguments) throws SQLException {
         return executeQuery(connection, true, loaderId, arguments);
     }
 
-    protected ResultSet executeQuery(Connection connection, boolean forceExecution, String loaderId, @Nullable Object... arguments) throws SQLException {
+    protected ResultSet executeQuery(@NotNull Connection connection, boolean forceExecution, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(loaderId);
         ResultSet result = executionProcessor.executeQuery(connection, forceExecution, arguments);
         checkDisposed();
         return result;
     }
 
-    protected <T extends CallableStatementOutput> T executeCall(Connection connection, @Nullable T outputReader, String loaderId, @Nullable Object... arguments) throws SQLException {
+    protected <T extends CallableStatementOutput> T executeCall(@NotNull Connection connection, @Nullable T outputReader, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(loaderId);
         T result = executionProcessor.executeCall(connection, outputReader, arguments);
         checkDisposed();
         return result;
     }
 
-    protected boolean executeStatement(Connection connection, String loaderId, @Nullable Object... arguments) throws SQLException {
+    protected boolean executeStatement(@NotNull Connection connection, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(loaderId);
         boolean result = executionProcessor.executeStatement(connection, arguments);
         checkDisposed();
         return result;
     }
 
-    protected void executeUpdate(Connection connection, String loaderId, @Nullable Object... arguments) throws SQLException {
+    protected void executeUpdate(@NotNull Connection connection, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(loaderId);
         executionProcessor.executeUpdate(connection, arguments);
         checkDisposed();
