@@ -229,13 +229,13 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     public void execute(@Nullable DBNConnection connection, boolean debug) throws SQLException {
         ProgressMonitor.setTaskDescription("Executing " + getStatementName());
+        ExecutionContext context = executionInput.getExecutionContext(true);
         resultName.reset();
         executionInput.initExecution();
 
         ConnectionHandler connectionHandler = getTargetConnection();
 
 
-        ExecutionContext context = executionInput.getExecutionContext(true);
         try {
             String statementText = initStatementText();
             if (statementText != null) {
