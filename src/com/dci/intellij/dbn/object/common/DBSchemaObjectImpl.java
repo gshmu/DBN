@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
+import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -132,7 +133,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
 
     @NotNull
     public DBObjectVirtualFile getVirtualFile() {
-        if (getParentObject() instanceof DBSchema) {
+        if (getObjectType().isSchemaObject()) {
             return DatabaseFileSystem.getInstance().findOrCreateDatabaseFile(this);
         }
         return super.getVirtualFile();
@@ -140,11 +141,10 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
 
     @Override
     public DBEditableObjectVirtualFile getEditableVirtualFile() {
-        DBObject parentObject = getParentObject();
-        if (parentObject instanceof DBSchema) {
+        if (getObjectType().isSchemaObject()) {
             return (DBEditableObjectVirtualFile) getVirtualFile();
         } else {
-            return (DBEditableObjectVirtualFile) parentObject.getVirtualFile();
+            return (DBEditableObjectVirtualFile) getParentObject().getVirtualFile();
         }
     }
 
