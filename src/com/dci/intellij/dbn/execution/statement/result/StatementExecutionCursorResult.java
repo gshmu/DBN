@@ -90,7 +90,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     }
 
     public void loadResultSet(ResultSet resultSet) throws SQLException {
-        int rowCount = Math.max(dataModel.getRowCount() + 1, 100);
+        int rowCount = Math.max(dataModel == null ? 0 : dataModel.getRowCount() + 1, 100);
         dataModel = new ResultSetDataModel(resultSet, getConnectionHandler(), rowCount);
         resultPanel.reloadTableModel();
         resultPanel.updateVisibleComponents();
