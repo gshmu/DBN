@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementGutterRenderer;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
@@ -124,11 +125,14 @@ public class SQLLanguageAnnotator implements Annotator {
     }
 
     private static void annotateExecutable(ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {
-        if (!executablePsiElement.isNestedExecutable()) {
-            VirtualFile virtualFile = executablePsiElement.getFile().getVirtualFile();
-            if (!DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
-                Annotation annotation = holder.createInfoAnnotation(executablePsiElement, null);
-                annotation.setGutterIconRenderer(new StatementGutterRenderer(executablePsiElement));
+        if (executablePsiElement.isValid() && !executablePsiElement.isNestedExecutable()) {
+            DBLanguagePsiFile psiFile = executablePsiElement.getFile();
+            if (psiFile != null) {
+                VirtualFile virtualFile = psiFile.getVirtualFile();
+                if (!DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
+                    Annotation annotation = holder.createInfoAnnotation(executablePsiElement, null);
+                    annotation.setGutterIconRenderer(new StatementGutterRenderer(executablePsiElement));
+                }
             }
         }
     }
