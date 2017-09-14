@@ -42,11 +42,12 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.NonPhysicalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 
-public class DatabaseFileSystem extends VirtualFileSystem implements ApplicationComponent {
+public class DatabaseFileSystem extends VirtualFileSystem implements NonPhysicalFileSystem, ApplicationComponent {
     public static final String PROTOCOL = "db";
     public static final String PROTOCOL_PREFIX = PROTOCOL + "://";
 
