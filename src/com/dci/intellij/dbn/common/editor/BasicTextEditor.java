@@ -13,6 +13,7 @@ public interface BasicTextEditor<T extends VirtualFile> extends FileEditor, Disp
     @NotNull
     Editor getEditor();
 
+    @NotNull
     T getVirtualFile();
 
     boolean canNavigateTo(@NotNull final Navigatable navigatable);

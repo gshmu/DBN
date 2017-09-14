@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
@@ -38,8 +39,9 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
         Disposer.register(this, textEditor);
     }
 
+    @NotNull
     public T getVirtualFile() {
-        return virtualFile;
+        return FailsafeUtil.get(virtualFile);
     }
 
     public <D> D getUserData(@NotNull Key<D> key) {
