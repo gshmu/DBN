@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.debugger;
 
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -14,7 +25,15 @@ import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
-import com.dci.intellij.dbn.debugger.common.config.*;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigFactory;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner;
@@ -35,16 +54,23 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
-import com.intellij.execution.*;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.Executor;
+import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.RunnerRegistry;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
-import com.intellij.execution.configurations.UnknownConfigurationType;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.application.ApplicationInfo;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -53,13 +79,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.util.*;
 
 @State(
     name = "DBNavigator.Project.DebuggerManager",
@@ -155,7 +174,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         //createDefaultConfigs();
 
         // TODO remove this cleanup logic after statement debugger roll-out
-        try {
+        /*try {
             RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(getProject());
             List<RunnerAndConfigurationSettings> configurationSettingsList = runManager.getConfigurationSettingsList(UnknownConfigurationType.INSTANCE);
             for (RunnerAndConfigurationSettings configurationSettings : configurationSettingsList) {
@@ -163,7 +182,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             }
         } catch (Throwable t) {
             LOGGER.error("Failed to cleanup run configuration", t);
-        }
+        }*/
         super.initComponent();
     }
 
