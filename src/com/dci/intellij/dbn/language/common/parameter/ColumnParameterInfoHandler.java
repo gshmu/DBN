@@ -82,27 +82,29 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
 
 
     @Nullable
-    public static BasePsiElement lookupHandlerElement(PsiFile file, int offset) {
-        PsiElement psiElement = file.findElementAt(offset);
-        while (psiElement != null && !(psiElement instanceof PsiFile)) {
-            if (psiElement instanceof BasePsiElement) {
-                ElementType elementType = PsiUtil.getElementType(psiElement);
-                if (elementType instanceof WrapperElementType) {
-                    WrapperElementType wrapperElementType = (WrapperElementType) elementType;
-                    if (wrapperElementType.is(ElementTypeAttribute.COLUMN_PARAMETER_HANDLER)) {
-                        return (BasePsiElement) psiElement;
-                    } else {
-                        return null;
+    private static BasePsiElement lookupHandlerElement(PsiFile file, int offset) {
+        if (file != null) {
+            PsiElement psiElement = file.findElementAt(offset);
+            while (psiElement != null && !(psiElement instanceof PsiFile)) {
+                if (psiElement instanceof BasePsiElement) {
+                    ElementType elementType = PsiUtil.getElementType(psiElement);
+                    if (elementType instanceof WrapperElementType) {
+                        WrapperElementType wrapperElementType = (WrapperElementType) elementType;
+                        if (wrapperElementType.is(ElementTypeAttribute.COLUMN_PARAMETER_HANDLER)) {
+                            return (BasePsiElement) psiElement;
+                        } else {
+                            return null;
+                        }
                     }
                 }
+                psiElement = psiElement.getParent();
             }
-            psiElement = psiElement.getParent();
         }
         return null;
     }
 
     @Nullable
-    public static BasePsiElement lookupProviderElement(@Nullable BasePsiElement handlerPsiElement) {
+    private static BasePsiElement lookupProviderElement(@Nullable BasePsiElement handlerPsiElement) {
         if (handlerPsiElement != null) {
             BasePsiElement statementPsiElement = handlerPsiElement.findEnclosingPsiElement(ElementTypeAttribute.STATEMENT);
             if (statementPsiElement != null) {
