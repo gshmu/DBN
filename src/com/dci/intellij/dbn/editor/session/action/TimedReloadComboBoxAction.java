@@ -17,8 +17,9 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.project.DumbAware;
 
-public class TimedReloadComboBoxAction extends DBNComboBoxAction {
+public class TimedReloadComboBoxAction extends DBNComboBoxAction implements DumbAware {
 
     public TimedReloadComboBoxAction() {
     }
