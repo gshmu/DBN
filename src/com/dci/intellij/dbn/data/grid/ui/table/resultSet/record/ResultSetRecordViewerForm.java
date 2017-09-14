@@ -244,7 +244,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
             if (index > 0) {
                 index--;
                 ResultSetDataModelRow previousRow = (ResultSetDataModelRow) row.getModel().getRowAtIndex(index);
-                if (row != null) {
+                if (previousRow != null) {
                     setRow(previousRow);
                     table.selectRow(index);
                 }
