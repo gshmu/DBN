@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -21,12 +27,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
 
 public abstract class LeafElementTypeImpl extends AbstractElementType implements LeafElementType {
     private TokenType tokenType;
@@ -132,7 +132,8 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 possibleLeafs.addAll(lookupCache.getFirstPossibleLeafs());
             }
             if (pathNode != null) {
-                if (pathNode.getElementType().is(ElementTypeAttribute.STATEMENT) && context.isBreakOnAttribute(ElementTypeAttribute.STATEMENT)){
+                ElementType pathElementType = pathNode.getElementType();
+                if (pathElementType != null && elementType.is(ElementTypeAttribute.STATEMENT) && context.isBreakOnAttribute(ElementTypeAttribute.STATEMENT)){
                     break;
                 }
                 position = pathNode.getIndexInParent() + 1;
