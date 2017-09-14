@@ -36,7 +36,8 @@ public class FailsafeUtil {
 
     public static <T> T getComponent(@Nullable Project project, @NotNull Class<T> interfaceClass) {
         project = get(project);
-        return project.getComponent(interfaceClass);
+        T component = project.getComponent(interfaceClass);
+        return get(component);
     }
 
 
