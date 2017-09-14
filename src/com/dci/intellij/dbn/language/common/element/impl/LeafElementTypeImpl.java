@@ -133,7 +133,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
             }
             if (pathNode != null) {
                 ElementType pathElementType = pathNode.getElementType();
-                if (pathElementType != null && elementType.is(ElementTypeAttribute.STATEMENT) && context.isBreakOnAttribute(ElementTypeAttribute.STATEMENT)){
+                if (pathElementType != null && pathElementType.is(ElementTypeAttribute.STATEMENT) && context.isBreakOnAttribute(ElementTypeAttribute.STATEMENT)){
                     break;
                 }
                 position = pathNode.getIndexInParent() + 1;
