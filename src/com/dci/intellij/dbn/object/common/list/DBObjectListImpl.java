@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentImpl;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -32,10 +33,13 @@ import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     private DBObjectType objectType = DBObjectType.UNKNOWN;
     private boolean hidden;
     private InternalFilter filter;
@@ -195,10 +199,16 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     public void notifyChangeListeners() {
-        Project project = getProject();
-        BrowserTreeNode treeParent = getParent();
-        if (!hidden && isTouched() && FailsafeUtil.softCheck(project) && treeParent != null && treeParent.isTreeStructureLoaded()) {
-            EventUtil.notify(project, BrowserTreeEventListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
+        try {
+            Project project = getProject();
+            BrowserTreeNode treeParent = getParent();
+            if (!hidden && isTouched() && FailsafeUtil.softCheck(project) && treeParent != null && treeParent.isTreeStructureLoaded()) {
+                BrowserTreeEventListener treeEventListener = EventUtil.notify(project, BrowserTreeEventListener.TOPIC);
+                treeEventListener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
+            }
+        } catch (ProcessCanceledException ignore) {
+        } catch (Exception e) {
+            LOGGER.error("Failed to notify tree change listeners", e);
         }
     }
 
