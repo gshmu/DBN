@@ -25,7 +25,7 @@ public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction
             if (context.isActive()) {
                 MessageUtil.showQuestionDialog(
                         project,
-                        "Kill Process",
+                        "Kill process",
                         "This will interrupt the script execution process. \nAre you sure you want to continue?",
                         MessageUtil.OPTIONS_YES_NO, 0,
                         new MessageCallback(0) {

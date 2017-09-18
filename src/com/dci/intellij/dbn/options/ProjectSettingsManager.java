@@ -197,7 +197,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
 
     public void exportToDefaultSettings() {
         MessageUtil.showQuestionDialog(
-                project, "Default Project Settings",
+                project, "Default project settings",
                 "This will overwrite your default settings with the ones from the current project (including database connections configuration). \nAre you sure you want to continue?",
                 new String[]{"Yes", "No"}, 0,
                 new MessageCallback(0) {
@@ -210,7 +210,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                             ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
                             ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
                             defaultProjectSettings.readConfiguration(element);
-                            MessageUtil.showInfoDialog(project, "Project Settings", "Project settings exported as default");
+                            MessageUtil.showInfoDialog(project, "Project settings", "Project settings exported as default");
                         } finally {
                             ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
                         }
@@ -225,7 +225,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                     "Do you want to import the default project settings into project \"" + project.getName() + "\"?":
                     "Your current settings will be overwritten with the default project settings, including database connections configuration. \nAre you sure you want to import the default project settings into project \"" + project.getName() + "\"?";
             MessageUtil.showQuestionDialog(
-                    project, "Default Project Settings",
+                    project, "Default project settings",
                     message,
                     new String[]{"Yes", "No"}, 0,
                     new MessageCallback(0) {
@@ -242,7 +242,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                                 EventUtil.notify(project, ConnectionSettingsListener.TOPIC).connectionsChanged();
 
                                 if (!isNewProject) {
-                                    MessageUtil.showInfoDialog(project, "Project Settings", "Default project settings loaded to project \"" + project.getName() + "\".");
+                                    MessageUtil.showInfoDialog(project, "Project settings", "Default project settings loaded to project \"" + project.getName() + "\".");
                                 }
                             } finally {
                                 ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);

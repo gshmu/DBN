@@ -97,7 +97,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
         final Project project = getProject();
         MessageUtil.showQuestionDialog(
                 project,
-                "Delete Console",
+                "Delete console",
                 "You will loose the information contained in this console.\n" +
                         "Are you sure you want to delete the console?",
                 MessageUtil.OPTIONS_YES_NO, 0,

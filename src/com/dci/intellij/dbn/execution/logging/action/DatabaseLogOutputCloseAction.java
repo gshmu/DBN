@@ -23,7 +23,7 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputActio
             if (loggingResult.getContext().isActive()) {
                 MessageUtil.showQuestionDialog(
                         project,
-                        "Process Active",
+                        "Process active",
                         "The process is still active. Closing the log output will interrupt the process. \nAre you sure you want to close the console?",
                         MessageUtil.OPTIONS_YES_NO, 0,
                         new MessageCallback(0) {
