@@ -12,7 +12,7 @@ public class CmdLineInterfaceInputDialog extends DBNDialog<CmdLineInterfaceInput
     private CmdLineInterface cmdLineInterface = new CmdLineInterface();
 
     public CmdLineInterfaceInputDialog(Project project, @NotNull CmdLineInterface cmdLineInterface, Set<String> usedNames) {
-        super(project, "Add Command-Line Interface", true);
+        super(project, "Add command-line interface", true);
         setModal(true);
         component = new CmdLineInterfaceInputForm(this, cmdLineInterface, usedNames);
         Action okAction = getOKAction();

@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 
 public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
     public ObjectQuickFilterDialog(Project project, DBObjectList objectList) {
-        super(project, "Quick Filter", true);
+        super(project, "Quick filter", true);
         component = new ObjectQuickFilterForm(this, objectList);
         setModal(true);
         setResizable(false);

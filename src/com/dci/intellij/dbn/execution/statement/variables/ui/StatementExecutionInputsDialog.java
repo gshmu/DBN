@@ -19,14 +19,14 @@ public class StatementExecutionInputsDialog extends DBNDialog<StatementExecution
     private DBDebuggerType debuggerType;
     private boolean reuseVariables = false;
 
-    public StatementExecutionInputsDialog(StatementExecutionProcessor executionProcessor, String statementText, DBDebuggerType debuggerType, boolean isBulkExecution) {
-        super(executionProcessor.getProject(), (debuggerType.isDebug() ? "Debug" : "Execute") + " Statement", true);
+    public StatementExecutionInputsDialog(StatementExecutionProcessor executionProcessor, DBDebuggerType debuggerType, boolean isBulkExecution) {
+        super(executionProcessor.getProject(), (debuggerType.isDebug() ? "Debug" : "Execute") + " statement", true);
         this.executionProcessor = executionProcessor;
         this.debuggerType = debuggerType;
         setModal(true);
         setResizable(true);
         executeAction = new ExecuteAction();
-        component = new StatementExecutionInputForm(this, executionProcessor, statementText, debuggerType, isBulkExecution);
+        component = new StatementExecutionInputForm(this, executionProcessor, debuggerType, isBulkExecution);
         init();
     }
 

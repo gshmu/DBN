@@ -17,7 +17,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
     private List<DBSchemaObject> selection = Collections.emptyList();
 
     public CompileDebugDependenciesDialog(DBRunConfig runConfiguration, List<DBSchemaObject> compileList) {
-        super(runConfiguration.getProject(), "Compile Object Dependencies", true);
+        super(runConfiguration.getProject(), "Compile object dependencies", true);
         this.runConfiguration = runConfiguration;
         this.component = new CompileDebugDependenciesForm(this, runConfiguration, compileList);
         init();

@@ -16,7 +16,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelection
     private CompileType selection;
 
     public CompilerTypeSelectionDialog(Project project, @Nullable DBSchemaObject object) {
-        super(project, "Compile Type", true);
+        super(project, "Compile type", true);
         setModal(true);
         setResizable(false);
         //setVerticalStretch(0);

@@ -13,7 +13,7 @@ public class DatasetColumnSetupDialog extends DBNDialog<DatasetColumnSetupForm> 
     private DatasetEditor datasetEditor;
 
     public DatasetColumnSetupDialog(Project project, DatasetEditor datasetEditor) {
-        super(project, "Column Setup", true);
+        super(project, "Column setup", true);
         this.datasetEditor = datasetEditor;
         setModal(true);
         setResizable(true);

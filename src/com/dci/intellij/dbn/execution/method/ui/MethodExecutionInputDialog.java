@@ -14,7 +14,7 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
     private DBDebuggerType debuggerType;
 
     public MethodExecutionInputDialog(MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
-        super(executionInput.getProject(), (debuggerType.isDebug() ? "Debug" : "Execute") + " Method", true);
+        super(executionInput.getProject(), (debuggerType.isDebug() ? "Debug" : "Execute") + " method", true);
         this.debuggerType = debuggerType;
         setModal(true);
         setResizable(true);

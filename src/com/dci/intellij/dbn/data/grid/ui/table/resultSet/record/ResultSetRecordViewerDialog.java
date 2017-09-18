@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 
 public class ResultSetRecordViewerDialog extends DBNDialog<ResultSetRecordViewerForm> {
     public ResultSetRecordViewerDialog(ResultSetTable table, boolean showDataTypes) {
-        super(table.getProject(), "View Record", true);
+        super(table.getProject(), "View record", true);
         setModal(true);
         setResizable(true);
         component = new ResultSetRecordViewerForm(this, table, showDataTypes);

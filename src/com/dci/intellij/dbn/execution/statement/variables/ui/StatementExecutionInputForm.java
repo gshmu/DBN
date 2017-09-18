@@ -62,10 +62,10 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     private EditorEx viewer;
     private String statementText;
 
-    public StatementExecutionInputForm(final StatementExecutionInputsDialog parentComponent, final StatementExecutionProcessor executionProcessor, String statementText, DBDebuggerType debuggerType, boolean isBulkExecution) {
+    public StatementExecutionInputForm(final StatementExecutionInputsDialog parentComponent, final StatementExecutionProcessor executionProcessor, DBDebuggerType debuggerType, boolean isBulkExecution) {
         super(parentComponent);
         this.executionProcessor = executionProcessor;
-        this.statementText = statementText;
+        this.statementText = executionProcessor.getExecutionInput().getExecutableStatementText();
 
         variablesPanel.setLayout(new BoxLayout(variablesPanel, BoxLayout.Y_AXIS));
         headerSeparatorPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
