@@ -345,7 +345,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             } else {
                 ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
                 MessageUtil.showErrorDialog(
-                        getProject(), "Unsupported Debugger",
+                        getProject(), "Unsupported debugger",
                         debuggerType.name() + " debugging is not supported in \"" + applicationInfo.getVersionName() + " " + applicationInfo.getFullVersion() + "\".\nDo you want to use classic debugger over JDBC instead?",
                         new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
                         new MessageCallback(0) {

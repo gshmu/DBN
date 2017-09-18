@@ -268,11 +268,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             String file = databaseInfo.getFiles().getMainFile().getPath();
             Project project = databaseSettings.getProject();
             if (StringUtils.isEmpty(file)) {
-                MessageUtil.showErrorDialog(project, "Wrong Database Configuration", "Database file not specified");
+                MessageUtil.showErrorDialog(project, "Wrong database configuration", "Database file not specified");
             } else if (!new File(file).exists()) {
                 MessageUtil.showWarningDialog(
                         project,
-                        "Database File not Available",
+                        "Database file not available",
                         "The database file \"" + file + "\" does not exist.\nDo you want to create?",
                         new String[]{"Create", "Cancel"}, 0,
                         callback);
@@ -283,7 +283,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public static void promptConnectDialog(ConnectionHandler connectionHandler, @Nullable String actionDesc, MessageCallback callback) {
         MessageUtil.showInfoDialog(
                 connectionHandler.getProject(),
-                "Not Connected to Database",
+                "Not connected to database",
                 "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
                         "If you want to continue" + (actionDesc == null ? "" : " with " + actionDesc) + ", you need to connect.",
                 new String[]{"Connect", "Cancel"}, 0,

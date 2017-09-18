@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -27,12 +33,6 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
 
 public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecutionResultForm> {
     private JPanel actionsPanel;
@@ -54,7 +54,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
         try {
             text = value.read();
         } catch (SQLException e) {
-            MessageUtil.showWarningDialog(project, "Load Error", "Could not load value for argument " + argument.getName() + ". Cause: " + e.getMessage());
+            MessageUtil.showWarningDialog(project, "Load error", "Could not load value for argument " + argument.getName() + ". Cause: " + e.getMessage());
         }
 
         Document document = EditorFactory.getInstance().createDocument(text == null ? "" : StringUtil.removeCharacter(text, '\r'));

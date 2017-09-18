@@ -30,8 +30,8 @@ public class StatementExecutionSettings extends Configuration implements Executi
                     "target-connection",
                     "Target connection type",
                     "Please specify the type of connection to use for executing the statement(s)." +
-                    "\n   - Main connection: sequential execution using the primary connection" +
-                    "\n   - Pool connection: parallel execution, using a dedicated connections" +
+                    "\n   - Main connection: sequential execution, using the primary connection" +
+                    "\n   - Pool connection: parallel (asynchronous) execution, using dedicated connections" +
                             REMEMBER_OPTION_HINT,
                     TargetConnectionOption.ASK,
                     TargetConnectionOption.MAIN,

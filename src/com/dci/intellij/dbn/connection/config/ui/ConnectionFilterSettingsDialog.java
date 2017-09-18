@@ -55,7 +55,7 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
             configuration.notifyChanges();
             super.doOKAction();
         } catch (ConfigurationException e) {
-            MessageUtil.showErrorDialog(getProject(), "Configuration Error", e.getMessage());
+            MessageUtil.showErrorDialog(getProject(), "Configuration error", e.getMessage());
         }
 
     }

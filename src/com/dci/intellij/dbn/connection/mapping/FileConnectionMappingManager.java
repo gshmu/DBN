@@ -304,7 +304,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
 
 
                     MessageUtil.showWarningDialog(project,
-                            "No Valid Connection", message,
+                            "No valid connection", message,
                             new String[]{"Select Connection", "Cancel"}, 0,
                             new MessageCallback(0) {
                                 @Override
@@ -318,7 +318,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                             "You did not select any schema to run the statement against.\n" +
                             "To continue with the statement execution please select a schema.";
                     MessageUtil.showWarningDialog(project,
-                            "No Schema Selected", message,
+                            "No schema selected", message,
                             new String[]{"Use Current Schema", "Select Schema", "Cancel"}, 0,
                             new MessageCallback() {
                                 @Override
