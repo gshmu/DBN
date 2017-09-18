@@ -18,7 +18,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
     private ImportSelectedAction importSelectedAction = new ImportSelectedAction();
 
     public TnsNamesImportDialog(Project project, @Nullable File file) {
-        super(project, "Import TNS Names", true);
+        super(project, "Import TNS names", true);
         setModal(true);
         component = new TnsNamesImportForm(this, file);
         init();

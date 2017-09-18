@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project;
 
 public class DatasetRecordEditorDialog extends DBNDialog<DatasetRecordEditorForm> {
     public DatasetRecordEditorDialog(Project project, DatasetEditorModelRow row) {
-        super(project, row.getModel().isEditable() ? "Edit Record" : "View Record", true);
+        super(project, row.getModel().isEditable() ? "Edit record" : "View record", true);
         setModal(true);
         setResizable(true);
         component = new DatasetRecordEditorForm(this, row);

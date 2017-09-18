@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,6 +42,7 @@ import com.intellij.util.Range;
 
 public class DocumentUtil {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
+    private static final Key<Long> LAST_ANNOTATION_REFRESH_KEY = Key.create("LAST_ANNOTATION_REFRESH");
 
     public static void touchDocument(final Editor editor, boolean reparse) {
         final Document document = editor.getDocument();
@@ -86,7 +88,11 @@ public class DocumentUtil {
     }
 
     public static void refreshEditorAnnotations(PsiFile psiFile) {
-        DaemonCodeAnalyzer.getInstance(psiFile.getProject()).restart(psiFile);
+        Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH_KEY);
+        if (lastRefresh == null || TimeUtil.isOlderThan(lastRefresh, 2, TimeUnit.SECONDS)) {
+            psiFile.putUserData(LAST_ANNOTATION_REFRESH_KEY, System.currentTimeMillis());
+            DaemonCodeAnalyzer.getInstance(psiFile.getProject()).restart(psiFile);
+        }
     }
 
     public static Document getDocument(PsiFile file) {

@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 
 public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     public DetachDDLFileDialog(List<VirtualFile> virtualFiles, DBSchemaObject object) {
-        super(object.getProject(), "Detach DDL Files", true);
+        super(object.getProject(), "Detach DDL files", true);
         String hint =
             "Following DDL files are currently attached the selected " + object.getTypeName() + ". " +
             "Select the files to detach from this object.";

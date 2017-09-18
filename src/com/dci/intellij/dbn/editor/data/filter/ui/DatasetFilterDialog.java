@@ -23,7 +23,7 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
     private DatasetFilterGroup filterGroup;
 
     public DatasetFilterDialog(DBDataset dataset, boolean isAutomaticPrompt, boolean createNewFilter, DatasetFilterType defaultFilterType) {
-        super(dataset.getProject(), "Data Filters", true);
+        super(dataset.getProject(), "Data filters", true);
         construct(dataset, isAutomaticPrompt);
         if ((createNewFilter || filterGroup.getFilters().isEmpty()) && defaultFilterType != DatasetFilterType.NONE) {
             DatasetFilter filter =

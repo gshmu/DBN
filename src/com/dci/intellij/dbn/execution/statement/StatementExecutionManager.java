@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,6 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
@@ -41,6 +39,7 @@ import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettin
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
+import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionTransactionDialog;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesCache;
@@ -52,6 +51,7 @@ import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -249,28 +249,56 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                 protected void execute() {
                     BackgroundTask executionCallback = new BackgroundTask(getProject(), size == 1 ? "Executing statement" : "Executing statements", false, true) {
                         @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                        protected void execute(@NotNull final ProgressIndicator progressIndicator) {
                             boolean showIndeterminateProgress = size < 5;
                             initProgressIndicator(progressIndicator, showIndeterminateProgress);
-                            long lastRefresh = 0;
                             for (int i = 0; i < size; i++) {
+                                final StatementExecutionProcessor executionProcessor = executionProcessors.get(i);
+                                final StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
+                                final double progress = CommonUtil.getProgressPercentage(i, size);
+
                                 if (!progressIndicator.isCanceled()) {
-                                    StatementExecutionProcessor executionProcessor = executionProcessors.get(i);
-                                    try {
-                                        if (!progressIndicator.isIndeterminate()) {
-                                            progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, size));
+                                    final Runnable executor = new Runnable(){
+                                        @Override
+                                        public void run() {
+                                            ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
+                                            DBNConnection connection = null;
+                                            try {
+                                                if (!progressIndicator.isIndeterminate()) {
+                                                    progressIndicator.setFraction(progress);
+                                                }
+                                                if (executionInput.isUsePoolConnection()) {
+                                                    DBSchema schema = executionInput.getTargetSchema();
+                                                    connection = connectionHandler.getPoolConnection(schema, false);
+                                                    executionProcessor.execute(connection, false);
+                                                } else {
+                                                    executionProcessor.execute();
+                                                }
+
+                                            } catch (SQLException e) {
+                                                NotificationUtil.sendErrorNotification(getProject(), "Error " + executionProcessor.getStatementName(), e.getMessage());
+                                            } finally {
+                                                if (connection != null && connection.isPoolConnection()) {
+                                                    connectionHandler.freePoolConnection(connection);
+                                                }
+                                                DBLanguagePsiFile file = executionProcessor.getPsiFile();
+                                                DocumentUtil.refreshEditorAnnotations(file);
+                                            }
                                         }
-                                        executionProcessor.execute();
-                                    } catch (SQLException e) {
-                                        NotificationUtil.sendErrorNotification(getProject(), "Error executing statement", e.getMessage());
-                                    } finally {
-                                        if (TimeUtil.isOlderThan(lastRefresh, 2, TimeUnit.SECONDS)) {
-                                            lastRefresh = System.currentTimeMillis();
-                                            DBLanguagePsiFile file = executionProcessor.getPsiFile();
-                                            DocumentUtil.refreshEditorAnnotations(file);
-                                        }
+                                    };
+
+                                    if (executionInput.isUsePoolConnection()) {
+                                        new BackgroundTask(getProject(), "Executing statement", true) {
+                                            @Override
+                                            protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                                                executor.run();
+                                            }
+                                        }.start();
+                                    } else {
+                                        executor.run();
                                     }
                                 }
+
                             }
                         }
                     };
@@ -371,8 +399,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                 }
 
                 if (!(reuseVariables && executionVariables.isProvided())) {
-                    String executableStatementText = executionInput.getExecutableStatementText();
-                    StatementExecutionInputsDialog dialog = new StatementExecutionInputsDialog(executionProcessor, executableStatementText, debuggerType, bulkExecution);
+                    StatementExecutionInputsDialog dialog = new StatementExecutionInputsDialog(executionProcessor, debuggerType, bulkExecution);
                     dialog.show();
                     if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
                         return false;
@@ -389,8 +416,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                     }
                 }
             } else if (executionSettings.isPromptExecution() || debuggerType.isDebug()) {
-                String executableStatementText = executionInput.getExecutableStatementText();
-                StatementExecutionInputsDialog dialog = new StatementExecutionInputsDialog(executionProcessor, executableStatementText, debuggerType, bulkExecution);
+                StatementExecutionInputsDialog dialog = new StatementExecutionInputsDialog(executionProcessor, debuggerType, bulkExecution);
                 dialog.show();
                 if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
                     return false;
@@ -399,6 +425,16 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         }
 
         return true;
+    }
+
+    public void promptPendingTransactionDialog(final StatementExecutionProcessor executionProcessor) {
+        new SimpleLaterInvocator() {
+            @Override
+            protected void execute() {
+                StatementExecutionTransactionDialog dialog = new StatementExecutionTransactionDialog(executionProcessor);
+                dialog.show();
+            }
+        }.start();
     }
 
     @Nullable

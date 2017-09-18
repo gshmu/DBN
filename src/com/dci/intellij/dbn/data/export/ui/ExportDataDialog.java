@@ -31,7 +31,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
 
 
     private ExportDataDialog(ResultSetTable table, @Nullable DBObject sourceObject, ConnectionHandler connectionHandler) {
-        super(connectionHandler.getProject(), "Export Data", true);
+        super(connectionHandler.getProject(), "Export data", true);
         this.table = table;
         this.connectionHandlerRef = connectionHandler.getRef();
         DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());

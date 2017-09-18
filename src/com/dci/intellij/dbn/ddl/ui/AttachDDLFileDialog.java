@@ -18,7 +18,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     private boolean showLookupOption;
 
     public AttachDDLFileDialog(List<VirtualFile> virtualFiles, @NotNull DBSchemaObject object, boolean showLookupOption) {
-        super(object.getProject(), "Attach DDL File", true);
+        super(object.getProject(), "Attach DDL file", true);
         this.objectRef = DBObjectRef.from(object);
         this.showLookupOption = showLookupOption;
         String typeName = object.getTypeName();

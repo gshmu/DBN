@@ -18,7 +18,7 @@ public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> 
     private TransactionAction additionalOperation;
 
     public UncommittedChangesDialog(ConnectionHandler connectionHandler, TransactionAction additionalOperation, boolean showActions) {
-        super(connectionHandler.getProject(), "Uncommitted Changes", true);
+        super(connectionHandler.getProject(), "Uncommitted changes", true);
         this.connectionHandlerRef = connectionHandler.getRef();
         this.additionalOperation = additionalOperation;
         component = new UncommittedChangesForm(connectionHandler, additionalOperation, showActions);

@@ -11,7 +11,7 @@ public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputFo
     private ScriptExecutionInput executionInput;
 
     public ScriptExecutionInputDialog(Project project, ScriptExecutionInput executionInput) {
-        super(project, "Execute SQL Script", true);
+        super(project, "Execute SQL script", true);
         this.executionInput = executionInput;
         setModal(true);
         component = new ScriptExecutionInputForm(this, executionInput);

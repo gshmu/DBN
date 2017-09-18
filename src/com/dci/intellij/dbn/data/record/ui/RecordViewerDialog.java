@@ -15,7 +15,7 @@ public class RecordViewerDialog extends DBNDialog<RecordViewerForm> {
     private DatasetRecord record;
 
     public RecordViewerDialog(Project project, DatasetRecord record) {
-        super(project, "View Record", true);
+        super(project, "View record", true);
         this.record = record; 
         setModal(false);
         setResizable(true);
