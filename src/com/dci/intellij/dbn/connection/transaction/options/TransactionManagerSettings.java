@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.ui.TransactionManagerSettingsForm;
 
 public class TransactionManagerSettings extends Configuration<TransactionManagerSettingsForm> {
-    public static final String REMEMBER_OPTION_HINT = "\n\n(you can remember your option and change it at any time in Settings > Operations > Transaction Manager)";
+    public static final String REMEMBER_OPTION_HINT = ""/*"\n\n(you can remember your option and change it at any time in Settings > Operations > Transaction Manager)"*/;
 
     private InteractiveOptionHandler<TransactionOption> closeProject =
             new InteractiveOptionHandler<TransactionOption>(

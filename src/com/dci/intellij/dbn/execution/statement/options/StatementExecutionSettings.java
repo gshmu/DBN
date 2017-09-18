@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.execution.statement.options.ui.StatementExecutionSettingsForm;
 
 public class StatementExecutionSettings extends Configuration implements ExecutionTimeoutSettings {
-    public static final String REMEMBER_OPTION_HINT = "\n\n(you can remember your option and change it at any time in Settings > Execution Engine > Statement Execution)";
+    private static final String REMEMBER_OPTION_HINT = ""/*"\n\n(you can remember your option and change it at any time in Settings > Execution Engine > Statement Execution)"*/;
 
     private ExecutionEngineSettings parent;
     private int resultSetFetchBlockSize = 100;
@@ -28,8 +28,10 @@ public class StatementExecutionSettings extends Configuration implements Executi
     private InteractiveOptionHandler<TargetConnectionOption> targetConnection =
             new InteractiveOptionHandler<TargetConnectionOption>(
                     "target-connection",
-                    "Target connection",
-                    "Please specify the connection to use for executing the statement(s)." +
+                    "Target connection type",
+                    "Please specify the type of connection to use for executing the statement(s)." +
+                    "\n   - Main connection: sequential execution using the primary connection" +
+                    "\n   - Pool connection: parallel execution, using a dedicated connections" +
                             REMEMBER_OPTION_HINT,
                     TargetConnectionOption.ASK,
                     TargetConnectionOption.MAIN,

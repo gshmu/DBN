@@ -30,6 +30,7 @@
         <ul>
             <li><b>3.0.7533</b>
             <ul>
+                - Parallel / asynchronous statement execution (using pool connections)<br>
                 - Data grid column info tooltips<br>
                 - Stability and cosmetic improvements<br>
             </ul>
