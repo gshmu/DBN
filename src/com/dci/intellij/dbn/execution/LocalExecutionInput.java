@@ -9,8 +9,8 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.project.Project;
 
 public abstract class LocalExecutionInput extends ExecutionInput{
-    private boolean usePoolConnection = true;
-    private boolean commitAfterExecution = true;
+    private boolean usePoolConnection = false;
+    private boolean commitAfterExecution = false;
     private boolean loggingEnabled = false;
 
 

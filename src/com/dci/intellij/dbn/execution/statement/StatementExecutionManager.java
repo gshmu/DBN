@@ -1,5 +1,19 @@
 package com.dci.intellij.dbn.execution.statement;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -7,7 +21,12 @@ import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.util.*;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
@@ -16,6 +35,7 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
+import com.dci.intellij.dbn.execution.TargetConnectionOption;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
@@ -27,8 +47,16 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionInputsDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement.MatchType;
-import com.dci.intellij.dbn.language.common.psi.*;
-import com.intellij.openapi.components.*;
+import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
+import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
+import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -43,15 +71,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.SQLException;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 @State(
         name = "DBNavigator.Project.StatementExecutionManager",
@@ -60,7 +79,8 @@ import java.util.concurrent.TimeUnit;
                 @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class StatementExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
-    public static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
+    private static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
+
     private final Map<FileEditor, List<StatementExecutionProcessor>> fileExecutionProcessors = new HashMap<FileEditor, List<StatementExecutionProcessor>>();
     private final StatementExecutionVariablesCache variablesCache = new StatementExecutionVariablesCache();
 
@@ -312,10 +332,21 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     private boolean promptExecutionDialogs(@NotNull List<StatementExecutionProcessor> executionProcessors, DBDebuggerType debuggerType) {
         Map<String, StatementExecutionVariable> variableCache = new HashMap<String, StatementExecutionVariable>();
         boolean reuseVariables = false;
-        boolean isBulkExecution = executionProcessors.size() > 1;
+        boolean usePoolConnection = false;
+        boolean bulkExecution = executionProcessors.size() > 1;
+
+        StatementExecutionSettings executionSettings = ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
+        TargetConnectionOption connectionOption = executionSettings.getTargetConnection().resolve();
+        if (connectionOption == TargetConnectionOption.CANCEL) {
+            return false;
+        } else {
+            usePoolConnection = connectionOption == TargetConnectionOption.POOL;
+        }
+
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-            executionProcessor.initExecutionInput(isBulkExecution);
+            executionProcessor.initExecutionInput(bulkExecution);
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
+            executionInput.setUsePoolConnection(usePoolConnection);
             Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
             if (executablePsiElement != null) {
@@ -334,7 +365,6 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                 executionVariables.initialize(bucket);
             }
 
-            StatementExecutionSettings executionSettings = ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
             if (executionVariables != null) {
                 if (reuseVariables) {
                     executionVariables.populate(variableCache, true);
@@ -342,7 +372,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
                 if (!(reuseVariables && executionVariables.isProvided())) {
                     String executableStatementText = executionInput.getExecutableStatementText();
-                    StatementExecutionInputsDialog dialog = new StatementExecutionInputsDialog(executionProcessor, executableStatementText, debuggerType, isBulkExecution);
+                    StatementExecutionInputsDialog dialog = new StatementExecutionInputsDialog(executionProcessor, executableStatementText, debuggerType, bulkExecution);
                     dialog.show();
                     if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
                         return false;
@@ -360,13 +390,14 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                 }
             } else if (executionSettings.isPromptExecution() || debuggerType.isDebug()) {
                 String executableStatementText = executionInput.getExecutableStatementText();
-                StatementExecutionInputsDialog dialog = new StatementExecutionInputsDialog(executionProcessor, executableStatementText, debuggerType, isBulkExecution);
+                StatementExecutionInputsDialog dialog = new StatementExecutionInputsDialog(executionProcessor, executableStatementText, debuggerType, bulkExecution);
                 dialog.show();
                 if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
                     return false;
                 }
             }
         }
+
         return true;
     }
 

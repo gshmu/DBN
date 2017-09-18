@@ -64,6 +64,8 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         super(project, ExecutionTarget.METHOD);
         methodRef = new DBObjectRef<DBMethod>();
         targetSchemaRef = new DBObjectRef<DBSchema>();
+        setUsePoolConnection(true);
+        setCommitAfterExecution(true);
     }
 
     public MethodExecutionInput(Project project, DBMethod method) {
