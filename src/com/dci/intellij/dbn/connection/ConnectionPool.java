@@ -337,7 +337,7 @@ public class ConnectionPool implements Disposable {
             if (TimeUtil.isOlderThan(lastCheckTimestamp, TimeUtil.THIRTY_SECONDS)) {
                 lastCheckTimestamp = currentTimeMillis;
                 DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-                return metadataInterface.isValid(connection);
+                isValid = metadataInterface.isValid(connection);
             }
             return isValid;
         }
