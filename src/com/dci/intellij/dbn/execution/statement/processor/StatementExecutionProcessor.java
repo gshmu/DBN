@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
@@ -88,4 +89,7 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     List<StatementExecutionProcessor> asList();
 
     int getExecutableLineNumber();
+
+    ExecutionContext getExecutionContext();
+    ExecutionContext getExecutionContext(boolean reset);
 }

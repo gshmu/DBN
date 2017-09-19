@@ -88,10 +88,12 @@ public class DocumentUtil {
     }
 
     public static void refreshEditorAnnotations(PsiFile psiFile) {
-        Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH_KEY);
-        if (lastRefresh == null || TimeUtil.isOlderThan(lastRefresh, 2, TimeUnit.SECONDS)) {
-            psiFile.putUserData(LAST_ANNOTATION_REFRESH_KEY, System.currentTimeMillis());
-            DaemonCodeAnalyzer.getInstance(psiFile.getProject()).restart(psiFile);
+        if (psiFile != null) {
+            Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH_KEY);
+            if (lastRefresh == null || TimeUtil.isOlderThan(lastRefresh, 1, TimeUnit.SECONDS)) {
+                psiFile.putUserData(LAST_ANNOTATION_REFRESH_KEY, System.currentTimeMillis());
+                DaemonCodeAnalyzer.getInstance(psiFile.getProject()).restart(psiFile);
+            }
         }
     }
 

@@ -46,7 +46,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
      *********************************************************/
 
     public void explainPlan(final ExecutablePsiElement executable, final @Nullable RunnableTask<ExplainPlanResult> callback) {
-        TaskInstructions taskInstructions = new TaskInstructions("Extracting explain plan for " + executable.getElementType().getDescription(), false, true);
+        TaskInstructions taskInstructions = new TaskInstructions("Extracting explain plan for " + executable.getSpecificElementType().getDescription(), false, true);
         ConnectionAction explainAction = new ConnectionAction("generating the explain plan", executable.getFile(), taskInstructions) {
             @Override
             protected void execute() {

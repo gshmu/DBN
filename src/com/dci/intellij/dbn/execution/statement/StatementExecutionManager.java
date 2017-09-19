@@ -252,8 +252,13 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                     BackgroundTask executionCallback = new BackgroundTask(getProject(), size == 1 ? "Executing statement" : "Executing statements", false, true) {
                         @Override
                         protected void execute(@NotNull final ProgressIndicator progressIndicator) {
-                            boolean showIndeterminateProgress = size < 5;
-                            initProgressIndicator(progressIndicator, showIndeterminateProgress);
+                            initProgressIndicator(progressIndicator, size < 5);
+
+                            for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+                                ExecutionContext context = executionProcessor.getExecutionContext(true);
+                                context.setQueued(true);
+                            }
+
                             for (int i = 0; i < size; i++) {
                                 final StatementExecutionProcessor executionProcessor = executionProcessors.get(i);
                                 final StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
@@ -264,15 +269,14 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                     final Runnable executor = new Runnable(){
                                         @Override
                                         public void run() {
-                                            ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
-                                            DBNConnection connection = null;
                                             try {
                                                 if (!progressIndicator.isIndeterminate()) {
                                                     progressIndicator.setFraction(progress);
                                                 }
                                                 if (options.isUsePoolConnection()) {
                                                     DBSchema schema = executionInput.getTargetSchema();
-                                                    connection = connectionHandler.getPoolConnection(schema, false);
+                                                    ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
+                                                    DBNConnection connection = connectionHandler.getPoolConnection(schema, false);
                                                     executionProcessor.execute(connection, false);
                                                 } else {
                                                     executionProcessor.execute();
@@ -428,8 +432,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     public void promptPendingTransactionDialog(final StatementExecutionProcessor executionProcessor) {
-        final ExecutionContext context = executionProcessor.getExecutionInput().getExecutionContext();
-        context.setBusy(true);
+        final ExecutionContext context = executionProcessor.getExecutionContext();
+        context.setPrompted(true);
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
@@ -437,7 +441,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                     PendingTransactionDialog dialog = new PendingTransactionDialog(executionProcessor);
                     dialog.show();
                 } finally {
-                    context.setBusy(false);
+                    context.setPrompted(false);
                     executionProcessor.postExecute();
                 }
             }
