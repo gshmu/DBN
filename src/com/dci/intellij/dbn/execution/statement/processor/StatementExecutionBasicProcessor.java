@@ -74,6 +74,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     private WeakReference<FileEditor> fileEditorRef;
     private ExecutablePsiElement cachedExecutable;
     private EditorProviderId editorProviderId;
+    private transient CancellableDatabaseCall<StatementExecutionResult> databaseCall;
 
     private LazyValue<String> resultName = new SimpleLazyValue<String>() {
         @Override
@@ -246,6 +247,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         ExecutionContext context = executionInput.getExecutionContext(true);
         resultName.reset();
         executionInput.initExecution();
+        context.setExecuting(true);
 
         ConnectionHandler connectionHandler = getTargetConnection();
 
@@ -273,9 +275,11 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                     }
                 } catch (SQLException e) {
                     ConnectionUtil.cancelStatement(context.getStatement());
-                    executionException = e;
-                    executionResult = createErrorExecutionResult(e.getMessage());
-                    executionResult.calculateExecDuration();
+                    if (!context.isCancelled()) {
+                        executionException = e;
+                        executionResult = createErrorExecutionResult(e.getMessage());
+                        executionResult.calculateExecDuration();
+                    }
                 } finally {
                     runningStatements.decrement();
                     disableLogging(context);
@@ -293,6 +297,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             }
 
         } finally {
+            context.setExecuting(false);
             postExecute();
         }
     }
@@ -365,19 +370,35 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
         int timeout = context.getTimeout();
         statement.setQueryTimeout(timeout);
-        return new CancellableDatabaseCall<StatementExecutionResult>(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
+        databaseCall = new CancellableDatabaseCall<StatementExecutionResult>(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
             @Override
-            public StatementExecutionResult execute() throws Exception{
-                statement.execute(statementText);
-                return createExecutionResult(statement, executionInput);
+            public StatementExecutionResult execute() throws Exception {
+                try {
+                    statement.execute(statementText);
+                    return createExecutionResult(statement, executionInput);
+                } finally {
+                    databaseCall = null;
+                }
             }
 
             @Override
             public void cancel() throws Exception {
-                context.setCancelled(true);
-                ConnectionUtil.cancelStatement(statement);
+                try {
+                    context.setCancelled(true);
+                    ConnectionUtil.cancelStatement(statement);
+                } finally {
+                    databaseCall = null;
+                }
             }
-        }.start();
+        };
+        return databaseCall.start();
+    }
+
+    @Override
+    public void cancelExecution() {
+        if (databaseCall != null) {
+            databaseCall.cancelSilently();
+        }
     }
 
     private void consumeLoggerOutput(ExecutionContext context) {
