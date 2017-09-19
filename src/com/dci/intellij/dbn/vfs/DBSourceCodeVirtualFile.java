@@ -30,7 +30,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -38,7 +37,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
 
-public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider {
+public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider, DocumentListener {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
@@ -64,21 +63,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     public DBSourceCodeVirtualFile(final DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
         super(databaseFile, contentType);
         setCharset(databaseFile.getConnectionHandler().getSettings().getDetailSettings().getCharset());
-    }
-
-    private DocumentListener documentListener = new DocumentAdapter() {
-        @Override
-        public void documentChanged(DocumentEvent e) {
-            CharSequence newContent = e.getDocument().getCharsSequence();
-            if (!isModified() && !StringUtil.equals(originalContent.getText(), newContent)) {
-                setModified(true);
-            }
-            localContent.setText(newContent);
-        }
-    };
-
-    public DocumentListener getDocumentListener() {
-        return documentListener;
     }
 
     @NotNull
@@ -317,6 +301,20 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             mainDatabaseFile.putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, (Document) value);
         }
         super.putUserData(key, value);
+    }
+
+    @Override
+    public void beforeDocumentChange(DocumentEvent event) {
+
+    }
+
+    @Override
+    public void documentChanged(DocumentEvent event) {
+        CharSequence newContent = event.getDocument().getCharsSequence();
+        if (!isModified() && !StringUtil.equals(originalContent.getText(), newContent)) {
+            setModified(true);
+        }
+        localContent.setText(newContent);
     }
 
     @Override

@@ -54,7 +54,7 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
 
         int documentTracking = document.hashCode();
         if (document.hashCode() != sourceCodeFile.getDocumentHashCode()) {
-            document.addDocumentListener(sourceCodeFile.getDocumentListener());
+            document.addDocumentListener(sourceCodeFile);
             sourceCodeFile.setDocumentHashCode(documentTracking);
         }
 

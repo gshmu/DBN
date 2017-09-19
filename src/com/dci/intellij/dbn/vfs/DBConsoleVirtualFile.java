@@ -262,6 +262,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
     @Override
     public void documentChanged(DocumentEvent event) {
         Document document = event.getDocument();
+        content.setText(document.getCharsSequence());
         if (document instanceof DocumentEx) {
             DocumentEx documentEx = (DocumentEx) document;
             List<RangeMarker> blocks = documentEx.getGuardedBlocks();
