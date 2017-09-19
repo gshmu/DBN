@@ -40,7 +40,7 @@ import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettin
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionTransactionDialog;
+import com.dci.intellij.dbn.execution.statement.result.ui.PendingTransactionDialog;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesCache;
@@ -432,7 +432,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             @Override
             protected void execute() {
                 try {
-                    StatementExecutionTransactionDialog dialog = new StatementExecutionTransactionDialog(executionProcessor);
+                    PendingTransactionDialog dialog = new PendingTransactionDialog(executionProcessor);
                     dialog.show();
                 } finally {
                     context.setBusy(false);

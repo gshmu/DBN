@@ -29,7 +29,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.GuiUtils;
 
-public class StatementExecutionTransactionForm extends DBNFormImpl<StatementExecutionTransactionDialog> {
+public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransactionDialog> {
     private JPanel mainPanel;
     private JPanel previewPanel;
     private JPanel headerPanel;
@@ -38,7 +38,7 @@ public class StatementExecutionTransactionForm extends DBNFormImpl<StatementExec
     private StatementExecutionProcessor executionProcessor;
     private EditorEx viewer;
 
-    public StatementExecutionTransactionForm(final StatementExecutionTransactionDialog parentComponent, final StatementExecutionProcessor executionProcessor) {
+    public PendingTransactionDialogForm(final PendingTransactionDialog parentComponent, final StatementExecutionProcessor executionProcessor) {
         super(parentComponent);
         this.executionProcessor = executionProcessor;
 

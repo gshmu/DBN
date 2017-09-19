@@ -14,20 +14,20 @@ import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 
-public class StatementExecutionTransactionDialog extends DialogWithTimeout {
+public class PendingTransactionDialog extends DialogWithTimeout {
     private CommitAction commitAction;
     private RollbackAction rollbackAction;
     private StatementExecutionProcessor executionProcessor;
-    private StatementExecutionTransactionForm transactionForm;
+    private PendingTransactionDialogForm transactionForm;
 
-    public StatementExecutionTransactionDialog(StatementExecutionProcessor executionProcessor) {
+    public PendingTransactionDialog(StatementExecutionProcessor executionProcessor) {
         super(executionProcessor.getProject(), "Uncommitted changes", true, TimeUtil.getSeconds(5));
         setModal(true);
         setResizable(true);
         this.executionProcessor = executionProcessor;
         commitAction = new CommitAction();
         rollbackAction = new RollbackAction();
-        transactionForm = new StatementExecutionTransactionForm(this, executionProcessor);
+        transactionForm = new PendingTransactionDialogForm(this, executionProcessor);
         DisposerUtil.register(this, transactionForm);
         setModal(false);
         init();
