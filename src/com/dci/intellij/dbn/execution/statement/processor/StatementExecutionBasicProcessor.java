@@ -345,7 +345,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     private void initLogging(ExecutionContext context, boolean debug) {
         boolean logging = false;
-        if (!debug && executionInput.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
+        if (!debug && executionInput.getOptions().isEnableLogging() && executionInput.isDatabaseLogProducer()) {
             ConnectionHandler connectionHandler = getTargetConnection();
             DBNConnection connection = context.getConnection();
 

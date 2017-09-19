@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
+import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -62,7 +63,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     public void execute(MethodExecutionInput executionInput, DBDebuggerType debuggerType) throws SQLException {
         executionInput.initExecution(debuggerType);
-        boolean usePoolConnection = executionInput.isUsePoolConnection();
+        boolean usePoolConnection = executionInput.getOptions().isUsePoolConnection();
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBSchema executionSchema = executionInput.getTargetSchema();
         Connection connection = usePoolConnection ?
@@ -77,9 +78,10 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     public void execute(final MethodExecutionInput executionInput, final Connection connection, DBDebuggerType debuggerType) throws SQLException {
         executionInput.initExecution(debuggerType);
+        ExecutionOptions options = executionInput.getOptions();
         final ConnectionHandler connectionHandler = getConnectionHandler();
-        boolean usePoolConnection = false;
-        boolean loggingEnabled = debuggerType != DBDebuggerType.JDBC && executionInput.isLoggingEnabled();
+        boolean usePoolConnection = options.isUsePoolConnection();
+        boolean loggingEnabled = debuggerType != DBDebuggerType.JDBC && options.isEnableLogging();
         Project project = getProject();
         final DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
         Counter runningMethods = connectionHandler.getLoadMonitor().getRunningMethods();
@@ -89,7 +91,6 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         try {
             String command = buildExecutionCommand(executionInput);
             T method = getMethod();
-            usePoolConnection = executionInput.isUsePoolConnection();
             loggingEnabled = loggingEnabled && loggingManager.supportsLogging(connectionHandler);
             if (loggingEnabled) {
                 loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
@@ -142,7 +143,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 loggingManager.disableLogger(connectionHandler, connection);
             }
 
-            if (executionInput.isCommitAfterExecution()) {
+            if (options.isCommitAfterExecution()) {
                 try {
                     if (usePoolConnection) {
                         connection.commit();

@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
+import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
@@ -38,8 +39,10 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         super(project, ExecutionTarget.METHOD);
         methodRef = new DBObjectRef<DBMethod>();
         targetSchemaRef = new DBObjectRef<DBSchema>();
-        setUsePoolConnection(true);
-        setCommitAfterExecution(true);
+
+        ExecutionOptions options = getOptions();
+        options.setUsePoolConnection(true);
+        options.setCommitAfterExecution(true);
     }
 
     public MethodExecutionInput(Project project, DBMethod method) {
@@ -48,7 +51,8 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         this.targetSchemaRef = method.getSchema().getRef();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
-            setLoggingEnabled(FailsafeUtil.get(method.getConnectionHandler()).isLoggingEnabled());
+            ConnectionHandler connectionHandler = FailsafeUtil.get(method.getConnectionHandler());
+            getOptions().setEnableLogging(connectionHandler.isLoggingEnabled());
         }
     }
 
@@ -260,17 +264,15 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     }
 
     public MethodExecutionInput clone() {
-        MethodExecutionInput executionInput = new MethodExecutionInput(getProject());
-        executionInput.methodRef = methodRef;
-        executionInput.targetSchemaRef = targetSchemaRef;
-        executionInput.setUsePoolConnection(isUsePoolConnection());
-        executionInput.setCommitAfterExecution(isCommitAfterExecution());
-        executionInput.setLoggingEnabled(isLoggingEnabled());
-        executionInput.argumentValues = new THashSet<MethodExecutionArgumentValue>();
+        MethodExecutionInput clone = new MethodExecutionInput(getProject());
+        clone.methodRef = methodRef;
+        clone.targetSchemaRef = targetSchemaRef;
+        clone.setOptions(getOptions().clone());
+        clone.argumentValues = new THashSet<MethodExecutionArgumentValue>();
         for (MethodExecutionArgumentValue executionVariable : argumentValues) {
-            executionInput.argumentValues.add(executionVariable.clone());
+            clone.argumentValues.add(executionVariable.clone());
         }
-        return executionInput;
+        return clone;
     }
 
     public void dispose() {
