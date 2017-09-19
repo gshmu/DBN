@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.execution.ExecutionContext;
+import com.dci.intellij.dbn.execution.ExecutionStatus;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -40,8 +40,8 @@ public class StatementGutterAction extends AnAction {
                     executionManager.executeStatement(executionProcessor);
                 }
             } else {
-                ExecutionContext context = executionProcessor.getExecutionContext();
-                if (context.isExecuting() || context.isQueued()) {
+                ExecutionStatus status = executionProcessor.getExecutionStatus();
+                if (status.isExecuting() || status.isQueued()) {
                     executionProcessor.cancelExecution();
                 } else {
                     StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
@@ -61,10 +61,10 @@ public class StatementGutterAction extends AnAction {
         if (executionProcessor != null) {
             StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
             if (executionResult == null) {
-                ExecutionContext context = executionProcessor.getExecutionContext();
+                ExecutionStatus status = executionProcessor.getExecutionStatus();
                 return
-                    context.isExecuting() ? Icons.STMT_EXECUTION_STOP :
-                    context.isQueued() ? Icons.STMT_EXECUTION_STOP_QUEUED :
+                    status.isExecuting() ? Icons.STMT_EXECUTION_STOP :
+                    status.isQueued() ? Icons.STMT_EXECUTION_STOP_QUEUED :
                             Icons.STMT_EXECUTION_RUN;
 
             } else {

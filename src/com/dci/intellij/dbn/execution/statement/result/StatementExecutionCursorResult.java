@@ -68,7 +68,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                 initProgressIndicator(progressIndicator, true, "Reloading results for " + getExecutionProcessor().getStatementName());
                 ExecutionContext context = getExecutionProcessor().getExecutionContext(true);
                 context.setExecutionTimestamp(System.currentTimeMillis());
-                context.setExecuting(true);
+                context.getExecutionStatus().setExecuting(true);
 
                 try {
                     resultPanel.highlightLoading(true);

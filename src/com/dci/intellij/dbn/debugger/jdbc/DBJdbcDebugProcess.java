@@ -42,6 +42,7 @@ import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBJdbcDebuggerEditorsProvid
 import com.dci.intellij.dbn.debugger.jdbc.frame.DBJdbcDebugSuspendContext;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.execution.ExecutionInput;
+import com.dci.intellij.dbn.execution.ExecutionStatus;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -302,7 +303,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             status.PROCESS_IS_TERMINATING = true;
             console.system("Stopping debugger...");
             T executionInput = getExecutionInput();
-            executionInput.getExecutionContext().setCancelled(!status.PROCESS_STOPPED_NORMALLY);
+            ExecutionStatus executionStatus = executionInput.getExecutionContext().getExecutionStatus();
+            executionStatus.setCancelled(!status.PROCESS_STOPPED_NORMALLY);
             stopDebugger();
         }
     }
