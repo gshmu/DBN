@@ -39,7 +39,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
         super(executionProcessor.getProject(), ExecutionTarget.STATEMENT);
         this.executionProcessor = executionProcessor;
-        ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
+        ConnectionHandler connectionHandler = executionProcessor.getConnectionHandler();
         DBSchema currentSchema = executionProcessor.getTargetSchema();
 
         this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
@@ -48,6 +48,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         this.executableStatementText = executableStatementText;
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
+            connectionHandler = FailsafeUtil.get(connectionHandler);
             getOptions().setEnableLogging(connectionHandler.isLoggingEnabled());
         }
     }
