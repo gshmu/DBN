@@ -30,7 +30,7 @@ public abstract class StatementExecutionQueue {
     private void execute() {
         if (!executing) {
             executing = true;
-            new BackgroundTask(project, "Executing statements", false, true) {
+            new BackgroundTask(project, "Executing statements", true, true) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     try {
