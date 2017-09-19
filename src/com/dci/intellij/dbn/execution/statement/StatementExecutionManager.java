@@ -35,6 +35,7 @@ import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionOptions;
+import com.dci.intellij.dbn.execution.ExecutionStatus;
 import com.dci.intellij.dbn.execution.TargetConnectionOption;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
@@ -256,7 +257,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
                             for (StatementExecutionProcessor executionProcessor : executionProcessors) {
                                 ExecutionContext context = executionProcessor.getExecutionContext(true);
-                                context.setQueued(true);
+                                context.getExecutionStatus().setQueued(true);
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -432,8 +433,9 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     public void promptPendingTransactionDialog(final StatementExecutionProcessor executionProcessor) {
-        final ExecutionContext context = executionProcessor.getExecutionContext();
-        context.setPrompted(true);
+        ExecutionContext context = executionProcessor.getExecutionContext();
+        final ExecutionStatus status = context.getExecutionStatus();
+        status.setPrompted(true);
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
@@ -441,7 +443,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                     PendingTransactionDialog dialog = new PendingTransactionDialog(executionProcessor);
                     dialog.show();
                 } finally {
-                    context.setPrompted(false);
+                    status.setPrompted(false);
                     executionProcessor.postExecute();
                 }
             }

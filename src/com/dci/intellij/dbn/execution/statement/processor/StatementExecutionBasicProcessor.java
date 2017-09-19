@@ -31,6 +31,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
+import com.dci.intellij.dbn.execution.ExecutionStatus;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
@@ -218,6 +219,11 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         return executionInput;
     }
 
+    @Override
+    public ExecutionStatus getExecutionStatus() {
+        return getExecutionContext().getExecutionStatus();
+    }
+
     public ExecutionContext getExecutionContext() {
         return executionInput.getExecutionContext();
     }
@@ -253,8 +259,10 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     public void execute(@Nullable DBNConnection connection, boolean debug) throws SQLException {
         ProgressMonitor.setTaskDescription("Executing " + getStatementName());
         ExecutionContext context = getExecutionContext();
-        context.setExecuting(true);
+        ExecutionStatus status = context.getExecutionStatus();
+        status.setExecuting(true);
         context.setExecutionTimestamp(System.currentTimeMillis());
+
         resultName.reset();
         DocumentUtil.refreshEditorAnnotations(getPsiFile());
 
@@ -266,7 +274,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                 Counter runningStatements = connectionHandler.getLoadMonitor().getRunningStatements();
 
                 try {
-                    context.assertNotCancelled();
+                    status.assertNotCancelled();
                     runningStatements.increment();
                     initConnection(context, connection);
                     initTimeout(context, debug);
@@ -283,7 +291,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                     }
                 } catch (SQLException e) {
                     ConnectionUtil.cancelStatement(context.getStatement());
-                    if (!context.isCancelled()) {
+                    if (!status.isCancelled()) {
                         executionException = e;
                         executionResult = createErrorExecutionResult(e.getMessage());
                         executionResult.calculateExecDuration();
@@ -311,8 +319,9 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     public void postExecute() {
-        ExecutionContext context = getExecutionInput().getExecutionContext();
-        if (!context.isPrompted()) {
+        ExecutionStatus status = getExecutionStatus();
+        if (!status.isPrompted()) {
+            ExecutionContext context = getExecutionContext();
             DBNConnection connection = context.getConnection();
             if (connection != null && connection.isPoolConnection()) {
                 ConnectionUtil.cancelStatement(context.getStatement());
@@ -371,7 +380,8 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Nullable
     private StatementExecutionResult executeStatement(final String statementText) throws SQLException {
         final ExecutionContext context = getExecutionContext();
-        context.assertNotCancelled();
+        final ExecutionStatus status = getExecutionStatus();
+        status.assertNotCancelled();
 
         DBNConnection connection = context.getConnection();
         ConnectionHandler connectionHandler = getTargetConnection();
@@ -380,7 +390,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
         int timeout = context.getTimeout();
         statement.setQueryTimeout(timeout);
-        context.assertNotCancelled();
+        status.assertNotCancelled();
 
         databaseCall = new CancellableDatabaseCall<StatementExecutionResult>(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
             @Override
@@ -396,7 +406,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             @Override
             public void cancel(){
                 try {
-                    context.setCancelled(true);
+                    status.setCancelled(true);
                     ConnectionUtil.cancelStatement(statement);
                 } finally {
                     databaseCall = null;
@@ -408,7 +418,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     public void cancelExecution() {
-        getExecutionContext().setCancelled(true);
+        getExecutionStatus().setCancelled(true);
         if (databaseCall != null) {
             databaseCall.cancelSilently();
         }

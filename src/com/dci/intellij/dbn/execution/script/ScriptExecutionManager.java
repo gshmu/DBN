@@ -1,5 +1,24 @@
 package com.dci.intellij.dbn.execution.script;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.SecureRandom;
+import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import org.jdesktop.swingx.util.OS;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -18,6 +37,7 @@ import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
+import com.dci.intellij.dbn.execution.ExecutionStatus;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
@@ -26,7 +46,11 @@ import com.dci.intellij.dbn.execution.script.ui.CmdLineInterfaceInputDialog;
 import com.dci.intellij.dbn.execution.script.ui.ScriptExecutionInputDialog;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -36,25 +60,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdesktop.swingx.util.OS;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.security.SecureRandom;
-import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 @State(
         name = "DBNavigator.Project.ScriptExecutionManager",
@@ -133,7 +138,8 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
     private void doExecuteScript(final ScriptExecutionInput input) throws Exception {
         ExecutionContext context = input.getExecutionContext();
-        context.setExecuting(true);
+        ExecutionStatus status = context.getExecutionStatus();
+        status.setExecuting(true);
         ConnectionHandler connectionHandler = FailsafeUtil.get(input.getConnectionHandler());
         final VirtualFile sourceFile = input.getSourceFile();
         activeProcesses.put(sourceFile, null);
@@ -257,7 +263,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 throw e;
             }
         } finally {
-            context.setExecuting(false);
+            status.setExecuting(false);
             outputContext.finish();
             BufferedReader consoleReader = logReader.get();
             if (consoleReader != null) consoleReader.close();
