@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -39,7 +40,8 @@ public class StatementGutterAction extends AnAction {
                     executionManager.executeStatement(executionProcessor);
                 }
             } else {
-                if (executionProcessor.getExecutionInput().getExecutionContext().isExecuting()) {
+                ExecutionContext context = executionProcessor.getExecutionContext();
+                if (context.isExecuting() || context.isQueued()) {
                     executionProcessor.cancelExecution();
                 } else {
                     StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
@@ -59,11 +61,11 @@ public class StatementGutterAction extends AnAction {
         if (executionProcessor != null) {
             StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
             if (executionResult == null) {
-                if (executionProcessor.getExecutionInput().getExecutionContext().isExecuting()) {
-                    return Icons.STMT_EXECUTION_STOP;
-                } else {
-                    return Icons.STMT_EXECUTION_RUN;
-                }
+                ExecutionContext context = executionProcessor.getExecutionContext();
+                return
+                    context.isExecuting() ? Icons.STMT_EXECUTION_STOP :
+                    context.isQueued() ? Icons.STMT_EXECUTION_STOP_QUEUED :
+                            Icons.STMT_EXECUTION_RUN;
 
             } else {
                 StatementExecutionStatus executionStatus = executionResult.getExecutionStatus();

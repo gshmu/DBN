@@ -81,10 +81,6 @@ public class StatementExecutionInput extends LocalExecutionInput {
         return executionProcessor == null ? 0 : executionProcessor.getExecutableLineNumber();
     }
 
-    public void initExecution() {
-        getExecutionContext().setExecutionTimestamp(System.currentTimeMillis());
-    }
-
     public String getOriginalStatementText() {
         return originalStatementText;
     }

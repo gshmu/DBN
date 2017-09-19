@@ -218,6 +218,14 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         return executionInput;
     }
 
+    public ExecutionContext getExecutionContext() {
+        return executionInput.getExecutionContext();
+    }
+
+    public ExecutionContext getExecutionContext(boolean reset) {
+        return executionInput.getExecutionContext(reset);
+    }
+
     public StatementExecutionResult getExecutionResult() {
         if (executionResult != null && executionResult.isDisposed()) {
             executionResult = null;
@@ -244,27 +252,27 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     public void execute(@Nullable DBNConnection connection, boolean debug) throws SQLException {
         ProgressMonitor.setTaskDescription("Executing " + getStatementName());
-        ExecutionContext context = executionInput.getExecutionContext(true);
-        resultName.reset();
-        executionInput.initExecution();
+        ExecutionContext context = getExecutionContext();
         context.setExecuting(true);
-
-        ConnectionHandler connectionHandler = getTargetConnection();
-
+        context.setExecutionTimestamp(System.currentTimeMillis());
+        resultName.reset();
+        DocumentUtil.refreshEditorAnnotations(getPsiFile());
 
         try {
             String statementText = initStatementText();
             SQLException executionException = null;
             if (statementText != null) {
+                ConnectionHandler connectionHandler = getTargetConnection();
                 Counter runningStatements = connectionHandler.getLoadMonitor().getRunningStatements();
 
                 try {
+                    context.assertNotCancelled();
                     runningStatements.increment();
                     initConnection(context, connection);
                     initTimeout(context, debug);
                     initLogging(context, debug);
 
-                    executionResult = executeStatement(context, statementText);
+                    executionResult = executeStatement(statementText);
 
                     // post execution activities
                     if (executionResult != null) {
@@ -297,7 +305,6 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             }
 
         } finally {
-            context.setExecuting(false);
             postExecute();
         }
     }
@@ -305,7 +312,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     public void postExecute() {
         ExecutionContext context = getExecutionInput().getExecutionContext();
-        if (!context.isBusy()) {
+        if (!context.isPrompted()) {
             DBNConnection connection = context.getConnection();
             if (connection != null && connection.isPoolConnection()) {
                 ConnectionUtil.cancelStatement(context.getStatement());
@@ -362,7 +369,10 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     }
 
     @Nullable
-    private StatementExecutionResult executeStatement(final ExecutionContext context, final String statementText) throws SQLException {
+    private StatementExecutionResult executeStatement(final String statementText) throws SQLException {
+        final ExecutionContext context = getExecutionContext();
+        context.assertNotCancelled();
+
         DBNConnection connection = context.getConnection();
         ConnectionHandler connectionHandler = getTargetConnection();
         final Statement statement = connection.createStatement();
@@ -370,6 +380,8 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
         int timeout = context.getTimeout();
         statement.setQueryTimeout(timeout);
+        context.assertNotCancelled();
+
         databaseCall = new CancellableDatabaseCall<StatementExecutionResult>(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
             @Override
             public StatementExecutionResult execute() throws Exception {
@@ -382,7 +394,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             }
 
             @Override
-            public void cancel() throws Exception {
+            public void cancel(){
                 try {
                     context.setCancelled(true);
                     ConnectionUtil.cancelStatement(statement);
@@ -396,6 +408,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     public void cancelExecution() {
+        getExecutionContext().setCancelled(true);
         if (databaseCall != null) {
             databaseCall.cancelSilently();
         }
@@ -618,7 +631,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     public String getStatementName() {
         ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-        return executablePsiElement == null ? "SQL statement" : executablePsiElement.getElementType().getDescription();
+        return executablePsiElement == null ? "SQL statement" : executablePsiElement.getSpecificElementType().getDescription();
     }
 
     public int getIndex() {

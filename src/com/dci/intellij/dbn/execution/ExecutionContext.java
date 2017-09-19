@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution;
 
+import java.sql.SQLException;
 import java.sql.Statement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,8 +11,9 @@ import com.dci.intellij.dbn.object.DBSchema;
 
 public abstract class ExecutionContext {
     private transient int timeout;
-    private transient boolean busy = false;
     private transient boolean logging = false;
+    private transient boolean queued = false;
+    private transient boolean prompted = false;
     private transient boolean executing = false;
     private transient boolean cancelled = false;
     private transient long executionTimestamp;
@@ -40,6 +42,14 @@ public abstract class ExecutionContext {
         this.logging = logging;
     }
 
+    public boolean isQueued() {
+        return queued;
+    }
+
+    public void setQueued(boolean queued) {
+        this.queued = queued;
+    }
+
     public boolean isExecuting() {
         return executing;
     }
@@ -56,12 +66,12 @@ public abstract class ExecutionContext {
         this.cancelled = isExecutionCancelled;
     }
 
-    public boolean isBusy() {
-        return busy;
+    public boolean isPrompted() {
+        return prompted;
     }
 
-    public void setBusy(boolean busy) {
-        this.busy = busy;
+    public void setPrompted(boolean prompted) {
+        this.prompted = prompted;
     }
 
     public long getExecutionTimestamp() {
@@ -88,9 +98,17 @@ public abstract class ExecutionContext {
         this.statement = statement;
     }
 
+    public void assertNotCancelled() throws SQLException {
+        if (cancelled) {
+            throw new SQLException("Process cancelled by user");
+        }
+    }
+
     public void reset() {
         timeout = 0;
         logging = false;
+        queued = false;
+        prompted = false;
         executing = false;
         cancelled = false;
         executionTimestamp = 0;

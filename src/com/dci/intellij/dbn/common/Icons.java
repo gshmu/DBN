@@ -108,18 +108,19 @@ public class Icons {
     public static final Icon KILL_PROCESS               = load("/img/action/KillProcess.png");
     public static final Icon EXECUTE_SQL_SCRIPT         = load("/img/action/ExecuteAsScript.png");
 
-    public static final Icon STMT_EXECUTION_EXPLAIN       = load("/img/action/ExplainStatement.png");
-    public static final Icon STMT_EXECUTION_RUN           = load("/img/action/ExecuteStatement.png");
-    public static final Icon STMT_EXECUTION_STOP          = load("/img/action/StopStatementExecution.png");
-    public static final Icon STMT_EXECUTION_DEBUG         = load("/img/action/DebugStatement.png");
-    public static final Icon STMT_EXECUTION_RERUN         = load("/img/action/Rerun.png");
-    public static final Icon STMT_EXECUTION_RESUME        = load("/img/action/ResumeExecution.png");
+    public static final Icon STMT_EXECUTION_EXPLAIN       = load("/img/action/StatementExplain.png");
+    public static final Icon STMT_EXECUTION_RUN           = load("/img/action/StatementExecution.png");
+    public static final Icon STMT_EXECUTION_STOP          = load("/img/action/StatementExecutionStop.png");
+    public static final Icon STMT_EXECUTION_STOP_QUEUED   = load("/img/action/StatementExecutionStopQueued.png");
+    public static final Icon STMT_EXECUTION_DEBUG         = load("/img/action/StatementDebug.png");
+    public static final Icon STMT_EXECUTION_RERUN         = load("/img/action/StatementExecutionRerun.png");
+    public static final Icon STMT_EXECUTION_RESUME        = load("/img/action/StatementExecutionResume.png");
     public static final Icon STMT_EXECUTION_REFRESH       = load("/img/action/Refresh.png");
     public static final Icon STMT_EXECUTION_ERROR         = load("/img/common/Error.png");
-    public static final Icon STMT_EXECUTION_ERROR_RERUN   = load("/img/action/ExecuteStatementError.png");
+    public static final Icon STMT_EXECUTION_ERROR_RERUN   = load("/img/action/StatementExecutionError.png");
     public static final Icon STMT_EXECUTION_WARNING       = load("/img/common/Warning.png");
-    public static final Icon STMT_EXECUTION_WARNING_RERUN   = load("/img/action/ExecuteStatementWarning.png");
-    public static final Icon STMT_EXECUTION_INFO_RERUN   = load("/img/action/ExecuteStatementInfo.png");
+    public static final Icon STMT_EXECUTION_WARNING_RERUN = load("/img/action/StatementExecutionWarning.png");
+    public static final Icon STMT_EXECUTION_INFO_RERUN    = load("/img/action/StatementExecutionInfo.png");
     public static final Icon STMT_EXECUTION_NAVIGATE      = load("/img/action/NavigateToResult.png");
 
     public static final Icon EXPLAIN_PLAN_RESULT        = load("/img/ExplainPlanResult.png");
@@ -129,8 +130,8 @@ public class Icons {
 
     public static final Icon EXEC_RESULT_RERUN              = load("/img/action/Refresh.png");
     public static final Icon EXEC_RESULT_OPEN_EXEC_DIALOG   = load("/img/ExecuteMethodDialog.png");
-    public static final Icon EXEC_RESULT_RESUME             = load("/img/action/ResumeExecution.png");
-    public static final Icon EXEC_RESULT_STOP               = load("/img/action/StopExecution.png");
+    public static final Icon EXEC_RESULT_RESUME             = load("/img/action/ExecutionResume.png");
+    public static final Icon EXEC_RESULT_STOP               = load("/img/action/ExecutionStop.png");
     public static final Icon EXEC_RESULT_CLOSE              = load("/img/action/Close.png");
     public static final Icon EXEC_RESULT_VIEW_STATEMENT     = load("/img/action/Preview.png");
     public static final Icon EXEC_RESULT_VIEW_RECORD        = load("/img/RecordViewer.png");
@@ -164,7 +165,7 @@ public class Icons {
     public static final Icon DATA_EDITOR_INSERT_RECORD = load("/img/action/InsertRecord.png");
     public static final Icon DATA_EDITOR_DELETE_RECORD = load("/img/action/DeleteRecord.png");
     public static final Icon DATA_EDITOR_SWITCH_EDITABLE_STATUS = load("/img/DatasetEditorSwitchEditableStatus.png");
-    public static final Icon DATA_EDITOR_FETCH_NEXT_RECORDS = load("/img/action/ResumeExecution.png");
+    public static final Icon DATA_EDITOR_FETCH_NEXT_RECORDS = load("/img/action/ExecutionResume.png");
     public static final Icon DATA_EDITOR_EDIT_RECORD = load("/img/EditDatasetRecord.png");
     public static final Icon DATA_EDITOR_NEXT_RECORD = load("/img/NextRecord.png");
     public static final Icon DATA_EDITOR_PREVIOUS_RECORD = load("/img/PreviousRecord.png");
@@ -415,7 +416,11 @@ public class Icons {
 
 
     private static Icon load(String path) {
-        return IconLoader.getIcon(path);
+        try {
+            return IconLoader.getIcon(path);
+        } catch (Throwable t) {
+            return  load("/img/common/Warning.png");
+        }
     }
 
     private static Icon load(String key, String path) {
