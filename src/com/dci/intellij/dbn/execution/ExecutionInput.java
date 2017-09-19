@@ -1,11 +1,16 @@
 package com.dci.intellij.dbn.execution;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
@@ -15,8 +20,6 @@ import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class ExecutionInput extends DisposableBase implements Disposable, ConnectionProvider, PersistentConfiguration {
     private ExecutionTimeout executionTimeout;
@@ -26,6 +29,24 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
     private ProjectRef projectRef;
     protected ConnectionHandlerRef targetConnectionRef;
     protected DBObjectRef<DBSchema> targetSchemaRef;
+
+    private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
+        @Override
+        protected ExecutionContext load() {
+            return createExecutionContext();
+        }
+    };
+
+    @NotNull
+    public final ExecutionContext getExecutionContext() {
+        return executionContext.get();
+    }
+
+    protected void resetExecutionContext() {
+        executionContext.reset();
+    }
+
+    protected abstract ExecutionContext createExecutionContext();
 
     private final TimeoutSettingsListener timeoutSettingsListener = new TimeoutSettingsListener() {
         @Override
@@ -80,9 +101,6 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
         if (reset) executionContext.reset();
         return executionContext;
     }
-
-    @NotNull
-    public abstract ExecutionContext getExecutionContext();
 
     public int getExecutionTimeout() {
         return executionTimeout.get();

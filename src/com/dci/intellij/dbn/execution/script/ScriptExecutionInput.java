@@ -3,8 +3,6 @@ package com.dci.intellij.dbn.execution.script;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
@@ -19,38 +17,35 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
     private VirtualFile sourceFile;
     private boolean clearOutput;
 
-    private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
-        @Override
-        protected ExecutionContext load() {
-            return new ExecutionContext() {
-                @NotNull
-                @Override
-                public String getTargetName() {
-                    return sourceFile.getPath();
-                }
-
-                @Nullable
-                @Override
-                public ConnectionHandler getTargetConnection() {
-                    return getConnectionHandler();
-                }
-
-                @Nullable
-                @Override
-                public DBSchema getTargetSchema() {
-                    return getSchema();
-                }
-            };
-        }
-    };
-
-
     public ScriptExecutionInput(Project project, VirtualFile sourceFile, ConnectionHandler connectionHandler, DBSchema schema, boolean clearOutput) {
         super(project, ExecutionTarget.SCRIPT);
         this.sourceFile = sourceFile;
         setTargetConnection(connectionHandler);
         setSchema(schema);
         this.clearOutput = clearOutput;
+    }
+
+    @Override
+    protected ExecutionContext createExecutionContext() {
+        return new ExecutionContext() {
+            @NotNull
+            @Override
+            public String getTargetName() {
+                return sourceFile.getPath();
+            }
+
+            @Nullable
+            @Override
+            public ConnectionHandler getTargetConnection() {
+                return getConnectionHandler();
+            }
+
+            @Nullable
+            @Override
+            public DBSchema getTargetSchema() {
+                return getSchema();
+            }
+        };
     }
 
     public CmdLineInterface getCmdLineInterface() {
@@ -87,12 +82,6 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
 
     public void setClearOutput(boolean clearOutput) {
         this.clearOutput = clearOutput;
-    }
-
-    @NotNull
-    @Override
-    public ExecutionContext getExecutionContext() {
-        return executionContext.get();
     }
 
     @Override

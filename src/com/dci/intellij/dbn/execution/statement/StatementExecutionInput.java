@@ -8,8 +8,6 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -38,32 +36,6 @@ public class StatementExecutionInput extends LocalExecutionInput {
     private ExecutablePsiElement executablePsiElement;
     private boolean bulkExecution = false;
 
-    private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
-        @Override
-        protected ExecutionContext load() {
-            return new ExecutionContext() {
-                @NotNull
-                @Override
-                public String getTargetName() {
-                    ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
-                    return CommonUtil.nvl(executablePsiElement == null ? null : executablePsiElement.getPresentableText(), "Statement");
-                }
-
-                @Nullable
-                @Override
-                public ConnectionHandler getTargetConnection() {
-                    return getConnectionHandler();
-                }
-
-                @Nullable
-                @Override
-                public DBSchema getTargetSchema() {
-                    return getCurrentSchema();
-                }
-            };
-        }
-    };
-
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
         super(executionProcessor.getProject(), ExecutionTarget.STATEMENT);
         this.executionProcessor = executionProcessor;
@@ -80,14 +52,32 @@ public class StatementExecutionInput extends LocalExecutionInput {
         }
     }
 
-    public int getExecutableLineNumber() {
-        return executionProcessor == null ? 0 : executionProcessor.getExecutableLineNumber();
+    @Override
+    protected ExecutionContext createExecutionContext() {
+        return new ExecutionContext() {
+            @NotNull
+            @Override
+            public String getTargetName() {
+                ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
+                return CommonUtil.nvl(executablePsiElement == null ? null : executablePsiElement.getPresentableText(), "Statement");
+            }
+
+            @Nullable
+            @Override
+            public ConnectionHandler getTargetConnection() {
+                return getConnectionHandler();
+            }
+
+            @Nullable
+            @Override
+            public DBSchema getTargetSchema() {
+                return getCurrentSchema();
+            }
+        };
     }
 
-    @NotNull
-    @Override
-    public ExecutionContext getExecutionContext() {
-        return executionContext.get();
+    public int getExecutableLineNumber() {
+        return executionProcessor == null ? 0 : executionProcessor.getExecutableLineNumber();
     }
 
     public void initExecution() {

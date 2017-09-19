@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.statement.result.ui;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import javax.swing.border.LineBorder;
 import java.awt.BorderLayout;
 
@@ -32,6 +33,7 @@ public class StatementExecutionTransactionForm extends DBNFormImpl<StatementExec
     private JPanel mainPanel;
     private JPanel previewPanel;
     private JPanel headerPanel;
+    private JTextPane hintTextPane;
 
     private StatementExecutionProcessor executionProcessor;
     private EditorEx viewer;
@@ -40,6 +42,13 @@ public class StatementExecutionTransactionForm extends DBNFormImpl<StatementExec
         super(parentComponent);
         this.executionProcessor = executionProcessor;
 
+        String text =
+                "You executed this statement in a pool connection. \n" +
+                "The transactional status of this connection cannot be left inconsistent. Please choose whether to commit or rollback the changes.\n" +
+                "(closing this dialog will rollback the changes)";
+        hintTextPane.setBackground(mainPanel.getBackground());
+        hintTextPane.setFont(mainPanel.getFont());
+        hintTextPane.setText(text);
 
         DBLanguagePsiFile psiFile = executionProcessor.getPsiFile();
         DBNHeaderForm headerForm = new DBNHeaderForm(psiFile.getName(), psiFile.getIcon(), psiFile.getEnvironmentType().getColor());

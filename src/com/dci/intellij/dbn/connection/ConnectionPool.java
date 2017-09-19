@@ -119,6 +119,7 @@ public class ConnectionPool implements Disposable {
             connection = createConnection();
         }
         ConnectionUtil.setReadonly(connection, readonly);
+        ConnectionUtil.setAutoCommit(connection, readonly);
         return connection;
     }
 

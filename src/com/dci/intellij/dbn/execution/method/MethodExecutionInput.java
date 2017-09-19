@@ -10,8 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -35,30 +33,6 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     private transient MethodExecutionResult executionResult;
     private transient List<ArgumentValue> inputArgumentValues = new ArrayList<ArgumentValue>();
-    private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
-        @Override
-        protected ExecutionContext load() {
-            return new ExecutionContext() {
-                @NotNull
-                @Override
-                public String getTargetName() {
-                    return methodRef.getObjectType().getName() + " " + methodRef.getObjectName();
-                }
-
-                @Nullable
-                @Override
-                public ConnectionHandler getTargetConnection() {
-                    return getConnectionHandler();
-                }
-
-                @Nullable
-                @Override
-                public DBSchema getTargetSchema() {
-                    return MethodExecutionInput.this.getTargetSchema();
-                }
-            };
-        }
-    };
 
     public MethodExecutionInput(Project project) {
         super(project, ExecutionTarget.METHOD);
@@ -84,10 +58,27 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         getExecutionContext().setExecutionTimestamp(System.currentTimeMillis());
     }
 
-    @NotNull
     @Override
-    public ExecutionContext getExecutionContext() {
-        return executionContext.get();
+    protected ExecutionContext createExecutionContext() {
+        return new ExecutionContext() {
+            @NotNull
+            @Override
+            public String getTargetName() {
+                return methodRef.getObjectType().getName() + " " + methodRef.getObjectName();
+            }
+
+            @Nullable
+            @Override
+            public ConnectionHandler getTargetConnection() {
+                return getConnectionHandler();
+            }
+
+            @Nullable
+            @Override
+            public DBSchema getTargetSchema() {
+                return MethodExecutionInput.this.getTargetSchema();
+            }
+        };
     }
 
     @Nullable
