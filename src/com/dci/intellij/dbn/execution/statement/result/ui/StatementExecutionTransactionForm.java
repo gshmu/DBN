@@ -44,8 +44,8 @@ public class StatementExecutionTransactionForm extends DBNFormImpl<StatementExec
 
         String text =
                 "You executed this statement in a pool connection. \n" +
-                "The transactional status of this connection cannot be left inconsistent. Please choose whether to commit or rollback the changes.\n" +
-                "(closing this dialog will rollback the changes)";
+                "The transactional status of this connection cannot be left inconsistent. Please choose whether to commit or rollback the changes.\n\n" +
+                "NOTE: Changes will be rolled-back if this prompt stays unattended for more than 5 minutes";
         hintTextPane.setBackground(mainPanel.getBackground());
         hintTextPane.setFont(mainPanel.getFont());
         hintTextPane.setText(text);

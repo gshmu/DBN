@@ -2,29 +2,46 @@ package com.dci.intellij.dbn.execution.statement.result.ui;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.ui.dialog.DialogWithTimeout;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 
-public class StatementExecutionTransactionDialog extends DBNDialog<StatementExecutionTransactionForm> {
+public class StatementExecutionTransactionDialog extends DialogWithTimeout {
     private CommitAction commitAction;
     private RollbackAction rollbackAction;
     private StatementExecutionProcessor executionProcessor;
+    private StatementExecutionTransactionForm transactionForm;
 
     public StatementExecutionTransactionDialog(StatementExecutionProcessor executionProcessor) {
-        super(executionProcessor.getProject(), "Uncommitted changes", true);
+        super(executionProcessor.getProject(), "Uncommitted changes", true, TimeUtil.getSeconds(5));
         setModal(true);
         setResizable(true);
         this.executionProcessor = executionProcessor;
         commitAction = new CommitAction();
         rollbackAction = new RollbackAction();
-        component = new StatementExecutionTransactionForm(this, executionProcessor);
+        transactionForm = new StatementExecutionTransactionForm(this, executionProcessor);
+        DisposerUtil.register(this, transactionForm);
+        setModal(false);
         init();
+    }
+
+    @Override
+    protected JComponent createContentComponent() {
+        return transactionForm.getComponent();
+    }
+
+    @Override
+    public void doDefaultAction() {
+        DBNConnection connection = getConnection();
+        ConnectionUtil.rollback(connection);
     }
 
     @Override
@@ -43,7 +60,7 @@ public class StatementExecutionTransactionDialog extends DBNDialog<StatementExec
 
     private class CommitAction extends AbstractAction {
         CommitAction() {
-            super("Commit changes", Icons.CONNECTION_COMMIT);
+            super("Commit", Icons.CONNECTION_COMMIT);
             putValue(DEFAULT_ACTION, Boolean.TRUE);
         }
 
@@ -60,7 +77,7 @@ public class StatementExecutionTransactionDialog extends DBNDialog<StatementExec
 
     private class RollbackAction extends AbstractAction {
         RollbackAction() {
-            super("Rollback changes", Icons.CONNECTION_ROLLBACK);
+            super("Rollback", Icons.CONNECTION_ROLLBACK);
         }
 
         public void actionPerformed(ActionEvent e) {
