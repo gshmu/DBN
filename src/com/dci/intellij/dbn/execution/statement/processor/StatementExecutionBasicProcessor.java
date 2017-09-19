@@ -252,6 +252,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
         try {
             String statementText = initStatementText();
+            SQLException executionException = null;
             if (statementText != null) {
                 Counter runningStatements = connectionHandler.getLoadMonitor().getRunningStatements();
 
@@ -267,12 +268,12 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                     if (executionResult != null) {
                         executionResult.calculateExecDuration();
                         consumeLoggerOutput(context);
-                        notifyDataManipulationChanges(context);
                         notifyDataDefinitionChanges(context);
+                        notifyDataManipulationChanges(context);
                     }
                 } catch (SQLException e) {
-                    context.resetStatement();
-                    context.setExecutionException(e);
+                    ConnectionUtil.cancelStatement(context.getStatement());
+                    executionException = e;
                     executionResult = createErrorExecutionResult(e.getMessage());
                     executionResult.calculateExecDuration();
                 } finally {
@@ -287,12 +288,25 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                 executionManager.addExecutionResult(executionResult);
             }
 
-            SQLException executionException = context.getExecutionException();
             if (executionException != null && debug) {
                 throw executionException;
             }
 
         } finally {
+            postExecute();
+        }
+    }
+
+    @Override
+    public void postExecute() {
+        ExecutionContext context = getExecutionInput().getExecutionContext();
+        if (!context.isBusy()) {
+            DBNConnection connection = context.getConnection();
+            if (connection != null && connection.isPoolConnection()) {
+                ConnectionUtil.cancelStatement(context.getStatement());
+                ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+                connectionHandler.freePoolConnection(connection);
+            }
             context.reset();
         }
     }
@@ -343,7 +357,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     }
 
     @Nullable
-    private StatementExecutionResult executeStatement(ExecutionContext context, final String statementText) throws SQLException {
+    private StatementExecutionResult executeStatement(final ExecutionContext context, final String statementText) throws SQLException {
         DBNConnection connection = context.getConnection();
         ConnectionHandler connectionHandler = getTargetConnection();
         final Statement statement = connection.createStatement();
@@ -360,6 +374,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
             @Override
             public void cancel() throws Exception {
+                context.setCancelled(true);
                 ConnectionUtil.cancelStatement(statement);
             }
         }.start();

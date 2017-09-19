@@ -65,9 +65,16 @@ public class StatementExecutionTransactionDialog extends DBNDialog<StatementExec
 
         public void actionPerformed(ActionEvent e) {
             DBNConnection connection = getConnection();
-            ConnectionUtil.commit(connection);
+            ConnectionUtil.rollback(connection);
             doOKAction();
         }
+    }
+
+    @Override
+    public void doCancelAction() {
+        DBNConnection connection = getConnection();
+        ConnectionUtil.rollback(connection);
+        super.doCancelAction();
     }
 
     @Override

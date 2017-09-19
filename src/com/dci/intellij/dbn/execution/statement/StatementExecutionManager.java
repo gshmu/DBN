@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.TargetConnectionOption;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
@@ -278,9 +279,6 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                             } catch (SQLException e) {
                                                 NotificationUtil.sendErrorNotification(getProject(), "Error " + executionProcessor.getStatementName(), e.getMessage());
                                             } finally {
-                                                if (connection != null && connection.isPoolConnection()) {
-                                                    connectionHandler.freePoolConnection(connection);
-                                                }
                                                 DBLanguagePsiFile file = executionProcessor.getPsiFile();
                                                 DocumentUtil.refreshEditorAnnotations(file);
                                             }
@@ -288,7 +286,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                     };
 
                                     if (executionInput.isUsePoolConnection()) {
-                                        new BackgroundTask(getProject(), "Executing statement", true) {
+                                        new BackgroundTask(getProject(), "Executing statement", executionProcessors.size() > 1, true) {
                                             @Override
                                             protected void execute(@NotNull ProgressIndicator progressIndicator) {
                                                 executor.run();
@@ -428,11 +426,18 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     public void promptPendingTransactionDialog(final StatementExecutionProcessor executionProcessor) {
+        final ExecutionContext context = executionProcessor.getExecutionInput().getExecutionContext();
+        context.setBusy(true);
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
-                StatementExecutionTransactionDialog dialog = new StatementExecutionTransactionDialog(executionProcessor);
-                dialog.show();
+                try {
+                    StatementExecutionTransactionDialog dialog = new StatementExecutionTransactionDialog(executionProcessor);
+                    dialog.show();
+                } finally {
+                    context.setBusy(false);
+                    executionProcessor.postExecute();
+                }
             }
         }.start();
     }
