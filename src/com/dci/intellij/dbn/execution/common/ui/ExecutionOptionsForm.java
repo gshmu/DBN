@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.util.Disposer;
@@ -66,9 +67,10 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         connectionLabel.setIcon(connectionHandler.getIcon());
         autoCommitLabel.setConnectionHandler(connectionHandler);
 
-        commitCheckBox.setSelected(executionInput.isCommitAfterExecution());
+        ExecutionOptions options = executionInput.getOptions();
+        commitCheckBox.setSelected(options.isCommitAfterExecution());
         commitCheckBox.setEnabled(!connectionHandler.isAutoCommit());
-        usePoolConnectionCheckBox.setSelected(executionInput.isUsePoolConnection());
+        usePoolConnectionCheckBox.setSelected(options.isUsePoolConnection());
 
         commitCheckBox.addActionListener(actionListener);
         usePoolConnectionCheckBox.addActionListener(actionListener);
@@ -76,7 +78,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler) && executionInput.isDatabaseLogProducer()) {
             enableLoggingCheckBox.setEnabled(!debuggerType.isDebug());
-            enableLoggingCheckBox.setSelected(!debuggerType.isDebug() && executionInput.isLoggingEnabled());
+            enableLoggingCheckBox.setSelected(!debuggerType.isDebug() && options.isEnableLogging());
             DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
             String databaseLogName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();
             if (StringUtil.isNotEmpty(databaseLogName)) {
@@ -110,9 +112,10 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
     }
 
     public void updateExecutionInput() {
-        executionInput.setUsePoolConnection(usePoolConnectionCheckBox.isSelected());
-        executionInput.setCommitAfterExecution(commitCheckBox.isSelected());
-        executionInput.setLoggingEnabled(enableLoggingCheckBox.isSelected());
+        ExecutionOptions options = executionInput.getOptions();
+        options.setUsePoolConnection(usePoolConnectionCheckBox.isSelected());
+        options.setCommitAfterExecution(commitCheckBox.isSelected());
+        options.setEnableLogging(enableLoggingCheckBox.isSelected());
         //DBSchema schema = (DBSchema) schemaList.getSelectedValue();
         //executionInput.setExecutionSchema(schema);
     }

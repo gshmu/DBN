@@ -9,42 +9,23 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.project.Project;
 
 public abstract class LocalExecutionInput extends ExecutionInput{
-    private boolean usePoolConnection = false;
-    private boolean commitAfterExecution = false;
-    private boolean loggingEnabled = false;
-
+    private ExecutionOptions options = new ExecutionOptions();
 
     public LocalExecutionInput(Project project, ExecutionTarget executionTarget) {
         super(project, executionTarget);
 
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
-            loggingEnabled = FailsafeUtil.get(connectionHandler).isLoggingEnabled();
+            options.setEnableLogging(connectionHandler.isLoggingEnabled());
         }
     }
 
-    public boolean isUsePoolConnection() {
-        return usePoolConnection;
+    public ExecutionOptions getOptions() {
+        return options;
     }
 
-    public void setUsePoolConnection(boolean usePoolConnection) {
-        this.usePoolConnection = usePoolConnection;
-    }
-
-    public boolean isCommitAfterExecution() {
-        return commitAfterExecution;
-    }
-
-    public void setCommitAfterExecution(boolean commitAfterExecution) {
-        this.commitAfterExecution = commitAfterExecution;
-    }
-
-    public boolean isLoggingEnabled() {
-        return loggingEnabled;
-    }
-
-    public void setLoggingEnabled(boolean loggingEnabled) {
-        this.loggingEnabled = loggingEnabled;
+    public void setOptions(ExecutionOptions options) {
+        this.options = options;
     }
 
     public abstract boolean hasExecutionVariables();
@@ -58,15 +39,15 @@ public abstract class LocalExecutionInput extends ExecutionInput{
      *********************************************************/
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
-        usePoolConnection = SettingsUtil.getBooleanAttribute(element, "use-pool-connection", true);
-        commitAfterExecution = SettingsUtil.getBooleanAttribute(element, "commit-after-execution", true);
-        loggingEnabled = SettingsUtil.getBooleanAttribute(element, "enable-logging", true);
+        options.setEnableLogging(SettingsUtil.getBooleanAttribute(element, "enable-logging", true));
+        options.setUsePoolConnection(SettingsUtil.getBooleanAttribute(element, "use-pool-connection", true));
+        options.setCommitAfterExecution(SettingsUtil.getBooleanAttribute(element, "commit-after-execution", true));
     }
 
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
-        SettingsUtil.setBooleanAttribute(element, "use-pool-connection", usePoolConnection);
-        SettingsUtil.setBooleanAttribute(element, "commit-after-execution", commitAfterExecution);
-        SettingsUtil.setBooleanAttribute(element, "enable-logging", loggingEnabled);
+        SettingsUtil.setBooleanAttribute(element, "enable-logging", options.isEnableLogging());
+        SettingsUtil.setBooleanAttribute(element, "use-pool-connection", options.isUsePoolConnection());
+        SettingsUtil.setBooleanAttribute(element, "commit-after-execution", options.isCommitAfterExecution());
     }
 }

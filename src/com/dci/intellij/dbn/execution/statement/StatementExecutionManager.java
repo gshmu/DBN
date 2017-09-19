@@ -34,6 +34,7 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.execution.ExecutionContext;
+import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.TargetConnectionOption;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
@@ -259,6 +260,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                 final double progress = CommonUtil.getProgressPercentage(i, size);
 
                                 if (!progressIndicator.isCanceled()) {
+                                    final ExecutionOptions options = executionInput.getOptions();
                                     final Runnable executor = new Runnable(){
                                         @Override
                                         public void run() {
@@ -268,7 +270,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                                 if (!progressIndicator.isIndeterminate()) {
                                                     progressIndicator.setFraction(progress);
                                                 }
-                                                if (executionInput.isUsePoolConnection()) {
+                                                if (options.isUsePoolConnection()) {
                                                     DBSchema schema = executionInput.getTargetSchema();
                                                     connection = connectionHandler.getPoolConnection(schema, false);
                                                     executionProcessor.execute(connection, false);
@@ -285,7 +287,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                         }
                                     };
 
-                                    if (executionInput.isUsePoolConnection()) {
+                                    if (options.isUsePoolConnection()) {
                                         new BackgroundTask(getProject(), "Executing statement", executionProcessors.size() > 1, true) {
                                             @Override
                                             protected void execute(@NotNull ProgressIndicator progressIndicator) {
@@ -372,7 +374,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
             executionProcessor.initExecutionInput(bulkExecution);
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-            executionInput.setUsePoolConnection(usePoolConnection);
+            executionInput.getOptions().setUsePoolConnection(usePoolConnection);
             Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
             if (executablePsiElement != null) {
