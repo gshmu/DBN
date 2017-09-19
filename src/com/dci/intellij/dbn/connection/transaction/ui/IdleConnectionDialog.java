@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.dialog.DialogWithTimeout;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -23,6 +24,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
         super(connectionHandler.getProject(), "Idle connection", true, TimeUtil.getSeconds(5));
         this.connectionHandlerRef = connectionHandler.getRef();
         idleConnectionDialogForm = new IdleConnectionDialogForm(connectionHandler, 5);
+        DisposerUtil.register(this, idleConnectionDialogForm);
         setModal(false);
         init();
     }
@@ -68,7 +70,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
     }
 
     private class CommitAction extends AbstractAction {
-        public CommitAction() {
+        CommitAction() {
             super("Commit", Icons.CONNECTION_COMMIT);
         }
 
@@ -78,7 +80,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
     }
 
     private class RollbackAction extends AbstractAction {
-        public RollbackAction() {
+        RollbackAction() {
             super("Rollback", Icons.CONNECTION_ROLLBACK);
         }
         public void actionPerformed(ActionEvent e) {
@@ -87,10 +89,9 @@ public class IdleConnectionDialog extends DialogWithTimeout {
 
     }
     private class KeepAliveAction extends AbstractAction {
-        public KeepAliveAction() {
+        KeepAliveAction() {
             super("Keep Alive");
         }
-
         public void actionPerformed(ActionEvent e) {
             ping();
         }
