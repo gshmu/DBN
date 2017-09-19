@@ -22,7 +22,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 
 public class StatementGutterAction extends AnAction {
-    final ExecutablePsiElement executablePsiElement;
+    private final transient ExecutablePsiElement executablePsiElement;
 
     public StatementGutterAction(ExecutablePsiElement executablePsiElement) {
         this.executablePsiElement = executablePsiElement;
@@ -39,11 +39,15 @@ public class StatementGutterAction extends AnAction {
                     executionManager.executeStatement(executionProcessor);
                 }
             } else {
-                StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
-                if (executionResult == null || !(executionProcessor instanceof StatementExecutionCursorProcessor) || executionProcessor.isDirty()) {
-                    executionManager.executeStatement(executionProcessor);
+                if (executionProcessor.getExecutionInput().getExecutionContext().isExecuting()) {
+                    executionProcessor.cancelExecution();
                 } else {
-                    executionProcessor.navigateToResult();
+                    StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
+                    if (executionResult == null || !(executionProcessor instanceof StatementExecutionCursorProcessor) || executionProcessor.isDirty()) {
+                        executionManager.executeStatement(executionProcessor);
+                    } else {
+                        executionProcessor.navigateToResult();
+                    }
                 }
             }
         }
@@ -55,7 +59,12 @@ public class StatementGutterAction extends AnAction {
         if (executionProcessor != null) {
             StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
             if (executionResult == null) {
-                return Icons.STMT_EXECUTION_RUN;
+                if (executionProcessor.getExecutionInput().getExecutionContext().isExecuting()) {
+                    return Icons.STMT_EXECUTION_STOP;
+                } else {
+                    return Icons.STMT_EXECUTION_RUN;
+                }
+
             } else {
                 StatementExecutionStatus executionStatus = executionResult.getExecutionStatus();
                 if (executionStatus == StatementExecutionStatus.SUCCESS){

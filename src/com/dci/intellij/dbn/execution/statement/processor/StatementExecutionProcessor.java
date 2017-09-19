@@ -57,6 +57,8 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     void postExecute();
 
+    void cancelExecution();
+
     @Nullable
     StatementExecutionVariablesBundle getExecutionVariables();
 

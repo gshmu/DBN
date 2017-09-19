@@ -190,4 +190,12 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     public abstract void cancel() throws Exception;
 
+    public void cancelSilently() {
+        try {
+            cancel();
+        } catch (Exception e) {
+            LOGGER.error("Failed to cancel database call", e);
+        }
+    }
+
 }
