@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,7 @@ import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -86,12 +87,14 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     private final Map<FileEditor, List<StatementExecutionProcessor>> fileExecutionProcessors = new HashMap<FileEditor, List<StatementExecutionProcessor>>();
     private final StatementExecutionVariablesCache variablesCache = new StatementExecutionVariablesCache();
+    private StatementExecutionQueue executionQueue = new StatementExecutionQueue(getProject()) {
+        @Override
+        protected void execute(StatementExecutionProcessor processor) {
+            process(processor);
+        }
+    };
 
-    private static int sequence;
-    public int getNextSequence() {
-        sequence++;
-        return sequence;
-    }
+    private static final AtomicInteger RESULT_SEQUENCE = new AtomicInteger(0);
 
     private StatementExecutionManager(Project project) {
         super(project);
@@ -219,6 +222,10 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         return null;
     }
 
+    public StatementExecutionQueue getExecutionQueue() {
+        return executionQueue;
+    }
+
     /*********************************************************
      *                       Execution                       *
      *********************************************************/
@@ -235,7 +242,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         executeStatements(executionProcessor.asList(), executionProcessor.getVirtualFile());
     }
 
-    public void executeStatements(final List<StatementExecutionProcessor> executionProcessors, final VirtualFile virtualFile) {
+    private void executeStatements(final List<StatementExecutionProcessor> executionProcessors, final VirtualFile virtualFile) {
         final int size = executionProcessors.size();
         if (size > 0) {
             final FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
@@ -250,60 +257,25 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             ConnectionAction executionTask = new ConnectionAction("the statement execution", connectionProvider) {
                 @Override
                 protected void execute() {
-                    BackgroundTask executionCallback = new BackgroundTask(getProject(), size == 1 ? "Executing statement" : "Executing statements", false, true) {
+                    SimpleTask executionCallback = new SimpleTask() {
                         @Override
-                        protected void execute(@NotNull final ProgressIndicator progressIndicator) {
-                            initProgressIndicator(progressIndicator, size < 5);
-
-                            for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-                                ExecutionContext context = executionProcessor.getExecutionContext(true);
-                                context.getExecutionStatus().setQueued(true);
-                            }
-
-                            for (int i = 0; i < size; i++) {
-                                final StatementExecutionProcessor executionProcessor = executionProcessors.get(i);
-                                final StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-                                final double progress = CommonUtil.getProgressPercentage(i, size);
-
-                                if (!progressIndicator.isCanceled()) {
-                                    final ExecutionOptions options = executionInput.getOptions();
-                                    final Runnable executor = new Runnable(){
-                                        @Override
-                                        public void run() {
-                                            try {
-                                                if (!progressIndicator.isIndeterminate()) {
-                                                    progressIndicator.setFraction(progress);
-                                                }
-                                                if (options.isUsePoolConnection()) {
-                                                    DBSchema schema = executionInput.getTargetSchema();
-                                                    ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
-                                                    DBNConnection connection = connectionHandler.getPoolConnection(schema, false);
-                                                    executionProcessor.execute(connection, false);
-                                                } else {
-                                                    executionProcessor.execute();
-                                                }
-
-                                            } catch (SQLException e) {
-                                                NotificationUtil.sendErrorNotification(getProject(), "Error " + executionProcessor.getStatementName(), e.getMessage());
-                                            } finally {
-                                                DBLanguagePsiFile file = executionProcessor.getPsiFile();
-                                                DocumentUtil.refreshEditorAnnotations(file);
-                                            }
-                                        }
-                                    };
-
+                        protected void execute() {
+                            for (final StatementExecutionProcessor executionProcessor : executionProcessors) {
+                                ExecutionStatus status = executionProcessor.getExecutionStatus();
+                                if (!status.isExecuting() && !status.isQueued() && !executionQueue.contains(executionProcessor)) {
+                                    StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
+                                    ExecutionOptions options = executionInput.getOptions();
                                     if (options.isUsePoolConnection()) {
                                         new BackgroundTask(getProject(), "Executing statement", executionProcessors.size() > 1, true) {
                                             @Override
                                             protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                                                executor.run();
+                                                process(executionProcessor);
                                             }
                                         }.start();
                                     } else {
-                                        executor.run();
+                                        executionQueue.queue(executionProcessor);
                                     }
                                 }
-
                             }
                         }
                     };
@@ -314,6 +286,26 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
             DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
             connectionMappingManager.selectConnectionAndSchema(file, executionTask);
+        }
+    }
+
+    private void process(StatementExecutionProcessor executionProcessor) {
+        try {
+            StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
+            ExecutionOptions options = executionInput.getOptions();
+            if (options.isUsePoolConnection()) {
+                DBSchema schema = executionInput.getTargetSchema();
+                ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
+                DBNConnection connection = connectionHandler.getPoolConnection(schema, false);
+                executionProcessor.execute(connection, false);
+            } else {
+                executionProcessor.execute();
+            }
+
+        } catch (SQLException e) {
+            NotificationUtil.sendErrorNotification(getProject(), "Error " + executionProcessor.getStatementName(), e.getMessage());
+        } finally {
+            DocumentUtil.refreshEditorAnnotations(executionProcessor.getPsiFile());
         }
     }
 
@@ -457,7 +449,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
             String selection = editor.getSelectionModel().getSelectedText();
             if (selection != null) {
-                return new StatementExecutionCursorProcessor(fileEditor, file, selection, getNextSequence());
+                return new StatementExecutionCursorProcessor(fileEditor, file, selection, RESULT_SEQUENCE.incrementAndGet());
             }
 
             ExecutablePsiElement executablePsiElement = PsiUtil.lookupExecutableAtCaret(editor, true);
@@ -517,8 +509,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     private StatementExecutionProcessor createExecutionProcessor(FileEditor fileEditor, List<StatementExecutionProcessor> executionProcessors, ExecutablePsiElement executablePsiElement) {
         StatementExecutionBasicProcessor executionProcessor =
                 executablePsiElement.isQuery() ?
-                        new StatementExecutionCursorProcessor(fileEditor, executablePsiElement, getNextSequence()) :
-                        new StatementExecutionBasicProcessor(fileEditor, executablePsiElement, getNextSequence());
+                        new StatementExecutionCursorProcessor(fileEditor, executablePsiElement, RESULT_SEQUENCE.incrementAndGet()) :
+                        new StatementExecutionBasicProcessor(fileEditor, executablePsiElement, RESULT_SEQUENCE.incrementAndGet());
         executionProcessors.add(executionProcessor);
         executablePsiElement.setExecutionProcessor(executionProcessor);
         return executionProcessor;

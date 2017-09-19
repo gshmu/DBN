@@ -418,7 +418,10 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     public void cancelExecution() {
-        getExecutionStatus().setCancelled(true);
+        ExecutionStatus status = getExecutionStatus();
+        status.setCancelled(true);
+        StatementExecutionManager executionManager = getExecutionManager();
+        executionManager.getExecutionQueue().cancel(this);
         if (databaseCall != null) {
             databaseCall.cancelSilently();
         }
@@ -470,7 +473,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                 VirtualFile virtualFile = getPsiFile().getVirtualFile();
                 connectionHandler.notifyDataChanges(virtualFile);
             } else if (connection.isPoolConnection()) {
-                StatementExecutionManager executionManager = StatementExecutionManager.getInstance(getProject());
+                StatementExecutionManager executionManager = getExecutionManager();
                 executionManager.promptPendingTransactionDialog(this);
 /*
                 MessageUtil.showQuestionDialog(
@@ -494,6 +497,11 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                 connectionHandler.resetDataChanges();
             }
         }
+    }
+
+    @NotNull
+    private StatementExecutionManager getExecutionManager() {
+        return StatementExecutionManager.getInstance(getProject());
     }
 
     private void notifyDataDefinitionChanges(ExecutionContext context) {

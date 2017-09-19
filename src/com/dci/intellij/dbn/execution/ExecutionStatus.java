@@ -40,6 +40,10 @@ public class ExecutionStatus {
         this.cancelled = cancelled;
     }
 
+    public boolean canExecute() {
+        return !queued && !executing && !cancelled;
+    }
+
     public void assertNotCancelled() throws SQLException {
         if (cancelled) {
             throw new SQLException("Process cancelled by user");

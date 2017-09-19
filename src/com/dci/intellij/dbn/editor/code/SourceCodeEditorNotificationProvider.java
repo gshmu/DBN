@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.editor.code;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.editor.EditorNotificationProvider;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -10,7 +13,7 @@ import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeLoadErrorNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeOutdatedNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeReadonlyNotificationPanel;
-import com.dci.intellij.dbn.execution.script.ScriptExecutionManagerListener;
+import com.dci.intellij.dbn.execution.script.ScriptExecutionListener;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
@@ -23,8 +26,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class SourceCodeEditorNotificationProvider extends EditorNotificationProvider<SourceCodeEditorNotificationPanel> {
     private static final Key<SourceCodeEditorNotificationPanel> KEY = Key.create("DBNavigator.SourceCodeEditorNotificationPanel");
@@ -35,10 +36,10 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
         EventUtil.subscribe(project, project, SourceCodeDifManagerListener.TOPIC, sourceCodeDifManagerListener);
         EventUtil.subscribe(project, project, EnvironmentManagerListener.TOPIC, environmentManagerListener);
         EventUtil.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        EventUtil.subscribe(project, project, ScriptExecutionManagerListener.TOPIC, scriptExecutionManagerListener);
+        EventUtil.subscribe(project, project, ScriptExecutionListener.TOPIC, scriptExecutionListener);
     }
 
-    private ScriptExecutionManagerListener scriptExecutionManagerListener = new ScriptExecutionManagerListener() {
+    private ScriptExecutionListener scriptExecutionListener = new ScriptExecutionListener() {
         @Override
         public void scriptExecuted(VirtualFile virtualFile) {
             updateEditorNotification(null);
