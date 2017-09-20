@@ -303,7 +303,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             }
 
         } catch (SQLException e) {
-            NotificationUtil.sendErrorNotification(getProject(), "Error " + executionProcessor.getStatementName(), e.getMessage());
+            NotificationUtil.sendErrorNotification(getProject(), "Error executing " + executionProcessor.getStatementName(), e.getMessage());
         } finally {
             DocumentUtil.refreshEditorAnnotations(executionProcessor.getPsiFile());
         }
