@@ -87,7 +87,7 @@ public class DocumentUtil {
         refreshEditorAnnotations(DocumentUtil.getFile(editor));
     }
 
-    public static void refreshEditorAnnotations(PsiFile psiFile) {
+    public static void refreshEditorAnnotations(@Nullable PsiFile psiFile) {
         if (psiFile != null) {
             Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH_KEY);
             if (lastRefresh == null || TimeUtil.isOlderThan(lastRefresh, 1, TimeUnit.SECONDS)) {
