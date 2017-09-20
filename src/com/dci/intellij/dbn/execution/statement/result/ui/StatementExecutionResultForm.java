@@ -113,8 +113,11 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         new ConditionalLaterInvocator() {
             protected void execute() {
                 ResultSetDataModel dataModel = executionResult.getTableModel();
-                statusLabel.setText(executionResult.getConnectionHandler().getPresentableText() + ": " +
-                        dataModel.getRowCount() + " records" + (dataModel.isResultSetExhausted() ? "" : " (Partial)"));
+                String connectionName = executionResult.getConnectionHandler().getPresentableText();
+                String connectionType = executionResult.getExecutionInput().getOptions().isUsePoolConnection() ? " (pool)" :"";
+                int rowCount = dataModel.getRowCount();
+                String partialResultInfo = dataModel.isResultSetExhausted() ? "" : " (partial)";
+                statusLabel.setText(connectionName + connectionType + ": " + rowCount + " records" + partialResultInfo);
             }
         }.start();
 
