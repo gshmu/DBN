@@ -293,6 +293,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         try {
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
             ExecutionOptions options = executionInput.getOptions();
+
             if (options.isUsePoolConnection()) {
                 DBSchema schema = executionInput.getTargetSchema();
                 ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());

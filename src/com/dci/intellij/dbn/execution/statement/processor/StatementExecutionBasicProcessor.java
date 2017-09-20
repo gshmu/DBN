@@ -258,15 +258,16 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     public void execute(@Nullable DBNConnection connection, boolean debug) throws SQLException {
         ProgressMonitor.setTaskDescription("Executing " + getStatementName());
-        ExecutionContext context = getExecutionContext();
-        ExecutionStatus status = context.getExecutionStatus();
-        status.setExecuting(true);
-        context.setExecutionTimestamp(System.currentTimeMillis());
-
-        resultName.reset();
-        DocumentUtil.refreshEditorAnnotations(getPsiFile());
-
         try {
+            ExecutionContext context = getExecutionContext();
+            context.setExecutionTimestamp(System.currentTimeMillis());
+
+            ExecutionStatus status = context.getExecutionStatus();
+            status.setExecuting(true);
+
+            resultName.reset();
+            DocumentUtil.refreshEditorAnnotations(getPsiFile());
+
             String statementText = initStatementText();
             SQLException executionException = null;
             if (statementText != null) {
@@ -302,6 +303,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                 }
             }
 
+            status.assertNotCancelled();
             if (executionResult != null) {
                 Project project = getProject();
                 ExecutionManager executionManager = ExecutionManager.getInstance(project);
