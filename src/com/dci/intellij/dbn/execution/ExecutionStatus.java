@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.execution;
 
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+
 public class ExecutionStatus {
     private transient boolean queued = false;
     private transient boolean prompted = false;
@@ -46,7 +48,7 @@ public class ExecutionStatus {
 
     public void assertNotCancelled() throws SQLException {
         if (cancelled) {
-            throw new SQLException("Process cancelled by user");
+            throw AlreadyDisposedException.INSTANCE;
         }
     }
 
