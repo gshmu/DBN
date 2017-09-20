@@ -481,9 +481,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                         }
 
                         resultTabs.removeTab(tabInfo);
-                        if (file != null) {
-                            DocumentUtil.refreshEditorAnnotations(file);
-                        }
+                        DocumentUtil.refreshEditorAnnotations(file);
                     }
                 } finally {
                     if (getTabCount() == 0) {

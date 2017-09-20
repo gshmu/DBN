@@ -266,7 +266,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                     StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
                                     ExecutionOptions options = executionInput.getOptions();
                                     if (options.isUsePoolConnection()) {
-                                        new BackgroundTask(getProject(), "Executing statement", executionProcessors.size() > 1, true) {
+                                        new BackgroundTask(getProject(), "Executing statement", true, true) {
                                             @Override
                                             protected void execute(@NotNull ProgressIndicator progressIndicator) {
                                                 process(executionProcessor);

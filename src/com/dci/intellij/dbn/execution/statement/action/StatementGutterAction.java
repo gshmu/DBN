@@ -125,7 +125,15 @@ public class StatementGutterAction extends AnAction {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
         if (executionProcessor!= null && !executionProcessor.isDisposed()) {
             StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
-            if (executionResult != null) {
+            if (executionResult == null) {
+                ExecutionStatus status = executionProcessor.getExecutionStatus();
+                if (status.isExecuting()) {
+                    return "Statement execution in progress. Cancel?";
+                } else  if (status.isQueued()) {
+                    return "Statement execution queued. Cancel?";
+                }
+            }
+            else {
                 StatementExecutionStatus executionStatus = executionResult.getExecutionStatus();
                 if (executionStatus == StatementExecutionStatus.SUCCESS) {
                     return "Statement executed successfully. Execute again?";
