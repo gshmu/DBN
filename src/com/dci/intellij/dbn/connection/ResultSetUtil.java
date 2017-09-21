@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.connection;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 
 public class ResultSetUtil extends DisposableBase{
     public static void insertRow(final ResultSet resultSet) throws SQLException {
@@ -80,7 +80,7 @@ public class ResultSetUtil extends DisposableBase{
     }
 
     public static List<String> getColumnNames(ResultSet resultSet) throws SQLException {
-        ArrayList<String> columnNames = new ArrayList<>();
+        ArrayList<String> columnNames = new ArrayList<String>();
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
         for (int i=0; i<columnCount; i++) {
