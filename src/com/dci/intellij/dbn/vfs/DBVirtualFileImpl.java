@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.vfs;
 
 import javax.swing.Icon;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -103,6 +104,26 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
             }
         }
         return url;
+    }
+
+    @Override
+    public void rename(Object requestor, @NotNull String newName) throws IOException {
+        throw new IOException("Operation not supported");
+    }
+
+    @Override
+    public void move(Object requestor, @NotNull VirtualFile newParent) throws IOException {
+        throw new IOException("Operation not supported");
+    }
+
+    @Override
+    public VirtualFile copy(Object requestor, @NotNull VirtualFile newParent, @NotNull String copyName) throws IOException {
+        throw new IOException("Operation not supported");
+    }
+
+    @Override
+    public void delete(Object requestor) throws IOException {
+        throw new IOException("Operation not supported");
     }
 
     @Override
