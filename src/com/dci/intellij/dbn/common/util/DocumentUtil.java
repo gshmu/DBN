@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.common.thread.ConditionalWriteActionRunner;
+import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
@@ -87,12 +88,18 @@ public class DocumentUtil {
         refreshEditorAnnotations(DocumentUtil.getFile(editor));
     }
 
-    public static void refreshEditorAnnotations(@Nullable PsiFile psiFile) {
+    public static void refreshEditorAnnotations(@Nullable final PsiFile psiFile) {
         if (psiFile != null) {
             Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH_KEY);
             if (lastRefresh == null || TimeUtil.isOlderThan(lastRefresh, 1, TimeUnit.SECONDS)) {
                 psiFile.putUserData(LAST_ANNOTATION_REFRESH_KEY, System.currentTimeMillis());
-                DaemonCodeAnalyzer.getInstance(psiFile.getProject()).restart(psiFile);
+                new ReadActionRunner() {
+                    @Override
+                    protected Object run() {
+                        DaemonCodeAnalyzer.getInstance(psiFile.getProject()).restart(psiFile);
+                        return null;
+                    }
+                }.start();
             }
         }
     }
