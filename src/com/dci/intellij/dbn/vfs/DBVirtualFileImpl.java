@@ -108,22 +108,22 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
     @Override
     public void rename(Object requestor, @NotNull String newName) throws IOException {
-        throw new IOException("Operation not supported");
+        throw DatabaseFileSystem.READONLY_FILE_SYSTEM;
     }
 
     @Override
     public void move(Object requestor, @NotNull VirtualFile newParent) throws IOException {
-        throw new IOException("Operation not supported");
+        throw DatabaseFileSystem.READONLY_FILE_SYSTEM;
     }
 
     @Override
     public VirtualFile copy(Object requestor, @NotNull VirtualFile newParent, @NotNull String copyName) throws IOException {
-        throw new IOException("Operation not supported");
+        throw DatabaseFileSystem.READONLY_FILE_SYSTEM;
     }
 
     @Override
     public void delete(Object requestor) throws IOException {
-        throw new IOException("Operation not supported");
+        throw DatabaseFileSystem.READONLY_FILE_SYSTEM;
     }
 
     @Override
