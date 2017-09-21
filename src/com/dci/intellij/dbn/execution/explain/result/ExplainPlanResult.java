@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ResultSetUtil;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.explain.result.ui.ExplainPlanResultForm;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -49,9 +51,10 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
         // entries must be sorted by PARENT_ID NULLS FIRST, ID
         Map<Integer, ExplainPlanEntry> entries = new HashMap<Integer, ExplainPlanEntry>();
         ConnectionHandler connectionHandler = getConnectionHandler();
+        List<String> explainColumnNames = ResultSetUtil.getColumnNames(resultSet);
 
         while (resultSet.next()) {
-            ExplainPlanEntry entry = new ExplainPlanEntry(connectionHandler, resultSet);
+            ExplainPlanEntry entry = new ExplainPlanEntry(connectionHandler, resultSet, explainColumnNames);
             Integer id = entry.getId();
             Integer parentId = entry.getParentId();
             entries.put(id, entry);
