@@ -56,11 +56,12 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     }
 
     public final void run(@NotNull ProgressIndicator progressIndicator) {
-        int priority = Thread.currentThread().getPriority();
+        Thread currentThread = Thread.currentThread();
+        int priority = currentThread.getPriority();
         try {
-            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-            initProgressIndicator(progressIndicator, true);
             progressIndicator.pushState();
+            currentThread.setPriority(Thread.MIN_PRIORITY);
+            initProgressIndicator(progressIndicator, true);
 
             execute(progressIndicator);
         } catch (ProcessCanceledException e) {
@@ -70,8 +71,8 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         } catch (Exception e) {
             LOGGER.error("Error executing background operation.", e);
         } finally {
+            currentThread.setPriority(priority);
             progressIndicator.popState();
-            Thread.currentThread().setPriority(priority);
             /*if (progressIndicator.isRunning()) {
                 progressIndicator.stop();
             }*/
