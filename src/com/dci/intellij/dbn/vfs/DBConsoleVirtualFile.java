@@ -126,6 +126,10 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         this.currentSchemaRef = new DBObjectRef<DBSchema>(getConnectionHandler().getId(), DBObjectType.SCHEMA, currentSchemaName);
     }
 
+    public String getCurrentSchemaName() {
+        return this.currentSchemaRef == null ? null : this.currentSchemaRef.getObjectName();
+    }
+
     @Override
     public boolean isValid() {
         return super.isValid() && connectionHandlerRef.isValid();
