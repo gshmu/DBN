@@ -1,7 +1,10 @@
 package com.dci.intellij.dbn.connection;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 
@@ -74,5 +77,15 @@ public class ResultSetUtil extends DisposableBase{
                     (SQLException) e :
                     new SQLException("Error selecting row: [" + e.getClass().getSimpleName() + "] " + e.getMessage());
         }
+    }
+
+    public static List<String> getColumnNames(ResultSet resultSet) throws SQLException {
+        ArrayList<String> columnNames = new ArrayList<>();
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnCount = metaData.getColumnCount();
+        for (int i=0; i<columnCount; i++) {
+            columnNames.add(metaData.getColumnName(i+1));
+        }
+        return columnNames;
     }
 }

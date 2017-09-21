@@ -34,7 +34,7 @@ public class ExplainPlanEntry implements Disposable {
     private ExplainPlanEntry parent;
     private List<ExplainPlanEntry> children;
 
-    public ExplainPlanEntry(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
+    public ExplainPlanEntry(ConnectionHandler connectionHandler, ResultSet resultSet, List<String> columnNames) throws SQLException {
         operation = resultSet.getString("OPERATION");
         operationOptions = resultSet.getString("OPTIONS");
         optimizer = resultSet.getString("OPTIMIZER");
@@ -44,7 +44,7 @@ public class ExplainPlanEntry implements Disposable {
             parentId = null;
         }
 
-        depth = resultSet.getBigDecimal("DEPTH");
+        depth = columnNames.contains("DEPTH") ? resultSet.getBigDecimal("DEPTH") : null;
         position = resultSet.getBigDecimal("POSITION");
         cost = resultSet.getBigDecimal("COST");
         cpuCost = resultSet.getBigDecimal("CPU_COST");
@@ -75,7 +75,6 @@ public class ExplainPlanEntry implements Disposable {
             DBObjectRef schemaRef = new DBObjectRef(connectionHandler.getId(), DBObjectType.SCHEMA, objectOwner);
             objectRef = new DBObjectRef(schemaRef, objectType, objectName);
         }
-
     }
 
     public ExplainPlanEntry getParent() {
