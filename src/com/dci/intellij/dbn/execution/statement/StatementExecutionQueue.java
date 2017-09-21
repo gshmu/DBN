@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
@@ -36,17 +37,19 @@ public abstract class StatementExecutionQueue {
                     try {
                         StatementExecutionProcessor processor = processors.poll();
                         while (processor != null) {
-                            StatementExecutionQueue.this.execute(processor);
+                            try {
+                                StatementExecutionQueue.this.execute(processor);
+                            } catch (ProcessCanceledException ignore) {}
 
                             if (progressIndicator.isCanceled()) {
-                                cancel();
+                                cancelExecution();
                             }
                             processor = processors.poll();
                         }
                     } finally {
                         executing = false;
                         if (progressIndicator.isCanceled()) {
-                            cancel();
+                            cancelExecution();
                         }
                     }
                 }
@@ -56,7 +59,7 @@ public abstract class StatementExecutionQueue {
 
     protected abstract void execute(StatementExecutionProcessor processor);
 
-    public void cancel() {
+    public void cancelExecution() {
         // cleanup queue for untouched processors
         StatementExecutionProcessor processor = processors.poll();
         while(processor != null) {
@@ -69,7 +72,7 @@ public abstract class StatementExecutionQueue {
         return processors.contains(processor);
     }
 
-    public void cancel(StatementExecutionProcessor processor) {
+    public void cancelExecution(StatementExecutionProcessor processor) {
         processor.getExecutionStatus().setQueued(false);
         processors.remove(processor);
         if (processors.size() == 0) {
