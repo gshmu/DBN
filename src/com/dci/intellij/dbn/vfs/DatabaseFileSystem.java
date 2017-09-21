@@ -51,7 +51,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements NonPhysical
     public static final String PROTOCOL = "db";
     public static final String PROTOCOL_PREFIX = PROTOCOL + "://";
 
-    private static final String ERR = "Operation not supported";
+    public static final IOException READONLY_FILE_SYSTEM = new IOException("Operation not supported");
     private Map<DBObjectRef, DBEditableObjectVirtualFile> filesCache = new HashMap<DBObjectRef, DBEditableObjectVirtualFile>();
 
     public DatabaseFileSystem() {
@@ -306,26 +306,26 @@ public class DatabaseFileSystem extends VirtualFileSystem implements NonPhysical
     protected void deleteFile(Object o, @NotNull VirtualFile virtualFile) throws IOException {}
 
     protected void moveFile(Object o, @NotNull VirtualFile virtualFile, @NotNull VirtualFile virtualFile1) throws IOException {
-        throw new IOException(ERR);
+        throw READONLY_FILE_SYSTEM;
     }
 
     protected void renameFile(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {
-        throw new IOException(ERR);
+        throw READONLY_FILE_SYSTEM;
     }
 
     @NotNull
     protected VirtualFile createChildFile(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {
-        throw new IOException(ERR);
+        throw READONLY_FILE_SYSTEM;
     }
 
     @NotNull
     protected VirtualFile createChildDirectory(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {
-        throw new IOException(ERR);
+        throw READONLY_FILE_SYSTEM;
     }
 
     @NotNull
     protected VirtualFile copyFile(Object o, @NotNull VirtualFile virtualFile, @NotNull VirtualFile virtualFile1, @NotNull String s) throws IOException {
-        throw new IOException(ERR);
+        throw READONLY_FILE_SYSTEM;
     }
 
     public boolean isReadOnly() {
