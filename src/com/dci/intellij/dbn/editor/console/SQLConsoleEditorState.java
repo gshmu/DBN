@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.editor.console;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.editor.BasicTextEditorState;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 class SQLConsoleEditorState extends BasicTextEditorState {
     private String currentSchema = "";
@@ -33,8 +33,7 @@ class SQLConsoleEditorState extends BasicTextEditorState {
         super.loadFromEditor(level, textEditor);
         DBConsoleVirtualFile file = (DBConsoleVirtualFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
         if (file != null) {
-            DBSchema schema = file.getCurrentSchema();
-            currentSchema = schema == null ? "" : schema.getName();
+            currentSchema = file.getCurrentSchemaName();
         }
 
         //content = textEditor.getEditor().getDocument().getText();
