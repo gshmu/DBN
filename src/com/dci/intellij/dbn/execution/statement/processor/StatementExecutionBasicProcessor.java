@@ -423,7 +423,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         ExecutionStatus status = getExecutionStatus();
         status.setCancelled(true);
         StatementExecutionManager executionManager = getExecutionManager();
-        executionManager.getExecutionQueue().cancel(this);
+        executionManager.getExecutionQueue().cancelExecution(this);
         if (databaseCall != null) {
             databaseCall.cancelSilently();
         }
