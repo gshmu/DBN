@@ -291,7 +291,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                         notifyDataManipulationChanges(context);
                     }
                 } catch (SQLException e) {
-                    ConnectionUtil.cancelStatement(context.getStatement());
+                    ConnectionUtil.cancel(context.getStatement());
                     if (!status.isCancelled()) {
                         executionException = e;
                         executionResult = createErrorExecutionResult(e.getMessage());
@@ -326,7 +326,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             ExecutionContext context = getExecutionContext();
             DBNConnection connection = context.getConnection();
             if (connection != null && connection.isPoolConnection()) {
-                ConnectionUtil.cancelStatement(context.getStatement());
+                ConnectionUtil.cancel(context.getStatement());
                 ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
                 connectionHandler.freePoolConnection(connection);
             }
@@ -409,7 +409,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             public void cancel(){
                 try {
                     status.setCancelled(true);
-                    ConnectionUtil.cancelStatement(statement);
+                    ConnectionUtil.cancel(statement);
                 } finally {
                     databaseCall = null;
                 }

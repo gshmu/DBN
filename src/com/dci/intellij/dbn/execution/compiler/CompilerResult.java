@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -44,7 +44,7 @@ public class CompilerResult implements Disposable {
 
     private void init(ConnectionHandler connectionHandler, DBSchema schema, String objectName, CompilerAction compilerAction) {
         this.compilerAction = compilerAction;
-        Connection connection = null;
+        DBNConnection connection = null;
         ResultSet resultSet = null;
         DBContentType contentType = compilerAction.getContentType();
         try {
@@ -65,7 +65,7 @@ public class CompilerResult implements Disposable {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally{
-            ConnectionUtil.closeResultSet(resultSet);
+            ConnectionUtil.close(resultSet);
             connectionHandler.freePoolConnection(connection);
         }
 

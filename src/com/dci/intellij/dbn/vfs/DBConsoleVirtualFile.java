@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -73,17 +72,12 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         content.importContent(text);
         final Document document = DocumentUtil.getDocument(this);
         if (document != null) {
-            new WriteActionRunner() {
-                @Override
-                public void run() {
-                    DocumentUtil.setText(document, content.getText());
-                    GuardedBlockMarkers guardedBlocks = content.getOffsets().getGuardedBlocks();
-                    if (!guardedBlocks.isEmpty()) {
-                        DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
-                        DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
-                    }
-                }
-            }.start();
+            DocumentUtil.setText(document, content.getText());
+            GuardedBlockMarkers guardedBlocks = content.getOffsets().getGuardedBlocks();
+            if (!guardedBlocks.isEmpty()) {
+                DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
+                DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
+            }
         }
     }
 

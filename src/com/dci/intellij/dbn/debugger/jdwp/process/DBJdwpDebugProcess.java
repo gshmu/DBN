@@ -344,7 +344,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 T executionInput = getExecutionInput();
                 if (executionInput != null && !status.TARGET_EXECUTION_TERMINATED) {
                     ExecutionContext context = executionInput.getExecutionContext();
-                    ConnectionUtil.cancelStatement(context.getStatement());
+                    ConnectionUtil.cancel(context.getStatement());
                 }
 
 

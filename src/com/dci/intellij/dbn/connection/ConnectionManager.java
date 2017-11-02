@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
 import java.io.File;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -184,8 +183,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     AuthenticationInfo authenticationInfo = getData();
                     try {
-                        Connection connection = ConnectionUtil.connect(connectionSettings, ConnectionType.TEST, null, authenticationInfo, false, null);
-                        ConnectionUtil.closeConnection(connection);
+                        DBNConnection connection = ConnectionUtil.connect(connectionSettings, ConnectionType.TEST, null, authenticationInfo, false, null);
+                        ConnectionUtil.close(connection);
                         databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
                         if (showMessageDialog) {
                             showSuccessfulConnectionMessage(project, connectionName);
@@ -232,9 +231,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                         protected void execute(@NotNull ProgressIndicator progressIndicator) {
                             AuthenticationInfo authenticationInfo = getData();
                             try {
-                                Connection connection = ConnectionUtil.connect(connectionSettings, ConnectionType.TEST, null, authenticationInfo, false, null);
+                                DBNConnection connection = ConnectionUtil.connect(connectionSettings, ConnectionType.TEST, null, authenticationInfo, false, null);
                                 ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
-                                ConnectionUtil.closeConnection(connection);
+                                ConnectionUtil.close(connection);
                                 showConnectionInfoDialog(connectionInfo, connectionName, environmentType);
                             } catch (Exception e) {
                                 showErrorConnectionMessage(project, connectionName, e);

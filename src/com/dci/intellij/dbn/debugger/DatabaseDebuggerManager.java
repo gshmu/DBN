@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,6 +19,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -456,7 +456,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
         if (connectionHandler != null && DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
             DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
-            Connection connection = null;
+            DBNConnection connection = null;
             try {
                 connection = connectionHandler.getPoolConnection(true);
                 DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(connection);

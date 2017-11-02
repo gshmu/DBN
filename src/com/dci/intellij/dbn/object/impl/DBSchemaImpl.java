@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -416,7 +417,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
 
     public synchronized void refreshObjectsStatus() throws SQLException {
         Set<BrowserTreeNode> refreshNodes = resetObjectsStatus();
-        Connection connection = null;
+        DBNConnection connection = null;
         ResultSet resultSet = null;
         ConnectionHandler connectionHandler = getConnectionHandler();
         try {
@@ -469,7 +470,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
             }
 
         } finally {
-            ConnectionUtil.closeResultSet(resultSet);
+            ConnectionUtil.close(resultSet);
             connectionHandler.freePoolConnection(connection);
         }
 

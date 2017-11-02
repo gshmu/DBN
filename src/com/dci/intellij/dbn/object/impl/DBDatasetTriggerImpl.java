@@ -1,8 +1,15 @@
 package com.dci.intellij.dbn.object.impl;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -13,12 +20,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrigger {
     public DBDatasetTriggerImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
@@ -102,7 +103,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        Connection connection = connectionHandler.getPoolConnection(getSchema(), false);
+        DBNConnection connection = connectionHandler.getPoolConnection(getSchema(), false);
         try {
             DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
             ddlInterface.updateTrigger(getDataset().getSchema().getName(), getDataset().getName(), getName(), oldCode, newCode, connection);
