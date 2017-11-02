@@ -17,6 +17,7 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.text.CodeFoldingState;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -96,7 +97,12 @@ public class BasicTextEditorState implements FileEditorState {
                     Editor editor = textEditor.getEditor();
                     Project project = editor.getProject();
                     if (project != null && !editor.isDisposed()) {
-                        PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+                        try {
+                            PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+                        } catch (ProcessCanceledException ignore) {
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         foldingState = CodeFoldingManager.getInstance(project).saveFoldingState(editor);
                     }
                 }
@@ -131,7 +137,13 @@ public class BasicTextEditorState implements FileEditorState {
                 public void run() {
                     Project project = editor.getProject();
                     if (project != null) {
-                        PsiDocumentManager.getInstance(project).commitDocument(document);
+                        try {
+                            PsiDocumentManager.getInstance(project).commitDocument(document);
+                        } catch (ProcessCanceledException ignore) {
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                         CodeFoldingManager.getInstance(project).
                                 restoreFoldingState(editor, getFoldingState());
                     }

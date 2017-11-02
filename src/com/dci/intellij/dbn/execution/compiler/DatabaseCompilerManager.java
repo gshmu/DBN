@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +15,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -165,7 +165,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         DBContentType contentType = compilerAction.getContentType();
         DBObjectStatusHolder objectStatus = object.getStatus();
         objectStatus.set(contentType, DBObjectStatus.COMPILING, true);
-        Connection connection = null;
+        DBNConnection connection = null;
         ConnectionHandler connectionHandler = object.getConnectionHandler();
         boolean verbose = compilerAction.getSource() != CompilerActionSource.BULK_COMPILE;
         try {

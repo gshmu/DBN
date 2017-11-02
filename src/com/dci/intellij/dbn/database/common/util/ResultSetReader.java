@@ -14,7 +14,7 @@ public abstract class ResultSetReader {
                 }
             }
         } finally {
-            ConnectionUtil.closeResultSet(resultSet);
+            ConnectionUtil.close(resultSet);
         }
     }
 

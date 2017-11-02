@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -126,7 +127,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
 
     private void doDropObject(DBSchemaObject object) {
         ConnectionHandler connectionHandler = object.getConnectionHandler();
-        Connection connection = null;
+        DBNConnection connection = null;
         try {
             DBContentType contentType = object.getContentType();
             connection = connectionHandler.getPoolConnection(false);

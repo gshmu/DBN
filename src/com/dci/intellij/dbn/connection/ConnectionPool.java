@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
 import java.lang.ref.WeakReference;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Timer;
@@ -16,7 +15,6 @@ import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -32,8 +30,8 @@ public class ConnectionPool implements Disposable {
     protected final Logger log = Logger.getInstance(getClass().getName());
     private ConnectionHandlerRef connectionHandlerRef;
 
-    private List<ConnectionWrapper> poolConnections = new CopyOnWriteArrayList<ConnectionWrapper>();
-    private ConnectionWrapper mainConnection;
+    private List<DBNConnection> poolConnections = new CopyOnWriteArrayList<DBNConnection>();
+    private DBNConnection mainConnection;
 
     ConnectionPool(@NotNull ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = connectionHandler.getRef();
@@ -55,12 +53,11 @@ public class ConnectionPool implements Disposable {
                 if (shouldInitMainConnection(forceInit)) {
                     try {
                         if (mainConnection != null) {
-                            mainConnection.closeConnection();
+                            ConnectionUtil.close(mainConnection);
                             mainConnection = null;
                         }
 
-                        DBNConnection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.MAIN);
-                        mainConnection = new ConnectionWrapper(connection);
+                        mainConnection = ConnectionUtil.connect(connectionHandler, ConnectionType.MAIN);
                         NotificationUtil.sendInfoNotification(
                                 getProject(),
                                 Constants.DBN_TITLE_PREFIX + "Connect",
@@ -73,11 +70,11 @@ public class ConnectionPool implements Disposable {
             }
         }
 
-        return mainConnection == null ? null : mainConnection.getConnection();
+        return mainConnection;
     }
 
-    boolean shouldInitMainConnection(boolean forceInit) throws SQLException {
-        return forceInit && (mainConnection == null || mainConnection.isClosed() || !mainConnection.isValid());
+    private boolean shouldInitMainConnection(boolean forceInit) throws SQLException {
+        return forceInit && (mainConnection == null || mainConnection.isClosed() || !mainConnection.isValid(2));
     }
 
     public long getLastAccessTimestamp() {
@@ -128,16 +125,16 @@ public class ConnectionPool implements Disposable {
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
 
-        for (ConnectionWrapper connectionWrapper : poolConnections) {
-            if (!connectionWrapper.isBusy()) {
-                connectionWrapper.setBusy(true);
-                if (connectionWrapper.isValid() && !connectionWrapper.isClosed()) {
+        for (DBNConnection connection : poolConnections) {
+            if (!connection.isBusy()) {
+                connection.setBusy(true);
+                if (!connection.isClosed() && connection.isValid()) {
                     connectionStatus.setConnected(true);
                     connectionStatus.setValid(true);
-                    return connectionWrapper.getConnection();
+                    return connection;
                 } else {
-                    connectionWrapper.closeConnection();
-                    poolConnections.remove(connectionWrapper);
+                    poolConnections.remove(connection);
+                    ConnectionUtil.close(connection);;
                 }
             }
         }
@@ -161,9 +158,8 @@ public class ConnectionPool implements Disposable {
 
         // pool connections do not need to have current schema set
         //connectionHandler.getDataDictionary().setCurrentSchema(connectionHandler.getCurrentSchemaName(), connection);
-        ConnectionWrapper connectionWrapper = new ConnectionWrapper(connection);
-        connectionWrapper.setBusy(true);
-        poolConnections.add(connectionWrapper);
+        connection.setBusy(true);
+        poolConnections.add(connection);
         int size = poolConnections.size();
         if (size > peakPoolSize) peakPoolSize = size;
         lastAccessTimestamp = System.currentTimeMillis();
@@ -171,51 +167,39 @@ public class ConnectionPool implements Disposable {
         return connection;
     }
 
-    public void releaseConnection(Connection connection) {
+    public void releaseConnection(DBNConnection connection) {
         if (connection != null) {
-            for (ConnectionWrapper connectionWrapper : poolConnections) {
-                if (connectionWrapper.getConnection() == connection) {
-                    ConnectionUtil.rollback(connection);
-                    ConnectionUtil.setAutocommit(connection, true);
-                    ConnectionUtil.setReadonly(connection, true);
-                    connectionWrapper.setBusy(false);
-                    break;
-                }
-            }
+            ConnectionUtil.rollback(connection);
+            ConnectionUtil.setAutocommit(connection, true);
+            ConnectionUtil.setReadonly(connection, true);
+            connection.setBusy(false);
         }
         lastAccessTimestamp = System.currentTimeMillis();
     }
 
-    public void dropConnection(Connection connection) {
+    public void dropConnection(DBNConnection connection) {
         if (connection != null) {
-            for (ConnectionWrapper connectionWrapper : poolConnections) {
-                if (connectionWrapper.getConnection() == connection) {
-                    poolConnections.remove(connectionWrapper);
-                    connectionWrapper.closeConnection();
-                    break;
-                }
-            }
+            poolConnections.remove(connection);
+            ConnectionUtil.close(connection);
         }
         lastAccessTimestamp = System.currentTimeMillis();
     }
 
     public void closeConnectionsSilently() {
-        for (ConnectionWrapper connectionWrapper : poolConnections) {
-            connectionWrapper.closeConnection();
+        for (DBNConnection connection : poolConnections) {
+            ConnectionUtil.close(connection);
         }
         poolConnections.clear();
 
-        if (mainConnection != null) {
-            mainConnection.closeConnection();
-            mainConnection = null;
-        }
+        ConnectionUtil.close(mainConnection);
+        mainConnection = null;
     }
 
     public void closeConnections() throws SQLException {
         SQLException exception = null;
-        for (ConnectionWrapper connectionWrapper : poolConnections) {
+        for (DBNConnection connection : poolConnections) {
             try {
-                connectionWrapper.getConnection().close();
+                connection.close();
             } catch (SQLException e) {
                 exception = e;
             } catch (Exception e) {
@@ -226,7 +210,7 @@ public class ConnectionPool implements Disposable {
 
         if (mainConnection != null) {
             try {
-                mainConnection.getConnection().close();
+                mainConnection.close();
             } catch (SQLException e) {
                 exception = e;
             } catch (Exception e) {
@@ -245,8 +229,9 @@ public class ConnectionPool implements Disposable {
 
     public void keepAlive(boolean check) {
         if (mainConnection != null) {
-            if (check) mainConnection.isValid();
-            mainConnection.keepAlive();
+            if (check && mainConnection.isValid()) {
+                mainConnection.keepAlive();
+            }
         }
     }
 
@@ -271,20 +256,6 @@ public class ConnectionPool implements Disposable {
         }
     }
 
-    boolean isMainConnection(Connection connection) {
-        return mainConnection != null && mainConnection.getConnection() == connection;
-    }
-
-    boolean isPoolConnection(Connection connection) {
-        for (ConnectionWrapper poolConnection : poolConnections) {
-            if (poolConnection.getConnection() == connection) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private static class ConnectionPoolCleanTask extends TimerTask {
         List<WeakReference<ConnectionPool>> connectionPools = new CopyOnWriteArrayList<WeakReference<ConnectionPool>>();
 
@@ -293,12 +264,12 @@ public class ConnectionPool implements Disposable {
                 ConnectionPool connectionPool = connectionPoolRef.get();
                 if (connectionPool != null && TimeUtil.isOlderThan(connectionPool.lastAccessTimestamp, TimeUtil.FIVE_MINUTES)) {
                     // close connections only if pool is passive
-                    for (ConnectionWrapper connection : connectionPool.poolConnections) {
+                    for (DBNConnection connection : connectionPool.poolConnections) {
                         if (connection.isBusy()) return;
                     }
 
-                    for (ConnectionWrapper connection : connectionPool.poolConnections) {
-                        connection.closeConnection();
+                    for (DBNConnection connection : connectionPool.poolConnections) {
+                        ConnectionUtil.close(connection);
                     }
                     connectionPool.poolConnections.clear();
                 }
@@ -307,7 +278,7 @@ public class ConnectionPool implements Disposable {
         }
 
         public void registerConnectionPool(ConnectionPool connectionPool) {
-            connectionPools.add(new WeakReference<ConnectionPool>(connectionPool));
+            connectionPools.add(new WeakReference<>(connectionPool));
         }
     }
 
@@ -315,65 +286,5 @@ public class ConnectionPool implements Disposable {
     static {
         Timer poolCleaner = new Timer("DBN - Connection Pool Cleaner");
         poolCleaner.schedule(POOL_CLEANER_TASK, TimeUtil.ONE_MINUTE, TimeUtil.ONE_MINUTE);
-    }
-
-
-    private class ConnectionWrapper {
-        private DBNConnection connection;
-        private long lastCheckTimestamp;
-        private long lastAccessTimestamp;
-        private boolean isValid = true;
-        private boolean isBusy = false;
-
-        ConnectionWrapper(DBNConnection connection) {
-            this.connection = connection;
-            long currentTimeMillis = System.currentTimeMillis();
-            lastCheckTimestamp = currentTimeMillis;
-            lastAccessTimestamp = currentTimeMillis;
-        }
-
-        public boolean isValid() {
-            long currentTimeMillis = System.currentTimeMillis();
-            if (TimeUtil.isOlderThan(lastCheckTimestamp, TimeUtil.THIRTY_SECONDS)) {
-                lastCheckTimestamp = currentTimeMillis;
-                DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-                isValid = metadataInterface.isValid(connection);
-            }
-            return isValid;
-        }
-
-        int getIdleMinutes() {
-            long idleTimeMillis = System.currentTimeMillis() - lastAccessTimestamp;
-            return (int) (idleTimeMillis / TimeUtil.ONE_MINUTE);
-        }
-
-        public DBNConnection getConnection() {
-            lastAccessTimestamp = System.currentTimeMillis();
-            return connection;
-        }
-
-        void closeConnection() {
-            ConnectionUtil.closeConnection(connection);
-        }
-
-        public void setAutoCommit(boolean autoCommit) throws SQLException {
-            ConnectionUtil.setAutoCommit(connection, autoCommit);
-        }
-
-        boolean isClosed() throws SQLException {
-            return ConnectionUtil.isClosed(connection);
-        }
-
-        boolean isBusy() {
-            return isBusy;
-        }
-
-        void setBusy(boolean isFree) {
-            this.isBusy = isFree;
-        }
-
-        void keepAlive() {
-            lastAccessTimestamp = System.currentTimeMillis();
-        }
     }
 }

@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHistoryTreeModel {
     public MethodExecutionHistoryGroupedTreeModel(List<MethodExecutionInput> executionInputs, boolean debug) {
@@ -103,7 +103,7 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
         for (MethodExecutionInput executionInput : executionInputs) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-            if (connectionHandler.getId().equals(connectionNode.getConnectionHandlerId()) &&
+            if (connectionHandler != null && connectionHandler.getId().equals(connectionNode.getConnectionHandlerId()) &&
                 methodRef.getSchemaName().equalsIgnoreCase(schemaNode.getName()) &&
                 methodRef.getObjectName().equalsIgnoreCase(methodNode.getName()) &&
                 methodRef.getOverload() == methodNode.getOverload() ) {

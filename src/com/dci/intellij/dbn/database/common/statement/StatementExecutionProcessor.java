@@ -1,19 +1,24 @@
 package com.dci.intellij.dbn.database.common.statement;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.intellij.openapi.diagnostic.Logger;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 public class StatementExecutionProcessor {
     private DatabaseInterfaceProvider interfaceProvider;
@@ -126,7 +131,7 @@ public class StatementExecutionProcessor {
                                     return null;
                                 }
                             } else {
-                                ConnectionUtil.closeStatement(statement);
+                                ConnectionUtil.close(statement);
                                 return null;
                             }
                         }
@@ -141,7 +146,7 @@ public class StatementExecutionProcessor {
                         } else {
                             lastException = new SQLException("Too many failed attempts of executing query '" + id +"'. " + exception.getMessage());
                         }
-                        ConnectionUtil.closeStatement(statement);
+                        ConnectionUtil.close(statement);
                         throw exception;
                     } finally {
                         statementDefinition.updateExecutionStatus(executionSuccessful);
@@ -150,7 +155,7 @@ public class StatementExecutionProcessor {
 
                 @Override
                 protected void handleTimeout() {
-                    ConnectionUtil.closeStatement(statement);
+                    ConnectionUtil.close(statement);
                 }
             }.start();
         } else {
@@ -201,13 +206,13 @@ public class StatementExecutionProcessor {
 
                     throw exception;
                 } finally {
-                    ConnectionUtil.closeStatement(statement);
+                    ConnectionUtil.close(statement);
                 }
             }
 
             @Override
             protected void handleTimeout() {
-                ConnectionUtil.closeStatement(statement);
+                ConnectionUtil.close(statement);
             }
         }.start();
     }
@@ -249,14 +254,14 @@ public class StatementExecutionProcessor {
 
                     throw exception;
                 } finally {
-                    ConnectionUtil.closeStatement(statement);
+                    ConnectionUtil.close(statement);
                 }
                 return null;
             }
 
             @Override
             protected void handleTimeout() {
-                ConnectionUtil.closeStatement(statement);
+                ConnectionUtil.close(statement);
             }
         }.start();
     }
@@ -297,13 +302,13 @@ public class StatementExecutionProcessor {
 
                     throw exception;
                 } finally {
-                    ConnectionUtil.closeStatement(statement);
+                    ConnectionUtil.close(statement);
                 }
             }
 
             @Override
             protected void handleTimeout() {
-                ConnectionUtil.closeStatement(statement);
+                ConnectionUtil.close(statement);
             }
         }.start();
     }

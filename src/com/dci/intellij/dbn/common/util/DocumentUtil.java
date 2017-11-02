@@ -7,8 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
-import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
-import com.dci.intellij.dbn.common.thread.ConditionalWriteActionRunner;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -128,7 +126,7 @@ public class DocumentUtil {
 
     public static void createGuardedBlocks(final Document document, final GuardedBlockType type, final GuardedBlockMarkers ranges, final String reason) {
         for (Range<Integer> range : ranges.getRanges()) {
-            DocumentUtil.createGuardedBlock(document, type, range.getFrom(), range.getTo(), reason);
+            createGuardedBlock(document, type, range.getFrom(), range.getTo(), reason);
         }
     }
 
@@ -175,7 +173,7 @@ public class DocumentUtil {
 
     @Nullable
     public static Document getDocument(final @NotNull VirtualFile virtualFile) {
-        return new ConditionalReadActionRunner<Document>() {
+        return new ReadActionRunner<Document>() {
             @Override
             protected Document run() {
                 return FileDocumentManager.getInstance().getDocument(virtualFile);
@@ -203,7 +201,7 @@ public class DocumentUtil {
     }
 
     public static void setText(final @NotNull Document document, final CharSequence text) {
-        new ConditionalWriteActionRunner() {
+        new WriteActionRunner() {
             public void run() {
                 FileDocumentManager manager = FileDocumentManager.getInstance();
                 VirtualFile file = manager.getFile(document);

@@ -135,7 +135,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     }
 
     public void closeResultSet() {
-        ConnectionUtil.closeResultSet(resultSet);
+        ConnectionUtil.close(resultSet);
     }
 
     @NotNull

@@ -68,6 +68,9 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     public DBLanguagePsiFile initializePsiFile(@NotNull DBLanguageDialect languageDialect) {
         DBLanguagePsiFile file = (DBLanguagePsiFile) getCachedPsi(languageDialect);
         if (file == null) {
+            file = (DBLanguagePsiFile) getCachedPsi(languageDialect.getBaseLanguage());
+        }
+        if (file == null) {
             DBLanguageParserDefinition parserDefinition = languageDialect.getParserDefinition();
             file = (DBLanguagePsiFile) parserDefinition.createFile(this);
             forceCachedPsi(file);

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.common;
 
 import javax.swing.Icon;
 import java.sql.CallableStatement;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -39,6 +38,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -476,7 +476,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     public String extractDDL() throws SQLException {
         String ddl = null;
         CallableStatement statement = null;
-        Connection connection = null;
+        DBNConnection connection = null;
 
         ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
         try {
@@ -492,7 +492,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
             ddl = ddl == null ? null : ddl.trim();
             statement.close();
         } finally{
-            ConnectionUtil.closeStatement(statement);
+            ConnectionUtil.close(statement);
             connectionHandler.freePoolConnection(connection);
         }
         return ddl;

@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
+import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
@@ -46,75 +47,50 @@ public class ConnectionUtil {
             return false;
         }
     }
-
-    public static void closeResultSet(final ResultSet resultSet) {
-        if (resultSet != null) {
-            if (ApplicationManager.getApplication().isDispatchThread()) {
-                new SimpleBackgroundTask("close result set") {
-                    @Override
-                    protected void execute() {
-                        closeResultSet(resultSet);
-                    }
-                }.start();
-            } else {
-                try {
-                    closeStatement(resultSet.getStatement());
-                    resultSet.close();
-                } catch (Throwable ignore) {
-                }
-            }
-        }
-    }
-
-    public static void closeStatement(final Statement statement) {
-        closeStatement(statement, false);
-    }
-
-    public static void closeStatement(final Statement statement, boolean background) {
-        if (statement != null) {
-            if (ApplicationManager.getApplication().isDispatchThread() || background) {
-                new SimpleBackgroundTask("close statement") {
-                    @Override
-                    protected void execute() {
-                        closeStatement(statement, false);
-                    }
-                }.start();
-            } else {
-                try {
-                    statement.close();
-                } catch (Throwable ignore) {
-                }
-            }
-        }
-    }
-
-    public static void cancelStatement(final Statement statement) {
+    public static void cancel(final Statement statement) {
         if (statement != null) {
             try {
                 statement.cancel();
             } catch (Throwable e) {
                 LOGGER.warn("Error cancelling statement: " + e.getMessage());
             } finally {
-                closeStatement(statement, true);
+                close(statement);
             }
         }
     }
 
-    public static void closeConnection(final Connection connection) {
-        if (connection != null) {
-            if (ApplicationManager.getApplication().isDispatchThread()) {
-                new SimpleBackgroundTask("close connection") {
+    public static void close(final ResultSet resultSet) {
+        close(resultSet, "result-set", true);
+    }
+
+    public static void close(final Statement statement) {
+        close(statement, "statement", true);
+    }
+
+    public static void close(final DBNConnection connection) {
+        close(connection, "connection", true);
+    }
+
+    private static void close(final AutoCloseable closeable, final String name, boolean background) {
+        if (closeable != null) {
+            if (background || ApplicationManager.getApplication().isDispatchThread()) {
+                new SimpleBackgroundTask("close " + name) {
                     @Override
                     protected void execute() {
-                        closeConnection(connection);
+                        close(closeable, name, false);
                     }
                 }.start();
             } else {
-                try {
-                    connection.close();
-                } catch (Throwable e) {
-                    LOGGER.warn("Error closing connection: " + e.getMessage());
-                }
+                new SimpleTimeoutTask(10, TimeUnit.SECONDS) {
+                    @Override
+                    public void run() {
+                        try {
+                            closeable.close();
+                        } catch (Throwable e) {
+                            LOGGER.warn("Error closing " + name + ": " + e.getMessage());
+                        }
+                    }
+                }.start();
             }
         }
     }
@@ -210,7 +186,7 @@ public class ConnectionUtil {
 
         private SQLException exception;
 
-        public ConnectTimeoutCall() {
+        ConnectTimeoutCall() {
             super(30, TimeUnit.SECONDS, null);
         }
 

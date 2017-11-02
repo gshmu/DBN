@@ -14,7 +14,12 @@ public class FailsafeUtil {
     public static final Project DUMMY_PROJECT = new MockProject(ApplicationManager.getApplication().getPicoContainer(), ApplicationManager.getApplication());
 
     public static @NotNull <T extends Disposable> T get(@Nullable T disposable) {
-        if (disposable == null || disposable.isDisposed()) {
+        if (disposable == null) {
+            throw AlreadyDisposedException.INSTANCE;
+        } else if (disposable.isDisposed()) {
+            if (ApplicationManager.getApplication().isDispatchThread()) {
+                return disposable;
+            }
             throw AlreadyDisposedException.INSTANCE;
         }
         return disposable;

@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -24,7 +25,6 @@ import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
-import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -158,7 +158,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     public List<DBSchema> getReferencingSchemas() throws SQLException {
         List<DBSchema> schemas = new ArrayList<DBSchema>();
         ConnectionHandler connectionHandler = getConnectionHandler();
-        Connection connection = connectionHandler.getPoolConnection(getSchema(), true);
+        DBNConnection connection = connectionHandler.getPoolConnection(getSchema(), true);
         ResultSet resultSet = null;
         try {
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
@@ -175,7 +175,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             }
 
         } finally {
-            ConnectionUtil.closeResultSet(resultSet);
+            ConnectionUtil.close(resultSet);
             connectionHandler.freePoolConnection(connection);
         }
         return schemas;
@@ -183,7 +183,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
 
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        Connection connection = connectionHandler.getPoolConnection(getSchema(), true);
+        DBNConnection connection = connectionHandler.getPoolConnection(getSchema(), true);
         try {
             DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
             ddlInterface.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, connection);
