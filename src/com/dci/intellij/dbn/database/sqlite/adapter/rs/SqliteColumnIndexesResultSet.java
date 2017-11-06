@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexDetailInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexInfo;
@@ -19,11 +19,11 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.Raw
  */
 
 public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResultSetStub<SqliteColumnIndexesResultSet.IndexColumn> {
-    public SqliteColumnIndexesResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
+    public SqliteColumnIndexesResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
         super(ownerName, datasetNames, connection);
     }
 
-    public SqliteColumnIndexesResultSet(String ownerName, String datasetName, Connection connection) throws SQLException {
+    public SqliteColumnIndexesResultSet(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         super(ownerName, datasetName, connection);
     }
 

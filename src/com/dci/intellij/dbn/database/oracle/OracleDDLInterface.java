@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.database.oracle;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
 import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
@@ -79,16 +79,16 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
-    public void updateView(String viewName, String code, Connection connection) throws SQLException {
+    public void updateView(String viewName, String code, DBNConnection connection) throws SQLException {
         executeUpdate(connection, "change-view", viewName, code);
     }
 
     @Override
-    public void updateTrigger(String tableOwner, String tableName, String triggerName, String oldCode, String newCode, Connection connection) throws SQLException {
+    public void updateTrigger(String tableOwner, String tableName, String triggerName, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         updateObject(triggerName, "trigger", oldCode, newCode, connection);
     }
 
-    public void updateObject(String objectName, String objectType, String oldCode, String newCode, Connection connection) throws SQLException {
+    public void updateObject(String objectName, String objectType, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         // code contains object type and name
         executeUpdate(connection, "change-object", newCode);
     }
@@ -96,7 +96,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CREATE statements                   *
      *********************************************************/
-    public void createMethod(MethodFactoryInput method, Connection connection) throws SQLException {
+    public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
         CodeStyleCaseSettings styleCaseSettings = PSQLCodeStyleSettings.getInstance(method.getSchema().getProject()).getCaseSettings();
         CodeStyleCaseOption kco = styleCaseSettings.getKeywordCaseOption();
         CodeStyleCaseOption oco = styleCaseSettings.getObjectCaseOption();

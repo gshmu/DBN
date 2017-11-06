@@ -20,7 +20,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -76,7 +76,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         int timeout = getSettings().getGeneralSettings().getFetchTimeout().value();
         final AtomicReference<Statement> statementRef = new AtomicReference<Statement>();
         final ConnectionHandler connectionHandler = getConnectionHandler();
-        Connection connection = connectionHandler.getMainConnection();
+        final DBNConnection connection = connectionHandler.getMainConnection();
 
         loaderCall = new CancellableDatabaseCall(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
             @Override
@@ -100,7 +100,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             @Override
             public void cancel() throws Exception {
                 Statement statement = statementRef.get();
-                ConnectionUtil.cancel(statement);
+                connection.cancel(statement);
                 loaderCall = null;
                 isDirty = true;
             }

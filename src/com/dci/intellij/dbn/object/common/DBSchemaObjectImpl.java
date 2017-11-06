@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -196,7 +195,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
      *                         Loaders                       *
      *********************************************************/
     private static final DynamicContentLoader REFERENCED_OBJECTS_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
             return metadataInterface.loadReferencedObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
@@ -224,7 +223,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     };
 
     private static final DynamicContentLoader REFERENCING_OBJECTS_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
             return metadataInterface.loadReferencingObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);

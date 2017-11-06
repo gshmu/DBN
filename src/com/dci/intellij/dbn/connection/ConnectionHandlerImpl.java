@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
 import javax.swing.Icon;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -50,7 +49,6 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectBundleImpl;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -72,7 +70,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private ConnectionInstructions instructions = new ConnectionInstructions();
 
     private boolean active;
-    private long validityCheckTimestamp = 0;
+    private long statusCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
     private AuthenticationInfo temporaryAuthenticationInfo = new AuthenticationInfo();
     private ConnectionInfo connectionInfo;
@@ -248,13 +246,13 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     public void commit() throws SQLException {
-        Connection mainConnection = getConnectionPool().getMainConnection(false);
+        DBNConnection mainConnection = getConnectionPool().getMainConnection(false);
         ConnectionUtil.commit(mainConnection);
         dataChanges = null;
     }
 
     public void rollback() throws SQLException {
-        Connection mainConnection = getConnectionPool().getMainConnection(false);
+        DBNConnection mainConnection = getConnectionPool().getMainConnection(false);
         ConnectionUtil.rollback(mainConnection);
         dataChanges = null;
     }
@@ -329,34 +327,27 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     public boolean isValid() {
-        if (getConnectionBundle().containsConnection(this)) {
+        ConnectionBundle connectionBundle = getConnectionBundle();
+        if (connectionBundle.containsConnection(this)) {
             long currentTimestamp = System.currentTimeMillis();
-            if (validityCheckTimestamp < currentTimestamp - 30000) {
-                if (ApplicationManager.getApplication().isDispatchThread()) {
-                    new SimpleBackgroundTask("verify connection") {
-                        @Override
-                        protected void execute() {
-                            checkConnection();
+            if (statusCheckTimestamp < currentTimestamp - TimeUtil.THIRTY_SECONDS) {
+                new SimpleBackgroundTask("verify connection") {
+                    @Override
+                    protected void execute() {
+                        statusCheckTimestamp = System.currentTimeMillis();
+                        try {
+                            getTestConnection();
+                        } catch (SQLException e) {
+                            if (SettingsUtil.isDebugEnabled) {
+                                LOGGER.warn("[DBN-INFO] Could not connect to database [" + getName() + "]: " + e.getMessage());
+                            }
                         }
-                    }.start();
-                } else {
-                    checkConnection();
-                }
+                    }
+                }.start();
             }
             return connectionStatus.isValid();
         }
         return false;
-    }
-
-    void checkConnection() {
-        validityCheckTimestamp = System.currentTimeMillis();
-        try {
-            getMainConnection();
-        } catch (SQLException e) {
-            if (SettingsUtil.isDebugEnabled) {
-                LOGGER.warn("[DBN-INFO] Could not connect to database [" + getName() + "]: " + e.getMessage());
-            }
-        }
     }
 
     public boolean isVirtual() {
@@ -374,7 +365,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @Override
-    public boolean hasPendingTransactions(@NotNull Connection connection) {
+    public boolean hasPendingTransactions(@NotNull DBNConnection connection) {
         return getInterfaceProvider().getMetadataInterface().hasPendingTransactions(connection);
     }
 
@@ -439,9 +430,9 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @Override
-    public DBNConnection createTestConnection() throws SQLException {
+    public DBNConnection getTestConnection() throws SQLException {
         assertCanConnect();
-        return getConnectionPool().createTestConnection();
+        return getConnectionPool().getTestConnection();
     }
 
     public DBNConnection getMainConnection() throws SQLException {

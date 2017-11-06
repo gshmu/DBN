@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.database;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.common.debug.BasicOperationInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
@@ -18,54 +18,54 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public interface DatabaseDebuggerInterface extends DatabaseInterface{
 
-    DebuggerSessionInfo initializeSession(Connection connection) throws SQLException;
+    DebuggerSessionInfo initializeSession(DBNConnection connection) throws SQLException;
 
-    void initializeJdwpSession(Connection connection, String host, String port) throws SQLException;
-    void disconnectJdwpSession(Connection connection) throws SQLException;
+    void initializeJdwpSession(DBNConnection connection, String host, String port) throws SQLException;
+    void disconnectJdwpSession(DBNConnection connection) throws SQLException;
 
-    DebuggerVersionInfo getDebuggerVersion(Connection connection) throws SQLException;
+    DebuggerVersionInfo getDebuggerVersion(DBNConnection connection) throws SQLException;
 
-    void enableDebugging(Connection connection) throws SQLException;
+    void enableDebugging(DBNConnection connection) throws SQLException;
 
-    void disableDebugging(Connection connection) throws SQLException;
+    void disableDebugging(DBNConnection connection) throws SQLException;
 
-    void attachSession(String sessionId, Connection connection) throws SQLException;
+    void attachSession(DBNConnection connection, String sessionId) throws SQLException;
 
-    void detachSession(Connection connection) throws SQLException;
+    void detachSession(DBNConnection connection) throws SQLException;
 
-    DebuggerRuntimeInfo synchronizeSession(Connection connection) throws SQLException;
+    DebuggerRuntimeInfo synchronizeSession(DBNConnection connection) throws SQLException;
 
-    BreakpointInfo addProgramBreakpoint(String programOwner, String programName, String programType, int line, Connection connection) throws SQLException;
+    BreakpointInfo addProgramBreakpoint(String programOwner, String programName, String programType, int line, DBNConnection connection) throws SQLException;
 
-    BreakpointInfo addSourceBreakpoint(int line, Connection connection) throws SQLException;
+    BreakpointInfo addSourceBreakpoint(int line, DBNConnection connection) throws SQLException;
 
-    BreakpointOperationInfo removeBreakpoint(int breakpointId, Connection connection) throws SQLException;
+    BreakpointOperationInfo removeBreakpoint(int breakpointId, DBNConnection connection) throws SQLException;
 
-    BreakpointOperationInfo enableBreakpoint(int breakpointId, Connection connection) throws SQLException;
+    BreakpointOperationInfo enableBreakpoint(int breakpointId, DBNConnection connection) throws SQLException;
 
-    BreakpointOperationInfo disableBreakpoint(int breakpointId, Connection connection) throws SQLException;
+    BreakpointOperationInfo disableBreakpoint(int breakpointId, DBNConnection connection) throws SQLException;
 
-    DebuggerRuntimeInfo stepOver(Connection connection) throws SQLException;
+    DebuggerRuntimeInfo stepOver(DBNConnection connection) throws SQLException;
 
-    DebuggerRuntimeInfo stepInto(Connection connection) throws SQLException;
+    DebuggerRuntimeInfo stepInto(DBNConnection connection) throws SQLException;
 
-    DebuggerRuntimeInfo stepOut(Connection connection) throws SQLException;
+    DebuggerRuntimeInfo stepOut(DBNConnection connection) throws SQLException;
 
-    DebuggerRuntimeInfo runToPosition(String programOwner, String programName, String programType, int line, Connection connection) throws SQLException;
+    DebuggerRuntimeInfo runToPosition(String programOwner, String programName, String programType, int line, DBNConnection connection) throws SQLException;
 
-    DebuggerRuntimeInfo stopExecution(Connection connection) throws SQLException;
+    DebuggerRuntimeInfo stopExecution(DBNConnection connection) throws SQLException;
 
-    DebuggerRuntimeInfo resumeExecution(Connection connection) throws SQLException;
+    DebuggerRuntimeInfo resumeExecution(DBNConnection connection) throws SQLException;
 
-    DebuggerRuntimeInfo getRuntimeInfo(Connection connection) throws SQLException;
+    DebuggerRuntimeInfo getRuntimeInfo(DBNConnection connection) throws SQLException;
 
-    ExecutionStatusInfo getExecutionStatusInfo(Connection connection) throws SQLException;
+    ExecutionStatusInfo getExecutionStatusInfo(DBNConnection connection) throws SQLException;
 
-    VariableInfo getVariableInfo(String variableName, Integer frameNumber, Connection connection) throws SQLException;
+    VariableInfo getVariableInfo(String variableName, Integer frameNumber, DBNConnection connection) throws SQLException;
 
-    BasicOperationInfo setVariableValue(String variableName, Integer frameNumber, String value, Connection connection) throws SQLException;
+    BasicOperationInfo setVariableValue(String variableName, Integer frameNumber, String value, DBNConnection connection) throws SQLException;
 
-    ExecutionBacktraceInfo getExecutionBacktraceInfo(Connection connection) throws SQLException;
+    ExecutionBacktraceInfo getExecutionBacktraceInfo(DBNConnection connection) throws SQLException;
 
     String[] getRequiredPrivilegeNames();
 

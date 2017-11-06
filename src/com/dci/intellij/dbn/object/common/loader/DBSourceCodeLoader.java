@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.common.loader;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jetbrains.annotations.Nullable;
@@ -48,5 +47,5 @@ public abstract class DBSourceCodeLoader {
     }
 
     @Nullable
-    public abstract ResultSet loadSourceCode(Connection connection) throws SQLException;
+    public abstract ResultSet loadSourceCode(DBNConnection connection) throws SQLException;
 }

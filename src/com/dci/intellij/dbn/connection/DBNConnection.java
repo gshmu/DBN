@@ -38,6 +38,9 @@ public class DBNConnection extends DBNConnectionBase {
         return type == ConnectionType.TEST;
     }
 
+    /****************************************************************************
+     *                       Status utilities                                   *
+     ****************************************************************************/
     @Override
     public boolean isClosed() throws SQLException {
         if (closed || closing) return true;

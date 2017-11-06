@@ -66,6 +66,12 @@ public abstract class ExecutionContext {
         return executionStatus;
     }
 
+    public void cancel(){
+        if (connection != null) {
+            connection.cancel(statement);
+        }
+    }
+
     public void reset() {
         executionStatus.reset();
         timeout = 0;

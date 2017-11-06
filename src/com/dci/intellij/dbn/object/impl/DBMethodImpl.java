@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -12,6 +11,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -159,7 +159,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
      *********************************************************/
 
     private static final DynamicContentLoader<DBArgument> ARGUMENTS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBArgument>() {
-        public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             DBMethod method = (DBMethod) dynamicContent.getParentElement();
             String ownerName = method.getSchema().getName();

@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.common;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,6 +9,7 @@ import java.util.regex.Pattern;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
@@ -38,14 +38,14 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
 
     }
 
-    protected final void execute(String statementText, Connection connection) throws SQLException {
+    protected final void execute(String statementText, DBNConnection connection) throws SQLException {
         Statement statement = connection.createStatement();
         statement.setQueryTimeout(20);
         statement.execute(statementText);
 
     }
 
-    protected final String getSingleValue(Connection connection, String loaderId, Object... arguments) throws SQLException {
+    protected final String getSingleValue(DBNConnection connection, String loaderId, Object... arguments) throws SQLException {
         ResultSet resultSet = executeQuery(connection, loaderId, arguments);
         if (resultSet.next()) {
             return resultSet.getString(1);
@@ -56,11 +56,11 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
     /*********************************************************
      *                   CREATE statements                   *
      *********************************************************/
-    public void createView(String viewName, String code, Connection connection) throws SQLException {
+    public void createView(String viewName, String code, DBNConnection connection) throws SQLException {
         executeUpdate(connection, "create-view", viewName, code);
     }
 
-    public void createObject(String code, Connection connection) throws SQLException {
+    public void createObject(String code, DBNConnection connection) throws SQLException {
         executeUpdate(connection, "create-object", code);
     }
 
@@ -68,11 +68,11 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
    /*********************************************************
     *                   DROP statements                     *
     *********************************************************/
-   public void dropObject(String objectType, String objectName, Connection connection) throws SQLException {
+   public void dropObject(String objectType, String objectName, DBNConnection connection) throws SQLException {
        executeUpdate(connection, "drop-object", objectType, objectName);
    }
 
-   public void dropObjectBody(String objectType, String objectName, Connection connection) throws SQLException {
+   public void dropObjectBody(String objectType, String objectName, DBNConnection connection) throws SQLException {
        executeUpdate(connection, "drop-object-body", objectType, objectName);
    }
 

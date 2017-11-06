@@ -100,6 +100,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                     connection.prepareStatement(command) :
                     connection.prepareCall(command);
 
+            context.setConnection(connection);
             context.setStatement(statement);
 
             bindParameters(executionInput, statement);
@@ -119,7 +120,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
                 @Override
                 public void cancel() throws Exception {
-                    ConnectionUtil.cancel(statement);
+                    connection.cancel(statement);
                 }
             }.start();
 
@@ -135,7 +136,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
             if (!usePoolConnection) connectionHandler.notifyDataChanges(method.getVirtualFile());
         } catch (SQLException e) {
-            ConnectionUtil.cancel(context.getStatement());
+            context.cancel();
             throw e;
         } finally {
             runningMethods.decrement();

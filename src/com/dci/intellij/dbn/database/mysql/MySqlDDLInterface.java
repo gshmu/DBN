@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
 import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
@@ -67,11 +67,11 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
         super.computeSourceCodeOffsets(content, objectTypeId, objectName);
     }
 
-    public String getSessionSqlMode(Connection connection) throws SQLException {
+    public String getSessionSqlMode(DBNConnection connection) throws SQLException {
         return getSingleValue(connection, "get-session-sql-mode");
     }
 
-    public void setSessionSqlMode(String sqlMode, Connection connection) throws SQLException {
+    public void setSessionSqlMode(String sqlMode, DBNConnection connection) throws SQLException {
         if (sqlMode != null) {
             executeCall(connection, null, "set-session-sql-mode", sqlMode);
         }
@@ -80,7 +80,7 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
-    public void updateView(String viewName, String code, Connection connection) throws SQLException {
+    public void updateView(String viewName, String code, DBNConnection connection) throws SQLException {
         String sqlMode = getSessionSqlMode(connection);
         setSessionSqlMode("TRADITIONAL", connection);
         try {
@@ -99,7 +99,7 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
     }
 
     @Override
-    public void updateTrigger(String tableOwner, String tableName, String triggerName, String oldCode, String newCode, Connection connection) throws SQLException {
+    public void updateTrigger(String tableOwner, String tableName, String triggerName, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         // triggers do not support multiple triggers with same event (i.e can not use "try temp" approach)
         String sqlMode = getSessionSqlMode(connection);
         setSessionSqlMode("TRADITIONAL", connection);
@@ -114,7 +114,7 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
         }
     }
 
-    public void updateObject(String objectName, String objectType, String oldCode, String newCode, Connection connection) throws SQLException {
+    public void updateObject(String objectName, String objectType, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         String sqlMode = getSessionSqlMode(connection);
         setSessionSqlMode("TRADITIONAL", connection);
         try {
@@ -133,14 +133,14 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                     DROP statements                   *
      *********************************************************/
-    private void dropObjectIfExists(String objectType, String objectName, Connection connection) throws SQLException {
+    private void dropObjectIfExists(String objectType, String objectName, DBNConnection connection) throws SQLException {
         executeUpdate(connection, "drop-object-if-exists", objectType, objectName);
     }
 
     /*********************************************************
      *                   CREATE statements                   *
      *********************************************************/
-    public void createMethod(MethodFactoryInput method, Connection connection) throws SQLException {
+    public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
         CodeStyleCaseSettings styleCaseSettings = PSQLCodeStyleSettings.getInstance(method.getSchema().getProject()).getCaseSettings();
         CodeStyleCaseOption keywordCaseOption = styleCaseSettings.getKeywordCaseOption();
         CodeStyleCaseOption objectCaseOption = styleCaseSettings.getObjectCaseOption();

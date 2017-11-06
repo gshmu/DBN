@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.logging;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +11,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
@@ -33,7 +33,7 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
     /*********************************************************
      *                       Custom                          *
      *********************************************************/
-    public boolean enableLogger(ConnectionHandler connectionHandler, Connection connection) {
+    public boolean enableLogger(ConnectionHandler connectionHandler, DBNConnection connection) {
         DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
             try {
@@ -52,7 +52,7 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
         return false;
     }
 
-    public void disableLogger(ConnectionHandler connectionHandler, @Nullable Connection connection) {
+    public void disableLogger(ConnectionHandler connectionHandler, @Nullable DBNConnection connection) {
         if (connection != null) {
             DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
             if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
@@ -69,7 +69,7 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
         }
     }
 
-    public String readLoggerOutput(ConnectionHandler connectionHandler, Connection connection) {
+    public String readLoggerOutput(ConnectionHandler connectionHandler, DBNConnection connection) {
         DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
         DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
         try {

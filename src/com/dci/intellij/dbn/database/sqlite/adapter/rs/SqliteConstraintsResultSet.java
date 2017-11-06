@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.*;
 
@@ -22,11 +22,11 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintIn
 public abstract class SqliteConstraintsResultSet extends SqliteConstraintInfoResultSetStub<SqliteConstraintsResultSet.Constraint> {
 
 
-    public SqliteConstraintsResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, Connection connection) throws SQLException {
+    public SqliteConstraintsResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
         super(ownerName, datasetNames, connection);
     }
 
-    public SqliteConstraintsResultSet(String ownerName, String datasetName, Connection connection) throws SQLException {
+    public SqliteConstraintsResultSet(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         super(ownerName, datasetName, connection);
     }
 

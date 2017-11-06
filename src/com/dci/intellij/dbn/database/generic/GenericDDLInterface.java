@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.database.generic;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
@@ -21,41 +21,41 @@ public class GenericDDLInterface extends DatabaseDDLInterfaceImpl {
                         "create or replace\n" + code;
     }
 
-    public String getSessionSqlMode(Connection connection) throws SQLException {
+    public String getSessionSqlMode(DBNConnection connection) throws SQLException {
         throw new UnsupportedOperationException("Not implemented");
     }
 
-    public void setSessionSqlMode(String sqlMode, Connection connection) throws SQLException {
+    public void setSessionSqlMode(String sqlMode, DBNConnection connection) throws SQLException {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
-    public void updateView(String viewName, String code, Connection connection) throws SQLException {
+    public void updateView(String viewName, String code, DBNConnection connection) throws SQLException {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public void updateTrigger(String tableOwner, String tableName, String triggerName, String oldCode, String newCode, Connection connection) throws SQLException {
+    public void updateTrigger(String tableOwner, String tableName, String triggerName, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         throw new UnsupportedOperationException("Not implemented");
     }
 
-    public void updateObject(String objectName, String objectType, String oldCode, String newCode, Connection connection) throws SQLException {
+    public void updateObject(String objectName, String objectType, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     /*********************************************************
      *                     DROP statements                   *
      *********************************************************/
-    private void dropObjectIfExists(String objectType, String objectName, Connection connection) throws SQLException {
+    private void dropObjectIfExists(String objectType, String objectName, DBNConnection connection) throws SQLException {
         executeQuery(connection, true, "drop-object-if-exists", objectType, objectName);
     }
 
     /*********************************************************
      *                   CREATE statements                   *
      *********************************************************/
-    public void createMethod(MethodFactoryInput method, Connection connection) throws SQLException {
+    public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
         throw new UnsupportedOperationException("Not implemented");
     }
 

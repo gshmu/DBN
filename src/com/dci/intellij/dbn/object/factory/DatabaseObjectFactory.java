@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.factory;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +85,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
             DBSchema schema = methodFactoryInput.getSchema();
             try {
                 ConnectionHandler connectionHandler = schema.getConnectionHandler();
-                Connection connection = connectionHandler.getMainConnection(schema);
+                DBNConnection connection = connectionHandler.getMainConnection(schema);
                 connectionHandler.getInterfaceProvider().getDDLInterface().createMethod(methodFactoryInput, connection);
                 DBObjectType objectType = methodFactoryInput.isFunction() ? DBObjectType.FUNCTION : DBObjectType.PROCEDURE;
                 schema.getChildObjectList(objectType).reload();

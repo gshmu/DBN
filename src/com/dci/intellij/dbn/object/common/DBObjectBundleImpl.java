@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
 import javax.swing.Icon;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,6 +38,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionPool;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
@@ -711,7 +711,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
      *                         Loaders                       *
      *********************************************************/
     private static final DynamicContentLoader<DBSchema> SCHEMAS_LOADER = new DynamicContentResultSetLoader<DBSchema>() {
-        public ResultSet createResultSet(DynamicContent<DBSchema> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBSchema> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadSchemas(connection);
         }
@@ -722,7 +722,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     };
 
     private static final DynamicContentLoader<DBUser> USERS_LOADER = new DynamicContentResultSetLoader<DBUser>() {
-        public ResultSet createResultSet(DynamicContent<DBUser> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBUser> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadUsers(connection);
         }
@@ -733,7 +733,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     };
 
     private static final DynamicContentLoader<DBRole> ROLES_LOADER = new DynamicContentResultSetLoader<DBRole>() {
-        public ResultSet createResultSet(DynamicContent<DBRole> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBRole> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadRoles(connection);
         }
@@ -745,7 +745,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
 
     private static final DynamicContentLoader<DBSystemPrivilege> SYSTEM_PRIVILEGES_LOADER = new DynamicContentResultSetLoader<DBSystemPrivilege>() {
-        public ResultSet createResultSet(DynamicContent<DBSystemPrivilege> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBSystemPrivilege> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadSystemPrivileges(connection);
         }
@@ -756,7 +756,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     };
 
     private static final DynamicContentLoader<DBObjectPrivilege> OBJECT_PRIVILEGES_LOADER = new DynamicContentResultSetLoader<DBObjectPrivilege>() {
-        public ResultSet createResultSet(DynamicContent<DBObjectPrivilege> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBObjectPrivilege> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadObjectPrivileges(connection);
         }
@@ -767,7 +767,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     };
 
     private static final DynamicContentLoader<DBCharset> CHARSETS_LOADER = new DynamicContentResultSetLoader<DBCharset>() {
-        public ResultSet createResultSet(DynamicContent<DBCharset> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBCharset> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadCharsets(connection);
         }
@@ -781,7 +781,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
      *                    Relation loaders                   *
      *********************************************************/
     private static final DynamicContentLoader USER_ROLE_RELATION_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadAllUserRoles(connection);
         }
@@ -800,7 +800,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     };
 
     private static final DynamicContentLoader USER_PRIVILEGE_RELATION_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadAllUserPrivileges(connection);
         }
@@ -819,7 +819,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     };
 
     private static final DynamicContentLoader ROLE_ROLE_RELATION_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadAllRoleRoles(connection);
         }
@@ -838,7 +838,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     };
 
     private static final DynamicContentLoader ROLE_PRIVILEGE_RELATION_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadAllRolePrivileges(connection);
         }

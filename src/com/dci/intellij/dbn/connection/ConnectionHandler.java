@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +31,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable {
     @NotNull
     Project getProject();
-    DBNConnection createTestConnection() throws SQLException;
+    DBNConnection getTestConnection() throws SQLException;
     DBNConnection getMainConnection() throws SQLException;
     DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException;
     DBNConnection getPoolConnection(boolean readonly) throws SQLException;
@@ -78,7 +77,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     boolean isVirtual();
     boolean isAutoCommit();
     boolean isLoggingEnabled();
-    boolean hasPendingTransactions(@NotNull Connection connection);
+    boolean hasPendingTransactions(@NotNull DBNConnection connection);
     void setAutoCommit(boolean autoCommit) throws SQLException;
     void setLoggingEnabled(boolean loggingEnabled);
     void disconnect() throws SQLException;
