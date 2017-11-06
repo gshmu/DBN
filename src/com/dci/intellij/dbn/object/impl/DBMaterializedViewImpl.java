@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -9,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.DBMaterializedView;
@@ -84,7 +84,7 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
             super(object, false);
         }
 
-        public ResultSet loadSourceCode(Connection connection) throws SQLException {
+        public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             return getConnectionHandler().getInterfaceProvider().getMetadataInterface().loadMaterializedViewSourceCode(
                    getSchema().getName(), getName(), connection);
         }

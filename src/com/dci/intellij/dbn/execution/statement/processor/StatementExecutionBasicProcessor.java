@@ -24,7 +24,6 @@ import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -291,7 +290,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                         notifyDataManipulationChanges(context);
                     }
                 } catch (SQLException e) {
-                    ConnectionUtil.cancel(context.getStatement());
+                    context.cancel();
                     if (!status.isCancelled()) {
                         executionException = e;
                         executionResult = createErrorExecutionResult(e.getMessage());
@@ -326,7 +325,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             ExecutionContext context = getExecutionContext();
             DBNConnection connection = context.getConnection();
             if (connection != null && connection.isPoolConnection()) {
-                ConnectionUtil.cancel(context.getStatement());
+                connection.cancel(context.getStatement());
                 ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
                 connectionHandler.freePoolConnection(connection);
             }
@@ -385,7 +384,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         final ExecutionStatus status = getExecutionStatus();
         status.assertNotCancelled();
 
-        DBNConnection connection = context.getConnection();
+        final DBNConnection connection = context.getConnection();
         ConnectionHandler connectionHandler = getTargetConnection();
         final Statement statement = connection.createStatement();
         context.setStatement(statement);
@@ -409,7 +408,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             public void cancel(){
                 try {
                     status.setCancelled(true);
-                    ConnectionUtil.cancel(statement);
+                    connection.cancel(statement);
                 } finally {
                     databaseCall = null;
                 }

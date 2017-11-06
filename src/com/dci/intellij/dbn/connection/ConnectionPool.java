@@ -32,32 +32,38 @@ public class ConnectionPool implements Disposable {
 
     private List<DBNConnection> poolConnections = new CopyOnWriteArrayList<DBNConnection>();
     private DBNConnection mainConnection;
+    private DBNConnection testConnection;
 
     ConnectionPool(@NotNull ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = connectionHandler.getRef();
         POOL_CLEANER_TASK.registerConnectionPool(this);
     }
 
-    public DBNConnection createTestConnection() throws SQLException {
-        return ConnectionUtil.connect(getConnectionHandler(), ConnectionType.TEST);
+    public DBNConnection getTestConnection() throws SQLException {
+        testConnection = init(testConnection, ConnectionType.TEST, true);
+        return testConnection;
     }
 
     @Nullable
     public DBNConnection getMainConnection(boolean forceInit) throws SQLException {
+        mainConnection = init(mainConnection, ConnectionType.MAIN, forceInit);
+        return mainConnection;
+    }
+
+    private DBNConnection init(DBNConnection connection, ConnectionType connectionType, boolean force) throws SQLException {
         lastAccessTimestamp = System.currentTimeMillis();
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.setLastUsedConnection(connectionHandler);
 
-        if (shouldInitMainConnection(forceInit)) {
+        if (shouldInit(connection, force)) {
             synchronized (this) {
-                if (shouldInitMainConnection(forceInit)) {
+                if (shouldInit(connection, force)) {
                     try {
-                        if (mainConnection != null) {
-                            ConnectionUtil.close(mainConnection);
-                            mainConnection = null;
+                        if (connection != null) {
+                            ConnectionUtil.close(connection);
                         }
 
-                        mainConnection = ConnectionUtil.connect(connectionHandler, ConnectionType.MAIN);
+                        connection = ConnectionUtil.connect(connectionHandler, connectionType);
                         NotificationUtil.sendInfoNotification(
                                 getProject(),
                                 Constants.DBN_TITLE_PREFIX + "Connect",
@@ -70,11 +76,11 @@ public class ConnectionPool implements Disposable {
             }
         }
 
-        return mainConnection;
+        return connection;
     }
 
-    private boolean shouldInitMainConnection(boolean forceInit) throws SQLException {
-        return forceInit && (mainConnection == null || mainConnection.isClosed() || !mainConnection.isValid(2));
+    private boolean shouldInit(DBNConnection connection, boolean force) throws SQLException {
+        return force && (connection == null || connection.isClosed() || !connection.isValid(2));
     }
 
     public long getLastAccessTimestamp() {
@@ -127,8 +133,8 @@ public class ConnectionPool implements Disposable {
 
         for (DBNConnection connection : poolConnections) {
             if (!connection.isBusy()) {
-                connection.setBusy(true);
                 if (!connection.isClosed() && connection.isValid()) {
+                    connection.setBusy(true);
                     connectionStatus.setConnected(true);
                     connectionStatus.setValid(true);
                     return connection;
@@ -229,9 +235,8 @@ public class ConnectionPool implements Disposable {
 
     public void keepAlive(boolean check) {
         if (mainConnection != null) {
-            if (check && mainConnection.isValid()) {
-                mainConnection.keepAlive();
-            }
+            mainConnection.keepAlive();
+            if (check) mainConnection.isValid();
         }
     }
 

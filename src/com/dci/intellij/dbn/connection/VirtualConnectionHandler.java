@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
 import javax.swing.Icon;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -161,7 +160,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override public String getUserName() {return "root";}
 
-    @Override public DBNConnection createTestConnection() throws SQLException {return null;}
+    @Override public DBNConnection getTestConnection() throws SQLException {return null;}
     @Override public DBNConnection getPoolConnection(boolean readonly) throws SQLException {return null;}
     @Override public DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {return null;}
     @Override public DBNConnection getMainConnection() throws SQLException {return null;}
@@ -184,7 +183,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return false;
     }
 
-    @Override public boolean hasPendingTransactions(@NotNull Connection connection) {return false;}
+    @Override public boolean hasPendingTransactions(@NotNull DBNConnection connection) {return false;}
 
     @NotNull
     @Override

@@ -126,7 +126,7 @@ public class ConnectionUtil {
         DatabaseInterfaceProvider interfaceProvider = databaseType == DatabaseType.UNKNOWN ? null : connectionHandler.getInterfaceProvider();
         try {
             DatabaseAttachmentHandler attachmentHandler = interfaceProvider == null ? null : interfaceProvider.getCompatibilityInterface().getDatabaseAttachmentHandler();
-            Connection connection = connect(
+            DBNConnection connection = connect(
                     connectionSettings,
                     connectionType,
                     connectionStatus,
@@ -136,7 +136,7 @@ public class ConnectionUtil {
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
             connectionHandler.setConnectionInfo(connectionInfo);
             connectionStatus.setAuthenticationError(null);
-            return new DBNConnection(connection, connectionType);
+            return connection;
         } catch (SQLException e) {
             if (interfaceProvider != null) {
                 DatabaseMessageParserInterface messageParserInterface = interfaceProvider.getMessageParserInterface();
@@ -191,7 +191,7 @@ public class ConnectionUtil {
         }
 
         @Override
-        public Connection call() throws Exception{
+        public Connection call() {
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             try {
                 final Properties properties = new Properties();
@@ -272,7 +272,7 @@ public class ConnectionUtil {
                     connectionStatus.setConnected(false);
                     connectionStatus.setValid(false);
                 }
-                exception = new SQLException("Connection error: " + e.getMessage());
+                exception = new SQLException("DBNConnection error: " + e.getMessage());
             }
             return null;
         }
@@ -318,7 +318,7 @@ public class ConnectionUtil {
         return DatabaseType.resolve(productName);
     }
 
-    public static void commit(Connection connection) {
+    public static void commit(DBNConnection connection) {
         try {
             if (connection != null) connection.commit();
         } catch (SQLRecoverableException e){
@@ -363,14 +363,14 @@ public class ConnectionUtil {
         }
     }
 
-    public static void setReadonly(Connection connection, boolean readonly) {
+    public static void setReadonly(DBNConnection connection, boolean readonly) {
         try {
             connection.setReadOnly(readonly);
         } catch (SQLException ignore) {
         }
     }
 
-    public static void setAutocommit(Connection connection, boolean autoCommit) {
+    public static void setAutocommit(DBNConnection connection, boolean autoCommit) {
         try {
             if (connection != null && !connection.isClosed()) {
                 ConnectionUtil.setAutoCommit(connection, autoCommit);
@@ -383,7 +383,7 @@ public class ConnectionUtil {
     }
 
 
-    public static boolean isClosed(final Connection connection) {
+    public static boolean isClosed(final DBNConnection connection) {
         return new SimpleTimeoutCall<Boolean>(2, TimeUnit.SECONDS, false) {
             @Override
             public Boolean call() throws Exception {

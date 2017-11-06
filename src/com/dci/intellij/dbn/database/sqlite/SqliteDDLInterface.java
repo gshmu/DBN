@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.database.sqlite;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
@@ -59,7 +59,7 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
-    public void updateView(String viewName, String code, Connection connection) throws SQLException {
+    public void updateView(String viewName, String code, DBNConnection connection) throws SQLException {
         // try create
         String objectType = "VIEW";
         String tempViewName = getTempObjectName(objectType);
@@ -73,7 +73,7 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
     }
 
     @Override
-    public void updateTrigger(String tableOwner, String tableName, String triggerName, String oldCode, String newCode, Connection connection) throws SQLException {
+    public void updateTrigger(String tableOwner, String tableName, String triggerName, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         String objectType = "TRIGGER";
         String tempTriggerName = getTempObjectName(objectType);
         dropObjectIfExists(objectType, tempTriggerName, connection);
@@ -84,7 +84,7 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
         createObject(newCode, connection);
     }
 
-    public void updateObject(String objectName, String objectType, String oldCode, String newCode, Connection connection) throws SQLException {
+    public void updateObject(String objectName, String objectType, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         dropObjectIfExists(objectType, objectName, connection);
         try {
             createObject(newCode, connection);
@@ -97,14 +97,14 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                     DROP statements                   *
      *********************************************************/
-    private void dropObjectIfExists(String objectType, String objectName, Connection connection) throws SQLException {
+    private void dropObjectIfExists(String objectType, String objectName, DBNConnection connection) throws SQLException {
         executeUpdate(connection, "drop-object-if-exists", objectType, objectName);
     }
 
     /*********************************************************
      *                   CREATE statements                   *
      *********************************************************/
-    public void createMethod(MethodFactoryInput method, Connection connection) throws SQLException {
+    public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
         throw new SQLException("Operation not supported: [create method]");
     }
 

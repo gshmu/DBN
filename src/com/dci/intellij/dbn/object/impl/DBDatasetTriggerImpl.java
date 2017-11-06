@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
 import javax.swing.Icon;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jetbrains.annotations.Nullable;
@@ -93,7 +92,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
             super(object, false);
         }
 
-        public ResultSet loadSourceCode(Connection connection) throws SQLException {
+        public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             ConnectionHandler connectionHandler = getConnectionHandler();
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadDatasetTriggerSourceCode(getDataset().getSchema().getName(), getDataset().getName(), getSchema().getName(), getName(), connection);

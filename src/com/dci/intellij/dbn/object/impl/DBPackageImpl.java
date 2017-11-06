@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
 import javax.swing.Icon;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -17,6 +16,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.ddl.DDLFileManager;
 import com.dci.intellij.dbn.ddl.DDLFileType;
@@ -109,7 +109,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
      *********************************************************/
 
     private static final DynamicContentLoader<DBPackageFunction> FUNCTIONS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBPackageFunction>() {
-        public ResultSet createResultSet(DynamicContent<DBPackageFunction> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBPackageFunction> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
             return metadataInterface.loadPackageFunctions(packagee.getSchema().getName(), packagee.getName(), connection);
@@ -133,7 +133,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
     };
 
     private static final DynamicContentLoader<DBPackageProcedure> PROCEDURES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBPackageProcedure>() {
-        public ResultSet createResultSet(DynamicContent<DBPackageProcedure> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBPackageProcedure> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
             return metadataInterface.loadPackageProcedures(packagee.getSchema().getName(), packagee.getName(), connection);
@@ -157,7 +157,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
     };
 
     private static final DynamicContentLoader<DBPackageType> TYPES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBPackageType>() {
-        public ResultSet createResultSet(DynamicContent<DBPackageType> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBPackageType> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
             return metadataInterface.loadPackageTypes(packagee.getSchema().getName(), packagee.getName(), connection);
@@ -185,7 +185,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
             super(object, false);
         }
 
-        public ResultSet loadSourceCode(Connection connection) throws SQLException {
+        public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             ConnectionHandler connectionHandler = getConnectionHandler();
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadObjectSourceCode(
@@ -198,7 +198,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
             super(object, true);
         }
 
-        public ResultSet loadSourceCode(Connection connection) throws SQLException {
+        public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             ConnectionHandler connectionHandler = getConnectionHandler();
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadObjectSourceCode(getSchema().getName(), getName(), "PACKAGE BODY",connection);

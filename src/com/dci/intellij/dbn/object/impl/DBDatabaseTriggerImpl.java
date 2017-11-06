@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
 import javax.swing.Icon;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jetbrains.annotations.Nullable;
@@ -9,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDatabaseTrigger;
@@ -88,7 +88,7 @@ public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTr
             super(object, false);
         }
 
-        public ResultSet loadSourceCode(Connection connection) throws SQLException {
+        public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler != null) {
                 DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();

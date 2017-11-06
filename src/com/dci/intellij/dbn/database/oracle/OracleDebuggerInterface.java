@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.database.oracle;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseDebuggerInterfaceImpl;
@@ -29,82 +29,82 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
     }
 
     @Override
-    public void initializeJdwpSession(Connection connection, String host, String port) throws SQLException {
+    public void initializeJdwpSession(DBNConnection connection, String host, String port) throws SQLException {
         executeCall(connection, null, "initialize-session-debugging");
         executeCall(connection, null, "initialize-session-compiler-flags");
         executeCall(connection, null, "connect-jdwp-session", host, port);
     }
 
     @Override
-    public void disconnectJdwpSession(Connection connection) throws SQLException {
+    public void disconnectJdwpSession(DBNConnection connection) throws SQLException {
         executeCall(connection, null, "disconnect-jdwp-session");
     }
 
-    public DebuggerSessionInfo initializeSession(Connection connection) throws SQLException {
+    public DebuggerSessionInfo initializeSession(DBNConnection connection) throws SQLException {
         executeCall(connection, null, "initialize-session-debugging");
         executeCall(connection, null, "initialize-session-compiler-flags");
         return executeCall(connection, new DebuggerSessionInfo(), "initialize-session");
     }
 
     @Override
-    public DebuggerVersionInfo getDebuggerVersion(Connection connection) throws SQLException {
+    public DebuggerVersionInfo getDebuggerVersion(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerVersionInfo(), "get-debugger-version");
     }
 
-    public void enableDebugging(Connection connection) throws SQLException {
+    public void enableDebugging(DBNConnection connection) throws SQLException {
         executeCall(connection, null, "enable-debugging");
     }
 
-    public void disableDebugging(Connection connection) throws SQLException {
+    public void disableDebugging(DBNConnection connection) throws SQLException {
         executeCall(connection, null, "disable-debugging");
     }
 
-    public void attachSession(String sessionId, Connection connection) throws SQLException {
+    public void attachSession(DBNConnection connection, String sessionId) throws SQLException {
         executeCall(connection, null, "attach-session", sessionId);
     }
 
-    public void detachSession(Connection connection) throws SQLException {
+    public void detachSession(DBNConnection connection) throws SQLException {
         executeCall(connection, null, "detach-session");
     }
 
-    public DebuggerRuntimeInfo synchronizeSession(Connection connection) throws SQLException {
+    public DebuggerRuntimeInfo synchronizeSession(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "synchronize-session");
     }
 
-    public BreakpointInfo addProgramBreakpoint(String programOwner, String programName, String programType, int line, Connection connection) throws SQLException {
+    public BreakpointInfo addProgramBreakpoint(String programOwner, String programName, String programType, int line, DBNConnection connection) throws SQLException {
         return executeCall(connection, new BreakpointInfo(), "add-program-breakpoint", programOwner, programName, programType, line + 1);
     }
 
     @Override
-    public BreakpointInfo addSourceBreakpoint(int line, Connection connection) throws SQLException {
+    public BreakpointInfo addSourceBreakpoint(int line, DBNConnection connection) throws SQLException {
         return executeCall(connection, new BreakpointInfo(), "add-source-breakpoint", line + 1);
     }
 
-    public BreakpointOperationInfo removeBreakpoint(int breakpointId, Connection connection) throws SQLException {
+    public BreakpointOperationInfo removeBreakpoint(int breakpointId, DBNConnection connection) throws SQLException {
         return executeCall(connection, new BreakpointOperationInfo(), "remove-breakpoint", breakpointId);
     }
 
-    public BreakpointOperationInfo enableBreakpoint(int breakpointId, Connection connection) throws SQLException {
+    public BreakpointOperationInfo enableBreakpoint(int breakpointId, DBNConnection connection) throws SQLException {
         return executeCall(connection, new BreakpointOperationInfo(), "enable-breakpoint", breakpointId);
     }
 
-    public BreakpointOperationInfo disableBreakpoint(int breakpointId, Connection connection) throws SQLException {
+    public BreakpointOperationInfo disableBreakpoint(int breakpointId, DBNConnection connection) throws SQLException {
         return executeCall(connection, new BreakpointOperationInfo(), "disable-breakpoint", breakpointId);
     }
 
-    public DebuggerRuntimeInfo stepOver(Connection connection) throws SQLException {
+    public DebuggerRuntimeInfo stepOver(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "step-over");
     }
 
-    public DebuggerRuntimeInfo stepInto(Connection connection) throws SQLException {
+    public DebuggerRuntimeInfo stepInto(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "step-into");
     }
 
-    public DebuggerRuntimeInfo stepOut(Connection connection) throws SQLException {
+    public DebuggerRuntimeInfo stepOut(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "step-out");
     }
 
-    public DebuggerRuntimeInfo runToPosition(String programOwner, String programName, String programType, int line, Connection connection) throws SQLException {
+    public DebuggerRuntimeInfo runToPosition(String programOwner, String programName, String programType, int line, DBNConnection connection) throws SQLException {
         BreakpointInfo breakpointInfo = addProgramBreakpoint(programOwner, programName, programType, line, connection);
         DebuggerRuntimeInfo runtimeInfo = stepOut(connection);
         Integer breakpointId = breakpointInfo.getBreakpointId();
@@ -114,31 +114,31 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
         return runtimeInfo;
     }
 
-    public DebuggerRuntimeInfo resumeExecution(Connection connection) throws SQLException {
+    public DebuggerRuntimeInfo resumeExecution(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "resume-execution");
     }
 
-    public DebuggerRuntimeInfo stopExecution(Connection connection) throws SQLException {
+    public DebuggerRuntimeInfo stopExecution(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "stop-execution");
     }
 
-    public DebuggerRuntimeInfo getRuntimeInfo(Connection connection) throws SQLException {
+    public DebuggerRuntimeInfo getRuntimeInfo(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "get-runtime-info");
     }
 
-    public ExecutionStatusInfo getExecutionStatusInfo(Connection connection) throws SQLException {
+    public ExecutionStatusInfo getExecutionStatusInfo(DBNConnection connection) throws SQLException {
         return executeCall(connection, new ExecutionStatusInfo(), "get-execution-status-info");
     }
 
-    public VariableInfo getVariableInfo(String variableName, Integer frameNumber, Connection connection) throws SQLException {
+    public VariableInfo getVariableInfo(String variableName, Integer frameNumber, DBNConnection connection) throws SQLException {
         return executeCall(connection, new VariableInfo(), "get-variable", variableName, frameNumber);
     }
 
-    public BasicOperationInfo setVariableValue(String variableName, Integer frameNumber, String value, Connection connection) throws SQLException {
+    public BasicOperationInfo setVariableValue(String variableName, Integer frameNumber, String value, DBNConnection connection) throws SQLException {
         return executeCall(connection, new BasicOperationInfo(), "set-variable-value", frameNumber, variableName, value);
     }
 
-    public ExecutionBacktraceInfo getExecutionBacktraceInfo(Connection connection) throws SQLException {
+    public ExecutionBacktraceInfo getExecutionBacktraceInfo(DBNConnection connection) throws SQLException {
         return executeCall(connection, new ExecutionBacktraceInfo(), "get-execution-backtrace-table");
     }
 

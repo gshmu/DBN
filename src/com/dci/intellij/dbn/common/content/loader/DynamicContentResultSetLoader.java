@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.content.loader;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 public abstract class DynamicContentResultSetLoader<T extends DynamicContentElement> implements DynamicContentLoader<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    public abstract ResultSet createResultSet(DynamicContent<T> dynamicContent, Connection connection) throws SQLException;
+    public abstract ResultSet createResultSet(DynamicContent<T> dynamicContent, DBNConnection connection) throws SQLException;
     public abstract T createElement(DynamicContent<T> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException;
 
     private class DebugInfo {                                                         

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
 import javax.swing.Icon;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,6 +15,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBColumn;
@@ -192,7 +192,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     };
 
     private static final DynamicContentLoader<DBNestedTable> NESTED_TABLES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBNestedTable>() {
-        public ResultSet createResultSet(DynamicContent<DBNestedTable> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBNestedTable> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             DBTable table = (DBTable) dynamicContent.getParentElement();
             return metadataInterface.loadNestedTables(table.getSchema().getName(), table.getName(), connection);

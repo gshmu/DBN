@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.thread;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.util.Timer;
@@ -20,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.diagnostic.Logger;
@@ -40,7 +40,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private Connection connection;
+    private DBNConnection connection;
     private int timeout;
     private long startTimestamp = System.currentTimeMillis();
     private TimeUnit timeUnit;
@@ -52,7 +52,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     private transient boolean cancelRequested = false;
     private Timer cancelCheckTimer;
 
-    public CancellableDatabaseCall(@Nullable ConnectionHandler connectionHandler, @Nullable Connection connection, int timeout, TimeUnit timeUnit) {
+    public CancellableDatabaseCall(@Nullable ConnectionHandler connectionHandler, @Nullable DBNConnection connection, int timeout, TimeUnit timeUnit) {
         this.connection = connection;
         this.timeout = timeout;
         this.timeUnit = timeUnit;

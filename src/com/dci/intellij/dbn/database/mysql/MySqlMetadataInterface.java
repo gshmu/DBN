@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 
@@ -15,12 +15,12 @@ public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
         super("mysql_metadata_interface.xml", provider);
     }
 
-    public ResultSet loadCompileObjectErrors(String ownerName, String objectName, Connection connection) throws SQLException {
+    public ResultSet loadCompileObjectErrors(String ownerName, String objectName, DBNConnection connection) throws SQLException {
         return null;
     }
 
     @Override
-    public ResultSet loadMethodArguments(String ownerName, String methodName, String methodType, int overload, Connection connection) throws SQLException {
+    public ResultSet loadMethodArguments(String ownerName, String methodName, String methodType, int overload, DBNConnection connection) throws SQLException {
         try {
             return super.loadMethodArguments(ownerName, methodName, methodType, overload, connection);
         } catch (SQLException e) {
@@ -30,7 +30,7 @@ public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public ResultSet loadAllMethodArguments(String ownerName, Connection connection) throws SQLException {
+    public ResultSet loadAllMethodArguments(String ownerName, DBNConnection connection) throws SQLException {
         try {
             return super.loadAllMethodArguments(ownerName, connection);
         } catch (SQLException e) {
@@ -45,7 +45,7 @@ public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public void killSession(Object sessionId, Object serialNumber, boolean immediate, Connection connection) throws SQLException {
+    public void killSession(Object sessionId, Object serialNumber, boolean immediate, DBNConnection connection) throws SQLException {
         executeStatement(connection, "kill-session", sessionId);
     }
 }

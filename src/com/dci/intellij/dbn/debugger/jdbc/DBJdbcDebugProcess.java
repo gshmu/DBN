@@ -162,7 +162,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                     DebuggerSessionInfo sessionInfo = debuggerInterface.initializeSession(targetConnection);
                     console.system("Debug target session initialized");
                     debuggerInterface.enableDebugging(targetConnection);
-                    debuggerInterface.attachSession(sessionInfo.getSessionId(), debugConnection);
+                    debuggerInterface.attachSession(debugConnection, sessionInfo.getSessionId());
                     console.system("Attached debug session");
 
                     synchronizeSession();

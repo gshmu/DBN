@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.database.generic;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 
@@ -15,7 +15,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         super("generic_metadata_interface.xml", provider);
     }
 
-    public ResultSet loadCompileObjectErrors(String ownerName, String objectName, Connection connection) throws SQLException {
+    public ResultSet loadCompileObjectErrors(String ownerName, String objectName, DBNConnection connection) throws SQLException {
         return null;
     }
 
@@ -25,7 +25,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public boolean isValid(Connection connection) {
+    public boolean isValid(DBNConnection connection) {
         return false;
     }
 }

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
 import javax.swing.Icon;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -205,7 +205,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
      *********************************************************/
 
     private static final DynamicContentLoader<DBTypeAttribute> ATTRIBUTES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBTypeAttribute>() {
-        public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             DBType type = (DBType) dynamicContent.getParentElement();
             return metadataInterface.loadTypeAttributes(type.getSchema().getName(), type.getName(), connection);
@@ -229,7 +229,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
     };
 
     private static final DynamicContentLoader<DBTypeFunction> FUNCTIONS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBTypeFunction>() {
-        public ResultSet createResultSet(DynamicContent<DBTypeFunction> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBTypeFunction> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             DBType type = (DBType) dynamicContent.getParentElement();
             return metadataInterface.loadTypeFunctions(type.getSchema().getName(), type.getName(), connection);
@@ -253,7 +253,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
     };
 
     private static final DynamicContentLoader<DBTypeProcedure> PROCEDURES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBTypeProcedure>() {
-        public ResultSet createResultSet(DynamicContent<DBTypeProcedure> dynamicContent, Connection connection) throws SQLException {
+        public ResultSet createResultSet(DynamicContent<DBTypeProcedure> dynamicContent, DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             DBType type = (DBType) dynamicContent.getParentElement();
             return metadataInterface.loadTypeProcedures(type.getSchema().getName(), type.getName(), connection);
@@ -294,7 +294,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
             super(object, false);
         }
 
-        public ResultSet loadSourceCode(Connection connection) throws SQLException {
+        public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadObjectSourceCode(getSchema().getName(), getName(), "TYPE", connection);
         }
@@ -305,7 +305,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
             super(object, true);
         }
 
-        public ResultSet loadSourceCode(Connection connection) throws SQLException {
+        public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             ConnectionHandler connectionHandler = getConnectionHandler();
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
             return metadataInterface.loadObjectSourceCode(getSchema().getName(), getName(), "TYPE BODY", connection);
