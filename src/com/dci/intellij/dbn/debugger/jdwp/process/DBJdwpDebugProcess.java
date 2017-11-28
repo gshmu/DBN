@@ -14,7 +14,8 @@ import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.DBDebugOperationTask;
@@ -343,7 +344,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 T executionInput = getExecutionInput();
                 if (executionInput != null && !status.TARGET_EXECUTION_TERMINATED) {
                     ExecutionContext context = executionInput.getExecutionContext();
-                    context.cancel();
+                    ConnectionUtil.cancel(context.getStatement());
                 }
 
 

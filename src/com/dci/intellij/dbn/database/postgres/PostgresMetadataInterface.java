@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 

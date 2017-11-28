@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Savepoint;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -18,22 +17,21 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
-import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelConnector;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 
 public class ConnectionUtil {
@@ -47,7 +45,7 @@ public class ConnectionUtil {
             return false;
         }
     }
-    public static void cancel(final Statement statement) {
+    public static void cancel(final DBNStatement statement) {
         if (statement != null) {
             try {
                 statement.cancel();
@@ -59,38 +57,12 @@ public class ConnectionUtil {
         }
     }
 
-    public static void close(final ResultSet resultSet) {
-        close(resultSet, "result-set", true);
-    }
-
-    public static void close(final Statement statement) {
-        close(statement, "statement", true);
-    }
-
-    public static void close(final DBNConnection connection) {
-        close(connection, "connection", true);
-    }
-
-    private static void close(final AutoCloseable closeable, final String name, boolean background) {
-        if (closeable != null) {
-            if (background || ApplicationManager.getApplication().isDispatchThread()) {
-                new SimpleBackgroundTask("close " + name) {
-                    @Override
-                    protected void execute() {
-                        close(closeable, name, false);
-                    }
-                }.start();
-            } else {
-                new SimpleTimeoutTask(10, TimeUnit.SECONDS) {
-                    @Override
-                    public void run() {
-                        try {
-                            closeable.close();
-                        } catch (Throwable e) {
-                            LOGGER.warn("Error closing " + name + ": " + e.getMessage());
-                        }
-                    }
-                }.start();
+    public static void close(final AutoCloseable resource) {
+        if (resource != null) {
+            try {
+                resource.close();
+            } catch (Exception e) {
+                LOGGER.warn("Failed to close resource", e);
             }
         }
     }

@@ -3,10 +3,8 @@ package com.dci.intellij.dbn.editor.data.model;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +18,9 @@ import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -74,7 +74,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         checkDisposed();
         closeResultSet();
         int timeout = getSettings().getGeneralSettings().getFetchTimeout().value();
-        final AtomicReference<Statement> statementRef = new AtomicReference<Statement>();
+        final AtomicReference<DBNStatement> statementRef = new AtomicReference<DBNStatement>();
         final ConnectionHandler connectionHandler = getConnectionHandler();
         final DBNConnection connection = connectionHandler.getMainConnection();
 
@@ -99,8 +99,8 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
             @Override
             public void cancel() throws Exception {
-                Statement statement = statementRef.get();
-                connection.cancel(statement);
+                DBNStatement statement = statementRef.get();
+                ConnectionUtil.cancel(statement);
                 loaderCall = null;
                 isDirty = true;
             }
@@ -141,10 +141,10 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         return FailsafeUtil.get(settings);
     }
 
-    private ResultSet loadResultSet(boolean useCurrentFilter, AtomicReference<Statement> statementRef) throws SQLException {
+    private ResultSet loadResultSet(boolean useCurrentFilter, AtomicReference<DBNStatement> statementRef) throws SQLException {
         int timeout = getSettings().getGeneralSettings().getFetchTimeout().value();
         ConnectionHandler connectionHandler = getConnectionHandler();
-        Connection connection = connectionHandler.getMainConnection();
+        DBNConnection connection = connectionHandler.getMainConnection();
         DBDataset dataset = getDataset();
         Project project = dataset.getProject();
         DatasetFilter filter = DatasetFilterManager.EMPTY_FILTER;
@@ -155,7 +155,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         }
 
         String selectStatement = filter.createSelectStatement(dataset, getState().getSortingState());
-        Statement statement;
+        DBNStatement statement;
         if (isReadonly()) {
             statement = connection.createStatement();
         } else {

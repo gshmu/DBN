@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.database;
 
 import java.sql.SQLException;
 
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;

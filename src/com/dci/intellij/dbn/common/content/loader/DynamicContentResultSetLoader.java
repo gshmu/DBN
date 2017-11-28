@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.util.SkipEntrySQLException;
@@ -124,8 +124,8 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
             }
             throw new DynamicContentLoadException(e, modelException);
         } finally {
-            runningMetaLoaders.decrement();
             ConnectionUtil.close(resultSet);
+            runningMetaLoaders.decrement();
             connectionHandler.freePoolConnection(connection);
         }
     }
