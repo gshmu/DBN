@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.database;
 import java.sql.SQLException;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.common.debug.BasicOperationInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;

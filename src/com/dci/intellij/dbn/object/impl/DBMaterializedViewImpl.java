@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.DBMaterializedView;

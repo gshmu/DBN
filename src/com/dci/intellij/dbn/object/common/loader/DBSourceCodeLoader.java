@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
 

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.*;
 

@@ -19,7 +19,7 @@ import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;

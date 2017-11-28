@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.util.LazyThreadLocal;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.logging.ExecutionLogOutput;

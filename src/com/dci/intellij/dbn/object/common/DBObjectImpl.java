@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
 import javax.swing.Icon;
-import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -37,8 +36,10 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -473,8 +474,8 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }
 
     public String extractDDL() throws SQLException {
-        String ddl = null;
-        CallableStatement statement = null;
+        String ddl;
+        DBNCallableStatement statement = null;
         DBNConnection connection = null;
 
         ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
@@ -490,7 +491,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
             ddl = statement.getString(1);
             ddl = ddl == null ? null : ddl.trim();
         } finally{
-            connection.release(statement);
+            ConnectionUtil.close(statement);
             connectionHandler.freePoolConnection(connection);
         }
         return ddl;

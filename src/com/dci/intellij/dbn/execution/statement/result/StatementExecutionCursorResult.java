@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -95,6 +96,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     }
 
     public void loadResultSet(ResultSet resultSet) throws SQLException {
+        StatementExecutionResultForm resultPanel = FailsafeUtil.get(this.resultPanel);
         int rowCount = Math.max(dataModel == null ? 0 : dataModel.getRowCount() + 1, 100);
         dataModel = new ResultSetDataModel(resultSet, getConnectionHandler(), rowCount);
         resultPanel.reloadTableModel();

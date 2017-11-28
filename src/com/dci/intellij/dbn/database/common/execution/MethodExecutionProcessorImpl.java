@@ -16,7 +16,8 @@ import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
@@ -96,7 +97,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
             }
 
-            final PreparedStatement statement = isQuery() ?
+            final DBNPreparedStatement statement = isQuery() ?
                     connection.prepareStatement(command) :
                     connection.prepareCall(command);
 
@@ -120,7 +121,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
                 @Override
                 public void cancel() throws Exception {
-                    connection.cancel(statement);
+                    ConnectionUtil.cancel(statement);
                 }
             }.start();
 
@@ -136,7 +137,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
             if (!usePoolConnection) connectionHandler.notifyDataChanges(method.getVirtualFile());
         } catch (SQLException e) {
-            context.cancel();
+            ConnectionUtil.cancel(context.getStatement());
             throw e;
         } finally {
             runningMethods.decrement();

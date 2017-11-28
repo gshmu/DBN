@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.diagnostic.Logger;

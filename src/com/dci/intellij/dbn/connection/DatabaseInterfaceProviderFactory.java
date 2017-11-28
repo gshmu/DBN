@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.generic.GenericInterfaceProvider;
 import com.dci.intellij.dbn.database.mysql.MySqlInterfaceProvider;

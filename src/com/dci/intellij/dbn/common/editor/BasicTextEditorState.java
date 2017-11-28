@@ -19,7 +19,6 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.text.CodeFoldingState;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 
@@ -74,7 +73,8 @@ public class BasicTextEditorState implements FileEditorState {
             targetElement.addContent(foldingElement);
             try {
                 CodeFoldingManager.getInstance(project).writeFoldingState(foldingState, foldingElement);
-            } catch (WriteExternalException e) {
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

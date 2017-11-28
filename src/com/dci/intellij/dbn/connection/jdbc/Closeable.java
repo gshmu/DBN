@@ -1,0 +1,14 @@
+package com.dci.intellij.dbn.connection.jdbc;
+
+import java.sql.SQLException;
+
+public interface Closeable extends AutoCloseable, Resource{
+    boolean isClosed() throws SQLException;
+
+    boolean isClosedInner() throws SQLException;
+
+    @Override
+    void close() throws SQLException;
+
+    void closeInner() throws SQLException;
+}

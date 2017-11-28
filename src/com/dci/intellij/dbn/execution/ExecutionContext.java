@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.execution;
 
-import java.sql.Statement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.object.DBSchema;
 
 public abstract class ExecutionContext {
@@ -13,7 +13,7 @@ public abstract class ExecutionContext {
     private transient boolean logging = false;
     private transient long executionTimestamp;
     private transient DBNConnection connection;
-    private transient Statement statement;
+    private transient DBNStatement statement;
     private ExecutionStatus executionStatus = new ExecutionStatus();
 
     public abstract @NotNull String getTargetName();
@@ -54,22 +54,16 @@ public abstract class ExecutionContext {
         this.connection = connection;
     }
 
-    public Statement getStatement() {
+    public DBNStatement getStatement() {
         return statement;
     }
 
-    public void setStatement(Statement statement) {
+    public void setStatement(DBNStatement statement) {
         this.statement = statement;
     }
 
     public ExecutionStatus getExecutionStatus() {
         return executionStatus;
-    }
-
-    public void cancel(){
-        if (connection != null) {
-            connection.cancel(statement);
-        }
     }
 
     public void reset() {

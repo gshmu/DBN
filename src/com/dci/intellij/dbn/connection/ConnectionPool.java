@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -59,9 +60,7 @@ public class ConnectionPool implements Disposable {
             synchronized (this) {
                 if (shouldInit(connection, force)) {
                     try {
-                        if (connection != null) {
-                            ConnectionUtil.close(connection);
-                        }
+                        ConnectionUtil.close(connection);
 
                         connection = ConnectionUtil.connect(connectionHandler, connectionType);
                         NotificationUtil.sendInfoNotification(
@@ -140,7 +139,7 @@ public class ConnectionPool implements Disposable {
                     return connection;
                 } else {
                     poolConnections.remove(connection);
-                    ConnectionUtil.close(connection);;
+                    ConnectionUtil.close(connection);
                 }
             }
         }
@@ -206,8 +205,6 @@ public class ConnectionPool implements Disposable {
         for (DBNConnection connection : poolConnections) {
             try {
                 connection.close();
-            } catch (SQLException e) {
-                exception = e;
             } catch (Exception e) {
                 exception = new SQLException(e.getClass() + ": " + e.getMessage(), e);
             }
@@ -217,8 +214,6 @@ public class ConnectionPool implements Disposable {
         if (mainConnection != null) {
             try {
                 mainConnection.close();
-            } catch (SQLException e) {
-                exception = e;
             } catch (Exception e) {
                 exception = new SQLException(e.getClass() + ": " + e.getMessage(), e);
             }
