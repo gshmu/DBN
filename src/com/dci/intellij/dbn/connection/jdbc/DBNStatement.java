@@ -42,10 +42,13 @@ public class DBNStatement<T extends Statement> extends DBNStatementBase<T>{
 
     @Override
     public void close() {
-        super.close();
-        DBNConnection connection = this.connection.get();
-        if (connection != null) {
-            connection.release(this);
+        try {
+            super.close();
+        } finally {
+            DBNConnection connection = this.connection.get();
+            if (connection != null) {
+                connection.release(this);
+            }
         }
     }
 
