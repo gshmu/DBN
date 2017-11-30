@@ -22,8 +22,9 @@ import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.intellij.openapi.diagnostic.Logger;
 
 public class StatementExecutionProcessor {
-    private DatabaseInterfaceProvider interfaceProvider;
     private static final Logger LOGGER = LoggerFactory.createLogger();
+
+    private DatabaseInterfaceProvider interfaceProvider;
     private String id;
     private boolean isQuery;
     private boolean isPreparedStatement;
@@ -116,8 +117,8 @@ public class StatementExecutionProcessor {
                         }
                         if (isPreparedStatement) {
                             PreparedStatement preparedStatement = statementDefinition.prepareStatement(connection, arguments);
-                            preparedStatement.setQueryTimeout(timeout);
                             statement = preparedStatement;
+                            preparedStatement.setQueryTimeout(timeout);
                             return preparedStatement.executeQuery();
                         } else {
                             if (statementText == null)
@@ -129,6 +130,7 @@ public class StatementExecutionProcessor {
                                 try {
                                     return statement.getResultSet();
                                 } catch (SQLException e) {
+                                    ConnectionUtil.close(statement);
                                     return null;
                                 }
                             } else {
@@ -136,7 +138,6 @@ public class StatementExecutionProcessor {
                                 return null;
                             }
                         }
-
                     } catch (SQLException exception) {
                         executionSuccessful = false;
                         ConnectionUtil.close(statement);
@@ -147,6 +148,9 @@ public class StatementExecutionProcessor {
                         } else {
                             lastException = new SQLException("Too many failed attempts of executing query '" + id +"'. " + exception.getMessage());
                         }
+                        throw exception;
+                    } catch (Exception exception) {
+                        ConnectionUtil.close(statement);
                         throw exception;
                     } finally {
                         statementDefinition.updateExecutionStatus(executionSuccessful);
