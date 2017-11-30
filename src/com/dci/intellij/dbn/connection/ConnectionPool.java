@@ -131,9 +131,9 @@ public class ConnectionPool implements Disposable {
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
 
         for (DBNConnection connection : poolConnections) {
-            if (!connection.isReserved()) {
+            if (!connection.isReserved() && !connection.isBusy()) {
+                connection.setReserved(true);
                 if (!connection.isClosed() && connection.isValid()) {
-                    connection.setReserved(true);
                     connectionStatus.setConnected(true);
                     connectionStatus.setValid(true);
                     return connection;
@@ -232,7 +232,7 @@ public class ConnectionPool implements Disposable {
     @Deprecated
     public void keepAlive(boolean check) {
         if (mainConnection != null) {
-            mainConnection.getStatusMonitor().ping();
+            mainConnection.getStatusMonitor().updateLastAccess();
             if (check) mainConnection.isValid();
         }
     }

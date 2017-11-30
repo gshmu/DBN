@@ -11,7 +11,7 @@ public abstract class ResourceStatusMonitor<T extends Resource>{
     private boolean reserved;
     private boolean busy;
 
-    public void ping() {
+    public void updateLastAccess() {
         lastAccess = System.currentTimeMillis();
     }
 
@@ -25,6 +25,9 @@ public abstract class ResourceStatusMonitor<T extends Resource>{
     }
 
     public void setReserved(boolean reserved) {
+        if (busy) {
+            LOGGER.warn("Busy connection unreserved");
+        }
         this.reserved = reserved;
     }
 
