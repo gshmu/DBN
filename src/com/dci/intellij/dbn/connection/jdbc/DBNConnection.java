@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.util.InitializationInfo;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.intellij.openapi.diagnostic.Logger;
 
@@ -41,8 +43,14 @@ public class DBNConnection extends DBNConnectionBase {
         } else {
             statement = (S) new DBNStatement<>(statement, this);
         }
-        for (DBNStatement currentStatement : statements) {
-            LOGGER.error("Statement not released", currentStatement.getInitStack());
+
+        if (isPoolConnection()) {
+            for (DBNStatement currentStatement : statements) {
+                InitializationInfo initInfo = currentStatement.initInfo;
+                if (TimeUtil.isOlderThan(initInfo.getTimestamp(), TimeUtil.ONE_MINUTE)) {
+                    LOGGER.error("Statement not released", initInfo.getStack());
+                }
+            }
         }
 
         statements.add((DBNStatement) statement);
