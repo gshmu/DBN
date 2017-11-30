@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -81,7 +82,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         loaderCall = new CancellableDatabaseCall(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
             @Override
             public Object execute() throws Exception {
-                ResultSet newResultSet = loadResultSet(useCurrentFilter, statementRef);
+                DBNResultSet newResultSet = loadResultSet(useCurrentFilter, statementRef);
 
                 if (newResultSet != null) {
                     checkDisposed();
@@ -109,7 +110,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     }
 
     @Override
-    public void setResultSet(ResultSet resultSet) throws SQLException {
+    public void setResultSet(DBNResultSet resultSet) throws SQLException {
         super.setResultSet(resultSet);
 
         // create the adapter
@@ -141,7 +142,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         return FailsafeUtil.get(settings);
     }
 
-    private ResultSet loadResultSet(boolean useCurrentFilter, AtomicReference<DBNStatement> statementRef) throws SQLException {
+    private DBNResultSet loadResultSet(boolean useCurrentFilter, AtomicReference<DBNStatement> statementRef) throws SQLException {
         int timeout = getSettings().getGeneralSettings().getFetchTimeout().value();
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBNConnection connection = connectionHandler.getMainConnection();

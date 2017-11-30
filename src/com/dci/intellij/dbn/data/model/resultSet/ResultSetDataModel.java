@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.data.model.resultSet;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +11,13 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.intellij.openapi.util.Disposer;
 
 public class ResultSetDataModel<T extends ResultSetDataModelRow> extends SortableDataModel<T> {
-    private ResultSet resultSet;
+    private DBNResultSet resultSet;
     private ConnectionHandler connectionHandler;
     private boolean resultSetExhausted = false;
 
@@ -26,7 +26,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         this.connectionHandler = connectionHandler;
     }
 
-    public ResultSetDataModel(ResultSet resultSet, ConnectionHandler connectionHandler, int maxRecords) throws SQLException {
+    public ResultSetDataModel(DBNResultSet resultSet, ConnectionHandler connectionHandler, int maxRecords) throws SQLException {
         super(connectionHandler.getProject());
         this.connectionHandler = connectionHandler;
         this.resultSet = resultSet;
@@ -40,11 +40,11 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     }
 
     @NotNull
-    public ResultSet getResultSet() {
+    public DBNResultSet getResultSet() {
         return FailsafeUtil.get(resultSet);
     }
 
-    public void setResultSet(ResultSet resultSet) throws SQLException {
+    public void setResultSet(DBNResultSet resultSet) throws SQLException {
         this.resultSet = resultSet;
     }
 

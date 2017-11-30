@@ -17,7 +17,6 @@ import com.intellij.openapi.diagnostic.Logger;
 public class DBNConnection extends DBNConnectionBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private ConnectionType type;
-    private boolean reserved;
 
     private Set<DBNStatement> statements = new HashSet<>();
     private ResourceStatusMonitor statusMonitor = new ResourceStatusMonitor() {};
@@ -69,7 +68,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public boolean isInvalidInner() throws SQLException {
-        return !reserved && !inner.isValid(2);
+        return !statusMonitor.isBusy() && !inner.isValid(2);
     }
 
     @Override
@@ -93,29 +92,29 @@ public class DBNConnection extends DBNConnectionBase {
         return type == ConnectionType.TEST;
     }
 
-    public boolean isBusy() {
-        return reserved || !statements.isEmpty();
+
+    public ResourceStatusMonitor getStatusMonitor() {
+        return statusMonitor;
     }
 
     public boolean isReserved() {
-        return reserved;
+        return statusMonitor.isReserved();
     }
 
     public void setReserved(boolean reserved) {
-        this.reserved = reserved;
+        statusMonitor.setReserved(reserved);
     }
 
-    /****************************************************************************
-     *                       Status utilities                                   *
-     ****************************************************************************/
-
-
-
-    public void keepAlive() {
-        statusMonitor.keepAlive();
+    public boolean isBusy() {
+        return statusMonitor.isBusy();
     }
 
-    public int getIdleMinutes() {
-        return statusMonitor.getIdleMinutes();
+    public void setBusy(boolean busy) {
+        statusMonitor.setBusy(busy);
+    }
+
+    @Override
+    public String toString() {
+        return type + " / " + (isBusy() ? "busy " : "idle") + " / " + (isReserved() ? "reserved" : "free");
     }
 }

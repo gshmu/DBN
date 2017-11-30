@@ -186,7 +186,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         }
     }
 
-    public void loadValues(MethodExecutionResult executionResult, PreparedStatement preparedStatement) throws SQLException {
+    public void loadValues(MethodExecutionResult executionResult, DBNPreparedStatement preparedStatement) throws SQLException {
         for (DBArgument argument : getArguments()) {
             if (argument.isOutput() && preparedStatement instanceof CallableStatement) {
                 CallableStatement callableStatement = (CallableStatement) preparedStatement;

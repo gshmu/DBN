@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.execution.statement.processor;
 
 import java.lang.ref.WeakReference;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -541,7 +540,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     }
 
     @NotNull
-    protected StatementExecutionResult createExecutionResult(Statement statement, final StatementExecutionInput executionInput) throws SQLException {
+    protected StatementExecutionResult createExecutionResult(DBNStatement statement, final StatementExecutionInput executionInput) throws SQLException {
         final StatementExecutionBasicResult executionResult = new StatementExecutionBasicResult(this, getResultName(), statement.getUpdateCount());
         boolean isDdlStatement = isDataDefinitionStatement();
         boolean hasCompilerErrors = false;

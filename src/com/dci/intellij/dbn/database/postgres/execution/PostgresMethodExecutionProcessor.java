@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessorImpl;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -66,7 +67,7 @@ public class PostgresMethodExecutionProcessor extends MethodExecutionProcessorIm
     }
 
     @Override
-    public void loadValues(MethodExecutionResult executionResult, PreparedStatement preparedStatement) throws SQLException {
+    public void loadValues(MethodExecutionResult executionResult, DBNPreparedStatement preparedStatement) throws SQLException {
         if (isQuery()) {
             DBArgument returnArgument = getReturnArgument();
             executionResult.addArgumentValue(returnArgument, preparedStatement.getResultSet());

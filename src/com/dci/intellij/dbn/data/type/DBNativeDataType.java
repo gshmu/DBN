@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.data.type;
 
 import java.math.BigDecimal;
-import java.sql.CallableStatement;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
+import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
 import com.intellij.openapi.diagnostic.Logger;
@@ -144,7 +144,7 @@ public class DBNativeDataType implements DynamicContentElement{
         }
     }
 
-    public Object getValueFromStatement(CallableStatement callableStatement, int parameterIndex) throws SQLException {
+    public Object getValueFromStatement(DBNCallableStatement callableStatement, int parameterIndex) throws SQLException {
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
         if (ValueAdapter.supports(genericDataType)) {
             return ValueAdapter.create(genericDataType, callableStatement, parameterIndex);

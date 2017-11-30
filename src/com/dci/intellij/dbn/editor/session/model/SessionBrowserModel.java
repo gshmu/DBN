@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.model.DataModelState;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
@@ -36,7 +37,7 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
     }
 
     public void load() throws SQLException {
-        ResultSet newResultSet;
+        DBNResultSet newResultSet;
 
         checkDisposed();
 
@@ -47,7 +48,7 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
         DBNConnection connection = null;
         try {
             connection = connectionHandler.getPoolConnection(true);
-            newResultSet =  metadataInterface.loadSessions(connection);
+            newResultSet = (DBNResultSet) metadataInterface.loadSessions(connection);
             checkDisposed();
 
             setResultSet(newResultSet);

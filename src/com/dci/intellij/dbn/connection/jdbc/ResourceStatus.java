@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.diagnostic.Logger;
 
-public abstract class ResourceStatusAdapter<T extends Resource> {
+public abstract class ResourceStatus<T extends Resource> {
     protected static final Logger LOGGER = LoggerFactory.createLogger();
 
     private boolean current;
@@ -15,10 +15,10 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     private long checkTimestamp;
     private long checkInterval;
 
-    public ResourceStatusAdapter() {
+    ResourceStatus() {
     }
 
-    public ResourceStatusAdapter(long checkInterval) {
+    ResourceStatus(long checkInterval) {
         this.checkInterval = checkInterval;
     }
 
@@ -63,4 +63,9 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     protected abstract void attemptInner() throws SQLException;
 
     protected abstract boolean checkInner() throws SQLException;
+
+    @Override
+    public String toString() {
+        return "" + current;
+    }
 }
