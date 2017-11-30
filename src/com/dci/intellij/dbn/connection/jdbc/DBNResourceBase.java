@@ -6,15 +6,18 @@ import java.util.concurrent.TimeUnit;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
+import com.dci.intellij.dbn.common.util.InitializationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 
 public class DBNResourceBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
+    protected InitializationInfo initInfo = new InitializationInfo();
 
     private ResourceStatusAdapter<Closeable> CLOSED;
     private ResourceStatusAdapter<Cancellable> VALID;
     private ResourceStatusAdapter<Cancellable> CANCELLED;
+
 
     public DBNResourceBase() {
         if (this instanceof Closeable) {

@@ -27,20 +27,36 @@ abstract class DBNPreparedStatementBase<T extends PreparedStatement> extends DBN
         super(inner, connection);
     }
 
-
-    /********************************************************************
-     *                     Wrapped functionality                        *
-     ********************************************************************/
     @Override
     public ResultSet executeQuery() throws SQLException {
-        return wrap(inner.executeQuery());
+        try {
+            return wrap(inner.executeQuery());
+        } catch (SQLException e){
+            throw this.executionException = e;
+        }
     }
 
     @Override
     public int executeUpdate() throws SQLException {
-        return inner.executeUpdate();
+        try {
+            return inner.executeUpdate();
+        } catch (SQLException e){
+            throw this.executionException = e;
+        }
     }
 
+    @Override
+    public boolean execute() throws SQLException {
+        try {
+            return inner.execute();
+        } catch (SQLException e){
+            throw this.executionException = e;
+        }
+    }
+
+    /********************************************************************
+     *                     Wrapped functionality                        *
+     ********************************************************************/
     @Override
     public void setNull(int parameterIndex, int sqlType) throws SQLException {
         inner.setNull(parameterIndex, sqlType);
@@ -139,11 +155,6 @@ abstract class DBNPreparedStatementBase<T extends PreparedStatement> extends DBN
     @Override
     public void setObject(int parameterIndex, Object x) throws SQLException {
         inner.setObject(parameterIndex, x);
-    }
-
-    @Override
-    public boolean execute() throws SQLException {
-        return inner.execute();
     }
 
     @Override

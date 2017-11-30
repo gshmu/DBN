@@ -8,15 +8,10 @@ import java.sql.Statement;
 public class DBNStatement<T extends Statement> extends DBNStatementBase<T>{
     private WeakReference<DBNConnection> connection;
     private WeakReference<DBNResultSet> resultSet;
-    private IllegalStateException initStack = new IllegalStateException("Statement not released");
 
     public DBNStatement(T inner, DBNConnection connection) {
         super(inner);
         this.connection = new WeakReference<>(connection);
-    }
-
-    public IllegalStateException getInitStack() {
-        return initStack;
     }
 
     @Override
