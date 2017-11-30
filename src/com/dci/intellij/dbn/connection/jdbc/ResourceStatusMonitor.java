@@ -8,16 +8,7 @@ import com.intellij.openapi.diagnostic.Logger;
 public abstract class ResourceStatusMonitor<T extends Resource>{
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private boolean busy = false;
     private long lastAccessTimestamp;
-
-    public void setBusy(boolean busy) {
-        this.busy = busy;
-    }
-
-    public boolean isBusy() {
-        return busy;
-    }
 
     public void keepAlive() {
         lastAccessTimestamp = System.currentTimeMillis();

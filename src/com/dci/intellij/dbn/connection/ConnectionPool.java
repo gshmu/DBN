@@ -131,9 +131,9 @@ public class ConnectionPool implements Disposable {
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
 
         for (DBNConnection connection : poolConnections) {
-            if (!connection.isBusy()) {
+            if (!connection.isReserved()) {
                 if (!connection.isClosed() && connection.isValid()) {
-                    connection.setBusy(true);
+                    connection.setReserved(true);
                     connectionStatus.setConnected(true);
                     connectionStatus.setValid(true);
                     return connection;
@@ -163,7 +163,7 @@ public class ConnectionPool implements Disposable {
 
         // pool connections do not need to have current schema set
         //connectionHandler.getDataDictionary().setCurrentSchema(connectionHandler.getCurrentSchemaName(), connection);
-        connection.setBusy(true);
+        connection.setReserved(true);
         poolConnections.add(connection);
         int size = poolConnections.size();
         if (size > peakPoolSize) peakPoolSize = size;
@@ -177,7 +177,7 @@ public class ConnectionPool implements Disposable {
             ConnectionUtil.rollback(connection);
             ConnectionUtil.setAutocommit(connection, true);
             ConnectionUtil.setReadonly(connection, true);
-            connection.setBusy(false);
+            connection.setReserved(false);
         }
         lastAccessTimestamp = System.currentTimeMillis();
     }
