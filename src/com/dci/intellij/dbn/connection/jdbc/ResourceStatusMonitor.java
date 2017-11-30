@@ -9,7 +9,7 @@ public abstract class ResourceStatusMonitor<T extends Resource>{
 
     private long lastAccess;
     private boolean reserved;
-    private boolean busy;
+    private boolean active;
 
     public void updateLastAccess() {
         lastAccess = System.currentTimeMillis();
@@ -25,17 +25,17 @@ public abstract class ResourceStatusMonitor<T extends Resource>{
     }
 
     public void setReserved(boolean reserved) {
-        if (busy) {
+        if (active) {
             LOGGER.warn("Busy connection unreserved");
         }
         this.reserved = reserved;
     }
 
-    public boolean isBusy() {
-        return busy;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setBusy(boolean busy) {
-        this.busy = busy;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
