@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
-abstract class DBNConnectionBase extends DBNResourceBase implements Connection, Closeable {
+abstract class DBNConnectionBase extends DBNResourceBase implements Connection, Closeable, Invalidable {
     protected Connection inner;
 
     public DBNConnectionBase(Connection inner) {
@@ -219,11 +219,6 @@ abstract class DBNConnectionBase extends DBNResourceBase implements Connection, 
     @Override
     public SQLXML createSQLXML() throws SQLException {
         return inner.createSQLXML();
-    }
-
-    @Override
-    public boolean isValid(int timeout) throws SQLException {
-        return inner.isValid(timeout);
     }
 
     @Override
