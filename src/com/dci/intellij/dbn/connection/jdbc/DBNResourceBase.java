@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
 import com.dci.intellij.dbn.common.util.InitializationInfo;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 
@@ -15,7 +16,7 @@ public class DBNResourceBase {
     protected InitializationInfo initInfo = new InitializationInfo();
 
     private ResourceStatusAdapter<Closeable> CLOSED;
-    private ResourceStatusAdapter<Cancellable> VALID;
+    private ResourceStatusAdapter<Invalidable> INVALID;
     private ResourceStatusAdapter<Cancellable> CANCELLED;
 
 
@@ -49,7 +50,23 @@ public class DBNResourceBase {
                 }
             };
         }
+
+        if (this instanceof Invalidable) {
+            final Invalidable invalidable = (Invalidable) this;
+            INVALID = new ResourceStatusAdapter<Invalidable>(TimeUtil.THIRTY_SECONDS) {
+                @Override
+                protected void attemptInner() throws SQLException {
+                    invalidable.invalidateInner();
+                }
+
+                @Override
+                protected boolean checkInner() throws SQLException {
+                    return invalidable.isInvalidInner();
+                }
+            };
+        }
     }
+
 
     public boolean isClosed() {
         return CLOSED.check();
@@ -65,6 +82,22 @@ public class DBNResourceBase {
 
     public void cancel() {
         CANCELLED.attempt();
+    }
+
+    public boolean isValid() {
+        return isValid(2);
+    }
+
+    public boolean isValid(int timeout) {
+        return !isInvalid();
+    }
+
+    public boolean isInvalid() {
+        return INVALID.check();
+    }
+
+    public void invalidate() {
+        INVALID.attempt();
     }
 
     public static void close(final Closeable closeable, boolean background) {

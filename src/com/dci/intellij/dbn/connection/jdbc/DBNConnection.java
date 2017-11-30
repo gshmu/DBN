@@ -19,12 +19,7 @@ public class DBNConnection extends DBNConnectionBase {
     private ConnectionType type;
 
     private Set<DBNStatement> statements = new HashSet<>();
-    private ResourceStatusMonitor statusMonitor = new ResourceStatusMonitor() {
-        @Override
-        protected boolean checkValid(int timeout) throws SQLException {
-            return inner.isValid(timeout);
-        }
-    };
+    private ResourceStatusMonitor statusMonitor = new ResourceStatusMonitor() {};
 
     public DBNConnection(Connection connection, ConnectionType type) {
         super(connection);
@@ -71,6 +66,16 @@ public class DBNConnection extends DBNConnectionBase {
         inner.close();
     }
 
+    @Override
+    public boolean isInvalidInner() throws SQLException {
+        return !statusMonitor.isBusy() && !inner.isValid(2);
+    }
+
+    @Override
+    public void invalidateInner() throws SQLException {
+        // do nothing
+    }
+
     public boolean isIdle() {
         return statements.isEmpty();
     }
@@ -94,15 +99,6 @@ public class DBNConnection extends DBNConnectionBase {
     /****************************************************************************
      *                       Status utilities                                   *
      ****************************************************************************/
-    public boolean isValid() {
-        return statusMonitor.isValid();
-    }
-
-    @Override
-    public boolean isValid(int timeout) throws SQLException {
-        return statusMonitor.isValid(timeout);
-    }
-
     public void setBusy(boolean busy) {
         statusMonitor.setBusy(busy);
     }
