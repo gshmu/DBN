@@ -17,6 +17,7 @@ import com.intellij.openapi.diagnostic.Logger;
 public class DBNConnection extends DBNConnectionBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private ConnectionType type;
+    private boolean reserved;
 
     private Set<DBNStatement> statements = new HashSet<>();
     private ResourceStatusMonitor statusMonitor = new ResourceStatusMonitor() {};
@@ -68,16 +69,12 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public boolean isInvalidInner() throws SQLException {
-        return !statusMonitor.isBusy() && !inner.isValid(2);
+        return !reserved && !inner.isValid(2);
     }
 
     @Override
     public void invalidateInner() throws SQLException {
         // do nothing
-    }
-
-    public boolean isIdle() {
-        return statements.isEmpty();
     }
 
     public ConnectionType getType() {
@@ -96,16 +93,23 @@ public class DBNConnection extends DBNConnectionBase {
         return type == ConnectionType.TEST;
     }
 
+    public boolean isBusy() {
+        return reserved || !statements.isEmpty();
+    }
+
+    public boolean isReserved() {
+        return reserved;
+    }
+
+    public void setReserved(boolean reserved) {
+        this.reserved = reserved;
+    }
+
     /****************************************************************************
      *                       Status utilities                                   *
      ****************************************************************************/
-    public void setBusy(boolean busy) {
-        statusMonitor.setBusy(busy);
-    }
 
-    public boolean isBusy() {
-        return statusMonitor.isBusy();
-    }
+
 
     public void keepAlive() {
         statusMonitor.keepAlive();
