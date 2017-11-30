@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 
-abstract class DBNResource {
+abstract class DBNResource implements Resource{
     private static final Logger LOGGER = LoggerFactory.createLogger();
     protected InitializationInfo initInfo = new InitializationInfo();
 
@@ -19,8 +19,10 @@ abstract class DBNResource {
     private ResourceStatus<Invalidable> INVALID;
     private ResourceStatus<Cancellable> CANCELLED;
 
+    private ResourceType type;
 
-    DBNResource() {
+    DBNResource(ResourceType type) {
+        this.type = type;
         if (this instanceof Closeable) {
             final Closeable closeable = (Closeable) this;
             CLOSED = new ResourceStatus<Closeable>() {
@@ -67,6 +69,10 @@ abstract class DBNResource {
         }
     }
 
+    @Override
+    public ResourceType getResourceType() {
+        return type;
+    }
 
     public boolean isClosed() {
         return CLOSED.check();
@@ -116,7 +122,7 @@ abstract class DBNResource {
                         try {
                             closeable.closeInner();
                         } catch (Throwable e) {
-                            LOGGER.warn("Error closing resource: " + e.getMessage());
+                            LOGGER.warn("Error closing " + closeable.getResourceType() + ": " + e.getMessage());
                         }
                     }
                 }.start();
