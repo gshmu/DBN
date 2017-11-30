@@ -28,29 +28,32 @@ public class DBNPreparedStatement<T extends PreparedStatement> extends DBNStatem
 
     @Override
     public DBNResultSet executeQuery() throws SQLException {
-        try {
-            return wrap(inner.executeQuery());
-        } catch (SQLException e){
-            throw this.exception = e;
-        }
+        return new ManagedExecutor<DBNResultSet>() {
+            @Override
+            protected DBNResultSet execute() throws SQLException {
+                return wrap(inner.executeQuery());
+            }
+        }.call();
     }
 
     @Override
     public int executeUpdate() throws SQLException {
-        try {
-            return inner.executeUpdate();
-        } catch (SQLException e){
-            throw this.exception = e;
-        }
+        return new ManagedExecutor<Integer>() {
+            @Override
+            protected Integer execute() throws SQLException {
+                return inner.executeUpdate();
+            }
+        }.call();
     }
 
     @Override
     public boolean execute() throws SQLException {
-        try {
-            return inner.execute();
-        } catch (SQLException e){
-            throw this.exception = e;
-        }
+        return new ManagedExecutor<Boolean>() {
+            @Override
+            protected Boolean execute() throws SQLException {
+                return inner.execute();
+            }
+        }.call();
     }
 
     /********************************************************************

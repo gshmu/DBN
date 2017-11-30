@@ -68,7 +68,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public boolean isInvalidInner() throws SQLException {
-        return !statusMonitor.isBusy() && !inner.isValid(2);
+        return !isBusy() && !inner.isValid(2);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class DBNConnection extends DBNConnectionBase {
         return type == ConnectionType.MAIN;
     }
 
-    public boolean iTestConnection() {
+    public boolean isTestConnection() {
         return type == ConnectionType.TEST;
     }
 
@@ -107,10 +107,6 @@ public class DBNConnection extends DBNConnectionBase {
 
     public boolean isBusy() {
         return statusMonitor.isBusy();
-    }
-
-    public void setBusy(boolean busy) {
-        statusMonitor.setBusy(busy);
     }
 
     @Override

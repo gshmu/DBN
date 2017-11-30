@@ -22,7 +22,7 @@ public abstract class SimpleTimeoutTask implements Runnable{
         try {
             future.get(timeout, timeoutUnit);
         } catch (Exception e) {
-            LOGGER.warn("Failed to execute timeout task");
+            LOGGER.warn("Failed to execute timeout task", e);
         }
     }
 }
