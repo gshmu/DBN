@@ -68,7 +68,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public boolean isInvalidInner() throws SQLException {
-        return !isBusy() && !inner.isValid(2);
+        return !isActive() && !inner.isValid(2);
     }
 
     @Override
@@ -105,12 +105,12 @@ public class DBNConnection extends DBNConnectionBase {
         statusMonitor.setReserved(reserved);
     }
 
-    public boolean isBusy() {
-        return statusMonitor.isBusy();
+    public boolean isActive() {
+        return statusMonitor.isActive();
     }
 
     @Override
     public String toString() {
-        return type + " / " + (isBusy() ? "busy " : "idle") + " / " + (isReserved() ? "reserved" : "free");
+        return type + " / " + (isActive() ? "active " : "idle") + " / " + (isReserved() ? "reserved" : "free");
     }
 }

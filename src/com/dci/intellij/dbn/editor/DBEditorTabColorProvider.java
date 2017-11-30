@@ -21,8 +21,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 
 public class DBEditorTabColorProvider implements EditorTabColorProvider{
 
-    public static final Color DEFAULT_COLOR = new Color(218, 234, 255);
-
     @Override
     public Color getEditorTabColor(@NotNull Project project, @NotNull VirtualFile file) {
         if (file.getFileType() instanceof DBLanguageFileType) {
@@ -35,11 +33,11 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider{
                 EnvironmentType environmentType = connectionHandler.getEnvironmentType();
                 if (file instanceof DBVirtualFileImpl) {
                     if (visibilitySettings.getObjectEditorTabs().value()) {
-                        return environmentType == null ? null : environmentType.getColor();
+                        return environmentType.getColor();
                     }
                 } else {
                     if (visibilitySettings.getScriptEditorTabs().value()) {
-                        return environmentType == null ? null : environmentType.getColor();
+                        return environmentType.getColor();
                     }
                 }
                 return null;
@@ -70,9 +68,6 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider{
 
     private static Color getColor(ConnectionHandler connectionHandler) {
         EnvironmentType environmentType = connectionHandler.getEnvironmentType();
-        if (environmentType != null) {
-            return environmentType.getColor();
-        }
-        return DEFAULT_COLOR;
+        return environmentType.getColor();
     }
 }

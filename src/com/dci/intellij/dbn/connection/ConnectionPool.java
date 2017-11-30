@@ -131,7 +131,7 @@ public class ConnectionPool implements Disposable {
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
 
         for (DBNConnection connection : poolConnections) {
-            if (!connection.isReserved() && !connection.isBusy()) {
+            if (!connection.isReserved() && !connection.isActive()) {
                 connection.setReserved(true);
                 if (!connection.isClosed() && connection.isValid()) {
                     connectionStatus.setConnected(true);
@@ -267,7 +267,7 @@ public class ConnectionPool implements Disposable {
                 if (connectionPool != null && TimeUtil.isOlderThan(connectionPool.lastAccessTimestamp, TimeUtil.FIVE_MINUTES)) {
                     // close connections only if pool is passive
                     for (DBNConnection connection : connectionPool.poolConnections) {
-                        if (connection.isBusy()) return;
+                        if (connection.isActive()) return;
                     }
 
                     for (DBNConnection connection : connectionPool.poolConnections) {
