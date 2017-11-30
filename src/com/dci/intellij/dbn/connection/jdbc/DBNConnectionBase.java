@@ -23,6 +23,7 @@ abstract class DBNConnectionBase extends DBNResource implements Connection, Clos
     protected Connection inner;
 
     public DBNConnectionBase(Connection inner) {
+        super(ResourceType.CONNECTION);
         this.inner = inner;
     }
 

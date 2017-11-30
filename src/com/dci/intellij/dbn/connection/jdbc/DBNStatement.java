@@ -22,6 +22,7 @@ public class DBNStatement<T extends Statement> extends DBNResource implements St
 
 
     DBNStatement(T inner, DBNConnection connection) {
+        super(ResourceType.STATEMENT);
         this.inner = inner;
         this.connection = new WeakReference<>(connection);
     }

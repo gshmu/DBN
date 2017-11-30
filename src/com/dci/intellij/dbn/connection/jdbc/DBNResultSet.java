@@ -32,11 +32,13 @@ public class DBNResultSet extends DBNResource implements ResultSet, Closeable {
 
 
     public DBNResultSet(ResultSet inner, DBNConnection connection) {
+        super(ResourceType.RESULT_SET);
         this.inner = inner;
         this.connection = new WeakReference<>(connection);
     }
 
     public DBNResultSet(ResultSet inner, DBNStatement statement) {
+        super(ResourceType.RESULT_SET);
         this.inner = inner;
         this.statement = new WeakReference<>(statement);
     }
@@ -59,10 +61,6 @@ public class DBNResultSet extends DBNResource implements ResultSet, Closeable {
                 ConnectionUtil.close(statement.get());
             }
         }
-    }
-
-    public DBNResultSet(ResultSet inner) {
-        this.inner = inner;
     }
 
     @Override
