@@ -8,13 +8,16 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.connection.ConnectionType;
+import com.intellij.openapi.diagnostic.Logger;
 
 public class DBNConnection extends DBNConnectionBase {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
     private ConnectionType type;
 
-    protected Set<Statement> statements = new HashSet<>();
-    protected ResourceStatusMonitor statusMonitor = new ResourceStatusMonitor() {
+    private Set<DBNStatement> statements = new HashSet<>();
+    private ResourceStatusMonitor statusMonitor = new ResourceStatusMonitor() {
         @Override
         protected boolean checkValid(int timeout) throws SQLException {
             return inner.isValid(timeout);
@@ -38,8 +41,16 @@ public class DBNConnection extends DBNConnectionBase {
         } else {
             statement = (S) new DBNStatement<>(statement, this);
         }
-        statements.add(statement);
+        for (DBNStatement currentStatement : statements) {
+            LOGGER.error("Statement not released", currentStatement.getInitStack());
+        }
+
+        statements.add((DBNStatement) statement);
         return statement;
+    }
+
+    protected void release(DBNStatement statement) {
+        statements.remove(statement);
     }
 
     @Override
