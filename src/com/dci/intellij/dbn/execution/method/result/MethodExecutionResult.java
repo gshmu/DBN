@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.method.result;
 
 import javax.swing.Icon;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +15,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
@@ -63,8 +63,8 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
         ArgumentValueHolder<Object> valueStore = ArgumentValue.createBasicValueHolder(value);
         ArgumentValue argumentValue = new ArgumentValue(argument, valueStore);
         argumentValues.add(argumentValue);
-        if (value instanceof ResultSet) {
-            ResultSet resultSet = (ResultSet) value;
+        if (value instanceof DBNResultSet) {
+            DBNResultSet resultSet = (DBNResultSet) value;
             if (cursorModels == null) {
                 cursorModels = new HashMap<DBObjectRef<DBArgument>, ResultSetDataModel>();
             }

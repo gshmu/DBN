@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
-abstract class DBNConnectionBase extends DBNResourceBase implements Connection, Closeable, Invalidable {
+abstract class DBNConnectionBase extends DBNResource implements Connection, Closeable, Invalidable {
     protected Connection inner;
 
     public DBNConnectionBase(Connection inner) {
@@ -39,7 +39,7 @@ abstract class DBNConnectionBase extends DBNResourceBase implements Connection, 
     }
 
     /********************************************************************
-     *                     Wrapped functionality                        *
+     *                     Wrapped calls                                *
      ********************************************************************/
     @Override
     public DBNStatement createStatement() throws SQLException {
@@ -56,6 +56,24 @@ abstract class DBNConnectionBase extends DBNResourceBase implements Connection, 
         return (DBNCallableStatement) wrap(inner.prepareCall(sql));
     }
 
+    @Override
+    public DBNStatement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
+        return (DBNStatement) wrap(inner.createStatement(resultSetType, resultSetConcurrency));
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
+        return wrap(inner.prepareStatement(sql, resultSetType, resultSetConcurrency));
+    }
+
+    @Override
+    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
+        return wrap(inner.prepareCall(sql, resultSetType, resultSetConcurrency));
+    }
+
+    /********************************************************************
+     *                     Wrapped executions                           *
+     ********************************************************************/
     @Override
     public String nativeSQL(String sql) throws SQLException {
         return inner.nativeSQL(sql);
@@ -114,21 +132,6 @@ abstract class DBNConnectionBase extends DBNResourceBase implements Connection, 
     @Override
     public void clearWarnings() throws SQLException {
         inner.clearWarnings();
-    }
-
-    @Override
-    public DBNStatement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-        return (DBNStatement) wrap(inner.createStatement(resultSetType, resultSetConcurrency));
-    }
-
-    @Override
-    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        return wrap(inner.prepareStatement(sql, resultSetType, resultSetConcurrency));
-    }
-
-    @Override
-    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        return wrap(inner.prepareCall(sql, resultSetType, resultSetConcurrency));
     }
 
     @Override

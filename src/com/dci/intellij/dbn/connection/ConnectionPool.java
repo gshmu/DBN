@@ -224,13 +224,15 @@ public class ConnectionPool implements Disposable {
         }
     }
 
+    @Deprecated
     public int getIdleMinutes() {
-        return mainConnection == null ? 0 : mainConnection.getIdleMinutes();
+        return mainConnection == null ? 0 : mainConnection.getStatusMonitor().getIdleMinutes();
     }
 
+    @Deprecated
     public void keepAlive(boolean check) {
         if (mainConnection != null) {
-            mainConnection.keepAlive();
+            mainConnection.getStatusMonitor().ping();
             if (check) mainConnection.isValid();
         }
     }

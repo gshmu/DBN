@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
+import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -207,8 +209,8 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
     }
 
     @Override
-    public void loadValues(MethodExecutionResult executionResult, PreparedStatement preparedStatement) throws SQLException {
-        CallableStatement callableStatement = (CallableStatement) preparedStatement;
+    public void loadValues(MethodExecutionResult executionResult, DBNPreparedStatement preparedStatement) throws SQLException {
+        DBNCallableStatement callableStatement = (DBNCallableStatement) preparedStatement;
         DBArgument returnArgument = getReturnArgument();
 
         // increment parameter index for input variables

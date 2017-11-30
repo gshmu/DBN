@@ -11,19 +11,19 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 
-public class DBNResourceBase {
+abstract class DBNResource {
     private static final Logger LOGGER = LoggerFactory.createLogger();
     protected InitializationInfo initInfo = new InitializationInfo();
 
-    private ResourceStatusAdapter<Closeable> CLOSED;
-    private ResourceStatusAdapter<Invalidable> INVALID;
-    private ResourceStatusAdapter<Cancellable> CANCELLED;
+    private ResourceStatus<Closeable> CLOSED;
+    private ResourceStatus<Invalidable> INVALID;
+    private ResourceStatus<Cancellable> CANCELLED;
 
 
-    public DBNResourceBase() {
+    DBNResource() {
         if (this instanceof Closeable) {
             final Closeable closeable = (Closeable) this;
-            CLOSED = new ResourceStatusAdapter<Closeable>() {
+            CLOSED = new ResourceStatus<Closeable>() {
                 @Override
                 protected void attemptInner() throws SQLException {
                     close(closeable, true);
@@ -38,7 +38,7 @@ public class DBNResourceBase {
 
         if (this instanceof Cancellable) {
             final Cancellable cancellable = (Cancellable) this;
-            CANCELLED = new ResourceStatusAdapter<Cancellable>() {
+            CANCELLED = new ResourceStatus<Cancellable>() {
                 @Override
                 protected void attemptInner() throws SQLException {
                     cancellable.cancelInner();
@@ -53,7 +53,7 @@ public class DBNResourceBase {
 
         if (this instanceof Invalidable) {
             final Invalidable invalidable = (Invalidable) this;
-            INVALID = new ResourceStatusAdapter<Invalidable>(TimeUtil.THIRTY_SECONDS) {
+            INVALID = new ResourceStatus<Invalidable>(TimeUtil.THIRTY_SECONDS) {
                 @Override
                 protected void attemptInner() throws SQLException {
                     invalidable.invalidateInner();

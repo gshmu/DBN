@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelCell;
 import com.dci.intellij.dbn.data.type.DBDataType;
 
@@ -16,6 +17,11 @@ public class ResultSetDataModelCell extends SortableDataModelCell {
             setUserValue(userValue);
         }
     }
+
+    protected DBNConnection getConnection() {
+        return getRow().getModel().getResultSet().getConnection();
+    }
+
 
     @NotNull
     @Override
