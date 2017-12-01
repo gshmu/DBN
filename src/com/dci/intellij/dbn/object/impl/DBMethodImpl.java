@@ -32,7 +32,6 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     protected DBObjectList<DBArgument> arguments;
     protected int position;
     protected int overload;
-    protected boolean isDeterministic;
     private DBLanguage language;
 
     public DBMethodImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
@@ -45,7 +44,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
 
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
-        isDeterministic = resultSet.getString("IS_DETERMINISTIC").equals("Y");
+        set(DBObjectProperty.DETERMINISTIC, resultSet.getString("IS_DETERMINISTIC").equals("Y"));
         overload = resultSet.getInt("OVERLOAD");
         position = resultSet.getInt("POSITION");
         language = DBLanguage.getLanguage(resultSet.getString("LANGUAGE"));
@@ -83,7 +82,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     }
 
     public boolean isDeterministic() {
-        return isDeterministic;
+        return is(DBObjectProperty.DETERMINISTIC);
     }
 
     public boolean hasDeclaredArguments() {

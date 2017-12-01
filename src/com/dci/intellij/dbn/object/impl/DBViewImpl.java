@@ -26,9 +26,9 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 
 public class DBViewImpl extends DBDatasetImpl implements DBView {
-    private boolean isSystemView;
     private DBType type;
     public DBViewImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
@@ -37,7 +37,7 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("VIEW_NAME");
-        isSystemView = resultSet.getString("IS_SYSTEM_VIEW").equals("Y");
+        set(DBObjectProperty.SYSTEM_OBJECT, resultSet.getString("IS_SYSTEM_VIEW").equals("Y"));
         String typeOwner = resultSet.getString("VIEW_TYPE_OWNER");
         String typeName = resultSet.getString("VIEW_TYPE");
         if (typeOwner != null && typeName != null) {
@@ -49,7 +49,7 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
 
     @Override
     public DBContentType getContentType() {
-        return isSystemView ? DBContentType.DATA : DBContentType.CODE_AND_DATA;
+        return isSystemView() ? DBContentType.DATA : DBContentType.CODE_AND_DATA;
     }
 
     public DBObjectType getObjectType() {
@@ -83,6 +83,11 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
             objectNavigationLists.add(new DBObjectNavigationListImpl<DBType>("Type", type));
         }
         return objectNavigationLists;
+    }
+
+    @Override
+    public boolean isSystemView() {
+        return is(DBObjectProperty.SYSTEM_OBJECT);
     }
 
     /*********************************************************

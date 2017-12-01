@@ -13,11 +13,11 @@ import com.dci.intellij.dbn.object.DBPrivilegeGrantee;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public class DBGrantedPrivilegeImpl extends DBObjectImpl implements DBGrantedPrivilege {
     private DBObjectRef<DBPrivilege> privilegeRef;
-    private boolean isAdminOption;
 
     public DBGrantedPrivilegeImpl(DBPrivilegeGrantee grantee, ResultSet resultSet) throws SQLException {
         super(grantee, resultSet);
@@ -27,7 +27,7 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl implements DBGrantedPri
     protected void initObject(ResultSet resultSet) throws SQLException {
         this.name = resultSet.getString("GRANTED_PRIVILEGE_NAME");
         this.privilegeRef = DBObjectRef.from(getConnectionHandler().getObjectBundle().getPrivilege(name));
-        this.isAdminOption = resultSet.getString("IS_ADMIN_OPTION").equals("Y");
+        set(DBObjectProperty.ADMIN_OPTION, resultSet.getString("IS_ADMIN_OPTION").equals("Y"));
     }
 
     public DBObjectType getObjectType() {
@@ -43,7 +43,7 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl implements DBGrantedPri
     }
 
     public boolean isAdminOption() {
-        return isAdminOption;
+        return is(DBObjectProperty.ADMIN_OPTION);
     }
 
     @Nullable

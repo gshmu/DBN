@@ -31,13 +31,11 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 
 public class DBUserImpl extends DBObjectImpl implements DBUser {
     DBObjectList<DBGrantedRole> roles;
     DBObjectList<DBGrantedPrivilege> privileges;
-
-    private boolean isExpired;
-    private boolean isLocked;
 
     public DBUserImpl(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
         super(connectionHandler, resultSet);
@@ -52,8 +50,8 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("USER_NAME");
-        isExpired = resultSet.getString("IS_EXPIRED").equals("Y");
-        isLocked = resultSet.getString("IS_LOCKED").equals("Y");
+        set(DBObjectProperty.EXPIRED, resultSet.getString("IS_EXPIRED").equals("Y"));
+        set(DBObjectProperty.LOCKED, resultSet.getString("IS_LOCKED").equals("Y"));
     }
 
     @Override
@@ -74,25 +72,26 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     }
 
     public boolean isExpired() {
-        return isExpired;
+        return is(DBObjectProperty.EXPIRED);
+    }
+
+    @Override
+    public boolean isLocked() {
+        return is(DBObjectProperty.LOCKED);
     }
 
     @Nullable
     @Override
     public Icon getIcon() {
-        return isExpired ?
-               (isLocked ? Icons.DBO_USER_EXPIRED_LOCKED : Icons.DBO_USER_EXPIRED) :
-               (isLocked ? Icons.DBO_USER_LOCKED : Icons.DBO_USER);
+        return isExpired() ?
+               (isLocked() ? Icons.DBO_USER_EXPIRED_LOCKED : Icons.DBO_USER_EXPIRED) :
+               (isLocked() ? Icons.DBO_USER_LOCKED : Icons.DBO_USER);
     }
 
     @Nullable
     @Override
     public DBObject getDefaultNavigationObject() {
         return getSchema();
-    }
-
-    public boolean isLocked() {
-        return isLocked;
     }
 
     public List<DBGrantedPrivilege> getPrivileges() {
@@ -131,10 +130,10 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
 
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
-        if (isLocked || isExpired) {
-            if (isLocked && isExpired)
+        if (isLocked() || isExpired()) {
+            if (isLocked() && isExpired())
                 ttb.append(false, " - expired & locked" , true);
-            else if (isLocked)
+            else if (isLocked())
                 ttb.append(false, " - locked" , true); else
                 ttb.append(false, " - expired" , true);
 

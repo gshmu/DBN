@@ -30,12 +30,12 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
 
 public class DBTableImpl extends DBDatasetImpl implements DBTable {
     private static final List<DBColumn> EMPTY_COLUMN_LIST = new ArrayList<DBColumn>();
-    private boolean isTemporary;
 
     private DBObjectList<DBIndex> indexes;
     private DBObjectList<DBNestedTable> nestedTables;
@@ -47,7 +47,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("TABLE_NAME");
-        isTemporary = resultSet.getString("IS_TEMPORARY").equals("Y");
+        set(DBObjectProperty.TEMPORARY, resultSet.getString("IS_TEMPORARY").equals("Y"));
     }
 
     @Override
@@ -73,13 +73,13 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
 
     @Nullable
     public Icon getIcon() {
-        return isTemporary ?
+        return isTemporary() ?
                 Icons.DBO_TMP_TABLE :
                 Icons.DBO_TABLE;
     }
 
     public boolean isTemporary() {
-        return isTemporary;
+        return is(DBObjectProperty.TEMPORARY);
     }
 
     @Nullable
@@ -170,7 +170,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     @Override
     public List<PresentableProperty> getPresentableProperties() {
         List<PresentableProperty> properties = super.getPresentableProperties();
-        if (isTemporary) {
+        if (isTemporary()) {
             properties.add(0, new SimplePresentableProperty("Attributes", "temporary"));
         }
         return properties;
