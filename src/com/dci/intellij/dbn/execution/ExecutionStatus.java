@@ -1,62 +1,27 @@
 package com.dci.intellij.dbn.execution;
 
-import java.sql.SQLException;
+import com.dci.intellij.dbn.common.property.Property;
+import com.dci.intellij.dbn.common.property.PropertyGroup;
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+public enum ExecutionStatus implements Property {
+    QUEUED,
+    PROMPTED,
+    EXECUTING,
+    CANCELLED;
 
-public class ExecutionStatus {
-    private transient boolean queued = false;
-    private transient boolean prompted = false;
-    private transient boolean executing = false;
-    private transient boolean cancelled = false;
-
-    public boolean isQueued() {
-        return queued;
+    @Override
+    public int index() {
+        return PropertyHolderImpl.idx(this);
     }
 
-    public void setQueued(boolean queued) {
-        this.queued = queued;
+    @Override
+    public PropertyGroup group() {
+        return null;
     }
 
-    public boolean isPrompted() {
-        return prompted;
+    @Override
+    public boolean implicit() {
+        return false;
     }
-
-    public void setPrompted(boolean prompted) {
-        this.prompted = prompted;
-    }
-
-    public boolean isExecuting() {
-        return executing;
-    }
-
-    public void setExecuting(boolean executing) {
-        this.executing = executing;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
-    }
-
-    public boolean canExecute() {
-        return !queued && !executing && !cancelled;
-    }
-
-    public void assertNotCancelled() throws SQLException {
-        if (cancelled) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
-    }
-
-    public void reset() {
-        queued = false;
-        prompted = false;
-        executing = false;
-        cancelled = false;
-    }
-
 }

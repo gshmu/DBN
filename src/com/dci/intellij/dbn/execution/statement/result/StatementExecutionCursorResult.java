@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResu
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.progress.ProgressIndicator;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 public class StatementExecutionCursorResult extends StatementExecutionBasicResult {
     private StatementExecutionResultForm resultPanel;
@@ -67,7 +68,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                 initProgressIndicator(progressIndicator, true, "Reloading results for " + getExecutionProcessor().getStatementName());
                 ExecutionContext context = getExecutionProcessor().getExecutionContext(true);
                 context.setExecutionTimestamp(System.currentTimeMillis());
-                context.getExecutionStatus().setExecuting(true);
+                context.set(EXECUTING, true);
 
                 try {
                     resultPanel.highlightLoading(true);

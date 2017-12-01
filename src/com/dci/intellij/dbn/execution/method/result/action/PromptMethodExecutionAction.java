@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 public class PromptMethodExecutionAction extends MethodExecutionResultAction {
     public PromptMethodExecutionAction() {
@@ -36,6 +37,6 @@ public class PromptMethodExecutionAction extends MethodExecutionResultAction {
         presentation.setEnabled(
                 executionResult != null &&
                         !executionResult.getDebuggerType().isDebug() &&
-                        !executionResult.getExecutionContext().getExecutionStatus().isExecuting());
+                        !executionResult.getExecutionContext().is(EXECUTING));
     }    
 }

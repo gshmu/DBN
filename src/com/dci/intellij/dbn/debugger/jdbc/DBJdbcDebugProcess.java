@@ -42,8 +42,8 @@ import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatusHolder;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBJdbcDebuggerEditorsProvider;
 import com.dci.intellij.dbn.debugger.jdbc.frame.DBJdbcDebugSuspendContext;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
-import com.dci.intellij.dbn.execution.ExecutionStatus;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -69,6 +69,7 @@ import com.intellij.xdebugger.ui.XDebugTabLayouter;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointId;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.setBreakpointId;
 import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 
 public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebugProcess implements DBDebugProcess {
     protected DBNConnection targetConnection;
@@ -101,6 +102,18 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     @Override
     public boolean is(DBDebugProcessStatus status) {
         return this.status.is(status);
+    }
+
+    @Override
+    public boolean isNot(DBDebugProcessStatus status) {
+        return this.status.isNot(status);
+    }
+
+    @Override
+    public void assertNot(DBDebugProcessStatus status) {
+        if (is(status)) {
+            throw AlreadyDisposedException.INSTANCE;
+        }
     }
 
     public DBNConnection getTargetConnection() {
@@ -311,8 +324,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             set(PROCESS_TERMINATING, true);
             console.system("Stopping debugger...");
             T executionInput = getExecutionInput();
-            ExecutionStatus executionStatus = executionInput.getExecutionContext().getExecutionStatus();
-            executionStatus.setCancelled(!is(PROCESS_STOPPED_NORMALLY));
+            ExecutionContext executionContext = executionInput.getExecutionContext();
+            executionContext.set(CANCELLED, !is(PROCESS_STOPPED_NORMALLY));
             stopDebugger();
         }
     }

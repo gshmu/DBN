@@ -37,7 +37,6 @@ import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
-import com.dci.intellij.dbn.execution.ExecutionStatus;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
@@ -60,6 +59,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 @State(
         name = "DBNavigator.Project.ScriptExecutionManager",
@@ -138,8 +138,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
     private void doExecuteScript(final ScriptExecutionInput input) throws Exception {
         ExecutionContext context = input.getExecutionContext();
-        ExecutionStatus status = context.getExecutionStatus();
-        status.setExecuting(true);
+        context.set(EXECUTING, true);
         ConnectionHandler connectionHandler = FailsafeUtil.get(input.getConnectionHandler());
         final VirtualFile sourceFile = input.getSourceFile();
         activeProcesses.put(sourceFile, null);
@@ -263,7 +262,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 throw e;
             }
         } finally {
-            status.setExecuting(false);
+            context.set(EXECUTING, false);
             outputContext.finish();
             BufferedReader consoleReader = logReader.get();
             if (consoleReader != null) consoleReader.close();

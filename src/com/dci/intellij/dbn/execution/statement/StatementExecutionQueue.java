@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.execution.statement;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
 
 public abstract class StatementExecutionQueue {
 
@@ -22,7 +23,7 @@ public abstract class StatementExecutionQueue {
 
     public void queue(StatementExecutionProcessor processor) {
         if (!this.processors.contains(processor)) {
-            processor.getExecutionStatus().setQueued(true);
+            processor.getExecutionContext().set(QUEUED, true);
             this.processors.add(processor);
             execute();
         }
@@ -63,7 +64,7 @@ public abstract class StatementExecutionQueue {
         // cleanup queue for untouched processors
         StatementExecutionProcessor processor = processors.poll();
         while(processor != null) {
-            processor.getExecutionStatus().reset();
+            processor.getExecutionContext().reset();
             processor = processors.poll();
         }
     }
@@ -73,7 +74,7 @@ public abstract class StatementExecutionQueue {
     }
 
     public void cancelExecution(StatementExecutionProcessor processor) {
-        processor.getExecutionStatus().setQueued(false);
+        processor.getExecutionContext().set(QUEUED, false);
         processors.remove(processor);
         if (processors.size() == 0) {
             executing = false;
