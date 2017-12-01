@@ -38,6 +38,7 @@ import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
+import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatusHolder;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBJdbcDebuggerEditorsProvider;
 import com.dci.intellij.dbn.debugger.jdbc.frame.DBJdbcDebugSuspendContext;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -67,13 +68,14 @@ import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointId;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.setBreakpointId;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
 
 public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebugProcess implements DBDebugProcess {
     protected DBNConnection targetConnection;
     protected DBNConnection debugConnection;
     private ConnectionHandlerRef connectionHandlerRef;
     private DBBreakpointHandler[] breakpointHandlers;
-    private DBDebugProcessStatus status = new DBDebugProcessStatus();
+    private DBDebugProcessStatusHolder status = new DBDebugProcessStatusHolder();
 
     private transient DebuggerRuntimeInfo runtimeInfo;
     private transient ExecutionBacktraceInfo backtraceInfo;
@@ -91,8 +93,14 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         breakpointHandlers = new DBBreakpointHandler[]{breakpointHandler};
     }
 
-    public DBDebugProcessStatus getStatus() {
-        return status;
+    @Override
+    public boolean set(DBDebugProcessStatus status, boolean value) {
+        return this.status.set(status, value);
+    }
+
+    @Override
+    public boolean is(DBDebugProcessStatus status) {
+        return this.status.is(status);
     }
 
     public DBNConnection getTargetConnection() {
@@ -167,7 +175,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
                     synchronizeSession();
                 } catch (SQLException e) {
-                    status.SESSION_INITIALIZATION_THREW_EXCEPTION = true;
+                    set(SESSION_INITIALIZATION_THREW_EXCEPTION, true);
                     NotificationUtil.sendErrorNotification(getProject(), "Error initializing debug environment.", e.getMessage());
                     session.stop();
                 }
@@ -180,11 +188,11 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         new BackgroundTask(project, "Initialize debug environment", true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                if (status.PROCESS_IS_TERMINATING || status.TARGET_EXECUTION_TERMINATED) {
+                if (is(PROCESS_TERMINATING) || is(TARGET_EXECUTION_TERMINATED)) {
                     getSession().stop();
                 } else {
 
-                    status.CAN_SET_BREAKPOINTS = true;
+                    set(BREAKPOINT_SETTING_ALLOWED, true);
                     progressIndicator.setText("Registering breakpoints");
                     registerBreakpoints(new SynchronizeSessionTask(project));
                 }
@@ -202,7 +210,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             final DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
             try {
                 startTargetProgram();
-                if (!status.TARGET_EXECUTION_THREW_EXCEPTION && !status.TARGET_EXECUTION_TERMINATED) {
+                if (!is(TARGET_EXECUTION_THREW_EXCEPTION) && !is(TARGET_EXECUTION_TERMINATED)) {
                     runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
                     runtimeInfo = debuggerInterface.stepOver(debugConnection);
                     progressIndicator.setText("Suspending session");
@@ -211,7 +219,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 }
 
             } catch (SQLException e) {
-                status.SESSION_INITIALIZATION_THREW_EXCEPTION = true;
+                set(SESSION_INITIALIZATION_THREW_EXCEPTION,  true);
                 console.system("Error synchronizing debug session: " + e.getMessage());
                 MessageUtil.showErrorDialog(getProject(), "Could not initialize debug environment on connection \"" + getConnectionHandler().getName() + "\". ", e);
                 getSession().stop();
@@ -224,17 +232,17 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         new BackgroundTask(getProject(), "Running debugger target program", true, true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                if (status.PROCESS_IS_TERMINATING) return;
-                if (status.SESSION_INITIALIZATION_THREW_EXCEPTION) return;
+                if (is(PROCESS_TERMINATING)) return;
+                if (is(SESSION_INITIALIZATION_THREW_EXCEPTION)) return;
                 T executionInput = getExecutionInput();
                 try {
-                    status.TARGET_EXECUTION_STARTED = true;
+                    set(TARGET_EXECUTION_STARTED, true);
 
                     console.system("Target program execution started: " + executionInput.getExecutionContext().getTargetName());
                     executeTarget();
                     console.system("Target program execution ended");
                 } catch (SQLException e) {
-                    status.TARGET_EXECUTION_THREW_EXCEPTION = true;
+                    set(TARGET_EXECUTION_THREW_EXCEPTION, true);
                     console.error("Target program execution failed. " + e.getMessage());
                     // if the method execution threw exception, the debugger-off statement is not reached,
                     // hence the session will hag as debuggable. To avoid this, disable debugging has
@@ -246,7 +254,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
                     MessageUtil.showErrorDialog(getProject(), "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
                 } finally {
-                    status.TARGET_EXECUTION_TERMINATED = true;
+                    set(TARGET_EXECUTION_TERMINATED, true);
                     getSession().stop();
                 }
             }
@@ -299,12 +307,12 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     @Override
     public synchronized void stop() {
-        if (!status.PROCESS_IS_TERMINATED && !status.PROCESS_IS_TERMINATING) {
-            status.PROCESS_IS_TERMINATING = true;
+        if (!is(PROCESS_TERMINATED) && !is(PROCESS_TERMINATING)) {
+            set(PROCESS_TERMINATING, true);
             console.system("Stopping debugger...");
             T executionInput = getExecutionInput();
             ExecutionStatus executionStatus = executionInput.getExecutionContext().getExecutionStatus();
-            executionStatus.setCancelled(!status.PROCESS_STOPPED_NORMALLY);
+            executionStatus.setCancelled(!is(PROCESS_STOPPED_NORMALLY));
             stopDebugger();
         }
     }
@@ -318,11 +326,11 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 try {
                     unregisterBreakpoints();
-                    status.CAN_SET_BREAKPOINTS = false;
+                    set(BREAKPOINT_SETTING_ALLOWED, false);
                     rollOutDebugger();
 
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                    if (!status.TARGET_EXECUTION_TERMINATED) {
+                    if (!is(TARGET_EXECUTION_TERMINATED)) {
                         runtimeInfo = debuggerInterface.stopExecution(debugConnection);
                     }
                     debuggerInterface.detachSession(debugConnection);
@@ -330,7 +338,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 } catch (final SQLException e) {
                     console.error("Error detaching debugger session: " + e.getMessage());
                 } finally {
-                    status.PROCESS_IS_TERMINATED = true;
+                    set(PROCESS_TERMINATED, true);
                     releaseDebugConnection();
                     releaseTargetConnection();
                     DBRunConfig<T> runProfile = (DBRunConfig<T>) getSession().getRunProfile();
@@ -443,7 +451,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     private void suspendSession() {
-        if (status.PROCESS_IS_TERMINATING) return;
+        if (is(PROCESS_TERMINATING)) return;
         Project project = getProject();
         XDebugSession session = getSession();
         if (isTerminated()) {
@@ -451,7 +459,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             String message = "Session terminated with code :" + reasonCode + " (" + getDebuggerInterface().getRuntimeEventReason(reasonCode) + ")";
             NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Debugger", message);
 
-            status.PROCESS_STOPPED_NORMALLY = true;
+            set(PROCESS_STOPPED_NORMALLY, true);
             session.stop();
         } else {
             VirtualFile virtualFile = getRuntimeInfoFile(runtimeInfo);
@@ -519,7 +527,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     private void rollOutDebugger() {
         try {
             long millis = System.currentTimeMillis();
-            while (!status.TARGET_EXECUTION_THREW_EXCEPTION && runtimeInfo != null && !runtimeInfo.isTerminated()) {
+            while (!is(TARGET_EXECUTION_THREW_EXCEPTION) && runtimeInfo != null && !runtimeInfo.isTerminated()) {
                 runtimeInfo = getDebuggerInterface().stepOut(debugConnection);
                 // force closing the target connection
                 if (System.currentTimeMillis() - millis > 20000) {
