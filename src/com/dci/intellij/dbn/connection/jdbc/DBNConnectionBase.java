@@ -29,18 +29,8 @@ abstract class DBNConnectionBase extends DBNResource implements Connection, Clos
 
     protected abstract <S extends Statement> S wrap(S statement);
 
-    @Override
-    public void commit() throws SQLException {
-        inner.commit();
-    }
-
-    @Override
-    public void rollback() throws SQLException {
-        inner.rollback();
-    }
-
     /********************************************************************
-     *                     Wrapped calls                                *
+     *                            Wrapped calls                         *
      ********************************************************************/
     @Override
     public DBNStatement createStatement() throws SQLException {

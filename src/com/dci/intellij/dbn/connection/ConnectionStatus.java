@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.connection;
 public class ConnectionStatus {
     private boolean connected = false;
     private boolean valid = true;
-    private boolean resolvingIdleStatus;
     private String statusMessage;
     private AuthenticationError authenticationError;
 
@@ -29,14 +28,6 @@ public class ConnectionStatus {
 
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
-    }
-
-    public boolean isResolvingIdleStatus() {
-        return resolvingIdleStatus;
-    }
-
-    public void setResolvingIdleStatus(boolean resolvingIdleStatus) {
-        this.resolvingIdleStatus = resolvingIdleStatus;
     }
 
     public AuthenticationError getAuthenticationError() {

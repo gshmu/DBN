@@ -3,12 +3,14 @@ package com.dci.intellij.dbn.connection.transaction.ui;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import java.awt.event.ActionEvent;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.intellij.openapi.project.Project;
@@ -47,14 +49,19 @@ public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> 
     }
 
     private class CommitAction extends AbstractAction {
-        public CommitAction() {
+        CommitAction() {
             super("Commit", Icons.CONNECTION_COMMIT);
         }
 
         public void actionPerformed(ActionEvent e) {
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();
-                transactionManager.execute(getConnectionHandler(), true, TransactionAction.COMMIT, additionalOperation);
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                List<DBNConnection> connections = connectionHandler.getActiveConnections();
+                for (DBNConnection connection : connections) {
+                    transactionManager.execute(connectionHandler, connection, true, TransactionAction.COMMIT, additionalOperation);
+                }
+
             } finally {
                 doOKAction();
             }
@@ -62,14 +69,19 @@ public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> 
     }
 
     private class RollbackAction extends AbstractAction {
-        public RollbackAction() {
+        RollbackAction() {
             super("Rollback", Icons.CONNECTION_ROLLBACK);
         }
 
         public void actionPerformed(ActionEvent e) {
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();
-                transactionManager.execute(getConnectionHandler(), true, TransactionAction.ROLLBACK, additionalOperation);
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                List<DBNConnection> connections = connectionHandler.getActiveConnections();
+                for (DBNConnection connection : connections) {
+                    transactionManager.execute(connectionHandler, connection, true, TransactionAction.ROLLBACK, additionalOperation);
+                }
+
             } finally {
                 doOKAction();
             }

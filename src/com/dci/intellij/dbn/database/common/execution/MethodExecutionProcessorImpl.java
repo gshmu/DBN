@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
@@ -85,8 +84,6 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         boolean loggingEnabled = debuggerType != DBDebuggerType.JDBC && options.isEnableLogging();
         Project project = getProject();
         final DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
-        Counter runningMethods = connectionHandler.getLoadMonitor().getRunningMethods();
-        runningMethods.increment();
 
         ExecutionContext context = executionInput.getExecutionContext(true);
         try {
@@ -135,12 +132,11 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 }
             }
 
-            if (!usePoolConnection) connectionHandler.notifyDataChanges(method.getVirtualFile());
+            if (!usePoolConnection) connection.getStatusMonitor().notifyDataChanges(method.getVirtualFile());
         } catch (SQLException e) {
             ConnectionUtil.cancel(context.getStatement());
             throw e;
         } finally {
-            runningMethods.decrement();
             if (loggingEnabled) {
                 loggingManager.disableLogger(connectionHandler, connection);
             }

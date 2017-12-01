@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +18,6 @@ import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
-import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -27,7 +27,6 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 
 public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable {
     @NotNull
@@ -42,6 +41,9 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     ConnectionSettings getSettings();
 
     void setSettings(ConnectionSettings connectionSettings);
+
+    @NotNull
+    List<DBNConnection> getActiveConnections();
 
     @NotNull
     ConnectionStatus getConnectionStatus();
@@ -67,6 +69,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
 
     @NotNull ConnectionBundle getConnectionBundle();
     @NotNull ConnectionPool getConnectionPool();
+    @Deprecated
     ConnectionLoadMonitor getLoadMonitor();
     DatabaseInterfaceProvider getInterfaceProvider();
     @NotNull DBObjectBundle getObjectBundle();
@@ -88,9 +91,6 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     String getPresentableText();
     String getQualifiedName();
 
-    void notifyDataChanges(VirtualFile virtualFile);
-    void resetDataChanges();
-    boolean hasUncommittedChanges();
     void commit() throws SQLException;
     void rollback() throws SQLException;
     void ping(boolean check);
@@ -106,7 +106,6 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     Filter<BrowserTreeNode> getObjectTypeFilter();
     NavigationPsiCache getPsiCache();
 
-    UncommittedChangeBundle getDataChanges();
     boolean isConnected();
     int getIdleMinutes();
 
@@ -115,4 +114,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     DatabaseInfo getDatabaseInfo();
     AuthenticationInfo getAuthenticationInfo();
     Set<TransactionAction> getPendingActions();
+
+    @Deprecated
+    boolean hasUncommittedChanges();
 }

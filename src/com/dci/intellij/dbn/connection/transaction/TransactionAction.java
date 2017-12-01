@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.sql.SQLException;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.intellij.notification.NotificationType;
 
 public enum TransactionAction implements Serializable {
@@ -13,8 +15,8 @@ public enum TransactionAction implements Serializable {
             NotificationType.ERROR, "Error committing connection \"{0}\". Details: {1}",
             false,
             new Executor() {
-                void execute(ConnectionHandler connectionHandler) throws SQLException {
-                    connectionHandler.commit();
+                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
+                    ConnectionUtil.commit(connection);
                 }
             }),
 
@@ -24,8 +26,8 @@ public enum TransactionAction implements Serializable {
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
             new Executor() {
-                void execute(ConnectionHandler connectionHandler) throws SQLException {
-                    connectionHandler.rollback();
+                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
+                    ConnectionUtil.rollback(connection);
                 }
             }),
 
@@ -35,8 +37,8 @@ public enum TransactionAction implements Serializable {
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
             new Executor() {
-                void execute(ConnectionHandler connectionHandler) throws SQLException {
-                    connectionHandler.rollback();
+                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
+                    ConnectionUtil.rollback(connection);
                 }
             }),
 
@@ -47,7 +49,7 @@ public enum TransactionAction implements Serializable {
             true,
             new Executor() {
                 @Override
-                void execute(ConnectionHandler connectionHandler) throws SQLException {
+                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
                     connectionHandler.disconnect();
                 }
             }),
@@ -58,20 +60,20 @@ public enum TransactionAction implements Serializable {
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
             new Executor() {
-                void execute(ConnectionHandler connectionHandler) throws SQLException {
+                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
                     connectionHandler.disconnect();
                 }
             }),
 
-    PING(
+    KEEP_ALIVE(
             "Ping",
             null, "",
             NotificationType.ERROR, "Error checking connectivity for \"{0}\". Details: {1}",
             false,
             new Executor() {
                 @Override
-                void execute(ConnectionHandler connectionHandler) throws SQLException {
-                    connectionHandler.ping(true);
+                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
+                    connection.getStatusMonitor().updateLastAccess();
                 }
             }),
 
@@ -82,7 +84,7 @@ public enum TransactionAction implements Serializable {
             NotificationType.ERROR, "Error switching Auto-Commit ON for connection \"{0}\". Details: {1}",
             true,
             new Executor() {
-                void execute(ConnectionHandler connectionHandler) throws SQLException {
+                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
                     assert !connectionHandler.isAutoCommit();
                     connectionHandler.setAutoCommit(true);
                 }
@@ -94,7 +96,7 @@ public enum TransactionAction implements Serializable {
             NotificationType.ERROR, "Error switching Auto-Commit OFF for connection\"{0}\". Details: {1}",
             true,
             new Executor() {
-                void execute(ConnectionHandler connectionHandler) throws SQLException {
+                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
                     assert connectionHandler.isAutoCommit();
                     connectionHandler.setAutoCommit(false);
                 }
@@ -144,11 +146,11 @@ public enum TransactionAction implements Serializable {
     }
 
     private abstract static class Executor {
-        abstract void execute(ConnectionHandler connectionHandler) throws SQLException;
+        abstract void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException;
     }
 
-    public void execute(ConnectionHandler connectionHandler) throws SQLException {
-        executor.execute(connectionHandler);
+    public void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
+        executor.execute(connectionHandler, connection);
     }
 
 }
