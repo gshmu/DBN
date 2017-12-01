@@ -32,11 +32,6 @@ public abstract class ExecutionContext implements PropertyHolder<ExecutionStatus
         return this.status.isNot(status);
     }
 
-    @Override
-    public void assertNot(ExecutionStatus parameter) {
-
-    }
-
     public abstract @NotNull String getTargetName();
 
     public abstract @Nullable ConnectionHandler getTargetConnection();

@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.common.property;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-
 public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>{
     private int computed = 0;
     private T[] properties;
@@ -77,14 +75,6 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
             }
         }
     }
-
-    @Override
-    public void assertNot(T parameter) {
-        if (is(parameter)) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
-    }
-
 
     public static int idx(Enum property) {
         return (int) Math.pow(2, property.ordinal());

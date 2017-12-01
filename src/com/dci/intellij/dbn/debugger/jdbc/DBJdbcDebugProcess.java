@@ -109,13 +109,6 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         return this.status.isNot(status);
     }
 
-    @Override
-    public void assertNot(DBDebugProcessStatus status) {
-        if (is(status)) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
-    }
-
     public DBNConnection getTargetConnection() {
         return targetConnection;
     }

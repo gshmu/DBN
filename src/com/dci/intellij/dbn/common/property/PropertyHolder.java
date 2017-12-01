@@ -6,6 +6,4 @@ public interface PropertyHolder<T extends Property> {
     boolean is(T status);
 
     boolean isNot(T status);
-
-    void assertNot(T parameter);
 }
