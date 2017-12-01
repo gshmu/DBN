@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 
 public class DBNStatement<T extends Statement> extends DBNResource implements Statement, Closeable, Cancellable {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -96,19 +97,19 @@ public class DBNStatement<T extends Statement> extends DBNResource implements St
             DBNConnection connection = getConnection();
             connection.updateLastAccess();
 
-            boolean wasActive = connection.is(ResourceStatus.ACTIVE);
+            boolean wasActive = connection.is(ACTIVE);
             if (wasActive) {
                 LOGGER.warn("Connection already busy with another statement");
             }
             try {
-                connection.set(ResourceStatus.ACTIVE, true);
+                connection.set(ACTIVE, true);
                 return execute();
             } catch (SQLException e) {
                 exception = e;
                 throw exception;
             } finally {
                 connection.updateLastAccess();
-                connection.set(ResourceStatus.ACTIVE, wasActive);
+                connection.set(ACTIVE, wasActive);
             }
         }
         protected abstract R execute() throws SQLException;

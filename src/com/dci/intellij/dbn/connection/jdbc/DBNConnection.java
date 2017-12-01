@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
+import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.*;
 
 public class DBNConnection extends DBNConnectionBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -114,7 +115,7 @@ public class DBNConnection extends DBNConnectionBase {
         try {
             super.setAutoCommit(autoCommit);
         } finally {
-            set(ResourceStatus.AUTO_COMMIT, autoCommit);
+            set(AUTO_COMMIT, autoCommit);
         }
     }
 
@@ -149,19 +150,19 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     public boolean isReserved() {
-        return is(ResourceStatus.RESERVED);
+        return is(RESERVED);
     }
 
     public boolean isActive() {
-        return is(ResourceStatus.ACTIVE);
+        return is(ACTIVE);
     }
 
     public boolean isAutoCommit() {
-        return is(ResourceStatus.AUTO_COMMIT);
+        return is(AUTO_COMMIT);
     }
 
     public boolean set(ResourceStatus status, boolean value) {
-        if (status == ResourceStatus.RESERVED && value && isActive()) {
+        if (status == RESERVED && value && isActive()) {
             LOGGER.warn("Reserving busy connection");
         }
         return super.set(status, value);

@@ -30,9 +30,9 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.TEMPORARY;
 
 public class DBTableImpl extends DBDatasetImpl implements DBTable {
     private static final List<DBColumn> EMPTY_COLUMN_LIST = new ArrayList<DBColumn>();
@@ -47,7 +47,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("TABLE_NAME");
-        set(DBObjectProperty.TEMPORARY, resultSet.getString("IS_TEMPORARY").equals("Y"));
+        set(TEMPORARY, resultSet.getString("IS_TEMPORARY").equals("Y"));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     }
 
     public boolean isTemporary() {
-        return is(DBObjectProperty.TEMPORARY);
+        return is(TEMPORARY);
     }
 
     @Nullable

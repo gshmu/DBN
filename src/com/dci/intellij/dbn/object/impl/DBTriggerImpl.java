@@ -22,11 +22,11 @@ import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
 import com.dci.intellij.dbn.object.common.operation.DBOperationType;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
     private TriggerType triggerType;
@@ -43,7 +43,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("TRIGGER_NAME");
-        set(DBObjectProperty.FOR_EACH_ROW, resultSet.getString("IS_FOR_EACH_ROW").equals("Y"));
+        set(FOR_EACH_ROW, resultSet.getString("IS_FOR_EACH_ROW").equals("Y"));
 
         String triggerTypeString = resultSet.getString("TRIGGER_TYPE");
         triggerType =
@@ -81,11 +81,11 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
 
     @Override
     public void initProperties() {
-        properties.set(DBObjectProperty.EDITABLE, true);
-        properties.set(DBObjectProperty.DISABLEABLE, true);
-        properties.set(DBObjectProperty.REFERENCEABLE, true);
-        properties.set(DBObjectProperty.COMPILABLE, true);
-        properties.set(DBObjectProperty.SCHEMA_OBJECT, true);
+        properties.set(EDITABLE, true);
+        properties.set(DISABLEABLE, true);
+        properties.set(REFERENCEABLE, true);
+        properties.set(COMPILABLE, true);
+        properties.set(SCHEMA_OBJECT, true);
     }
 
     @Override
@@ -94,7 +94,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
     }
 
     public boolean isForEachRow() {
-        return is(DBObjectProperty.FOR_EACH_ROW);
+        return is(FOR_EACH_ROW);
     }
 
     public TriggerType getTriggerType() {

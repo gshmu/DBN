@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.common.status;
 
 import com.dci.intellij.dbn.common.property.Property;
+import com.dci.intellij.dbn.common.property.PropertyGroup;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public enum DBObjectStatus implements Property {
@@ -31,4 +32,16 @@ public enum DBObjectStatus implements Property {
     public int index() {
         return PropertyHolderImpl.idx(this);
     }
+
+    @Override
+    public PropertyGroup group() {
+        return null;
+    }
+
+    @Override
+    public boolean implicit() {
+        return false;
+    }
+
+
 }

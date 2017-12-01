@@ -61,16 +61,20 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
     public void enableEditing(@NotNull DBSchemaObject schemaObject, @NotNull DBContentType contentType) {
         schemaObject.getStatus().set(contentType, DBObjectStatus.EDITABLE, true);
         DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
-        EditorUtil.setEditorsReadonly(contentFile, false);
-        EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
+        if (contentFile != null) {
+            EditorUtil.setEditorsReadonly(contentFile, false);
+            EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
+        }
     }
 
     public void disableEditing(@NotNull DBSchemaObject schemaObject, @NotNull DBContentType contentType) {
         schemaObject.getStatus().set(contentType, DBObjectStatus.EDITABLE, false);
         boolean readonly = isReadonly(schemaObject, contentType);
         DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
-        EditorUtil.setEditorsReadonly(contentFile, readonly);
-        EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
+        if (contentFile != null) {
+            EditorUtil.setEditorsReadonly(contentFile, readonly);
+            EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
+        }
     }
 
 

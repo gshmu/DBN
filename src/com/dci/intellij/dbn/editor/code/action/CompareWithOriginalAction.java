@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 public class CompareWithOriginalAction extends AbstractDiffAction {
     public CompareWithOriginalAction() {
@@ -31,7 +32,7 @@ public class CompareWithOriginalAction extends AbstractDiffAction {
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             boolean readonly = environmentManager.isReadonly(sourceCodeFile);
             presentation.setVisible(!readonly);
-            presentation.setEnabled(sourceCodeFile.isModified());
+            presentation.setEnabled(sourceCodeFile.is(MODIFIED));
         }
     }
 }

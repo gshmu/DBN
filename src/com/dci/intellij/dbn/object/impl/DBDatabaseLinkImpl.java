@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.object.DBDatabaseLink;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 
 public class DBDatabaseLinkImpl extends DBSchemaObjectImpl implements DBDatabaseLink {
     private String userName;
@@ -29,7 +29,7 @@ public class DBDatabaseLinkImpl extends DBSchemaObjectImpl implements DBDatabase
 
     @Override
     public void initProperties() {
-        properties.set(DBObjectProperty.SCHEMA_OBJECT, true);
+        properties.set(SCHEMA_OBJECT, true);
     }
 
     public DBObjectType getObjectType() {

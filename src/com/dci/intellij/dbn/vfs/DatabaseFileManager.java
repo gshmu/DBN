@@ -41,6 +41,7 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.file.impl.FileManagerImpl;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 @State(
     name = "DBNavigator.Project.DatabaseFileManager",
@@ -165,7 +166,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                         case SHOW: {
                             List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                             for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                                if (sourceCodeFile.isModified()) {
+                                if (sourceCodeFile.is(MODIFIED)) {
                                     SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
                                     diffManager.opedDatabaseDiffWindow(sourceCodeFile);
                                 }

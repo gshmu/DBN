@@ -32,12 +32,13 @@ import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationLi
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
 import com.dci.intellij.dbn.object.common.operation.DBOperationType;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 
 public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint {
     private int constraintType;
@@ -98,8 +99,8 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
 
     @Override
     protected void initProperties() {
-        properties.set(DBObjectProperty.SCHEMA_OBJECT, true);
-        properties.set(DBObjectProperty.DISABLEABLE, true);
+        properties.set(SCHEMA_OBJECT, true);
+        properties.set(DISABLEABLE, true);
     }
 
     @Nullable

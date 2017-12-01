@@ -16,6 +16,8 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LOADING;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 public class RevertChangesAction extends AbstractSourceCodeEditorAction {
     public RevertChangesAction() {
@@ -51,7 +53,7 @@ public class RevertChangesAction extends AbstractSourceCodeEditorAction {
             presentation.setVisible(!readonly);
             DBSchemaObject object = sourceCodeFile.getObject();
             DBContentType contentType = sourceCodeFile.getContentType();
-            presentation.setEnabled(!sourceCodeFile.isLoading() && sourceCodeFile.isModified());
+            presentation.setEnabled(!sourceCodeFile.is(LOADING) && sourceCodeFile.is(MODIFIED));
         }
 
 

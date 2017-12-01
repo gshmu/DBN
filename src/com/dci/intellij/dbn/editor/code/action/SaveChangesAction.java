@@ -15,6 +15,8 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 public class SaveChangesAction extends AbstractSourceCodeEditorAction {
     public SaveChangesAction() {
@@ -51,7 +53,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
                     contentType == DBContentType.CODE_SPEC ? "Save spec" :
                     contentType == DBContentType.CODE_BODY ? "Save body" : "Save";
 
-            presentation.setEnabled(sourceCodeFile.isModified() && !sourceCodeFile.isSaving());
+            presentation.setEnabled(sourceCodeFile.is(MODIFIED) && !sourceCodeFile.is(SAVING));
             presentation.setText(text);
         }
     }

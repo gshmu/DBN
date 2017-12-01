@@ -24,9 +24,10 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DETERMINISTIC;
 
 public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMethod {
     protected DBObjectList<DBArgument> arguments;
@@ -44,7 +45,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
 
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
-        set(DBObjectProperty.DETERMINISTIC, resultSet.getString("IS_DETERMINISTIC").equals("Y"));
+        set(DETERMINISTIC, resultSet.getString("IS_DETERMINISTIC").equals("Y"));
         overload = resultSet.getInt("OVERLOAD");
         position = resultSet.getInt("POSITION");
         language = DBLanguage.getLanguage(resultSet.getString("LANGUAGE"));
@@ -53,7 +54,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     @Override
     public void initProperties() {
         super.initProperties();
-        properties.set(DBObjectProperty.COMPILABLE, true);
+        properties.set(COMPILABLE, true);
     }
 
     @Override
@@ -82,7 +83,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     }
 
     public boolean isDeterministic() {
-        return is(DBObjectProperty.DETERMINISTIC);
+        return is(DETERMINISTIC);
     }
 
     public boolean hasDeclaredArguments() {

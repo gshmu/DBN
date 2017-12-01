@@ -2,10 +2,15 @@ package com.dci.intellij.dbn.common.property;
 
 public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>{
     private int status = 0;
-    private Class<T> type;
+    private T[] properties;
 
     public PropertyHolderImpl(Class<T> type) {
-        this.type = type;
+        this.properties = type.getEnumConstants();
+        for (T property : properties) {
+            if (property.implicit()) {
+                set(property);
+            }
+        }
     }
 
     @Override
@@ -21,17 +26,37 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
         return (this.status & idx) == idx;
     }
 
-    private boolean set(T status) {
-        if (!is(status)) {
-            this.status += status.index();
+    private boolean set(T property) {
+        if (!is(property)) {
+            PropertyGroup group = property.group();
+            if (group != null) {
+                for (T prop : properties) {
+                    if (prop.group() == group) {
+                        unset(prop);
+                        break;
+                    }
+                }
+            }
+
+            this.status += property.index();
             return true;
         }
         return false;
     }
 
-    private boolean unset(T status) {
-        if (is(status)) {
-            this.status -= status.index();
+    private boolean unset(T property) {
+        if (is(property)) {
+            this.status -= property.index();
+
+            PropertyGroup group = property.group();
+            if (group != null) {
+                for (T prop : properties) {
+                    if (prop.group() == group && prop.implicit()) {
+                        set(prop);
+                        break;
+                    }
+                }
+            }
             return true;
         }
         return false;
@@ -44,15 +69,12 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        T[] properties = type.getEnumConstants();
-        if (properties != null) {
-            for (T property : properties) {
-                if (is(property)) {
-                    if (builder.length() > 0) {
-                        builder.append(" / ");
-                    }
-                    builder.append(property.toString());
+        for (T property : properties) {
+            if (is(property)) {
+                if (builder.length() > 0) {
+                    builder.append(" / ");
                 }
+                builder.append(property.toString());
             }
         }
         return builder.toString();
