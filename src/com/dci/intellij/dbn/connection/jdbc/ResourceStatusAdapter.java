@@ -38,34 +38,53 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
     public boolean check() {
-        if (is(current) || is(changing)) return true;
+        if (isCurrent() || isChanging()) return true;
 
-        if (is(checking)) return false;
+        if (!isChecking() && !isChanging()) {
+            synchronized (this) {
+                if (!isChecking() && !isChanging()) {
+                    try {
+                        set(checking, true);
+                        if (checkInterval == 0) {
+                            set(current, checkInner());
+                        } else {
+                            long currentTimeMillis = System.currentTimeMillis();
+                            if (TimeUtil.isOlderThan(checkTimestamp, checkInterval)) {
+                                checkTimestamp = currentTimeMillis;
+                                set(current, checkInner());
+                            }
+                        }
+                    } catch (Exception t){
+                        LOGGER.warn("Failed to check resource " + current + "status", t);
+                        set(current, true);
+                    } finally {
+                        set(checking, false);
+                    }
+                    return isCurrent();
 
-        try {
-            set(checking, true);
-            if (checkInterval == 0) {
-                set(current, checkInner());
-            } else {
-                long currentTimeMillis = System.currentTimeMillis();
-                if (TimeUtil.isOlderThan(checkTimestamp, checkInterval)) {
-                    checkTimestamp = currentTimeMillis;
-                    set(current, checkInner());
                 }
             }
-        } catch (Exception t){
-            LOGGER.warn("Failed to check resource " + current + "status", t);
-            set(current, true);
-        } finally {
-            set(checking, false);
         }
+
+        return false;
+    }
+
+    private boolean isChecking() {
+        return is(checking);
+    }
+
+    private boolean isCurrent() {
         return is(current);
     }
 
+    private boolean isChanging() {
+        return is(changing);
+    }
+
     public void attempt() {
-        if (!is(current) && !is(changing)) {
+        if (!isCurrent() && !isChanging()) {
             synchronized (this) {
-                if (!is(current) && !is(changing)) {
+                if (!isCurrent() && !isChanging()) {
                     try {
                         set(changing, true);
                         attemptInner();
@@ -73,6 +92,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                         LOGGER.warn("Error " + changing + " resource", t);
                     } finally {
                         set(current, true);
+                        set(changing, false);
                     }
                 }
             }

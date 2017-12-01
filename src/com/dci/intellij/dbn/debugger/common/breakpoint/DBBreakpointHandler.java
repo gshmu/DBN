@@ -16,6 +16,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointDesc;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.BREAKPOINT_SETTING_ALLOWED;
 
 public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>> {
     private XDebugSession session;
@@ -37,7 +38,7 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
 
 
     protected boolean canSetBreakpoints() {
-        return getDebugProcess().getStatus().CAN_SET_BREAKPOINTS;
+        return getDebugProcess().is(BREAKPOINT_SETTING_ALLOWED);
     }
 
     @Override
