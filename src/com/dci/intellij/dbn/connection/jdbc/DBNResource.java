@@ -11,21 +11,25 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 
-abstract class DBNResource implements Resource{
+abstract class DBNResource extends ResourceStatusHolder implements Resource{
     private static final Logger LOGGER = LoggerFactory.createLogger();
     protected InitializationInfo initInfo = new InitializationInfo();
 
-    private ResourceStatus<Closeable> CLOSED;
-    private ResourceStatus<Invalidable> INVALID;
-    private ResourceStatus<Cancellable> CANCELLED;
+    private ResourceStatusAdapter<Closeable> CLOSED_STATUS_ADAPTER;
+    private ResourceStatusAdapter<Invalidable> INVALID_STATUS_CHECKER;
+    private ResourceStatusAdapter<Cancellable> CANCELLED;
 
     private ResourceType type;
 
     DBNResource(ResourceType type) {
         this.type = type;
+
         if (this instanceof Closeable) {
             final Closeable closeable = (Closeable) this;
-            CLOSED = new ResourceStatus<Closeable>() {
+            CLOSED_STATUS_ADAPTER = new ResourceStatusAdapter<Closeable>(this,
+                    ResourceStatus.CLOSED,
+                    ResourceStatus.CLOSING,
+                    ResourceStatus.CHECKING_CLOSED) {
                 @Override
                 protected void attemptInner() throws SQLException {
                     close(closeable, true);
@@ -40,7 +44,10 @@ abstract class DBNResource implements Resource{
 
         if (this instanceof Cancellable) {
             final Cancellable cancellable = (Cancellable) this;
-            CANCELLED = new ResourceStatus<Cancellable>() {
+            CANCELLED = new ResourceStatusAdapter<Cancellable>(this,
+                    ResourceStatus.CANCELLED,
+                    ResourceStatus.CANCELLING,
+                    ResourceStatus.CHECKING_CANCELLED) {
                 @Override
                 protected void attemptInner() throws SQLException {
                     cancellable.cancelInner();
@@ -55,7 +62,11 @@ abstract class DBNResource implements Resource{
 
         if (this instanceof Invalidable) {
             final Invalidable invalidable = (Invalidable) this;
-            INVALID = new ResourceStatus<Invalidable>(TimeUtil.THIRTY_SECONDS) {
+            INVALID_STATUS_CHECKER = new ResourceStatusAdapter<Invalidable>(this,
+                    ResourceStatus.INVALID,
+                    ResourceStatus.INVALIDATING,
+                    ResourceStatus.CHECKING_INVALID,
+                    TimeUtil.THIRTY_SECONDS) {
                 @Override
                 protected void attemptInner() throws SQLException {
                     invalidable.invalidateInner();
@@ -75,11 +86,11 @@ abstract class DBNResource implements Resource{
     }
 
     public boolean isClosed() {
-        return CLOSED.check();
+        return CLOSED_STATUS_ADAPTER.check();
     }
 
     public void close() {
-        CLOSED.attempt();
+        CLOSED_STATUS_ADAPTER.attempt();
     }
 
     public boolean isCancelled() {
@@ -99,11 +110,11 @@ abstract class DBNResource implements Resource{
     }
 
     public boolean isInvalid() {
-        return INVALID.check();
+        return INVALID_STATUS_CHECKER.check();
     }
 
     public void invalidate() {
-        INVALID.attempt();
+        INVALID_STATUS_CHECKER.attempt();
     }
 
     public static void close(final Closeable closeable, boolean background) {

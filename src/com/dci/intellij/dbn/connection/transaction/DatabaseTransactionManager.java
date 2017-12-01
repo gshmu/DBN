@@ -131,7 +131,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     public void commit(final @NotNull ConnectionHandler connectionHandler, boolean fromEditor, boolean background) {
         List<DBNConnection> connections = connectionHandler.getActiveConnections();
         for (DBNConnection connection : connections) {
-            UncommittedChangeBundle dataChanges = connection.getStatusMonitor().getDataChanges();
+            UncommittedChangeBundle dataChanges = connection.getDataChanges();
             if (fromEditor && dataChanges != null && dataChanges.size() > 1) {
                 Project project = connectionHandler.getProject();
                 VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
@@ -153,7 +153,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     public void rollback(final @NotNull ConnectionHandler connectionHandler, boolean fromEditor, boolean background) {
         List<DBNConnection> connections = connectionHandler.getActiveConnections();
         for (DBNConnection connection : connections) {
-            UncommittedChangeBundle dataChanges = connection.getStatusMonitor().getDataChanges();
+            UncommittedChangeBundle dataChanges = connection.getDataChanges();
             if (fromEditor && dataChanges != null && dataChanges.size() > 1) {
                 Project project = connectionHandler.getProject();
                 VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
@@ -199,7 +199,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
         List<DBNConnection> connections = connectionHandler.getActiveConnections();
         for (DBNConnection connection : connections) {
-            if (!isAutoCommit && connection.getStatusMonitor().hasUncommittedChanges()) {
+            if (!isAutoCommit && connection.hasDataChanges()) {
                 InteractiveOptionHandler<TransactionOption> toggleAutoCommit = getTransactionManagerSettings().getToggleAutoCommit();
                 TransactionOption result = toggleAutoCommit.resolve(connectionHandler.getName());
                 switch (result) {
@@ -216,7 +216,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     public void disconnect(ConnectionHandler connectionHandler) {
         List<DBNConnection> connections = connectionHandler.getActiveConnections();
         for (DBNConnection connection : connections) {
-            if (connection.getStatusMonitor().hasUncommittedChanges()) {
+            if (connection.hasDataChanges()) {
                 InteractiveOptionHandler<TransactionOption> disconnect = getTransactionManagerSettings().getDisconnect();
                 TransactionOption result = disconnect.resolve(connectionHandler.getName());
 

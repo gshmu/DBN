@@ -120,7 +120,7 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl<UncommittedChang
             List<DBNConnection> connections = connectionHandler.getActiveConnections();
             int changes = 0;
             for (DBNConnection connection : connections) {
-                UncommittedChangeBundle dataChanges = connection.getStatusMonitor().getDataChanges();
+                UncommittedChangeBundle dataChanges = connection.getDataChanges();
                 changes += dataChanges == null ? 0 : dataChanges.size();
             }
 

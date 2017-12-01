@@ -7,19 +7,23 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.InitializationInfo;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionType;
+import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public class DBNConnection extends DBNConnectionBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private ConnectionType type;
 
+    private long lastAccess;
     private Set<DBNStatement> statements = new HashSet<>();
-    private ConnectionStatusMonitor statusMonitor = new ConnectionStatusMonitor();
+    private UncommittedChangeBundle dataChanges;
 
     public DBNConnection(Connection connection, ConnectionType type) {
         super(connection);
@@ -92,12 +96,25 @@ public class DBNConnection extends DBNConnectionBase {
         return type == ConnectionType.TEST;
     }
 
+
+    public void updateLastAccess() {
+        lastAccess = System.currentTimeMillis();
+    }
+
+    public int getIdleMinutes() {
+        long idleTimeMillis = System.currentTimeMillis() - lastAccess;
+        return (int) (idleTimeMillis / TimeUtil.ONE_MINUTE);
+    }
+
+    /********************************************************************
+     *                        Transaction                               *
+     ********************************************************************/
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
         try {
             super.setAutoCommit(autoCommit);
         } finally {
-            set(ConnectionProperty.AUTO_COMMIT, autoCommit);
+            set(ResourceStatus.AUTO_COMMIT, autoCommit);
         }
     }
 
@@ -109,47 +126,74 @@ public class DBNConnection extends DBNConnectionBase {
     @Override
     public void commit() throws SQLException {
         super.commit();
-        statusMonitor.resetDataChanges();
+        resetDataChanges();
     }
 
     @Override
     public void rollback() throws SQLException {
         super.rollback();
-        statusMonitor.resetDataChanges();
+        resetDataChanges();
     }
 
     @Override
     public void close() {
         super.close();
-        statusMonitor.resetDataChanges();
+        resetDataChanges();
     }
 
-    public ConnectionStatusMonitor getStatusMonitor() {
-        return statusMonitor;
-    }
-
-    public void set(ConnectionProperty status, boolean value) {
-        statusMonitor.set(status, value);
-    }
-
-    public boolean is(ConnectionProperty status) {
-        return statusMonitor.is(status);
-    }
-
+    /********************************************************************
+     *                             Status                               *
+     ********************************************************************/
     public boolean isIdle() {
-        return statusMonitor.isReserved();
+        return !isActive() && !isReserved();
     }
 
     public boolean isReserved() {
-        return statusMonitor.isReserved();
+        return is(ResourceStatus.RESERVED);
     }
 
     public boolean isActive() {
-        return statusMonitor.isActive();
+        return is(ResourceStatus.ACTIVE);
+    }
+
+    public boolean isAutoCommit() {
+        return is(ResourceStatus.AUTO_COMMIT);
+    }
+
+    public boolean set(ResourceStatus status, boolean value) {
+        if (status == ResourceStatus.RESERVED && value && isActive()) {
+            LOGGER.warn("Reserving busy connection");
+        }
+        return super.set(status, value);
+    }
+
+    /********************************************************************
+     *                             Data changes                         *
+     ********************************************************************/
+    public void notifyDataChanges(VirtualFile virtualFile) {
+        if (!isAutoCommit()) {
+            if (dataChanges == null) {
+                dataChanges = new UncommittedChangeBundle();
+            }
+            dataChanges.notifyChange(virtualFile);
+        }
+    }
+
+    public void resetDataChanges() {
+        dataChanges = null;
+    }
+
+    @Nullable
+    public UncommittedChangeBundle getDataChanges() {
+        return dataChanges;
+    }
+
+    public boolean hasDataChanges() {
+        return dataChanges != null && !dataChanges.isEmpty();
     }
 
     @Override
     public String toString() {
-        return type + " / " + (isActive() ? "active " : "idle") + " / " + (isReserved() ? "reserved" : "free");
+        return type + " - " + super.toString() + "";
     }
 }

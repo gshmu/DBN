@@ -95,7 +95,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                         setUserValue(newUserValue);
                     }
                     DBNConnection connection = getModel().getConnection();
-                    connection.getStatusMonitor().notifyDataChanges(getDataset().getVirtualFile());
+                    connection.notifyDataChanges(getDataset().getVirtualFile());
                     EventUtil.notify(getProject(), DatasetEditorModelCellValueListener.TOPIC).valueChanged(this);
                 }
                 try {

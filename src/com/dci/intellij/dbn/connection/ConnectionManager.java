@@ -36,9 +36,8 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
-import com.dci.intellij.dbn.connection.jdbc.ConnectionProperty;
-import com.dci.intellij.dbn.connection.jdbc.ConnectionStatusMonitor;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
@@ -435,14 +434,13 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             List<DBNConnection> activeConnections = connectionHandler.getActiveConnections();
 
             for (final DBNConnection connection : activeConnections) {
-                if (connection.isIdle() && !connection.is(ConnectionProperty.RESOLVING_TRANSACTION)) {
+                if (connection.isIdle() && !connection.is(ResourceStatus.RESOLVING_TRANSACTION)) {
 
                     int idleMinutes = connectionHandler.getIdleMinutes();
                     int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
                     if (idleMinutes > idleMinutesToDisconnect) {
-                        ConnectionStatusMonitor statusMonitor = connection.getStatusMonitor();
-                        if (statusMonitor.hasUncommittedChanges()) {
-                            connection.set(ConnectionProperty.RESOLVING_TRANSACTION, true);
+                        if (connection.hasDataChanges()) {
+                            connection.set(ResourceStatus.RESOLVING_TRANSACTION, true);
                             new SimpleLaterInvocator() {
                                 @Override
                                 protected void execute() {

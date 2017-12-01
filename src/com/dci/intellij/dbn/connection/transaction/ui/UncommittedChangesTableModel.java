@@ -32,7 +32,7 @@ public class UncommittedChangesTableModel extends DisposableBase implements DBNT
         List<DBNConnection> connections = connectionHandler.getActiveConnections();
         int count = 0;
         for (DBNConnection connection : connections) {
-            UncommittedChangeBundle dataChanges = connection.getStatusMonitor().getDataChanges();
+            UncommittedChangeBundle dataChanges = connection.getDataChanges();
             count += dataChanges == null ? 0 : dataChanges.size();
         }
 
@@ -63,11 +63,11 @@ public class UncommittedChangesTableModel extends DisposableBase implements DBNT
         List<DBNConnection> connections = connectionHandler.getActiveConnections();
         int count = 0;
         for (DBNConnection connection : connections) {
-            UncommittedChangeBundle dataChanges = connection.getStatusMonitor().getDataChanges();
+            UncommittedChangeBundle dataChanges = connection.getDataChanges();
             int size = dataChanges == null ? 0 : dataChanges.size();
             count += size;
-            if (count > rowIndex) {
-                return connection.getStatusMonitor().getDataChanges().getChanges().get(count - size + rowIndex);
+            if (dataChanges != null && count > rowIndex) {
+                return dataChanges.getChanges().get(count - size + rowIndex);
             }
         }
 

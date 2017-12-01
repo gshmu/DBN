@@ -132,7 +132,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 }
             }
 
-            if (!usePoolConnection) connection.getStatusMonitor().notifyDataChanges(method.getVirtualFile());
+            if (!usePoolConnection) connection.notifyDataChanges(method.getVirtualFile());
         } catch (SQLException e) {
             ConnectionUtil.cancel(context.getStatement());
             throw e;

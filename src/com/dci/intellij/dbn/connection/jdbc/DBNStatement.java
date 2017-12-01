@@ -94,22 +94,21 @@ public class DBNStatement<T extends Statement> extends DBNResource implements St
         @Override
         public R call() throws SQLException {
             DBNConnection connection = getConnection();
-            ConnectionStatusMonitor statusMonitor = connection.getStatusMonitor();
-            statusMonitor.updateLastAccess();
+            connection.updateLastAccess();
 
-            boolean wasActive = connection.is(ConnectionProperty.ACTIVE);
+            boolean wasActive = connection.is(ResourceStatus.ACTIVE);
             if (wasActive) {
                 LOGGER.warn("Connection already busy with another statement");
             }
             try {
-                connection.set(ConnectionProperty.ACTIVE, true);
+                connection.set(ResourceStatus.ACTIVE, true);
                 return execute();
             } catch (SQLException e) {
                 exception = e;
                 throw exception;
             } finally {
-                statusMonitor.updateLastAccess();
-                connection.set(ConnectionProperty.ACTIVE, wasActive);
+                connection.updateLastAccess();
+                connection.set(ResourceStatus.ACTIVE, wasActive);
             }
         }
         protected abstract R execute() throws SQLException;
