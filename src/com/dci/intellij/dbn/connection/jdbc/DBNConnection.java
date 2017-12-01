@@ -161,11 +161,11 @@ public class DBNConnection extends DBNConnectionBase {
         return is(AUTO_COMMIT);
     }
 
-    public boolean set(ResourceStatus status, boolean value) {
-        if (status == RESERVED && value && isActive()) {
+    public boolean set(ResourceStatus property, boolean value) {
+        if (property == RESERVED && value && isActive()) {
             LOGGER.warn("Reserving busy connection");
         }
-        return super.set(status, value);
+        return super.set(property, value);
     }
 
     /********************************************************************

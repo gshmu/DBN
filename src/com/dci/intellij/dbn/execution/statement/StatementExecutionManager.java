@@ -36,7 +36,6 @@ import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionOptions;
-import com.dci.intellij.dbn.execution.ExecutionStatus;
 import com.dci.intellij.dbn.execution.TargetConnectionOption;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
@@ -75,6 +74,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
 import gnu.trove.THashSet;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 @State(
         name = "DBNavigator.Project.StatementExecutionManager",
@@ -261,8 +261,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         @Override
                         protected void execute() {
                             for (final StatementExecutionProcessor executionProcessor : executionProcessors) {
-                                ExecutionStatus status = executionProcessor.getExecutionStatus();
-                                if (!status.isExecuting() && !status.isQueued() && !executionQueue.contains(executionProcessor)) {
+                                ExecutionContext context = executionProcessor.getExecutionContext();
+                                if (!context.is(EXECUTING) && !context.is(QUEUED) && !executionQueue.contains(executionProcessor)) {
                                     StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
                                     ExecutionOptions options = executionInput.getOptions();
                                     if (options.isUsePoolConnection()) {
@@ -426,9 +426,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     public void promptPendingTransactionDialog(final StatementExecutionProcessor executionProcessor) {
-        ExecutionContext context = executionProcessor.getExecutionContext();
-        final ExecutionStatus status = context.getExecutionStatus();
-        status.setPrompted(true);
+        final ExecutionContext context = executionProcessor.getExecutionContext();
+        context.set(PROMPTED, true);
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
@@ -436,7 +435,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                     PendingTransactionDialog dialog = new PendingTransactionDialog(executionProcessor);
                     dialog.show();
                 } finally {
-                    status.setPrompted(false);
+                    context.set(PROMPTED, false);
                     executionProcessor.postExecute();
                 }
             }

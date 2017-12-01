@@ -4,4 +4,8 @@ public interface PropertyHolder<T extends Property> {
     boolean set(T status, boolean value);
 
     boolean is(T status);
+
+    boolean isNot(T status);
+
+    void assertNot(T parameter);
 }

@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.common.property;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+
 public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>{
-    private int status = 0;
+    private int computed = 0;
     private T[] properties;
 
     public PropertyHolderImpl(Class<T> type) {
@@ -14,16 +16,21 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
     }
 
     @Override
-    public boolean set(T status, boolean value) {
+    public boolean set(T property, boolean value) {
         return value ?
-                set(status) :
-                unset(status);
+                set(property) :
+                unset(property);
     }
 
     @Override
-    public boolean is(T status) {
-        int idx = status.index();
-        return (this.status & idx) == idx;
+    public boolean is(T property) {
+        int idx = property.index();
+        return (this.computed & idx) == idx;
+    }
+
+    @Override
+    public boolean isNot(T status) {
+        return !is(status);
     }
 
     private boolean set(T property) {
@@ -38,7 +45,7 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
                 }
             }
 
-            this.status += property.index();
+            this.computed += property.index();
             return true;
         }
         return false;
@@ -46,7 +53,7 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
 
     private boolean unset(T property) {
         if (is(property)) {
-            this.status -= property.index();
+            this.computed -= property.index();
 
             PropertyGroup group = property.group();
             if (group != null) {
@@ -62,8 +69,25 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
         return false;
     }
 
-    public static int idx(Enum status) {
-        return (int) Math.pow(2, status.ordinal());
+    public void reset() {
+        computed = 0;
+        for (T property : properties) {
+            if (property.implicit()) {
+                set(property);
+            }
+        }
+    }
+
+    @Override
+    public void assertNot(T parameter) {
+        if (is(parameter)) {
+            throw AlreadyDisposedException.INSTANCE;
+        }
+    }
+
+
+    public static int idx(Enum property) {
+        return (int) Math.pow(2, property.ordinal());
     }
 
     @Override

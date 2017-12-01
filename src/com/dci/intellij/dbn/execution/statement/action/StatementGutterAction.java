@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.execution.ExecutionStatus;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -21,6 +21,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
 
 public class StatementGutterAction extends AnAction {
     private final transient ExecutablePsiElement executablePsiElement;
@@ -40,8 +42,8 @@ public class StatementGutterAction extends AnAction {
                     executionManager.executeStatement(executionProcessor);
                 }
             } else {
-                ExecutionStatus status = executionProcessor.getExecutionStatus();
-                if (status.isExecuting() || status.isQueued()) {
+                ExecutionContext context = executionProcessor.getExecutionContext();
+                if (context.is(EXECUTING) || context.is(QUEUED)) {
                     executionProcessor.cancelExecution();
                 } else {
                     StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
@@ -61,10 +63,10 @@ public class StatementGutterAction extends AnAction {
         if (executionProcessor != null) {
             StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
             if (executionResult == null) {
-                ExecutionStatus status = executionProcessor.getExecutionStatus();
+                ExecutionContext context = executionProcessor.getExecutionContext();
                 return
-                    status.isExecuting() ? Icons.STMT_EXECUTION_STOP :
-                    status.isQueued() ? Icons.STMT_EXECUTION_STOP_QUEUED :
+                    context.is(EXECUTING) ? Icons.STMT_EXECUTION_STOP :
+                    context.is(QUEUED) ? Icons.STMT_EXECUTION_STOP_QUEUED :
                             Icons.STMT_EXECUTION_RUN;
 
             } else {
@@ -126,10 +128,10 @@ public class StatementGutterAction extends AnAction {
         if (executionProcessor!= null && !executionProcessor.isDisposed()) {
             StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
             if (executionResult == null) {
-                ExecutionStatus status = executionProcessor.getExecutionStatus();
-                if (status.isExecuting()) {
+                ExecutionContext context = executionProcessor.getExecutionContext();
+                if (context.is(EXECUTING)) {
                     return "Statement execution in progress. Cancel?";
-                } else  if (status.isQueued()) {
+                } else  if (context.is(QUEUED)) {
                     return "Statement execution queued. Cancel?";
                 }
             }

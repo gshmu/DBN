@@ -3,18 +3,39 @@ package com.dci.intellij.dbn.execution;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.object.DBSchema;
 
-public abstract class ExecutionContext {
+public abstract class ExecutionContext implements PropertyHolder<ExecutionStatus> {
     private transient int timeout;
     private transient boolean logging = false;
     private transient long executionTimestamp;
     private transient DBNConnection connection;
     private transient DBNStatement statement;
-    private ExecutionStatus executionStatus = new ExecutionStatus();
+    private ExecutionStatusHolder status = new ExecutionStatusHolder();
+
+    @Override
+    public boolean set(ExecutionStatus status, boolean value) {
+        return this.status.set(status, value);
+    }
+
+    @Override
+    public boolean is(ExecutionStatus status) {
+        return this.status.is(status);
+    }
+
+    @Override
+    public boolean isNot(ExecutionStatus status) {
+        return this.status.isNot(status);
+    }
+
+    @Override
+    public void assertNot(ExecutionStatus parameter) {
+
+    }
 
     public abstract @NotNull String getTargetName();
 
@@ -62,12 +83,8 @@ public abstract class ExecutionContext {
         this.statement = statement;
     }
 
-    public ExecutionStatus getExecutionStatus() {
-        return executionStatus;
-    }
-
     public void reset() {
-        executionStatus.reset();
+        status.reset();
         timeout = 0;
         logging = false;
         executionTimestamp = 0;
