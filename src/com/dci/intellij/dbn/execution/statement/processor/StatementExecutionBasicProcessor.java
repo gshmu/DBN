@@ -469,7 +469,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         if (notifyChanges) {
             if (connection.isMainConnection()) {
                 VirtualFile virtualFile = getPsiFile().getVirtualFile();
-                connection.getStatusMonitor().notifyDataChanges(virtualFile);
+                connection.notifyDataChanges(virtualFile);
             } else if (connection.isPoolConnection()) {
                 StatementExecutionManager executionManager = getExecutionManager();
                 executionManager.promptPendingTransactionDialog(this);
@@ -492,7 +492,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             }
         } else if (resetChanges) {
             if (connection.isMainConnection()) {
-                connection.getStatusMonitor().resetDataChanges();
+                connection.resetDataChanges();
             }
         }
     }

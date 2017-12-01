@@ -16,8 +16,8 @@ import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
-import com.dci.intellij.dbn.connection.jdbc.ConnectionProperty;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -132,21 +132,25 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     }
 
     @Nullable
-    private DBNConnection lookupConnection() throws SQLException {
+    private DBNConnection lookupConnection() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
 
         for (DBNConnection connection : poolConnections) {
             checkDisposed();
             if (!connection.isReserved() && !connection.isActive()) {
-                connection.set(ConnectionProperty.RESERVED, true);
-                if (!connection.isClosed() && connection.isValid()) {
-                    connectionStatus.setConnected(true);
-                    connectionStatus.setValid(true);
-                    return connection;
-                } else {
-                    poolConnections.remove(connection);
-                    ConnectionUtil.close(connection);
+                synchronized (this) {
+                    if (!connection.isReserved() && !connection.isActive()) {
+                        connection.set(ResourceStatus.RESERVED, true);
+                        if (!connection.isClosed() && connection.isValid()) {
+                            connectionStatus.setConnected(true);
+                            connectionStatus.setValid(true);
+                            return connection;
+                        } else {
+                            poolConnections.remove(connection);
+                            ConnectionUtil.close(connection);
+                        }
+                    }
                 }
             }
         }
@@ -171,7 +175,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
 
         // pool connections do not need to have current schema set
         //connectionHandler.getDataDictionary().setCurrentSchema(connectionHandler.getCurrentSchemaName(), connection);
-        connection.set(ConnectionProperty.RESERVED, true);
+        connection.set(ResourceStatus.RESERVED, true);
 
         poolConnections.add(connection);
         int size = poolConnections.size();
@@ -186,7 +190,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
             ConnectionUtil.rollback(connection);
             ConnectionUtil.setAutocommit(connection, true);
             ConnectionUtil.setReadonly(connection, true);
-            connection.set(ConnectionProperty.RESERVED, false);
+            connection.set(ResourceStatus.RESERVED, false);
         }
         lastAccessTimestamp = System.currentTimeMillis();
     }
@@ -235,13 +239,13 @@ public class ConnectionPool extends DisposableBase implements Disposable {
 
     @Deprecated
     public int getIdleMinutes() {
-        return mainConnection == null ? 0 : mainConnection.getStatusMonitor().getIdleMinutes();
+        return mainConnection == null ? 0 : mainConnection.getIdleMinutes();
     }
 
     @Deprecated
     public void keepAlive(boolean check) {
         if (mainConnection != null) {
-            mainConnection.getStatusMonitor().updateLastAccess();
+            mainConnection.updateLastAccess();
             if (check) mainConnection.isValid();
         }
     }

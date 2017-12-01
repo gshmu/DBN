@@ -565,7 +565,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     public boolean hasUncommittedChanges() {
         List<DBNConnection> connections = getActiveConnections();
         for (DBNConnection connection : connections) {
-            if (connection.getStatusMonitor().hasUncommittedChanges()) {
+            if (connection.hasDataChanges()) {
                 return true;
             }
         }

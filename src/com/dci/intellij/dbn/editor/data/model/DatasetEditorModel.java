@@ -339,7 +339,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         }
         DBDataset dataset = getDataset();
         DBNConnection connection = getConnection();
-        connection.getStatusMonitor().notifyDataChanges(dataset.getVirtualFile());
+        connection.notifyDataChanges(dataset.getVirtualFile());
     }
 
     public void insertRecord(int rowIndex) {
@@ -358,7 +358,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             editorTable.selectCell(rowIndex, editorTable.getSelectedColumn() == -1 ? 0 : editorTable.getSelectedColumn());
 
             DBNConnection connection = getConnection();
-            connection.getStatusMonitor().notifyDataChanges(dataset.getVirtualFile());
+            connection.notifyDataChanges(dataset.getVirtualFile());
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(getProject(), "Could not insert record for " + dataset.getQualifiedNameWithType() + ".", e);
         }
@@ -382,7 +382,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
             editorTable.selectCell(insertIndex, editorTable.getSelectedColumn());
             DBNConnection connection = getConnection();
-            connection.getStatusMonitor().notifyDataChanges(dataset.getVirtualFile());
+            connection.notifyDataChanges(dataset.getVirtualFile());
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(getProject(), "Could not duplicate record in " + dataset.getQualifiedNameWithType() + ".", e);
         }
