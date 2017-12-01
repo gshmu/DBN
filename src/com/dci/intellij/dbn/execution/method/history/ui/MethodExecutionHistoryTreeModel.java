@@ -1,6 +1,14 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
+import javax.swing.Icon;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -8,13 +16,6 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import java.util.List;
 
 public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel implements Disposable {
     protected List<MethodExecutionInput> executionInputs;
@@ -194,5 +195,10 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
         if (!disposed) {
             disposed = true;
         }
+    }
+
+    @Override
+    public void checkDisposed() {
+        if (disposed) throw AlreadyDisposedException.INSTANCE;
     }
 }

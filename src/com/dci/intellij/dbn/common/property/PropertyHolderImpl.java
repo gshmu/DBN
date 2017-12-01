@@ -17,13 +17,13 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
 
     @Override
     public boolean is(T status) {
-        int idx = status.idx();
+        int idx = status.index();
         return (this.status & idx) == idx;
     }
 
     private boolean set(T status) {
         if (!is(status)) {
-            this.status += status.idx();
+            this.status += status.index();
             return true;
         }
         return false;
@@ -31,7 +31,7 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
 
     private boolean unset(T status) {
         if (is(status)) {
-            this.status -= status.idx();
+            this.status -= status.index();
             return true;
         }
         return false;
@@ -43,17 +43,18 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
 
     @Override
     public String toString() {
-        T[] properties = type.getEnumConstants();
         StringBuilder builder = new StringBuilder();
-        for (T property : properties) {
-            if (is(property)) {
-                if (builder.length() > 0) {
-                    builder.append(" / ");
+        T[] properties = type.getEnumConstants();
+        if (properties != null) {
+            for (T property : properties) {
+                if (is(property)) {
+                    if (builder.length() > 0) {
+                        builder.append(" / ");
+                    }
+                    builder.append(property.toString());
                 }
-                builder.append(property.toString());
             }
         }
-
         return builder.toString();
     }
 }

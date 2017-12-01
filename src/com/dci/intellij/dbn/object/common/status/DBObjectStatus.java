@@ -28,7 +28,7 @@ public enum DBObjectStatus implements Property {
     }
 
     @Override
-    public int idx() {
+    public int index() {
         return PropertyHolderImpl.idx(this);
     }
 }

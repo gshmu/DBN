@@ -31,7 +31,6 @@ import com.dci.intellij.dbn.object.common.DBVirtualObjectBundle;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
     public static final ConnectionStatus CONNECTION_STATUS = new ConnectionStatus();
@@ -232,10 +231,15 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override
     public DatabaseConsoleBundle getConsoleBundle() {return null;}
+    @Override
     public boolean isValid(boolean check) {return true;}
+    @Override
     public boolean isValid() {return true;}
+    @Override
     public void disconnect() {}
+    @Override
     public void ping(boolean check) {}
+    @Override
     public int getIdleMinutes() {return 0;}
 
     @Override
@@ -259,11 +263,16 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     }
 
     public ConnectionHandler clone() {return null;}
-    public void notifyDataChanges(VirtualFile virtualFile) {}
-    public void resetDataChanges() {}
+    @Override
     public boolean hasUncommittedChanges() {return false;}
+    @Override
     public void commit() throws SQLException {}
+    @Override
     public void rollback() throws SQLException {}
+    @Override
     public void dispose() {}
+    @Override
+    public void checkDisposed() {
 
+    }
 }

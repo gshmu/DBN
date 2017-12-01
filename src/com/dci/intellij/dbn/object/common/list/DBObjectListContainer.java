@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -337,12 +336,6 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
                 }
                 checkDisposed();
             }
-        }
-    }
-
-    private void checkDisposed() {
-        if (isDisposed()) {
-            throw AlreadyDisposedException.INSTANCE;
         }
     }
 

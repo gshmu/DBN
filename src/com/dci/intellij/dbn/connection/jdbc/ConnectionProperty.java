@@ -18,7 +18,7 @@ public enum ConnectionProperty implements Property {
     }
 
     @Override
-    public int idx() {
+    public int index() {
         return idx;
     }
 }

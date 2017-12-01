@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.intellij.openapi.application.ApplicationAdapter;
@@ -72,6 +73,11 @@ public abstract class AbstractProjectComponent extends ApplicationAdapter implem
     public void dispose() {
         disposed = true;
         project = null;
+    }
+
+    @Override
+    public void checkDisposed() {
+        if (disposed) throw AlreadyDisposedException.INSTANCE;
     }
 
     public final void disposeComponent() {

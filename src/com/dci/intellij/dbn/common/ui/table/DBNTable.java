@@ -28,6 +28,7 @@ import java.util.TimerTask;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -329,4 +330,8 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         return disposed;
     }
 
+    @Override
+    public void checkDisposed() {
+        if (disposed) throw AlreadyDisposedException.INSTANCE;
+    }
 }

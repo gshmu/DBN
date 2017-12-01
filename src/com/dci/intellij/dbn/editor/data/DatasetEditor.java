@@ -604,6 +604,17 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return dataLoadError;
     }
 
+
+    public List<DatasetColumnState> initColumnStates() {
+        DatasetColumnSetup columnSetup = editorState.getColumnSetup();
+        List<DatasetColumnState> columnStates = columnSetup.getColumnStates();
+        DBDataset dataset = getDataset();
+        if (columnStates.size() != dataset.getColumns().size()) {
+            columnSetup.init(dataset);
+        }
+        return columnStates;
+    }
+
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
@@ -624,14 +635,8 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         }
     }
 
-
-    public List<DatasetColumnState> initColumnStates() {
-        DatasetColumnSetup columnSetup = editorState.getColumnSetup();
-        List<DatasetColumnState> columnStates = columnSetup.getColumnStates();
-        DBDataset dataset = getDataset();
-        if (columnStates.size() != dataset.getColumns().size()) {
-            columnSetup.init(dataset);
-        }
-        return columnStates;
+    @Override
+    public void checkDisposed() {
+        if (disposed) throw AlreadyDisposedException.INSTANCE;
     }
 }

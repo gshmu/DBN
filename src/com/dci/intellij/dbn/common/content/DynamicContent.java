@@ -94,6 +94,4 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
     void updateChangeTimestamp();
 
     String getName();
-
-    void checkDisposed() throws InterruptedException;
 }

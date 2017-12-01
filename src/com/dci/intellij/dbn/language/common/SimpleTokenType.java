@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.language.common;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinitionFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -7,19 +12,16 @@ import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.Language;
 import com.intellij.psi.tree.IElementType;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class SimpleTokenType extends IElementType implements TokenType {
+    private int idx;
     private String id;
     private String value;
     private String description;
     private boolean isSuppressibleReservedWord;
     private TokenTypeCategory category;
     private DBObjectType objectType;
-    private int idx;
+    private int lookupIndex;
     private int hashCode;
     private FormattingDefinition formatting;
     private TokenPairTemplate tokenPairTemplate;
@@ -30,13 +32,14 @@ public class SimpleTokenType extends IElementType implements TokenType {
 
     public SimpleTokenType(SimpleTokenType source, Language language) {
         super(source.toString(), language);
+        idx = INDEXER.incrementAndGet();
         this.id = source.id;
         this.value = source.getValue();
         this.description = source.description;
         isSuppressibleReservedWord = source.isSuppressibleReservedWord();
         this.category = source.category;
         this.objectType = source.objectType;
-        this.idx = source.idx;
+        this.lookupIndex = source.lookupIndex;
 
         formatting = FormattingDefinitionFactory.cloneDefinition(source.getFormatting());
         tokenPairTemplate = TokenPairTemplate.get(id);
@@ -44,13 +47,14 @@ public class SimpleTokenType extends IElementType implements TokenType {
 
     public SimpleTokenType(Element element, Language language) {
         super(element.getAttributeValue("id"), language);
+        idx = INDEXER.incrementAndGet();
         id = element.getAttributeValue("id");
         value = element.getAttributeValue("value");
         description = element.getAttributeValue("description");
 
         String indexString = element.getAttributeValue("index");
         if (StringUtil.isNotEmptyOrSpaces(indexString)) {
-            idx = Integer.parseInt(indexString);
+            lookupIndex = Integer.parseInt(indexString);
         }
 
         String type = element.getAttributeValue("type");
@@ -68,6 +72,11 @@ public class SimpleTokenType extends IElementType implements TokenType {
     }
 
     @Override
+    public int getIdx() {
+        return idx;
+    }
+
+    @Override
     public TokenPairTemplate getTokenPairTemplate() {
         return tokenPairTemplate;
     }
@@ -81,8 +90,8 @@ public class SimpleTokenType extends IElementType implements TokenType {
     }
 
 
-    public int getIdx() {
-        return idx;
+    public int getLookupIndex() {
+        return lookupIndex;
     }
 
     public String getValue() {

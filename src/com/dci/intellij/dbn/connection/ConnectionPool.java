@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -22,12 +23,11 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 
-public class ConnectionPool implements Disposable {
+public class ConnectionPool extends DisposableBase implements Disposable {
 
     private static Logger LOGGER = LoggerFactory.createLogger();
     private long lastAccessTimestamp = 0;
     private int peakPoolSize = 0;
-    private boolean isDisposed;
 
     protected final Logger log = Logger.getInstance(getClass().getName());
     private ConnectionHandlerRef connectionHandlerRef;
@@ -137,6 +137,7 @@ public class ConnectionPool implements Disposable {
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
 
         for (DBNConnection connection : poolConnections) {
+            checkDisposed();
             if (!connection.isReserved() && !connection.isActive()) {
                 connection.set(ConnectionProperty.RESERVED, true);
                 if (!connection.isClosed() && connection.isValid()) {
@@ -154,6 +155,7 @@ public class ConnectionPool implements Disposable {
 
     @NotNull
     private DBNConnection createConnection() throws SQLException {
+        checkDisposed();
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         String connectionName = connectionHandler.getName();
@@ -253,8 +255,8 @@ public class ConnectionPool implements Disposable {
     }
 
     public void dispose() {
-        if (!isDisposed) {
-            isDisposed = true;
+        if (!isDisposed()) {
+            super.dispose();
             closeConnectionsSilently();
         }
     }

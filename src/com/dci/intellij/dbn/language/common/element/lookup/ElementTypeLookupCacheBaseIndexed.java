@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+
+import com.dci.intellij.dbn.common.index.IndexedContainer;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -9,14 +12,13 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashSet;
 
-import java.util.Set;
-
 public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> extends ElementTypeLookupCacheBase<T> {
 
-    protected Set<LeafElementType> allPossibleLeafs;
+    private IndexedContainer<LeafElementType> allPossibleLeafs;
     protected Set<LeafElementType> firstPossibleLeafs;
     protected Set<LeafElementType> firstRequiredLeafs;
-    protected Set<TokenType> allPossibleTokens;
+
+    private IndexedContainer<TokenType> allPossibleTokens;
     protected Set<TokenType> firstPossibleTokens;
     protected Set<TokenType> firstRequiredTokens;
     private Boolean startsWithIdentifier;
@@ -24,10 +26,10 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
     public ElementTypeLookupCacheBaseIndexed(T elementType) {
         super(elementType);
         if (!elementType.isLeaf()) {
-            allPossibleLeafs = new THashSet<LeafElementType>();
+            allPossibleLeafs = new IndexedContainer<>();
             firstPossibleLeafs = new THashSet<LeafElementType>();
             firstRequiredLeafs = new THashSet<LeafElementType>();
-            allPossibleTokens = new THashSet<TokenType>();
+            allPossibleTokens = new IndexedContainer<>();
             firstPossibleTokens = new THashSet<TokenType>();
             firstRequiredTokens = new THashSet<TokenType>();
         }
@@ -108,15 +110,15 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
 
         if (initAllElements) {
             // register all possible leafs
-            allPossibleLeafs.add(leaf);
+            allPossibleLeafs.put(leaf);
 
             // register all possible tokens
             if (leaf instanceof IdentifierElementType) {
                 SharedTokenTypeBundle sharedTokenTypes = getSharedTokenTypes();
-                allPossibleTokens.add(sharedTokenTypes.getIdentifier());
-                allPossibleTokens.add(sharedTokenTypes.getQuotedIdentifier());
+                allPossibleTokens.put(sharedTokenTypes.getIdentifier());
+                allPossibleTokens.put(sharedTokenTypes.getQuotedIdentifier());
             } else {
-                allPossibleTokens.add(leaf.getTokenType());
+                allPossibleTokens.put(leaf.getTokenType());
             }
         }
 

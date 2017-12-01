@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.ui.tab;
 import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -72,5 +73,10 @@ public class TabbedPane extends JBEditorTabs implements com.dci.intellij.dbn.com
     @Override
     public void dispose() {
         super.dispose();
+    }
+
+    @Override
+    public void checkDisposed() {
+        if (isDisposed()) throw AlreadyDisposedException.INSTANCE;
     }
 }
