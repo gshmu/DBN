@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -212,4 +213,10 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
             cell = null;
         }
     }
+
+    @Override
+    public void checkDisposed() {
+        if (disposed) throw AlreadyDisposedException.INSTANCE;
+    }
+
 }

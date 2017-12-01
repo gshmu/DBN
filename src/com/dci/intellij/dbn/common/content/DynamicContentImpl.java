@@ -378,10 +378,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         return false;
     }
 
-    public void checkDisposed() throws InterruptedException {
-        if (isDisposed()) throw new InterruptedException();
-    }
-
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();

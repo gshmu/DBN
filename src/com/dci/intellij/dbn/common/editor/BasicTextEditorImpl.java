@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
@@ -22,7 +23,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 
-public abstract class BasicTextEditorImpl<T extends VirtualFile> implements BasicTextEditor<T>{
+public abstract class BasicTextEditorImpl<T extends VirtualFile> extends DisposableBase implements BasicTextEditor<T>{
     protected TextEditor textEditor;
     private T virtualFile;
     private String name;
@@ -154,15 +155,8 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
         return getTextEditor().getStructureViewBuilder();
     }
 
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     public void dispose() {
-        disposed = true;
+        super.dispose();
         virtualFile = null;
         project = null;
         //textEditor = null;

@@ -87,56 +87,56 @@ public abstract class DBLanguageTokenTypeBundle {
         keywords = new SimpleTokenType[keywordList.size()];
         keywordsMap = new THashMap<String, SimpleTokenType>();
         for (SimpleTokenType keyword : keywordList) {
-            keywords[keyword.getIdx()] = keyword;
+            keywords[keyword.getLookupIndex()] = keyword;
             keywordsMap.put(keyword.getValue(), keyword);
         }
 
         functions = new SimpleTokenType[functionList.size()];
         functionsMap = new THashMap<String, SimpleTokenType>();
         for (SimpleTokenType function : functionList) {
-            functions[function.getIdx()] = function;
+            functions[function.getLookupIndex()] = function;
             functionsMap.put(function.getValue(), function);
         }
 
         parameters = new SimpleTokenType[parameterList.size()];
         parametersMap = new THashMap<String, SimpleTokenType>();
         for (SimpleTokenType parameter : parameterList) {
-            parameters[parameter.getIdx()] = parameter;
+            parameters[parameter.getLookupIndex()] = parameter;
             parametersMap.put(parameter.getValue(), parameter);
         }
 
         dataTypes = new SimpleTokenType[dataTypeList.size()];
         dataTypesMap = new THashMap<String, SimpleTokenType>();
         for (SimpleTokenType dataType : dataTypeList) {
-            dataTypes[dataType.getIdx()] = dataType;
+            dataTypes[dataType.getLookupIndex()] = dataType;
             dataTypesMap.put(dataType.getValue(), dataType);
         }
 
         exceptions = new SimpleTokenType[exceptionList.size()];
         exceptionsMap = new THashMap<String, SimpleTokenType>();
         for (SimpleTokenType exception : exceptionList) {
-            exceptions[exception.getIdx()] = exception;
+            exceptions[exception.getLookupIndex()] = exception;
             exceptionsMap.put(exception.getValue(), exception);
         }
 
         objects = new SimpleTokenType[objectsList.size()];
         objectsMap = new THashMap<String, SimpleTokenType>();
         for (SimpleTokenType object : objectsList) {
-            objects[object.getIdx()] = object;
+            objects[object.getLookupIndex()] = object;
             objectsMap.put(object.getValue(), object);
         }
 
         characters = new SimpleTokenType[characterList.size()];
         charactersMap = new THashMap<String, SimpleTokenType>();
         for (SimpleTokenType character : characterList) {
-            characters[character.getIdx()] = character;
+            characters[character.getLookupIndex()] = character;
             charactersMap.put(character.getValue(), character);
         }
 
         operators = new SimpleTokenType[characterList.size()];
         operatorsMap = new THashMap<String, SimpleTokenType>();
         for (SimpleTokenType operator : operatorList) {
-            operators[operator.getIdx()] = operator;
+            operators[operator.getLookupIndex()] = operator;
             operatorsMap.put(operator.getValue(), operator);
         }
     }

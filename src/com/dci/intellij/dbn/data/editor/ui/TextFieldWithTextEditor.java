@@ -19,6 +19,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
@@ -196,5 +197,10 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
             userValueHolder = null;
             project = null;
         }
+    }
+
+    @Override
+    public void checkDisposed() {
+        if (disposed) throw AlreadyDisposedException.INSTANCE;
     }
 }

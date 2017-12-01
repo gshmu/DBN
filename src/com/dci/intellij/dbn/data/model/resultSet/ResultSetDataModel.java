@@ -6,7 +6,6 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -122,10 +121,6 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
                 }
             }
         }.start();
-    }
-
-    protected void checkDisposed() {
-        if (isDisposed()) throw AlreadyDisposedException.INSTANCE;
     }
 
     protected void disposeRow(T row) {

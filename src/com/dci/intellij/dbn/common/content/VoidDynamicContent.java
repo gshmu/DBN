@@ -169,7 +169,7 @@ public class VoidDynamicContent implements DynamicContent{
     }
 
     @Override
-    public void checkDisposed() throws InterruptedException {
+    public void checkDisposed() {
 
     }
 

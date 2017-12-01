@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -73,6 +74,11 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
             project = null;
             super.dispose();
         }
+    }
+
+    @Override
+    public void checkDisposed() {
+        if (disposed) throw AlreadyDisposedException.INSTANCE;
     }
 
     public boolean isDisposed() {

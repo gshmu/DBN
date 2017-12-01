@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -157,5 +158,8 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
         putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
     }
 
-
+    @Override
+    public void checkDisposed() {
+        if (disposed) throw AlreadyDisposedException.INSTANCE;
+    }
 }

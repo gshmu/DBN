@@ -21,6 +21,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.math.BigDecimal;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -271,5 +272,10 @@ public class ExplainPlanTreeTable extends TreeTable implements Disposable{
     @Override
     public void dispose() {
         disposed = true;
+    }
+
+    @Override
+    public void checkDisposed() {
+        if (disposed) throw AlreadyDisposedException.INSTANCE;
     }
 }
