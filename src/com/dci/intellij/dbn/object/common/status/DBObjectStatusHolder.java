@@ -2,33 +2,35 @@ package com.dci.intellij.dbn.object.common.status;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.property.PropertyHolder;
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.editor.DBContentType;
 
 public class DBObjectStatusHolder {
     private DBContentType mainContentType;
-    private DBObjectStatusEntry[] statusEntries;
+    private Entry[] statusEntries;
 
     public DBObjectStatusHolder(DBContentType mainContentType) {
         this.mainContentType = mainContentType;
     }
 
-    private DBObjectStatusEntry get(DBContentType contentType, DBObjectStatus status, boolean create) {
-        DBObjectStatusEntry statusEntry = get(contentType, status);
-        if (statusEntry == null && create) {
+    private Entry ensure(DBContentType contentType) {
+        Entry statusEntry = get(contentType);
+        if (statusEntry == null) {
             synchronized (this) {
-                statusEntry = get(contentType, status);
+                statusEntry = get(contentType);
                 if (statusEntry == null) {
                     if (statusEntries == null) {
-                        statusEntries = new DBObjectStatusEntry[1];
-                        statusEntry = new DBObjectStatusEntry(contentType, status);
+                        statusEntries = new Entry[1];
+                        statusEntry = new Entry(contentType);
                         statusEntries[0] = statusEntry;
                     } else {
-                        statusEntry = get(contentType, status);
+                        statusEntry = get(contentType);
                         if (statusEntry == null) {
                             int currentSize = this.statusEntries.length;
-                            DBObjectStatusEntry[] statusEntries = new DBObjectStatusEntry[currentSize + 1];
+                            Entry[] statusEntries = new Entry[currentSize + 1];
                             System.arraycopy(this.statusEntries, 0, statusEntries, 0, currentSize);
-                            statusEntry = new DBObjectStatusEntry(contentType, status);
+                            statusEntry = new Entry(contentType);
                             statusEntries[currentSize] = statusEntry;
                             this.statusEntries = statusEntries;
                         }
@@ -40,10 +42,10 @@ public class DBObjectStatusHolder {
     }
 
     @Nullable
-    private DBObjectStatusEntry get(DBContentType contentType, DBObjectStatus status) {
+    private Entry get(DBContentType contentType) {
         if (statusEntries != null) {
-            for (DBObjectStatusEntry statusEntry : statusEntries) {
-                if (statusEntry.getContentType() == contentType && statusEntry.getStatusType() == status) {
+            for (Entry statusEntry : statusEntries) {
+                if (statusEntry.getContentType() == contentType) {
                     return statusEntry;
                 }
             }
@@ -53,8 +55,8 @@ public class DBObjectStatusHolder {
 
 
     public boolean set(DBContentType contentType, DBObjectStatus status, boolean value) {
-        DBObjectStatusEntry statusEntry = get(contentType, status, true);
-        return statusEntry.setValue(value);
+        Entry statusEntry = ensure(contentType);
+        return statusEntry.set(status, value);
     }
 
     public boolean set(DBObjectStatus status, boolean value) {
@@ -91,22 +93,18 @@ public class DBObjectStatusHolder {
     public boolean isNot(DBContentType contentType, DBObjectStatus status) {
         return !is(contentType, status);
     }
+
     public boolean is(DBContentType contentType, DBObjectStatus status) {
-        DBObjectStatusEntry statusEntry = get(contentType, status);
+        Entry statusEntry = get(contentType);
         return statusEntry == null ?
                 status.getDefaultValue() :
-                statusEntry.getValue();
-    }
-
-    public boolean has(DBContentType contentType, DBObjectStatus status) {
-        DBObjectStatusEntry statusEntry = get(contentType, status);
-        return statusEntry != null;
+                statusEntry.is(status);
     }
 
     public boolean has(DBObjectStatus status) {
         if (statusEntries != null) {
-            for (DBObjectStatusEntry statusEntry : statusEntries) {
-                if (statusEntry.getStatusType() == status) {
+            for (Entry statusEntry : statusEntries) {
+                if (statusEntry.is(status)) {
                     return true;
                 }
             }
@@ -114,42 +112,24 @@ public class DBObjectStatusHolder {
         return false;
     }
 
-    public class DBObjectStatusEntry {
-        private DBObjectStatus status;
+    private class Entry {
         private DBContentType contentType;
-        private boolean value;
+        private PropertyHolder<DBObjectStatus> status = new PropertyHolderImpl<DBObjectStatus>(DBObjectStatus.class);
 
-        public DBObjectStatusEntry(DBContentType contentType, DBObjectStatus status) {
+        Entry(DBContentType contentType) {
             this.contentType = contentType;
-            this.status = status;
         }
 
-        public DBObjectStatus getStatusType() {
-            return status;
+        boolean set(DBObjectStatus status, boolean value) {
+            return this.status.set(status, value);
         }
 
-        public DBContentType getContentType() {
+        boolean is(DBObjectStatus status) {
+            return this.status.is(status);
+        }
+
+        DBContentType getContentType() {
             return contentType;
-        }
-
-        public boolean getValue() {
-            return value;
-        }
-
-        /**
-         * returns true if status has changed
-         */
-        public boolean setValue(boolean value) {
-            if (this.value != value) {
-                this.value = value;
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return contentType + " " + status + ": " + value;
         }
     }
 }

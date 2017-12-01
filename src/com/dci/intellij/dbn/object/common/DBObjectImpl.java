@@ -144,8 +144,8 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }*/
 
     @Override
-    public void set(DBObjectProperty status, boolean value) {
-        properties.set(status, value);
+    public boolean set(DBObjectProperty status, boolean value) {
+        return properties.set(status, value);
     }
 
     @Override

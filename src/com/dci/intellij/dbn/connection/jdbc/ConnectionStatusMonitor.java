@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
@@ -14,7 +15,7 @@ public class ConnectionStatusMonitor {
 
     private long lastAccess;
 
-    private PropertyHolderImpl<ConnectionProperty> status = new PropertyHolderImpl<>();
+    private PropertyHolder<ConnectionProperty> status = new PropertyHolderImpl<>(ConnectionProperty.class);
     private UncommittedChangeBundle dataChanges;
 
     public void updateLastAccess() {
