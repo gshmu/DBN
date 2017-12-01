@@ -11,6 +11,8 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LOADING;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
     public ReloadSourceCodeAction() {
@@ -39,7 +41,7 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
                 contentType == DBContentType.CODE_BODY ? "Reload body" : "Reload";
 
             presentation.setText(text);
-            presentation.setEnabled(!sourceCodeFile.isLoading() && !sourceCodeFile.isModified());
+            presentation.setEnabled(!sourceCodeFile.is(LOADING) && !sourceCodeFile.is(MODIFIED));
         }
     }
 }

@@ -79,6 +79,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.text.DateFormatUtil;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
 @State(
     name = "DBNavigator.Project.SourceCodeManager",
@@ -138,7 +139,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         public void editModeChanged(DBContentVirtualFile databaseContentFile) {
             if (databaseContentFile instanceof DBSourceCodeVirtualFile) {
                 DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseContentFile;
-                if (sourceCodeFile.isModified()) {
+                if (sourceCodeFile.is(MODIFIED)) {
                     loadSourceCode(sourceCodeFile, true);
                 }
             }
@@ -193,8 +194,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             @Override
             protected void execute() {
                 boolean initialLoad = !sourceCodeFile.isLoaded();
-                if (!sourceCodeFile.isLoading() && (initialLoad || force)) {
-                    sourceCodeFile.setLoading(true);
+                if (!sourceCodeFile.is(LOADING) && (initialLoad || force)) {
+                    sourceCodeFile.set(LOADING, true);
                     EditorUtil.setEditorsReadonly(sourceCodeFile, true);
                     Project project = getProject();
                     DBSchemaObject object = sourceCodeFile.getObject();
@@ -204,10 +205,10 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         sourceCodeFile.loadSourceFromDatabase();
                     } catch (SQLException e) {
                         sourceCodeFile.setSourceLoadError(e.getMessage());
-                        sourceCodeFile.setModified(false);
+                        sourceCodeFile.set(MODIFIED, false);
                         NotificationUtil.sendErrorNotification(project, "Source Load Error", "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database. Cause: " + e.getMessage());
                     } finally {
-                        sourceCodeFile.setLoading(false);
+                        sourceCodeFile.set(LOADING, false);
                         EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoaded(sourceCodeFile, initialLoad);
                     }
                 }
@@ -224,13 +225,13 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         final DBSchemaObject object = sourceCodeFile.getObject();
         final DBContentType contentType = sourceCodeFile.getContentType();
 
-        if (!sourceCodeFile.isSaving()) {
+        if (!sourceCodeFile.is(SAVING)) {
             DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
             if (!debuggerManager.checkForbiddenOperation(sourceCodeFile.getActiveConnection())) {
                 return;
             }
 
-            sourceCodeFile.setSaving(true);
+            sourceCodeFile.set(SAVING, true);
             final Project project = getProject();
             try {
                 Document document = FailsafeUtil.get(DocumentUtil.getDocument(sourceCodeFile));
@@ -261,7 +262,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                         MessageUtil.showErrorDialog(project, "Could not load database sources.", e);
                                     }
                                 } else {
-                                    sourceCodeFile.setSaving(false);
+                                    sourceCodeFile.set(SAVING, false);
                                 }
                             }
 
@@ -274,12 +275,12 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
                 } else {
                     String message = "You are not allowed to change the name or the type of the object";
-                    sourceCodeFile.setSaving(false);
+                    sourceCodeFile.set(SAVING, false);
                     MessageUtil.showErrorDialog(project, "Illegal action", message);
                 }
             } catch (Exception ex) {
                 MessageUtil.showErrorDialog(project, "Could not save changes to database.", ex);
-                sourceCodeFile.setSaving(false);
+                sourceCodeFile.set(SAVING, false);
             }
         }
     }
@@ -399,7 +400,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 } catch (SQLException e) {
                     MessageUtil.showErrorDialog(project, "Could not save changes to database.", e);
                 } finally {
-                    sourceCodeFile.setSaving(false);
+                    sourceCodeFile.set(SAVING, false);
                 }
                 if (successCallback != null) successCallback.run();
 
@@ -481,7 +482,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                             case SHOW: {
                                 List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                                 for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                                    if (sourceCodeFile.isModified()) {
+                                    if (sourceCodeFile.is(MODIFIED)) {
                                         SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(objectProject);
                                         diffManager.opedDatabaseDiffWindow(sourceCodeFile);
                                     }
@@ -543,7 +544,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             protected void execute() {
                 List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                 for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                    if (sourceCodeFile.isModified()) {
+                    if (sourceCodeFile.is(MODIFIED)) {
                         saveSourceToDatabase(sourceCodeFile, null, successCallback);
                     }
                 }

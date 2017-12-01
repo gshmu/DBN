@@ -33,11 +33,11 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.list.ObjectListProvider;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     private DBDataType dataType;
@@ -52,11 +52,11 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
 
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("COLUMN_NAME");
-        set(DBObjectProperty.PRIMARY_KEY, "Y".equals(resultSet.getString("IS_PRIMARY_KEY")));
-        set(DBObjectProperty.FOREIGN_KEY, "Y".equals(resultSet.getString("IS_FOREIGN_KEY")));
-        set(DBObjectProperty.UNIQUE_KEY, "Y".equals(resultSet.getString("IS_UNIQUE_KEY")));
-        set(DBObjectProperty.NULLABLE, "Y".equals(resultSet.getString("IS_NULLABLE")));
-        set(DBObjectProperty.HIDDEN, "Y".equals(resultSet.getString("IS_HIDDEN")));
+        set(PRIMARY_KEY, "Y".equals(resultSet.getString("IS_PRIMARY_KEY")));
+        set(FOREIGN_KEY, "Y".equals(resultSet.getString("IS_FOREIGN_KEY")));
+        set(UNIQUE_KEY, "Y".equals(resultSet.getString("IS_UNIQUE_KEY")));
+        set(NULLABLE, "Y".equals(resultSet.getString("IS_NULLABLE")));
+        set(HIDDEN, "Y".equals(resultSet.getString("IS_HIDDEN")));
         position = resultSet.getInt("POSITION");
 
         dataType = DBDataType.get(this.getConnectionHandler(), resultSet);
@@ -130,23 +130,23 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     }
 
     public boolean isNullable() {
-        return is(DBObjectProperty.NULLABLE);
+        return is(NULLABLE);
     }
 
     public boolean isHidden() {
-        return is(DBObjectProperty.HIDDEN);
+        return is(HIDDEN);
     }
 
     public boolean isPrimaryKey() {
-        return is(DBObjectProperty.PRIMARY_KEY);
+        return is(PRIMARY_KEY);
     }
 
     public boolean isUniqueKey() {
-        return is(DBObjectProperty.UNIQUE_KEY);
+        return is(UNIQUE_KEY);
     }
 
     public boolean isForeignKey() {
-        return is(DBObjectProperty.FOREIGN_KEY);
+        return is(FOREIGN_KEY);
     }
 
     public boolean isSinglePrimaryKey() {

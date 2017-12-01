@@ -36,6 +36,8 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObject> implements FileConnectionMappingProvider {
     public ThreadLocal<Document> FAKE_DOCUMENT = new ThreadLocal<Document>();
@@ -263,7 +265,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     public boolean isModified() {
         if (isContentLoaded()) {
             for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
-                if (contentVirtualFile.isModified()) {
+                if (contentVirtualFile.is(MODIFIED)) {
                     return true;
                 }
             }
@@ -274,7 +276,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     public boolean isSaving() {
         if (isContentLoaded()) {
             for (DBSourceCodeVirtualFile sourceCodeFile : getSourceCodeFiles()) {
-                if (sourceCodeFile.isSaving()) {
+                if (sourceCodeFile.is(SAVING)) {
                     return true;
                 }
             }

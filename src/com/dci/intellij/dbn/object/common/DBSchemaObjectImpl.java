@@ -29,12 +29,12 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.diagnostic.Logger;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 
 public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchemaObject {
@@ -53,14 +53,14 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     }
 
     protected void initProperties() {
-        properties.set(DBObjectProperty.EDITABLE, true);
-        properties.set(DBObjectProperty.REFERENCEABLE, true);
-        properties.set(DBObjectProperty.SCHEMA_OBJECT, true);
+        properties.set(EDITABLE, true);
+        properties.set(REFERENCEABLE, true);
+        properties.set(SCHEMA_OBJECT, true);
     }
 
     @Override
     protected void initLists() {
-        if (is(DBObjectProperty.REFERENCEABLE)) {
+        if (is(REFERENCEABLE)) {
             DBObjectListContainer childObjects = initChildObjects();
             referencedObjects = childObjects.createObjectList(DBObjectType.INCOMING_DEPENDENCY, this, REFERENCED_OBJECTS_LOADER, false, true);
             referencingObjects = childObjects.createObjectList(DBObjectType.OUTGOING_DEPENDENCY, this, REFERENCING_OBJECTS_LOADER, false, true);

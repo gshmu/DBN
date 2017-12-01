@@ -18,8 +18,9 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.UNIQUE;
 
 public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     private DBObjectList<DBColumn> columns;
@@ -31,7 +32,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("INDEX_NAME");
-        set(DBObjectProperty.UNIQUE, resultSet.getString("IS_UNIQUE").equals("Y"));
+        set(UNIQUE, resultSet.getString("IS_UNIQUE").equals("Y"));
     }
 
     public void initStatus(ResultSet resultSet) throws SQLException {
@@ -41,7 +42,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
 
     @Override
     public void initProperties() {
-        properties.set(DBObjectProperty.SCHEMA_OBJECT, true);
+        properties.set(SCHEMA_OBJECT, true);
     }
 
     @Override
@@ -66,7 +67,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     }
 
     public boolean isUnique() {
-        return is(DBObjectProperty.UNIQUE);
+        return is(UNIQUE);
     }
 
     protected List<DBObjectNavigationList> createNavigationLists() {

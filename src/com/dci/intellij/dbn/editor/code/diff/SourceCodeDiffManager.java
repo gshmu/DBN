@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.editor.code.diff;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -27,9 +31,7 @@ import com.intellij.openapi.diff.SimpleContent;
 import com.intellij.openapi.diff.SimpleDiffRequest;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Consumer;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 @State(
         name = "DBNavigator.Project.SourceCodeDiffManager",
@@ -77,7 +79,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                                 EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
                                 break;
                             case 1:
-                                sourceCodeFile.setSaving(false);
+                                sourceCodeFile.set(SAVING, false);
                                 break;
 
                         }
@@ -127,7 +129,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                                                 EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
                                                 break;
                                             case CANCEL:
-                                                sourceCodeFile.setSaving(false);
+                                                sourceCodeFile.set(SAVING, false);
                                                 break;
                                         }
                                     } else if (action == MergeAction.MERGE) {

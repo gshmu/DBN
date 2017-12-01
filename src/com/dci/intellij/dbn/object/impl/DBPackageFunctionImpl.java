@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBPackageFunction;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NAVIGABLE;
 
 public class DBPackageFunctionImpl extends DBFunctionImpl implements DBPackageFunction {
 
@@ -27,7 +27,7 @@ public class DBPackageFunctionImpl extends DBFunctionImpl implements DBPackageFu
 
     @Override
     public void initProperties() {
-        properties.set(DBObjectProperty.NAVIGABLE, true);
+        properties.set(NAVIGABLE, true);
     }
 
     public DBPackage getPackage() {

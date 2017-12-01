@@ -70,9 +70,9 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelation;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     DBObjectList<DBTable> tables;
@@ -96,10 +96,10 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("SCHEMA_NAME");
-        set(DBObjectProperty.PUBLIC_SCHEMA, resultSet.getString("IS_PUBLIC").equals("Y"));
-        set(DBObjectProperty.SYSTEM_SCHEMA, resultSet.getString("IS_SYSTEM").equals("Y"));
-        set(DBObjectProperty.EMPTY_SCHEMA, resultSet.getString("IS_EMPTY").equals("Y"));
-        set(DBObjectProperty.USER_SCHEMA, getName().equalsIgnoreCase(getConnectionHandler().getUserName()));
+        set(PUBLIC_SCHEMA, resultSet.getString("IS_PUBLIC").equals("Y"));
+        set(SYSTEM_SCHEMA, resultSet.getString("IS_SYSTEM").equals("Y"));
+        set(EMPTY_SCHEMA, resultSet.getString("IS_EMPTY").equals("Y"));
+        set(USER_SCHEMA, getName().equalsIgnoreCase(getConnectionHandler().getUserName()));
     }
 
     @Override
@@ -165,20 +165,20 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     public boolean isPublicSchema() {
-        return is(DBObjectProperty.PUBLIC_SCHEMA);
+        return is(PUBLIC_SCHEMA);
     }
 
     public boolean isUserSchema() {
-        return is(DBObjectProperty.USER_SCHEMA);
+        return is(USER_SCHEMA);
     }
 
     public boolean isSystemSchema() {
-        return is(DBObjectProperty.SYSTEM_SCHEMA);
+        return is(SYSTEM_SCHEMA);
     }
 
     @Override
     public boolean isEmptySchema() {
-        return is(DBObjectProperty.EMPTY_SCHEMA);
+        return is(EMPTY_SCHEMA);
     }
 
     @Nullable
@@ -403,7 +403,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     public boolean isParentOf(DBObject object) {
         if (object instanceof DBSchemaObject) {
             DBSchemaObject schemaObject = (DBSchemaObject) object;
-            return schemaObject.is(DBObjectProperty.SCHEMA_OBJECT) && this.equals(schemaObject.getSchema());
+            return schemaObject.is(SCHEMA_OBJECT) && this.equals(schemaObject.getSchema());
 
         }
         return false;

@@ -11,7 +11,8 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSequence;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.REFERENCEABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 
 public class DBSequenceImpl extends DBSchemaObjectImpl implements DBSequence {
     public DBSequenceImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
@@ -25,8 +26,8 @@ public class DBSequenceImpl extends DBSchemaObjectImpl implements DBSequence {
 
     @Override
     public void initProperties() {
-        properties.set(DBObjectProperty.REFERENCEABLE, true);
-        properties.set(DBObjectProperty.SCHEMA_OBJECT, true);
+        properties.set(REFERENCEABLE, true);
+        properties.set(SCHEMA_OBJECT, true);
     }
 
     public DBObjectType getObjectType() {

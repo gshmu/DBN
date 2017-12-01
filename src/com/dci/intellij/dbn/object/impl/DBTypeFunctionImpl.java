@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeFunction;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NAVIGABLE;
 
 public class DBTypeFunctionImpl extends DBFunctionImpl implements DBTypeFunction {
     public DBTypeFunctionImpl(DBType type, ResultSet resultSet) throws SQLException {
@@ -20,7 +20,7 @@ public class DBTypeFunctionImpl extends DBFunctionImpl implements DBTypeFunction
 
     @Override
     public void initProperties() {
-        properties.set(DBObjectProperty.NAVIGABLE, true);
+        properties.set(NAVIGABLE, true);
     }
 
     @Override

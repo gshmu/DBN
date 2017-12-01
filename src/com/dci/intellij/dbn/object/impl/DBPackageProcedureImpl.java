@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBPackageProcedure;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NAVIGABLE;
 
 public class DBPackageProcedureImpl extends DBProcedureImpl implements DBPackageProcedure {
     public DBPackageProcedureImpl(DBPackage packagee, ResultSet resultSet) throws SQLException {
@@ -20,7 +20,7 @@ public class DBPackageProcedureImpl extends DBProcedureImpl implements DBPackage
 
     @Override
     public void initProperties() {
-        properties.set(DBObjectProperty.NAVIGABLE, true);
+        properties.set(NAVIGABLE, true);
     }
 
     @Override

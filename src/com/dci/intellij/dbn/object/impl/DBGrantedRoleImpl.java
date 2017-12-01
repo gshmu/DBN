@@ -13,8 +13,9 @@ import com.dci.intellij.dbn.object.DBRoleGrantee;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ADMIN_OPTION;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEFAULT_ROLE;
 
 public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
     private DBObjectRef<DBRole> roleRef;
@@ -27,8 +28,8 @@ public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
     protected void initObject(ResultSet resultSet) throws SQLException {
         this.name = resultSet.getString("GRANTED_ROLE_NAME");
         this.roleRef = DBObjectRef.from(getConnectionHandler().getObjectBundle().getRole(name));
-        set(DBObjectProperty.ADMIN_OPTION, resultSet.getString("IS_ADMIN_OPTION").equals("Y"));
-        set(DBObjectProperty.DEFAULT_ROLE, resultSet.getString("IS_DEFAULT_ROLE").equals("Y"));
+        set(ADMIN_OPTION, resultSet.getString("IS_ADMIN_OPTION").equals("Y"));
+        set(DEFAULT_ROLE, resultSet.getString("IS_DEFAULT_ROLE").equals("Y"));
     }
 
     public DBObjectType getObjectType() {
@@ -44,11 +45,11 @@ public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
     }
 
     public boolean isAdminOption() {
-        return is(DBObjectProperty.ADMIN_OPTION);
+        return is(ADMIN_OPTION);
     }
 
     public boolean isDefaultRole() {
-        return is(DBObjectProperty.DEFAULT_ROLE);
+        return is(DEFAULT_ROLE);
     }
 
     @Nullable
