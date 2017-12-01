@@ -50,9 +50,9 @@ public class UncommittedChangesForm extends DBNFormImpl {
                     DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(connectionHandler.getProject());
                     Object source = e.getSource();
                     if (source == commitButton) {
-                        transactionManager.execute(connectionHandler, false, TransactionAction.COMMIT, additionalOperation);
+                        transactionManager.execute(connectionHandler, null, false, TransactionAction.COMMIT, additionalOperation);
                     } else if (source == rollbackButton) {
-                        transactionManager.execute(connectionHandler, false, TransactionAction.ROLLBACK, additionalOperation);
+                        transactionManager.execute(connectionHandler, null, false, TransactionAction.ROLLBACK, additionalOperation);
                     }
                 }
             };

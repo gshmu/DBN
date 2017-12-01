@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
@@ -40,8 +41,13 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     }
 
     @NotNull
-    public DBNResultSet getResultSet() {
+    protected DBNResultSet getResultSet() {
         return FailsafeUtil.get(resultSet);
+    }
+
+    @NotNull
+    public DBNConnection getConnection() {
+        return getResultSet().getConnection();
     }
 
     public void setResultSet(DBNResultSet resultSet) throws SQLException {

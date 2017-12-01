@@ -4,6 +4,7 @@ import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,6 @@ import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
-import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -133,7 +133,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public void setAutoCommit(boolean autoCommit) throws SQLException {}
     @Override public void setLoggingEnabled(boolean loggingEnabled) {}
 
-    @Override public UncommittedChangeBundle getDataChanges() {return null;}
     @Override public boolean isConnected() {return false;}
     @Override public boolean isDisposed() {
         return false;
@@ -171,6 +170,13 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override public ConnectionSettings getSettings() {return null;}
     @Override public void setSettings(ConnectionSettings connectionSettings) {}
+
+    @NotNull
+    @Override
+    public List<DBNConnection> getActiveConnections() {
+        return Collections.emptyList();
+    }
+
     @NotNull
     @Override public ConnectionStatus getConnectionStatus() {return CONNECTION_STATUS;}
 

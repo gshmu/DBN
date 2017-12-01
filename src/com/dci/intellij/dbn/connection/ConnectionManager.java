@@ -36,6 +36,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
+import com.dci.intellij.dbn.connection.jdbc.ConnectionStatusMonitor;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
@@ -430,25 +431,30 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         private void resolveIdleStatus(final ConnectionHandler connectionHandler) {
             FailsafeUtil.check(connectionHandler);
             final DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
-            final ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
-            if (connectionHandler.getLoadMonitor().isIdle() && !connectionStatus.isResolvingIdleStatus()) {
-                int idleMinutes = connectionHandler.getIdleMinutes();
-                int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
-                if (idleMinutes > idleMinutesToDisconnect) {
-                    if (connectionHandler.hasUncommittedChanges()) {
-                        connectionHandler.getConnectionStatus().setResolvingIdleStatus(true);
-                        new SimpleLaterInvocator() {
-                            @Override
-                            protected void execute() {
-                                IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler);
-                                idleConnectionDialog.show();
-                            }
-                        }.start();
-                    } else {
-                        transactionManager.execute(connectionHandler, false, TransactionAction.DISCONNECT_IDLE);
+            List<DBNConnection> activeConnections = connectionHandler.getActiveConnections();
+
+            for (final DBNConnection connection : activeConnections) {
+                ConnectionStatusMonitor statusMonitor = connection.getStatusMonitor();
+                if (statusMonitor.isIdle() && !statusMonitor.isResolvingStatus()) {
+                    int idleMinutes = connectionHandler.getIdleMinutes();
+                    int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
+                    if (idleMinutes > idleMinutesToDisconnect) {
+                        if (statusMonitor.hasUncommittedChanges()) {
+                            statusMonitor.setResolvingStatus(true);
+                            new SimpleLaterInvocator() {
+                                @Override
+                                protected void execute() {
+                                    IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler, connection);
+                                    idleConnectionDialog.show();
+                                }
+                            }.start();
+                        } else {
+                            transactionManager.execute(connectionHandler, connection, false, TransactionAction.DISCONNECT_IDLE);
+                        }
                     }
                 }
             }
+
         }
     }
 

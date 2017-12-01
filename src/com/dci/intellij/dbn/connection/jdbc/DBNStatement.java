@@ -94,7 +94,7 @@ public class DBNStatement<T extends Statement> extends DBNResource implements St
         @Override
         public R call() throws SQLException {
             DBNConnection connection = getConnection();
-            ResourceStatusMonitor statusMonitor = connection.getStatusMonitor();
+            ConnectionStatusMonitor statusMonitor = connection.getStatusMonitor();
             statusMonitor.updateLastAccess();
             boolean busy = statusMonitor.isActive();
             if (busy) {

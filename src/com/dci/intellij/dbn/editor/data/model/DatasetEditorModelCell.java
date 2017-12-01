@@ -1,6 +1,13 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.TableCellEditor;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -8,6 +15,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
@@ -20,13 +28,6 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.TableCellEditor;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class DatasetEditorModelCell extends ResultSetDataModelCell implements ChangeListener {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -93,7 +94,8 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                     if (!isValueAdapter) {
                         setUserValue(newUserValue);
                     }
-                    connectionHandler.notifyDataChanges(getDataset().getVirtualFile());
+                    DBNConnection connection = getModel().getConnection();
+                    connection.getStatusMonitor().notifyDataChanges(getDataset().getVirtualFile());
                     EventUtil.notify(getProject(), DatasetEditorModelCellValueListener.TOPIC).valueChanged(this);
                 }
                 try {

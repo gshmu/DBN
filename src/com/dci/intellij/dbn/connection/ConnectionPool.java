@@ -51,6 +51,11 @@ public class ConnectionPool implements Disposable {
         return mainConnection;
     }
 
+    @Nullable
+    public DBNConnection getMainConnection() {
+        return mainConnection;
+    }
+
     private DBNConnection init(DBNConnection connection, ConnectionType connectionType, boolean force) throws SQLException {
         lastAccessTimestamp = System.currentTimeMillis();
         ConnectionHandler connectionHandler = getConnectionHandler();

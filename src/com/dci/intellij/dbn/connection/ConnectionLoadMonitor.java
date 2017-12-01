@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.Disposable;
 
+@Deprecated
 public class ConnectionLoadMonitor implements Disposable {
     private ConnectionHandlerRef connectionHandlerRef;
 
@@ -14,28 +15,6 @@ public class ConnectionLoadMonitor implements Disposable {
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
     }
-
-    private Counter runningStatements = new Counter() {
-        @Override
-        public void onIncrement() {
-            updateLastAccess();
-        }
-        @Override
-        public void onDecrement() {
-            updateLastAccess();
-        }
-    };
-    private Counter runningMethods = new Counter() {
-        @Override
-        public void onIncrement() {
-            updateLastAccess();
-        }
-
-        @Override
-        public void onDecrement() {
-            updateLastAccess();
-        }
-    };
 
     private Counter runningMetaLoaders = new Counter(){
         @Override
@@ -62,22 +41,10 @@ public class ConnectionLoadMonitor implements Disposable {
         return runningMetaLoaders;
     }
 
-    public Counter getRunningStatements() {
-        return runningStatements;
-    }
-
-    public Counter getRunningMethods() {
-        return runningMethods;
-    }
-
     public boolean isLoading() {
         return runningMetaLoaders.getValue() > 0;
     }
 
     @Override
     public void dispose() {}
-
-    public boolean isIdle() {
-        return runningStatements.getValue() == 0 && runningMethods.getValue() == 0;
-    }
 }

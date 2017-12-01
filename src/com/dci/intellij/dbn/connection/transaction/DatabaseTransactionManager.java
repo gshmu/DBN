@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.connection.transaction;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -11,6 +19,7 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.dci.intellij.dbn.connection.transaction.ui.UncommittedChangesDialog;
 import com.dci.intellij.dbn.connection.transaction.ui.UncommittedChangesOverviewDialog;
@@ -21,14 +30,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class DatabaseTransactionManager extends AbstractProjectComponent implements ProjectManagerListener{
 
@@ -40,30 +41,37 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         return FailsafeUtil.getComponent(project, DatabaseTransactionManager.class);
     }
 
-    public void execute(final ConnectionHandler connectionHandler, boolean background, final TransactionAction... actions) {
-        final List<TransactionAction> actionList = new ArrayList<TransactionAction>();
-        for (TransactionAction action : actions) {
-            if (action != null) {
-                actionList.add(action);
+    public void execute(final ConnectionHandler connectionHandler, final DBNConnection connection, boolean background, final TransactionAction... actions) {
+        if (connection == null) {
+            List<DBNConnection> activeConnections = connectionHandler.getActiveConnections();
+            for (DBNConnection activeConnection : activeConnections) {
+                execute(connectionHandler, activeConnection, background, actions);
             }
-        }
+        } else {
+            final List<TransactionAction> actionList = new ArrayList<TransactionAction>();
+            for (TransactionAction action : actions) {
+                if (action != null) {
+                    actionList.add(action);
+                }
+            }
 
-        Set<TransactionAction> pendingActions = connectionHandler.getPendingActions();
+            Set<TransactionAction> pendingActions = connectionHandler.getPendingActions();
 
-        actionList.removeAll(pendingActions);
-        if (actionList.size() > 0) {
-            pendingActions.addAll(actionList);
-            Project project = connectionHandler.getProject();
-            String connectionName = connectionHandler.getName();
-            if (ApplicationManager.getApplication().isDisposeInProgress()) {
-                executeActions(connectionHandler, actionList);
-            } else {
-                new BackgroundTask(project, "Performing \"" + actionList.get(0).getName() + "\" on connection " + connectionName, background) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator indicator) {
-                        executeActions(connectionHandler, actionList);
-                    }
-                }.start();
+            actionList.removeAll(pendingActions);
+            if (actionList.size() > 0) {
+                pendingActions.addAll(actionList);
+                Project project = connectionHandler.getProject();
+                String connectionName = connectionHandler.getName();
+                if (ApplicationManager.getApplication().isDisposeInProgress()) {
+                    executeActions(connectionHandler, connection, actionList);
+                } else {
+                    new BackgroundTask(project, "Performing \"" + actionList.get(0).getName() + "\" on connection " + connectionName, background) {
+                        @Override
+                        protected void execute(@NotNull ProgressIndicator indicator) {
+                            executeActions(connectionHandler, connection, actionList);
+                        }
+                    }.start();
+                }
             }
         }
     }
@@ -72,23 +80,23 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         return ProjectSettingsManager.getInstance(getProject()).getOperationSettings().getTransactionManagerSettings();
     }
 
-    private void executeActions(ConnectionHandler connectionHandler, List<TransactionAction> actions) {
+    private void executeActions(ConnectionHandler connectionHandler, DBNConnection connection, List<TransactionAction> actions) {
         Project project = getProject();
         String connectionName = connectionHandler.getName();
         TransactionListener transactionListener = EventUtil.notify(project, TransactionListener.TOPIC);
         for (TransactionAction action : actions) {
-            executeAction(connectionHandler, project, connectionName, transactionListener, action);
+            executeAction(connectionHandler, connection, project, connectionName, transactionListener, action);
         }
     }
 
-    private void executeAction(ConnectionHandler connectionHandler, Project project, String connectionName, TransactionListener transactionListener, TransactionAction action) {
+    private void executeAction(ConnectionHandler connectionHandler, DBNConnection connection, Project project, String connectionName, TransactionListener transactionListener, TransactionAction action) {
         boolean success = true;
         try {
             // notify pre-action
             transactionListener.beforeAction(connectionHandler, action);
             ProgressMonitor.setTaskDescription("Performing " + action.getName() + " on connection " + connectionName);
 
-            action.execute(connectionHandler);
+            action.execute(connectionHandler, connection);
             if (action.getNotificationType() != null) {
                 NotificationUtil.sendNotification(
                         project,
@@ -121,41 +129,53 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     }
 
     public void commit(final @NotNull ConnectionHandler connectionHandler, boolean fromEditor, boolean background) {
-        if (fromEditor && connectionHandler.getDataChanges().size() > 1) {
-            Project project = connectionHandler.getProject();
-            VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
-            if (selectedFile != null) {
-                InteractiveOptionHandler<TransactionOption> commitMultipleChanges = getTransactionManagerSettings().getCommitMultipleChanges();
-                TransactionOption result = commitMultipleChanges.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
-                switch (result) {
-                    case COMMIT: execute(connectionHandler, background, TransactionAction.COMMIT); break;
-                    case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, null); break;
+        List<DBNConnection> connections = connectionHandler.getActiveConnections();
+        for (DBNConnection connection : connections) {
+            UncommittedChangeBundle dataChanges = connection.getStatusMonitor().getDataChanges();
+            if (fromEditor && dataChanges != null && dataChanges.size() > 1) {
+                Project project = connectionHandler.getProject();
+                VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
+                if (selectedFile != null) {
+                    InteractiveOptionHandler<TransactionOption> commitMultipleChanges = getTransactionManagerSettings().getCommitMultipleChanges();
+                    TransactionOption result = commitMultipleChanges.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
+                    switch (result) {
+                        case COMMIT: execute(connectionHandler, connection, background, TransactionAction.COMMIT); break;
+                        case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, null); break;
+                    }
                 }
+            } else {
+                execute(connectionHandler, connection, background, TransactionAction.COMMIT);
             }
-        } else {
-            execute(connectionHandler, background, TransactionAction.COMMIT);
         }
+
     }
 
     public void rollback(final @NotNull ConnectionHandler connectionHandler, boolean fromEditor, boolean background) {
-        if (fromEditor && connectionHandler.getDataChanges().size() > 1) {
-            Project project = connectionHandler.getProject();
-            VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
-            if (selectedFile != null) {
-                InteractiveOptionHandler<TransactionOption> rollbackMultipleChanges = getTransactionManagerSettings().getRollbackMultipleChanges();
-                TransactionOption result = rollbackMultipleChanges.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
-                switch (result) {
-                    case ROLLBACK: execute(connectionHandler, background, TransactionAction.ROLLBACK); break;
-                    case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, null); break;
+        List<DBNConnection> connections = connectionHandler.getActiveConnections();
+        for (DBNConnection connection : connections) {
+            UncommittedChangeBundle dataChanges = connection.getStatusMonitor().getDataChanges();
+            if (fromEditor && dataChanges != null && dataChanges.size() > 1) {
+                Project project = connectionHandler.getProject();
+                VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
+                if (selectedFile != null) {
+                    InteractiveOptionHandler<TransactionOption> rollbackMultipleChanges = getTransactionManagerSettings().getRollbackMultipleChanges();
+                    TransactionOption result = rollbackMultipleChanges.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
+                    switch (result) {
+                        case ROLLBACK: execute(connectionHandler, connection, background, TransactionAction.ROLLBACK); break;
+                        case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, null); break;
+                    }
                 }
+            } else {
+                execute(connectionHandler, connection, background, TransactionAction.ROLLBACK);
             }
-        } else {
-            execute(connectionHandler, background, TransactionAction.ROLLBACK);
         }
     }
 
     public void disconnect(final ConnectionHandler connectionHandler, boolean background) {
-        execute(connectionHandler, background, TransactionAction.DISCONNECT);
+        List<DBNConnection> connections = connectionHandler.getActiveConnections();
+        for (DBNConnection connection : connections) {
+            execute(connectionHandler, connection, background, TransactionAction.DISCONNECT);
+        }
     }
 
 
@@ -177,39 +197,41 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 TransactionAction.TURN_AUTO_COMMIT_OFF :
                 TransactionAction.TURN_AUTO_COMMIT_ON;
 
-        if (!isAutoCommit && connectionHandler.hasUncommittedChanges()) {
-            InteractiveOptionHandler<TransactionOption> toggleAutoCommit = getTransactionManagerSettings().getToggleAutoCommit();
-            TransactionOption result = toggleAutoCommit.resolve(connectionHandler.getName());
-            switch (result) {
-                case COMMIT: execute(connectionHandler, true, TransactionAction.COMMIT, autoCommitAction); break;
-                case ROLLBACK: execute(connectionHandler, true, TransactionAction.ROLLBACK, autoCommitAction); break;
-                case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, autoCommitAction);
+        List<DBNConnection> connections = connectionHandler.getActiveConnections();
+        for (DBNConnection connection : connections) {
+            if (!isAutoCommit && connection.getStatusMonitor().hasUncommittedChanges()) {
+                InteractiveOptionHandler<TransactionOption> toggleAutoCommit = getTransactionManagerSettings().getToggleAutoCommit();
+                TransactionOption result = toggleAutoCommit.resolve(connectionHandler.getName());
+                switch (result) {
+                    case COMMIT: execute(connectionHandler, connection, true, TransactionAction.COMMIT, autoCommitAction); break;
+                    case ROLLBACK: execute(connectionHandler, connection, true, TransactionAction.ROLLBACK, autoCommitAction); break;
+                    case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, autoCommitAction);
+                }
+            } else {
+                execute(connectionHandler, connection, false, autoCommitAction);
             }
-        } else {
-            execute(connectionHandler, false, autoCommitAction);
         }
     }
 
     public void disconnect(ConnectionHandler connectionHandler) {
-        if (connectionHandler.hasUncommittedChanges()) {
-            InteractiveOptionHandler<TransactionOption> disconnect = getTransactionManagerSettings().getDisconnect();
-            TransactionOption result = disconnect.resolve(connectionHandler.getName());
+        List<DBNConnection> connections = connectionHandler.getActiveConnections();
+        for (DBNConnection connection : connections) {
+            if (connection.getStatusMonitor().hasUncommittedChanges()) {
+                InteractiveOptionHandler<TransactionOption> disconnect = getTransactionManagerSettings().getDisconnect();
+                TransactionOption result = disconnect.resolve(connectionHandler.getName());
 
-            switch (result) {
-                case COMMIT: execute(connectionHandler, false, TransactionAction.COMMIT, TransactionAction.DISCONNECT); break;
-                case ROLLBACK: execute(connectionHandler, false, TransactionAction.DISCONNECT); break;
-                case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, TransactionAction.DISCONNECT);
+                switch (result) {
+                    case COMMIT: execute(connectionHandler, connection, false, TransactionAction.COMMIT, TransactionAction.DISCONNECT); break;
+                    case ROLLBACK: execute(connectionHandler, connection, false, TransactionAction.DISCONNECT); break;
+                    case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, TransactionAction.DISCONNECT);
+                }
+            } else {
+                execute(connectionHandler, connection, false, TransactionAction.DISCONNECT);
             }
-        } else {
-            execute(connectionHandler, false, TransactionAction.DISCONNECT);
         }
     }
 
-    /**********************************************
-    *            ProjectManagerListener           *
-    ***********************************************/
-
-    /**********************************************
+   /**********************************************
     *                ProjectComponent             *
     ***********************************************/
     @NonNls

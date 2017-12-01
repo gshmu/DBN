@@ -19,7 +19,7 @@ public class DBNConnection extends DBNConnectionBase {
     private ConnectionType type;
 
     private Set<DBNStatement> statements = new HashSet<>();
-    private ResourceStatusMonitor statusMonitor = new ResourceStatusMonitor() {};
+    private ConnectionStatusMonitor statusMonitor = new ConnectionStatusMonitor();
 
     public DBNConnection(Connection connection, ConnectionType type) {
         super(connection);
@@ -92,8 +92,35 @@ public class DBNConnection extends DBNConnectionBase {
         return type == ConnectionType.TEST;
     }
 
+    @Override
+    public void setAutoCommit(boolean autoCommit) throws SQLException {
+        super.setAutoCommit(autoCommit);
+    }
 
-    public ResourceStatusMonitor getStatusMonitor() {
+    @Override
+    public boolean getAutoCommit() throws SQLException {
+        return super.getAutoCommit();
+    }
+
+    @Override
+    public void commit() throws SQLException {
+        inner.commit();
+        statusMonitor.resetDataChanges();
+    }
+
+    @Override
+    public void rollback() throws SQLException {
+        inner.rollback();
+        statusMonitor.resetDataChanges();
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        statusMonitor.resetDataChanges();
+    }
+
+    public ConnectionStatusMonitor getStatusMonitor() {
         return statusMonitor;
     }
 

@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
@@ -272,11 +271,9 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             SQLException executionException = null;
             if (statementText != null) {
                 ConnectionHandler connectionHandler = getTargetConnection();
-                Counter runningStatements = connectionHandler.getLoadMonitor().getRunningStatements();
 
                 try {
                     status.assertNotCancelled();
-                    runningStatements.increment();
                     initConnection(context, connection);
                     initTimeout(context, debug);
                     initLogging(context, debug);
@@ -298,7 +295,6 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                         executionResult.calculateExecDuration();
                     }
                 } finally {
-                    runningStatements.decrement();
                     disableLogging(context);
                 }
             }
@@ -473,7 +469,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         if (notifyChanges) {
             if (connection.isMainConnection()) {
                 VirtualFile virtualFile = getPsiFile().getVirtualFile();
-                connectionHandler.notifyDataChanges(virtualFile);
+                connection.getStatusMonitor().notifyDataChanges(virtualFile);
             } else if (connection.isPoolConnection()) {
                 StatementExecutionManager executionManager = getExecutionManager();
                 executionManager.promptPendingTransactionDialog(this);
@@ -496,7 +492,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             }
         } else if (resetChanges) {
             if (connection.isMainConnection()) {
-                connectionHandler.resetDataChanges();
+                connection.getStatusMonitor().resetDataChanges();
             }
         }
     }
