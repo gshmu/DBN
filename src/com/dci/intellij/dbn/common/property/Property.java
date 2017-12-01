@@ -1,5 +1,5 @@
 package com.dci.intellij.dbn.common.property;
 
-public interface Property {
+public interface Property{
     int idx();
 }

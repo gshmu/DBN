@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.object.common.status;
 
-public enum DBObjectStatus {
+import com.dci.intellij.dbn.common.property.Property;
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+
+public enum DBObjectStatus implements Property {
     PRESENT(false, true),
     ENABLED(true, true),
     EDITABLE(false, false),
@@ -22,5 +25,10 @@ public enum DBObjectStatus {
 
     public boolean getDefaultValue() {
         return defaultValue;
+    }
+
+    @Override
+    public int idx() {
+        return PropertyHolderImpl.idx(this);
     }
 }
