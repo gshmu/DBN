@@ -89,11 +89,6 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     DBObjectList<DBCluster> clusters;
     DBObjectList<DBDatabaseLink> databaseLinks;
 
-    boolean isUserSchema;
-    boolean isPublicSchema;
-    boolean isSystemSchema;
-    boolean isEmptySchema;
-
     public DBSchemaImpl(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
         super(connectionHandler, resultSet);
     }
@@ -101,10 +96,10 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("SCHEMA_NAME");
-        isPublicSchema = resultSet.getString("IS_PUBLIC").equals("Y");
-        isSystemSchema = resultSet.getString("IS_SYSTEM").equals("Y");
-        isEmptySchema = resultSet.getString("IS_EMPTY").equals("Y");
-        isUserSchema = getName().equalsIgnoreCase(getConnectionHandler().getUserName());
+        set(DBObjectProperty.PUBLIC_SCHEMA, resultSet.getString("IS_PUBLIC").equals("Y"));
+        set(DBObjectProperty.SYSTEM_SCHEMA, resultSet.getString("IS_SYSTEM").equals("Y"));
+        set(DBObjectProperty.EMPTY_SCHEMA, resultSet.getString("IS_EMPTY").equals("Y"));
+        set(DBObjectProperty.USER_SCHEMA, getName().equalsIgnoreCase(getConnectionHandler().getUserName()));
     }
 
     @Override
@@ -170,20 +165,20 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     public boolean isPublicSchema() {
-        return isPublicSchema;
+        return is(DBObjectProperty.PUBLIC_SCHEMA);
     }
 
     public boolean isUserSchema() {
-        return isUserSchema;
+        return is(DBObjectProperty.USER_SCHEMA);
     }
 
     public boolean isSystemSchema() {
-        return isSystemSchema;
+        return is(DBObjectProperty.SYSTEM_SCHEMA);
     }
 
     @Override
     public boolean isEmptySchema() {
-        return isEmptySchema;
+        return is(DBObjectProperty.EMPTY_SCHEMA);
     }
 
     @Nullable

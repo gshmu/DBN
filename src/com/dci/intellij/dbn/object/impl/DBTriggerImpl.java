@@ -29,7 +29,6 @@ import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
 
 public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
-    private boolean isForEachRow;
     private TriggerType triggerType;
     private TriggeringEvent[] triggeringEvents;
 
@@ -44,7 +43,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("TRIGGER_NAME");
-        isForEachRow = resultSet.getString("IS_FOR_EACH_ROW").equals("Y");
+        set(DBObjectProperty.FOR_EACH_ROW, resultSet.getString("IS_FOR_EACH_ROW").equals("Y"));
 
         String triggerTypeString = resultSet.getString("TRIGGER_TYPE");
         triggerType =
@@ -95,7 +94,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
     }
 
     public boolean isForEachRow() {
-        return isForEachRow;
+        return is(DBObjectProperty.FOR_EACH_ROW);
     }
 
     public TriggerType getTriggerType() {

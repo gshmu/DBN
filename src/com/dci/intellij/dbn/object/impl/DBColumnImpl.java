@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.list.ObjectListProvider;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
@@ -40,11 +41,6 @@ import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
 
 public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     private DBDataType dataType;
-    private boolean isPrimaryKey;
-    private boolean isForeignKey;
-    private boolean isUniqueKey;
-    private boolean isNullable;
-    private boolean isHidden;
     private int position;
 
     private DBObjectList<DBConstraint> constraints;
@@ -56,11 +52,11 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
 
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("COLUMN_NAME");
-        isPrimaryKey = "Y".equals(resultSet.getString("IS_PRIMARY_KEY"));
-        isForeignKey = "Y".equals(resultSet.getString("IS_FOREIGN_KEY"));
-        isUniqueKey = "Y".equals(resultSet.getString("IS_UNIQUE_KEY"));
-        isNullable = "Y".equals(resultSet.getString("IS_NULLABLE"));
-        isHidden = "Y".equals(resultSet.getString("IS_HIDDEN"));
+        set(DBObjectProperty.PRIMARY_KEY, "Y".equals(resultSet.getString("IS_PRIMARY_KEY")));
+        set(DBObjectProperty.FOREIGN_KEY, "Y".equals(resultSet.getString("IS_FOREIGN_KEY")));
+        set(DBObjectProperty.UNIQUE_KEY, "Y".equals(resultSet.getString("IS_UNIQUE_KEY")));
+        set(DBObjectProperty.NULLABLE, "Y".equals(resultSet.getString("IS_NULLABLE")));
+        set(DBObjectProperty.HIDDEN, "Y".equals(resultSet.getString("IS_HIDDEN")));
         position = resultSet.getInt("POSITION");
 
         dataType = DBDataType.get(this.getConnectionHandler(), resultSet);
@@ -96,7 +92,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     @Override
     @Nullable
     public DBObject getDefaultNavigationObject() {
-        if (isForeignKey) {
+        if (isForeignKey()) {
             return getForeignKeyColumn();
         }
         return null;
@@ -107,11 +103,11 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         ttb.append(false, " - ", true);
         ttb.append(false, dataType.getQualifiedName(), true);
 
-        if (isPrimaryKey) ttb.append(false,  "&nbsp;&nbsp;PK", true);
-        if (isForeignKey) ttb.append(false, isPrimaryKey ? ",&nbsp;FK" : "&nbsp;&nbsp;FK", true);
-        if (!isPrimaryKey && !isForeignKey && !isNullable) ttb.append(false, "&nbsp;&nbsp;NOT NULL", true);
+        if (isPrimaryKey()) ttb.append(false,  "&nbsp;&nbsp;PK", true);
+        if (isForeignKey()) ttb.append(false, isPrimaryKey() ? ",&nbsp;FK" : "&nbsp;&nbsp;FK", true);
+        if (!isPrimaryKey() && !isForeignKey() && !isNullable()) ttb.append(false, "&nbsp;&nbsp;NOT NULL", true);
 
-        if (isForeignKey && getForeignKeyColumn() != null) {
+        if (isForeignKey() && getForeignKeyColumn() != null) {
             ttb.append(true, "FK column:&nbsp;", false);
             DBColumn foreignKeyColumn = getForeignKeyColumn();
             ttb.append(false, foreignKeyColumn.getDataset().getName() + '.' + foreignKeyColumn.getName(), false);
@@ -123,35 +119,38 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
 
     @Nullable
     public Icon getIcon() {
-        return isPrimaryKey ? isForeignKey ? Icons.DBO_COLUMN_PFK : Icons.DBO_COLUMN_PK :
-               isForeignKey ? Icons.DBO_COLUMN_FK :
-               isHidden ? Icons.DBO_COLUMN_HIDDEN :
+        return isPrimaryKey() ? isForeignKey() ? Icons.DBO_COLUMN_PFK : Icons.DBO_COLUMN_PK :
+               isForeignKey() ? Icons.DBO_COLUMN_FK :
+               isHidden() ? Icons.DBO_COLUMN_HIDDEN :
                Icons.DBO_COLUMN;
-    }
-
-    public boolean isNullable() {
-        return isNullable;
-    }
-
-    public boolean isHidden() {
-        return isHidden;
     }
 
     public DBDataset getDataset() {
         return (DBDataset) getParentObject();
     }
 
+    public boolean isNullable() {
+        return is(DBObjectProperty.NULLABLE);
+    }
+
+    public boolean isHidden() {
+        return is(DBObjectProperty.HIDDEN);
+    }
 
     public boolean isPrimaryKey() {
-        return isPrimaryKey;
+        return is(DBObjectProperty.PRIMARY_KEY);
     }
 
     public boolean isUniqueKey() {
-        return isUniqueKey;
+        return is(DBObjectProperty.UNIQUE_KEY);
+    }
+
+    public boolean isForeignKey() {
+        return is(DBObjectProperty.FOREIGN_KEY);
     }
 
     public boolean isSinglePrimaryKey() {
-        if (isPrimaryKey) {
+        if (isPrimaryKey()) {
             for (DBConstraint constraint : getConstraints()) {
                 if (constraint.isPrimaryKey() && constraint.getColumns().size() == 1) {
                     return true;
@@ -159,10 +158,6 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
             }
         }
         return false;
-    }
-
-    public boolean isForeignKey() {
-        return isForeignKey;
     }
 
     public List<DBIndex> getIndexes() {
@@ -219,7 +214,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     }
 
     public List<DBColumn> getReferencingColumns() {
-        assert isPrimaryKey;
+        assert isPrimaryKey();
 
         List<DBColumn> list = new ArrayList<DBColumn>();
         boolean isSystemSchema = getDataset().getSchema().isSystemSchema();
@@ -258,13 +253,13 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
                 navigationLists.add(new DBObjectNavigationListImpl<DBIndex>("Indexes", indexes.getObjects()));
             }
 
-            if (isForeignKey) {
+            if (isForeignKey()) {
                 DBColumn foreignKeyColumn = getForeignKeyColumn();
                 navigationLists.add(new DBObjectNavigationListImpl<DBColumn>("Referenced column", foreignKeyColumn));
             }
         }
 
-        if (isPrimaryKey) {
+        if (isPrimaryKey()) {
             ObjectListProvider<DBColumn> objectListProvider = new ObjectListProvider<DBColumn>() {
                 public List<DBColumn> getObjects() {
                     return getReferencingColumns();
@@ -284,7 +279,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     public List<PresentableProperty> getPresentableProperties() {
         List<PresentableProperty> properties = super.getPresentableProperties();
 
-        if (isForeignKey) {
+        if (isForeignKey()) {
             DBColumn foreignKeyColumn = getForeignKeyColumn();
             if (foreignKeyColumn != null) {
                 properties.add(0, new DBObjectPresentableProperty("Foreign key column", foreignKeyColumn, true));
@@ -292,9 +287,9 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         }
 
         StringBuilder attributes  = new StringBuilder();
-        if (isPrimaryKey) attributes.append("PK");
-        if (isForeignKey) attributes.append(" FK");
-        if (!isPrimaryKey && !isNullable) attributes.append(" not null");
+        if (isPrimaryKey()) attributes.append("PK");
+        if (isForeignKey()) attributes.append(" FK");
+        if (!isPrimaryKey() && !isNullable()) attributes.append(" not null");
 
         if (attributes.length() > 0) {
             properties.add(0, new SimplePresentableProperty("Attributes", attributes.toString().trim()));
@@ -327,9 +322,9 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         if (o instanceof DBColumn)  {
             DBColumn column = (DBColumn) o;
             if (getDataset().equals(column.getDataset())) {
-                if (isPrimaryKey && column.isPrimaryKey()) {
+                if (isPrimaryKey() && column.isPrimaryKey()) {
                     return super.compareTo(o);
-                } else if (isPrimaryKey) {
+                } else if (isPrimaryKey()) {
                     return -1;
                 } else if (column.isPrimaryKey()){
                     return 1;

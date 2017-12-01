@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
@@ -29,8 +30,6 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
     private int overload;
     private int position;
     private int sequence;
-    private boolean input;
-    private boolean output;
 
     public DBArgumentImpl(@NotNull DBMethod method, ResultSet resultSet) throws SQLException {
         super(method, resultSet);
@@ -43,8 +42,8 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
         sequence = resultSet.getInt("SEQUENCE");
         String inOut = resultSet.getString("IN_OUT");
         if (inOut != null) {
-            input = inOut.contains("IN");
-            output = inOut.contains("OUT");
+            set(DBObjectProperty.INPUT, inOut.contains("IN"));
+            set(DBObjectProperty.OUTPUT, inOut.contains("OUT"));
 
         }
         name = resultSet.getString("ARGUMENT_NAME");
@@ -77,11 +76,11 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
     }
 
     public boolean isInput() {
-        return input;
+        return is(DBObjectProperty.INPUT);
     }
 
     public boolean isOutput() {
-        return output;
+        return is(DBObjectProperty.OUTPUT);
     }
 
     public boolean isLeaf() {
@@ -97,7 +96,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
         ttb.append(true, getObjectType().getName(), true);
         ttb.append(false, " - ", true);
         ttb.append(false, dataType.getQualifiedName(), true);
-        String inOut = input && output ? "IN / OUT" : input ? "IN" : "OUT";
+        String inOut = isInput() && isOutput() ? "IN / OUT" : isInput() ? "IN" : "OUT";
         ttb.append(true, inOut, true);
         ttb.createEmptyRow();
         super.buildToolTip(ttb);
@@ -112,7 +111,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
     public List<PresentableProperty> getPresentableProperties() {
         List<PresentableProperty> properties = super.getPresentableProperties();
         properties.add(0, new DBDataTypePresentableProperty(dataType));
-        properties.add(0, new SimplePresentableProperty("Argument type", input && output ? "IN / OUT" : input ? "IN" : "OUT"));
+        properties.add(0, new SimplePresentableProperty("Argument type", isInput() && isOutput() ? "IN / OUT" : isInput() ? "IN" : "OUT"));
         return properties;
     }
 
@@ -129,9 +128,9 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
     @Nullable
     @Override
     public Icon getIcon() {
-        return input && output ? Icons.DBO_ARGUMENT_IN_OUT :
-               input ? Icons.DBO_ARGUMENT_IN :
-               output ? Icons.DBO_ARGUMENT_OUT : Icons.DBO_ARGUMENT;
+        return isInput() && isOutput() ? Icons.DBO_ARGUMENT_IN_OUT :
+               isInput() ? Icons.DBO_ARGUMENT_IN :
+               isOutput() ? Icons.DBO_ARGUMENT_OUT : Icons.DBO_ARGUMENT;
     }
 
     public DBObjectType getObjectType() {

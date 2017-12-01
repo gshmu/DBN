@@ -23,7 +23,6 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 
 public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     private DBObjectList<DBColumn> columns;
-    private boolean isUnique;
 
     public DBIndexImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
         super(dataset, resultSet);
@@ -32,7 +31,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("INDEX_NAME");
-        isUnique = resultSet.getString("IS_UNIQUE").equals("Y");
+        set(DBObjectProperty.UNIQUE, resultSet.getString("IS_UNIQUE").equals("Y"));
     }
 
     public void initStatus(ResultSet resultSet) throws SQLException {
@@ -67,7 +66,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     }
 
     public boolean isUnique() {
-        return isUnique;
+        return is(DBObjectProperty.UNIQUE);
     }
 
     protected List<DBObjectNavigationList> createNavigationLists() {
