@@ -20,7 +20,7 @@ public class DBPackageProcedureImpl extends DBProcedureImpl implements DBPackage
 
     @Override
     public void initProperties() {
-        getProperties().set(DBObjectProperty.NAVIGABLE);
+        properties.set(DBObjectProperty.NAVIGABLE, true);
     }
 
     @Override

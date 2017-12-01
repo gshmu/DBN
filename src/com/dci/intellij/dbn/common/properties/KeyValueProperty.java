@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.common.properties;
 
-public class Property {
+public class KeyValueProperty {
     private String key;
     private String value;
 
-    public Property(String key, String value) {
+    public KeyValueProperty(String key, String value) {
         this.key = key;
         this.value = value;
     }
 
-    public Property() {
+    public KeyValueProperty() {
     }
 
     public String getKey() {

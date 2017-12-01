@@ -96,19 +96,20 @@ public class DBNStatement<T extends Statement> extends DBNResource implements St
             DBNConnection connection = getConnection();
             ConnectionStatusMonitor statusMonitor = connection.getStatusMonitor();
             statusMonitor.updateLastAccess();
-            boolean busy = statusMonitor.isActive();
-            if (busy) {
+
+            boolean wasActive = connection.is(ConnectionProperty.ACTIVE);
+            if (wasActive) {
                 LOGGER.warn("Connection already busy with another statement");
             }
             try {
-                statusMonitor.setActive(true);
+                connection.set(ConnectionProperty.ACTIVE, true);
                 return execute();
             } catch (SQLException e) {
                 exception = e;
                 throw exception;
             } finally {
                 statusMonitor.updateLastAccess();
-                statusMonitor.setActive(busy);
+                connection.set(ConnectionProperty.ACTIVE, wasActive);
             }
         }
         protected abstract R execute() throws SQLException;

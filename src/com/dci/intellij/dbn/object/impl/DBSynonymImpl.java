@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -56,9 +55,8 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
 
     @Override
     public void initProperties() {
-        DBObjectProperties properties = getProperties();
-        properties.set(DBObjectProperty.REFERENCEABLE);
-        properties.set(DBObjectProperty.SCHEMA_OBJECT);
+        properties.set(DBObjectProperty.REFERENCEABLE, true);
+        properties.set(DBObjectProperty.SCHEMA_OBJECT, true);
     }
 
     public DBObjectType getObjectType() {

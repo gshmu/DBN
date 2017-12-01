@@ -32,7 +32,6 @@ import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationLi
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
 import com.dci.intellij.dbn.object.common.operation.DBOperationType;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -99,9 +98,8 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
 
     @Override
     protected void initProperties() {
-        DBObjectProperties properties = getProperties();
-        properties.set(DBObjectProperty.SCHEMA_OBJECT);
-        properties.set(DBObjectProperty.DISABLEABLE);
+        properties.set(DBObjectProperty.SCHEMA_OBJECT, true);
+        properties.set(DBObjectProperty.DISABLEABLE, true);
     }
 
     @Nullable

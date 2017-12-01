@@ -94,7 +94,11 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-        super.setAutoCommit(autoCommit);
+        try {
+            super.setAutoCommit(autoCommit);
+        } finally {
+            set(ConnectionProperty.AUTO_COMMIT, autoCommit);
+        }
     }
 
     @Override
@@ -104,13 +108,13 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public void commit() throws SQLException {
-        inner.commit();
+        super.commit();
         statusMonitor.resetDataChanges();
     }
 
     @Override
     public void rollback() throws SQLException {
-        inner.rollback();
+        super.rollback();
         statusMonitor.resetDataChanges();
     }
 
@@ -124,12 +128,20 @@ public class DBNConnection extends DBNConnectionBase {
         return statusMonitor;
     }
 
-    public boolean isReserved() {
+    public void set(ConnectionProperty status, boolean value) {
+        statusMonitor.set(status, value);
+    }
+
+    public boolean is(ConnectionProperty status) {
+        return statusMonitor.is(status);
+    }
+
+    public boolean isIdle() {
         return statusMonitor.isReserved();
     }
 
-    public void setReserved(boolean reserved) {
-        statusMonitor.setReserved(reserved);
+    public boolean isReserved() {
+        return statusMonitor.isReserved();
     }
 
     public boolean isActive() {

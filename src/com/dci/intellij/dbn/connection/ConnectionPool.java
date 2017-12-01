@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
+import com.dci.intellij.dbn.connection.jdbc.ConnectionProperty;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -137,7 +138,7 @@ public class ConnectionPool implements Disposable {
 
         for (DBNConnection connection : poolConnections) {
             if (!connection.isReserved() && !connection.isActive()) {
-                connection.setReserved(true);
+                connection.set(ConnectionProperty.RESERVED, true);
                 if (!connection.isClosed() && connection.isValid()) {
                     connectionStatus.setConnected(true);
                     connectionStatus.setValid(true);
@@ -168,7 +169,8 @@ public class ConnectionPool implements Disposable {
 
         // pool connections do not need to have current schema set
         //connectionHandler.getDataDictionary().setCurrentSchema(connectionHandler.getCurrentSchemaName(), connection);
-        connection.setReserved(true);
+        connection.set(ConnectionProperty.RESERVED, true);
+
         poolConnections.add(connection);
         int size = poolConnections.size();
         if (size > peakPoolSize) peakPoolSize = size;
@@ -182,7 +184,7 @@ public class ConnectionPool implements Disposable {
             ConnectionUtil.rollback(connection);
             ConnectionUtil.setAutocommit(connection, true);
             ConnectionUtil.setReadonly(connection, true);
-            connection.setReserved(false);
+            connection.set(ConnectionProperty.RESERVED, false);
         }
         lastAccessTimestamp = System.currentTimeMillis();
     }

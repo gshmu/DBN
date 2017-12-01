@@ -37,7 +37,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
 
     @Override
     public void initProperties() {
-        getProperties().set(DBObjectProperty.NAVIGABLE);
+        properties.set(DBObjectProperty.NAVIGABLE, true);
     }
 
     @Override

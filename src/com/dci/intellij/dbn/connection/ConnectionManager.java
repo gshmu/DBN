@@ -36,6 +36,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
+import com.dci.intellij.dbn.connection.jdbc.ConnectionProperty;
 import com.dci.intellij.dbn.connection.jdbc.ConnectionStatusMonitor;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -434,13 +435,14 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             List<DBNConnection> activeConnections = connectionHandler.getActiveConnections();
 
             for (final DBNConnection connection : activeConnections) {
-                ConnectionStatusMonitor statusMonitor = connection.getStatusMonitor();
-                if (statusMonitor.isIdle() && !statusMonitor.isResolvingStatus()) {
+                if (connection.isIdle() && !connection.is(ConnectionProperty.RESOLVING_TRANSACTION)) {
+
                     int idleMinutes = connectionHandler.getIdleMinutes();
                     int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
                     if (idleMinutes > idleMinutesToDisconnect) {
+                        ConnectionStatusMonitor statusMonitor = connection.getStatusMonitor();
                         if (statusMonitor.hasUncommittedChanges()) {
-                            statusMonitor.setResolvingStatus(true);
+                            connection.set(ConnectionProperty.RESOLVING_TRANSACTION, true);
                             new SimpleLaterInvocator() {
                                 @Override
                                 protected void execute() {

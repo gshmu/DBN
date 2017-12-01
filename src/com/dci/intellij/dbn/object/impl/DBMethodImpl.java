@@ -54,7 +54,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     @Override
     public void initProperties() {
         super.initProperties();
-        getProperties().set(DBObjectProperty.COMPILABLE);
+        properties.set(DBObjectProperty.COMPILABLE, true);
     }
 
     @Override

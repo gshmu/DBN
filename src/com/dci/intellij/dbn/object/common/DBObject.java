@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilderProvider;
 import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
+import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -22,13 +23,13 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.intellij.psi.PsiElement;
 
-public interface DBObject extends BrowserTreeNode, DynamicContentElement, LookupItemBuilderProvider, Referenceable, EnvironmentTypeProvider, PresentableConnectionProvider {
+public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeNode, DynamicContentElement, LookupItemBuilderProvider, Referenceable, EnvironmentTypeProvider, PresentableConnectionProvider {
     DBObjectType getObjectType();
     boolean isOfType(DBObjectType objectType);
 
@@ -90,7 +91,6 @@ public interface DBObject extends BrowserTreeNode, DynamicContentElement, Lookup
     @Nullable
     DBObject getUndisposedElement();
 
-    DBObjectProperties getProperties();
     DBOperationExecutor getOperationExecutor();
 
     @NotNull

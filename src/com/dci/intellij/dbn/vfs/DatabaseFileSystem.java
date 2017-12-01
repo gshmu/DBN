@@ -92,7 +92,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements NonPhysical
                         String identifier = objectPath.substring(7);
                         DBObjectRef objectRef = new DBObjectRef(connectionId, identifier);
                         DBObject object = objectRef.get();
-                        if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
+                        if (object != null && object.is(DBObjectProperty.EDITABLE)) {
                             return findOrCreateDatabaseFile((DBSchemaObject) object);
                         }
                     } else if (objectPath.startsWith("object_")) {
@@ -102,7 +102,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements NonPhysical
                         String identifier = objectPath.substring(typeEndIndex + 1);
                         DBObjectRef objectRef = new DBObjectRef(connectionId, identifier);
                         DBObject object = objectRef.get();
-                        if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
+                        if (object != null && object.is(DBObjectProperty.EDITABLE)) {
                             DBEditableObjectVirtualFile virtualFile = findOrCreateDatabaseFile((DBSchemaObject) object);
                             return virtualFile.getContentFile(contentType);
                         }
@@ -367,13 +367,13 @@ public class DatabaseFileSystem extends VirtualFileSystem implements NonPhysical
                     providerId = editorStateManager.getEditorProvider(object.getObjectType());
                 }
 
-                if (object.getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
+                if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
                     DBObjectListContainer childObjects = object.getChildObjects();
                     if (childObjects != null) childObjects.load();
 
                     openSchemaObject((DBSchemaObject) object, providerId, scrollBrowser, focusEditor);
 
-                } else if (object.getParentObject().getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
+                } else if (object.getParentObject().is(DBObjectProperty.SCHEMA_OBJECT)) {
                     DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
                     if (childObjects != null) childObjects.load();
                     openChildObject(object, providerId, scrollBrowser, focusEditor);

@@ -42,7 +42,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
 
     @Override
     public void initProperties() {
-        getProperties().set(DBObjectProperty.SCHEMA_OBJECT);
+        properties.set(DBObjectProperty.SCHEMA_OBJECT, true);
     }
 
     @Override

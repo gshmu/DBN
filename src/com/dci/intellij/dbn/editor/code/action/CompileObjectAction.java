@@ -50,7 +50,7 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
         } else {
 
             DBSchemaObject schemaObject = sourceCodeFile.getObject();
-            if (schemaObject.getProperties().is(DBObjectProperty.COMPILABLE) && DatabaseFeature.OBJECT_INVALIDATION.isSupported(schemaObject)) {
+            if (schemaObject.is(DBObjectProperty.COMPILABLE) && DatabaseFeature.OBJECT_INVALIDATION.isSupported(schemaObject)) {
                 CompilerSettings compilerSettings = getCompilerSettings(schemaObject.getProject());
                 CompileType compileType = compilerSettings.getCompileType();
                 DBObjectStatusHolder objectStatus = schemaObject.getStatus();

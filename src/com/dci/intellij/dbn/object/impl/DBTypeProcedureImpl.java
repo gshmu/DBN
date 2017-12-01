@@ -20,7 +20,7 @@ public class DBTypeProcedureImpl extends DBProcedureImpl implements DBTypeProced
 
     @Override
     public void initProperties() {
-        getProperties().set(DBObjectProperty.NAVIGABLE);
+        properties.set(DBObjectProperty.NAVIGABLE, true);
     }
 
     @Override
