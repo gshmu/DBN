@@ -58,9 +58,6 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
         return this.status.isNot(status);
     }
 
-    @Override
-    public void assertNot(VirtualFileStatus status) {}
-
     @Nullable
     public ConnectionHandler getActiveConnection() {
         return getObject().getConnectionHandler();

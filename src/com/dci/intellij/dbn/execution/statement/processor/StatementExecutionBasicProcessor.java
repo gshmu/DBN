@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
@@ -267,7 +268,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                 ConnectionHandler connectionHandler = getTargetConnection();
 
                 try {
-                    context.assertNot(CANCELLED);
+                    assertNotCancelled();
                     initConnection(context, connection);
                     initTimeout(context, debug);
                     initLogging(context, debug);
@@ -293,7 +294,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                 }
             }
 
-            context.assertNot(CANCELLED);
+            assertNotCancelled();
             if (executionResult != null) {
                 Project project = getProject();
                 ExecutionManager executionManager = ExecutionManager.getInstance(project);
@@ -306,6 +307,12 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
         } finally {
             postExecute();
+        }
+    }
+
+    private void assertNotCancelled() {
+        if (getExecutionContext().is(CANCELLED)) {
+            throw AlreadyDisposedException.INSTANCE;
         }
     }
 
@@ -372,7 +379,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Nullable
     private StatementExecutionResult executeStatement(final String statementText) throws SQLException {
         final ExecutionContext context = getExecutionContext();
-        context.assertNot(CANCELLED);
+        assertNotCancelled();
 
         final DBNConnection connection = context.getConnection();
         ConnectionHandler connectionHandler = getTargetConnection();
@@ -381,7 +388,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
         int timeout = context.getTimeout();
         statement.setQueryTimeout(timeout);
-        context.assertNot(CANCELLED);
+        assertNotCancelled();
 
         databaseCall = new CancellableDatabaseCall<StatementExecutionResult>(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
             @Override

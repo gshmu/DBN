@@ -158,9 +158,6 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return properties.isNot(property);
     }
 
-    @Override
-    public void assertNot(DBObjectProperty property) {}
-
     public DBContentType getContentType() {
         return DBContentType.NONE;
     }
