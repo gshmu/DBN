@@ -27,7 +27,7 @@ public class DBPackageFunctionImpl extends DBFunctionImpl implements DBPackageFu
 
     @Override
     public void initProperties() {
-        getProperties().set(DBObjectProperty.NAVIGABLE);
+        properties.set(DBObjectProperty.NAVIGABLE, true);
     }
 
     public DBPackage getPackage() {

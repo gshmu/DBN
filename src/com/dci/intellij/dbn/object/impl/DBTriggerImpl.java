@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
 import com.dci.intellij.dbn.object.common.operation.DBOperationType;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
@@ -83,12 +82,11 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
 
     @Override
     public void initProperties() {
-        DBObjectProperties properties = getProperties();
-        properties.set(DBObjectProperty.EDITABLE);
-        properties.set(DBObjectProperty.DISABLEABLE);
-        properties.set(DBObjectProperty.REFERENCEABLE);
-        properties.set(DBObjectProperty.COMPILABLE);
-        properties.set(DBObjectProperty.SCHEMA_OBJECT);
+        properties.set(DBObjectProperty.EDITABLE, true);
+        properties.set(DBObjectProperty.DISABLEABLE, true);
+        properties.set(DBObjectProperty.REFERENCEABLE, true);
+        properties.set(DBObjectProperty.COMPILABLE, true);
+        properties.set(DBObjectProperty.SCHEMA_OBJECT, true);
     }
 
     @Override

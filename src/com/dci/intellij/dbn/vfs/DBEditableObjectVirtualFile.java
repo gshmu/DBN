@@ -157,7 +157,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     public List<VirtualFile> getAttachedDDLFiles() {
         DBSchemaObject object = getObject();
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(object.getProject());
-        if (object.getProperties().is(DBObjectProperty.EDITABLE)) {
+        if (object.is(DBObjectProperty.EDITABLE)) {
             return fileAttachmentManager.getAttachedDDLFiles(object);
         }
         return null;

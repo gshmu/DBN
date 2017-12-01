@@ -29,7 +29,7 @@ public class DBDatabaseLinkImpl extends DBSchemaObjectImpl implements DBDatabase
 
     @Override
     public void initProperties() {
-        getProperties().set(DBObjectProperty.SCHEMA_OBJECT);
+        properties.set(DBObjectProperty.SCHEMA_OBJECT, true);
     }
 
     public DBObjectType getObjectType() {

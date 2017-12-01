@@ -58,6 +58,7 @@ import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
 import com.dci.intellij.dbn.object.common.operation.DBOperationType;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.ConnectionPresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
@@ -83,7 +84,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     protected String name;
     protected DBObjectRef objectRef;
     protected DBObjectRef parentObjectRef;
-    private DBObjectProperties properties;
+    protected DBObjectProperties properties = new DBObjectProperties();
     private DBObjectListContainer childObjects;
     private DBObjectRelationListContainer childObjectRelations;
     private DBObjectPsiElement psi;
@@ -142,6 +143,16 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return null;
     }*/
 
+    @Override
+    public void set(DBObjectProperty status, boolean value) {
+        properties.set(status, value);
+    }
+
+    @Override
+    public boolean is(DBObjectProperty status) {
+        return properties.is(status);
+    }
+
     public DBContentType getContentType() {
         return DBContentType.NONE;
     }
@@ -166,13 +177,6 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     @Override
     public boolean isParentOf(DBObject object) {
         return this.equals(object.getParentObject());
-    }
-
-    public DBObjectProperties getProperties() {
-        if (properties == null) {
-            properties = new DBObjectProperties();
-        }
-        return properties;
     }
 
     public DBOperationExecutor getOperationExecutor() {

@@ -101,6 +101,16 @@ abstract class DBNConnectionBase extends DBNResource implements Connection, Clos
     }
 
     @Override
+    public void commit() throws SQLException {
+        inner.commit();
+    }
+
+    @Override
+    public void rollback() throws SQLException {
+        inner.rollback();
+    }
+
+    @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
         inner.setAutoCommit(autoCommit);
     }

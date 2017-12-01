@@ -408,7 +408,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     public boolean isParentOf(DBObject object) {
         if (object instanceof DBSchemaObject) {
             DBSchemaObject schemaObject = (DBSchemaObject) object;
-            return schemaObject.getProperties().is(DBObjectProperty.SCHEMA_OBJECT) && this.equals(schemaObject.getSchema());
+            return schemaObject.is(DBObjectProperty.SCHEMA_OBJECT) && this.equals(schemaObject.getSchema());
 
         }
         return false;

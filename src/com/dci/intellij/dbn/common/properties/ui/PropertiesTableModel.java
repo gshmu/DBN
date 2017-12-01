@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.common.properties.ui;
 
-import com.dci.intellij.dbn.common.properties.Property;
-import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dci.intellij.dbn.common.properties.KeyValueProperty;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
+
 public class PropertiesTableModel extends DBNEditableTableModel {
-    private List<Property> properties = new ArrayList<Property>();
+    private List<KeyValueProperty> properties = new ArrayList<KeyValueProperty>();
 
     public PropertiesTableModel(Map<String, String> propertiesMap) {
         loadProperties(propertiesMap);
@@ -19,7 +19,7 @@ public class PropertiesTableModel extends DBNEditableTableModel {
 
     public void loadProperties(Map<String, String> propertiesMap) {
         for (String key : propertiesMap.keySet()) {
-            Property property = new Property(key, propertiesMap.get(key));
+            KeyValueProperty property = new KeyValueProperty(key, propertiesMap.get(key));
             properties.add(property);
         }
     }
@@ -27,7 +27,7 @@ public class PropertiesTableModel extends DBNEditableTableModel {
     public Map<String, String> exportProperties() {
         Map<String, String> propertiesMap = new HashMap<String, String>();
 
-        for (Property property : properties) {
+        for (KeyValueProperty property : properties) {
             String key = property.getKey();
             if (!StringUtil.isEmptyOrSpaces(key)) {
                 String value = CommonUtil.nvl(property.getValue(), "");
@@ -68,7 +68,7 @@ public class PropertiesTableModel extends DBNEditableTableModel {
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         Object actualValue = getValueAt(rowIndex, columnIndex);
         if (!CommonUtil.safeEqual(actualValue, o)) {
-            Property property = properties.get(rowIndex);
+            KeyValueProperty property = properties.get(rowIndex);
             if (columnIndex == 0) {
                 property.setKey((String) o);
 
@@ -81,24 +81,24 @@ public class PropertiesTableModel extends DBNEditableTableModel {
     }
 
     private String getKey(int rowIndex) {
-        Property property = getProperty(rowIndex);
+        KeyValueProperty property = getProperty(rowIndex);
         return property.getKey();
     }
 
     private String getValue(int rowIndex) {
-        Property property = getProperty(rowIndex);
+        KeyValueProperty property = getProperty(rowIndex);
         return property.getValue();
     }
 
-    private Property getProperty(int rowIndex) {
+    private KeyValueProperty getProperty(int rowIndex) {
         while (properties.size() <= rowIndex) {
-            properties.add(new Property());
+            properties.add(new KeyValueProperty());
         }
         return properties.get(rowIndex);
     }
 
     public void insertRow(int rowIndex) {
-        properties.add(rowIndex, new Property());
+        properties.add(rowIndex, new KeyValueProperty());
         notifyListeners(rowIndex, properties.size()-1, -1);
     }
 

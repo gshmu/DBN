@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.ui.dialog.DialogWithTimeout;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.jdbc.ConnectionProperty;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
@@ -50,7 +51,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
     @Override
     protected void doOKAction() {
         try {
-            connection.getStatusMonitor().setResolvingStatus(false);
+            connection.set(ConnectionProperty.RESOLVING_TRANSACTION, false);
         } finally {
             super.doOKAction();
         }

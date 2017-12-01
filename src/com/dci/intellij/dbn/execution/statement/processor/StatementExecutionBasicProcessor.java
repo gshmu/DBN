@@ -569,7 +569,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                             if (object != null) {
                                 Project project = getProject();
                                 DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-                                boolean isCompilable = object.getProperties().is(DBObjectProperty.COMPILABLE);
+                                boolean isCompilable = object.is(DBObjectProperty.COMPILABLE);
                                 if (isCompilable) {
                                     CompileType compileType = compilerManager.getCompileType(object, contentType);
                                     if (compileType == CompileType.DEBUG) {

@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.object.common.status;
 public enum DBObjectStatus {
     PRESENT(false, true),
     ENABLED(true, true),
-    VALID(true, true),
     EDITABLE(false, false),
+    VALID(true, true),
     DEBUG(true, true),
     COMPILING(false, false);
 

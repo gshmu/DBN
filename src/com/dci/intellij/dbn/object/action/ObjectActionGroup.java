@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.dependency.action.ObjectDependencyTreeAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -24,11 +23,10 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 public class ObjectActionGroup extends DefaultActionGroup {
 
     public ObjectActionGroup(DBObject object) {
-        DBObjectProperties properties = object.getProperties();
         if(object instanceof DBSchemaObject) {
             DBSchemaObject schemaObject = (DBSchemaObject) object;
 
-            if (properties.is(DBObjectProperty.EDITABLE)) {
+            if (object.is(DBObjectProperty.EDITABLE)) {
                 DBContentType contentType = schemaObject.getContentType();
                 if (contentType == DBContentType.DATA || contentType == DBContentType.CODE_AND_DATA) {
                     add(new EditObjectDataAction(schemaObject));
@@ -39,15 +37,15 @@ public class ObjectActionGroup extends DefaultActionGroup {
                 }
             }
 
-            if (properties.is(DBObjectProperty.COMPILABLE) && DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
+            if (object.is(DBObjectProperty.COMPILABLE) && DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
                 add(new CompileActionGroup(schemaObject));
             }
 
-            if (properties.is(DBObjectProperty.DISABLEABLE) && DatabaseFeature.OBJECT_DISABLING.isSupported(object)) {
+            if (object.is(DBObjectProperty.DISABLEABLE) && DatabaseFeature.OBJECT_DISABLING.isSupported(object)) {
                 add(new EnableDisableAction(schemaObject));
             }
 
-            if (properties.is(DBObjectProperty.SCHEMA_OBJECT)) {
+            if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
                 if (object.getObjectType() != DBObjectType.CONSTRAINT || DatabaseFeature.CONSTRAINT_MANIPULATION.isSupported(object)) {
                     add(new DropObjectAction((DBSchemaObject) object));
                 }
@@ -64,7 +62,7 @@ public class ObjectActionGroup extends DefaultActionGroup {
             }
         }
 
-        if (object instanceof DBProgram && properties.is(DBObjectProperty.SCHEMA_OBJECT)) {
+        if (object instanceof DBProgram && object.is(DBObjectProperty.SCHEMA_OBJECT)) {
             addSeparator();
             add(new RunProgramMethodAction((DBProgram) object));
             if (DatabaseFeature.DEBUGGING.isSupported(object)) {
@@ -73,7 +71,7 @@ public class ObjectActionGroup extends DefaultActionGroup {
         }
 
         if(object instanceof DBSchemaObject) {
-            if(properties.is(DBObjectProperty.REFERENCEABLE) && DatabaseFeature.OBJECT_DEPENDENCIES.isSupported(object)) {
+            if(object.is(DBObjectProperty.REFERENCEABLE) && DatabaseFeature.OBJECT_DEPENDENCIES.isSupported(object)) {
                 addSeparator();
                 add (new ObjectDependencyTreeAction((DBSchemaObject) object));
             }
@@ -81,7 +79,7 @@ public class ObjectActionGroup extends DefaultActionGroup {
 
         List<DBObjectNavigationList> navigationLists = object.getNavigationLists();
         if (navigationLists != null && navigationLists.size() > 0) {
-            if (!properties.is(DBObjectProperty.REFERENCEABLE)) addSeparator();
+            if (!object.is(DBObjectProperty.REFERENCEABLE)) addSeparator();
             //add(new DbsGoToActionGroup(linkLists));
             for (DBObjectNavigationList navigationList : navigationLists) {
                 if (navigationList.isLazy()) {

@@ -55,7 +55,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             DBContentType contentType = sourceCodeFile.getContentType();
 
             if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
-                boolean isCompilable = object.getProperties().is(DBObjectProperty.COMPILABLE);
+                boolean isCompilable = object.is(DBObjectProperty.COMPILABLE);
 
                 if (isCompilable) {
                     CompileType compileType = getCompileType(object, contentType);
