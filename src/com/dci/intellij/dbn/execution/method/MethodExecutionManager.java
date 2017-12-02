@@ -192,7 +192,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                     try {
                         initProgressIndicator(progressIndicator, true, "Executing " + method.getQualifiedNameWithType());
                         executionProcessor.execute(executionInput, DBDebuggerType.NONE);
-                        if (!context.is(CANCELLED)) {
+                        if (context.isNot(CANCELLED)) {
                             ExecutionManager executionManager = ExecutionManager.getInstance(project);
                             executionManager.addExecutionResult(executionInput.getExecutionResult());
                             context.set(EXECUTING, false);
@@ -201,7 +201,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         context.set(CANCELLED, false);
                     } catch (final SQLException e) {
                         context.set(EXECUTING, false);
-                        if (!context.is(CANCELLED)) {
+                        if (context.isNot(CANCELLED)) {
                             MessageUtil.showErrorDialog(project,
                                     "Method execution error",
                                     "Error executing " + method.getQualifiedNameWithType() + ".\n" + e.getMessage().trim(),
@@ -240,7 +240,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
             executionProcessor.execute(executionInput, connection, debuggerType);
             ExecutionContext context = executionInput.getExecutionContext();
-            if (!context.is(CANCELLED)) {
+            if (context.isNot(CANCELLED)) {
                 ExecutionManager executionManager = ExecutionManager.getInstance(method.getProject());
                 executionManager.addExecutionResult(executionInput.getExecutionResult());
             }

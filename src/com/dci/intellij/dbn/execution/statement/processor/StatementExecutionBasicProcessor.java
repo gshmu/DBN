@@ -61,7 +61,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -69,6 +68,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
 public class StatementExecutionBasicProcessor extends DisposableBase implements StatementExecutionProcessor {
     protected DBLanguagePsiFile psiFile;
@@ -284,7 +284,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                     }
                 } catch (SQLException e) {
                     ConnectionUtil.cancel(context.getStatement());
-                    if (!context.is(CANCELLED)) {
+                    if (context.isNot(CANCELLED)) {
                         executionException = e;
                         executionResult = createErrorExecutionResult(e.getMessage());
                         executionResult.calculateExecDuration();
@@ -311,7 +311,8 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     }
 
     private void assertNotCancelled() {
-        if (getExecutionContext().is(CANCELLED)) {
+        ExecutionContext context = getExecutionContext();
+        if (context.is(CANCELLED)) {
             throw AlreadyDisposedException.INSTANCE;
         }
     }
@@ -319,7 +320,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     public void postExecute() {
         ExecutionContext context = getExecutionContext();
-        if (!context.is(PROMPTED)) {
+        if (context.isNot(PROMPTED)) {
 
             DBNConnection connection = context.getConnection();
             if (connection != null && connection.isPoolConnection()) {
@@ -570,8 +571,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                             if (object != null) {
                                 Project project = getProject();
                                 DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-                                boolean isCompilable = object.is(DBObjectProperty.COMPILABLE);
-                                if (isCompilable) {
+                                if (object.is(COMPILABLE)) {
                                     CompileType compileType = compilerManager.getCompileType(object, contentType);
                                     if (compileType == CompileType.DEBUG) {
                                         compilerManager.compileObject(object, compileType, compilerAction);

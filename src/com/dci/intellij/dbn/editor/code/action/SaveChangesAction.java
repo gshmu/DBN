@@ -53,7 +53,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
                     contentType == DBContentType.CODE_SPEC ? "Save spec" :
                     contentType == DBContentType.CODE_BODY ? "Save body" : "Save";
 
-            presentation.setEnabled(sourceCodeFile.is(MODIFIED) && !sourceCodeFile.is(SAVING));
+            presentation.setEnabled(sourceCodeFile.is(MODIFIED) && sourceCodeFile.isNot(SAVING));
             presentation.setText(text);
         }
     }

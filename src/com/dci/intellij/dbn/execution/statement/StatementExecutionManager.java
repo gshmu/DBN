@@ -262,7 +262,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         protected void execute() {
                             for (final StatementExecutionProcessor executionProcessor : executionProcessors) {
                                 ExecutionContext context = executionProcessor.getExecutionContext();
-                                if (!context.is(EXECUTING) && !context.is(QUEUED) && !executionQueue.contains(executionProcessor)) {
+                                if (context.isNot(EXECUTING) && context.isNot(QUEUED) && !executionQueue.contains(executionProcessor)) {
                                     StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
                                     ExecutionOptions options = executionInput.getOptions();
                                     if (options.isUsePoolConnection()) {

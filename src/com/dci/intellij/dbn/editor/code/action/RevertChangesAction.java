@@ -53,7 +53,7 @@ public class RevertChangesAction extends AbstractSourceCodeEditorAction {
             presentation.setVisible(!readonly);
             DBSchemaObject object = sourceCodeFile.getObject();
             DBContentType contentType = sourceCodeFile.getContentType();
-            presentation.setEnabled(!sourceCodeFile.is(LOADING) && sourceCodeFile.is(MODIFIED));
+            presentation.setEnabled(sourceCodeFile.isNot(LOADING) && sourceCodeFile.is(MODIFIED));
         }
 
 

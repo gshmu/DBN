@@ -101,7 +101,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
             @Override
             protected boolean canExecute() {
-                return !is(REFRESHING) && isLoaded();
+                return isNot(REFRESHING) && isLoaded();
             }
 
             @Override
@@ -149,11 +149,11 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     public boolean isChangedInDatabase(boolean reload) {
-        if (!is(REFRESHING) && isLoaded()) {
+        if (isNot(REFRESHING) && isLoaded()) {
             if (reload || databaseTimestamp.isDirty()) {
                 refreshContentState();
             }
-            return !is(REFRESHING) && (is(OUTDATED) || is(MERGED));
+            return isNot(REFRESHING) && (is(OUTDATED) || is(MERGED));
         }
         return false;
     }
@@ -285,7 +285,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     @Override
     public void documentChanged(DocumentEvent event) {
         CharSequence newContent = event.getDocument().getCharsSequence();
-        if (!is(MODIFIED) && !StringUtil.equals(originalContent.getText(), newContent)) {
+        if (isNot(MODIFIED) && !StringUtil.equals(originalContent.getText(), newContent)) {
             set(MODIFIED, true);
         }
         localContent.setText(newContent);

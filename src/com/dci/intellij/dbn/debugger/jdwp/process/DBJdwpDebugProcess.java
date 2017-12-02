@@ -321,7 +321,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                             executeTarget();
                         } catch (SQLException e){
                             set(TARGET_EXECUTION_THREW_EXCEPTION, true);
-                            if (!is(DEBUGGER_STOPPING)) {
+                            if (isNot(DEBUGGER_STOPPING)) {
                                 String message = executionInput == null ? "Error executing target program" : "Error executing " + executionInput.getExecutionContext().getTargetName();
                                 console.error(message + ": " + e.getMessage());
                             }
@@ -339,7 +339,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
     @Override
     public synchronized void stop() {
-        if (!is(DEBUGGER_STOPPING)) {
+        if (isNot(DEBUGGER_STOPPING)) {
             set(DEBUGGER_STOPPING, true);
             set(BREAKPOINT_SETTING_ALLOWED, false);
             console.system("Stopping debugger...");
@@ -355,7 +355,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setText("Stopping debug environment.");
                 T executionInput = getExecutionInput();
-                if (executionInput != null && !is(TARGET_EXECUTION_TERMINATED)) {
+                if (executionInput != null && isNot(TARGET_EXECUTION_TERMINATED)) {
                     ExecutionContext context = executionInput.getExecutionContext();
                     ConnectionUtil.cancel(context.getStatement());
                 }

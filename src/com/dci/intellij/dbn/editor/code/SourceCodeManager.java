@@ -194,7 +194,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             @Override
             protected void execute() {
                 boolean initialLoad = !sourceCodeFile.isLoaded();
-                if (!sourceCodeFile.is(LOADING) && (initialLoad || force)) {
+                if (sourceCodeFile.isNot(LOADING) && (initialLoad || force)) {
                     sourceCodeFile.set(LOADING, true);
                     EditorUtil.setEditorsReadonly(sourceCodeFile, true);
                     Project project = getProject();
@@ -225,7 +225,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         final DBSchemaObject object = sourceCodeFile.getObject();
         final DBContentType contentType = sourceCodeFile.getContentType();
 
-        if (!sourceCodeFile.is(SAVING)) {
+        if (sourceCodeFile.isNot(SAVING)) {
             DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
             if (!debuggerManager.checkForbiddenOperation(sourceCodeFile.getActiveConnection())) {
                 return;

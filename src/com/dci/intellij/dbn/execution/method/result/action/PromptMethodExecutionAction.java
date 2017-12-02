@@ -37,6 +37,6 @@ public class PromptMethodExecutionAction extends MethodExecutionResultAction {
         presentation.setEnabled(
                 executionResult != null &&
                         !executionResult.getDebuggerType().isDebug() &&
-                        !executionResult.getExecutionContext().is(EXECUTING));
+                        executionResult.getExecutionContext().isNot(EXECUTING));
     }    
 }
