@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-
 import com.dci.intellij.dbn.common.index.IndexedContainer;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -11,6 +9,8 @@ import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashSet;
+
+import java.util.Set;
 
 public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> extends ElementTypeLookupCacheBase<T> {
 
@@ -26,10 +26,10 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
     public ElementTypeLookupCacheBaseIndexed(T elementType) {
         super(elementType);
         if (!elementType.isLeaf()) {
-            allPossibleLeafs = new IndexedContainer<>();
+            allPossibleLeafs = new IndexedContainer<LeafElementType>();
             firstPossibleLeafs = new THashSet<LeafElementType>();
             firstRequiredLeafs = new THashSet<LeafElementType>();
-            allPossibleTokens = new IndexedContainer<>();
+            allPossibleTokens = new IndexedContainer<TokenType>();
             firstPossibleTokens = new THashSet<TokenType>();
             firstRequiredTokens = new THashSet<TokenType>();
         }
