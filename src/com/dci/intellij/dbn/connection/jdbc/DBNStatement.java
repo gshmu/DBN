@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.intellij.openapi.diagnostic.Logger;
+
 import java.lang.ref.WeakReference;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,9 +11,6 @@ import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.concurrent.Callable;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.intellij.openapi.diagnostic.Logger;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 
 public class DBNStatement<T extends Statement> extends DBNResource implements Statement, Closeable, Cancellable {
@@ -25,7 +26,7 @@ public class DBNStatement<T extends Statement> extends DBNResource implements St
     DBNStatement(T inner, DBNConnection connection) {
         super(ResourceType.STATEMENT);
         this.inner = inner;
-        this.connection = new WeakReference<>(connection);
+        this.connection = new WeakReference<DBNConnection>(connection);
     }
 
     @Override
@@ -72,11 +73,11 @@ public class DBNStatement<T extends Statement> extends DBNResource implements St
             resultSet = null;
         } else {
             if (resultSet == null) {
-                resultSet = new WeakReference<>(new DBNResultSet(original, this));
+                resultSet = new WeakReference<DBNResultSet>(new DBNResultSet(original, this));
             } else {
                 DBNResultSet wrapped = resultSet.get();
                 if (wrapped == null || wrapped.inner != original) {
-                    resultSet = new WeakReference<>(new DBNResultSet(original, this));
+                    resultSet = new WeakReference<DBNResultSet>(new DBNResultSet(original, this));
                 }
             }
         }

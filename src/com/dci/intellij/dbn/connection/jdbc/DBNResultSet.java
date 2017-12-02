@@ -1,29 +1,16 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
-
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
 
 public class DBNResultSet extends DBNResource implements ResultSet, Closeable {
     private WeakReference<DBNStatement> statement;
@@ -34,13 +21,13 @@ public class DBNResultSet extends DBNResource implements ResultSet, Closeable {
     public DBNResultSet(ResultSet inner, DBNConnection connection) {
         super(ResourceType.RESULT_SET);
         this.inner = inner;
-        this.connection = new WeakReference<>(connection);
+        this.connection = new WeakReference<DBNConnection>(connection);
     }
 
     public DBNResultSet(ResultSet inner, DBNStatement statement) {
         super(ResourceType.RESULT_SET);
         this.inner = inner;
-        this.statement = new WeakReference<>(statement);
+        this.statement = new WeakReference<DBNStatement>(statement);
     }
 
     @Override

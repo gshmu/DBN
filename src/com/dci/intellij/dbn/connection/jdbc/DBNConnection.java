@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashSet;
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.InitializationInfo;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -16,6 +7,12 @@ import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.*;
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.*;
 
 public class DBNConnection extends DBNConnectionBase {
@@ -23,7 +20,7 @@ public class DBNConnection extends DBNConnectionBase {
     private ConnectionType type;
 
     private long lastAccess;
-    private Set<DBNStatement> statements = new HashSet<>();
+    private Set<DBNStatement> statements = new HashSet<DBNStatement>();
     private UncommittedChangeBundle dataChanges;
 
     public DBNConnection(Connection connection, ConnectionType type) {
@@ -41,7 +38,7 @@ public class DBNConnection extends DBNConnectionBase {
             statement = (S) new DBNPreparedStatement(preparedStatement, this);
 
         } else {
-            statement = (S) new DBNStatement<>(statement, this);
+            statement = (S) new DBNStatement<Statement>(statement, this);
         }
 
         if (isPoolConnection()) {
