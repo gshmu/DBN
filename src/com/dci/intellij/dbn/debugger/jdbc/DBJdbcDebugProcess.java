@@ -216,7 +216,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             final DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
             try {
                 startTargetProgram();
-                if (!is(TARGET_EXECUTION_THREW_EXCEPTION) && !is(TARGET_EXECUTION_TERMINATED)) {
+                if (isNot(TARGET_EXECUTION_THREW_EXCEPTION) && isNot(TARGET_EXECUTION_TERMINATED)) {
                     runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
                     runtimeInfo = debuggerInterface.stepOver(debugConnection);
                     progressIndicator.setText("Suspending session");
@@ -313,12 +313,12 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     @Override
     public synchronized void stop() {
-        if (!is(PROCESS_TERMINATED) && !is(PROCESS_TERMINATING)) {
+        if (isNot(PROCESS_TERMINATED) && isNot(PROCESS_TERMINATING)) {
             set(PROCESS_TERMINATING, true);
             console.system("Stopping debugger...");
             T executionInput = getExecutionInput();
             ExecutionContext executionContext = executionInput.getExecutionContext();
-            executionContext.set(CANCELLED, !is(PROCESS_STOPPED_NORMALLY));
+            executionContext.set(CANCELLED, isNot(PROCESS_STOPPED_NORMALLY));
             stopDebugger();
         }
     }
@@ -336,7 +336,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                     rollOutDebugger();
 
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                    if (!is(TARGET_EXECUTION_TERMINATED)) {
+                    if (isNot(TARGET_EXECUTION_TERMINATED)) {
                         runtimeInfo = debuggerInterface.stopExecution(debugConnection);
                     }
                     debuggerInterface.detachSession(debugConnection);
@@ -533,7 +533,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     private void rollOutDebugger() {
         try {
             long millis = System.currentTimeMillis();
-            while (!is(TARGET_EXECUTION_THREW_EXCEPTION) && runtimeInfo != null && !runtimeInfo.isTerminated()) {
+            while (isNot(TARGET_EXECUTION_THREW_EXCEPTION) && runtimeInfo != null && !runtimeInfo.isTerminated()) {
                 runtimeInfo = getDebuggerInterface().stepOut(debugConnection);
                 // force closing the target connection
                 if (System.currentTimeMillis() - millis > 20000) {

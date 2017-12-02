@@ -32,7 +32,7 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
     }
 
     private boolean set(T property) {
-        if (!is(property)) {
+        if (isNot(property)) {
             PropertyGroup group = property.group();
             if (group != null) {
                 for (T prop : properties) {

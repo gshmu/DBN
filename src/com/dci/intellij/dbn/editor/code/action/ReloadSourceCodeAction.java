@@ -41,7 +41,7 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
                 contentType == DBContentType.CODE_BODY ? "Reload body" : "Reload";
 
             presentation.setText(text);
-            presentation.setEnabled(!sourceCodeFile.is(LOADING) && !sourceCodeFile.is(MODIFIED));
+            presentation.setEnabled(sourceCodeFile.isNot(LOADING) && sourceCodeFile.isNot(MODIFIED));
         }
     }
 }

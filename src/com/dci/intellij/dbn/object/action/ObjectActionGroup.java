@@ -79,7 +79,7 @@ public class ObjectActionGroup extends DefaultActionGroup {
 
         List<DBObjectNavigationList> navigationLists = object.getNavigationLists();
         if (navigationLists != null && navigationLists.size() > 0) {
-            if (!object.is(REFERENCEABLE)) addSeparator();
+            if (object.isNot(REFERENCEABLE)) addSeparator();
             //add(new DbsGoToActionGroup(linkLists));
             for (DBObjectNavigationList navigationList : navigationLists) {
                 if (navigationList.isLazy()) {

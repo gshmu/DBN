@@ -34,6 +34,6 @@ public class StartMethodExecutionAction extends MethodExecutionResultAction {
         presentation.setEnabled(
                 executionResult != null &&
                         !executionResult.getDebuggerType().isDebug() &&
-                        !executionResult.getExecutionContext().is(EXECUTING));
+                        executionResult.getExecutionContext().isNot(EXECUTING));
     }
 }
