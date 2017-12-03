@@ -21,11 +21,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -39,7 +35,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
         INTERNAL_LIB_MAP.put(DatabaseType.MYSQL, mysql);
 
         HashMap<String, String> sqlite = new HashMap<String, String>();
-        sqlite.put("1.", "sqlite-jdbc-3.14.2.1.jar");
+        sqlite.put("1.", "sqlite-jdbc-3.21.10.jar");
         INTERNAL_LIB_MAP.put(DatabaseType.SQLITE, sqlite);
 
         HashMap<String, String> postgres = new HashMap<String, String>();
