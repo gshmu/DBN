@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.diagnostic.Logger;
+
+import java.sql.SQLException;
 
 public abstract class ResourceStatusAdapter<T extends Resource> {
     protected static final Logger LOGGER = LoggerFactory.createLogger();
@@ -82,7 +82,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
     public void attempt() {
-        if (!isCurrent() && !isChanging()) {
+        if (!isCurrent() && !isChanging() && !check()) {
             synchronized (this) {
                 if (!isCurrent() && !isChanging()) {
                     try {
@@ -105,6 +105,6 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
 
     @Override
     public String toString() {
-        return "" + current;
+        return holder.toString();
     }
 }
