@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -88,11 +89,11 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     public SessionBrowserModel loadSessions(DBSessionBrowserVirtualFile sessionBrowserFile) {
         ConnectionHandler connectionHandler = sessionBrowserFile.getConnectionHandler();
         DBNConnection connection = null;
-        ResultSet resultSet = null;
+        DBNResultSet resultSet = null;
         try {
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
             connection = connectionHandler.getPoolConnection(true);
-            resultSet = metadataInterface.loadSessions(connection);
+            resultSet = (DBNResultSet) metadataInterface.loadSessions(connection);
             return new SessionBrowserModel(connectionHandler, resultSet);
         } catch (SQLException e) {
             SessionBrowserModel model = new SessionBrowserModel(connectionHandler);

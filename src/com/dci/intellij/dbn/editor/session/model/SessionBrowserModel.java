@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.session.model;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,12 +10,10 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.model.DataModelState;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterType;
 import com.dci.intellij.dbn.editor.session.SessionBrowserState;
@@ -30,37 +27,13 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
         setHeader(new SessionBrowserModelHeader());
     }
 
-    public SessionBrowserModel(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
+    public SessionBrowserModel(ConnectionHandler connectionHandler, DBNResultSet resultSet) throws SQLException {
         super(connectionHandler);
         setHeader(new SessionBrowserModelHeader(connectionHandler, resultSet));
-        load();
-    }
-
-    public void load() throws SQLException {
-        DBNResultSet newResultSet;
-
         checkDisposed();
-
-        closeResultSet();
-
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-        DBNConnection connection = null;
-        try {
-            connection = connectionHandler.getPoolConnection(true);
-            newResultSet = (DBNResultSet) metadataInterface.loadSessions(connection);
-            checkDisposed();
-
-            setResultSet(newResultSet);
-            setResultSetExhausted(false);
-
-            fetchNextRecords(10000, true);
-            closeResultSet();
-            setResultSet(null);
-        } finally {
-            connectionHandler.freePoolConnection(connection);
-        }
-
+        setResultSet(resultSet);
+        setResultSetExhausted(false);
+        fetchNextRecords(10000, true);
     }
 
     public String getLoadError() {

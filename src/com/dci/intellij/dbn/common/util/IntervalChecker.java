@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.intellij.openapi.application.ApplicationManager;
+
 public abstract class IntervalChecker {
     private long interval;
     private long lastCheck;
@@ -17,7 +19,7 @@ public abstract class IntervalChecker {
                     checking = true;
                     try {
                         long currentTimeMillis = System.currentTimeMillis();
-                        if (TimeUtil.isOlderThan(lastCheck, interval)) {
+                        if (TimeUtil.isOlderThan(lastCheck, interval) && !ApplicationManager.getApplication().isDispatchThread()) {
                             lastCheck = currentTimeMillis;
                             value = doCheck();
                         }
