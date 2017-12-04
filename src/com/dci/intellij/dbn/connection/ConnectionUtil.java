@@ -1,19 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.Driver;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLRecoverableException;
-import java.sql.Savepoint;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -33,6 +19,14 @@ import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class ConnectionUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -148,7 +142,7 @@ public class ConnectionUtil {
         return new DBNConnection(connection, connectionType);
     }
 
-    private static class ConnectTimeoutCall extends SimpleTimeoutCall<Connection> {
+    private static class ConnectTimeoutCall extends SimpleTimeoutCall<DBNConnection> {
         private ConnectionType connectionType;
         private AuthenticationInfo temporaryAuthenticationInfo;
         private ConnectionSettings connectionSettings;
@@ -163,7 +157,7 @@ public class ConnectionUtil {
         }
 
         @Override
-        public Connection call() {
+        public DBNConnection call() {
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             try {
                 final Properties properties = new Properties();
@@ -233,7 +227,7 @@ public class ConnectionUtil {
                 databaseSettings.setDatabaseType(databaseType);
                 databaseSettings.setDatabaseVersion(getDatabaseVersion(connection));
                 databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
-                return connection;
+                return new DBNConnection(connection, connectionType);
 
             } catch (Throwable e) {
                 DatabaseType databaseType = getDatabaseType(databaseSettings.getDriver());
@@ -244,7 +238,7 @@ public class ConnectionUtil {
                     connectionStatus.setConnected(false);
                     connectionStatus.setValid(false);
                 }
-                exception = new SQLException("DBNConnection error: " + e.getMessage());
+                exception = e instanceof SQLException ? (SQLException) e : new SQLException("Connection error: " + e.getMessage(), e);
             }
             return null;
         }

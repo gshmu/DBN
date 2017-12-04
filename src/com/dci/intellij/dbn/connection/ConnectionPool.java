@@ -254,6 +254,10 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         return poolConnections.size();
     }
 
+    public List<DBNConnection> getPoolConnections() {
+        return poolConnections;
+    }
+
     public int getPeakPoolSize() {
         return peakPoolSize;
     }
