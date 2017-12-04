@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
+import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.dci.intellij.dbn.connection.transaction.ui.UncommittedChangesDialog;
@@ -43,7 +44,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
     public void execute(final ConnectionHandler connectionHandler, final DBNConnection connection, boolean background, final TransactionAction... actions) {
         if (connection == null) {
-            List<DBNConnection> activeConnections = connectionHandler.getActiveConnections();
+            List<DBNConnection> activeConnections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
             for (DBNConnection activeConnection : activeConnections) {
                 execute(connectionHandler, activeConnection, background, actions);
             }
@@ -129,7 +130,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     }
 
     public void commit(final @NotNull ConnectionHandler connectionHandler, boolean fromEditor, boolean background) {
-        List<DBNConnection> connections = connectionHandler.getActiveConnections();
+        List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
         for (DBNConnection connection : connections) {
             UncommittedChangeBundle dataChanges = connection.getDataChanges();
             if (fromEditor && dataChanges != null && dataChanges.size() > 1) {
@@ -151,7 +152,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     }
 
     public void rollback(final @NotNull ConnectionHandler connectionHandler, boolean fromEditor, boolean background) {
-        List<DBNConnection> connections = connectionHandler.getActiveConnections();
+        List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
         for (DBNConnection connection : connections) {
             UncommittedChangeBundle dataChanges = connection.getDataChanges();
             if (fromEditor && dataChanges != null && dataChanges.size() > 1) {
@@ -172,7 +173,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     }
 
     public void disconnect(final ConnectionHandler connectionHandler, boolean background) {
-        List<DBNConnection> connections = connectionHandler.getActiveConnections();
+        List<DBNConnection> connections = connectionHandler.getConnections();
         for (DBNConnection connection : connections) {
             execute(connectionHandler, connection, background, TransactionAction.DISCONNECT);
         }
@@ -197,7 +198,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 TransactionAction.TURN_AUTO_COMMIT_OFF :
                 TransactionAction.TURN_AUTO_COMMIT_ON;
 
-        List<DBNConnection> connections = connectionHandler.getActiveConnections();
+        List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
         for (DBNConnection connection : connections) {
             if (!isAutoCommit && connection.hasDataChanges()) {
                 InteractiveOptionHandler<TransactionOption> toggleAutoCommit = getTransactionManagerSettings().getToggleAutoCommit();
@@ -214,7 +215,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     }
 
     public void disconnect(ConnectionHandler connectionHandler) {
-        List<DBNConnection> connections = connectionHandler.getActiveConnections();
+        List<DBNConnection> connections = connectionHandler.getConnections();
         for (DBNConnection connection : connections) {
             if (connection.hasDataChanges()) {
                 InteractiveOptionHandler<TransactionOption> disconnect = getTransactionManagerSettings().getDisconnect();

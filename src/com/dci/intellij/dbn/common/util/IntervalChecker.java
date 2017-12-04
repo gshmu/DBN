@@ -31,5 +31,9 @@ public abstract class IntervalChecker {
         return value;
     }
 
+    public void set(boolean value) {
+        this.value = value;
+    }
+
     protected abstract boolean doCheck();
 }

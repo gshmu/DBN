@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
@@ -53,7 +54,7 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
                 DatabaseTransactionManager transactionManager = getTransactionManager();
                 List<ConnectionHandler> connectionHandlers = component.getConnectionHandlers();
                 for (ConnectionHandler connectionHandler : connectionHandlers) {
-                    List<DBNConnection> connections = connectionHandler.getActiveConnections();
+                    List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
                     for (DBNConnection connection : connections) {
                         transactionManager.execute(connectionHandler, connection, true, TransactionAction.COMMIT, additionalOperation);
                     }
@@ -77,7 +78,7 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
                 List<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>(component.getConnectionHandlers());
 
                 for (ConnectionHandler connectionHandler : connectionHandlers) {
-                    List<DBNConnection> connections = connectionHandler.getActiveConnections();
+                    List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
                     for (DBNConnection connection : connections) {
                         transactionManager.execute(connectionHandler, connection, true, TransactionAction.ROLLBACK, additionalOperation);
                     }

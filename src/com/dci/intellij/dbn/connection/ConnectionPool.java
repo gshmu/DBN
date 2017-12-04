@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.connection;
 
+import java.lang.ref.WeakReference;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
@@ -13,15 +23,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConnectionPool extends DisposableBase implements Disposable {
 
@@ -42,13 +43,13 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     }
 
     public DBNConnection getTestConnection() throws SQLException {
-        testConnection = init(testConnection, ConnectionType.TEST, true);
+        testConnection = init(testConnection, ConnectionType.TEST);
         return testConnection;
     }
 
-    @Nullable
-    public DBNConnection getMainConnection(boolean forceInit) throws SQLException {
-        mainConnection = init(mainConnection, ConnectionType.MAIN, forceInit);
+    @NotNull
+    public DBNConnection ensureMainConnection() throws SQLException {
+        mainConnection = init(mainConnection, ConnectionType.MAIN);
         return mainConnection;
     }
 
@@ -57,14 +58,43 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         return mainConnection;
     }
 
-    private DBNConnection init(DBNConnection connection, ConnectionType connectionType, boolean force) throws SQLException {
+    @NotNull
+    public List<DBNConnection> getConnections(ConnectionType... connectionTypes) {
+        ArrayList<DBNConnection> connections = new ArrayList<DBNConnection>();
+        if (isOneOf(ConnectionType.MAIN, connectionTypes) && mainConnection != null) {
+            connections.add(mainConnection);
+        }
+
+        if (isOneOf(ConnectionType.TEST, connectionTypes) && testConnection != null) {
+            connections.add(testConnection);
+        }
+
+        if (isOneOf(ConnectionType.POOL, connectionTypes)) {
+            connections.addAll(poolConnections);
+        }
+        // TODO add session connections
+        return connections;
+    }
+
+    private static boolean isOneOf(ConnectionType connectionType, ConnectionType... connectionTypes) {
+        if (connectionTypes == null || connectionTypes.length == 0) return true;
+        for (ConnectionType type : connectionTypes) {
+            if (connectionType == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @NotNull
+    private DBNConnection init(DBNConnection connection, ConnectionType connectionType) throws SQLException {
         lastAccessTimestamp = System.currentTimeMillis();
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.setLastUsedConnection(connectionHandler);
 
-        if (shouldInit(connection, force)) {
+        if (shouldInit(connection)) {
             synchronized (this) {
-                if (shouldInit(connection, force)) {
+                if (shouldInit(connection)) {
                     try {
                         ConnectionUtil.close(connection);
 
@@ -84,8 +114,8 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         return connection;
     }
 
-    private boolean shouldInit(DBNConnection connection, boolean force) throws SQLException {
-        return force && (connection == null || connection.isClosed() || !connection.isValid(2));
+    private boolean shouldInit(DBNConnection connection) {
+        return connection == null || connection.isClosed() || !connection.isValid();
     }
 
     public long getLastAccessTimestamp() {
@@ -281,7 +311,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         public void run() {
             for (WeakReference<ConnectionPool> connectionPoolRef : connectionPools) {
                 ConnectionPool connectionPool = connectionPoolRef.get();
-                if (connectionPool != null && TimeUtil.isOlderThan(connectionPool.lastAccessTimestamp, TimeUtil.FIVE_MINUTES)) {
+                if (connectionPool != null && TimeUtil.isOlderThan(connectionPool.lastAccessTimestamp, TimeUtil.ONE_MINUTE)) {
                     // close connections only if pool is passive
                     for (DBNConnection connection : connectionPool.poolConnections) {
                         if (connection.isActive()) return;

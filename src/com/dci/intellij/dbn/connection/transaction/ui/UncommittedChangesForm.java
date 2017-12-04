@@ -8,13 +8,17 @@ import javax.swing.JTable;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
@@ -30,6 +34,7 @@ public class UncommittedChangesForm extends DBNFormImpl {
     private JPanel transactionActionsPanel;
 
     private ConnectionHandlerRef connectionHandlerRef;
+    private UncommittedChangesTableModel tableModel;
 
     public UncommittedChangesForm(final ConnectionHandler connectionHandler, final TransactionAction additionalOperation, boolean showActions) {
         this.connectionHandlerRef = connectionHandler.getRef();
@@ -38,8 +43,8 @@ public class UncommittedChangesForm extends DBNFormImpl {
         DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        UncommittedChangesTableModel model = new UncommittedChangesTableModel(connectionHandler);
-        changesTable = new UncommittedChangesTable(model);
+        tableModel = new UncommittedChangesTableModel(connectionHandler);
+        changesTable = new UncommittedChangesTable(tableModel);
         changesTableScrollPane.setViewportView(changesTable);
         changesTableScrollPane.getViewport().setBackground(changesTable.getBackground());
 
@@ -62,10 +67,16 @@ public class UncommittedChangesForm extends DBNFormImpl {
 
         }
         EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+        DisposerUtil.register(this, changesTable);
     }
 
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
+    }
+
+    @NotNull
+    public List<DBNConnection> getConnections() {
+        return tableModel.getConnections();
     }
 
     @Override
@@ -100,10 +111,12 @@ public class UncommittedChangesForm extends DBNFormImpl {
             @Override
             protected void execute() {
                 if (!isDisposed()) {
-                    UncommittedChangesTableModel model = new UncommittedChangesTableModel(connectionHandler);
-                    changesTable.setModel(model);
+                    UncommittedChangesTableModel oldTableModel = tableModel;
+                    tableModel = new UncommittedChangesTableModel(connectionHandler);
+                    changesTable.setModel(tableModel);
                     commitButton.setEnabled(false);
                     rollbackButton.setEnabled(false);
+                    DisposerUtil.dispose(oldTableModel);
                 }
             }
         }.start();
