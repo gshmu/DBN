@@ -76,6 +76,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     }
 
     public final void run() {
+        trace(this);
         try {
             if (canExecute()) {
                 ConnectionHandler connectionHandler = getConnectionHandler();

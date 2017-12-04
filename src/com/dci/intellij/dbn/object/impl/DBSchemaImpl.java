@@ -417,54 +417,62 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         try {
             connection = connectionHandler.getPoolConnection(true);
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-            resultSet = metadataInterface.loadInvalidObjects(getName(), connection);
-            while (resultSet != null && resultSet.next()) {
-                String objectName = resultSet.getString("OBJECT_NAME");
-                DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
-                if (schemaObject != null && schemaObject.getStatus().has(DBObjectStatus.VALID)) {
-                    DBObjectStatusHolder objectStatus = schemaObject.getStatus();
-                    boolean statusChanged;
+            try {
+                resultSet = metadataInterface.loadInvalidObjects(getName(), connection);
+                while (resultSet != null && resultSet.next()) {
+                    String objectName = resultSet.getString("OBJECT_NAME");
+                    DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
+                    if (schemaObject != null && schemaObject.getStatus().has(DBObjectStatus.VALID)) {
+                        DBObjectStatusHolder objectStatus = schemaObject.getStatus();
+                        boolean statusChanged;
 
-                    if (schemaObject.getContentType().isBundle()) {
-                        String objectType = resultSet.getString("OBJECT_TYPE");
-                        statusChanged = objectType.contains("BODY") ?
-                                objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.VALID, false) :
-                                objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.VALID, false);
-                    }
-                    else {
-                        statusChanged = objectStatus.set(DBObjectStatus.VALID, false);
-                    }
-                    if (statusChanged) {
-                        refreshNodes.add(schemaObject.getParent());
+                        if (schemaObject.getContentType().isBundle()) {
+                            String objectType = resultSet.getString("OBJECT_TYPE");
+                            statusChanged = objectType.contains("BODY") ?
+                                    objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.VALID, false) :
+                                    objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.VALID, false);
+                        }
+                        else {
+                            statusChanged = objectStatus.set(DBObjectStatus.VALID, false);
+                        }
+                        if (statusChanged) {
+                            refreshNodes.add(schemaObject.getParent());
+                        }
                     }
                 }
             }
+            finally {
+                ConnectionUtil.close(resultSet);
+            }
 
-            resultSet = metadataInterface.loadDebugObjects(getName(), connection);
-            while (resultSet != null && resultSet.next()) {
-                String objectName = resultSet.getString("OBJECT_NAME");
-                DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
-                if (schemaObject != null && schemaObject.getStatus().has(DBObjectStatus.DEBUG)) {
-                    DBObjectStatusHolder objectStatus = schemaObject.getStatus();
-                    boolean statusChanged;
+            try {
+                resultSet = metadataInterface.loadDebugObjects(getName(), connection);
+                while (resultSet != null && resultSet.next()) {
+                    String objectName = resultSet.getString("OBJECT_NAME");
+                    DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
+                    if (schemaObject != null && schemaObject.getStatus().has(DBObjectStatus.DEBUG)) {
+                        DBObjectStatusHolder objectStatus = schemaObject.getStatus();
+                        boolean statusChanged;
 
-                    if (schemaObject.getContentType().isBundle()) {
-                        String objectType = resultSet.getString("OBJECT_TYPE");
-                        statusChanged = objectType.contains("BODY") ?
-                                objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.DEBUG, true) :
-                                objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.DEBUG, true);
-                    }
-                    else {
-                        statusChanged = objectStatus.set(DBObjectStatus.DEBUG, true);
-                    }
-                    if (statusChanged) {
-                        refreshNodes.add(schemaObject.getParent());
+                        if (schemaObject.getContentType().isBundle()) {
+                            String objectType = resultSet.getString("OBJECT_TYPE");
+                            statusChanged = objectType.contains("BODY") ?
+                                    objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.DEBUG, true) :
+                                    objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.DEBUG, true);
+                        }
+                        else {
+                            statusChanged = objectStatus.set(DBObjectStatus.DEBUG, true);
+                        }
+                        if (statusChanged) {
+                            refreshNodes.add(schemaObject.getParent());
+                        }
                     }
                 }
+            } finally {
+                ConnectionUtil.close(resultSet);
             }
 
         } finally {
-            ConnectionUtil.close(resultSet);
             connectionHandler.freePoolConnection(connection);
         }
 

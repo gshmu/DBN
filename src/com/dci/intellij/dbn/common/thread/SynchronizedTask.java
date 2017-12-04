@@ -11,6 +11,7 @@ public abstract class SynchronizedTask<T> extends SimpleTask<T> {
 
     @Override
     public final void run() {
+        trace(this);
         try {
             if (canExecute()) {
                 String syncKey = getSyncKey();

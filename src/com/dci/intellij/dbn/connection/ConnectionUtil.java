@@ -164,6 +164,7 @@ public class ConnectionUtil {
 
         @Override
         public DBNConnection call() {
+            trace(this);
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             try {
                 final Properties properties = new Properties();
