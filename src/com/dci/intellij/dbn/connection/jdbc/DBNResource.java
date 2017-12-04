@@ -6,19 +6,20 @@ import java.util.concurrent.TimeUnit;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
-import com.dci.intellij.dbn.common.util.InitializationInfo;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.common.util.Traceable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 
 abstract class DBNResource extends ResourceStatusHolder implements Resource{
     private static final Logger LOGGER = LoggerFactory.createLogger();
-    protected InitializationInfo initInfo = new InitializationInfo();
+    private long initTimestamp = System.currentTimeMillis();
 
     private ResourceStatusAdapter<Closeable> CLOSED_STATUS_ADAPTER;
     private ResourceStatusAdapter<Invalidable> INVALID_STATUS_CHECKER;
     private ResourceStatusAdapter<Cancellable> CANCELLED;
 
+    protected Traceable traceable = new Traceable();
     private ResourceType type;
 
     DBNResource(ResourceType type) {
@@ -83,6 +84,10 @@ abstract class DBNResource extends ResourceStatusHolder implements Resource{
     @Override
     public ResourceType getResourceType() {
         return type;
+    }
+
+    public long getInitTimestamp() {
+        return initTimestamp;
     }
 
     public boolean isClosed() {

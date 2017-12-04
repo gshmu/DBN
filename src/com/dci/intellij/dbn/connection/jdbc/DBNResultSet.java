@@ -1,16 +1,28 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
-
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Date;
+import java.sql.NClob;
+import java.sql.Ref;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.RowId;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
+
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 
 public class DBNResultSet extends DBNResource implements ResultSet, Closeable {
     private WeakReference<DBNStatement> statement;
@@ -44,8 +56,11 @@ public class DBNResultSet extends DBNResource implements ResultSet, Closeable {
         try {
             super.close();
         } finally {
-            if (statement != null) {
-                ConnectionUtil.close(statement.get());
+            if (this.statement != null) {
+                DBNStatement statement = this.statement.get();
+                if (statement != null) {
+                    statement.close();
+                }
             }
         }
     }

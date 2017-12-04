@@ -15,6 +15,7 @@ public abstract class SimpleTask<T> extends AbstractTask<T>{
     }
 
     public void run() {
+        trace(this);
         try {
             if (canExecute()) {
                 execute();

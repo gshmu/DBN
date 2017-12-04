@@ -90,8 +90,8 @@ public class DBObjectStatusHolder {
         }
     }
 
-    public boolean isNot(DBContentType contentType, DBObjectStatus status) {
-        return !is(contentType, status);
+    public boolean isNot(DBObjectStatus status) {
+        return !is(status);
     }
 
     public boolean is(DBContentType contentType, DBObjectStatus status) {
@@ -99,6 +99,10 @@ public class DBObjectStatusHolder {
         return statusEntry == null ?
                 status.getDefaultValue() :
                 statusEntry.is(status);
+    }
+
+    public boolean isNot(DBContentType contentType, DBObjectStatus status) {
+        return !is(contentType, status);
     }
 
     public boolean has(DBObjectStatus status) {

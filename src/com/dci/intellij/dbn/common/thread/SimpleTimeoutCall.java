@@ -8,7 +8,9 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class SimpleTimeoutCall<T> implements Callable<T>{
+import com.dci.intellij.dbn.common.util.Traceable;
+
+public abstract class SimpleTimeoutCall<T> extends Traceable implements Callable<T>{
     public static final ExecutorService POOL = Executors.newCachedThreadPool(new ThreadFactory() {
         @Override
         public Thread newThread(@NotNull Runnable runnable) {
@@ -37,6 +39,9 @@ public abstract class SimpleTimeoutCall<T> implements Callable<T>{
             return handleException(e);
         }
     }
+
+    @Override
+    public abstract T call() throws Exception;
 
     protected T handleException(Exception e) {
         return defaultValue;

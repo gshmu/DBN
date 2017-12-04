@@ -238,7 +238,8 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                         doCompileInvalidObjects(schema.getPackages(), "packages", progressIndicator, compileType);
                         doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, compileType);
                         doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, compileType);
-                        doCompileInvalidObjects(schema.getDatasetTriggers(), "triggers", progressIndicator, compileType);
+                        doCompileInvalidObjects(schema.getDatasetTriggers(), "dataset triggers", progressIndicator, compileType);
+                        doCompileInvalidObjects(schema.getDatabaseTriggers(), "database triggers", progressIndicator, compileType);
                         EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, null);
 
                         if (!progressIndicator.isCanceled()) {
@@ -247,6 +248,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                             buildCompilationErrors(schema.getFunctions(), compilerErrors);
                             buildCompilationErrors(schema.getProcedures(), compilerErrors);
                             buildCompilationErrors(schema.getDatasetTriggers(), compilerErrors);
+                            buildCompilationErrors(schema.getDatabaseTriggers(), compilerErrors);
                             if (compilerErrors.size() > 0) {
                                 ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
                                 executionManager.addExecutionResults(compilerErrors);
@@ -265,21 +267,22 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         progressIndicator.setText("Compiling invalid " + description + "...");
         int count = objects.size();
         for (int i=0; i< count; i++) {
-            if (progressIndicator.isCanceled()) {
+            if (progressIndicator.isCanceled() || objects.size() == 0 /* may be disposed meanwhile*/) {
                 break;
             } else {
-                progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, count));
                 DBSchemaObject object = objects.get(i);
+                progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, count));
+                DBObjectStatusHolder objectStatus = object.getStatus();
                 if (object.getContentType().isBundle()) {
                     for (DBContentType contentType : object.getContentType().getSubContentTypes()) {
-                        if (!object.getStatus().is(contentType, DBObjectStatus.VALID)) {
+                        if (objectStatus.isNot(contentType, DBObjectStatus.VALID)) {
                             CompilerAction compilerAction = new CompilerAction(CompilerActionSource.BULK_COMPILE, contentType);
                             doCompileObject(object, compileType, compilerAction);
                             progressIndicator.setText2("Compiling " + object.getQualifiedNameWithType());
                         }
                     }
                 } else {
-                    if (!object.getStatus().is(DBObjectStatus.VALID)) {
+                    if (objectStatus.isNot(DBObjectStatus.VALID)) {
                         CompilerAction compilerAction = new CompilerAction(CompilerActionSource.BULK_COMPILE, object.getContentType());
                         doCompileObject(object, compileType, compilerAction);
                         progressIndicator.setText2("Compiling " + object.getQualifiedNameWithType());

@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.common.thread;
 
-public abstract class AbstractTask<T> implements RunnableTask<T>{
+import com.dci.intellij.dbn.common.util.Traceable;
+
+public abstract class AbstractTask<T> extends Traceable implements RunnableTask<T>{
     private T data;
 
     private boolean cancelled;

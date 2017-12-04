@@ -12,7 +12,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class StatementExecutor<T> implements Callable<T>{
+import com.dci.intellij.dbn.common.util.Traceable;
+
+public abstract class StatementExecutor<T> extends Traceable implements Callable<T>{
     public static final ExecutorService POOL = Executors.newCachedThreadPool(new ThreadFactory() {
         @Override
         public Thread newThread(@NotNull Runnable runnable) {
@@ -31,6 +33,7 @@ public abstract class StatementExecutor<T> implements Callable<T>{
 
     @Override
     public final T call() throws Exception {
+        trace(this);
         Thread currentThread = Thread.currentThread();
         int initialPriority = currentThread.getPriority();
         currentThread.setPriority(Thread.MIN_PRIORITY);
