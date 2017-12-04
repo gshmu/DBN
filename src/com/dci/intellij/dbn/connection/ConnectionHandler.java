@@ -32,10 +32,19 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     @NotNull
     Project getProject();
     DBNConnection getTestConnection() throws SQLException;
+
+    @NotNull
     DBNConnection getMainConnection() throws SQLException;
+
+    @NotNull
     DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException;
+
+    @NotNull
     DBNConnection getPoolConnection(boolean readonly) throws SQLException;
+
+    @NotNull
     DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException;
+
     void freePoolConnection(DBNConnection connection);
     void dropPoolConnection(DBNConnection connection);
     ConnectionSettings getSettings();
@@ -43,7 +52,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     void setSettings(ConnectionSettings connectionSettings);
 
     @NotNull
-    List<DBNConnection> getActiveConnections();
+    List<DBNConnection> getConnections(ConnectionType... connectionTypes);
 
     @NotNull
     ConnectionStatus getConnectionStatus();

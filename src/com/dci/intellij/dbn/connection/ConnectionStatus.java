@@ -1,17 +1,29 @@
 package com.dci.intellij.dbn.connection;
 
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.util.IntervalChecker;
+import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+
 public class ConnectionStatus {
-    private boolean connected = false;
+    private ConnectionHandlerRef connectionHandlerRef;
+
     private boolean valid = true;
-    private String statusMessage;
     private AuthenticationError authenticationError;
+    private String statusMessage;
+
+    ConnectionStatus(@NotNull ConnectionHandler connectionHandler) {
+        this.connectionHandlerRef = connectionHandler.getRef();
+    }
 
     public boolean isConnected() {
-        return connected;
+        return connected.check();
     }
 
     public void setConnected(boolean connected) {
-        this.connected = connected;
+        this.connected.set(connected);
     }
 
     public boolean isValid() {
@@ -37,4 +49,30 @@ public class ConnectionStatus {
     public void setAuthenticationError(AuthenticationError authenticationError) {
         this.authenticationError = authenticationError;
     }
+
+
+    private IntervalChecker connected = new IntervalChecker(TimeUtil.TEN_SECONDS) {
+        @Override
+        protected boolean doCheck() {
+            try {
+                ConnectionHandler connectionHandler = connectionHandlerRef.get();
+                ConnectionPool connectionPool = connectionHandler.getConnectionPool();
+                DBNConnection mainConnection = connectionPool.getMainConnection();
+                if (mainConnection != null && !mainConnection.isClosed() && mainConnection.isValid()) {
+                    return true;
+                }
+
+                List<DBNConnection> poolConnections = connectionPool.getPoolConnections();
+                for (DBNConnection poolConnection : poolConnections) {
+                    if (!poolConnection.isClosed() && poolConnection.isValid()) {
+                        return true;
+                    }
+                }
+
+            } catch (Exception e) {
+                return false;
+            }
+            return false;
+        }
+    };
 }

@@ -33,12 +33,12 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
-    public static final ConnectionStatus CONNECTION_STATUS = new ConnectionStatus();
     private String id;
     private String name;
     private DatabaseType databaseType;
     private double databaseVersion;
     private Project project;
+    private ConnectionStatus connectionStatus;
     private DatabaseInterfaceProvider interfaceProvider;
     private Map<String, String> properties = new HashMap<String, String>();
     private NavigationPsiCache psiCache;
@@ -53,6 +53,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         this.databaseType = databaseType;
         this.databaseVersion = databaseVersion;
         this.ref = new ConnectionHandlerRef(this);
+        this.connectionStatus = new ConnectionStatus(this);
         this.objectBundle = new DBVirtualObjectBundle(this);
     }
 
@@ -160,9 +161,13 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public String getUserName() {return "root";}
 
     @Override public DBNConnection getTestConnection() throws SQLException {return null;}
+    @NotNull
     @Override public DBNConnection getPoolConnection(boolean readonly) throws SQLException {return null;}
+    @NotNull
     @Override public DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {return null;}
+    @NotNull
     @Override public DBNConnection getMainConnection() throws SQLException {return null;}
+    @NotNull
     @Override public DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException {return null;}
     @Override public void freePoolConnection(DBNConnection connection) {}
     @Override public void dropPoolConnection(DBNConnection connection) {}
@@ -172,12 +177,12 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @NotNull
     @Override
-    public List<DBNConnection> getActiveConnections() {
+    public List<DBNConnection> getConnections(ConnectionType... connectionTypes) {
         return Collections.emptyList();
     }
 
     @NotNull
-    @Override public ConnectionStatus getConnectionStatus() {return CONNECTION_STATUS;}
+    @Override public ConnectionStatus getConnectionStatus() {return connectionStatus;}
 
     @Override public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {}
 

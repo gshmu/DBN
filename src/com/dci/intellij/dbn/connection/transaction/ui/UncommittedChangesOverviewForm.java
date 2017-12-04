@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
@@ -117,7 +118,7 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl<UncommittedChang
             ConnectionHandler connectionHandler = (ConnectionHandler) value;
             setIcon(connectionHandler.getIcon());
             append(connectionHandler.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            List<DBNConnection> connections = connectionHandler.getActiveConnections();
+            List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
             int changes = 0;
             for (DBNConnection connection : connections) {
                 UncommittedChangeBundle dataChanges = connection.getDataChanges();

@@ -57,7 +57,7 @@ public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> 
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                List<DBNConnection> connections = connectionHandler.getActiveConnections();
+                List<DBNConnection> connections = component.getConnections();
                 for (DBNConnection connection : connections) {
                     transactionManager.execute(connectionHandler, connection, true, TransactionAction.COMMIT, additionalOperation);
                 }
@@ -77,7 +77,7 @@ public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> 
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                List<DBNConnection> connections = connectionHandler.getActiveConnections();
+                List<DBNConnection> connections = component.getConnections();
                 for (DBNConnection connection : connections) {
                     transactionManager.execute(connectionHandler, connection, true, TransactionAction.ROLLBACK, additionalOperation);
                 }

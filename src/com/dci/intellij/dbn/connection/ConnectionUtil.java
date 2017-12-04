@@ -1,5 +1,19 @@
 package com.dci.intellij.dbn.connection;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.Driver;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
+import java.sql.Savepoint;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -19,14 +33,6 @@ import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 public class ConnectionUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -235,7 +241,6 @@ public class ConnectionUtil {
                 databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
                 if (connectionStatus != null) {
                     connectionStatus.setStatusMessage(e.getMessage());
-                    connectionStatus.setConnected(false);
                     connectionStatus.setValid(false);
                 }
                 exception = e instanceof SQLException ? (SQLException) e : new SQLException("Connection error: " + e.getMessage(), e);
