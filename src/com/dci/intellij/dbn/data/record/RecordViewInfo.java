@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.data.record;
 import javax.swing.Icon;
 
 public class RecordViewInfo {
-    String title;
-    Icon icon;
+    private String title;
+    private Icon icon;
 
     public RecordViewInfo(String title, Icon icon) {
         this.title = title;
