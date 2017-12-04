@@ -28,8 +28,9 @@ public class DatabaseInterfaceProviderFactory {
             ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
             databaseType = databaseSettings.getDatabaseType();
             if (databaseType == null || databaseType == DatabaseType.UNKNOWN) {
+                DBNConnection testConnection = null;
                 try {
-                    DBNConnection testConnection = connectionHandler.getTestConnection();
+                    testConnection = connectionHandler.getTestConnection();
                     databaseType = ConnectionUtil.getDatabaseType(testConnection);
                     databaseSettings.setDatabaseType(databaseType);
                 } catch (SQLException e) {
@@ -37,6 +38,8 @@ public class DatabaseInterfaceProviderFactory {
                         databaseSettings.setDatabaseType(DatabaseType.UNKNOWN);
                     }
                     throw e;
+                } finally {
+                    ConnectionUtil.close(testConnection);
                 }
             }
         }
