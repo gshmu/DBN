@@ -314,12 +314,15 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
                     @Override
                     protected void execute() {
                         statusCheckTimestamp = System.currentTimeMillis();
+                        DBNConnection testConnection = null;
                         try {
-                            getTestConnection();
+                            testConnection = getTestConnection();
                         } catch (SQLException e) {
                             if (SettingsUtil.isDebugEnabled) {
                                 LOGGER.warn("[DBN-INFO] Could not connect to database [" + getName() + "]: " + e.getMessage());
                             }
+                        } finally {
+                            ConnectionUtil.close(testConnection);
                         }
                     }
                 }.start();
