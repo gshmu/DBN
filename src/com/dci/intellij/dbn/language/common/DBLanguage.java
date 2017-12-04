@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
+import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -17,7 +19,12 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
 
     private D[] languageDialects;
     private SharedTokenTypeBundle sharedTokenTypes;
-    private IFileElementType fileElementType;
+    private LazyValue<IFileElementType> fileElementType = new SimpleLazyValue<IFileElementType>() {
+        @Override
+        protected IFileElementType load() {
+            return createFileElementType(DBLanguage.this);
+        }
+    };
 
     protected DBLanguage(final @NonNls String id, final @NonNls String... mimeTypes){
         super(id, mimeTypes);
@@ -25,14 +32,7 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
     }
 
     public final IFileElementType getFileElementType() {
-        if (fileElementType == null) {
-            synchronized (this) {
-                if (fileElementType == null) {
-                    fileElementType = createFileElementType(this);
-                }
-            }
-        }
-        return fileElementType;
+        return fileElementType.get();
     }
 
     protected abstract IFileElementType createFileElementType(DBLanguage<D> language);

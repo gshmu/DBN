@@ -27,7 +27,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
     private TokenPairTemplate tokenPairTemplate;
 
     public SimpleTokenType(@NotNull @NonNls String debugName, @Nullable Language language) {
-        super(debugName, language);
+        super(debugName, language, false);
     }
 
     public SimpleTokenType(SimpleTokenType source, Language language) {

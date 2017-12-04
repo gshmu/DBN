@@ -12,7 +12,7 @@ import com.intellij.psi.tree.IFileElementType;
 
 public class DBLanguageFileElementType extends IFileElementType {
     public DBLanguageFileElementType(Language language) {
-        super(language);                                                         
+        super("FILE_ELEMENT_TYPE", language, false);
     }
 
     public ASTNode parseContents(ASTNode chameleon) {
