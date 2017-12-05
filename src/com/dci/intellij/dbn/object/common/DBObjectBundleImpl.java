@@ -465,7 +465,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 if (connectionHandler.getConnectionStatus().isConnected()) {
                     append(false, " - active", true);
-                } else if (connectionHandler.canConnect() && !connectionHandler.isValid(false)) {
+                } else if (connectionHandler.canConnect() && !connectionHandler.isValid()) {
                     append(false, " - invalid", true);
                     append(true, connectionHandler.getConnectionStatus().getStatusMessage(), "-2", "red", false);
                 }

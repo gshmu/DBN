@@ -77,6 +77,7 @@ public class DBNConnection extends DBNConnectionBase {
     @Override
     public void invalidateInner() throws SQLException {
         // do nothing
+        System.out.println();
     }
 
     public ConnectionType getType() {

@@ -24,21 +24,18 @@ import java.util.Map;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 
-public class DBNResultSet extends DBNResource implements ResultSet, Closeable {
+public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, Closeable {
     private WeakReference<DBNStatement> statement;
     private WeakReference<DBNConnection> connection;
-    protected ResultSet inner;
 
 
     public DBNResultSet(ResultSet inner, DBNConnection connection) {
-        super(ResourceType.RESULT_SET);
-        this.inner = inner;
+        super(inner, ResourceType.RESULT_SET);
         this.connection = new WeakReference<DBNConnection>(connection);
     }
 
     public DBNResultSet(ResultSet inner, DBNStatement statement) {
-        super(ResourceType.RESULT_SET);
-        this.inner = inner;
+        super(inner, ResourceType.RESULT_SET);
         this.statement = new WeakReference<DBNStatement>(statement);
     }
 

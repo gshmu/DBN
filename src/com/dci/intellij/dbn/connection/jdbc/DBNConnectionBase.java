@@ -19,12 +19,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
-abstract class DBNConnectionBase extends DBNResource implements Connection, Closeable, Invalidable {
-    protected Connection inner;
-
+abstract class DBNConnectionBase extends DBNResource<Connection> implements Connection, Closeable, Invalidable {
     public DBNConnectionBase(Connection inner) {
-        super(ResourceType.CONNECTION);
-        this.inner = inner;
+        super(inner, ResourceType.CONNECTION);
     }
 
     protected abstract <S extends Statement> S wrap(S statement);

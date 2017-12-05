@@ -135,7 +135,7 @@ public class ConnectionUtil {
         connectCall.connectionStatus = connectionStatus;
         connectCall.autoCommit = autoCommit;
         connectCall.databaseAttachmentHandler = attachmentHandler;
-        Connection connection = connectCall.start();
+        DBNConnection connection = connectCall.start();
 
         if (connectCall.exception != null) {
             throw connectCall.exception;
@@ -145,7 +145,7 @@ public class ConnectionUtil {
             throw new SQLException("Could not connect to database. Communication timeout");
         }
 
-        return new DBNConnection(connection, connectionType);
+        return connection;
     }
 
     private static class ConnectTimeoutCall extends SimpleTimeoutCall<DBNConnection> {

@@ -111,7 +111,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             protected void execute() {
                 Project project = getProject();
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                if (connectionHandler.isValid(true)) {
+                if (connectionHandler.isValid()) {
                     DBMethod method = executionInput.getMethod();
                     if (method == null) {
                         String message =
