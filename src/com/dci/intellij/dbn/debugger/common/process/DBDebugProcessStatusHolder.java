@@ -3,7 +3,8 @@ package com.dci.intellij.dbn.debugger.common.process;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public class DBDebugProcessStatusHolder extends PropertyHolderImpl<DBDebugProcessStatus>{
-    public DBDebugProcessStatusHolder() {
-        super(DBDebugProcessStatus.class);
+    @Override
+    protected DBDebugProcessStatus[] getProperties() {
+        return DBDebugProcessStatus.values();
     }
 }

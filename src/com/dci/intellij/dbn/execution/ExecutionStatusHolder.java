@@ -6,10 +6,15 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 public class ExecutionStatusHolder extends PropertyHolderImpl<ExecutionStatus> {
 
     public ExecutionStatusHolder() {
-        super(ExecutionStatus.class);
+        super();
     }
 
     public boolean canExecute() {
         return isNot(QUEUED) && isNot(EXECUTING) && isNot(CANCELLED);
+    }
+
+    @Override
+    protected ExecutionStatus[] getProperties() {
+        return ExecutionStatus.values();
     }
 }
