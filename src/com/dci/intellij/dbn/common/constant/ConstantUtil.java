@@ -32,7 +32,7 @@ public abstract class ConstantUtil {
         T[] allConstants = constantClass.getEnumConstants();
         for(String id : ids) {
             for (T t : allConstants) {
-                if (t.is(id)) {
+                if (t.id().equals(id)) {
                     constants.add(t);
                     break;
                 }

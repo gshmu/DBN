@@ -46,11 +46,6 @@ public abstract class PseudoConstant<T extends PseudoConstant> implements Consta
     }
 
     @Override
-    public final boolean is(String id) {
-        return this.id.equals(id);
-    }
-
-    @Override
     public final boolean isOneOf(T... constants) {
         return ConstantUtil.isOneOf(this, constants);
     }
