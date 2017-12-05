@@ -36,18 +36,18 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.HIDDEN;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private DBObjectType objectType = DBObjectType.UNKNOWN;
-    private boolean hidden;
+    private final DBObjectType objectType;
     private InternalFilter filter;
 
-    public DBObjectListImpl(@NotNull DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed, boolean hidden) {
+    DBObjectListImpl(@NotNull DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed, boolean hidden) {
         super(treeParent, loader, dependencyAdapter, indexed);
         this.objectType = objectType;
-        this.hidden = hidden;
+        set(HIDDEN, hidden);
         if (treeParent instanceof DBSchema && !hidden) {
             ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
             quickFilterManager.applyCachedFilter(this);
@@ -103,7 +103,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     private class InternalFilter extends Filter<T> {
         private ObjectQuickFilter quickFilter;
 
-        public InternalFilter(ObjectQuickFilter quickFilter) {
+        InternalFilter(ObjectQuickFilter quickFilter) {
             this.quickFilter = quickFilter;
         }
 
@@ -186,7 +186,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @NotNull
     public Project getProject() {
         GenericDatabaseElement parent = getParentElement();
-        return FailsafeUtil.get(parent == null ? null : parent.getProject());
+        return FailsafeUtil.get(parent.getProject());
     }
 
     public GenericDatabaseElement getUndisposedElement() {
@@ -202,7 +202,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         try {
             Project project = getProject();
             BrowserTreeNode treeParent = getParent();
-            if (!hidden && isTouched() && FailsafeUtil.softCheck(project) && treeParent != null && treeParent.isTreeStructureLoaded()) {
+            if (isNot(HIDDEN) && isTouched() && FailsafeUtil.softCheck(project) && treeParent != null && treeParent.isTreeStructureLoaded()) {
                 BrowserTreeEventListener treeEventListener = EventUtil.notify(project, BrowserTreeEventListener.TOPIC);
                 treeEventListener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
             }

@@ -1,17 +1,19 @@
 package com.dci.intellij.dbn.common.property;
 
-public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>{
-    private int computed = 0;
-    private T[] properties;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 
-    public PropertyHolderImpl(Class<T> type) {
-        this.properties = type.getEnumConstants();
-        for (T property : properties) {
+public abstract class PropertyHolderImpl<T extends Property> extends DisposableBase implements PropertyHolder<T>{
+    private int computed = 0;
+
+    public PropertyHolderImpl() {
+        for (T property : getProperties()) {
             if (property.implicit()) {
                 set(property);
             }
         }
     }
+
+    protected abstract T[] getProperties();
 
     @Override
     public boolean set(T property, boolean value) {
@@ -35,7 +37,7 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
         if (isNot(property)) {
             PropertyGroup group = property.group();
             if (group != null) {
-                for (T prop : properties) {
+                for (T prop : getProperties()) {
                     if (prop.group() == group) {
                         unset(prop);
                         break;
@@ -55,7 +57,7 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
 
             PropertyGroup group = property.group();
             if (group != null) {
-                for (T prop : properties) {
+                for (T prop : getProperties()) {
                     if (prop.group() == group && prop.implicit()) {
                         set(prop);
                         break;
@@ -69,7 +71,7 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
 
     public void reset() {
         computed = 0;
-        for (T property : properties) {
+        for (T property : getProperties()) {
             if (property.implicit()) {
                 set(property);
             }
@@ -83,7 +85,7 @@ public class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for (T property : properties) {
+        for (T property : getProperties()) {
             if (is(property)) {
                 if (builder.length() > 0) {
                     builder.append(" / ");

@@ -118,7 +118,12 @@ public class DBObjectStatusHolder {
 
     private class Entry {
         private DBContentType contentType;
-        private PropertyHolder<DBObjectStatus> status = new PropertyHolderImpl<DBObjectStatus>(DBObjectStatus.class);
+        private PropertyHolder<DBObjectStatus> status = new PropertyHolderImpl<DBObjectStatus>(){
+            @Override
+            protected DBObjectStatus[] getProperties() {
+                return DBObjectStatus.values();
+            }
+        };
 
         Entry(DBContentType contentType) {
             this.contentType = contentType;
