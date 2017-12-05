@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -180,11 +181,11 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         }
     };
 
-    public void refreshTabInfo(String connectionId) {
+    public void refreshTabInfo(ConnectionId connectionId) {
         for (TabInfo tabInfo : connectionTabs.getTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
             ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
-            if (connectionHandler.getId().equals(connectionId)) {
+            if (connectionHandler.getId() == connectionId) {
                 tabInfo.setText(connectionHandler.getName());
                 break;
             }

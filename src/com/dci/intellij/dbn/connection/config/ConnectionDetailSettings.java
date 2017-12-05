@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDetailSettingsForm;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.project.Project;
@@ -187,7 +188,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         return parent.getProject();
     }
 
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return parent.getConnectionId();
     }
 }

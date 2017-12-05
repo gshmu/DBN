@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
@@ -507,7 +508,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
      *******************************************************/
     private ConnectionStatusListener connectionStatusListener = new ConnectionStatusListener() {
         @Override
-        public void statusChanged(String connectionId) {
+        public void statusChanged(ConnectionId connectionId) {
             DatasetEditorTable editorTable = getEditorTable();
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler.getId().equals(connectionId)) {

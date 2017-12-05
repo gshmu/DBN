@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
@@ -133,7 +134,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
         settingsDialog.show();
     }
 
-    public void openConnectionSettings(@Nullable String connectionId) {
+    public void openConnectionSettings(@Nullable ConnectionId connectionId) {
         Project project = getProject();
         ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
         settingsDialog.focusConnectionSettings(connectionId);
@@ -145,7 +146,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
         ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
         ConnectionBundleSettingsForm settingsEditor = settingsDialog.getProjectSettings().getConnectionSettings().getSettingsEditor();
         if (settingsEditor != null) {
-            String connectionId = settingsEditor.createNewConnection(databaseType, configType);
+            ConnectionId connectionId = settingsEditor.createNewConnection(databaseType, configType);
             settingsDialog.focusConnectionSettings(connectionId);
             settingsDialog.show();
         }

@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -95,7 +96,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
 
     @NotNull
     @Override
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return getMainDatabaseFile().getConnectionId();
     }
 

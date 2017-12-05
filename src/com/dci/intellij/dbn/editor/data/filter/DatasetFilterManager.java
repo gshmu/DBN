@@ -1,8 +1,16 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
@@ -15,13 +23,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @State(
     name = "DBNavigator.Project.DatasetFilterManager",
@@ -31,7 +32,7 @@ import java.util.Map;
 )
 public class DatasetFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final DatasetFilter EMPTY_FILTER = new DatasetEmptyFilter();
-    private Map<String, Map<String, DatasetFilterGroup>> filters =  new HashMap<String, Map<String, DatasetFilterGroup>>();
+    private Map<ConnectionId, Map<String, DatasetFilterGroup>> filters =  new HashMap<ConnectionId, Map<String, DatasetFilterGroup>>();
 
     private DatasetFilterManager(Project project) {
         super(project);
@@ -130,7 +131,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     }
 
     private void addFilterGroup(DatasetFilterGroup filterGroup) {
-        String connectionId = filterGroup.getConnectionId();
+        ConnectionId connectionId = filterGroup.getConnectionId();
         String datasetName = filterGroup.getDatasetName();
         Map<String, DatasetFilterGroup> connectionFilters = filters.get(connectionId);
         if (connectionFilters == null) {
@@ -143,19 +144,19 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
 
     public DatasetFilterGroup getFilterGroup(DBDataset dataset) {
         ConnectionHandler connectionHandler = FailsafeUtil.get(dataset.getConnectionHandler());
-        String connectionId = connectionHandler.getId();
+        ConnectionId connectionId = connectionHandler.getId();
         String datasetName = dataset.getQualifiedName();
         return getFilterGroup(connectionId, datasetName);
     }
 
     public DatasetFilterGroup getFilterGroup(DatasetFilter filter) {
-        String connectionId = filter.getConnectionId();
+        ConnectionId connectionId = filter.getConnectionId();
         String datasetName = filter.getDatasetName();
         return getFilterGroup(connectionId, datasetName);
     }
 
     @NotNull
-    public DatasetFilterGroup getFilterGroup(String connectionId, String datasetName) {
+    public DatasetFilterGroup getFilterGroup(ConnectionId connectionId, String datasetName) {
         Map<String, DatasetFilterGroup> filterGroups = filters.get(connectionId);
         if (filterGroups == null) {
             filterGroups = new HashMap<String, DatasetFilterGroup>();
@@ -193,7 +194,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     @Override
     public Element getState() {
         Element element = new Element("state");
-        for (String connectionId : filters.keySet()){
+        for (ConnectionId connectionId : filters.keySet()){
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             if (connectionManager.getConnectionHandler(connectionId) != null) {
                 Map<String, DatasetFilterGroup> filterLists = filters.get(connectionId);

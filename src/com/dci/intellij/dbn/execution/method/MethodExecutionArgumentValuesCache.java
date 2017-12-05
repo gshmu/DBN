@@ -8,12 +8,13 @@ import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import gnu.trove.THashMap;
 
 public class MethodExecutionArgumentValuesCache implements PersistentStateElement<Element> {
-    private Map<String, Set<MethodExecutionArgumentValue>> variablesMap = new THashMap<String, Set<MethodExecutionArgumentValue>>();
+    private Map<ConnectionId, Set<MethodExecutionArgumentValue>> variablesMap = new THashMap<ConnectionId, Set<MethodExecutionArgumentValue>>();
 
-    public MethodExecutionArgumentValue getArgumentValue(String connectionId, String name, boolean create) {
+    public MethodExecutionArgumentValue getArgumentValue(ConnectionId connectionId, String name, boolean create) {
         Set<MethodExecutionArgumentValue> argumentValues = variablesMap.get(connectionId);
 
         if (argumentValues != null) {
@@ -38,7 +39,7 @@ public class MethodExecutionArgumentValuesCache implements PersistentStateElemen
         return null;
     }
 
-    public void cacheVariable(String connectionId, String name, String value) {
+    public void cacheVariable(ConnectionId connectionId, String name, String value) {
         if (StringUtil.isNotEmpty(value)) {
             MethodExecutionArgumentValue argumentValue = getArgumentValue(connectionId, name, true);
             argumentValue.setValue(value);
@@ -54,7 +55,7 @@ public class MethodExecutionArgumentValuesCache implements PersistentStateElemen
             this.variablesMap.clear();
             List<Element> connectionElements = argumentValuesElement.getChildren();
             for (Element connectionElement : connectionElements) {
-                String connectionId = connectionElement.getAttributeValue("connection-id");
+                ConnectionId connectionId = ConnectionId.get(connectionElement.getAttributeValue("connection-id"));
                 List<Element> argumentElements = connectionElement.getChildren();
                 for (Element argumentElement : argumentElements) {
                     String name = argumentElement.getAttributeValue("name");
@@ -69,10 +70,10 @@ public class MethodExecutionArgumentValuesCache implements PersistentStateElemen
         Element argumentValuesElement = new Element("argument-values-cache");
         element.addContent(argumentValuesElement);
 
-        for (String connectionId : variablesMap.keySet()) {
+        for (ConnectionId connectionId : variablesMap.keySet()) {
             Set<MethodExecutionArgumentValue> argumentValues = variablesMap.get(connectionId);
             Element connectionElement = new Element("connection");
-            connectionElement.setAttribute("connection-id", connectionId);
+            connectionElement.setAttribute("connection-id", connectionId.id());
             argumentValuesElement.addContent(connectionElement);
             for (MethodExecutionArgumentValue argumentValue : argumentValues) {
                 if (argumentValue.getValueHistory().size() > 0) {

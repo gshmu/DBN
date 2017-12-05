@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -76,7 +77,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
     }
 
     private class CacheKey implements PersistentStateElement<Element>{
-        private String connectionId;
+        private ConnectionId connectionId;
         private String schemaName;
         private DBObjectType objectType;
 
@@ -94,7 +95,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
             objectType = objectList.getObjectType();
         }
 
-        public String getConnectionId() {
+        public ConnectionId getConnectionId() {
             return connectionId;
         }
 
@@ -129,14 +130,14 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
 
         @Override
         public void readState(Element element) {
-            connectionId = element.getAttributeValue("connection-id");
+            connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
             schemaName = element.getAttributeValue("schema");
             objectType = DBObjectType.getObjectType(element.getAttributeValue("object-type"));
         }
 
         @Override
         public void writeState(Element element) {
-            element.setAttribute("connection-id", connectionId);
+            element.setAttribute("connection-id", connectionId.id());
             element.setAttribute("schema", schemaName);
             element.setAttribute("object-type", objectType.getName());
         }

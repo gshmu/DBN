@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -81,7 +82,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         if (VirtualFileUtil.isLocalFileSystem(virtualFile)) {
             virtualFile.putUserData(ACTIVE_CONNECTION_KEY, connectionHandler);
 
-            String connectionId = connectionHandler == null ? null : connectionHandler.getId();
+            ConnectionId connectionId = connectionHandler == null ? null : connectionHandler.getId();
             String currentSchema = connectionHandler == null ? null  : connectionHandler.getUserName().toUpperCase();
 
             FileConnectionMapping mapping = lookupMapping(virtualFile);
@@ -248,8 +249,8 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
 
         VirtualFileManager virtualFileManager = VirtualFileManager.getInstance();
         for (FileConnectionMapping mapping : mappings) {
-            String connectionId = mapping.getConnectionId();
-            if (connectionHandler.getId().equals(connectionId)) {
+            ConnectionId connectionId = mapping.getConnectionId();
+            if (connectionHandler.getId() == connectionId) {
                 VirtualFile file = virtualFileManager.findFileByUrl(mapping.getFileUrl());
                 if (file != null) {
                     list.add(file);

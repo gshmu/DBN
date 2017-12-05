@@ -94,7 +94,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     void setLoggingEnabled(boolean loggingEnabled);
     void disconnect() throws SQLException;
 
-    String getId();
+    ConnectionId getId();
     String getUserName();
     String getPresentableText();
     String getQualifiedName();

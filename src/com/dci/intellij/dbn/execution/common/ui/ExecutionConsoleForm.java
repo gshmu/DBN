@@ -29,6 +29,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
@@ -513,7 +514,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
     }
 
-    public void closeExecutionResults(List<String> connectionIds) {
+    public void closeExecutionResults(List<ConnectionId> connectionIds) {
         TabbedPane resultTabs = getResultTabs();
         List<TabInfo> tabs = new ArrayList<TabInfo>(resultTabs.getTabs());
         for (TabInfo tabInfo : tabs) {

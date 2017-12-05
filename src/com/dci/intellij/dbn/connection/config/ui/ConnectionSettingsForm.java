@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
@@ -10,6 +21,7 @@ import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPaneUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -26,17 +38,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<ConnectionSettings>{
     private JPanel mainPanel;
@@ -205,7 +206,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
     ConnectionPresentationChangeListener connectionPresentationChangeListener = new ConnectionPresentationChangeListener() {
         @Override
-        public void presentationChanged(final String name, final Icon icon, final Color color, final String connectionId, DatabaseType databaseType) {
+        public void presentationChanged(final String name, final Icon icon, final Color color, final ConnectionId connectionId, DatabaseType databaseType) {
             new SimpleLaterInvocator() {
                 @Override
                 protected void execute() {

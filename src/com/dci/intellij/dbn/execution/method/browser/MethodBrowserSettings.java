@@ -10,13 +10,14 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public class MethodBrowserSettings implements PersistentConfiguration {
-    private String connectionId;
+    private ConnectionId connectionId;
     private String schemaName;
     private DBObjectRef<DBMethod> method;
     private Map<DBObjectType, Boolean> objectVisibility = new EnumMap<DBObjectType, Boolean>(DBObjectType.class);
@@ -74,7 +75,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
     }
 
     public void readConfiguration(Element element) {
-        connectionId = element.getAttributeValue("connection-id");
+        connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
         schemaName = element.getAttributeValue("schema");
 
         Element methodElement = element.getChild("selected-method");
@@ -86,7 +87,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
 
     public void writeConfiguration(Element element) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) element.setAttribute("connection-id", connectionHandler.getId());
+        if (connectionHandler != null) element.setAttribute("connection-id", connectionHandler.getId().id());
         if (schemaName != null) element.setAttribute("schema", schemaName);
         if(method != null) {
             Element methodElement = new Element("selected-method");

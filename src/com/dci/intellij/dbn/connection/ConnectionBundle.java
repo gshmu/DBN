@@ -49,35 +49,35 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     public ConnectionBundle(Project project) {
         this.projectRef = new ProjectRef(project);
         virtualConnections.add(new VirtualConnectionHandler(
-                "virtual-oracle-connection",
+                ConnectionId.VIRTUAL_ORACLE_CONNECTION,
                 "Virtual - Oracle 10.1",
                 DatabaseType.ORACLE,
                 10.1,
                 project));
 
         virtualConnections.add(new VirtualConnectionHandler(
-                "virtual-mysql-connection",
+                ConnectionId.VIRTUAL_MYSQL_CONNECTION,
                 "Virtual - MySQL 5.0",
                 DatabaseType.MYSQL,
                 5.0,
                 project));
 
         virtualConnections.add(new VirtualConnectionHandler(
-                "virtual-postgres-connection",
+                ConnectionId.VIRTUAL_POSTGRES_CONNECTION,
                 "Virtual - PostgreSQL 9.3.4",
                 DatabaseType.POSTGRES,
                 9.3,
                 project));
 
         virtualConnections.add(new VirtualConnectionHandler(
-                "virtual-sqlite-connection",
+                ConnectionId.VIRTUAL_SQLITE_CONNECTION,
                 "Virtual - SQLite 3.10.2",
                 DatabaseType.SQLITE,
                 3.10,
                 project));
 
         virtualConnections.add(new VirtualConnectionHandler(
-                "virtual-iso92-sql-connection",
+                ConnectionId.VIRTUAL_ISO92_SQL_CONNECTION,
                 "Virtual - ISO-92 SQL",
                 DatabaseType.UNKNOWN,
                 92,
@@ -88,9 +88,9 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         return virtualConnections;
     }
 
-    public ConnectionHandler getVirtualConnection(String id) {
+    public ConnectionHandler getVirtualConnection(ConnectionId id) {
         for (ConnectionHandler virtualConnection : virtualConnections) {
-            if (virtualConnection.getId().equals(id)) {
+            if (virtualConnection.getId() == id) {
                 return virtualConnection;
             }
         }
@@ -103,7 +103,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         List<ConnectionSettings> connections = settings.getConnections();
         boolean listChanged = false;
         for (ConnectionSettings connection : connections) {
-            String connectionId = connection.getConnectionId();
+            ConnectionId connectionId = connection.getConnectionId();
             ConnectionHandler connectionHandler = getConnectionHandler(oldConnectionHandlers, connectionId);
             if (connectionHandler == null) {
                 connectionHandler = new ConnectionHandlerImpl(this, connection);
@@ -141,9 +141,9 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         }
     }
 
-    ConnectionHandler getConnectionHandler(List<ConnectionHandler> list, String connectionId) {
+    ConnectionHandler getConnectionHandler(List<ConnectionHandler> list, ConnectionId connectionId) {
         for (ConnectionHandler connectionHandler : list) {
-            if (connectionHandler.getId().equals(connectionId)) {
+            if (connectionHandler.getId() == connectionId) {
                 return connectionHandler;
             }
         }
@@ -188,9 +188,9 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         return connectionHandlers.contains(connectionHandler);
     }
 
-    public ConnectionHandler getConnection(String id) {
+    public ConnectionHandler getConnection(ConnectionId id) {
         for (ConnectionHandler connectionHandler : connectionHandlers.getFullList()){
-            if (connectionHandler.getId().equals(id)) return connectionHandler;
+            if (connectionHandler.getId() == id) return connectionHandler;
         }
         return null;
     }

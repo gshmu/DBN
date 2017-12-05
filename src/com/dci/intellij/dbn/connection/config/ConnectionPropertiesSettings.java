@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionPropertiesSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -55,7 +56,7 @@ public class ConnectionPropertiesSettings extends Configuration<ConnectionProper
     }
 
     @NotNull
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return parent.getConnectionId();
     }
 

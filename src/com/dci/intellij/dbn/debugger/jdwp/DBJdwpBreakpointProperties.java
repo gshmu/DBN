@@ -5,12 +5,13 @@ import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperti
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
 import com.intellij.util.xmlb.annotations.Attribute;
 
 public class DBJdwpBreakpointProperties extends JavaBreakpointProperties<DBJdwpBreakpointProperties> implements DBBreakpointProperties {
     @Attribute("connection-id")
-    private String connectionId;
+    private ConnectionId connectionId;
 
     private ConnectionHandlerRef connectionHandlerRef;
 
@@ -26,7 +27,7 @@ public class DBJdwpBreakpointProperties extends JavaBreakpointProperties<DBJdwpB
     }
 
     @Override
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return connectionId;
     }
 

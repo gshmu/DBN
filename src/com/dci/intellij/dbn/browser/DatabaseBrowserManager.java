@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -198,7 +199,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
      *                       Listeners                        *
      **********************************************************/
     private ObjectFilterChangeListener filterChangeListener = new ObjectFilterChangeListener() {
-        public void typeFiltersChanged(String connectionId) {
+        public void typeFiltersChanged(ConnectionId connectionId) {
             if (toolWindowForm.isLoaded()) {
                 ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
                 if (connectionHandler == null) {
@@ -210,7 +211,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         }
 
         @Override
-        public void nameFiltersChanged(String connectionId, @NotNull DBObjectType... objectTypes) {
+        public void nameFiltersChanged(ConnectionId connectionId, @NotNull DBObjectType... objectTypes) {
             ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
             if (toolWindowForm.isLoaded() && connectionHandler != null && objectTypes.length > 0) {
                 connectionHandler.getObjectBundle().refreshTreeChildren(objectTypes);
@@ -219,7 +220,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     };
 
     @Nullable
-    private ConnectionHandler getConnectionHandler(String connectionId) {
+    private ConnectionHandler getConnectionHandler(ConnectionId connectionId) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         return connectionManager.getConnectionHandler(connectionId);
     }
@@ -353,7 +354,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                     }
 
                     if (addConnectionElement) {
-                        connectionElement.setAttribute("connection-id", connectionHandler.getId());
+                        connectionElement.setAttribute("connection-id", connectionHandler.getId().id());
                         nodesElement.addContent(connectionElement);
                     }
                 }
@@ -369,7 +370,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
             List<Element> connectionElements = nodesElement.getChildren();
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
             for (final Element connectionElement : connectionElements) {
-                String connectionId = connectionElement.getAttributeValue("connection-id");
+                ConnectionId connectionId = ConnectionId.get(connectionElement.getAttributeValue("connection-id"));
                 final ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
                 if (connectionHandler != null) {
                     ConnectionDetailSettings settings = connectionHandler.getSettings().getDetailSettings();

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionFilterSettingsForm;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -44,7 +45,7 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
         this.hideEmptySchemas = hideEmptySchemas;
     }
 
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return connectionSettings.getConnectionId();
     }
 

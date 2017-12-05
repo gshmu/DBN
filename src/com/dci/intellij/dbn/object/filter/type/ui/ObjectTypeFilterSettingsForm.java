@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSetting;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.intellij.openapi.options.ConfigurationException;
@@ -84,7 +85,7 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
             public void notifyChanges() {
                 if (notifyFilterListeners) {
                     Project project = objectFilterSettings.getProject();
-                    String connectionId = objectFilterSettings.getConnectionId();
+                    ConnectionId connectionId = objectFilterSettings.getConnectionId();
                     ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
                     listener.typeFiltersChanged(connectionId);
                 }

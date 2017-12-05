@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.ddl.DDLFileType;
@@ -76,7 +77,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements NonPhysical
         int index = url.indexOf('/', startIndex);
 
         if (index > -1) {
-            String connectionId = url.substring(startIndex, index);
+            ConnectionId connectionId = ConnectionId.get(url.substring(startIndex, index));
             ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
             if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isEnabled()) {
                 String objectPath = url.substring(index + 1);
@@ -245,7 +246,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements NonPhysical
         if (objectRef == null) {
             return PROTOCOL + "://" + UUID.randomUUID() + "/null";
         } else {
-            String connectionId = objectRef.getConnectionId();
+            ConnectionId connectionId = objectRef.getConnectionId();
             return PROTOCOL + "://" + connectionId + "/object#" + objectRef.serialize()/* + "." + getDefaultExtension(object)*/;
         }
     }
@@ -254,7 +255,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements NonPhysical
         if (objectRef == null) {
             return PROTOCOL + "://" + UUID.randomUUID() + "/null";
         } else {
-            String connectionId = objectRef.getConnectionId();
+            ConnectionId connectionId = objectRef.getConnectionId();
             return PROTOCOL + "://" + connectionId + "/object_" + contentType.name().toLowerCase() + "#" + objectRef.serialize();
         }
     }

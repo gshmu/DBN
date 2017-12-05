@@ -127,7 +127,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
         @Override
-        public void connectionChanged(String connectionId) {
+        public void connectionChanged(ConnectionId connectionId) {
             final ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
             if (connectionHandler != null) {
                 new BackgroundTask(getProject(), "Refreshing database objects", true, true) {
@@ -361,9 +361,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
      *                     Miscellaneous                     *
      *********************************************************/
     @Nullable
-    public ConnectionHandler getConnectionHandler(String connectionId) {
+    public ConnectionHandler getConnectionHandler(ConnectionId connectionId) {
          for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers().getFullList()) {
-            if (connectionHandler.getId().equals(connectionId)) {
+            if (connectionHandler.getId() == connectionId) {
                 return connectionHandler;
             }
          }
@@ -415,7 +415,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public boolean isValidConnectionId(String connectionId) {
+    public boolean isValidConnectionId(ConnectionId connectionId) {
         return getConnectionHandler(connectionId) != null;
     }
 
@@ -464,7 +464,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             new ConditionalLaterInvocator() {
                 @Override
                 protected void execute() {
-                    List<String> connectionIds = new ArrayList<String>();
+                    List<ConnectionId> connectionIds = new ArrayList<ConnectionId>();
                     for (ConnectionHandler connectionHandler : connectionHandlers) {
                         connectionIds.add(connectionHandler.getId());
                     }

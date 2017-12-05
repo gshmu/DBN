@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
@@ -109,15 +110,15 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
     private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
         @Override
-        public void connectionChanged(String connectionId) {
+        public void connectionChanged(ConnectionId connectionId) {
             closeFiles(connectionId);
         }
     };
 
-    private void closeFiles(String connectionId) {
+    private void closeFiles(ConnectionId connectionId) {
         Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<DBEditableObjectVirtualFile>();
         for (DBObjectRef objectRef : openFiles.keySet()) {
-            if (objectRef.getConnectionId().equals(connectionId)) {
+            if (objectRef.getConnectionId() == connectionId) {
                 filesToClose.add(openFiles.get(objectRef));
             }
         }
@@ -202,12 +203,12 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         }
     };
 
-    public void closeDatabaseFiles(@NotNull final List<String> connectionIds) {
+    public void closeDatabaseFiles(@NotNull final List<ConnectionId> connectionIds) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
         for (VirtualFile virtualFile : fileEditorManager.getOpenFiles()) {
             if (virtualFile instanceof DBVirtualFileImpl) {
                 DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) virtualFile;
-                String connectionId = databaseVirtualFile.getConnectionId();
+                ConnectionId connectionId = databaseVirtualFile.getConnectionId();
                 if (connectionIds.contains(connectionId)) {
                     fileEditorManager.closeFile(virtualFile);
                 }

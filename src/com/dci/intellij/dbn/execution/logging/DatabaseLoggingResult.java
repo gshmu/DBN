@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultConsole;
@@ -74,7 +75,7 @@ public class DatabaseLoggingResult extends DisposableBase implements ExecutionRe
     }
 
     @Override
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return context.getConnectionId();
     }
 

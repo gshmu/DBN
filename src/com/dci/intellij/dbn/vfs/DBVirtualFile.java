@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.project.Project;
@@ -19,7 +20,7 @@ public interface DBVirtualFile extends /*VirtualFileWithId, */EnvironmentTypePro
     Icon getIcon();
 
     @NotNull
-    String getConnectionId();
+    ConnectionId getConnectionId();
 
     @NotNull
     ConnectionHandler getConnectionHandler();

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.util.text.StringUtil;
@@ -64,7 +65,7 @@ public abstract class DatasetFilterImpl extends Configuration implements Dataset
         this.name = StringUtil.first(name, 40, true);
     }
 
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return filterGroup.getConnectionId();
     }
 
