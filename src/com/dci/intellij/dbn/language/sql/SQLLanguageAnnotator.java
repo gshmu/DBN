@@ -121,7 +121,7 @@ public class SQLLanguageAnnotator implements Annotator {
 
     private static boolean checkConnection(IdentifierPsiElement objectReference) {
         ConnectionHandler connectionHandler = objectReference.getActiveConnection();
-        return connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.canConnect() && connectionHandler.getConnectionStatus().isValid() && !connectionHandler.getLoadMonitor().isLoading();
+        return connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.canConnect() && connectionHandler.isValid() && !connectionHandler.getLoadMonitor().isLoading();
     }
 
     private static void annotateExecutable(ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {

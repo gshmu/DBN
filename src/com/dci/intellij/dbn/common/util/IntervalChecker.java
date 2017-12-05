@@ -9,7 +9,8 @@ public abstract class IntervalChecker {
     private boolean value;
     private boolean checking;
 
-    public IntervalChecker(long interval) {
+    protected IntervalChecker(boolean initialValue, long interval){
+        this.value = initialValue;
         this.interval = interval;
     }
 
@@ -56,6 +57,10 @@ public abstract class IntervalChecker {
 
     public void set(boolean value) {
         this.value = value;
+    }
+
+    public boolean get() {
+        return value;
     }
 
     protected abstract boolean doCheck();

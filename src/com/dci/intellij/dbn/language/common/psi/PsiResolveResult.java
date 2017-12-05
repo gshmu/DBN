@@ -47,7 +47,7 @@ public class PsiResolveResult {
         this.isResolving = true;
         this.text = psiElement.getUnquotedText();
         ConnectionHandler connectionHandler = psiElement.getActiveConnection();
-        this.isConnectionValid = connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.getConnectionStatus().isValid();
+        this.isConnectionValid = connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.isValid();
         this.isConnectionActive = connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.canConnect();
         this.referencedElement = null;
         this.parent = null;
@@ -147,7 +147,7 @@ public class PsiResolveResult {
     }
 
     private boolean connectionBecameValid(ConnectionHandler connectionHandler) {
-        return !isConnectionValid && connectionHandler!= null && !connectionHandler.isVirtual() && connectionHandler.getConnectionStatus().isValid();
+        return !isConnectionValid && connectionHandler!= null && !connectionHandler.isVirtual() && connectionHandler.isValid();
     }
 
     private boolean connectionBecameActive(ConnectionHandler connectionHandler) {
