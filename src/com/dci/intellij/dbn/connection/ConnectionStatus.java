@@ -13,11 +13,11 @@ public class ConnectionStatus {
     private AuthenticationError authenticationError;
     private String statusMessage;
 
-    private IntervalChecker valid = new IntervalChecker(TimeUtil.THIRTY_SECONDS) {
+    private IntervalChecker valid = new IntervalChecker(true, TimeUtil.THIRTY_SECONDS) {
         @Override
         protected boolean doCheck() {
             try {
-                ConnectionHandler connectionHandler = connectionHandlerRef.get();
+                ConnectionHandler connectionHandler = getConnectionHandler();
                 connectionHandler.getMainConnection();
                 return true;
             } catch (Exception e) {
@@ -26,11 +26,11 @@ public class ConnectionStatus {
         }
     };
 
-    private IntervalChecker connected = new IntervalChecker(TimeUtil.TEN_SECONDS) {
+    private IntervalChecker connected = new IntervalChecker(false, TimeUtil.TEN_SECONDS) {
         @Override
         protected boolean doCheck() {
             try {
-                ConnectionHandler connectionHandler = connectionHandlerRef.get();
+                ConnectionHandler connectionHandler = getConnectionHandler();
                 ConnectionPool connectionPool = connectionHandler.getConnectionPool();
                 DBNConnection mainConnection = connectionPool.getMainConnection();
                 if (mainConnection != null && !mainConnection.isClosed() && mainConnection.isValid()) {
@@ -51,25 +51,34 @@ public class ConnectionStatus {
         }
     };
 
+    @NotNull
+    private ConnectionHandler getConnectionHandler() {
+        return connectionHandlerRef.get();
+    }
+
+    private boolean canConnect() {
+        return getConnectionHandler().canConnect();
+    }
+
 
     ConnectionStatus(@NotNull ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = connectionHandler.getRef();
     }
 
-    public boolean isConnected() {
-        return connected.check();
+    public void setValid(boolean valid) {
+        this.valid.set(valid);
     }
 
     public void setConnected(boolean connected) {
         this.connected.set(connected);
     }
 
-    public boolean isValid() {
-        return valid.check();
+    public boolean isConnected() {
+        return connected.get() || (canConnect() && connected.check());
     }
 
-    public void setValid(boolean valid) {
-        this.valid.set(valid);
+    public boolean isValid() {
+        return valid.get() || (canConnect() && valid.check());
     }
 
     public String getStatusMessage() {
