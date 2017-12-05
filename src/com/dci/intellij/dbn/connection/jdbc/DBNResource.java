@@ -7,14 +7,14 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Traceable;
 import com.intellij.openapi.diagnostic.Logger;
 
-abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
+public abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private long initTimestamp = System.currentTimeMillis();
     protected T inner;
 
     private ResourceStatusAdapter<Closeable> CLOSED_STATUS_ADAPTER;
-    private ResourceStatusAdapter<Invalidable> INVALID_STATUS_CHECKER;
-    private ResourceStatusAdapter<Cancellable> CANCELLED;
+    private ResourceStatusAdapter<Cancellable> CANCELLED_STATUS_ADAPTER;
+    private ResourceStatusAdapter<Invalidable> INVALID_STATUS_ADAPTER;
 
     protected Traceable traceable = new Traceable();
     private ResourceType type;
@@ -29,13 +29,13 @@ abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
 
         if (this instanceof Closeable) {
             final Closeable closeable = (Closeable) this;
-            CLOSED_STATUS_ADAPTER = new ResourceStatusAdapter<Closeable>(this,
+            CLOSED_STATUS_ADAPTER = new ResourceStatusAdapter<Closeable>(closeable,
                     ResourceStatus.CLOSED,
                     ResourceStatus.CLOSING,
                     ResourceStatus.CHECKING_CLOSED) {
                 @Override
                 protected void changeInner() throws SQLException {
-                    closeable.close();
+                    closeable.closeInner();
                 }
 
                 @Override
@@ -47,7 +47,7 @@ abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
 
         if (this instanceof Cancellable) {
             final Cancellable cancellable = (Cancellable) this;
-            CANCELLED = new ResourceStatusAdapter<Cancellable>(this,
+            CANCELLED_STATUS_ADAPTER = new ResourceStatusAdapter<Cancellable>(cancellable,
                     ResourceStatus.CANCELLED,
                     ResourceStatus.CANCELLING,
                     ResourceStatus.CHECKING_CANCELLED) {
@@ -65,7 +65,7 @@ abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
 
         if (this instanceof Invalidable) {
             final Invalidable invalidable = (Invalidable) this;
-            INVALID_STATUS_CHECKER = new ResourceStatusAdapter<Invalidable>(this,
+            INVALID_STATUS_ADAPTER = new ResourceStatusAdapter<Invalidable>(invalidable,
                     ResourceStatus.INVALID,
                     ResourceStatus.INVALIDATING,
                     ResourceStatus.CHECKING_INVALID,
@@ -101,11 +101,11 @@ abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
     }
 
     public boolean isCancelled() {
-        return CANCELLED.check();
+        return CANCELLED_STATUS_ADAPTER.check();
     }
 
     public void cancel() {
-        CANCELLED.change();
+        CANCELLED_STATUS_ADAPTER.change();
     }
 
     public boolean isValid() {
@@ -117,10 +117,10 @@ abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
     }
 
     public boolean isInvalid() {
-        return INVALID_STATUS_CHECKER.check();
+        return INVALID_STATUS_ADAPTER.check();
     }
 
     public void invalidate() {
-        INVALID_STATUS_CHECKER.change();
+        INVALID_STATUS_ADAPTER.change();
     }
 }

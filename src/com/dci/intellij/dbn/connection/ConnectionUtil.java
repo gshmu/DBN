@@ -57,14 +57,15 @@ public class ConnectionUtil {
         }
     }
 
-    public static void close(final AutoCloseable resource) {
+    public static <T extends AutoCloseable> T close(T resource) {
         if (resource != null) {
             try {
                 resource.close();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 LOGGER.warn("Failed to close resource", e);
             }
         }
+        return null;
     }
 
     public static void setAutoCommit(Connection connection, boolean autoCommit) throws SQLException {

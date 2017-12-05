@@ -51,6 +51,10 @@ public class ConnectionStatus {
         }
     };
 
+    ConnectionStatus(@NotNull ConnectionHandler connectionHandler) {
+        this.connectionHandlerRef = connectionHandler.getRef();
+    }
+
     @NotNull
     private ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
@@ -61,10 +65,6 @@ public class ConnectionStatus {
     }
 
 
-    ConnectionStatus(@NotNull ConnectionHandler connectionHandler) {
-        this.connectionHandlerRef = connectionHandler.getRef();
-    }
-
     public void setValid(boolean valid) {
         this.valid.set(valid);
     }
@@ -74,11 +74,15 @@ public class ConnectionStatus {
     }
 
     public boolean isConnected() {
-        return connected.get() || (canConnect() && connected.check());
+        return canConnect() ?
+                connected.check() :
+                connected.get();
     }
 
     public boolean isValid() {
-        return valid.get() || (canConnect() && valid.check());
+        return canConnect() ?
+                valid.check() :
+                valid.get();
     }
 
     public String getStatusMessage() {

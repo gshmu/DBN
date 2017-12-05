@@ -4,9 +4,9 @@ import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
+import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -14,19 +14,19 @@ import com.intellij.openapi.diagnostic.Logger;
 public abstract class ResourceStatusAdapter<T extends Resource> {
     protected static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private final PropertyHolder<ResourceStatus> holder;
+    private final T resource;
     private final ResourceStatus current;
     private final ResourceStatus changing;
     private final ResourceStatus checking;
     private long checkTimestamp;
     private long checkInterval;
 
-    ResourceStatusAdapter(PropertyHolder<ResourceStatus> holder, ResourceStatus current, ResourceStatus changing, ResourceStatus checking) {
-        this(holder, current, changing, checking, 0);
+    ResourceStatusAdapter(T resource, ResourceStatus current, ResourceStatus changing, ResourceStatus checking) {
+        this(resource, current, changing, checking, 0);
     }
 
-    ResourceStatusAdapter(PropertyHolder<ResourceStatus> holder, ResourceStatus current, ResourceStatus changing, ResourceStatus checking, long checkInterval) {
-        this.holder = holder;
+    ResourceStatusAdapter(T resource, ResourceStatus current, ResourceStatus changing, ResourceStatus checking, long checkInterval) {
+        this.resource = resource;
         this.current = current;
         this.changing = changing;
         this.checking = checking;
@@ -34,11 +34,11 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
     private boolean is(ResourceStatus status) {
-        return holder.is(status);
+        return resource.is(status);
     }
 
     private boolean set(ResourceStatus status, boolean value) {
-        return holder.set(status, value);
+        return resource.set(status, value);
     }
 
     private boolean isChecking() {
@@ -109,13 +109,16 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
             new SimpleTimeoutTask(10, TimeUnit.SECONDS) {
                 @Override
                 public void run() {
+                    String identifier = " " + resource.getResourceType() + " resource";
                     try {
+                        LOGGER.info(NamingUtil.capitalize(changing.toString()) + identifier);
                         changeInner();
                     } catch (Throwable e) {
-                        LOGGER.warn("Error  " + changing + " resource: " + e.getMessage());
+                        LOGGER.warn("Error  " + changing + identifier + " : " + e.getMessage());
                     } finally {
                         set(current, true);
                         set(changing, false);
+                        LOGGER.warn("Done  " + changing + identifier);
                     }
                 }
             }.start();
@@ -128,6 +131,6 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
 
     @Override
     public String toString() {
-        return holder.toString();
+        return resource.toString();
     }
 }
