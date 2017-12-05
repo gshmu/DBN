@@ -291,11 +291,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 callback);
     }
 
-    private static void showErrorConnectionMessage(Project project, String connectionName, Exception e) {
+    public static void showErrorConnectionMessage(Project project, String connectionName, Throwable e) {
         MessageUtil.showErrorDialog(
                 project,
                 "Connection error",
-                "Cannot connect to \"" + connectionName + "\".\n" + e.getMessage());
+                "Cannot connect to \"" + connectionName + "\".\n" + (e == null ? "Unknown reason" : e.getMessage()));
     }
 
     private static void showSuccessfulConnectionMessage(Project project, String connectionName) {

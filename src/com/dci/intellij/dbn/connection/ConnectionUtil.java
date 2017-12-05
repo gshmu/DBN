@@ -211,7 +211,7 @@ public class ConnectionUtil {
                 }
                 ConnectionUtil.setAutoCommit(connection, autoCommit);
                 if (connectionStatus != null) {
-                    connectionStatus.setStatusMessage(null);
+                    connectionStatus.setConnectionException(null);
                     connectionStatus.setConnected(true);
                     connectionStatus.setValid(true);
                 }
@@ -242,7 +242,7 @@ public class ConnectionUtil {
                 databaseSettings.setDatabaseType(databaseType);
                 databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
                 if (connectionStatus != null) {
-                    connectionStatus.setStatusMessage(e.getMessage());
+                    connectionStatus.setConnectionException(e);
                     connectionStatus.setValid(false);
                 }
                 exception = e instanceof SQLException ? (SQLException) e : new SQLException("Connection error: " + e.getMessage(), e);

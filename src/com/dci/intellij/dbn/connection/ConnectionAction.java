@@ -48,6 +48,10 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         return executeOption == null || executeOption.equals(getData());
     }
 
+    protected boolean isManaged() {
+        return false;
+    }
+
     @NotNull
     protected Project getProject() {
         return getConnectionHandler().getProject();
@@ -81,7 +85,11 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             if (canExecute()) {
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 if (connectionHandler.isVirtual() || connectionHandler.canConnect()) {
-                    executeAction();
+                    if (isManaged() || connectionHandler.isValid()) {
+                        executeAction();
+                    } else {
+                        ConnectionManager.showErrorConnectionMessage(getProject(), connectionHandler.getName(), connectionHandler.getConnectionStatus().getConnectionException());
+                    }
                 } else {
                     if (connectionHandler.isDatabaseInitialized()) {
                         if (connectionHandler.isAuthenticationProvided()) {

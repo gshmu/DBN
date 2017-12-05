@@ -21,11 +21,14 @@ public class ReloadObjectsAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         TaskInstructions taskInstructions = new TaskInstructions("Reloading " + objectList.getContentDescription() + ".", false, false);
         String listName = objectList.getName();
-        String actionDescription = objectList.isLoaded() ? "reloading the " + listName : "loading the " + listName;
+        final boolean loaded = objectList.isLoaded();
+        String actionDescription = loaded ? "reloading the " + listName : "loading the " + listName;
         new ConnectionAction(actionDescription, objectList, taskInstructions) {
             @Override
             protected void execute() {
-                objectList.reload();
+                if (loaded)
+                    objectList.reload(); else
+                    objectList.load(true);
             }
         }.start();
     }
