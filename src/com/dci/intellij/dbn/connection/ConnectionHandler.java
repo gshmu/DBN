@@ -85,7 +85,6 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     @Nullable DBSchema getUserSchema();
     @Nullable DBSchema getDefaultSchema();
 
-    boolean isValid(boolean check);
     boolean isValid();
     boolean isVirtual();
     boolean isAutoCommit();

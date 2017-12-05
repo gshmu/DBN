@@ -1,11 +1,15 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-
-import java.sql.SQLException;
 
 public abstract class ResourceStatusAdapter<T extends Resource> {
     protected static final Logger LOGGER = LoggerFactory.createLogger();
@@ -36,6 +40,19 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     private boolean set(ResourceStatus status, boolean value) {
         return holder.set(status, value);
     }
+
+    private boolean isChecking() {
+        return is(checking);
+    }
+
+    private boolean isCurrent() {
+        return is(current);
+    }
+
+    private boolean isChanging() {
+        return is(changing);
+    }
+
 
     public boolean check() {
         if (isCurrent() || isChanging()) return true;
@@ -69,37 +86,43 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
         return false;
     }
 
-    private boolean isChecking() {
-        return is(checking);
-    }
-
-    private boolean isCurrent() {
-        return is(current);
-    }
-
-    private boolean isChanging() {
-        return is(changing);
-    }
-
-    public void attempt() {
+    public void change() {
         if (!isCurrent() && !isChanging() && !check()) {
             synchronized (this) {
                 if (!isCurrent() && !isChanging()) {
-                    try {
-                        set(changing, true);
-                        attemptInner();
-                    } catch (Exception t){
-                        LOGGER.warn("Error " + changing + " resource", t);
-                    } finally {
-                        set(current, true);
-                        set(changing, false);
-                    }
+                    set(changing, true);
+                    changeControlled();
                 }
             }
         }
     }
 
-    protected abstract void attemptInner() throws SQLException;
+    private void changeControlled() {
+        if (ApplicationManager.getApplication().isDispatchThread()) {
+            new SimpleBackgroundTask("close resource") {
+                @Override
+                protected void execute() {
+                    changeControlled();
+                }
+            }.start();
+        } else {
+            new SimpleTimeoutTask(10, TimeUnit.SECONDS) {
+                @Override
+                public void run() {
+                    try {
+                        changeInner();
+                    } catch (Throwable e) {
+                        LOGGER.warn("Error  " + changing + " resource: " + e.getMessage());
+                    } finally {
+                        set(current, true);
+                        set(changing, false);
+                    }
+                }
+            }.start();
+        }
+    }
+
+    protected abstract void changeInner() throws SQLException;
 
     protected abstract boolean checkInner() throws SQLException;
 

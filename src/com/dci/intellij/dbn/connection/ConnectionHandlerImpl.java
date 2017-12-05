@@ -271,17 +271,6 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return getConnectionBundle().getProject();
     }
 
-    public boolean isValid(boolean check) {
-        if (check) {
-            try {
-                getMainConnection();
-            } catch (SQLException e) {
-                return false;
-            }
-        }
-        return isValid();
-    }
-
     @Override
     public int getIdleMinutes() {
         return connectionPool == null ? 0 : connectionPool.getIdleMinutes();

@@ -237,8 +237,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override
     public DatabaseConsoleBundle getConsoleBundle() {return null;}
     @Override
-    public boolean isValid(boolean check) {return true;}
-    @Override
     public boolean isValid() {return true;}
     @Override
     public void disconnect() {}

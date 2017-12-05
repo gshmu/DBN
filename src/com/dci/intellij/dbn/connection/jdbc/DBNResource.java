@@ -1,19 +1,16 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Traceable;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 
-abstract class DBNResource extends ResourceStatusHolder implements Resource{
+abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private long initTimestamp = System.currentTimeMillis();
+    protected T inner;
 
     private ResourceStatusAdapter<Closeable> CLOSED_STATUS_ADAPTER;
     private ResourceStatusAdapter<Invalidable> INVALID_STATUS_CHECKER;
@@ -22,7 +19,12 @@ abstract class DBNResource extends ResourceStatusHolder implements Resource{
     protected Traceable traceable = new Traceable();
     private ResourceType type;
 
-    DBNResource(ResourceType type) {
+    DBNResource(T inner, ResourceType type) {
+        if (inner instanceof DBNResource) {
+            throw new IllegalArgumentException("Resource already wrapped");
+        }
+
+        this.inner = inner;
         this.type = type;
 
         if (this instanceof Closeable) {
@@ -32,8 +34,8 @@ abstract class DBNResource extends ResourceStatusHolder implements Resource{
                     ResourceStatus.CLOSING,
                     ResourceStatus.CHECKING_CLOSED) {
                 @Override
-                protected void attemptInner() throws SQLException {
-                    close(closeable, true);
+                protected void changeInner() throws SQLException {
+                    closeable.close();
                 }
 
                 @Override
@@ -50,7 +52,7 @@ abstract class DBNResource extends ResourceStatusHolder implements Resource{
                     ResourceStatus.CANCELLING,
                     ResourceStatus.CHECKING_CANCELLED) {
                 @Override
-                protected void attemptInner() throws SQLException {
+                protected void changeInner() throws SQLException {
                     cancellable.cancelInner();
                 }
 
@@ -69,7 +71,7 @@ abstract class DBNResource extends ResourceStatusHolder implements Resource{
                     ResourceStatus.CHECKING_INVALID,
                     TimeUtil.THIRTY_SECONDS) {
                 @Override
-                protected void attemptInner() throws SQLException {
+                protected void changeInner() throws SQLException {
                     invalidable.invalidateInner();
                 }
 
@@ -95,7 +97,7 @@ abstract class DBNResource extends ResourceStatusHolder implements Resource{
     }
 
     public void close() {
-        CLOSED_STATUS_ADAPTER.attempt();
+        CLOSED_STATUS_ADAPTER.change();
     }
 
     public boolean isCancelled() {
@@ -103,7 +105,7 @@ abstract class DBNResource extends ResourceStatusHolder implements Resource{
     }
 
     public void cancel() {
-        CANCELLED.attempt();
+        CANCELLED.change();
     }
 
     public boolean isValid() {
@@ -119,30 +121,6 @@ abstract class DBNResource extends ResourceStatusHolder implements Resource{
     }
 
     public void invalidate() {
-        INVALID_STATUS_CHECKER.attempt();
-    }
-
-    public static void close(final Closeable closeable, boolean background) {
-        if (closeable != null) {
-            if (background || ApplicationManager.getApplication().isDispatchThread()) {
-                new SimpleBackgroundTask("close resource") {
-                    @Override
-                    protected void execute() {
-                        close(closeable, false);
-                    }
-                }.start();
-            } else {
-                new SimpleTimeoutTask(10, TimeUnit.SECONDS) {
-                    @Override
-                    public void run() {
-                        try {
-                            closeable.closeInner();
-                        } catch (Throwable e) {
-                            LOGGER.warn("Error closing " + closeable.getResourceType() + ": " + e.getMessage());
-                        }
-                    }
-                }.start();
-            }
-        }
+        INVALID_STATUS_CHECKER.change();
     }
 }

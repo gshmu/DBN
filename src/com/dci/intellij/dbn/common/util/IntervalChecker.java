@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.intellij.openapi.application.ApplicationManager;
 
 public abstract class IntervalChecker {
@@ -17,13 +18,11 @@ public abstract class IntervalChecker {
             synchronized (this) {
                 if (!checking) {
                     checking = true;
-                    try {
-                        long currentTimeMillis = System.currentTimeMillis();
-                        if (TimeUtil.isOlderThan(lastCheck, interval) && !ApplicationManager.getApplication().isDispatchThread()) {
-                            lastCheck = currentTimeMillis;
-                            value = doCheck();
-                        }
-                    } finally {
+                    long currentTimeMillis = System.currentTimeMillis();
+                    if (TimeUtil.isOlderThan(lastCheck, interval)) {
+                        lastCheck = currentTimeMillis;
+                        checkControlled();
+                    } else {
                         checking = false;
                     }
                 }
@@ -31,6 +30,28 @@ public abstract class IntervalChecker {
         }
 
         return value;
+    }
+
+    private void checkControlled() {
+        if (ApplicationManager.getApplication().isDispatchThread()) {
+            new SimpleBackgroundTask("check resource status") {
+                @Override
+                protected void execute() {
+                    try {
+                        value = doCheck();
+                    } finally {
+                        checking = false;
+                    }
+                }
+            }.start();
+        } else {
+            try {
+                value = doCheck();
+            } finally {
+                checking = false;
+            }
+        }
+
     }
 
     public void set(boolean value) {
