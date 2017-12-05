@@ -163,9 +163,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
         if (detailSettings.isConnectAutomatically() || instructions.isAllowAutoConnect()) {
-            if (isAuthenticationProvided()) {
-                return true;
-            }
+            return isAuthenticationProvided();
         }
         return false;
     }
@@ -242,12 +240,12 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return connectionSettings.getDetailSettings().getEnvironmentType();
     }
 
-    public void commit() throws SQLException {
+    public void commit() {
         DBNConnection mainConnection = getConnectionPool().getMainConnection();
         ConnectionUtil.commit(mainConnection);
     }
 
-    public void rollback() throws SQLException {
+    public void rollback() {
         DBNConnection mainConnection = getConnectionPool().getMainConnection();
         ConnectionUtil.rollback(mainConnection);
     }
@@ -324,9 +322,12 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         connectionSettings.getPropertiesSettings().setEnableAutoCommit(autoCommit);
     }
 
-    public void disconnect() throws SQLException {
-        getConnectionPool().closeConnections();
+    public void disconnect() {
+        // explicit disconnect (reset auto-connect data)
         temporaryAuthenticationInfo = new AuthenticationInfo();
+        instructions.setAllowAutoConnect(false);
+        connectionStatus.setConnected(false);
+        getConnectionPool().closeConnections();
     }
 
     public String getId() {

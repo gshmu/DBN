@@ -243,28 +243,14 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         mainConnection = null;
     }
 
-    public void closeConnections() throws SQLException {
-        SQLException exception = null;
-        for (DBNConnection connection : poolConnections) {
-            try {
-                connection.close();
-            } catch (Exception e) {
-                exception = new SQLException(e.getClass() + ": " + e.getMessage(), e);
-            }
+    public void closeConnections() {
+        for (DBNConnection connection : new ArrayList<>(poolConnections)) {
+            ConnectionUtil.close(connection);
         }
         poolConnections.clear();
 
-        if (mainConnection != null) {
-            try {
-                mainConnection.close();
-            } catch (Exception e) {
-                exception = new SQLException(e.getClass() + ": " + e.getMessage(), e);
-            }
-            mainConnection = null;
-        }
-        if (exception != null) {
-            throw exception;
-        }
+        mainConnection = ConnectionUtil.close(mainConnection);
+        testConnection = ConnectionUtil.close(testConnection);
     }
 
     @Deprecated

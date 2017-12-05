@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-public interface Resource {
+import com.dci.intellij.dbn.common.property.PropertyHolder;
+
+public interface Resource extends PropertyHolder<ResourceStatus> {
     ResourceType getResourceType();
 }
