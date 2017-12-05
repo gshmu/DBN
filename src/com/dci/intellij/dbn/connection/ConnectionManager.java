@@ -295,7 +295,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         MessageUtil.showErrorDialog(
                 project,
                 "Connection error",
-                "Cannot connect to \"" + connectionName + "\".\n" + (e == null ? "Unknown reason" : e.getMessage()));
+                "Cannot connect to \"" + connectionName + "\".\n" + (e == null || e.getMessage() == null ? "Unknown reason" : e.getMessage()));
     }
 
     private static void showSuccessfulConnectionMessage(Project project, String connectionName) {
