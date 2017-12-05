@@ -14,13 +14,15 @@ public class ReloadObjectsAction extends AnAction {
     private DBObjectList objectList;
 
     public ReloadObjectsAction(DBObjectList objectList) {
-        super("Reload", null, Icons.ACTION_REFRESH);
+        super(objectList.isLoaded() ? "Reload" : "Load", null, Icons.ACTION_REFRESH);
         this.objectList = objectList;
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
         TaskInstructions taskInstructions = new TaskInstructions("Reloading " + objectList.getContentDescription() + ".", false, false);
-        new ConnectionAction("reloading the objects", objectList, taskInstructions) {
+        String listName = objectList.getName();
+        String actionDescription = objectList.isLoaded() ? "reloading the " + listName : "loading the " + listName;
+        new ConnectionAction(actionDescription, objectList, taskInstructions) {
             @Override
             protected void execute() {
                 objectList.reload();
