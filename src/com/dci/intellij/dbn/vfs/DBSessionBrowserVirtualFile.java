@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.fileTypes.FileType;
@@ -46,7 +47,7 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
 
     @NotNull
     @Override
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return connectionHandlerRef.getConnectionId();
     }
 

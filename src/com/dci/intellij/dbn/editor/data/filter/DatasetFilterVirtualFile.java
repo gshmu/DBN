@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
@@ -65,7 +66,7 @@ public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBPar
 
     @NotNull
     @Override
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return datasetRef.getConnectionId();
     }
 

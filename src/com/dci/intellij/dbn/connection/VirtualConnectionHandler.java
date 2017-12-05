@@ -33,7 +33,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
-    private String id;
+    private ConnectionId id;
     private String name;
     private DatabaseType databaseType;
     private double databaseVersion;
@@ -46,7 +46,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     private DBObjectBundle objectBundle;
     private ConnectionInstructions instructions = new ConnectionInstructions();
 
-    public VirtualConnectionHandler(String id, String name, DatabaseType databaseType, double databaseVersion, Project project){
+    public VirtualConnectionHandler(ConnectionId id, String name, DatabaseType databaseType, double databaseVersion, Project project){
         this.id = id;
         this.name = name;
         this.project = project;
@@ -59,7 +59,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     public static ConnectionHandler getDefault(Project project) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        return connectionManager.getConnectionBundle().getVirtualConnection("virtual-oracle-connection");
+        return connectionManager.getConnectionBundle().getVirtualConnection(ConnectionId.VIRTUAL_ORACLE_CONNECTION);
 
     }
 
@@ -115,7 +115,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return true;
     }
 
-    @Override public String getId() {return id;}
+    @Override public ConnectionId getId() {return id;}
     @NotNull
     @Override public String getName() {return name;}
     @Override public String getPresentableText() {

@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -74,7 +75,7 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
         return connectionRef == null;
     }
 
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return connectionRef == null ? null : connectionRef.getConnectionId();
     }
 

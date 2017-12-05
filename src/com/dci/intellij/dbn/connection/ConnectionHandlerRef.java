@@ -8,18 +8,18 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 
 public class ConnectionHandlerRef{
     private WeakReference<ConnectionHandler> reference;
-    private String connectionId;
+    private ConnectionId connectionId;
 
     public ConnectionHandlerRef(ConnectionHandler connectionHandler) {
         reference = new WeakReference<ConnectionHandler>(connectionHandler);
         connectionId = connectionHandler == null ? null : connectionHandler.getId();
     }
 
-    public ConnectionHandlerRef(String connectionId) {
+    public ConnectionHandlerRef(ConnectionId connectionId) {
         this.connectionId = connectionId;
     }
 
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return connectionId;
     }
 

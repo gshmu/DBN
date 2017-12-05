@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
@@ -183,7 +184,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         return mainPanel;
     }
 
-    public void focusConnectionSettings(@Nullable String connectionId) {
+    public void focusConnectionSettings(@Nullable ConnectionId connectionId) {
         ConnectionBundleSettings connectionSettings = getConfiguration().getConnectionSettings();
         ConnectionBundleSettingsForm settingsEditor = connectionSettings.getSettingsEditor();
         if (settingsEditor != null) {

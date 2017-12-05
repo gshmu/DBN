@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
@@ -269,7 +270,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     }
 
     @NotNull
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return parent.getConnectionId();
     }
 
@@ -277,7 +278,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     *                 PersistentConfiguration               *
     *********************************************************/
     public void readConfiguration(Element element) {
-        String connectionId = getString(element, "id", null);
+        ConnectionId connectionId = ConnectionId.get(getString(element, "id", null));
         if (connectionId != null) {
             parent.setConnectionId(connectionId);
         }

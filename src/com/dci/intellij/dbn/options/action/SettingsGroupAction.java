@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -55,7 +56,7 @@ public class SettingsGroupAction extends ActionGroup {
                 if (configId == ConfigId.CONNECTIONS) {
                     DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
                     ConnectionHandler activeConnection = browserManager.getActiveConnection();
-                    String connectionId = activeConnection == null ? null : activeConnection.getId();
+                    ConnectionId connectionId = activeConnection == null ? null : activeConnection.getId();
                     settingsManager.openConnectionSettings(connectionId);
                 }
                 else {

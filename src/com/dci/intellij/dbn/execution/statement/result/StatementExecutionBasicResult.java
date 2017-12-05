@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
@@ -129,7 +130,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
     }
 
     @Override
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return getExecutionInput().getConnectionId();
     }
 

@@ -1,23 +1,23 @@
 package com.dci.intellij.dbn.connection;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.impl.ProjectLifecycleListener;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 public class ConnectionCache implements ApplicationComponent{
-    private static Map<String, ConnectionHandler> CACHE = new THashMap<String, ConnectionHandler>();
+    private static Map<ConnectionId, ConnectionHandler> CACHE = new THashMap<ConnectionId, ConnectionHandler>();
 
     @Nullable
-    public static ConnectionHandler findConnectionHandler(String connectionId) {
+    public static ConnectionHandler findConnectionHandler(ConnectionId connectionId) {
         ConnectionHandler connectionHandler = CACHE.get(connectionId);
         ProjectManager projectManager = ProjectManager.getInstance();
         if (connectionHandler == null && projectManager != null) {
@@ -68,9 +68,9 @@ public class ConnectionCache implements ApplicationComponent{
 
         @Override
         public void afterProjectClosed(@NotNull Project project) {
-            Iterator<String> connectionIds = CACHE.keySet().iterator();
+            Iterator<ConnectionId> connectionIds = CACHE.keySet().iterator();
             while (connectionIds.hasNext()) {
-                String connectionId = connectionIds.next();
+                ConnectionId connectionId = connectionIds.next();
                 ConnectionHandler connectionHandler = CACHE.get(connectionId);
                 if (connectionHandler.isDisposed() || connectionHandler.getProject() == project) {
                     connectionIds.remove();

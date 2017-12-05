@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -24,13 +25,13 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     protected DBObjectRef parent;
     protected DBObjectType objectType;
     protected String objectName;
-    protected String connectionId;
+    protected ConnectionId connectionId;
     protected int overload;
 
     private WeakReference<T> reference;
     private int hashCode = -1;
 
-    public DBObjectRef(String connectionId, String identifier) {
+    public DBObjectRef(ConnectionId connectionId, String identifier) {
         deserialize(connectionId, identifier);
     }
 
@@ -54,7 +55,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         this.objectName = objectName;
     }
 
-    public DBObjectRef(String connectionId, DBObjectType objectType, String objectName) {
+    public DBObjectRef(ConnectionId connectionId, DBObjectType objectType, String objectName) {
         this.connectionId = connectionId;
         this.objectType = objectType;
         this.objectName = objectName;
@@ -92,13 +93,13 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
     public void readState(Element element) {
         if (element != null) {
-            String connectionId = element.getAttributeValue("connection-id");
+            ConnectionId connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
             String objectIdentifier = element.getAttributeValue("object-ref");
             deserialize(connectionId, objectIdentifier);
         }
     }
 
-    public void deserialize(String connectionId, String objectIdentifier) {
+    public void deserialize(ConnectionId connectionId, String objectIdentifier) {
         int typeEndIndex = objectIdentifier.indexOf("]");
         StringTokenizer objectTypes = new StringTokenizer(objectIdentifier.substring(1, typeEndIndex), "/");
 
@@ -131,7 +132,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     public void writeState(Element element) {
         String value = serialize();
 
-        element.setAttribute("connection-id", getConnectionId());
+        element.setAttribute("connection-id", getConnectionId().id());
         element.setAttribute("object-ref", value);
     }
 
@@ -213,7 +214,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
 
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return parent == null ? connectionId : parent.getConnectionId();
     }
 
@@ -353,7 +354,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBObjectRef) {
             DBObjectRef that = (DBObjectRef) o;
-            int result = this.getConnectionId().compareTo(that.getConnectionId());
+            int result = this.getConnectionId().id().compareTo(that.getConnectionId().id());
             if (result != 0) return result;
 
             if (this.parent != null && that.parent != null) {
@@ -410,7 +411,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @Override
     public int hashCode() {
         if (hashCode == -1) {
-            hashCode = (getConnectionId() + '#' + serialize()).hashCode();
+            hashCode = (getConnectionId().id() + '#' + serialize()).hashCode();
         }
         return hashCode;
     }

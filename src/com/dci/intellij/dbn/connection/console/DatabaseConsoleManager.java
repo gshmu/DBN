@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.console.ui.CreateRenameConsoleDialog;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
@@ -125,7 +126,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
         for (ConnectionHandler connectionHandler : connectionHandlers) {
             Element connectionElement = new Element("connection");
             element.addContent(connectionElement);
-            connectionElement.setAttribute("id", connectionHandler.getId());
+            connectionElement.setAttribute("id", connectionHandler.getId().id());
 
             List<DBConsoleVirtualFile> consoles = connectionHandler.getConsoleBundle().getConsoles();
             for (DBConsoleVirtualFile console : consoles) {
@@ -144,7 +145,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
     public void loadState(Element element) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         for (Element connectionElement : element.getChildren()) {
-            String connectionId = connectionElement.getAttributeValue("id");
+            ConnectionId connectionId = ConnectionId.get(connectionElement.getAttributeValue("id"));
             ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
 
             if (connectionHandler != null) {

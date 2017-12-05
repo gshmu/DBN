@@ -12,10 +12,12 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import static com.dci.intellij.dbn.connection.ConnectionId.UNKNOWN_CONNECTION;
 
 public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel implements Disposable {
     protected List<MethodExecutionInput> executionInputs;
@@ -68,9 +70,9 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
             return ConnectionHandlerRef.get(connectionHandler);
         }
 
-        public String getConnectionHandlerId() {
+        public ConnectionId getConnectionHandlerId() {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            return connectionHandler == null ? "unknown" : connectionHandler.getId();
+            return connectionHandler == null ? UNKNOWN_CONNECTION : connectionHandler.getId();
         }
 
         @Override

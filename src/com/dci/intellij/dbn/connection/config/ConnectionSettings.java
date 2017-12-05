@@ -1,21 +1,22 @@
 package com.dci.intellij.dbn.connection.config;
 
-import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
-import com.dci.intellij.dbn.vfs.DBConsoleType;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
+import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
 
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> implements ConnectionRef{
     private ConnectionBundleSettings parent;
 
-    private String connectionId;
+    private ConnectionId connectionId;
     private boolean isActive = true;
     private boolean isNew;
 
@@ -74,10 +75,10 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     }
 
     public void generateNewId() {
-        connectionId =  UUID.randomUUID().toString();
+        connectionId = ConnectionId.get(UUID.randomUUID().toString());
     }
 
-    public void setConnectionId(String connectionId) {
+    public void setConnectionId(ConnectionId connectionId) {
         this.connectionId = connectionId;
     }
 
@@ -87,7 +88,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         return new ConnectionSettingsForm(this);
     }
 
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return connectionId;
     }
 
@@ -100,7 +101,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         if (ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.get()) {
             generateNewId();
         } else {
-            connectionId = element.getAttributeValue("id");
+            connectionId = ConnectionId.get(element.getAttributeValue("id"));
         }
         isActive = getBooleanAttribute(element, "active", isActive);
         super.readConfiguration(element);
@@ -124,7 +125,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
 
     @Override
     public void writeConfiguration(Element element) {
-        element.setAttribute("id", connectionId);
+        element.setAttribute("id", connectionId.id());
         element.setAttribute("active", Boolean.toString(isActive));
         super.writeConfiguration(element);
     }

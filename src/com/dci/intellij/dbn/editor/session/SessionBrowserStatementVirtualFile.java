@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
@@ -80,8 +81,8 @@ public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implem
 
     @NotNull
     @Override
-    public String getConnectionId() {
-        return sessionBrowser == null ? "disposed" : sessionBrowser.getConnectionHandler().getId();
+    public ConnectionId getConnectionId() {
+        return sessionBrowser == null ? ConnectionId.DISPOSED_CONNECTION : sessionBrowser.getConnectionHandler().getId();
     }
 
     @Nullable

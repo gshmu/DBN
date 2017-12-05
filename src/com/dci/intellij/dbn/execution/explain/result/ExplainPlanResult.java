@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.explain.result.ui.ExplainPlanResultForm;
@@ -88,7 +89,7 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
     }
 
     @Override
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return connectionHandlerRef.getConnectionId();
     }
 

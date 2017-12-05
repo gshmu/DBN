@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -240,7 +241,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         ConnectionHandler connectionHandler = file == null ? null : file.getActiveConnection();
         if (connectionHandler == null) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-            return connectionManager.getConnectionBundle().getVirtualConnection("virtual-oracle-connection");
+            return connectionManager.getConnectionBundle().getVirtualConnection(ConnectionId.VIRTUAL_ORACLE_CONNECTION);
         }
         return connectionHandler;
     }

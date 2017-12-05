@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.navigation.GoToDatabaseObjectModel;
 import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
@@ -42,13 +43,14 @@ import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
 
 public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAware {
-    private String latestConnectionId = "";
+    private ConnectionId latestConnectionId;
     private String latestSchemaName = "";
     private String latestUsedText;
     private String latestPredefinedText;
     private String latestClipboardText;
     private ChooseByNamePopup popup;
     public void gotoActionPerformed(AnActionEvent event) {
+
         //FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.popup.file");
         Project project = event.getData(PlatformDataKeys.PROJECT);
 
@@ -88,7 +90,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                                 public boolean value(AnAction action) {
                                     if (action instanceof SelectConnectionAction) {
                                         SelectConnectionAction selectConnectionAction = (SelectConnectionAction) action;
-                                        return latestConnectionId.equals(selectConnectionAction.getConnectionHandler().getId());
+                                        return latestConnectionId == selectConnectionAction.getConnectionHandler().getId();
                                     } else if (action instanceof SelectSchemaAction) {
                                         SelectSchemaAction selectSchemaAction = (SelectSchemaAction) action;
                                         return latestSchemaName.equals(selectSchemaAction.getSchema().getName());

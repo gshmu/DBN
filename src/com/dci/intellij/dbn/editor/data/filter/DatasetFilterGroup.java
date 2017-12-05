@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetFilterForm;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -26,7 +27,7 @@ import com.intellij.openapi.project.Project;
 
 public class DatasetFilterGroup extends Configuration<DatasetFilterForm> implements ListModel {
     private Project project;
-    private String connectionId;
+    private ConnectionId connectionId;
     private String datasetName;
     private DatasetFilter activeFilter;
     private List<DatasetFilter> filters = new ArrayList<DatasetFilter>();
@@ -40,7 +41,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
         this.project = project;
     }
 
-    public DatasetFilterGroup(Project project, String connectionId, String datasetName) {
+    public DatasetFilterGroup(Project project, ConnectionId connectionId, String datasetName) {
         this.project = project;
         this.connectionId = connectionId;
         this.datasetName = datasetName;
@@ -181,7 +182,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
     }
 
 
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return connectionId;
     }
 
@@ -275,7 +276,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
    }
 
     public void readConfiguration(Element element) {
-        connectionId = element.getAttributeValue("connection-id");
+        connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
         datasetName = element.getAttributeValue("dataset");
         for (Object object : element.getChildren()){
             Element filterElement = (Element) object;
@@ -295,7 +296,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
     }
 
     public void writeConfiguration(Element element) {
-        element.setAttribute("connection-id", connectionId);
+        element.setAttribute("connection-id", connectionId.id());
         element.setAttribute("dataset", datasetName);
         for (DatasetFilter filter : filters) {
             Element filterElement = new Element("filter");

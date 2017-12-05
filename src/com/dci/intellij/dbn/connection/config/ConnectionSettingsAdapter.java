@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.connection.config;
 
+import com.dci.intellij.dbn.connection.ConnectionId;
+
 public abstract class ConnectionSettingsAdapter implements ConnectionSettingsListener {
     @Override
     public void connectionsChanged() {
@@ -7,12 +9,12 @@ public abstract class ConnectionSettingsAdapter implements ConnectionSettingsLis
     }
 
     @Override
-    public void connectionChanged(String connectionId) {
+    public void connectionChanged(ConnectionId connectionId) {
 
     }
 
     @Override
-    public void connectionNameChanged(String connectionId) {
+    public void connectionNameChanged(ConnectionId connectionId) {
 
     }
 }

@@ -1,5 +1,30 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.xmlbeans.impl.common.ReaderInputStream;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
@@ -11,6 +36,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
@@ -29,31 +55,6 @@ import com.intellij.ui.ListUtil;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.xmlbeans.impl.common.ReaderInputStream;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<ConnectionBundleSettings> implements ListSelectionListener, DataProviderSupplier {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -90,7 +91,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
         List<ConnectionSettings> connections = configuration.getConnections();
         if (connections.size() > 0) {
-            selectConnection(connections.get(0).getId());
+            selectConnection(ConnectionId.get(connections.get(0).getId()));
         }
         JPanel emptyPanel = new JPanel();
         connectionSetupPanel.setPreferredSize(new Dimension(500, -1));
@@ -130,12 +131,12 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         }
     }
 
-    public void selectConnection(@Nullable String connectionId) {
+    public void selectConnection(@Nullable ConnectionId connectionId) {
         if (connectionId != null) {
             ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
             for (int i=0; i<model.size(); i++) {
                 ConnectionSettings connectionSettings = (ConnectionSettings) model.getElementAt(i);
-                if (connectionSettings.getConnectionId().equals(connectionId)) {
+                if (connectionSettings.getConnectionId() == connectionId) {
                     connectionsList.setSelectedValue(connectionSettings, true);
                     break;
                 }
@@ -176,7 +177,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             ConnectionSettingsForm currentForm = cachedForms.get(currentPanelId);
             String selectedTabName = currentForm == null ? null : currentForm.getSelectedTabName();
 
-            currentPanelId = connectionSettings.getConnectionId();
+            currentPanelId = connectionSettings.getConnectionId().id();
             if (!cachedForms.keySet().contains(currentPanelId)) {
                 JComponent setupPanel = connectionSettings.createComponent();
                 this.connectionSetupPanel.add(setupPanel, currentPanelId);
@@ -193,7 +194,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     }
 
 
-    public String createNewConnection(@NotNull DatabaseType databaseType, @NotNull ConnectionConfigType configType) {
+    public ConnectionId createNewConnection(@NotNull DatabaseType databaseType, @NotNull ConnectionConfigType configType) {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
         connectionBundleSettings.setModified(true);
         ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings, databaseType, configType);

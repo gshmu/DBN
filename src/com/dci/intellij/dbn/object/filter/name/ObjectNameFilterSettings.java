@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -36,7 +37,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
     }
 
 
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return connectionRef.getConnectionId();
     }
 

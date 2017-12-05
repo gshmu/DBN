@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.fileTypes.FileType;
@@ -37,7 +38,7 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
 
     @NotNull
     @Override
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return connectionHandlerRef.getConnectionId();
     }
 

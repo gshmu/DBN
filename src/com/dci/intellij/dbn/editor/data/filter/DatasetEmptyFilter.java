@@ -6,6 +6,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.options.ConfigurationException;
@@ -38,7 +39,7 @@ public class DatasetEmptyFilter implements DatasetFilter{
         return buffer.toString();
     }
 
-    public String getConnectionId() { return null; }
+    public ConnectionId getConnectionId() { return null; }
     public String getDatasetName() { return null; }
     public boolean isNew() { return false; }
 

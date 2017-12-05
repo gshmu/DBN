@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -153,7 +154,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
             rebuild();
         }
 
-        public void connectionNameChanged(String connectionId) {
+        public void connectionNameChanged(ConnectionId connectionId) {
             if (browserForm instanceof TabbedBrowserForm && !browserForm.isDisposed()) {
                 TabbedBrowserForm tabbedBrowserForm = (TabbedBrowserForm) browserForm;
                 tabbedBrowserForm.refreshTabInfo(connectionId);

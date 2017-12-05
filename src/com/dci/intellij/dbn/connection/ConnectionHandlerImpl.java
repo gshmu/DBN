@@ -330,7 +330,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         getConnectionPool().closeConnections();
     }
 
-    public String getId() {
+    public ConnectionId getId() {
         return connectionSettings.getConnectionId();
     }
 

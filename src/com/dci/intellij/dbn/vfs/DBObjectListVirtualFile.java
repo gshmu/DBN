@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -52,7 +53,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
 
     @NotNull
     @Override
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return getConnectionHandler().getId();
     }
 

@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.options.ConfigId;
@@ -30,9 +31,9 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
         return ProjectSettingsManager.getSettings(project).getConnectionSettings();
     }
 
-    public ConnectionSettings getConnectionSettings(String connectionId) {
+    public ConnectionSettings getConnectionSettings(ConnectionId connectionId) {
         for (ConnectionSettings connection : connections) {
-            if (connection.getConnectionId().equals(connectionId)) {
+            if (connection.getConnectionId() == connectionId) {
                 return connection;
             }
         }

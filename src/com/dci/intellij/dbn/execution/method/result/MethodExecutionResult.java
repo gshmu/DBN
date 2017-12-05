@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -136,7 +137,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
     }
 
     @Override
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return executionInput.getConnectionId();
     }
 

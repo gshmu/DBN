@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class LogOutputContext {
@@ -109,7 +110,7 @@ public class LogOutputContext {
         }
     }
 
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return connectionHandlerRef.getConnectionId();
     }
 }

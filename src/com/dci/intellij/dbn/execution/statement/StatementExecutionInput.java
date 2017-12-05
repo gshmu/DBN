@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
@@ -171,7 +172,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         }
     }
 
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return targetConnectionRef == null ? null : targetConnectionRef.getConnectionId();
     }
 

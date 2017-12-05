@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
@@ -116,7 +117,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         return methodRef;
     }
 
-    public String getConnectionId() {
+    public ConnectionId getConnectionId() {
         return methodRef.getConnectionId();
     }
 
