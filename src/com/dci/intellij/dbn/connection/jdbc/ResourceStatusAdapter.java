@@ -2,11 +2,12 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -109,20 +110,24 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
             new SimpleTimeoutTask(10, TimeUnit.SECONDS) {
                 @Override
                 public void run() {
-                    String identifier = " " + resource.getResourceType() + " resource";
                     try {
-                        LOGGER.info(NamingUtil.capitalize(changing.toString()) + identifier);
+                        if (SettingsUtil.isDebugEnabled) LOGGER.info("Started " + getLogIdentifier());
                         changeInner();
                     } catch (Throwable e) {
-                        LOGGER.warn("Error  " + changing + identifier + " : " + e.getMessage());
+                        LOGGER.warn("Error " + getLogIdentifier() + ": " + e.getMessage());
                     } finally {
                         set(current, true);
                         set(changing, false);
-                        LOGGER.info("Done  " + changing + identifier);
+                        if (SettingsUtil.isDebugEnabled) LOGGER.info("Done " + getLogIdentifier());
                     }
                 }
             }.start();
         }
+    }
+
+    @NotNull
+    private String getLogIdentifier() {
+        return changing.toString().toLowerCase() + " " + resource.getResourceType();
     }
 
     protected abstract void changeInner() throws SQLException;
