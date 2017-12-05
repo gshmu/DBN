@@ -286,7 +286,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                             project == null || project.isDisposed() ?
                                     ConnectionCache.findConnectionHandler(getConnectionId()) :
                                     ConnectionManager.getInstance(project).getConnectionHandler(getConnectionId());
-                    if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isActive()) {
+                    if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isEnabled()) {
                         object = lookup(connectionHandler);
                         if (object != null) {
                             reference = new WeakReference<T>(object);

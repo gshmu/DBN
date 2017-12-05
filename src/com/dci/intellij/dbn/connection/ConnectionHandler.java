@@ -106,7 +106,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     @Nullable
     DBLanguageDialect resolveLanguageDialect(Language language);
     DBLanguageDialect getLanguageDialect(DBLanguage language);
-    boolean isActive();
+    boolean isEnabled();
 
     DatabaseType getDatabaseType();
     double getDatabaseVersion();
