@@ -118,7 +118,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                     } finally {
                         set(current, true);
                         set(changing, false);
-                        LOGGER.warn("Done  " + changing + identifier);
+                        LOGGER.info("Done  " + changing + identifier);
                     }
                 }
             }.start();
