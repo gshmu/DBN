@@ -11,7 +11,7 @@ public class ConnectionStatus {
     private ConnectionHandlerRef connectionHandlerRef;
 
     private AuthenticationError authenticationError;
-    private String statusMessage;
+    private Throwable connectionException;
 
     private IntervalChecker valid = new IntervalChecker(true, TimeUtil.THIRTY_SECONDS) {
         @Override
@@ -86,11 +86,15 @@ public class ConnectionStatus {
     }
 
     public String getStatusMessage() {
-        return statusMessage;
+        return connectionException == null ? null : connectionException.getMessage();
     }
 
-    public void setStatusMessage(String statusMessage) {
-        this.statusMessage = statusMessage;
+    public Throwable getConnectionException() {
+        return connectionException;
+    }
+
+    public void setConnectionException(Throwable connectionException) {
+        this.connectionException = connectionException;
     }
 
     public AuthenticationError getAuthenticationError() {

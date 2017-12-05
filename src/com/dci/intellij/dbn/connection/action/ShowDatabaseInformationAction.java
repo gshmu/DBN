@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.connection.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import org.jetbrains.annotations.NotNull;
 
 public class ShowDatabaseInformationAction extends AbstractConnectionAction {
 
@@ -22,6 +23,11 @@ public class ShowDatabaseInformationAction extends AbstractConnectionAction {
             protected void execute() {
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 ConnectionManager.showConnectionInfoDialog(connectionHandler);
+            }
+
+            @Override
+            protected boolean isManaged() {
+                return true;
             }
         }.start();
     }

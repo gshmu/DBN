@@ -21,6 +21,11 @@ public class ConnectAction extends AbstractConnectionAction {
             protected void execute() {
                 ConnectionManager.testConnection(connectionHandler, false, true);
             }
+
+            @Override
+            protected boolean isManaged() {
+                return true;
+            }
         }.start();
     }
 }
