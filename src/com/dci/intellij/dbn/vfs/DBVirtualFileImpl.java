@@ -18,7 +18,7 @@ import com.intellij.openapi.vfs.ex.dummy.DummyFileIdGenerator;
 
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable {
     private static AtomicInteger ID_STORE = new AtomicInteger(0);
-    protected int documentHashCode;
+    private int documentHashCode;
     private int id;
     protected String name;
     protected String path;
@@ -117,6 +117,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
         throw DatabaseFileSystem.READONLY_FILE_SYSTEM;
     }
 
+    @NotNull
     @Override
     public VirtualFile copy(Object requestor, @NotNull VirtualFile newParent, @NotNull String copyName) throws IOException {
         throw DatabaseFileSystem.READONLY_FILE_SYSTEM;

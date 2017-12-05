@@ -78,7 +78,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements NonPhysical
         if (index > -1) {
             String connectionId = url.substring(startIndex, index);
             ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
-            if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isActive()) {
+            if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isEnabled()) {
                 String objectPath = url.substring(index + 1);
                 if (isValidPath(objectPath) && allowFileLookup(connectionHandler)) {
                     if (objectPath.startsWith("console#")) {

@@ -35,9 +35,9 @@ import com.intellij.openapi.util.Disposer;
 
 public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, Disposable {
 
-    public static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER = new Filter<ConnectionHandler>() {
+    private static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER = new Filter<ConnectionHandler>() {
         public boolean accepts(ConnectionHandler connectionHandler) {
-            return connectionHandler != null && connectionHandler.isActive();
+            return connectionHandler != null && connectionHandler.isEnabled();
         }
     };
 
@@ -111,7 +111,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
                 Disposer.register(this, connectionHandler);
                 listChanged = true;
             } else {
-                listChanged = listChanged || connectionHandler.isActive() != connection.isActive();
+                listChanged = listChanged || connectionHandler.isEnabled() != connection.isActive();
                 connectionHandler.setSettings(connection);
                 newConnectionHandlers.add(connectionHandler);
                 oldConnectionHandlers.remove(connectionHandler);

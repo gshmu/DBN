@@ -111,7 +111,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @NotNull
     public Project getProject() {return project;}
 
-    public boolean isActive() {
+    public boolean isEnabled() {
         return true;
     }
 

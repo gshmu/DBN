@@ -65,7 +65,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private ConnectionInstructions instructions = new ConnectionInstructions();
 
-    private boolean active;
+    private boolean enabled;
     private ConnectionHandlerRef ref;
     private AuthenticationInfo temporaryAuthenticationInfo = new AuthenticationInfo();
     private ConnectionInfo connectionInfo;
@@ -97,7 +97,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     public ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
         this.connectionBundle = connectionBundle;
         this.connectionSettings = connectionSettings;
-        this.active = connectionSettings.isActive();
+        this.enabled = connectionSettings.isActive();
         ref = new ConnectionHandlerRef(this);
 
         connectionStatus = new ConnectionStatus(this);
@@ -190,7 +190,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     public void setSettings(ConnectionSettings connectionSettings) {
         this.connectionSettings = connectionSettings;
-        this.active = connectionSettings.isActive();
+        this.enabled = connectionSettings.isActive();
     }
 
     @NotNull
@@ -212,8 +212,8 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return sessionBrowserFile;
     }
 
-    public boolean isActive() {
-        return active;
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public DatabaseType getDatabaseType() {
