@@ -10,46 +10,21 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 public class ConnectionStatus {
     private ConnectionHandlerRef connectionHandlerRef;
 
-    private boolean valid = true;
     private AuthenticationError authenticationError;
     private String statusMessage;
 
-    ConnectionStatus(@NotNull ConnectionHandler connectionHandler) {
-        this.connectionHandlerRef = connectionHandler.getRef();
-    }
-
-    public boolean isConnected() {
-        return connected.check();
-    }
-
-    public void setConnected(boolean connected) {
-        this.connected.set(connected);
-    }
-
-    public boolean isValid() {
-        return valid;
-    }
-
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
-
-    public String getStatusMessage() {
-        return statusMessage;
-    }
-
-    public void setStatusMessage(String statusMessage) {
-        this.statusMessage = statusMessage;
-    }
-
-    public AuthenticationError getAuthenticationError() {
-        return authenticationError;
-    }
-
-    public void setAuthenticationError(AuthenticationError authenticationError) {
-        this.authenticationError = authenticationError;
-    }
-
+    private IntervalChecker valid = new IntervalChecker(TimeUtil.THIRTY_SECONDS) {
+        @Override
+        protected boolean doCheck() {
+            try {
+                ConnectionHandler connectionHandler = connectionHandlerRef.get();
+                connectionHandler.getMainConnection();
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+    };
 
     private IntervalChecker connected = new IntervalChecker(TimeUtil.TEN_SECONDS) {
         @Override
@@ -75,4 +50,42 @@ public class ConnectionStatus {
             return false;
         }
     };
+
+
+    ConnectionStatus(@NotNull ConnectionHandler connectionHandler) {
+        this.connectionHandlerRef = connectionHandler.getRef();
+    }
+
+    public boolean isConnected() {
+        return connected.check();
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected.set(connected);
+    }
+
+    public boolean isValid() {
+        return valid.check();
+    }
+
+    public void setValid(boolean valid) {
+        this.valid.set(valid);
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+
+    public AuthenticationError getAuthenticationError() {
+        return authenticationError;
+    }
+
+    public void setAuthenticationError(AuthenticationError authenticationError) {
+        this.authenticationError = authenticationError;
+    }
+
 }

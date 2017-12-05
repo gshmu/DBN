@@ -20,9 +20,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
@@ -68,7 +66,6 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private ConnectionInstructions instructions = new ConnectionInstructions();
 
     private boolean active;
-    private long statusCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
     private AuthenticationInfo temporaryAuthenticationInfo = new AuthenticationInfo();
     private ConnectionInfo connectionInfo;
@@ -306,30 +303,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     public boolean isValid() {
-        ConnectionBundle connectionBundle = getConnectionBundle();
-        if (connectionBundle.containsConnection(this)) {
-            long currentTimestamp = System.currentTimeMillis();
-            if (statusCheckTimestamp < currentTimestamp - TimeUtil.THIRTY_SECONDS) {
-                new SimpleBackgroundTask("verify connection") {
-                    @Override
-                    protected void execute() {
-                        statusCheckTimestamp = System.currentTimeMillis();
-                        DBNConnection testConnection = null;
-                        try {
-                            testConnection = getTestConnection();
-                        } catch (SQLException e) {
-                            if (SettingsUtil.isDebugEnabled) {
-                                LOGGER.warn("[DBN-INFO] Could not connect to database [" + getName() + "]: " + e.getMessage());
-                            }
-                        } finally {
-                            ConnectionUtil.close(testConnection);
-                        }
-                    }
-                }.start();
-            }
-            return connectionStatus.isValid();
-        }
-        return false;
+        return connectionStatus.isValid();
     }
 
     public boolean isVirtual() {
