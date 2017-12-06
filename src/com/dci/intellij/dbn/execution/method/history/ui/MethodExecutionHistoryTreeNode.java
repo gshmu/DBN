@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class MethodExecutionHistoryTreeNode extends DefaultMutableTreeNode {
 
     public Icon getIcon() {
         return
-            type == Type.CONNECTION? Icons.CONNECTION_ACTIVE :
+            type == Type.CONNECTION? Icons.CONNECTION_CONNECTED :
             type == Type.SCHEMA ? Icons.DBO_SCHEMA :
             type == Type.PACKAGE ? Icons.DBO_PACKAGE :
             type == Type.TYPE ? Icons.DBO_TYPE :

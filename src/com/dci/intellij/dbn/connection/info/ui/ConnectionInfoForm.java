@@ -95,7 +95,7 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
     private void initHeaderPanel(String connectionName, EnvironmentType environmentType) {
         DBNHeaderForm headerForm = new DBNHeaderForm();
         headerForm.setTitle(connectionName);
-        headerForm.setIcon(Icons.CONNECTION_ACTIVE);
+        headerForm.setIcon(Icons.CONNECTION_CONNECTED);
         headerForm.setBackground(environmentType.getColor());
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
