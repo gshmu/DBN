@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.code.common.intention;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -11,9 +14,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
 
 public class DatabaseConnectIntentionAction extends GenericIntentionAction implements LowPriorityAction{
     @NotNull
@@ -28,7 +28,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
 
     @Override
     public Icon getIcon(int flags) {
-        return Icons.CONNECTION_ACTIVE;
+        return Icons.CONNECTION_CONNECTED;
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {

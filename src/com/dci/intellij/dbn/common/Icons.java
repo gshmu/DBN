@@ -273,8 +273,10 @@ public class Icons {
     public static final Icon CONN_STATUS_DISCONNECTED = load("/img/common/BulbOff.png");
 
     public static final Icon CONNECTION_VIRTUAL       = load("/img/connection/ConnectionVirtual.png");
+    public static final Icon CONNECTION_CONNECTED     = load("/img/connection/ConnectionConnected.png");
     public static final Icon CONNECTION_ACTIVE        = load("/img/connection/ConnectionActive.png");
-    public static final Icon CONNECTION_ACTIVE_NEW    = load("/img/connection/ConnectionActiveNew.png");
+    public static final Icon CONNECTION_BUSY          = load("/img/connection/ConnectionBusy.png");
+    public static final Icon CONNECTION_CONNECTED_NEW = load("/img/connection/ConnectionConnectedNew.png");
     public static final Icon CONNECTION_INACTIVE      = load("/img/connection/ConnectionInactive.png");
     public static final Icon CONNECTION_DISABLED      = load("/img/connection/ConnectionDisabled.png");
     public static final Icon CONNECTION_NEW           = load("/img/connection/ConnectionNew.png");

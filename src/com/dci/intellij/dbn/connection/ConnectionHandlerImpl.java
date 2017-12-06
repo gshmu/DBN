@@ -509,7 +509,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     public Icon getIcon(){
-        return connectionStatus.isConnected() ? Icons.CONNECTION_ACTIVE : 
+        return connectionStatus.isConnected() ? Icons.CONNECTION_CONNECTED :
                connectionStatus.isValid() ? Icons.CONNECTION_INACTIVE :
                         Icons.CONNECTION_INVALID;
     }

@@ -89,7 +89,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         ConnectivityStatus connectivityStatus = databaseSettings.getConnectivityStatus();
         Icon icon = connectionSettings.isNew() ? Icons.CONNECTION_NEW :
                    !connectionSettings.isActive() ? Icons.CONNECTION_DISABLED :
-                   connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_ACTIVE :
+                   connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_CONNECTED :
                    connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
 
         headerForm = new DBNHeaderForm(connectionSettings.getDatabaseSettings().getName(), icon, detailSettings.getEnvironmentType().getColor());
