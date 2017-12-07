@@ -22,8 +22,7 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.REFERENCEABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
     private DBObjectRef<DBObject> underlyingObject;
@@ -56,8 +55,9 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
 
     @Override
     public void initProperties() {
-        properties.set(REFERENCEABLE, true);
         properties.set(SCHEMA_OBJECT, true);
+        properties.set(REFERENCEABLE, true);
+        properties.set(INVALIDABLE, true);
     }
 
     public DBObjectType getObjectType() {

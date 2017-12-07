@@ -105,17 +105,6 @@ public class DBObjectStatusHolder {
         return !is(contentType, status);
     }
 
-    public boolean has(DBObjectStatus status) {
-        if (statusEntries != null) {
-            for (Entry statusEntry : statusEntries) {
-                if (statusEntry.is(status)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     private class Entry {
         private DBContentType contentType;
         private PropertyHolder<DBObjectStatus> status = new PropertyHolderImpl<DBObjectStatus>(){

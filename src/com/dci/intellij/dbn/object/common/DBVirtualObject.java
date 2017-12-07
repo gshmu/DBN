@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.property.BasicProperty;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -68,6 +69,25 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private DBObjectType objectType;
     private BasePsiElement underlyingPsiElement;
     private BasePsiElement relevantPsiElement;
+
+    private BasicProperty<Boolean> valid = new BasicProperty<Boolean>(true) {
+        @Override
+        protected Boolean load() {
+            if (underlyingPsiElement.isValid()) {
+                if (objectType == DBObjectType.DATASET) {
+                    return true;
+                }
+                if (name.equalsIgnoreCase(relevantPsiElement.getText())) {
+                    if (relevantPsiElement instanceof IdentifierPsiElement) {
+                        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
+                        return identifierPsiElement.getObjectType() == objectType;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+    };
 
     public DBVirtualObject(DBObjectType objectType, BasePsiElement psiElement) {
         super(psiElement.getActiveConnection(), psiElement.getText());
@@ -133,21 +153,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     public boolean isValid() {
-        if (underlyingPsiElement.isValid()) {
-            if (objectType == DBObjectType.DATASET) {
-                return true;
-            }
-            if (name.equalsIgnoreCase(relevantPsiElement.getText())) {
-                if (relevantPsiElement instanceof IdentifierPsiElement) {
-                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
-                    if (identifierPsiElement.getObjectType() != objectType) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }
-        return false;
+        return valid.get();
     }
 
     @NotNull

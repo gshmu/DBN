@@ -15,7 +15,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public abstract class DBProgramImpl<P extends DBProcedure, F extends DBFunction>
         extends DBSchemaObjectImpl implements DBProgram<P, F> {
@@ -34,7 +34,9 @@ public abstract class DBProgramImpl<P extends DBProcedure, F extends DBFunction>
     @Override
     public void initProperties() {
         super.initProperties();
+        properties.set(INVALIDABLE, true);
         properties.set(COMPILABLE, true);
+        properties.set(DEBUGABLE, true);
     }
 
     public void initStatus(ResultSet resultSet) throws SQLException {

@@ -50,6 +50,7 @@ import com.dci.intellij.dbn.object.DBSystemPrivilege;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
@@ -419,7 +420,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     private boolean addToCompileList(List<DBSchemaObject> compileList, DBSchemaObject schemaObject) {
         DBSchema schema = schemaObject.getSchema();
         DBObjectStatusHolder objectStatus = schemaObject.getStatus();
-        if (!schema.isPublicSchema() && !schema.isSystemSchema() && objectStatus.has(DBObjectStatus.DEBUG) && !objectStatus.is(DBObjectStatus.DEBUG)) {
+        if (!schema.isPublicSchema() && !schema.isSystemSchema() && schemaObject.is(DBObjectProperty.DEBUGABLE) && !objectStatus.is(DBObjectStatus.DEBUG)) {
             compileList.add(schemaObject);
             return true;
         }

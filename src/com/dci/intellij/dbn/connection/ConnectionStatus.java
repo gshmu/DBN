@@ -13,6 +13,34 @@ public class ConnectionStatus {
     private AuthenticationError authenticationError;
     private Throwable connectionException;
 
+    private IntervalChecker active = new IntervalChecker(true, TimeUtil.ONE_SECOND) {
+        @Override
+        protected boolean doCheck() {
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            List<DBNConnection> connections = connectionHandler.getConnections();
+            for (DBNConnection connection : connections) {
+                if (connection.isActive()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    };
+
+    private IntervalChecker busy = new IntervalChecker(true, TimeUtil.ONE_SECOND) {
+        @Override
+        protected boolean doCheck() {
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            List<DBNConnection> connections = connectionHandler.getConnections();
+            for (DBNConnection connection : connections) {
+                if (connection.hasDataChanges()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    };
+
     private IntervalChecker valid = new IntervalChecker(true, TimeUtil.THIRTY_SECONDS) {
         @Override
         protected boolean doCheck() {
@@ -105,4 +133,11 @@ public class ConnectionStatus {
         this.authenticationError = authenticationError;
     }
 
+    public boolean isBusy() {
+        return busy.check();
+    }
+
+    public boolean isActive() {
+        return active.check();
+    }
 }

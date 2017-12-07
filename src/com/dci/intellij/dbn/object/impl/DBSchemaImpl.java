@@ -422,7 +422,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 while (resultSet != null && resultSet.next()) {
                     String objectName = resultSet.getString("OBJECT_NAME");
                     DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
-                    if (schemaObject != null && schemaObject.getStatus().has(DBObjectStatus.VALID)) {
+                    if (schemaObject != null && schemaObject.is(INVALIDABLE)) {
                         DBObjectStatusHolder objectStatus = schemaObject.getStatus();
                         boolean statusChanged;
 
@@ -450,7 +450,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 while (resultSet != null && resultSet.next()) {
                     String objectName = resultSet.getString("OBJECT_NAME");
                     DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
-                    if (schemaObject != null && schemaObject.getStatus().has(DBObjectStatus.DEBUG)) {
+                    if (schemaObject != null && schemaObject.is(DETERMINISTIC)) {
                         DBObjectStatusHolder objectStatus = schemaObject.getStatus();
                         boolean statusChanged;
 
@@ -498,12 +498,12 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                     if (object instanceof DBSchemaObject) {
                         DBSchemaObject schemaObject = (DBSchemaObject) object;
                         DBObjectStatusHolder objectStatus = schemaObject.getStatus();
-                        if (objectStatus.has(DBObjectStatus.VALID)) {
+                        if (schemaObject.is(INVALIDABLE)) {
                             if (objectStatus.set(DBObjectStatus.VALID, true)) {
                                 refreshNodes.add(object.getParent());
                             }
                         }
-                        if (objectStatus.has(DBObjectStatus.DEBUG)) {
+                        if (schemaObject.is(DEBUGABLE)) {
                             if (objectStatus.set(DBObjectStatus.DEBUG, false)) {
                                 refreshNodes.add(object.getParent());
                             }
