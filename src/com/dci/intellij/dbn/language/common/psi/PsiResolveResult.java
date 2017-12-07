@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.psi;
 import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -12,22 +13,16 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.*;
 
-public class PsiResolveResult {
-    public static final Key<PsiResolveResult> DATA_KEY = new Key<PsiResolveResult>("DBN_RESOLVE_RESULT");
-
+public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     private ConnectionHandlerRef activeConnection;
     private DBObjectRef<DBSchema> currentSchema;
     private WeakReference<IdentifierPsiElement> element;
     private WeakReference<BasePsiElement> parent;
     private WeakReference<PsiElement> referencedElement;
     private CharSequence text;
-    private boolean isNew;
-    private boolean isResolving;
-    private boolean isConnectionValid;
-    private boolean isConnectionActive;
     private long lastResolveInvocation = 0;
     private int scopeTextLength;
     private int resolveTrials = 0;
@@ -36,7 +31,12 @@ public class PsiResolveResult {
     PsiResolveResult(IdentifierPsiElement element) {
         this.activeConnection = ConnectionHandlerRef.from(element.getActiveConnection());
         this.element = new WeakReference<IdentifierPsiElement>(element);
-        this.isNew = true;
+        set(PsiResolveStatus.NEW, true);
+    }
+
+    @Override
+    protected PsiResolveStatus[] getProperties() {
+        return PsiResolveStatus.values();
     }
 
     public void accept(IdentifierPsiElement element) {
@@ -44,11 +44,11 @@ public class PsiResolveResult {
     }
 
     public void preResolve(IdentifierPsiElement psiElement) {
-        this.isResolving = true;
+        set(RESOLVING, true);
         this.text = psiElement.getUnquotedText();
         ConnectionHandler connectionHandler = psiElement.getActiveConnection();
-        this.isConnectionValid = connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.isValid();
-        this.isConnectionActive = connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.canConnect();
+        set(CONNECTION_VALID, connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.isValid());
+        set(CONNECTION_ACTIVE, connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.canConnect());
         this.referencedElement = null;
         this.parent = null;
         this.activeConnection = ConnectionHandlerRef.from(connectionHandler);
@@ -61,20 +61,24 @@ public class PsiResolveResult {
     }
 
     public void postResolve() {
-        this.isNew = false;
+        set(NEW, false);
         PsiElement referencedElement = this.referencedElement == null ? null : this.referencedElement.get();
         this.resolveTrials = referencedElement == null ? resolveTrials + 1 : 0;
         this.overallResolveTrials = referencedElement == null ? overallResolveTrials + 1 : 0;
-        this.isResolving = false;
+        set(RESOLVING, false);
     }
 
     public boolean isResolving() {
-        return isResolving;
+        return is(RESOLVING);
+    }
+
+    public boolean isNew() {
+        return is(NEW);
     }
 
     boolean isDirty() {
-        if (isResolving) return false;
-        if (isNew) return true;
+        if (isResolving()) return false;
+        if (isNew()) return true;
 
         if (resolveTrials > 3 && lastResolveInvocation < System.currentTimeMillis() - 3000) {
             lastResolveInvocation = System.currentTimeMillis();
@@ -115,14 +119,10 @@ public class PsiResolveResult {
                 return true;
             } else if (referencedElement instanceof DBObjectPsiElement) {
                 DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) referencedElement;
-                if (objectPsiElement.getObject().getParentObject() != parent.resolveUnderlyingObject()) {
-                    return true;
-                }
+                return objectPsiElement.getObject().getParentObject() != parent.resolveUnderlyingObject();
             }
         } else {
-            if (element != null && element.isPrecededByDot()) {
-                return true;
-            }
+            return element != null && element.isPrecededByDot();
         }
         return false;
     }
@@ -147,11 +147,11 @@ public class PsiResolveResult {
     }
 
     private boolean connectionBecameValid(ConnectionHandler connectionHandler) {
-        return !isConnectionValid && connectionHandler!= null && !connectionHandler.isVirtual() && connectionHandler.isValid();
+        return isNot(CONNECTION_VALID) && connectionHandler!= null && !connectionHandler.isVirtual() && connectionHandler.isValid();
     }
 
     private boolean connectionBecameActive(ConnectionHandler connectionHandler) {
-        return !isConnectionActive && connectionHandler!= null && !connectionHandler.isVirtual() && connectionHandler.canConnect();
+        return isNot(CONNECTION_ACTIVE) && connectionHandler!= null && !connectionHandler.isVirtual() && connectionHandler.canConnect();
     }
 
     private boolean enclosingScopeChanged() {

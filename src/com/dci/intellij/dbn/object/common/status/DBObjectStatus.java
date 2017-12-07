@@ -12,12 +12,19 @@ public enum DBObjectStatus implements Property {
     DEBUG(true, true),
     COMPILING(false, false);
 
-    private boolean propagable;
-    private boolean defaultValue;
+    private final int index;
+    private final boolean propagable;
+    private final boolean defaultValue;
 
     DBObjectStatus(boolean propagable, boolean defaultValue) {
+        this.index = PropertyHolderImpl.idx(this);
         this.propagable = propagable;
         this.defaultValue = defaultValue;
+    }
+
+    @Override
+    public int index() {
+        return index;
     }
 
     public boolean isPropagable() {
@@ -26,11 +33,6 @@ public enum DBObjectStatus implements Property {
 
     public boolean getDefaultValue() {
         return defaultValue;
-    }
-
-    @Override
-    public int index() {
-        return PropertyHolderImpl.idx(this);
     }
 
     @Override
