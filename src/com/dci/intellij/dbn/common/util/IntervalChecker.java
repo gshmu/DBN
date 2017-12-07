@@ -38,20 +38,21 @@ public abstract class IntervalChecker {
             new SimpleBackgroundTask("check resource status") {
                 @Override
                 protected void execute() {
-                    try {
-                        value = doCheck();
-                    } finally {
-                        checking = false;
-                    }
+                    checkControlled();
                 }
             }.start();
         } else {
+            boolean oldValue = this.value;
             try {
                 value = doCheck();
             } finally {
                 checking = false;
+                if (value != oldValue) changed();
             }
         }
+    }
+
+    public void changed() {
 
     }
 

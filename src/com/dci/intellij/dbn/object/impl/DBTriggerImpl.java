@@ -85,6 +85,8 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
         properties.set(DISABLEABLE, true);
         properties.set(REFERENCEABLE, true);
         properties.set(COMPILABLE, true);
+        properties.set(DEBUGABLE, true);
+        properties.set(INVALIDABLE, true);
         properties.set(SCHEMA_OBJECT, true);
     }
 

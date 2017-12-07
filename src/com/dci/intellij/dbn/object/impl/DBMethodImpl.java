@@ -26,8 +26,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DETERMINISTIC;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMethod {
     protected DBObjectList<DBArgument> arguments;
@@ -55,6 +54,8 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     public void initProperties() {
         super.initProperties();
         properties.set(COMPILABLE, true);
+        properties.set(INVALIDABLE, true);
+        properties.set(DEBUGABLE, true);
     }
 
     @Override

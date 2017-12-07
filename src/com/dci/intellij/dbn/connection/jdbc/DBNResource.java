@@ -42,6 +42,11 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
                 protected boolean checkInner() throws SQLException {
                     return closeable.isClosedInner();
                 }
+
+                @Override
+                public void changed() {
+                    statusChanged(ResourceStatus.CLOSED);
+                }
             };
         }
 
@@ -59,6 +64,11 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
                 @Override
                 protected boolean checkInner() throws SQLException {
                     return cancellable.isCancelledInner();
+                }
+
+                @Override
+                public void changed() {
+                    statusChanged(ResourceStatus.CANCELLED);
                 }
             };
         }
@@ -79,8 +89,17 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
                 protected boolean checkInner() throws SQLException {
                     return invalidable.isInvalidInner();
                 }
+
+                @Override
+                public void changed() {
+                    statusChanged(ResourceStatus.INVALID);
+                }
             };
         }
+    }
+
+    protected void statusChanged(ResourceStatus status) {
+
     }
 
     @Override
