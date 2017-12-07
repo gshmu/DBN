@@ -16,9 +16,15 @@ public enum DBDebugProcessStatus implements Property{
     DEBUGGER_STOPPING;
 
 
+    private final int index;
+
+    DBDebugProcessStatus() {
+        this.index = PropertyHolderImpl.idx(this);
+    }
+
     @Override
     public int index() {
-        return PropertyHolderImpl.idx(this);
+        return index;
     }
 
     @Override

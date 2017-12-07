@@ -18,10 +18,6 @@ public enum ResourceStatus implements Property {
     CANCELLING,
     CHECKING_CANCELLED,
 
-    //statement
-
-
-
     // connection
     ACTIVE,
     RESERVED,
@@ -30,15 +26,15 @@ public enum ResourceStatus implements Property {
     ROLLING_BACK,
     RESOLVING_TRANSACTION;
 
-    private int idx;
+    private final int index;
 
     ResourceStatus() {
-        this.idx = PropertyHolderImpl.idx(this);
+        this.index = PropertyHolderImpl.idx(this);
     }
 
     @Override
     public int index() {
-        return idx;
+        return index;
     }
 
     @Override

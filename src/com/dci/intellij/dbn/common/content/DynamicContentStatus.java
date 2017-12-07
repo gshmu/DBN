@@ -11,15 +11,15 @@ public enum DynamicContentStatus implements Property {
     LOADING,
     LOADING_IN_BACKGROUND;
 
-    private int idx;
+    private final int index;
 
     DynamicContentStatus() {
-        this.idx = PropertyHolderImpl.idx(this);
+        this.index = PropertyHolderImpl.idx(this);
     }
 
     @Override
     public int index() {
-        return idx;
+        return index;
     }
 
     @Override

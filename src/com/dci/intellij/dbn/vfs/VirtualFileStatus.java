@@ -15,9 +15,9 @@ public enum VirtualFileStatus implements Property{
     SAVING,
     REFRESHING;
 
-    private int index;
-    private boolean implicit;
-    private PropertyGroup group;
+    private final int index;
+    private final boolean implicit;
+    private final PropertyGroup group;
 
     VirtualFileStatus(PropertyGroup group, boolean implicit) {
         this.index = PropertyHolderImpl.idx(this);
