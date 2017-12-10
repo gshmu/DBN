@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+
 import com.dci.intellij.dbn.common.index.IndexedContainer;
+import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -10,20 +13,23 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashSet;
 
-import java.util.Set;
-
 public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> extends ElementTypeLookupCacheBase<T> {
 
     private IndexedContainer<LeafElementType> allPossibleLeafs;
-    protected Set<LeafElementType> firstPossibleLeafs;
-    protected Set<LeafElementType> firstRequiredLeafs;
+    Set<LeafElementType> firstPossibleLeafs;
+    Set<LeafElementType> firstRequiredLeafs;
 
     private IndexedContainer<TokenType> allPossibleTokens;
-    protected Set<TokenType> firstPossibleTokens;
-    protected Set<TokenType> firstRequiredTokens;
-    private Boolean startsWithIdentifier;
+    private Set<TokenType> firstPossibleTokens;
+    private Set<TokenType> firstRequiredTokens;
+    private SimpleLazyValue<Boolean> startsWithIdentifier = new SimpleLazyValue<Boolean>() {
+        @Override
+        protected Boolean load() {
+            return checkStartsWithIdentifier();
+        }
+    };
 
-    public ElementTypeLookupCacheBaseIndexed(T elementType) {
+    ElementTypeLookupCacheBaseIndexed(T elementType) {
         super(elementType);
         if (!elementType.isLeaf()) {
             allPossibleLeafs = new IndexedContainer<LeafElementType>();
@@ -139,15 +145,10 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
     }
 
     public boolean startsWithIdentifier() {
-        if (startsWithIdentifier == null) {
-            synchronized (this) {
-                if (startsWithIdentifier == null) {
-                    startsWithIdentifier = startsWithIdentifier(null);
-                }
-            }
-        }
-        return startsWithIdentifier;
+        return startsWithIdentifier.get();
     }
+
+    protected abstract boolean checkStartsWithIdentifier();
 
     protected boolean isWrapperBeginLeaf(LeafElementType leaf) {
         WrappingDefinition wrapping = elementType.getWrapping();

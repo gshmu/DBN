@@ -1,15 +1,14 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 public class IterationElementTypeLookupCache extends ElementTypeLookupCacheBase<IterationElementType> {
     public IterationElementTypeLookupCache(IterationElementType elementType) {
@@ -123,10 +122,6 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCacheBase<
     @Override
     public boolean isFirstRequiredToken(TokenType tokenType) {
         return getIteratedElementType().getLookupCache().isFirstRequiredToken(tokenType);
-    }
-
-    public boolean startsWithIdentifier(PathNode node) {
-        return getElementType().getIteratedElementType().getLookupCache().startsWithIdentifier(node);
     }
 
     @Override

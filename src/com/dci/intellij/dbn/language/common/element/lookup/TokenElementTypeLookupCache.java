@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.intellij.util.containers.HashSet;
-
-import java.util.Set;
 
 public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<TokenElementType>{
     public TokenElementTypeLookupCache(TokenElementType elementType) {
@@ -43,10 +42,6 @@ public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<Toke
     @Override
     public boolean containsToken(TokenType tokenType) {
         return getTokenType() == tokenType;
-    }
-
-    public boolean startsWithIdentifier(PathNode node) {
-        return getTokenType().isIdentifier();
     }
 
     @Override
