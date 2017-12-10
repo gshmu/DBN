@@ -243,13 +243,13 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     }
 
     @Override
-    public boolean isNot(ElementTypeAttribute attribute) {
-        return !is(attribute);
+    public boolean set(ElementTypeAttribute attribute, boolean value) {
+        throw new AbstractMethodError("Operation not allowed");
     }
 
     @Override
-    public boolean set(ElementTypeAttribute attribute, boolean value) {
-        throw new AbstractMethodError("Operation not allowed");
+    public boolean isNot(ElementTypeAttribute attribute) {
+        return !is(attribute);
     }
 
     public FormattingDefinition getFormatting() {
