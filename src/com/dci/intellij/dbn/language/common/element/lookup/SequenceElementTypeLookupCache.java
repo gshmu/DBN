@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
-
-import java.util.Set;
 
 public class SequenceElementTypeLookupCache<T extends SequenceElementType> extends ElementTypeLookupCacheBaseIndexed<T> {
 
@@ -54,10 +53,10 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         return false;
     }
 
-    public boolean startsWithIdentifier(PathNode node) {
+    public boolean checkStartsWithIdentifier() {
         ElementTypeRef[] children = getElementType().getChildren();
         for (ElementTypeRef child : children) {
-            if (child.getLookupCache().startsWithIdentifier(node)) {
+            if (child.getLookupCache().startsWithIdentifier()) {
                 return true;
             }
 
