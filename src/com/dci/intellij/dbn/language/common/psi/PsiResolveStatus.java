@@ -10,11 +10,7 @@ public enum PsiResolveStatus implements Property{
     CONNECTION_VALID,
     CONNECTION_ACTIVE;
 
-    private final int index;
-
-    PsiResolveStatus() {
-        this.index = PropertyHolderImpl.idx(this);
-    }
+    private final int index = PropertyHolderImpl.idx(this);
 
     @Override
     public int index() {

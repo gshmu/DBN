@@ -79,7 +79,11 @@ public abstract class PropertyHolderImpl<T extends Property> extends DisposableB
     }
 
     public static int idx(Enum property) {
-        return (int) Math.pow(2, property.ordinal());
+        double pow = Math.pow(2, property.ordinal());
+        if (pow > Integer.MAX_VALUE) {
+            System.out.println(pow);
+        }
+        return (int) pow;
     }
 
     @Override

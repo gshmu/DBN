@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
-import java.util.EnumSet;
-import java.util.Set;
+import com.dci.intellij.dbn.common.property.Property;
+import com.dci.intellij.dbn.common.property.PropertyGroup;
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
-public enum ElementTypeAttribute {
+public enum ElementTypeAttribute implements Property{
     
     ROOT("ROOT", "Executable statement"),
     EXECUTABLE("EXECUTABLE", "Executable statement"),
@@ -37,11 +38,25 @@ public enum ElementTypeAttribute {
     COLUMN_PARAMETER_PROVIDER("COLUMN_PARAMETER_PROVIDER", "Column parameter provider"),
     ;
 
-    public static final Set<ElementTypeAttribute> EMPTY_LIST = EnumSet.noneOf(ElementTypeAttribute.class);
-
     private String name;
     private String description;
     private boolean specific;
+    private final int index = PropertyHolderImpl.idx(this);
+
+    @Override
+    public int index() {
+        return index;
+    }
+
+    @Override
+    public PropertyGroup group() {
+        return null;
+    }
+
+    @Override
+    public boolean implicit() {
+        return false;
+    }
 
     ElementTypeAttribute(String name, String description) {
         this(name, description, false);

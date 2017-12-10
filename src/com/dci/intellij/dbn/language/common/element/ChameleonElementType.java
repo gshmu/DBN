@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBundle;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
@@ -102,11 +101,6 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     }
 
     @Override
-    public ElementTypeAttributesBundle getAttributes() {
-        return null;
-    }
-
-    @Override
     public WrappingDefinition getWrapping() {
         return null;
     }
@@ -140,6 +134,16 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
 
     public boolean is(ElementTypeAttribute attribute) {
         return false;
+    }
+
+    @Override
+    public boolean isNot(ElementTypeAttribute status) {
+        return true;
+    }
+
+    @Override
+    public boolean set(ElementTypeAttribute status, boolean value) {
+        throw new AbstractMethodError("Operation not allowed");
     }
 
     public boolean isLeaf() {

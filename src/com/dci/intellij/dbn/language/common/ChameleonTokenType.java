@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.language.common;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -9,15 +13,10 @@ import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBundle;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
 
 public class ChameleonTokenType extends SimpleTokenType implements ElementType {
     private DBLanguageDialect injectedLanguage;
@@ -65,6 +64,16 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
         return false;
     }
 
+    @Override
+    public boolean set(ElementTypeAttribute status, boolean value) {
+        throw new AbstractMethodError("Operation not allowed");
+    }
+
+    @Override
+    public boolean isNot(ElementTypeAttribute status) {
+        return true;
+    }
+
     public boolean isLeaf() {
         return false;
     }
@@ -82,11 +91,6 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
     }
 
     public ElementTypeBundle getElementBundle() {
-        return null;
-    }
-
-    @Override
-    public ElementTypeAttributesBundle getAttributes() {
         return null;
     }
 

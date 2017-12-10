@@ -30,7 +30,7 @@ import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBundle;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributeHolder;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.diagnostic.Logger;
@@ -52,9 +52,8 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     private ElementTypeParser parser;
     private ElementTypeBundle bundle;
     private ElementType parent;
-
     private DBObjectType virtualObjectType;
-    private ElementTypeAttributesBundle attributes = ElementTypeAttributesBundle.EMPTY;
+    private ElementTypeAttributeHolder attributes;
 
     protected WrappingDefinition wrapping;
 
@@ -137,7 +136,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         String attributesString = def.getAttributeValue("attributes");
         if (StringUtil.isNotEmptyOrSpaces(attributesString)) {
-            attributes =  new ElementTypeAttributesBundle(attributesString);
+            attributes =  new ElementTypeAttributeHolder(attributesString);
         }
 
         String objectTypeName = def.getAttributeValue("virtual-object");
@@ -238,12 +237,19 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return parser;
     }
 
+
     public boolean is(ElementTypeAttribute attribute) {
-        return attributes.is(attribute);
+        return attributes != null && attributes.is(attribute);
     }
 
-    public ElementTypeAttributesBundle getAttributes() {
-        return attributes;
+    @Override
+    public boolean isNot(ElementTypeAttribute attribute) {
+        return !is(attribute);
+    }
+
+    @Override
+    public boolean set(ElementTypeAttribute attribute, boolean value) {
+        throw new AbstractMethodError("Operation not allowed");
     }
 
     public FormattingDefinition getFormatting() {
