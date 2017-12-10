@@ -12,12 +12,11 @@ public enum DBObjectStatus implements Property {
     DEBUG(true, true),
     COMPILING(false, false);
 
-    private final int index;
+    private final int index = PropertyHolderImpl.idx(this);
     private final boolean propagable;
     private final boolean defaultValue;
 
     DBObjectStatus(boolean propagable, boolean defaultValue) {
-        this.index = PropertyHolderImpl.idx(this);
         this.propagable = propagable;
         this.defaultValue = defaultValue;
     }

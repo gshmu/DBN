@@ -26,7 +26,6 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBundle;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
@@ -84,10 +83,6 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         }
 
         return formattingAttributes;
-    }
-
-    public ElementTypeAttributesBundle getElementTypeAttributes() {
-        return elementType.getAttributes();
     }
 
     public FormattingAttributes getFormattingAttributesRecursive(boolean left) {

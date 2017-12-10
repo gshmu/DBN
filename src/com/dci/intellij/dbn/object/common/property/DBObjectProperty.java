@@ -48,11 +48,7 @@ public enum DBObjectProperty implements Property {
     FOR_EACH_ROW
     ;
 
-    private final int index;
-
-    DBObjectProperty() {
-        this.index = PropertyHolderImpl.idx(this);
-    }
+    private final int index = PropertyHolderImpl.idx(this);
 
     @Override
     public int index() {

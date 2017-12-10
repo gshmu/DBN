@@ -26,11 +26,7 @@ public enum ResourceStatus implements Property {
     ROLLING_BACK,
     RESOLVING_TRANSACTION;
 
-    private final int index;
-
-    ResourceStatus() {
-        this.index = PropertyHolderImpl.idx(this);
-    }
+    private final int index = PropertyHolderImpl.idx(this);
 
     @Override
     public int index() {

@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.language.common.element.lookup;
 import java.util.Set;
 
 import com.dci.intellij.dbn.common.index.IndexedContainer;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -22,12 +21,7 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
     private IndexedContainer<TokenType> allPossibleTokens;
     private Set<TokenType> firstPossibleTokens;
     private Set<TokenType> firstRequiredTokens;
-    private SimpleLazyValue<Boolean> startsWithIdentifier = new SimpleLazyValue<Boolean>() {
-        @Override
-        protected Boolean load() {
-            return checkStartsWithIdentifier();
-        }
-    };
+    private Boolean startsWithIdentifier;
 
     ElementTypeLookupCacheBaseIndexed(T elementType) {
         super(elementType);
@@ -145,7 +139,14 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
     }
 
     public boolean startsWithIdentifier() {
-        return startsWithIdentifier.get();
+        if (startsWithIdentifier == null) {
+            synchronized (this) {
+                if (startsWithIdentifier == null) {
+                    startsWithIdentifier = checkStartsWithIdentifier();
+                }
+            }
+        }
+        return startsWithIdentifier;
     }
 
     protected abstract boolean checkStartsWithIdentifier();

@@ -10,11 +10,7 @@ public enum ExecutionStatus implements Property {
     EXECUTING,
     CANCELLED;
 
-    private final int index;
-
-    ExecutionStatus() {
-        this.index = PropertyHolderImpl.idx(this);
-    }
+    private final int index = PropertyHolderImpl.idx(this);
 
     @Override
     public int index() {
