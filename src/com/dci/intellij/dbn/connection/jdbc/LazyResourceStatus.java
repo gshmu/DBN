@@ -27,7 +27,6 @@ public abstract class LazyResourceStatus {
                         checkControlled();
                     } else {
                         checking = false;
-                        dirty = false;
                     }
                 }
             }
@@ -49,6 +48,7 @@ public abstract class LazyResourceStatus {
             try {
                 value = doCheck();
             } finally {
+                dirty = false;
                 checking = false;
                 if (value != oldValue) statusChanged();
             }
