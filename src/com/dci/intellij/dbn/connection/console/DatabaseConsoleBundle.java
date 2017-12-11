@@ -1,27 +1,27 @@
 package com.dci.intellij.dbn.connection.console;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
-import com.intellij.openapi.Disposable;
+import com.intellij.util.containers.ContainerUtil;
 
-public class DatabaseConsoleBundle implements Disposable{
+public class DatabaseConsoleBundle extends DisposableBase {
     private ConnectionHandlerRef connectionHandlerRef;
 
-    private List<DBConsoleVirtualFile> consoles = new ArrayList<DBConsoleVirtualFile>();
+    private List<DBConsoleVirtualFile> consoles = ContainerUtil.createLockFreeCopyOnWriteList();
 
     public DatabaseConsoleBundle(ConnectionHandler connectionHandler) {
+        super(connectionHandler);
         this.connectionHandlerRef = connectionHandler.getRef();
     }
 
@@ -83,25 +83,18 @@ public class DatabaseConsoleBundle implements Disposable{
         DBConsoleVirtualFile console = new DBConsoleVirtualFile(connectionHandler, name, type);
         consoles.add(console);
         Collections.sort(consoles);
-        Map<String, DBConsoleType> configConsoles = connectionHandler.getSettings().getConsoles();
-        if (!configConsoles.keySet().contains(name)) {
-            configConsoles.put(name, type);
-        }
-
         return console;
     }
 
     public void removeConsole(String name) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
         DBConsoleVirtualFile console = getConsole(name);
         consoles.remove(console);
-        Map<String, DBConsoleType> configConsoles = connectionHandler.getSettings().getConsoles();
-        configConsoles.remove(name);
         DisposerUtil.dispose(console);
     }
 
     @Override
     public void dispose() {
+        super.dispose();
         DisposerUtil.dispose(consoles);
     }
 

@@ -41,6 +41,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     private DBNConnection testConnection;
 
     ConnectionPool(@NotNull ConnectionHandler connectionHandler) {
+        super(connectionHandler);
         this.connectionHandlerRef = connectionHandler.getRef();
         POOL_CLEANER_TASK.registerConnectionPool(this);
     }
@@ -61,6 +62,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         return mainConnection;
     }
 
+    @NotNull
     public DBNConnection ensureSessionConnection(SessionId sessionId) throws SQLException {
         DBNConnection connection = sessionConnections.get(sessionId);
         connection = init(connection, ConnectionType.SESSION);

@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -16,7 +15,6 @@ import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
-import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.intellij.openapi.project.Project;
 
 public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBundleSettingsForm> implements TopLevelConfig {
@@ -111,17 +109,6 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
             ConnectionSettings connection = new ConnectionSettings(this);
             connection.readConfiguration(connectionElement);
             connections.add(connection);
-
-            // TODO remove (backward compatibility)
-            Element consolesElement = connectionElement.getChild("consoles");
-            if (consolesElement != null) {
-                for (Object c : consolesElement.getChildren()) {
-                    Element consoleElement = (Element) c;
-                    String consoleName = consoleElement.getAttributeValue("name");
-                    DBConsoleType consoleType = SettingsUtil.getEnumAttribute(consoleElement, "type", DBConsoleType.STANDARD);
-                    connection.getConsoles().put(consoleName, consoleType);
-                }
-            }
         }
 
         if (!project.isDefault()) {
@@ -136,17 +123,6 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
             Element connectionElement = new Element("connection");
             connectionSetting.writeConfiguration(connectionElement);
             element.addContent(connectionElement);
-
-/*            Element consolesElement = new Element("consoles");
-            connectionElement.addContent(consolesElement);
-            Map<String, DBConsoleType> consoles = connectionSetting.getConsoles();
-            for (String consoleName : consoles.keySet()) {
-                DBConsoleType consoleType = consoles.get(consoleName);
-                Element consoleElement = new Element("console");
-                consoleElement.setAttribute("name", consoleName);
-                consoleElement.setAttribute("type", consoleType.name());
-                consolesElement.addContent(consoleElement);
-            }*/
         }
     }
 

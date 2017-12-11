@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -56,7 +57,13 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
 
     @NotNull
     ConnectionHandlerStatus getConnectionStatus();
+
+    @NotNull
     DatabaseConsoleBundle getConsoleBundle();
+
+    @NotNull
+    DatabaseSessionBundle getSessionBundle();
+
     DBSessionBrowserVirtualFile getSessionBrowserFile();
     ConnectionInstructions getInstructions();
 
