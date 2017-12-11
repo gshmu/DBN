@@ -432,8 +432,9 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
 
     @Override
     public boolean hasPendingTransactions(@NotNull DBNConnection connection) {
+        ResultSet resultSet = null;
         try {
-            ResultSet resultSet = executeQuery(connection, true, "count-pending-transactions");
+            resultSet = executeQuery(connection, true, "count-pending-transactions");
             try {
                 resultSet.next();
                 int count = resultSet.getInt("COUNT");
@@ -443,6 +444,8 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
             }
         } catch (SQLException e) {
             return isValid(connection);
+        } finally {
+            ConnectionUtil.close(resultSet);
         }
     }
 }

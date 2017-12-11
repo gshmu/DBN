@@ -23,7 +23,6 @@ import java.util.Calendar;
 import java.util.Map;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 
 public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, Closeable {
     private WeakReference<DBNStatement> statement;
@@ -71,25 +70,6 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
     @Override
     public void closeInner() throws SQLException {
         inner.close();
-    }
-
-    public abstract static class ManagedLoader  {
-        private DBNResultSet resultSet;
-
-        public ManagedLoader(DBNResultSet resultSet) {
-            this.resultSet = resultSet;
-        }
-
-        public final void load() throws SQLException{
-            DBNConnection connection = resultSet.getConnection();
-            try {
-                connection.set(ACTIVE, true);
-                execute();
-            } finally {
-                connection.set(ACTIVE, false);
-            }
-        }
-        protected abstract void execute() throws SQLException;
     }
 
     /********************************************************************

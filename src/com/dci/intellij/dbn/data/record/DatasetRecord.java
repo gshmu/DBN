@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
+import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -74,14 +75,19 @@ public class DatasetRecord implements Disposable {
             }
 
             resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                index = 1;
+            try {
+                connection.set(ResourceStatus.ACTIVE, true);
+                if (resultSet.next()) {
+                    index = 1;
 
-                for (DBColumn column : dataset.getColumns()) {
-                    Object value = column.getDataType().getValueFromResultSet(resultSet, index);
-                    values.put(column.getName(), value);
-                    index++;
+                    for (DBColumn column : dataset.getColumns()) {
+                        Object value = column.getDataType().getValueFromResultSet(resultSet, index);
+                        values.put(column.getName(), value);
+                        index++;
+                    }
                 }
+            } finally {
+                connection.set(ResourceStatus.ACTIVE, false);
             }
         }  finally {
             ConnectionUtil.close(resultSet);
