@@ -12,14 +12,16 @@ public abstract class SimpleTimeoutTask implements Runnable{
 
     private long timeout;
     private TimeUnit timeoutUnit;
+    private boolean daemon;
 
-    public SimpleTimeoutTask(long timeout, TimeUnit timeoutUnit) {
+    protected SimpleTimeoutTask(long timeout, TimeUnit timeoutUnit, boolean daemon) {
         this.timeout = timeout;
         this.timeoutUnit = timeoutUnit;
+        this.daemon = daemon;
     }
 
     public final void start() {
-        Future future = SimpleTimeoutCall.POOL.submit(this);
+        Future future = ThreadFactory.timeoutExecutor(daemon).submit(this);
         try {
             future.get(timeout, timeoutUnit);
         } catch (TimeoutException ignore) {

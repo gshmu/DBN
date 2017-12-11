@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 
 public abstract class ResourceStatusAdapter<T extends Resource> {
@@ -101,30 +100,32 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
     private void changeControlled() {
-        if (ApplicationManager.getApplication().isDispatchThread()) {
-            new SimpleBackgroundTask("close resource") {
-                @Override
-                protected void execute() {
-                    changeControlled();
+        new SimpleBackgroundTask("change resource status") {
+            @Override
+            protected void execute() {
+                boolean daemon = true;
+                if (resource.getResourceType() == ResourceType.CONNECTION && current == ResourceStatus.CLOSED) {
+                    // non daemon threads for closing connections
+                    daemon = false;
                 }
-            }.start();
-        } else {
-            new SimpleTimeoutTask(10, TimeUnit.SECONDS) {
-                @Override
-                public void run() {
-                    try {
-                        if (SettingsUtil.isDebugEnabled) LOGGER.info("Started " + getLogIdentifier());
-                        changeInner();
-                    } catch (Throwable e) {
-                        LOGGER.warn("Error " + getLogIdentifier() + ": " + e.getMessage());
-                    } finally {
-                        set(current, true);
-                        set(changing, false);
-                        if (SettingsUtil.isDebugEnabled) LOGGER.info("Done " + getLogIdentifier());
+
+                new SimpleTimeoutTask(10, TimeUnit.SECONDS, daemon) {
+                    @Override
+                    public void run() {
+                        try {
+                            if (SettingsUtil.isDebugEnabled) LOGGER.info("Started " + getLogIdentifier());
+                            changeInner();
+                        } catch (Throwable e) {
+                            LOGGER.warn("Error " + getLogIdentifier() + ": " + e.getMessage());
+                        } finally {
+                            set(current, true);
+                            set(changing, false);
+                            if (SettingsUtil.isDebugEnabled) LOGGER.info("Done " + getLogIdentifier());
+                        }
                     }
-                }
-            }.start();
-        }
+                }.start();
+            }
+        }.start();
     }
 
     @NotNull

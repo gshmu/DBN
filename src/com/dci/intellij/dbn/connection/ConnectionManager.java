@@ -133,7 +133,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 new BackgroundTask(getProject(), "Refreshing database objects", true, true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        connectionHandler.getConnectionPool().closeConnectionsSilently();
+                        connectionHandler.getConnectionPool().closeConnections();
                         connectionHandler.getObjectBundle().getObjectListContainer().reload();
                     }
                 }.start();

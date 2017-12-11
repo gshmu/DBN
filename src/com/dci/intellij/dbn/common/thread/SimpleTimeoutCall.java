@@ -2,38 +2,28 @@ package com.dci.intellij.dbn.common.thread;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.util.Traceable;
 
 public abstract class SimpleTimeoutCall<T> extends Traceable implements Callable<T>{
-    public static final ExecutorService POOL = Executors.newCachedThreadPool(new ThreadFactory() {
-        @Override
-        public Thread newThread(@NotNull Runnable runnable) {
-            Thread thread = new Thread(runnable, "DBN - Timed-out Execution Thread");
-            thread.setPriority(Thread.MIN_PRIORITY);
-            thread.setDaemon(true);
-            return thread;
-        }
-    });
-
     private long timeout;
     private TimeUnit timeoutUnit;
     private T defaultValue;
+    private boolean daemon;
 
-    public SimpleTimeoutCall(long timeout, TimeUnit timeoutUnit, T defaultValue) {
+    public SimpleTimeoutCall(long timeout, TimeUnit timeoutUnit, T defaultValue, boolean daemon) {
         this.timeout = timeout;
         this.timeoutUnit = timeoutUnit;
         this.defaultValue = defaultValue;
+        this.daemon = daemon;
     }
 
     public final T start() {
         try {
-            Future<T> future = POOL.submit(this);
+            ExecutorService executorService = ThreadFactory.timeoutExecutor(daemon);
+            Future<T> future = executorService.submit(this);
             return future.get(timeout, timeoutUnit);
         } catch (Exception e) {
             return handleException(e);

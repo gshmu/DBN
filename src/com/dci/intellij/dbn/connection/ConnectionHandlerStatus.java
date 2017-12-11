@@ -110,7 +110,7 @@ public class ConnectionHandlerStatus {
     }
 
     public boolean isValid() {
-        return canConnect() ?
+        return isConnected() && canConnect() ?
                 valid.check() :
                 valid.get();
     }

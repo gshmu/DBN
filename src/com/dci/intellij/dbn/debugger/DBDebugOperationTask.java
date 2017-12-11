@@ -1,25 +1,13 @@
 package com.dci.intellij.dbn.debugger;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.AbstractTask;
+import com.dci.intellij.dbn.common.thread.ThreadFactory;
 import com.intellij.openapi.project.Project;
 
 public abstract class DBDebugOperationTask<T> extends AbstractTask<T> {
-    private static final ExecutorService POOL = Executors.newCachedThreadPool(new ThreadFactory() {
-        @Override
-        public Thread newThread(@NotNull Runnable runnable) {
-            Thread thread = new Thread(runnable, "DBN - Database Debug Thread");
-            thread.setPriority(Thread.MIN_PRIORITY);
-            thread.setDaemon(true);
-            return thread;
-        }
-    });
-
     private Project project;
     private String operationDescription;
 
@@ -48,7 +36,8 @@ public abstract class DBDebugOperationTask<T> extends AbstractTask<T> {
 
     public final void start() {
         try {
-            POOL.submit(this);
+            ExecutorService executorService = ThreadFactory.debugExecutor();
+            executorService.submit(this);
         } catch (Exception e) {
             handleException(e);
         }

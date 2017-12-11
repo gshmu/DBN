@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -23,6 +24,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.containers.ContainerUtil;
 
 public class ConnectionPool extends DisposableBase implements Disposable {
 
@@ -33,7 +35,8 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     protected final Logger log = Logger.getInstance(getClass().getName());
     private ConnectionHandlerRef connectionHandlerRef;
 
-    private List<DBNConnection> poolConnections = new CopyOnWriteArrayList<DBNConnection>();
+    private List<DBNConnection> poolConnections = ContainerUtil.createLockFreeCopyOnWriteList();
+    private Map<SessionId, DBNConnection> sessionConnections = ContainerUtil.newConcurrentMap();
     private DBNConnection mainConnection;
     private DBNConnection testConnection;
 
@@ -58,6 +61,13 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         return mainConnection;
     }
 
+    public DBNConnection ensureSessionConnection(SessionId sessionId) throws SQLException {
+        DBNConnection connection = sessionConnections.get(sessionId);
+        connection = init(connection, ConnectionType.SESSION);
+        sessionConnections.put(sessionId, connection);
+        return connection;
+    }
+
     @NotNull
     public List<DBNConnection> getConnections(ConnectionType... connectionTypes) {
         ArrayList<DBNConnection> connections = new ArrayList<DBNConnection>();
@@ -72,7 +82,13 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         if (isOneOf(ConnectionType.POOL, connectionTypes)) {
             connections.addAll(poolConnections);
         }
-        // TODO add session connections
+        if (isOneOf(ConnectionType.SESSION, connectionTypes)) {
+            for (DBNConnection connection : sessionConnections.values()) {
+                if (connection != null) {
+                    connections.add(connection);
+                }
+            }
+        }
         return connections;
     }
 
@@ -233,21 +249,16 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         lastAccessTimestamp = System.currentTimeMillis();
     }
 
-    public void closeConnectionsSilently() {
+    public void closeConnections() {
         for (DBNConnection connection : poolConnections) {
             ConnectionUtil.close(connection);
         }
         poolConnections.clear();
 
-        ConnectionUtil.close(mainConnection);
-        mainConnection = null;
-    }
-
-    public void closeConnections() {
-        for (DBNConnection connection : new ArrayList<>(poolConnections)) {
-            ConnectionUtil.close(connection);
+        for (SessionId sessionId : sessionConnections.keySet()) {
+            DBNConnection connection = sessionConnections.get(sessionId);
+            sessionConnections.put(sessionId, ConnectionUtil.close(connection));
         }
-        poolConnections.clear();
 
         mainConnection = ConnectionUtil.close(mainConnection);
         testConnection = ConnectionUtil.close(testConnection);
@@ -281,7 +292,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
-            closeConnectionsSilently();
+            closeConnections();
         }
     }
 
