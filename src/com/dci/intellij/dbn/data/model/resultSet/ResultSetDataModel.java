@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
+import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.intellij.openapi.util.Disposer;
@@ -80,16 +81,22 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         if (resultSet == null || ConnectionUtil.isClosed(resultSet)) {
             resultSetExhausted = true;
         } else {
-            while (count < records) {
-                checkDisposed();
-                if (resultSet != null && resultSet.next()) {
-                    count++;
-                    T row = createRow(initialIndex + count);
-                    newRows.add(row);
-                } else {
-                    resultSetExhausted = true;
-                    break;
+            DBNConnection connection = resultSet.getConnection();
+            try {
+                connection.set(ResourceStatus.ACTIVE, true);
+                while (count < records) {
+                    checkDisposed();
+                    if (resultSet != null && resultSet.next()) {
+                        count++;
+                        T row = createRow(initialIndex + count);
+                        newRows.add(row);
+                    } else {
+                        resultSetExhausted = true;
+                        break;
+                    }
                 }
+            } finally {
+                connection.set(ResourceStatus.ACTIVE, false);
             }
         }
 

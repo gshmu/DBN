@@ -164,57 +164,59 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     private void doCompileObject(DBSchemaObject object, CompileType compileType, CompilerAction compilerAction) {
         DBContentType contentType = compilerAction.getContentType();
         DBObjectStatusHolder objectStatus = object.getStatus();
-        objectStatus.set(contentType, DBObjectStatus.COMPILING, true);
-        DBNConnection connection = null;
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
-        boolean verbose = compilerAction.getSource() != CompilerActionSource.BULK_COMPILE;
-        try {
-            connection = connectionHandler.getPoolConnection(true);
-            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+        if (objectStatus.isNot(contentType, DBObjectStatus.COMPILING)) {
+            objectStatus.set(contentType, DBObjectStatus.COMPILING, true);
+            DBNConnection connection = null;
+            ConnectionHandler connectionHandler = object.getConnectionHandler();
+            boolean verbose = compilerAction.getSource() != CompilerActionSource.BULK_COMPILE;
+            try {
+                connection = connectionHandler.getPoolConnection(true);
+                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
 
-            boolean isDebug = compileType == CompileType.DEBUG;
+                boolean isDebug = compileType == CompileType.DEBUG;
 
-            if (compileType == CompileType.KEEP) {
-                isDebug = objectStatus.is(DBObjectStatus.DEBUG);
+                if (compileType == CompileType.KEEP) {
+                    isDebug = objectStatus.is(DBObjectStatus.DEBUG);
+                }
+
+                if (contentType == DBContentType.CODE_SPEC || contentType == DBContentType.CODE) {
+                    metadataInterface.compileObject(
+                            object.getSchema().getName(),
+                            object.getName(),
+                            object.getTypeName().toUpperCase(),
+                            isDebug,
+                            connection);
+                }
+                else if (contentType == DBContentType.CODE_BODY){
+                    metadataInterface.compileObjectBody(
+                            object.getSchema().getName(),
+                            object.getName(),
+                            object.getTypeName().toUpperCase(),
+                            isDebug,
+                            connection);
+
+                } else if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
+                    metadataInterface.compileObject(
+                            object.getSchema().getName(),
+                            object.getName(),
+                            object.getTypeName().toUpperCase(),
+                            isDebug,
+                            connection);
+                    metadataInterface.compileObjectBody(
+                            object.getSchema().getName(),
+                            object.getName(),
+                            object.getTypeName().toUpperCase(),
+                            isDebug,
+                            connection);
+                }
+
+                if (verbose) createCompilerResult(object, compilerAction);
+            } catch (SQLException e) {
+                if (verbose) createErrorCompilerResult(compilerAction, object, contentType, e);
+            }  finally{
+                connectionHandler.freePoolConnection(connection);
+                objectStatus.set(contentType, DBObjectStatus.COMPILING, false);
             }
-
-            if (contentType == DBContentType.CODE_SPEC || contentType == DBContentType.CODE) {
-                metadataInterface.compileObject(
-                            object.getSchema().getName(),
-                            object.getName(),
-                            object.getTypeName().toUpperCase(),
-                            isDebug,
-                            connection);
-            }
-            else if (contentType == DBContentType.CODE_BODY){
-                metadataInterface.compileObjectBody(
-                            object.getSchema().getName(),
-                            object.getName(),
-                            object.getTypeName().toUpperCase(),
-                            isDebug,
-                            connection);
-
-            } else if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
-                metadataInterface.compileObject(
-                            object.getSchema().getName(),
-                            object.getName(),
-                            object.getTypeName().toUpperCase(),
-                            isDebug,
-                            connection);
-                metadataInterface.compileObjectBody(
-                            object.getSchema().getName(),
-                            object.getName(),
-                            object.getTypeName().toUpperCase(),
-                            isDebug,
-                            connection);
-            }
-
-            if (verbose) createCompilerResult(object, compilerAction);
-        } catch (SQLException e) {
-            if (verbose) createErrorCompilerResult(compilerAction, object, contentType, e);
-        }  finally{
-            connectionHandler.freePoolConnection(connection);
-            objectStatus.set(contentType, DBObjectStatus.COMPILING, false);
         }
     }
 

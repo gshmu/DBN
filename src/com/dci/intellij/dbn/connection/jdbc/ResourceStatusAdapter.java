@@ -40,7 +40,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
 
     private boolean set(ResourceStatus status, boolean value) {
         boolean changed = resource.set(status, value);
-        if (changed && status == current) changed();
+        if (changed && status == current) resource.statusChanged(current);
         return changed;
     }
 
@@ -98,10 +98,6 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                 }
             }
         }
-    }
-
-    public void changed() {
-
     }
 
     private void changeControlled() {

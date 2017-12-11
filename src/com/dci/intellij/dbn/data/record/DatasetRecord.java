@@ -17,7 +17,6 @@ import com.intellij.openapi.Disposable;
 import gnu.trove.THashMap;
 
 public class DatasetRecord implements Disposable {
-    private DBNResultSet resultSet;
     private DatasetFilterInput filterInput;
     private Map<String, Object> values = new THashMap<String, Object>();
 
@@ -59,9 +58,11 @@ public class DatasetRecord implements Disposable {
 
         ConnectionHandler connectionHandler = dataset.getConnectionHandler();
         DBNConnection connection = null;
+        DBNPreparedStatement statement = null;
+        DBNResultSet resultSet = null;
         try {
             connection = connectionHandler.getPoolConnection(true);
-            DBNPreparedStatement statement = connection.prepareStatement(selectStatement.toString());
+            statement = connection.prepareStatement(selectStatement.toString());
 
             int index = 1;
             iterator = filterInput.getColumns().iterator();
@@ -83,6 +84,8 @@ public class DatasetRecord implements Disposable {
                 }
             }
         }  finally {
+            ConnectionUtil.close(resultSet);
+            ConnectionUtil.close(statement);
             connectionHandler.freePoolConnection(connection);
         }
 
@@ -98,9 +101,7 @@ public class DatasetRecord implements Disposable {
 
     @Override
     public void dispose() {
-        ConnectionUtil.close(resultSet);
         filterInput = null;
-        resultSet = null;
         values.clear();
         values = null;
     }

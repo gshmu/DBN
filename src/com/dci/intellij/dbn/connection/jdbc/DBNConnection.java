@@ -29,6 +29,18 @@ public class DBNConnection extends DBNConnectionBase {
     private long lastAccess;
     private Set<DBNStatement> statements = new HashSet<DBNStatement>();
     private UncommittedChangeBundle dataChanges;
+    private IncrementalResourceStatusAdapter<DBNConnection> ACTIVE_STATUS_ADAPTER = new IncrementalResourceStatusAdapter<DBNConnection>(ResourceStatus.ACTIVE, this) {
+        @Override
+        protected boolean setInner(ResourceStatus status, boolean value) {
+            return DBNConnection.super.set(status, value);
+        }
+    };
+    private IncrementalResourceStatusAdapter<DBNConnection> RESERVED_STATUS_ADAPTER = new IncrementalResourceStatusAdapter<DBNConnection>(ResourceStatus.RESERVED, this) {
+        @Override
+        protected boolean setInner(ResourceStatus status, boolean value) {
+            return DBNConnection.super.set(status, value);
+        }
+    };
 
     public DBNConnection(Connection connection, ConnectionType type, ConnectionId id) {
         super(connection);
@@ -37,7 +49,6 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     protected <S extends Statement> S wrap(S statement) {
-        boolean wasEmpty = statements.isEmpty();
         if (statement instanceof CallableStatement) {
             CallableStatement callableStatement = (CallableStatement) statement;
             statement = (S) new DBNCallableStatement(callableStatement, this);
@@ -59,17 +70,11 @@ public class DBNConnection extends DBNConnectionBase {
         }
 
         statements.add((DBNStatement) statement);
-        if (wasEmpty) {
-            statusChanged(ACTIVE);
-        }
         return statement;
     }
 
     protected void release(DBNStatement statement) {
         statements.remove(statement);
-        if (statements.isEmpty()) {
-            statusChanged(ACTIVE);
-        }
     }
 
     @Override
@@ -113,7 +118,7 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     @Override
-    protected void statusChanged(ResourceStatus status) {
+    public void statusChanged(ResourceStatus status) {
         ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(id);
         if (connectionHandler != null && !connectionHandler.isDisposed()) {
             ConnectionHandlerStatus connectionStatus = connectionHandler.getConnectionStatus();
@@ -189,11 +194,25 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     public boolean set(ResourceStatus status, boolean value) {
-        if (status == RESERVED && value && isActive()) {
-            LOGGER.warn("Reserving active connection");
+        boolean changed;
+        if (status == ACTIVE) {
+            changed = ACTIVE_STATUS_ADAPTER.set(status, value);
+
+        } else if (status == RESERVED) {
+            if (value) {
+                if (isActive()) {
+                    LOGGER.warn("Reserving active connection");
+                } else if (isReserved()) {
+                    LOGGER.warn("Reserving already reserved connection");
+                }
+            }
+            changed = RESERVED_STATUS_ADAPTER.set(status, value);
+        } else {
+            changed = super.set(status, value);
+            if (changed) statusChanged(status);
         }
-        boolean changed = super.set(status, value);
-        if (changed) statusChanged(status);
+
+
         return changed;
     }
 
