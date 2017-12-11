@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -234,8 +235,16 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return null;
     }
 
+    @NotNull
     @Override
     public DatabaseConsoleBundle getConsoleBundle() {return null;}
+
+    @NotNull
+    @Override
+    public DatabaseSessionBundle getSessionBundle() {
+        return null;
+    }
+
     @Override
     public boolean isValid() {return true;}
     @Override

@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +8,6 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
-import com.dci.intellij.dbn.vfs.DBConsoleType;
 
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> implements ConnectionRef{
     private ConnectionBundleSettings parent;
@@ -25,7 +21,6 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private ConnectionSshTunnelSettings sshTunnelSettings;
     private ConnectionDetailSettings detailSettings;
     private ConnectionFilterSettings filterSettings;
-    private Map<String, DBConsoleType> consoles = new HashMap<String, DBConsoleType>();
 
     public ConnectionSettings(ConnectionBundleSettings parent) {
         this(parent, DatabaseType.UNKNOWN, ConnectionConfigType.BASIC);
@@ -75,7 +70,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     }
 
     public void generateNewId() {
-        connectionId = ConnectionId.get(UUID.randomUUID().toString());
+        connectionId = ConnectionId.create();
     }
 
     public void setConnectionId(ConnectionId connectionId) {
@@ -90,10 +85,6 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
 
     public ConnectionId getConnectionId() {
         return connectionId;
-    }
-
-    public Map<String, DBConsoleType> getConsoles() {
-        return consoles;
     }
 
     @Override

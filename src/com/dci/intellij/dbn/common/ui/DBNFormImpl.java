@@ -13,10 +13,8 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 
 public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends DisposableBase implements DBNForm {
-    private boolean disposed;
     private Project project;
     private P parentComponent;
 
@@ -24,7 +22,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
     }
 
     public DBNFormImpl(@NotNull P parentComponent) {
-        Disposer.register(parentComponent, this);
+        super(parentComponent);
         this.parentComponent = parentComponent;
     }
 

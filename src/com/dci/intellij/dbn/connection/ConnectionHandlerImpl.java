@@ -34,6 +34,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
@@ -62,6 +63,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private ConnectionLoadMonitor loadMonitor;
     private DatabaseInterfaceProvider interfaceProvider;
     private DatabaseConsoleBundle consoleBundle;
+    private DatabaseSessionBundle sessionBundle;
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private ConnectionInstructions instructions = new ConnectionInstructions();
 
@@ -103,10 +105,9 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         connectionStatus = new ConnectionHandlerStatus(this);
         connectionPool = new ConnectionPool(this);
         consoleBundle = new DatabaseConsoleBundle(this);
+        sessionBundle = new DatabaseSessionBundle(this);
         loadMonitor = new ConnectionLoadMonitor(this);
 
-        Disposer.register(this, connectionPool);
-        Disposer.register(this, consoleBundle);
         Disposer.register(this, loadMonitor);
     }
 
@@ -198,9 +199,16 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return connectionStatus;
     }
 
+    @NotNull
     @Override
     public DatabaseConsoleBundle getConsoleBundle() {
         return consoleBundle;
+    }
+
+    @NotNull
+    @Override
+    public DatabaseSessionBundle getSessionBundle() {
+        return sessionBundle;
     }
 
     @Override
