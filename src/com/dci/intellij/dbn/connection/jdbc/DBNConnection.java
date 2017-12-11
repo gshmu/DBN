@@ -186,7 +186,7 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     public boolean isActive() {
-        return is(ACTIVE) || !statements.isEmpty();
+        return is(ACTIVE);
     }
 
     public boolean isAutoCommit() {
