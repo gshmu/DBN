@@ -37,6 +37,7 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     protected <S extends Statement> S wrap(S statement) {
+        boolean wasEmpty = statements.isEmpty();
         if (statement instanceof CallableStatement) {
             CallableStatement callableStatement = (CallableStatement) statement;
             statement = (S) new DBNCallableStatement(callableStatement, this);
@@ -58,11 +59,17 @@ public class DBNConnection extends DBNConnectionBase {
         }
 
         statements.add((DBNStatement) statement);
+        if (wasEmpty) {
+            statusChanged(ACTIVE);
+        }
         return statement;
     }
 
     protected void release(DBNStatement statement) {
         statements.remove(statement);
+        if (statements.isEmpty()) {
+            statusChanged(ACTIVE);
+        }
     }
 
     @Override
@@ -174,7 +181,7 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     public boolean isActive() {
-        return is(ACTIVE);
+        return is(ACTIVE) || !statements.isEmpty();
     }
 
     public boolean isAutoCommit() {

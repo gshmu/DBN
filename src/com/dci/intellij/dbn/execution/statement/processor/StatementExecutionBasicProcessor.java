@@ -398,6 +398,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                     statement.execute(statementText);
                     return createExecutionResult(statement, executionInput);
                 } finally {
+                    ConnectionUtil.close(statement);
                     databaseCall = null;
                 }
             }
