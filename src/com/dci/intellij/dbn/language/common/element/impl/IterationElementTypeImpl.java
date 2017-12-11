@@ -27,7 +27,7 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
     protected TokenElementType[] separatorTokens;
     private int[] elementsCountVariants;
     private int minIterations;
-    private LazyValue<Boolean> isFollowedBySeparator = new SimpleLazyValue<Boolean>() {
+    private LazyValue<Boolean> followedBySeparator = new SimpleLazyValue<Boolean>(false) {
         @Override
         protected Boolean load() {
             TokenElementType[] separatorTokens = getSeparatorTokens();
@@ -163,6 +163,6 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
 
     @Override
     public boolean isFollowedBySeparator() {
-        return isFollowedBySeparator.get();
+        return followedBySeparator.get();
     }
 }

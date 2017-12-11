@@ -160,7 +160,7 @@ public class ConnectionUtil {
         private SQLException exception;
 
         ConnectTimeoutCall() {
-            super(30, TimeUnit.SECONDS, null);
+            super(30, TimeUnit.SECONDS, null, true);
         }
 
         @Override
@@ -353,15 +353,5 @@ public class ConnectionUtil {
         } catch (SQLException e) {
             LOGGER.warn("Error committing connection", e);
         }
-    }
-
-
-    public static boolean isClosed(final DBNConnection connection) {
-        return new SimpleTimeoutCall<Boolean>(2, TimeUnit.SECONDS, false) {
-            @Override
-            public Boolean call() throws Exception {
-                return connection.isClosed();
-            }
-        }.start();
     }
 }

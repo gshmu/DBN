@@ -420,12 +420,14 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
     }
 
     public boolean isValid(DBNConnection connection) {
+        ResultSet resultSet = null;
         try {
-            if (connection == null || ConnectionUtil.isClosed(connection)) return false;
-            ResultSet resultSet = executeQuery(connection, true, "validate-connection");
-            ConnectionUtil.close(resultSet);
+            if (connection == null || connection.isClosed()) return false;
+            resultSet = executeQuery(connection, true, "validate-connection");
         } catch (SQLException e) {
             return false;
+        } finally {
+            ConnectionUtil.close(resultSet);
         }
         return true;
     }
@@ -435,13 +437,9 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
         ResultSet resultSet = null;
         try {
             resultSet = executeQuery(connection, true, "count-pending-transactions");
-            try {
-                resultSet.next();
-                int count = resultSet.getInt("COUNT");
-                return count > 0;
-            } finally {
-                ConnectionUtil.close(resultSet);
-            }
+            resultSet.next();
+            int count = resultSet.getInt("COUNT");
+            return count > 0;
         } catch (SQLException e) {
             return isValid(connection);
         } finally {

@@ -514,12 +514,11 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
                 connectionStatus.isBusy() ? Icons.CONNECTION_BUSY :
                 connectionStatus.isActive() ? Icons.CONNECTION_ACTIVE :
                     Icons.CONNECTION_CONNECTED;
+        } else {
+            return connectionStatus.isValid() ?
+                    Icons.CONNECTION_INACTIVE :
+                    Icons.CONNECTION_INVALID;
         }
-
-        return connectionStatus.isValid() ?
-            Icons.CONNECTION_INACTIVE :
-            Icons.CONNECTION_INVALID;
-
     }
 
     @Nullable
@@ -558,7 +557,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         boolean refresh = this.connectionSettings.getDatabaseSettings().hashCode() != connectionSettings.getDatabaseSettings().hashCode();
         this.connectionSettings = connectionSettings;
         if (refresh) {
-            connectionPool.closeConnectionsSilently();
+            connectionPool.closeConnections();
 
             final Project project = getProject();
             new BackgroundTask(getProject(), "Trying to connect to " + getName(), false) {

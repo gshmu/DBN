@@ -4,6 +4,13 @@ public abstract class SimpleLazyValue<T> implements LazyValue<T> {
     private T value;
     private boolean loading; // recursivity check
 
+    public SimpleLazyValue() {
+    }
+
+    public SimpleLazyValue(T defaultValue) {
+        this.value = defaultValue;
+    }
+
     @Override
     public final T get(){
         if (value == null && !loading) {
