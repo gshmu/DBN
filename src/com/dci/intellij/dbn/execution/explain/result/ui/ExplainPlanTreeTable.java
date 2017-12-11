@@ -36,6 +36,7 @@ import com.intellij.codeInsight.template.impl.TemplateColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
@@ -118,25 +119,27 @@ public class ExplainPlanTreeTable extends TreeTable implements Disposable{
 
         @Override
         public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            ExplainPlanEntry entry = (ExplainPlanEntry) value;
+            try {
+                ExplainPlanEntry entry = (ExplainPlanEntry) value;
 
-            DBObjectRef objectRef = entry.getObjectRef();
-            SimpleTextAttributes selectedCellAttributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
-            if (objectRef != null) {
-                setIcon(objectRef.getObjectType().getIcon());
-                append(objectRef.getPath() + " - ", selected ? selectedCellAttributes : SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            }
+                DBObjectRef objectRef = entry.getObjectRef();
+                SimpleTextAttributes selectedCellAttributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
+                if (objectRef != null) {
+                    setIcon(objectRef.getObjectType().getIcon());
+                    append(objectRef.getPath() + " - ", selected ? selectedCellAttributes : SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                }
 
-            String operation = entry.getOperation();
-            String options = entry.getOperationOptions();
-            append(operation, selected ? selectedCellAttributes.derive(SimpleTextAttributes.STYLE_BOLD, null, null, null) : operationAttributes);
-            if (StringUtil.isNotEmpty(options)) {
-                SimpleTextAttributes regularAttributes = options.equals("FULL") ?
-                        SimpleTextAttributes.ERROR_ATTRIBUTES :
-                        SimpleTextAttributes.GRAYED_ATTRIBUTES;
-                append(" (" + options.toLowerCase() + ")", selected ? selectedCellAttributes : regularAttributes);
-            }
-            setBorder(null);
+                String operation = entry.getOperation();
+                String options = entry.getOperationOptions();
+                append(operation, selected ? selectedCellAttributes.derive(SimpleTextAttributes.STYLE_BOLD, null, null, null) : operationAttributes);
+                if (StringUtil.isNotEmpty(options)) {
+                    SimpleTextAttributes regularAttributes = options.equals("FULL") ?
+                            SimpleTextAttributes.ERROR_ATTRIBUTES :
+                            SimpleTextAttributes.GRAYED_ATTRIBUTES;
+                    append(" (" + options.toLowerCase() + ")", selected ? selectedCellAttributes : regularAttributes);
+                }
+                setBorder(null);
+            } catch (ProcessCanceledException ignore) {}
         }
     };
 
