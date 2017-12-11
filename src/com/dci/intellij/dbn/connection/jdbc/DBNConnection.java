@@ -11,6 +11,10 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.connection.ConnectionCache;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.intellij.openapi.diagnostic.Logger;
@@ -20,14 +24,16 @@ import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.*;
 public class DBNConnection extends DBNConnectionBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private ConnectionType type;
+    private ConnectionId id;
 
     private long lastAccess;
     private Set<DBNStatement> statements = new HashSet<DBNStatement>();
     private UncommittedChangeBundle dataChanges;
 
-    public DBNConnection(Connection connection, ConnectionType type) {
+    public DBNConnection(Connection connection, ConnectionType type, ConnectionId id) {
         super(connection);
         this.type = type;
+        this.id = id;
     }
 
     protected <S extends Statement> S wrap(S statement) {
@@ -77,7 +83,10 @@ public class DBNConnection extends DBNConnectionBase {
     @Override
     public void invalidateInner() throws SQLException {
         // do nothing
-        System.out.println();
+    }
+
+    public ConnectionId getId() {
+        return id;
     }
 
     public ConnectionType getType() {
@@ -96,6 +105,18 @@ public class DBNConnection extends DBNConnectionBase {
         return type == ConnectionType.TEST;
     }
 
+    @Override
+    protected void statusChanged(ResourceStatus status) {
+        ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(id);
+        if (connectionHandler != null && !connectionHandler.isDisposed()) {
+            ConnectionHandlerStatus connectionStatus = connectionHandler.getConnectionStatus();
+            switch (status) {
+                case CLOSED: connectionStatus.getConnected().markDirty(); break;
+                case INVALID: connectionStatus.getValid().markDirty(); break;
+                case ACTIVE: connectionStatus.getActive().markDirty(); break;
+            }
+        }
+    }
 
     public void updateLastAccess() {
         lastAccess = System.currentTimeMillis();
@@ -160,11 +181,13 @@ public class DBNConnection extends DBNConnectionBase {
         return is(AUTO_COMMIT);
     }
 
-    public boolean set(ResourceStatus property, boolean value) {
-        if (property == RESERVED && value && isActive()) {
-            LOGGER.warn("Reserving busy connection");
+    public boolean set(ResourceStatus status, boolean value) {
+        if (status == RESERVED && value && isActive()) {
+            LOGGER.warn("Reserving active connection");
         }
-        return super.set(property, value);
+        boolean changed = super.set(status, value);
+        if (changed) statusChanged(status);
+        return changed;
     }
 
     /********************************************************************

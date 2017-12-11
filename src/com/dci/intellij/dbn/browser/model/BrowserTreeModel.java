@@ -9,6 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
@@ -19,15 +20,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.HashSet;
 import gnu.trove.THashSet;
 
-public abstract class BrowserTreeModel implements TreeModel, Disposable {
+public abstract class BrowserTreeModel extends DisposableBase implements TreeModel, Disposable {
     private Set<TreeModelListener> treeModelListeners = new HashSet<TreeModelListener>();
     private BrowserTreeNode root;
-    private boolean isDisposed  = false;
     private final Set<LoadInProgressTreeNode> loadInProgressNodes = new THashSet<LoadInProgressTreeNode>();
 
     protected BrowserTreeModel(BrowserTreeNode root) {
         this.root = root;
-        EventUtil.subscribe(root.getProject(), this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
+        Project project = root.getProject();
+        EventUtil.subscribe(project, this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
     }
 
     public void addTreeModelListener(TreeModelListener listener) {
@@ -127,8 +128,8 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
     }
 
     public void dispose() {
-        if (!isDisposed) {
-            isDisposed = true;
+        if (!isDisposed()) {
+            super.dispose();
             treeModelListeners.clear();
             loadInProgressNodes.clear();
             root = null;
@@ -146,7 +147,4 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
             }
         }
     };
-
-
-
 }

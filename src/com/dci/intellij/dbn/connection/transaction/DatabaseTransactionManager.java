@@ -18,7 +18,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionStatusListener;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
@@ -121,7 +121,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 transactionListener.afterAction(connectionHandler, action, success);
 
                 if (action.isStatusChange()) {
-                    ConnectionStatusListener statusListener = EventUtil.notify(project, ConnectionStatusListener.TOPIC);
+                    ConnectionHandlerStatusListener statusListener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
                     statusListener.statusChanged(connectionHandler.getId());
                 }
                 connectionHandler.getPendingActions().remove(action);

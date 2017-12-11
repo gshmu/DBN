@@ -55,7 +55,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     List<DBNConnection> getConnections(ConnectionType... connectionTypes);
 
     @NotNull
-    ConnectionStatus getConnectionStatus();
+    ConnectionHandlerStatus getConnectionStatus();
     DatabaseConsoleBundle getConsoleBundle();
     DBSessionBrowserVirtualFile getSessionBrowserFile();
     ConnectionInstructions getInstructions();

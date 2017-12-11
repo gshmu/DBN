@@ -123,7 +123,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     }
 
     private void notifyStatusChange() {
-        ConnectionStatusListener changeListener = EventUtil.notify(getProject(), ConnectionStatusListener.TOPIC);
+        ConnectionHandlerStatusListener changeListener = EventUtil.notify(getProject(), ConnectionHandlerStatusListener.TOPIC);
         changeListener.statusChanged(getConnectionHandler().getId());
     }
 
@@ -164,7 +164,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     @Nullable
     private DBNConnection lookupConnection() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
+        ConnectionHandlerStatus connectionStatus = connectionHandler.getConnectionStatus();
 
         for (DBNConnection connection : poolConnections) {
             checkDisposed();
@@ -191,7 +191,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     private DBNConnection createConnection() throws SQLException {
         checkDisposed();
         ConnectionHandler connectionHandler = getConnectionHandler();
-        ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
+        ConnectionHandlerStatus connectionStatus = connectionHandler.getConnectionStatus();
         String connectionName = connectionHandler.getName();
         LOGGER.debug("[DBN-INFO] Attempt to create new pool connection for '" + connectionName + "'");
         DBNConnection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.POOL);

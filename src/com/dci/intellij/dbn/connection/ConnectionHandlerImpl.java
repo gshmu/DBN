@@ -57,7 +57,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     private ConnectionSettings connectionSettings;
     private ConnectionBundle connectionBundle;
-    private ConnectionStatus connectionStatus;
+    private ConnectionHandlerStatus connectionStatus;
     private ConnectionPool connectionPool;
     private ConnectionLoadMonitor loadMonitor;
     private DatabaseInterfaceProvider interfaceProvider;
@@ -100,7 +100,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         this.enabled = connectionSettings.isActive();
         ref = new ConnectionHandlerRef(this);
 
-        connectionStatus = new ConnectionStatus(this);
+        connectionStatus = new ConnectionHandlerStatus(this);
         connectionPool = new ConnectionPool(this);
         consoleBundle = new DatabaseConsoleBundle(this);
         loadMonitor = new ConnectionLoadMonitor(this);
@@ -194,7 +194,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @NotNull
-    public ConnectionStatus getConnectionStatus() {
+    public ConnectionHandlerStatus getConnectionStatus() {
         return connectionStatus;
     }
 
