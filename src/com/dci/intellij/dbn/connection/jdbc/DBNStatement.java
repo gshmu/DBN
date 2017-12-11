@@ -95,11 +95,6 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
         public R call() throws SQLException {
             DBNConnection connection = getConnection();
             connection.updateLastAccess();
-
-            boolean wasActive = connection.is(ACTIVE);
-            if (wasActive) {
-                LOGGER.warn("Connection already busy with another statement");
-            }
             try {
                 connection.set(ACTIVE, true);
                 return execute();
@@ -109,7 +104,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
                 throw exception;
             } finally {
                 connection.updateLastAccess();
-                connection.set(ACTIVE, wasActive);
+                connection.set(ACTIVE, false);
             }
         }
         protected abstract R execute() throws SQLException;

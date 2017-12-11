@@ -265,8 +265,6 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             String statementText = initStatementText();
             SQLException executionException = null;
             if (statementText != null) {
-                ConnectionHandler connectionHandler = getTargetConnection();
-
                 try {
                     assertNotCancelled();
                     initConnection(context, connection);
@@ -398,7 +396,6 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                     statement.execute(statementText);
                     return createExecutionResult(statement, executionInput);
                 } finally {
-                    ConnectionUtil.close(statement);
                     databaseCall = null;
                 }
             }
@@ -540,7 +537,13 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @NotNull
     protected StatementExecutionResult createExecutionResult(DBNStatement statement, final StatementExecutionInput executionInput) throws SQLException {
-        final StatementExecutionBasicResult executionResult = new StatementExecutionBasicResult(this, getResultName(), statement.getUpdateCount());
+        StatementExecutionBasicResult executionResult = new StatementExecutionBasicResult(this, getResultName(), statement.getUpdateCount());
+        ConnectionUtil.close(statement);
+        attachDdlExecutionInfo(executionInput, executionResult);
+        return executionResult;
+    }
+
+    private void attachDdlExecutionInfo(StatementExecutionInput executionInput, final StatementExecutionBasicResult executionResult) {
         boolean isDdlStatement = isDataDefinitionStatement();
         boolean hasCompilerErrors = false;
         final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
@@ -605,10 +608,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             executionResult.updateExecutionMessage(MessageType.INFO, message);
             executionResult.setExecutionStatus(StatementExecutionStatus.SUCCESS);
         }
-
-        return executionResult;
     }
-
 
 
     private StatementExecutionResult createErrorExecutionResult(String cause) {
