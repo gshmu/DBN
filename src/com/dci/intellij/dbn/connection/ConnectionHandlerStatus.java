@@ -3,17 +3,19 @@ package com.dci.intellij.dbn.connection;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.util.IntervalChecker;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.LazyResourceStatus;
+import com.intellij.openapi.project.Project;
 
-public class ConnectionStatus {
+public class ConnectionHandlerStatus {
     private ConnectionHandlerRef connectionHandlerRef;
 
     private AuthenticationError authenticationError;
     private Throwable connectionException;
 
-    private IntervalChecker active = new IntervalChecker(true, TimeUtil.ONE_SECOND) {
+    private LazyConnectionStatus active = new LazyConnectionStatus(true, TimeUtil.ONE_SECOND) {
         @Override
         protected boolean doCheck() {
             ConnectionHandler connectionHandler = getConnectionHandler();
@@ -27,7 +29,7 @@ public class ConnectionStatus {
         }
     };
 
-    private IntervalChecker busy = new IntervalChecker(true, TimeUtil.ONE_SECOND) {
+    private LazyConnectionStatus busy = new LazyConnectionStatus(true, TimeUtil.ONE_SECOND) {
         @Override
         protected boolean doCheck() {
             ConnectionHandler connectionHandler = getConnectionHandler();
@@ -41,7 +43,7 @@ public class ConnectionStatus {
         }
     };
 
-    private IntervalChecker valid = new IntervalChecker(true, TimeUtil.THIRTY_SECONDS) {
+    private LazyConnectionStatus valid = new LazyConnectionStatus(true, TimeUtil.THIRTY_SECONDS) {
         @Override
         protected boolean doCheck() {
             try {
@@ -54,7 +56,7 @@ public class ConnectionStatus {
         }
     };
 
-    private IntervalChecker connected = new IntervalChecker(false, TimeUtil.TEN_SECONDS) {
+    private LazyConnectionStatus connected = new LazyConnectionStatus(false, TimeUtil.TEN_SECONDS) {
         @Override
         protected boolean doCheck() {
             try {
@@ -79,7 +81,7 @@ public class ConnectionStatus {
         }
     };
 
-    ConnectionStatus(@NotNull ConnectionHandler connectionHandler) {
+    ConnectionHandlerStatus(@NotNull ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = connectionHandler.getRef();
     }
 
@@ -139,5 +141,35 @@ public class ConnectionStatus {
 
     public boolean isActive() {
         return active.check();
+    }
+
+    public LazyResourceStatus getActive() {
+        return active;
+    }
+
+    public LazyResourceStatus getBusy() {
+        return busy;
+    }
+
+    public LazyResourceStatus getValid() {
+        return valid;
+    }
+
+    public LazyResourceStatus getConnected() {
+        return connected;
+    }
+
+    private abstract class LazyConnectionStatus extends LazyResourceStatus {
+        LazyConnectionStatus(boolean initialValue, long interval) {
+            super(initialValue, interval);
+        }
+
+        @Override
+        public final void statusChanged() {
+            ConnectionHandler connectionHandler = connectionHandlerRef.get();
+            Project project = connectionHandler.getProject();
+            ConnectionHandlerStatusListener statusListener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
+            statusListener.statusChanged(connectionHandler.getId());
+        }
     }
 }

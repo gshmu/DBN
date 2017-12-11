@@ -23,7 +23,7 @@ import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.connection.ConnectionStatusListener;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.options.ConfigurationException;
@@ -152,7 +152,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
                 }
 
                 if (settingsChanged) {
-                    ConnectionStatusListener listener = EventUtil.notify(project, ConnectionStatusListener.TOPIC);
+                    ConnectionHandlerStatusListener listener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
                     listener.statusChanged(configuration.getConnectionId());
                 }
             }

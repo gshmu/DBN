@@ -38,7 +38,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     private DatabaseType databaseType;
     private double databaseVersion;
     private Project project;
-    private ConnectionStatus connectionStatus;
+    private ConnectionHandlerStatus connectionStatus;
     private DatabaseInterfaceProvider interfaceProvider;
     private Map<String, String> properties = new HashMap<String, String>();
     private NavigationPsiCache psiCache;
@@ -53,7 +53,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         this.databaseType = databaseType;
         this.databaseVersion = databaseVersion;
         this.ref = new ConnectionHandlerRef(this);
-        this.connectionStatus = new ConnectionStatus(this);
+        this.connectionStatus = new ConnectionHandlerStatus(this);
         this.objectBundle = new DBVirtualObjectBundle(this);
     }
 
@@ -182,7 +182,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     }
 
     @NotNull
-    @Override public ConnectionStatus getConnectionStatus() {return connectionStatus;}
+    @Override public ConnectionHandlerStatus getConnectionStatus() {return connectionStatus;}
 
     @Override public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {}
 

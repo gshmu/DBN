@@ -1,15 +1,17 @@
-package com.dci.intellij.dbn.common.util;
+package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 
-public abstract class IntervalChecker {
+public abstract class LazyResourceStatus {
     private long interval;
     private long lastCheck;
     private boolean value;
     private boolean checking;
+    private boolean dirty;
 
-    protected IntervalChecker(boolean initialValue, long interval){
+    protected LazyResourceStatus(boolean initialValue, long interval){
         this.value = initialValue;
         this.interval = interval;
     }
@@ -20,11 +22,12 @@ public abstract class IntervalChecker {
                 if (!checking) {
                     checking = true;
                     long currentTimeMillis = System.currentTimeMillis();
-                    if (TimeUtil.isOlderThan(lastCheck, interval)) {
+                    if (TimeUtil.isOlderThan(lastCheck, interval) || dirty) {
                         lastCheck = currentTimeMillis;
                         checkControlled();
                     } else {
                         checking = false;
+                        dirty = false;
                     }
                 }
             }
@@ -47,17 +50,19 @@ public abstract class IntervalChecker {
                 value = doCheck();
             } finally {
                 checking = false;
-                if (value != oldValue) changed();
+                if (value != oldValue) statusChanged();
             }
         }
     }
 
-    public void changed() {
-
-    }
+    public abstract void statusChanged();
 
     public void set(boolean value) {
         this.value = value;
+    }
+
+    public void markDirty() {
+        dirty = true;
     }
 
     public boolean get() {

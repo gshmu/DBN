@@ -77,7 +77,7 @@ public class ConnectionUtil {
     }
 
     public static DBNConnection connect(ConnectionHandler connectionHandler, ConnectionType connectionType) throws SQLException {
-        ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
+        ConnectionHandlerStatus connectionStatus = connectionHandler.getConnectionStatus();
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
 
@@ -125,7 +125,7 @@ public class ConnectionUtil {
     public static DBNConnection connect(
             ConnectionSettings connectionSettings,
             @NotNull ConnectionType connectionType,
-            @Nullable ConnectionStatus connectionStatus,
+            @Nullable ConnectionHandlerStatus connectionStatus,
             @Nullable AuthenticationInfo temporaryAuthenticationInfo,
             boolean autoCommit,
             @Nullable DatabaseAttachmentHandler attachmentHandler) throws SQLException {
@@ -153,7 +153,7 @@ public class ConnectionUtil {
         private ConnectionType connectionType;
         private AuthenticationInfo temporaryAuthenticationInfo;
         private ConnectionSettings connectionSettings;
-        private ConnectionStatus connectionStatus;
+        private ConnectionHandlerStatus connectionStatus;
         private DatabaseAttachmentHandler databaseAttachmentHandler;
         private boolean autoCommit;
 
@@ -235,7 +235,7 @@ public class ConnectionUtil {
                 databaseSettings.setDatabaseType(databaseType);
                 databaseSettings.setDatabaseVersion(getDatabaseVersion(connection));
                 databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
-                return new DBNConnection(connection, connectionType);
+                return new DBNConnection(connection, connectionType, connectionSettings.getConnectionId());
 
             } catch (Throwable e) {
                 DatabaseType databaseType = getDatabaseType(databaseSettings.getDriver());
