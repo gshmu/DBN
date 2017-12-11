@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.util.SkipEntrySQLException;
@@ -72,40 +73,45 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
             runningMetaLoaders.increment();
             dynamicContent.checkDisposed();
             connection = connectionHandler.getPoolConnection(true);
-            dynamicContent.checkDisposed();
-            resultSet = createResultSet(dynamicContent, connection);
-            if (addDelay) Thread.sleep(500);
-            List<T> list = null;
-            while (resultSet != null && resultSet.next()) {
-                if (addDelay) Thread.sleep(10);
+            try {
+                connection.set(ResourceStatus.ACTIVE, true);
                 dynamicContent.checkDisposed();
-                
-                T element = null;
-                try {
-                    element = createElement(dynamicContent, resultSet, loaderCache);
-                } catch (ProcessCanceledException e){
-                    return;
-                } catch (RuntimeException e) {
-                    System.out.println("RuntimeException: " + e.getMessage());
-                } catch (SkipEntrySQLException e) {
-                    continue;
-                }
+                resultSet = createResultSet(dynamicContent, connection);
+                if (addDelay) Thread.sleep(500);
+                List<T> list = null;
+                while (resultSet != null && resultSet.next()) {
+                    if (addDelay) Thread.sleep(10);
+                    dynamicContent.checkDisposed();
 
-                dynamicContent.checkDisposed();
-                if (element != null) {
-                    if (list == null) list = new ArrayList<T>();
-                    list.add(element);
-                    if (count%10 == 0) {
-                        String description = element.getDescription();
-                        if (description != null)
-                            ProgressMonitor.setSubtaskDescription(description);
+                    T element = null;
+                    try {
+                        element = createElement(dynamicContent, resultSet, loaderCache);
+                    } catch (ProcessCanceledException e){
+                        return;
+                    } catch (RuntimeException e) {
+                        System.out.println("RuntimeException: " + e.getMessage());
+                    } catch (SkipEntrySQLException e) {
+                        continue;
                     }
-                    count++;
+
+                    dynamicContent.checkDisposed();
+                    if (element != null) {
+                        if (list == null) list = new ArrayList<T>();
+                        list.add(element);
+                        if (count%10 == 0) {
+                            String description = element.getDescription();
+                            if (description != null)
+                                ProgressMonitor.setSubtaskDescription(description);
+                        }
+                        count++;
+                    }
                 }
+                dynamicContent.checkDisposed();
+                dynamicContent.setElements(list);
+                postLoadContent(dynamicContent, debugInfo);
+            } finally {
+                connection.set(ResourceStatus.ACTIVE, false);
             }
-            dynamicContent.checkDisposed();
-            dynamicContent.setElements(list);
-            postLoadContent(dynamicContent, debugInfo);
         } catch (Exception e) {
             if (e instanceof InterruptedException) throw (InterruptedException) e;
             if (e instanceof ProcessCanceledException) throw (ProcessCanceledException) e;
