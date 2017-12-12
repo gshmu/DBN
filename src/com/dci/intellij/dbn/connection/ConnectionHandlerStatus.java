@@ -46,12 +46,19 @@ public class ConnectionHandlerStatus {
     private LazyConnectionStatus valid = new LazyConnectionStatus(true, TimeUtil.THIRTY_SECONDS) {
         @Override
         protected boolean doCheck() {
+            DBNConnection poolConnection = null;
+            ConnectionHandler connectionHandler = getConnectionHandler();
             try {
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                connectionHandler.getMainConnection();
+                boolean valid = get();
+                ConnectionPool connectionPool = connectionHandler.getConnectionPool();
+                if (isConnected() || !valid || connectionPool.wasNeverAccessed()) {
+                    poolConnection = connectionPool.allocateConnection(true);
+                }
                 return true;
             } catch (Exception e) {
                 return false;
+            } finally {
+                connectionHandler.freePoolConnection(poolConnection);
             }
         }
     };
@@ -110,7 +117,7 @@ public class ConnectionHandlerStatus {
     }
 
     public boolean isValid() {
-        return isConnected() && canConnect() ?
+        return canConnect() ?
                 valid.check() :
                 valid.get();
     }

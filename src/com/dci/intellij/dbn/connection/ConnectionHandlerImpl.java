@@ -381,7 +381,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     public DBNConnection getTestConnection() throws SQLException {
         assertCanConnect();
-        return getConnectionPool().getTestConnection();
+        return getConnectionPool().ensureTestConnection();
     }
 
     @NotNull

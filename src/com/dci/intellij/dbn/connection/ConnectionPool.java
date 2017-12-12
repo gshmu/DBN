@@ -46,7 +46,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         POOL_CLEANER_TASK.registerConnectionPool(this);
     }
 
-    public DBNConnection getTestConnection() throws SQLException {
+    public DBNConnection ensureTestConnection() throws SQLException {
         testConnection = init(testConnection, ConnectionType.TEST);
         return testConnection;
     }
@@ -60,6 +60,10 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     @Nullable
     public DBNConnection getMainConnection() {
         return mainConnection;
+    }
+
+    public DBNConnection getTestConnection() {
+        return testConnection;
     }
 
     @NotNull
@@ -138,6 +142,10 @@ public class ConnectionPool extends DisposableBase implements Disposable {
 
     public long getLastAccessTimestamp() {
         return lastAccessTimestamp;
+    }
+
+    public boolean wasNeverAccessed() {
+        return lastAccessTimestamp == 0;
     }
 
     private void notifyStatusChange() {

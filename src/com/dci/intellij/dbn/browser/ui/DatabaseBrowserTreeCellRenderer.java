@@ -67,7 +67,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
                 if (treeNode instanceof DBObjectList) {
                     DBObjectList objectsList = (DBObjectList) treeNode;
                     boolean isEmpty = objectsList.getChildCount() == 0;
-                    isDirty = objectsList.isLoading() || (!objectsList.isLoaded() && !hasConnectivity(objectsList));
+                    isDirty = /*objectsList.isDirty() ||*/ objectsList.isLoading() || (!objectsList.isLoaded() && !hasConnectivity(objectsList));
                     SimpleTextAttributes textAttributes =
                             isDirty ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES :
                             isEmpty ? SimpleTextAttributes.REGULAR_ATTRIBUTES :
