@@ -163,13 +163,13 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override public DBNConnection getTestConnection() throws SQLException {return null;}
     @NotNull
-    @Override public DBNConnection getPoolConnection(boolean readonly) throws SQLException {return null;}
+    @Override public DBNConnection getPoolConnection(boolean readonly) throws SQLException {throw new UnsupportedOperationException();}
     @NotNull
-    @Override public DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {return null;}
+    @Override public DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {throw new UnsupportedOperationException();}
     @NotNull
-    @Override public DBNConnection getMainConnection() throws SQLException {return null;}
+    @Override public DBNConnection getMainConnection() throws SQLException {throw new UnsupportedOperationException();}
     @NotNull
-    @Override public DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException {return null;}
+    @Override public DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException {throw new UnsupportedOperationException();}
     @Override public void freePoolConnection(DBNConnection connection) {}
     @Override public void dropPoolConnection(DBNConnection connection) {}
 

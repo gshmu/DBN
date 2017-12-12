@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
@@ -11,12 +12,11 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.openapi.Disposable;
-import com.intellij.util.containers.ContainerUtil;
 
 public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     private ConnectionHandlerRef connectionHandlerRef;
 
-    private List<DatabaseSession> sessions = ContainerUtil.createLockFreeCopyOnWriteList();
+    private List<DatabaseSession> sessions = new CopyOnWriteArrayList<>();
 
     public DatabaseSessionBundle(ConnectionHandler connectionHandler) {
         super(connectionHandler);

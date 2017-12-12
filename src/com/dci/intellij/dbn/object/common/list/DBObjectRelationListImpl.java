@@ -43,7 +43,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
     }
 
     public String toString() {
-        return name;
+        return name + " - " + super.toString();
     }
 
     public List<DBObjectRelation> getRelationBySourceName(String sourceName) {

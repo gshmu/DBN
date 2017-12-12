@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,12 +14,11 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
-import com.intellij.util.containers.ContainerUtil;
 
 public class DatabaseConsoleBundle extends DisposableBase {
     private ConnectionHandlerRef connectionHandlerRef;
 
-    private List<DBConsoleVirtualFile> consoles = ContainerUtil.createLockFreeCopyOnWriteList();
+    private List<DBConsoleVirtualFile> consoles = new CopyOnWriteArrayList<DBConsoleVirtualFile>();
 
     public DatabaseConsoleBundle(ConnectionHandler connectionHandler) {
         super(connectionHandler);

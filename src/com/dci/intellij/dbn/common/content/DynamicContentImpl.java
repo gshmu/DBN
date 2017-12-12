@@ -219,7 +219,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         dependencyAdapter.beforeReload(this);
         checkDisposed();
         try {
-            checkDisposed();
+            set(DIRTY, false);
             loader.reloadContent(this);
         } catch (DynamicContentLoadException e) {
             set(DIRTY, !e.isModelException());
