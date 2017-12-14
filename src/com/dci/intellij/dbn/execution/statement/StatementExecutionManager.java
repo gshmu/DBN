@@ -29,13 +29,14 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.execution.ExecutionContext;
-import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.TargetConnectionOption;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
@@ -264,8 +265,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                 ExecutionContext context = executionProcessor.getExecutionContext();
                                 if (context.isNot(EXECUTING) && context.isNot(QUEUED) && !executionQueue.contains(executionProcessor)) {
                                     StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-                                    ExecutionOptions options = executionInput.getOptions();
-                                    if (options.isUsePoolConnection()) {
+                                    if (executionInput.getSession().getId() == SessionId.POOL) {
                                         new BackgroundTask(getProject(), "Executing statement", true, true) {
                                             @Override
                                             protected void execute(@NotNull ProgressIndicator progressIndicator) {
@@ -292,9 +292,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     private void process(StatementExecutionProcessor executionProcessor) {
         try {
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-            ExecutionOptions options = executionInput.getOptions();
 
-            if (options.isUsePoolConnection()) {
+            if (executionInput.getSession().getId() == SessionId.POOL) {
                 DBSchema schema = executionInput.getTargetSchema();
                 ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
                 DBNConnection connection = connectionHandler.getPoolConnection(schema, false);
@@ -372,7 +371,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
             executionProcessor.initExecutionInput(bulkExecution);
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-            executionInput.getOptions().setUsePoolConnection(usePoolConnection);
+            DatabaseSessionBundle sessionBundle = executionProcessor.getConnectionHandler().getSessionBundle();
+            executionInput.setSession(usePoolConnection ? sessionBundle.POOL : sessionBundle.MAIN);
             Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
             if (executablePsiElement != null) {

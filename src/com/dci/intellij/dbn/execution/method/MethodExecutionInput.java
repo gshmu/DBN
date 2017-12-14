@@ -42,8 +42,8 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         targetSchemaRef = new DBObjectRef<DBSchema>();
 
         ExecutionOptions options = getOptions();
-        options.setUsePoolConnection(true);
         options.setCommitAfterExecution(true);
+        //setSessionId(SessionId.POOL);
     }
 
     public MethodExecutionInput(Project project, DBMethod method) {
@@ -101,6 +101,11 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     @Override
     public boolean isSchemaSelectionAllowed() {
         return DatabaseFeature.AUTHID_METHOD_EXECUTION.isSupported(getConnectionHandler());
+    }
+
+    @Override
+    public boolean isSessionSelectionAllowed() {
+        return true;
     }
 
     @Override
@@ -222,10 +227,12 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         String schemaName = element.getAttributeValue("execution-schema");
         targetSchemaRef = new DBObjectRef<DBSchema>(methodRef.getConnectionId(), DBObjectType.SCHEMA, schemaName);
         Element argumentsElement = element.getChild("argument-list");
-        for (Object object : argumentsElement.getChildren()) {
-            Element argumentElement = (Element) object;
-            MethodExecutionArgumentValue variable = new MethodExecutionArgumentValue(argumentElement);
-            argumentValues.add(variable);
+        if (argumentsElement != null) {
+            for (Object object : argumentsElement.getChildren()) {
+                Element argumentElement = (Element) object;
+                MethodExecutionArgumentValue variable = new MethodExecutionArgumentValue(argumentElement);
+                argumentValues.add(variable);
+            }
         }
     }
 

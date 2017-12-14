@@ -283,6 +283,10 @@ public class Icons {
     public static final Icon CONNECTION_INVALID       = load("/img/connection/ConnectionInvalid.png");
     public static final Icon CONNECTIONS              = load("/img/connection/Connections.png");
 
+    public static final Icon SESSION_CUSTOM           = load("/img/connection/SessionCustom.png");
+    public static final Icon SESSION_MAIN             = load("/img/connection/SessionMain.png");
+    public static final Icon SESSION_POOL             = load("/img/connection/SessionPool.png");
+
 
     public static final Icon DB_ORACLE            = load("/img/database/Oracle.png");
     public static final Icon DB_ORACLE_LARGE      = load("/img/database/Oracle_large.png");

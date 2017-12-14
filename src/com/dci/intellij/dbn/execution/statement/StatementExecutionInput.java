@@ -165,6 +165,11 @@ public class StatementExecutionInput extends LocalExecutionInput {
         return false;
     }
 
+    @Override
+    public boolean isSessionSelectionAllowed() {
+        return false;
+    }
+
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
         this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
