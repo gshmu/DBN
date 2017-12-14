@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
@@ -114,7 +115,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
             protected void execute() {
                 ResultSetDataModel dataModel = executionResult.getTableModel();
                 String connectionName = executionResult.getConnectionHandler().getPresentableText();
-                String connectionType = executionResult.getExecutionInput().getOptions().isUsePoolConnection() ? " (pool)" :"";
+                String connectionType = executionResult.getExecutionInput().getSession().getId() == SessionId.POOL ? " (pool)" :"";
                 int rowCount = dataModel.getRowCount();
                 String partialResultInfo = dataModel.isResultSetExhausted() ? "" : " (partial)";
                 statusLabel.setText(connectionName + connectionType + ": " + rowCount + " records" + partialResultInfo);

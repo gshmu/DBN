@@ -11,16 +11,23 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.intellij.openapi.Disposable;
 
 public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     private ConnectionHandlerRef connectionHandlerRef;
+    public DatabaseSession MAIN;
+    public DatabaseSession POOL;
 
     private List<DatabaseSession> sessions = new CopyOnWriteArrayList<>();
 
     public DatabaseSessionBundle(ConnectionHandler connectionHandler) {
         super(connectionHandler);
         this.connectionHandlerRef = connectionHandler.getRef();
+        MAIN = new DatabaseSession(SessionId.MAIN, "Main", connectionHandler);
+        POOL = new DatabaseSession(SessionId.POOL, "Pool", connectionHandler);
+        sessions.add(MAIN);
+        sessions.add(POOL);
     }
 
     public List<DatabaseSession> getSessions() {
@@ -65,7 +72,7 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
 
     public DatabaseSession createSession(String name) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DatabaseSession session = new DatabaseSession(connectionHandler, name);
+        DatabaseSession session = new DatabaseSession(null, name, connectionHandler);
         sessions.add(session);
         Collections.sort(sessions);
         return session;

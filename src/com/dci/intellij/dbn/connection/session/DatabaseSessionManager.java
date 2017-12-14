@@ -108,9 +108,11 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
 
             List<DatabaseSession> sessions = connectionHandler.getSessionBundle().getSessions();
             for (DatabaseSession session : sessions) {
-                Element sessionElement = new Element("session");
-                connectionElement.addContent(sessionElement);
-                sessionElement.setAttribute("name", session.getName());
+                if (session.isCustom()) {
+                    Element sessionElement = new Element("session");
+                    connectionElement.addContent(sessionElement);
+                    sessionElement.setAttribute("name", session.getName());
+                }
             }
         }
         return element;

@@ -6,6 +6,9 @@ import com.dci.intellij.dbn.common.constant.PseudoConstant;
 
 public final class SessionId extends PseudoConstant<SessionId> {
 
+    public static final SessionId MAIN = get("MAIN");
+    public static final SessionId POOL = get("POOL");
+
     public SessionId(String id) {
         super(id);
     }

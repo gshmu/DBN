@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -36,13 +37,14 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
     private JPanel mainPanel;
     private JPanel timeoutPanel;
     private JPanel targetSchemaPanel;
-    private JCheckBox usePoolConnectionCheckBox;
+    private JPanel targetSessionPanel;
     private JCheckBox commitCheckBox;
     private JCheckBox reuseVariablesCheckBox;
     private JCheckBox enableLoggingCheckBox;
     private AutoCommitLabel autoCommitLabel;
     private JLabel connectionLabel;
     private JLabel targetSchemaLabel;
+    private JLabel targetSessionLabel;
 
     private LocalExecutionInput executionInput;
     private Set<ChangeListener> changeListeners = new HashSet<ChangeListener>();
@@ -70,11 +72,8 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         ExecutionOptions options = executionInput.getOptions();
         commitCheckBox.setSelected(options.isCommitAfterExecution());
         commitCheckBox.setEnabled(!connectionHandler.isAutoCommit());
-        usePoolConnectionCheckBox.setSelected(options.isUsePoolConnection());
 
         commitCheckBox.addActionListener(actionListener);
-        usePoolConnectionCheckBox.addActionListener(actionListener);
-        usePoolConnectionCheckBox.setEnabled(!debuggerType.isDebug());
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler) && executionInput.isDatabaseLogProducer()) {
             enableLoggingCheckBox.setEnabled(!debuggerType.isDebug());
@@ -113,7 +112,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
 
     public void updateExecutionInput() {
         ExecutionOptions options = executionInput.getOptions();
-        options.setUsePoolConnection(usePoolConnectionCheckBox.isSelected());
+        //options.setUsePoolConnection(usePoolConnectionCheckBox.isSelected());
         options.setCommitAfterExecution(commitCheckBox.isSelected());
         options.setEnableLogging(enableLoggingCheckBox.isSelected());
         //DBSchema schema = (DBSchema) schemaList.getSelectedValue();
@@ -143,6 +142,33 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
             ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
             return connectionHandler.getObjectBundle().getSchemas();
         }
+    }
+
+    private class SessionSelector extends ValueSelector<DatabaseSession> {
+        public SessionSelector() {
+            super(Icons.SESSION_CUSTOM, "Select Session...", getExecutionInput().getSession(), true, ValueSelectorOption.HIDE_DESCRIPTION);
+            addListener(new ValueSelectorListener<DatabaseSession>() {
+                @Override
+                public void selectionChanged(DatabaseSession oldValue, DatabaseSession newValue) {
+                    executionInput.setSession(newValue);
+                    notifyChangeListeners();
+                }
+            });
+        }
+
+        @Override
+        public List<DatabaseSession> loadValues() {
+            return getConnectionHandler().getSessionBundle().getSessions();
+        }
+    }
+
+    public LocalExecutionInput getExecutionInput() {
+        return FailsafeUtil.get(executionInput);
+    }
+
+    public ConnectionHandler getConnectionHandler() {
+        ConnectionHandler connectionHandler = getExecutionInput().getConnectionHandler();
+        return FailsafeUtil.get(connectionHandler);
     }
 
     private ActionListener actionListener = new ActionListener() {

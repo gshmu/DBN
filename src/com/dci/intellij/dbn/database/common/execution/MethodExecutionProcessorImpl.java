@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -63,7 +64,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     public void execute(MethodExecutionInput executionInput, DBDebuggerType debuggerType) throws SQLException {
         executionInput.initExecution(debuggerType);
-        boolean usePoolConnection = executionInput.getOptions().isUsePoolConnection();
+        boolean usePoolConnection = executionInput.getSession().getId() == SessionId.POOL;
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBSchema executionSchema = executionInput.getTargetSchema();
         DBNConnection connection = usePoolConnection ?
@@ -80,7 +81,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         executionInput.initExecution(debuggerType);
         ExecutionOptions options = executionInput.getOptions();
         final ConnectionHandler connectionHandler = getConnectionHandler();
-        boolean usePoolConnection = options.isUsePoolConnection();
+        boolean usePoolConnection = executionInput.getSession().getId() == SessionId.POOL;
         boolean loggingEnabled = debuggerType != DBDebuggerType.JDBC && options.isEnableLogging();
         Project project = getProject();
         final DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
