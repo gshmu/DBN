@@ -9,22 +9,12 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorFontType;
 import com.intellij.ui.border.CustomLineBorder;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Font;
+import java.awt.*;
 
 public class DatasetEditorTableGutterRenderer extends JPanel implements ListCellRenderer {
     private JLabel textLabel;
@@ -41,7 +31,7 @@ public class DatasetEditorTableGutterRenderer extends JPanel implements ListCell
         imageLabel = new JLabel();
 
         textPanel = new JPanel(new BorderLayout());
-        textPanel.setBorder(new EmptyBorder(0,0,0,3));
+        textPanel.setBorder(JBUI.Borders.emptyRight(3));
         textPanel.add(textLabel, BorderLayout.EAST);
         add(textPanel, BorderLayout.CENTER);
         add(imageLabel, BorderLayout.EAST);

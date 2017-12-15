@@ -1,21 +1,5 @@
 package com.dci.intellij.dbn.execution.script.options.ui;
 
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.Set;
-
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -25,7 +9,20 @@ import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.TableUtil;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.Set;
 
 public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel> {
 
@@ -129,7 +126,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
 
     public Component prepareEditor(TableCellEditor editor, int rowIndex, int columnIndex) {
         final JTextField textField = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
-        textField.setBorder(new EmptyBorder(0,3,0,0));
+        textField.setBorder(JBUI.Borders.emptyLeft(3));
 
         new SimpleLaterInvocator() {
             @Override

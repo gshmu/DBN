@@ -1,30 +1,14 @@
 package com.dci.intellij.dbn.common.ui.list;
 
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -215,7 +199,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
             textPanel.add(label, BorderLayout.WEST);
             textPanel.add(errorLabel, BorderLayout.CENTER);
             textPanel.setBackground(UIUtil.getListBackground());
-            textPanel.setBorder(new EmptyBorder(0, 8, 0, 0));
+            textPanel.setBorder(JBUI.Borders.emptyLeft(8));
             add(textPanel, BorderLayout.CENTER);
         }
 
