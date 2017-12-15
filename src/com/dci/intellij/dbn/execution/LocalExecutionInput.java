@@ -2,33 +2,35 @@ package com.dci.intellij.dbn.execution;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.session.DatabaseSession;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 
 public abstract class LocalExecutionInput extends ExecutionInput{
     private ExecutionOptions options = new ExecutionOptions();
-    private DatabaseSession targetSession;
+    private SessionId targetSessionId = SessionId.MAIN;
 
     public LocalExecutionInput(Project project, ExecutionTarget executionTarget) {
         super(project, executionTarget);
 
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
-            connectionHandler = FailsafeUtil.get(connectionHandler);
-            options.setEnableLogging(connectionHandler.isLoggingEnabled());
-            targetSession = connectionHandler.getSessionBundle().getMainSession();
+        if (connectionHandler != null) {
+            if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
+                connectionHandler = FailsafeUtil.get(connectionHandler);
+                options.setEnableLogging(connectionHandler.isLoggingEnabled());
+            }
         }
     }
 
-    public DatabaseSession getTargetSession() {
-        return targetSession;
+    public SessionId getTargetSessionId() {
+        return targetSessionId;
     }
 
-    public void setTargetSession(DatabaseSession targetSession) {
-        this.targetSession = targetSession;
+    public void setTargetSessionId(SessionId targetSessionId) {
+        this.targetSessionId = targetSessionId;
     }
 
     public ExecutionOptions getOptions() {
@@ -52,14 +54,14 @@ public abstract class LocalExecutionInput extends ExecutionInput{
      *********************************************************/
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
-        //sessionId = CommonUtil.nvl(SessionId.get(element.getAttributeValue("session-id")), sessionId);
+        targetSessionId = CommonUtil.nvl(SessionId.get(element.getAttributeValue("session-id")), targetSessionId);
         options.setEnableLogging(SettingsUtil.getBooleanAttribute(element, "enable-logging", true));
         options.setCommitAfterExecution(SettingsUtil.getBooleanAttribute(element, "commit-after-execution", true));
     }
 
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
-        //element.setAttribute("session-id", sessionId.id());
+        element.setAttribute("session-id", targetSessionId.id());
         SettingsUtil.setBooleanAttribute(element, "enable-logging", options.isEnableLogging());
         SettingsUtil.setBooleanAttribute(element, "commit-after-execution", options.isCommitAfterExecution());
     }

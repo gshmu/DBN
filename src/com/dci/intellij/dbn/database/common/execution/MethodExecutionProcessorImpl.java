@@ -64,7 +64,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     public void execute(MethodExecutionInput executionInput, DBDebuggerType debuggerType) throws SQLException {
         executionInput.initExecution(debuggerType);
-        boolean usePoolConnection = executionInput.getTargetSession().getId() == SessionId.POOL;
+        boolean usePoolConnection = executionInput.getTargetSessionId() == SessionId.POOL;
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBSchema executionSchema = executionInput.getTargetSchema();
         DBNConnection connection = usePoolConnection ?
@@ -81,7 +81,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         executionInput.initExecution(debuggerType);
         ExecutionOptions options = executionInput.getOptions();
         final ConnectionHandler connectionHandler = getConnectionHandler();
-        boolean usePoolConnection = executionInput.getTargetSession().getId() == SessionId.POOL;
+        boolean usePoolConnection = executionInput.getTargetSessionId() == SessionId.POOL;
         boolean loggingEnabled = debuggerType != DBDebuggerType.JDBC && options.isEnableLogging();
         Project project = getProject();
         final DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
