@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.connection.session;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.SessionId;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class DatabaseSession extends DisposableBase implements Comparable<DatabaseSession>, Presentable {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -75,6 +75,10 @@ public class DatabaseSession extends DisposableBase implements Comparable<Databa
 
     @Override
     public int compareTo(@NotNull DatabaseSession o) {
+        if (id == SessionId.MAIN) return -1;
+        if (id == SessionId.POOL) {
+            return o.id == SessionId.MAIN ? 1 : -1;
+        }
         return name.compareTo(o.name);
     }
 }

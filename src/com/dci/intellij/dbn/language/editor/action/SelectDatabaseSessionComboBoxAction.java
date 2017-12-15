@@ -35,7 +35,7 @@ public class SelectDatabaseSessionComboBoxAction extends DBNComboBoxAction imple
                 actionGroup.add(new SelectDatabaseSessionAction(sessionBundle.getPoolSession()));
                 List<DatabaseSession> sessions = sessionBundle.getSessions();
                 if (sessions.size() > 0) {
-                    actionGroup.addSeparator();
+                    //actionGroup.addSeparator();
                     for (DatabaseSession session : sessions){
                         if (session.isCustom()) {
                             actionGroup.add(new SelectDatabaseSessionAction(session));
