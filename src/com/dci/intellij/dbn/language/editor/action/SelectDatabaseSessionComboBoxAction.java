@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
+import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -15,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.List;
 
 public class SelectDatabaseSessionComboBoxAction extends DBNComboBoxAction {
     private static final String NAME = "Session";
@@ -25,11 +27,22 @@ public class SelectDatabaseSessionComboBoxAction extends DBNComboBoxAction {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(DataManager.getInstance().getDataContext(component));
         if (virtualFile != null) {
-            ConnectionHandler activeConnection = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
-            if (activeConnection != null && !activeConnection.isVirtual() && !activeConnection.isDisposed()) {
-                for (DatabaseSession schema : activeConnection.getSessionBundle().getSessions()){
-                    actionGroup.add(new SelectDatabaseSessionAction(schema));
+            ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
+            if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
+                DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
+                actionGroup.add(new SelectDatabaseSessionAction(sessionBundle.getMainSession()));
+                actionGroup.add(new SelectDatabaseSessionAction(sessionBundle.getPoolSession()));
+                List<DatabaseSession> sessions = sessionBundle.getSessions();
+                if (sessions.size() > 0) {
+                    actionGroup.addSeparator();
+                    for (DatabaseSession session : sessions){
+                        if (session.isCustom()) {
+                            actionGroup.add(new SelectDatabaseSessionAction(session));
+                        }
+                    }
                 }
+                actionGroup.addSeparator();
+                actionGroup.add(new CreateDatabaseSessionAction(connectionHandler));
             }
         }
         return actionGroup;
