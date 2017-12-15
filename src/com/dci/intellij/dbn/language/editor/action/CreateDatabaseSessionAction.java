@@ -14,7 +14,7 @@ public class CreateDatabaseSessionAction extends DumbAwareAction {
     private ConnectionHandlerRef connectionHandlerRef;
 
     public CreateDatabaseSessionAction(ConnectionHandler connectionHandler) {
-        super("Create session...");
+        super("New session...");
         this.connectionHandlerRef = connectionHandler.getRef();
     }
 

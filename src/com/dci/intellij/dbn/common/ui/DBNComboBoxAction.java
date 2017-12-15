@@ -1,15 +1,13 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
+import com.intellij.openapi.project.DumbAware;
 
-public abstract class DBNComboBoxAction extends ComboBoxAction {
+import javax.swing.*;
+import java.awt.*;
+
+public abstract class DBNComboBoxAction extends ComboBoxAction implements DumbAware {
     public JComponent createCustomComponent(Presentation presentation) {
     JPanel panel=new JPanel(new GridBagLayout());
     ComboBoxButton button = new ComboBoxButton(presentation);

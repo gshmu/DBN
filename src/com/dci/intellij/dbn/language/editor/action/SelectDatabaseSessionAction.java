@@ -53,8 +53,14 @@ public class SelectDatabaseSessionAction extends DumbAwareAction {
             }
         }
 
-
         Presentation presentation = e.getPresentation();
+        if (session.isMain()) {
+            presentation.setDescription("Execute statements using main connection");
+        } else if (session.isPool()) {
+            presentation.setDescription("Execute statements in pool connections (async)");
+        }
+
+
         presentation.setEnabled(enabled);
     }
 }

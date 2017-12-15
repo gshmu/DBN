@@ -11,6 +11,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.List;
 
-public class SelectDatabaseSessionComboBoxAction extends DBNComboBoxAction {
+public class SelectDatabaseSessionComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "Session";
 
     @NotNull
@@ -48,7 +49,7 @@ public class SelectDatabaseSessionComboBoxAction extends DBNComboBoxAction {
         return actionGroup;
     }
 
-    public synchronized void update(AnActionEvent e) {
+    public void update(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         String text = NAME;
@@ -73,6 +74,7 @@ public class SelectDatabaseSessionComboBoxAction extends DBNComboBoxAction {
 
         Presentation presentation = e.getPresentation();
         presentation.setText(text, false);
+        presentation.setDescription("Select database session");
         presentation.setIcon(icon);
         presentation.setVisible(visible);
         presentation.setEnabled(enabled);
