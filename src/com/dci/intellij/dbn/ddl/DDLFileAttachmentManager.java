@@ -24,6 +24,8 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.ddl.ui.AttachDDLFileDialog;
@@ -113,6 +115,15 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     public DBSchemaObject getEditableObject(VirtualFile ddlFile) {
         DBObjectRef<DBSchemaObject> objectRef = mappings.get(ddlFile.getPath());
         return DBObjectRef.get(objectRef);
+    }
+
+    public ConnectionHandler getMappedConnection(VirtualFile ddlFile) {
+        DBObjectRef<DBSchemaObject> objectRef = mappings.get(ddlFile.getPath());
+        if (objectRef != null) {
+            ConnectionId connectionId = objectRef.getConnectionId();
+            return ConnectionManager.getInstance(getProject()).getConnectionHandler(connectionId);
+        }
+        return null;
     }
 
 
