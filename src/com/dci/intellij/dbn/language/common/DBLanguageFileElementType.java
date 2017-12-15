@@ -1,11 +1,7 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
-import com.intellij.lang.ParserDefinition;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.PsiBuilderFactory;
+import com.intellij.lang.*;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IFileElementType;
@@ -32,7 +28,7 @@ public class DBLanguageFileElementType extends IFileElementType {
 
         DBLanguageParser parser = (DBLanguageParser) parserDefinition.createParser(project);
         double databaseVersion = 9999;
-        ConnectionHandler activeConnection = file.getActiveConnection();
+        ConnectionHandler activeConnection = file.getConnectionHandler();
         if (activeConnection != null) {
             databaseVersion = activeConnection.getDatabaseVersion();
         }

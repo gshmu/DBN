@@ -22,7 +22,7 @@ public class DBSyntaxHighlighterProvider implements SyntaxHighlighterProvider {
 
             DBLanguageDialect mainLanguageDialect = language.getMainLanguageDialect();
             if (project != null && virtualFile != null) {
-                ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getActiveConnection(virtualFile);
+                ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
                 DBLanguageDialect languageDialect = connectionHandler == null ?
                         mainLanguageDialect :
                         connectionHandler.getLanguageDialect(language);

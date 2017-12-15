@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
@@ -18,8 +7,8 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
+import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
@@ -41,19 +30,28 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.LocalTimeCounter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentListener, DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
+import javax.swing.*;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.List;
+
+public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentListener, DBParseableVirtualFile, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private SourceCodeContent content = new SourceCodeContent();
     private ConnectionHandlerRef connectionHandlerRef;
-    private DBObjectRef<DBSchema> currentSchemaRef;
-    private DBConsoleType type = DBConsoleType.STANDARD;
+    private DBObjectRef<DBSchema> databaseSchemaRef;
+    private DatabaseSession databaseSession;
+    private final DBConsoleType type;
 
     public DBConsoleVirtualFile(ConnectionHandler connectionHandler, String name, DBConsoleType type) {
         super(connectionHandler.getProject());
         this.type = type;
         connectionHandlerRef = connectionHandler.getRef();
-        setCurrentSchema(connectionHandler.getDefaultSchema());
+        databaseSession = connectionHandler.getSessionBundle().getMainSession();
+        setDatabaseSchema(connectionHandler.getDefaultSchema());
         setName(name);
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
@@ -107,22 +105,28 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         return connectionHandlerRef.get();
     }
 
-    @NotNull
-    @Override
-    public ConnectionId getConnectionId() {
-        return connectionHandlerRef.getConnectionId();
+    public void setDatabaseSchema(DBSchema currentSchema) {
+        this.databaseSchemaRef = DBObjectRef.from(currentSchema);
     }
 
-    public void setCurrentSchema(DBSchema currentSchema) {
-        this.currentSchemaRef = DBObjectRef.from(currentSchema);
+    public void setDatabaseSchemaName(String currentSchemaName) {
+        this.databaseSchemaRef = new DBObjectRef<DBSchema>(getConnectionHandler().getId(), DBObjectType.SCHEMA, currentSchemaName);
     }
 
-    public void setCurrentSchemaName(String currentSchemaName) {
-        this.currentSchemaRef = new DBObjectRef<DBSchema>(getConnectionHandler().getId(), DBObjectType.SCHEMA, currentSchemaName);
+    public String getDatabaseSchemaName() {
+        return this.databaseSchemaRef == null ? null : this.databaseSchemaRef.getObjectName();
     }
 
-    public String getCurrentSchemaName() {
-        return this.currentSchemaRef == null ? null : this.currentSchemaRef.getObjectName();
+    public void setDatabaseSessionId(SessionId sessionId) {
+        databaseSession = getConnectionHandler().getSessionBundle().getSession(sessionId);
+    }
+
+    public DatabaseSession getDatabaseSession() {
+        return databaseSession;
+    }
+
+    public void setDatabaseSession(DatabaseSession databaseSession) {
+        this.databaseSession = databaseSession;
     }
 
     @Override
@@ -130,16 +134,9 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         return super.isValid() && connectionHandlerRef.isValid();
     }
 
-
     @Nullable
-    @Override
-    public ConnectionHandler getActiveConnection() {
-        return getConnectionHandler();
-    }
-
-    @Nullable
-    public DBSchema getCurrentSchema() {
-        return DBObjectRef.get(currentSchemaRef);
+    public DBSchema getDatabaseSchema() {
+        return DBObjectRef.get(databaseSchemaRef);
     }
 
     @NotNull

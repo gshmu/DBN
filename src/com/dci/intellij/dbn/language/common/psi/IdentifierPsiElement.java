@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -19,22 +11,13 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
-import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
-import com.dci.intellij.dbn.language.common.psi.lookup.ObjectDefinitionLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.VariableDefinitionLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.*;
 import com.dci.intellij.dbn.language.common.resolve.AliasObjectResolver;
 import com.dci.intellij.dbn.language.common.resolve.SurroundingVirtualObjectResolver;
 import com.dci.intellij.dbn.language.common.resolve.UnderlyingObjectResolver;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSynonym;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.DBVirtualObject;
+import com.dci.intellij.dbn.object.common.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.application.ApplicationManager;
@@ -43,6 +26,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.IncorrectOperationException;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElement {
     public IdentifierPsiElement(ASTNode astNode, IdentifierElementType elementType) {
@@ -384,7 +375,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         }
 
         if (elementType.isObject()) {
-            ConnectionHandler activeConnection = ref.getActiveConnection();
+            ConnectionHandler activeConnection = ref.getConnectionHandler();
 
             if (!elementType.isDefinition()){
                 PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(this, objectType, refText);
@@ -504,7 +495,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             return null;
         }
 
-        ConnectionHandler connectionHandler = getActiveConnection();
+        ConnectionHandler connectionHandler = getConnectionHandler();
         if ((connectionHandler == null || connectionHandler.isVirtual()) && isObject() && isDefinition()) {
             return null;
         }

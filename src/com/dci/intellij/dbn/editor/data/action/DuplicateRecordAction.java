@@ -27,7 +27,7 @@ public class DuplicateRecordAction extends AbstractDataEditorAction {
         presentation.setText("Duplicate Record");
         DatasetEditor datasetEditor = getDatasetEditor(e);
         Project project = e.getProject();
-        if (project == null || datasetEditor == null ||!datasetEditor.getActiveConnection().isConnected()) {
+        if (project == null || datasetEditor == null ||!datasetEditor.getConnectionHandler().isConnected()) {
             presentation.setEnabled(false);
         } else {
             presentation.setEnabled(true);

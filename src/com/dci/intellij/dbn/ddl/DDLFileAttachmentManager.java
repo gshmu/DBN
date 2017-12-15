@@ -1,19 +1,5 @@
 package com.dci.intellij.dbn.ddl;
 
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -41,25 +27,23 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.SelectFromListDialog;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileCopyEvent;
-import com.intellij.openapi.vfs.VirtualFileEvent;
-import com.intellij.openapi.vfs.VirtualFileListener;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.VirtualFileMoveEvent;
-import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
+import com.intellij.openapi.vfs.*;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 @State(
     name = "DBNavigator.Project.DDLFileAttachmentManager",
@@ -188,14 +172,14 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
         // map last used connection/schema
         FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
-        ConnectionHandler activeConnection = connectionMappingManager.getActiveConnection(virtualFile);
+        ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
         if (activeConnection == null) {
             DBSchemaObject schemaObject = objectRef.get();
             if (schemaObject != null) {
                 ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
                 DBSchema schema = schemaObject.getSchema();
-                connectionMappingManager.setActiveConnection(virtualFile, connectionHandler);
-                connectionMappingManager.setCurrentSchema(virtualFile, schema);
+                connectionMappingManager.setConnectionHandler(virtualFile, connectionHandler);
+                connectionMappingManager.setDatabaseSchema(virtualFile, schema);
             }
         }
 

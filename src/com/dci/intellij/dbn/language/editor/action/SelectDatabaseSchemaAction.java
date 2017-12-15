@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -17,9 +15,10 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 
-public class SetCurrentSchemaAction extends AnObjectAction<DBSchema> {
-    public SetCurrentSchemaAction(DBSchema schema) {
+public class SelectDatabaseSchemaAction extends AnObjectAction<DBSchema> {
+    public SelectDatabaseSchemaAction(DBSchema schema) {
         super(schema);
     }
 
@@ -36,7 +35,7 @@ public class SetCurrentSchemaAction extends AnObjectAction<DBSchema> {
         if (project != null && editor != null) {
             DBSchema schema = getSchema();
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            connectionMappingManager.setCurrentSchemaForEditor(editor, schema);
+            connectionMappingManager.setDatabaseSchema(editor, schema);
         }
     }
 

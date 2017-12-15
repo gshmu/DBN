@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.vfs;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDataset;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class DBDatasetVirtualFile extends DBContentVirtualFile {
     public DBDatasetVirtualFile(DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
@@ -33,5 +34,10 @@ public class DBDatasetVirtualFile extends DBContentVirtualFile {
 
     public long getLength() {
         return 0;
+    }
+
+    @Override
+    public DatabaseSession getDatabaseSession() {
+        return getConnectionHandler().getSessionBundle().getMainSession();
     }
 }

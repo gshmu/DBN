@@ -1,19 +1,11 @@
 package com.dci.intellij.dbn.vfs;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
@@ -36,10 +28,18 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
-public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObject> implements FileConnectionMappingProvider {
+public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObject> {
     public ThreadLocal<Document> FAKE_DOCUMENT = new ThreadLocal<Document>();
     private static final List<DBContentVirtualFile> EMPTY_CONTENT_FILES = Collections.emptyList();
     private List<DBContentVirtualFile> contentFiles;
@@ -50,12 +50,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
     @Nullable
-    public ConnectionHandler getActiveConnection() {
-        return getConnectionHandler();
-    }
-
-    @Nullable
-    public DBSchema getCurrentSchema() {
+    public DBSchema getDatabaseSchema() {
         return getObject().getSchema();
     }
 

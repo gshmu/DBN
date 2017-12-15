@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.code.common.intention;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -14,6 +11,9 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class DatabaseConnectIntentionAction extends GenericIntentionAction implements LowPriorityAction{
     @NotNull
@@ -34,7 +34,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
-            ConnectionHandler activeConnection = dbLanguagePsiFile.getActiveConnection();
+            ConnectionHandler activeConnection = dbLanguagePsiFile.getConnectionHandler();
             if (activeConnection != null && !activeConnection.isDisposed() && !activeConnection.isVirtual() && !activeConnection.canConnect() && !activeConnection.isConnected()) {
                 return true;
             }
@@ -45,7 +45,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
     public void invoke(@NotNull final Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
-            final ConnectionHandler activeConnection = dbLanguagePsiFile.getActiveConnection();
+            final ConnectionHandler activeConnection = dbLanguagePsiFile.getConnectionHandler();
             if (activeConnection != null && !activeConnection.isDisposed() && !activeConnection.isVirtual()) {
                 activeConnection.getInstructions().setAllowAutoConnect(true);
                 new BackgroundTask(project, "Trying to connect to " + activeConnection.getName(), false) {

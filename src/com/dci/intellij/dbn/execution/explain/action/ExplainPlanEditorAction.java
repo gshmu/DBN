@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.explain.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -22,6 +20,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 
 public class ExplainPlanEditorAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -52,7 +51,7 @@ public class ExplainPlanEditorAction extends AnAction {
             if (psiFile instanceof DBLanguagePsiFile) {
                 DBLanguagePsiFile languagePsiFile = (DBLanguagePsiFile) psiFile;
 
-                ConnectionHandler activeConnection = languagePsiFile.getActiveConnection();
+                ConnectionHandler activeConnection = languagePsiFile.getConnectionHandler();
                 visible = isVisible(e) && DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
 
                 if (visible) {

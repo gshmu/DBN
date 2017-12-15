@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.code.common.intention;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -20,6 +17,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class ExplainPlanIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     @NotNull
@@ -49,7 +49,7 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
                 ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
                 FileEditor fileEditor = EditorUtil.getFileEditor(editor);
                 if (executable != null && fileEditor != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
-                    ConnectionHandler activeConnection = executable.getActiveConnection();
+                    ConnectionHandler activeConnection = executable.getConnectionHandler();
                     return DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
                 }
             }

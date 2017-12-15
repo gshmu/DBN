@@ -1,18 +1,9 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-import java.io.IOException;
-import java.io.InputStream;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -25,8 +16,15 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements PropertyHolder<VirtualFileStatus>, FileConnectionMappingProvider  {
+import javax.swing.*;
+import java.io.IOException;
+import java.io.InputStream;
+
+public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements PropertyHolder<VirtualFileStatus>  {
     protected DBEditableObjectVirtualFile mainDatabaseFile;
     protected DBContentType contentType;
     private FileType fileType;
@@ -60,12 +58,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     }
 
     @Nullable
-    public ConnectionHandler getActiveConnection() {
-        return getObject().getConnectionHandler();
-    }
-
-    @Nullable
-    public DBSchema getCurrentSchema() {
+    public DBSchema getDatabaseSchema() {
         return getObject().getSchema();
     }
 
@@ -92,12 +85,6 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     @Override
     public ConnectionHandler getConnectionHandler() {
         return getMainDatabaseFile().getConnectionHandler();
-    }
-
-    @NotNull
-    @Override
-    public ConnectionId getConnectionId() {
-        return getMainDatabaseFile().getConnectionId();
     }
 
     public DBLanguageDialect getLanguageDialect() {

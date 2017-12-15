@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.logging.action;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -17,6 +15,7 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
 
 public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements DumbAware {
 
@@ -25,17 +24,17 @@ public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements D
     }
 
     public boolean isSelected(AnActionEvent e) {
-        ConnectionHandler activeConnection = getActiveConnection(e);
+        ConnectionHandler activeConnection = getConnectionHandler(e);
         return activeConnection != null && activeConnection.isLoggingEnabled();
     }
 
     @Nullable
-    private static ConnectionHandler getActiveConnection(AnActionEvent e) {
+    private static ConnectionHandler getConnectionHandler(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            ConnectionHandler activeConnection = connectionMappingManager.getActiveConnection(virtualFile);
+            ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
             if (activeConnection != null && !activeConnection.isVirtual() && !activeConnection.isDisposed()) {
                 return activeConnection ;
             }
@@ -45,13 +44,13 @@ public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements D
     }
 
     public void setSelected(AnActionEvent e, boolean selected) {
-        ConnectionHandler activeConnection = getActiveConnection(e);
+        ConnectionHandler activeConnection = getConnectionHandler(e);
         if (activeConnection != null) activeConnection.setLoggingEnabled(selected);
     }
 
     public void update(AnActionEvent e) {
         super.update(e);
-        ConnectionHandler activeConnection = getActiveConnection(e);
+        ConnectionHandler activeConnection = getConnectionHandler(e);
         Presentation presentation = e.getPresentation();
 
         boolean visible = false;

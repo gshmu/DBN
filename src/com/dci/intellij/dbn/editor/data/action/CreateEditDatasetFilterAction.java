@@ -43,7 +43,7 @@ public class CreateEditDatasetFilterAction extends AbstractDataEditorAction {
         Presentation presentation = e.getPresentation();
 
         DatasetEditor datasetEditor = getDatasetEditor(e);
-        if (datasetEditor == null || !datasetEditor.getActiveConnection().isConnected()) {
+        if (datasetEditor == null || !datasetEditor.getConnectionHandler().isConnected()) {
             presentation.setEnabled(false);
         } else {
             DBDataset dataset = datasetEditor.getDataset();

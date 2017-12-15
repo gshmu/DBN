@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import java.awt.BorderLayout;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -29,6 +22,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class StatementExecutionResultForm extends DBNFormImpl implements ExecutionResultForm<StatementExecutionCursorResult>, SearchableDataComponent {
     private JPanel mainPanel;
@@ -115,7 +111,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
             protected void execute() {
                 ResultSetDataModel dataModel = executionResult.getTableModel();
                 String connectionName = executionResult.getConnectionHandler().getPresentableText();
-                String connectionType = executionResult.getExecutionInput().getSession().getId() == SessionId.POOL ? " (pool)" :"";
+                String connectionType = executionResult.getExecutionInput().getTargetSession().getId() == SessionId.POOL ? " (pool)" :"";
                 int rowCount = dataModel.getRowCount();
                 String partialResultInfo = dataModel.isResultSetExhausted() ? "" : " (partial)";
                 statusLabel.setText(connectionName + connectionType + ": " + rowCount + " records" + partialResultInfo);

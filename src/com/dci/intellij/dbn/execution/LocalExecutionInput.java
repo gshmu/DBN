@@ -1,17 +1,16 @@
 package com.dci.intellij.dbn.execution;
 
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
 
 public abstract class LocalExecutionInput extends ExecutionInput{
     private ExecutionOptions options = new ExecutionOptions();
-    private DatabaseSession session;
+    private DatabaseSession targetSession;
 
     public LocalExecutionInput(Project project, ExecutionTarget executionTarget) {
         super(project, executionTarget);
@@ -20,16 +19,16 @@ public abstract class LocalExecutionInput extends ExecutionInput{
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
             connectionHandler = FailsafeUtil.get(connectionHandler);
             options.setEnableLogging(connectionHandler.isLoggingEnabled());
-            session = connectionHandler.getSessionBundle().MAIN;
+            targetSession = connectionHandler.getSessionBundle().getMainSession();
         }
     }
 
-    public DatabaseSession getSession() {
-        return session;
+    public DatabaseSession getTargetSession() {
+        return targetSession;
     }
 
-    public void setSession(DatabaseSession session) {
-        this.session = session;
+    public void setTargetSession(DatabaseSession targetSession) {
+        this.targetSession = targetSession;
     }
 
     public ExecutionOptions getOptions() {

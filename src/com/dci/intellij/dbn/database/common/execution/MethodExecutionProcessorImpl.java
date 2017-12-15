@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.database.common.execution;
 
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
@@ -33,6 +26,13 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implements MethodExecutionProcessor<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -64,7 +64,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     public void execute(MethodExecutionInput executionInput, DBDebuggerType debuggerType) throws SQLException {
         executionInput.initExecution(debuggerType);
-        boolean usePoolConnection = executionInput.getSession().getId() == SessionId.POOL;
+        boolean usePoolConnection = executionInput.getTargetSession().getId() == SessionId.POOL;
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBSchema executionSchema = executionInput.getTargetSchema();
         DBNConnection connection = usePoolConnection ?
@@ -81,7 +81,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         executionInput.initExecution(debuggerType);
         ExecutionOptions options = executionInput.getOptions();
         final ConnectionHandler connectionHandler = getConnectionHandler();
-        boolean usePoolConnection = executionInput.getSession().getId() == SessionId.POOL;
+        boolean usePoolConnection = executionInput.getTargetSession().getId() == SessionId.POOL;
         boolean loggingEnabled = debuggerType != DBDebuggerType.JDBC && options.isEnableLogging();
         Project project = getProject();
         final DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);

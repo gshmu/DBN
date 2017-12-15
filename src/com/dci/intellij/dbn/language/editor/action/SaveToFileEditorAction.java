@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import java.io.IOException;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -24,6 +21,9 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 public class SaveToFileEditorAction extends DumbAwareAction {
     public SaveToFileEditorAction() {
@@ -52,8 +52,8 @@ public class SaveToFileEditorAction extends DumbAwareAction {
                             if (newVirtualFile != null) {
                                 newVirtualFile.setBinaryContent(document.getCharsSequence().toString().getBytes());
                                 FileConnectionMappingManager fileConnectionMappingManager = FileConnectionMappingManager.getInstance(project);
-                                fileConnectionMappingManager.setActiveConnection(newVirtualFile, consoleVirtualFile.getConnectionHandler());
-                                fileConnectionMappingManager.setCurrentSchema(newVirtualFile, consoleVirtualFile.getCurrentSchema());
+                                fileConnectionMappingManager.setConnectionHandler(newVirtualFile, consoleVirtualFile.getConnectionHandler());
+                                fileConnectionMappingManager.setDatabaseSchema(newVirtualFile, consoleVirtualFile.getDatabaseSchema());
 
                                 FileEditorManager.getInstance(project).openFile(newVirtualFile, true);
                             }

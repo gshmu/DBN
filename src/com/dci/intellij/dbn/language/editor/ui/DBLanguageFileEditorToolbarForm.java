@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.editor.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -14,6 +10,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
     public static final Key<DBLanguageFileEditorToolbarForm> USER_DATA_KEY = new Key<DBLanguageFileEditorToolbarForm>("fileEditorToolbarForm");
@@ -27,7 +26,7 @@ public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
         actionToolbar.setTargetComponent(actionsPanel);
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
 
-        ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getActiveConnection(file);
+        ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(file);
         autoCommitLabel.setConnectionHandler(connectionHandler);
         Disposer.register(this, autoCommitLabel);
     }
