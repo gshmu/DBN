@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import java.awt.Color;
-import java.awt.event.KeyEvent;
-
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
@@ -19,10 +12,17 @@ import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.RoundedLineBorder;
+import com.intellij.util.ui.JBUI;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class DatasetTableCellEditorWithTextEditor extends DatasetTableCellEditor {
-    private static final EmptyBorder BUTTON_OUTSIDE_BORDER = new EmptyBorder(1, 1, 1, 1);
-    private static final EmptyBorder BUTTON_INSIDE_BORDER = new EmptyBorder(0, 2, 0, 2);
+    private static final Border BUTTON_OUTSIDE_BORDER = JBUI.Borders.empty(1);
+    private static final Border BUTTON_INSIDE_BORDER = JBUI.Borders.empty(0, 2);
     private static final RoundedLineBorder BUTTON_LINE_BORDER = new RoundedLineBorder(Colors.BUTTON_BORDER_COLOR, 4);
     private static final CompoundBorder BUTTON_BORDER = new CompoundBorder(BUTTON_OUTSIDE_BORDER, new CompoundBorder(BUTTON_LINE_BORDER, BUTTON_INSIDE_BORDER));
 

@@ -1,40 +1,5 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.KeyboardFocusManager;
-import java.awt.event.FocusEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -49,7 +14,27 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.JBColor;
 import com.intellij.util.containers.HashSet;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Set;
 
 public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implements TableModelListener {
     private static final Font BOLD = new Font(UIUtil.getMenuFont().getFontName(), Font.BOLD, UIUtil.getMenuFont().getSize());
@@ -494,8 +479,8 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
      *                  TableCellRenderers                *
      ******************************************************/
     private static class CalendarTableCellRenderer extends DefaultTableCellRenderer {
-        static final Border SELECTION_BORDER = new CompoundBorder(new LineBorder(UIUtil.getLabelForeground(), 1, false), new EmptyBorder(0, 0, 0, 6));
-        static final Border EMPTY_BORDER = new EmptyBorder(1, 1, 1, 9);
+        static final Border SELECTION_BORDER = new CompoundBorder(new LineBorder(UIUtil.getLabelForeground(), 1, false), JBUI.Borders.emptyRight(6));
+        static final Border EMPTY_BORDER = JBUI.Borders.empty(1, 1, 1, 9);
         static final Color INACTIVE_DAY_COLOR = new JBColor(new Color(0xC0C0C0), new Color(0x5B5B5B));
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -519,7 +504,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
 
     private static class CalendarTableHeaderCellRenderer extends DefaultTableCellRenderer {
-        static final Border EMPTY_BORDER = new EmptyBorder(1, 1, 1, 9);
+        static final Border EMPTY_BORDER = JBUI.Borders.empty(1, 1, 1, 9);
         static final Color FOREGROUND_COLOR = new JBColor(new Color(67, 123, 203), new Color(67, 123, 203));
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {

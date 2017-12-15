@@ -1,27 +1,8 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
-import com.dci.intellij.dbn.common.ui.ValueSelector;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
-import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.ui.*;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -33,6 +14,15 @@ import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterCondition;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.ui.JBUI;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> {
     private JPanel mainPanel;
@@ -95,7 +85,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
     private void addConditionPanel(ObjectQuickFilterCondition condition) {
         ObjectQuickFilterConditionForm conditionForm = new ObjectQuickFilterConditionForm(this, condition);
         conditionsPanel.add(conditionForm.getComponent());
-        conditionsPanel.setBorder(new CompoundBorder(Borders.BOTTOM_LINE_BORDER, new EmptyBorder(0,0,4,0)));
+        conditionsPanel.setBorder(new CompoundBorder(Borders.BOTTOM_LINE_BORDER, JBUI.Borders.emptyBottom(4)));
         conditionsPanel.revalidate();
         conditionsPanel.repaint();
 
@@ -117,7 +107,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
             }
         }
         int conditionsCount = filter.getConditions().size();
-        conditionsPanel.setBorder(conditionsCount > 0 ? new CompoundBorder(Borders.BOTTOM_LINE_BORDER, new EmptyBorder(0,0,4,0)) : null);
+        conditionsPanel.setBorder(conditionsCount > 0 ? new CompoundBorder(Borders.BOTTOM_LINE_BORDER, JBUI.Borders.emptyBottom(4)) : null);
         conditionsPanel.revalidate();
         conditionsPanel.repaint();
         updateJoinTypeComponents();

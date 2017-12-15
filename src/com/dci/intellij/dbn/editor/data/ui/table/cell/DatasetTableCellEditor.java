@@ -1,22 +1,5 @@
  package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
- import javax.swing.JTextField;
- import javax.swing.border.Border;
- import javax.swing.border.CompoundBorder;
- import javax.swing.border.EmptyBorder;
- import javax.swing.border.LineBorder;
- import javax.swing.text.Document;
- import java.awt.Cursor;
- import java.awt.MouseInfo;
- import java.awt.Point;
- import java.awt.event.KeyEvent;
- import java.awt.event.KeyListener;
- import java.awt.event.MouseAdapter;
- import java.awt.event.MouseEvent;
- import java.awt.event.MouseListener;
- import java.awt.event.MouseMotionAdapter;
- import java.awt.event.MouseMotionListener;
-
  import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
  import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
  import com.dci.intellij.dbn.common.ui.Borders;
@@ -33,10 +16,19 @@
  import com.dci.intellij.dbn.object.DBColumn;
  import com.intellij.ui.JBColor;
  import com.intellij.ui.SimpleTextAttributes;
+ import com.intellij.util.ui.JBUI;
+
+ import javax.swing.*;
+ import javax.swing.border.Border;
+ import javax.swing.border.CompoundBorder;
+ import javax.swing.border.LineBorder;
+ import javax.swing.text.Document;
+ import java.awt.*;
+ import java.awt.event.*;
 
  public class DatasetTableCellEditor extends AbstractDatasetTableCellEditor implements KeyListener{
-    private static final Border ERROR_BORDER = new CompoundBorder(new LineBorder(JBColor.RED, 1), new EmptyBorder(0, 2, 0, 2));
-    private static final Border POPUP_BORDER = new CompoundBorder(new LineBorder(JBColor.BLUE, 1), new EmptyBorder(0, 2, 0, 2));
+    private static final Border ERROR_BORDER = new CompoundBorder(new LineBorder(JBColor.RED, 1), JBUI.Borders.empty(0, 2));
+    private static final Border POPUP_BORDER = new CompoundBorder(new LineBorder(JBColor.BLUE, 1), JBUI.Borders.empty(0, 2));
 
     public static final int HIGHLIGHT_TYPE_NONE = 0;
     public static final int HIGHLIGHT_TYPE_POPUP = 1;

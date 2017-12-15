@@ -1,23 +1,5 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.FocusEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.sql.SQLException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
@@ -36,6 +18,17 @@ import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.ui.JBUI;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.sql.SQLException;
 
 public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JPanel mainPanel;
@@ -47,7 +40,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     public TextEditorPopupProviderForm(TextFieldWithPopup textField, boolean autoPopup) {
         super(textField, autoPopup, true);
-        editorTextArea.setBorder(new EmptyBorder(4, 4, 4, 4));
+        editorTextArea.setBorder(JBUI.Borders.empty(4));
         editorTextArea.addKeyListener(this);
         editorTextArea.setWrapStyleWord(true);
         Color bgColor = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.DEFAULT_PLAIN_DATA).getBgColor();
