@@ -28,7 +28,7 @@ public class DeleteRecordAction extends AbstractDataEditorAction {
         presentation.setText("Delete Records");
         DatasetEditor datasetEditor = getDatasetEditor(e);
         Project project = e.getProject();
-        if (project == null || datasetEditor == null || !datasetEditor.getActiveConnection().isConnected()) {
+        if (project == null || datasetEditor == null || !datasetEditor.getConnectionHandler().isConnected()) {
             presentation.setEnabled(false);
         } else {
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);

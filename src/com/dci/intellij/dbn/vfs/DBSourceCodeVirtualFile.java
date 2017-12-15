@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
@@ -16,6 +9,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
@@ -36,6 +30,14 @@ import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider, DocumentListener {
@@ -73,6 +75,11 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             }
         }
         return null;
+    }
+
+    @Override
+    public DatabaseSession getDatabaseSession() {
+        return getConnectionHandler().getSessionBundle().getPoolSession();
     }
 
     public synchronized boolean isLoaded() {

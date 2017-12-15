@@ -1,20 +1,9 @@
 package com.dci.intellij.dbn.editor.session;
 
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -28,8 +17,14 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.LocalTimeCounter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile, FileConnectionMappingProvider {
+import javax.swing.*;
+import java.io.*;
+import java.nio.charset.Charset;
+
+public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     private SessionBrowser sessionBrowser;
@@ -79,22 +74,16 @@ public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implem
         return FailsafeUtil.get(connectionHandler);
     }
 
-    @NotNull
-    @Override
-    public ConnectionId getConnectionId() {
-        return sessionBrowser == null ? ConnectionId.DISPOSED_CONNECTION : sessionBrowser.getConnectionHandler().getId();
-    }
-
     @Nullable
     @Override
-    public ConnectionHandler getActiveConnection() {
-        return getConnectionHandler();
-    }
-
-    @Nullable
-    @Override
-    public DBSchema getCurrentSchema() {
+    public DBSchema getDatabaseSchema() {
         return DBObjectRef.get(schemaRef);
+    }
+
+    @Nullable
+    @Override
+    public DatabaseSession getDatabaseSession() {
+        return getConnectionHandler().getSessionBundle().getPoolSession();
     }
 
     public void setCurrentSchema(DBSchema schema) {

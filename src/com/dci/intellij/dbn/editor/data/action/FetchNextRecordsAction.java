@@ -35,7 +35,7 @@ public class FetchNextRecordsAction extends AbstractDataEditorAction {
         boolean enabled =
                 datasetEditor != null &&
                 datasetEditor.isLoaded() &&
-                datasetEditor.getActiveConnection().isConnected() &&
+                datasetEditor.getConnectionHandler().isConnected() &&
                 !datasetEditor.isInserting() &&
                 !datasetEditor.isLoading() &&        
                 !datasetEditor.isDirty() &&

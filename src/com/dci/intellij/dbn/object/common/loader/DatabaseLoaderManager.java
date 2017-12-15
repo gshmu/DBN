@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.object.common.loader;
 
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -18,6 +15,8 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 public class DatabaseLoaderManager extends AbstractProjectComponent {
     private DatabaseLoaderQueue loaderQueue;
@@ -36,7 +35,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
                             VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
                             for (VirtualFile openFile : openFiles) {
 
-                                ConnectionHandler activeConnection = connectionMappingManager.getActiveConnection(openFile);
+                                ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(openFile);
                                 if (activeConnection == connectionHandler) {
                                     FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
                                     for (FileEditor fileEditor : fileEditors) {

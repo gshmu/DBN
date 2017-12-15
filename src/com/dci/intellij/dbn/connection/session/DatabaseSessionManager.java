@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.connection.session;
 
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -14,13 +8,16 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.ui.CreateRenameSessionDialog;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @State(
         name = "DBNavigator.Project.DatabaseSessionManager",
@@ -59,8 +56,8 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         }.start();
     }
 
-    public void createSession(ConnectionHandler connectionHandler, String name) {
-        connectionHandler.getSessionBundle().createSession(name);
+    public DatabaseSession createSession(ConnectionHandler connectionHandler, String name) {
+        return connectionHandler.getSessionBundle().createSession(name);
     }
 
     public void renameSession(DatabaseSession session, String newName) {
@@ -86,8 +83,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
                     @Override
                     protected void execute() {
                         ConnectionHandler connectionHandler = session.getConnectionHandler();
-                        String sessionName = session.getName();
-                        connectionHandler.getSessionBundle().removeSession(sessionName);
+                        connectionHandler.getSessionBundle().removeSession(session.getId());
                     }
                 });
     }
@@ -112,6 +108,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
                     Element sessionElement = new Element("session");
                     connectionElement.addContent(sessionElement);
                     sessionElement.setAttribute("name", session.getName());
+                    sessionElement.setAttribute("id", session.getId().id());
                 }
             }
         }
@@ -129,7 +126,8 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
                 DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
                 for (Element sessionElement : connectionElement.getChildren()) {
                     String sessionName = sessionElement.getAttributeValue("name");
-                    DatabaseSession session = sessionBundle.getSession(sessionName, true);
+                    SessionId sessionId = SessionId.get(sessionElement.getAttributeValue("id"));
+                    sessionBundle.addSession(sessionId, sessionName);
                 }
             }
         }

@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import javax.swing.Icon;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
@@ -72,6 +61,17 @@ import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
     private static final List<DBObject> EMPTY_OBJECT_LIST = Collections.unmodifiableList(new ArrayList<DBObject>(0));

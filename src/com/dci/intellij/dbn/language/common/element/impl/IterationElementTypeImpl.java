@@ -1,14 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
+import com.dci.intellij.dbn.common.util.RecursivitySafeLazyValue;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -20,6 +14,12 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import org.jdom.Element;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 public class IterationElementTypeImpl extends AbstractElementType implements IterationElementType {
 
@@ -27,7 +27,7 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
     protected TokenElementType[] separatorTokens;
     private int[] elementsCountVariants;
     private int minIterations;
-    private LazyValue<Boolean> followedBySeparator = new SimpleLazyValue<Boolean>(false) {
+    private LazyValue<Boolean> followedBySeparator = new RecursivitySafeLazyValue<Boolean>(false) {
         @Override
         protected Boolean load() {
             TokenElementType[] separatorTokens = getSeparatorTokens();

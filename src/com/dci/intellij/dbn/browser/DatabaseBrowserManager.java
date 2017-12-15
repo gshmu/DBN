@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.browser;
 
-import javax.swing.tree.TreePath;
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
@@ -37,21 +29,21 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
-import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
-import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.components.*;
+import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.List;
 
 @State(
     name = "DBNavigator.Project.DatabaseBrowserManager",
@@ -260,7 +252,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
                         FileEditor oldEditor = event.getOldEditor();
                         DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-                        DBSchema currentSchema = databaseVirtualFile.getCurrentSchema();
+                        DBSchema currentSchema = databaseVirtualFile.getDatabaseSchema();
                         boolean scroll = oldEditor != null && oldEditor.isValid();
                         BrowserTreeNode treeNode = currentSchema == null ? objectBundle : currentSchema;
                         navigateToElement(treeNode, scroll);

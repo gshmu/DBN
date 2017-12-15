@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -38,6 +32,12 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.Range;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class DocumentUtil {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
@@ -53,7 +53,7 @@ public class DocumentUtil {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) file;
             DBLanguage dbLanguage = dbLanguageFile.getDBLanguage();
             if (dbLanguage != null) {
-                ConnectionHandler connectionHandler = dbLanguageFile.getActiveConnection();
+                ConnectionHandler connectionHandler = dbLanguageFile.getConnectionHandler();
                 DBLanguageSyntaxHighlighter syntaxHighlighter = getSyntaxHighlighter(dbLanguage, connectionHandler);
 
                 EditorHighlighter editorHighlighter = HighlighterFactory.createHighlighter(syntaxHighlighter, editor.getColorsScheme());

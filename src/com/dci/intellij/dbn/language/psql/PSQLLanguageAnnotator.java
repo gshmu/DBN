@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.psql;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.code.psql.color.PSQLTextAttributesKeys;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
@@ -14,17 +12,8 @@ import com.dci.intellij.dbn.execution.statement.StatementGutterRenderer;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.navigation.NavigateToDefinitionAction;
-import com.dci.intellij.dbn.language.common.navigation.NavigateToObjectAction;
-import com.dci.intellij.dbn.language.common.navigation.NavigateToSpecificationAction;
-import com.dci.intellij.dbn.language.common.navigation.NavigationAction;
-import com.dci.intellij.dbn.language.common.navigation.NavigationGutterRenderer;
-import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
-import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
+import com.dci.intellij.dbn.language.common.navigation.*;
+import com.dci.intellij.dbn.language.common.psi.*;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.options.ProjectSettings;
@@ -35,6 +24,7 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 public class PSQLLanguageAnnotator implements Annotator {
 
@@ -55,7 +45,7 @@ public class PSQLLanguageAnnotator implements Annotator {
             }
             else if (psiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
-                ConnectionHandler connectionHandler = identifierPsiElement.getActiveConnection();
+                ConnectionHandler connectionHandler = identifierPsiElement.getConnectionHandler();
                 if (connectionHandler != null) {
                     annotateIdentifier(psiElement, holder);
                 }
@@ -137,7 +127,7 @@ public class PSQLLanguageAnnotator implements Annotator {
 
     private static void annotateObject(IdentifierPsiElement objectReference, AnnotationHolder holder) {
         PsiElement reference = objectReference.resolve();
-        /*ConnectionHandler connectionHandler = objectReference.getActiveConnection();
+        /*ConnectionHandler connectionHandler = objectReference.getConnectionHandler();
         if (reference == null && connectionHandler != null && connectionHandler.getConnectionStatus().isValid()) {
             Annotation annotation = holder.createErrorAnnotation(objectReference.getAstNode(),
                     "Unknown " + objectReference.getObjectTypeName());

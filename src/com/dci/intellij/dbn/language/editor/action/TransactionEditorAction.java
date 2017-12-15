@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -17,6 +13,10 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public abstract class TransactionEditorAction extends DumbAwareAction {
     protected TransactionEditorAction(String text, String description, Icon icon) {
@@ -29,7 +29,7 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
         boolean enabled = false;
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            ConnectionHandler activeConnection = connectionMappingManager.getActiveConnection(virtualFile);
+            ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
             enabled = activeConnection != null && activeConnection.hasUncommittedChanges();
         }
         Presentation presentation = e.getPresentation();
@@ -55,7 +55,7 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
     protected static ConnectionHandler getConnectionHandler(@Nullable Project project, @Nullable VirtualFile virtualFile) {
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            return connectionMappingManager.getActiveConnection(virtualFile);
+            return connectionMappingManager.getConnectionHandler(virtualFile);
         }
         return null;
     }

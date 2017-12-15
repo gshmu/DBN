@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
@@ -19,17 +11,8 @@ import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
-import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
-import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
-import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
-import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
-import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.SimpleObjectLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.VirtualObjectLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.*;
+import com.dci.intellij.dbn.language.common.psi.lookup.*;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -47,6 +30,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private static final PsiLookupAdapter CHR_STAR_LOOKUP_ADAPTER = new PsiLookupAdapter() {
@@ -90,7 +81,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     };
 
     public DBVirtualObject(DBObjectType objectType, BasePsiElement psiElement) {
-        super(psiElement.getActiveConnection(), psiElement.getText());
+        super(psiElement.getConnectionHandler(), psiElement.getText());
 
         underlyingPsiElement = psiElement;
         relevantPsiElement = psiElement;
@@ -244,7 +235,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         DBLanguagePsiFile file = underlyingPsiElement.getFile();
-        ConnectionHandler connectionHandler = file == null ? null : file.getActiveConnection();
+        ConnectionHandler connectionHandler = file == null ? null : file.getConnectionHandler();
         if (connectionHandler == null) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             return connectionManager.getConnectionBundle().getVirtualConnection(ConnectionId.VIRTUAL_ORACLE_CONNECTION);

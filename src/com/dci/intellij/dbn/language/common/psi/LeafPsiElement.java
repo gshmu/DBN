@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -21,6 +17,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public abstract class LeafPsiElement extends BasePsiElement implements PsiReference {
 
@@ -95,7 +95,7 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
         Set<DBObjectType> parentTypes = objectType.getGenericParents();
         if (parentTypes.size() > 0) {
             if (objectType.isSchemaObject()) {
-                ConnectionHandler connectionHandler = sourceScope.getActiveConnection();
+                ConnectionHandler connectionHandler = sourceScope.getConnectionHandler();
 
                 if (connectionHandler != null && !connectionHandler.isVirtual()) {
                     DBObjectBundle objectBundle = connectionHandler.getObjectBundle();

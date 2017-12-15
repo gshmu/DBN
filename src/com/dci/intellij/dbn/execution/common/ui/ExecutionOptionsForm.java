@@ -1,27 +1,9 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.ValueSelector;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
-import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.ui.*;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -32,6 +14,16 @@ import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.util.Disposer;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent> {
     private JPanel mainPanel;
@@ -146,11 +138,11 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
 
     private class SessionSelector extends ValueSelector<DatabaseSession> {
         public SessionSelector() {
-            super(Icons.SESSION_CUSTOM, "Select Session...", getExecutionInput().getSession(), true, ValueSelectorOption.HIDE_DESCRIPTION);
+            super(Icons.SESSION_CUSTOM, "Select Session...", getExecutionInput().getTargetSession(), true, ValueSelectorOption.HIDE_DESCRIPTION);
             addListener(new ValueSelectorListener<DatabaseSession>() {
                 @Override
                 public void selectionChanged(DatabaseSession oldValue, DatabaseSession newValue) {
-                    executionInput.setSession(newValue);
+                    executionInput.setTargetSession(newValue);
                     notifyChangeListeners();
                 }
             });

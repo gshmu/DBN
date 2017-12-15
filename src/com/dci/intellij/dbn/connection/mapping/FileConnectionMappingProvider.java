@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.connection.mapping;
 
+import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
+import com.dci.intellij.dbn.object.DBSchema;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.object.DBSchema;
-
-public interface FileConnectionMappingProvider {
+public interface FileConnectionMappingProvider extends ConnectionProvider {
     @Nullable
-    ConnectionHandler getActiveConnection();
+    DatabaseSession getDatabaseSession();
 
     @Nullable
-    DBSchema getCurrentSchema();
+    DBSchema getDatabaseSchema();
+
 }

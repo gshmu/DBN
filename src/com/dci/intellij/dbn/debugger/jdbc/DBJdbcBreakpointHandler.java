@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdbc;
 
-import java.sql.SQLException;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -36,6 +32,11 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.SQLException;
+import java.util.List;
+
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.*;
 
 public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProcess> {
@@ -238,7 +239,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
                 VirtualFile virtualFile = getVirtualFile(lineBreakpoint);
                 if (virtualFile != null) {
                     FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-                    ConnectionHandler connectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
+                    ConnectionHandler connectionHandler = connectionMappingManager.getConnectionHandler(virtualFile);
 
                     if (connectionHandler == getDebugProcess().getConnectionHandler()) {
                         setBreakpointId(lineBreakpoint, null);

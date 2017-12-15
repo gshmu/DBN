@@ -77,7 +77,7 @@ public class DebugStatementEditorAction extends AnAction {
             if (virtualFile != null) {
                 enabled = DatabaseDebuggerManager.isDebugConsole(virtualFile);
 
-                ConnectionHandler connectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
+                ConnectionHandler connectionHandler = connectionMappingManager.getConnectionHandler(virtualFile);
                 if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
                     visible = true;
                     if (!enabled) {

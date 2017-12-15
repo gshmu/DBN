@@ -16,18 +16,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     private ConnectionHandlerRef connectionHandlerRef;
-    public DatabaseSession MAIN;
-    public DatabaseSession POOL;
+    private DatabaseSession mainSession;
+    private DatabaseSession poolSession;
 
     private List<DatabaseSession> sessions = new CopyOnWriteArrayList<DatabaseSession>();
 
     public DatabaseSessionBundle(ConnectionHandler connectionHandler) {
         super(connectionHandler);
         this.connectionHandlerRef = connectionHandler.getRef();
-        MAIN = new DatabaseSession(SessionId.MAIN, "Main", connectionHandler);
-        POOL = new DatabaseSession(SessionId.POOL, "Pool", connectionHandler);
-        sessions.add(MAIN);
-        sessions.add(POOL);
+        mainSession = new DatabaseSession(SessionId.MAIN, "Main", connectionHandler);
+        poolSession = new DatabaseSession(SessionId.POOL, "Pool", connectionHandler);
+        sessions.add(mainSession);
+        sessions.add(poolSession);
     }
 
     public List<DatabaseSession> getSessions() {
@@ -47,6 +47,14 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
         return connectionHandlerRef.get();
     }
 
+    public DatabaseSession getMainSession() {
+        return mainSession;
+    }
+
+    public DatabaseSession getPoolSession() {
+        return poolSession;
+    }
+
     @Nullable
     public DatabaseSession getSession(String name) {
         for (DatabaseSession session : sessions) {
@@ -57,17 +65,19 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
         return null;
     }
 
-    public DatabaseSession getSession(String name, boolean create) {
-        DatabaseSession session = getSession(name);
-        if (session == null && create) {
-            synchronized (this) {
-                session = getSession(name);
-                if (session == null) {
-                    return createSession(name);
-                }
+    @Nullable
+    public DatabaseSession getSession(SessionId id) {
+        for (DatabaseSession session : sessions) {
+            if (session.getId() == id) {
+                return session;
             }
         }
-        return session;
+        return null;
+    }
+
+    public void addSession(SessionId id, String name) {
+        sessions.add(new DatabaseSession(id, name, getConnectionHandler()));
+        Collections.sort(sessions);
     }
 
     public DatabaseSession createSession(String name) {
@@ -78,8 +88,8 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
         return session;
     }
 
-    public void removeSession(String name) {
-        DatabaseSession session = getSession(name);
+    public void removeSession(SessionId id) {
+        DatabaseSession session = getSession(id);
         sessions.remove(session);
         DisposerUtil.dispose(session);
     }

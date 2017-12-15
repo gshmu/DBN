@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import javax.swing.Icon;
-import java.util.HashSet;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
@@ -51,14 +45,15 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class BasePsiElement extends ASTWrapperPsiElement implements ItemPresentation, FormattingProviderPsiElement {
     private ElementType elementType;
@@ -172,9 +167,9 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
     @Nullable
-    public ConnectionHandler getActiveConnection() {
+    public ConnectionHandler getConnectionHandler() {
         DBLanguagePsiFile file = getFile();
-        return file == null ? null : file.getActiveConnection();
+        return file == null ? null : file.getConnectionHandler();
     }
 
     public DBSchema getCurrentSchema() {
@@ -184,7 +179,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
             return basePsiElement.getCurrentSchema();
         }
         DBLanguagePsiFile file = getFile();
-        return file == null ? null : file.getCurrentSchema();
+        return file == null ? null : file.getDatabaseSchema();
     }
 
     public String toString() {
@@ -736,7 +731,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
     public QuoteDefinition getIdentifierQuotes() {
-        ConnectionHandler activeConnection = getActiveConnection();
+        ConnectionHandler activeConnection = getConnectionHandler();
         if (activeConnection != null) {
             return DatabaseCompatibilityInterface.getInstance(activeConnection).getIdentifierQuotes();
         }

@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.language.common;
 
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
@@ -14,6 +11,8 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.tree.IFileElementType;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class DBLanguage<D extends DBLanguageDialect> extends Language implements DBFileElementTypeProvider {
 
@@ -46,7 +45,7 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
     public abstract D getMainLanguageDialect();
 
     public D getLanguageDialect(Project project, VirtualFile virtualFile) {
-        ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getActiveConnection(virtualFile);
+        ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
         if (connectionHandler != null) {
             return (D) connectionHandler.getLanguageDialect(this);
         }

@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.editor;
 
-import java.awt.Color;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
@@ -18,6 +14,10 @@ import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.intellij.openapi.fileEditor.impl.EditorTabColorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
 
 public class DBEditorTabColorProvider implements EditorTabColorProvider{
 
@@ -63,7 +63,7 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider{
             return objectFile.getConnectionHandler();
         }
 
-        return FileConnectionMappingManager.getInstance(project).getActiveConnection(file);
+        return FileConnectionMappingManager.getInstance(project).getConnectionHandler(file);
     }
 
     private static Color getColor(ConnectionHandler connectionHandler) {
