@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.intellij.openapi.Disposable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -65,14 +66,14 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
         return null;
     }
 
-    @Nullable
+    @NotNull
     public DatabaseSession getSession(SessionId id) {
         for (DatabaseSession session : sessions) {
             if (session.getId() == id) {
                 return session;
             }
         }
-        return null;
+        throw new IllegalArgumentException("Unknown session id " + id);
     }
 
     public void addSession(SessionId id, String name) {

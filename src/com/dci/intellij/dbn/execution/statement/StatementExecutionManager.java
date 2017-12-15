@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
-import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
@@ -253,7 +252,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                 ExecutionContext context = executionProcessor.getExecutionContext();
                                 if (context.isNot(EXECUTING) && context.isNot(QUEUED) && !executionQueue.contains(executionProcessor)) {
                                     StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-                                    if (executionInput.getTargetSession().getId() == SessionId.POOL) {
+                                    if (executionInput.getTargetSessionId() == SessionId.POOL) {
                                         new BackgroundTask(getProject(), "Executing statement", true, true) {
                                             @Override
                                             protected void execute(@NotNull ProgressIndicator progressIndicator) {
@@ -281,7 +280,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         try {
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
 
-            if (executionInput.getTargetSession().getId() == SessionId.POOL) {
+            if (executionInput.getTargetSessionId() == SessionId.POOL) {
                 DBSchema schema = executionInput.getTargetSchema();
                 ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
                 DBNConnection connection = connectionHandler.getPoolConnection(schema, false);
@@ -359,8 +358,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
             executionProcessor.initExecutionInput(bulkExecution);
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-            DatabaseSessionBundle sessionBundle = executionProcessor.getConnectionHandler().getSessionBundle();
-            executionInput.setTargetSession(usePoolConnection ? sessionBundle.getPoolSession() : sessionBundle.getMainSession());
+            executionInput.setTargetSessionId(usePoolConnection ? SessionId.POOL : SessionId.MAIN);
             Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
             if (executablePsiElement != null) {

@@ -28,6 +28,13 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Connectivity status indicator<br>
+                - Session management<br>
+                - Redesigned resource management<br>
+                - Important stability and performance improvements<br>
+            </ul>
             <li><b>3.0.7621</b>
             <ul>
                 - Parallel / asynchronous statement execution (using pool connections)<br>
