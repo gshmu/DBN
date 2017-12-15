@@ -12,13 +12,14 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
+public class SelectConnectionComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "DB Connections";
 
     @NotNull
