@@ -23,6 +23,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -56,8 +57,13 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         } else {
             targetSchemaLabel.setVisible(true);
             DBSchema targetSchema = executionInput.getTargetSchema();
-            targetSchemaLabel.setText(targetSchema.getName());
-            targetSchemaLabel.setIcon(targetSchema.getIcon());
+            if (targetSchema == null) {
+                targetSessionLabel.setText("No schema selected");
+                targetSessionLabel.setIcon(Icons.DBO_SCHEMA);
+            } else {
+                targetSchemaLabel.setText(targetSchema.getName());
+                targetSchemaLabel.setIcon(targetSchema.getIcon());
+            }
         }
 
         if (executionInput.isSessionSelectionAllowed()) {
@@ -146,7 +152,11 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         @Override
         public List<DBSchema> loadValues() {
             ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-            return connectionHandler.getObjectBundle().getSchemas();
+            if (connectionHandler == null) {
+                return Collections.emptyList();
+            } else {
+                return connectionHandler.getObjectBundle().getSchemas();
+            }
         }
     }
 

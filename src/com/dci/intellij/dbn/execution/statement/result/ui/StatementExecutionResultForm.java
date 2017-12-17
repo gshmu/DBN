@@ -111,7 +111,10 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
             protected void execute() {
                 ResultSetDataModel dataModel = executionResult.getTableModel();
                 String connectionName = executionResult.getConnectionHandler().getPresentableText();
-                String connectionType = executionResult.getExecutionInput().getTargetSessionId() == SessionId.POOL ? " (pool)" :"";
+                SessionId sessionId = executionResult.getExecutionInput().getTargetSessionId();
+                String connectionType =
+                        sessionId == SessionId.MAIN ? " (main)" :
+                        sessionId == SessionId.POOL ? " (pool)" : " (session)";
                 int rowCount = dataModel.getRowCount();
                 String partialResultInfo = dataModel.isResultSetExhausted() ? "" : " (partial)";
                 statusLabel.setText(connectionName + connectionType + ": " + rowCount + " records" + partialResultInfo);

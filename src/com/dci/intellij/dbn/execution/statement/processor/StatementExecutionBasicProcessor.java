@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -115,7 +116,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     public boolean isDirty(){
         if (getConnectionHandler() != executionInput.getConnectionHandler() || // connection changed since execution
-            getTargetSchema() != executionInput.getCurrentSchema()) { // current schema changed since execution)
+            getTargetSchema() != executionInput.getTargetSchema()) { // current schema changed since execution)
             return true;
 
         } else {
@@ -230,7 +231,8 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             executionInput.setOriginalStatementText(cachedExecutable.getText());
             executionInput.setExecutableStatementText(cachedExecutable.prepareStatementText());
             executionInput.setConnectionHandler(getConnectionHandler());
-            executionInput.setCurrentSchema(getTargetSchema());
+            executionInput.setTargetSchema(getTargetSchema());
+            executionInput.setTargetSession(getTargetSession());
             executionInput.setBulkExecution(bulkExecution);
         }
 
@@ -626,6 +628,11 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Nullable
     public DBSchema getTargetSchema() {
         return getPsiFile().getDatabaseSchema();
+    }
+
+    @Nullable
+    public DatabaseSession getTargetSession() {
+        return getPsiFile().getDatabaseSession();
     }
 
     @NotNull
