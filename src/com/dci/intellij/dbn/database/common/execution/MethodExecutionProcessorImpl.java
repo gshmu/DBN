@@ -64,13 +64,12 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     public void execute(MethodExecutionInput executionInput, DBDebuggerType debuggerType) throws SQLException {
         executionInput.initExecution(debuggerType);
-        boolean usePoolConnection = executionInput.getTargetSessionId() == SessionId.POOL;
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DBSchema executionSchema = executionInput.getTargetSchema();
-        DBNConnection connection = usePoolConnection ?
-                connectionHandler.getPoolConnection(executionSchema, false) :
-                connectionHandler.getMainConnection(executionSchema);
-        if (usePoolConnection) {
+        SessionId targetSessionId = executionInput.getTargetSessionId();
+        DBSchema targetSchema = executionInput.getTargetSchema();
+        DBNConnection connection = connectionHandler.getConnection(targetSessionId, targetSchema);
+
+        if (targetSessionId == SessionId.POOL) {
             ConnectionUtil.setAutoCommit(connection, false);
         }
 
@@ -81,7 +80,8 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         executionInput.initExecution(debuggerType);
         ExecutionOptions options = executionInput.getOptions();
         final ConnectionHandler connectionHandler = getConnectionHandler();
-        boolean usePoolConnection = executionInput.getTargetSessionId() == SessionId.POOL;
+        SessionId targetSessionId = executionInput.getTargetSessionId();
+
         boolean loggingEnabled = debuggerType != DBDebuggerType.JDBC && options.isEnableLogging();
         Project project = getProject();
         final DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
@@ -133,7 +133,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 }
             }
 
-            if (!usePoolConnection) connection.notifyDataChanges(method.getVirtualFile());
+            if (targetSessionId != SessionId.POOL) connection.notifyDataChanges(method.getVirtualFile());
         } catch (SQLException e) {
             ConnectionUtil.cancel(context.getStatement());
             throw e;
@@ -142,21 +142,23 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 loggingManager.disableLogger(connectionHandler, connection);
             }
 
-            if (options.isCommitAfterExecution()) {
-                try {
-                    if (usePoolConnection) {
-                        connection.commit();
-                    } else {
-                        connectionHandler.commit();
+            try {
+                if (options.isCommitAfterExecution()) {
+                    connection.commit();
+                } else {
+                    if (targetSessionId == SessionId.POOL) {
+                        connection.rollback();
                     }
-                } catch (SQLException e) {
-                    NotificationUtil.sendErrorNotification(getProject(), "Error committing after method execution.", e.getMessage());
                 }
+            } catch (SQLException e) {
+                NotificationUtil.sendErrorNotification(getProject(), "Error committing / rolling-back after method execution.", e.getMessage());
             }
 
-            if (debuggerType == DBDebuggerType.JDBC)
-                connectionHandler.dropPoolConnection(connection); else
-                connectionHandler.freePoolConnection(connection);
+            if (targetSessionId == SessionId.POOL) {
+                if (debuggerType == DBDebuggerType.JDBC)
+                    connectionHandler.dropPoolConnection(connection); else
+                    connectionHandler.freePoolConnection(connection);
+            }
         }
     }
 

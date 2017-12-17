@@ -75,12 +75,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     private final Map<FileEditor, List<StatementExecutionProcessor>> fileExecutionProcessors = new HashMap<FileEditor, List<StatementExecutionProcessor>>();
     private final StatementExecutionVariablesCache variablesCache = new StatementExecutionVariablesCache();
-    private StatementExecutionQueue executionQueue = new StatementExecutionQueue(getProject()) {
-        @Override
-        protected void execute(StatementExecutionProcessor processor) {
-            process(processor);
-        }
-    };
+    private Map<SessionId, StatementExecutionQueue> executionQueues = new HashMap<SessionId, StatementExecutionQueue>();
 
     private static final AtomicInteger RESULT_SEQUENCE = new AtomicInteger(0);
 
@@ -88,6 +83,25 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         super(project);
         EventUtil.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
         EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+    }
+
+    public StatementExecutionQueue getExecutionQueue(SessionId sessionId) {
+        StatementExecutionQueue executionQueue = executionQueues.get(sessionId);
+        if (executionQueue == null) {
+            synchronized (this) {
+                executionQueue = executionQueues.get(sessionId);
+                if (executionQueue == null) {
+                    executionQueue = new StatementExecutionQueue(StatementExecutionManager.this) {
+                        @Override
+                        protected void execute(StatementExecutionProcessor processor) {
+                            process(processor);
+                        }
+                    };
+                    executionQueues.put(sessionId, executionQueue);
+                }
+            }
+        }
+        return executionQueue;
     }
 
     public static StatementExecutionManager getInstance(@NotNull Project project) {
@@ -210,10 +224,6 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         return null;
     }
 
-    public StatementExecutionQueue getExecutionQueue() {
-        return executionQueue;
-    }
-
     /*********************************************************
      *                       Execution                       *
      *********************************************************/
@@ -250,9 +260,10 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         protected void execute() {
                             for (final StatementExecutionProcessor executionProcessor : executionProcessors) {
                                 ExecutionContext context = executionProcessor.getExecutionContext();
-                                if (context.isNot(EXECUTING) && context.isNot(QUEUED) && !executionQueue.contains(executionProcessor)) {
-                                    StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-                                    if (executionInput.getTargetSessionId() == SessionId.POOL) {
+                                StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
+                                SessionId sessionId = executionInput.getTargetSessionId();
+                                if (context.isNot(EXECUTING) && context.isNot(QUEUED)) {
+                                    if (sessionId == SessionId.POOL) {
                                         new BackgroundTask(getProject(), "Executing statement", true, true) {
                                             @Override
                                             protected void execute(@NotNull ProgressIndicator progressIndicator) {
@@ -260,7 +271,10 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                             }
                                         }.start();
                                     } else {
-                                        executionQueue.queue(executionProcessor);
+                                        StatementExecutionQueue executionQueue = getExecutionQueue(sessionId);
+                                        if (!executionQueue.contains(executionProcessor)) {
+                                            executionQueue.queue(executionProcessor);
+                                        }
                                     }
                                 }
                             }

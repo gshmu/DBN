@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.Icon;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
@@ -32,6 +22,12 @@ import com.dci.intellij.dbn.object.common.DBVirtualObjectBundle;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.sql.SQLException;
+import java.util.*;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
     private ConnectionId id;
@@ -162,12 +158,20 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public String getUserName() {return "root";}
 
     @Override public DBNConnection getTestConnection() throws SQLException {return null;}
+
     @NotNull
     @Override public DBNConnection getPoolConnection(boolean readonly) throws SQLException {throw new UnsupportedOperationException();}
+
     @NotNull
     @Override public DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {throw new UnsupportedOperationException();}
+
     @NotNull
     @Override public DBNConnection getMainConnection() throws SQLException {throw new UnsupportedOperationException();}
+
+    @NotNull
+    @Override
+    public DBNConnection getConnection(SessionId sessionId, @Nullable DBSchema schema) throws SQLException {throw new UnsupportedOperationException();}
+
     @NotNull
     @Override public DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException {throw new UnsupportedOperationException();}
     @Override public void freePoolConnection(DBNConnection connection) {}

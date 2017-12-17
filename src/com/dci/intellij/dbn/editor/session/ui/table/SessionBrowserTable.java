@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
-import javax.swing.JPopupMenu;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.table.TableCellRenderer;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import java.util.EventObject;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
@@ -30,6 +19,17 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.PopupMenuListenerAdapter;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.util.EventObject;
 
 public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     private SessionBrowser sessionBrowser;
@@ -59,6 +59,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         return new SelectionRestorer();
     }
 
+    @NotNull
     public Project getProject() {
         return sessionBrowser.getProject();
     }

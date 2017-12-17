@@ -1,24 +1,28 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import org.jetbrains.annotations.NotNull;
-
+import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
 
-public abstract class StatementExecutionQueue {
+public abstract class StatementExecutionQueue extends DisposableBase{
 
-    private Project project;
+    private ProjectRef projectRef;
     private final Queue<StatementExecutionProcessor> processors = new ConcurrentLinkedQueue<StatementExecutionProcessor>();
     private boolean executing = false;
 
-    StatementExecutionQueue(Project project) {
-        this.project = project;
+    StatementExecutionQueue(StatementExecutionManager executionManager) {
+        super(executionManager);
+        projectRef = new ProjectRef(executionManager.getProject());
     }
 
     public void queue(StatementExecutionProcessor processor) {
@@ -29,32 +33,42 @@ public abstract class StatementExecutionQueue {
         }
     }
 
+    @NotNull
+    public Project getProject() {
+        return projectRef.getnn();
+    }
+
+
     private void execute() {
         if (!executing) {
-            executing = true;
-            new BackgroundTask(project, "Executing statements", true, true) {
-                @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                    try {
-                        StatementExecutionProcessor processor = processors.poll();
-                        while (processor != null) {
+            synchronized (this) {
+                if (!executing) {
+                    executing = true;
+                    new BackgroundTask(getProject(), "Executing statements", true, true) {
+                        @Override
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
                             try {
-                                StatementExecutionQueue.this.execute(processor);
-                            } catch (ProcessCanceledException ignore) {}
+                                StatementExecutionProcessor processor = processors.poll();
+                                while (processor != null) {
+                                    try {
+                                        StatementExecutionQueue.this.execute(processor);
+                                    } catch (ProcessCanceledException ignore) {}
 
-                            if (progressIndicator.isCanceled()) {
-                                cancelExecution();
+                                    if (progressIndicator.isCanceled()) {
+                                        cancelExecution();
+                                    }
+                                    processor = processors.poll();
+                                }
+                            } finally {
+                                executing = false;
+                                if (progressIndicator.isCanceled()) {
+                                    cancelExecution();
+                                }
                             }
-                            processor = processors.poll();
                         }
-                    } finally {
-                        executing = false;
-                        if (progressIndicator.isCanceled()) {
-                            cancelExecution();
-                        }
-                    }
+                    }.start();
                 }
-            }.start();
+            }
         }
     }
 
@@ -78,6 +92,14 @@ public abstract class StatementExecutionQueue {
         processors.remove(processor);
         if (processors.size() == 0) {
             executing = false;
+        }
+    }
+
+    @Override
+    public void dispose() {
+        if (!isDisposed()) {
+            super.dispose();
+            processors.clear();
         }
     }
 }
