@@ -1,14 +1,10 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import java.sql.SQLException;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
@@ -21,6 +17,11 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
+import java.util.List;
 
 public interface StatementExecutionProcessor extends ConnectionProvider, Disposable{
 
@@ -34,6 +35,9 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     @Nullable
     DBSchema getTargetSchema();
+
+    @Nullable
+    DatabaseSession getTargetSession();
 
     @NotNull
     Project getProject();

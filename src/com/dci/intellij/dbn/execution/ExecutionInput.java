@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class ExecutionInput extends DisposableBase implements Disposable, ConnectionProvider, PersistentConfiguration {
     private ExecutionTimeout executionTimeout;
@@ -75,23 +76,25 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
     }
 
     @NotNull
-    public Project getProject() {
+    public final Project getProject() {
         return projectRef.getnn();
     }
 
-    public DBSchema getTargetSchema() {
+    @Nullable
+    public final DBSchema getTargetSchema() {
         return DBObjectRef.get(targetSchemaRef);
     }
 
-    public void setTargetSchema(DBSchema schema){
-        targetSchemaRef = schema.getRef();
+    public final void setTargetSchema(@Nullable DBSchema schema){
+        targetSchemaRef = DBObjectRef.from(schema);
     }
 
-    public ConnectionHandler getTargetConnection() {
+    @Nullable
+    public final ConnectionHandler getTargetConnection() {
         return ConnectionHandlerRef.get(targetConnectionRef);
     }
 
-    public void setTargetConnection(ConnectionHandler connectionHandler) {
+    public final void setTargetConnection(@Nullable ConnectionHandler connectionHandler) {
         this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
     }
 

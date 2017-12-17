@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
@@ -27,6 +28,10 @@ public abstract class LocalExecutionInput extends ExecutionInput{
 
     public SessionId getTargetSessionId() {
         return targetSessionId;
+    }
+
+    public void setTargetSession(DatabaseSession databaseSession) {
+        setTargetSessionId(databaseSession == null ? SessionId.MAIN : databaseSession.getId());
     }
 
     public void setTargetSessionId(SessionId targetSessionId) {

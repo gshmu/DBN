@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.execution.ExecutionContext;
-import com.dci.intellij.dbn.execution.TargetConnectionOption;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
@@ -358,21 +357,13 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     private boolean promptExecutionDialogs(@NotNull List<StatementExecutionProcessor> executionProcessors, DBDebuggerType debuggerType) {
         Map<String, StatementExecutionVariable> variableCache = new HashMap<String, StatementExecutionVariable>();
         boolean reuseVariables = false;
-        boolean usePoolConnection = false;
         boolean bulkExecution = executionProcessors.size() > 1;
 
         StatementExecutionSettings executionSettings = ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
-        TargetConnectionOption connectionOption = executionSettings.getTargetConnection().resolve();
-        if (connectionOption == TargetConnectionOption.CANCEL) {
-            return false;
-        } else {
-            usePoolConnection = connectionOption == TargetConnectionOption.POOL;
-        }
 
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
             executionProcessor.initExecutionInput(bulkExecution);
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-            executionInput.setTargetSessionId(usePoolConnection ? SessionId.POOL : SessionId.MAIN);
             Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
             if (executablePsiElement != null) {
