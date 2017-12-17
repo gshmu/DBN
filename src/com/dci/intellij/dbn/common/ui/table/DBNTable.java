@@ -1,32 +1,5 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import javax.swing.DefaultListSelectionModel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JViewport;
-import javax.swing.event.EventListenerList;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.PointerInfo;
-import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
@@ -38,6 +11,19 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import javax.swing.table.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DBNTable<T extends DBNTableModel> extends JTable implements Disposable{
     private static final int MAX_COLUMN_WIDTH = 300;
@@ -151,8 +137,9 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         return scrollDistance;
     }
 
+    @NotNull
     public Project getProject() {
-        return projectRef.get();
+        return projectRef.getnn();
     }
 
     public Object getValueAtMouseLocation() {

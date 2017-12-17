@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -25,6 +26,7 @@ import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionBasicResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
@@ -406,7 +408,9 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
         context.set(CANCELLED, true);
         StatementExecutionManager executionManager = getExecutionManager();
-        executionManager.getExecutionQueue().cancelExecution(this);
+        SessionId sessionId = getExecutionInput().getTargetSessionId();
+        StatementExecutionQueue executionQueue = executionManager.getExecutionQueue(sessionId);
+        executionQueue.cancelExecution(this);
         if (databaseCall != null) {
             databaseCall.cancelSilently();
         }
