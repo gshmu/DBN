@@ -1,14 +1,15 @@
-package com.dci.intellij.dbn.connection;
+package com.dci.intellij.dbn.editor.data;
 
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.common.property.PropertyGroup;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
-public enum ConnectionHandlerStatus implements Property {
-    CONNECTED,
-    ACTIVE,
-    VALID,
-    BUSY;
+public enum DatasetLoadInstruction implements Property {
+    USE_CURRENT_FILTER,
+    PRESERVE_CHANGES,
+    DELIBERATE_ACTION,
+    REBUILD;
+
 
     private final int index = PropertyHolderImpl.idx(this);
 

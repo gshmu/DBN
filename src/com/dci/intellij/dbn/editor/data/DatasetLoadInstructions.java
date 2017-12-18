@@ -1,51 +1,56 @@
 package com.dci.intellij.dbn.editor.data;
 
-public class DatasetLoadInstructions {
-    private boolean useCurrentFilter;
-    private boolean keepChanges;
-    private boolean isDeliberateAction;
-    private boolean rebuild;
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
-    public DatasetLoadInstructions(boolean useCurrentFilter, boolean keepChanges, boolean isDeliberateAction, boolean rebuild) {
-        this.useCurrentFilter = useCurrentFilter;
-        this.keepChanges = keepChanges;
-        this.isDeliberateAction = isDeliberateAction;
-        this.rebuild = rebuild;
+public class DatasetLoadInstructions extends PropertyHolderImpl<DatasetLoadInstruction>{
+
+    public DatasetLoadInstructions(DatasetLoadInstruction ... instructions) {
+        for (DatasetLoadInstruction instruction : instructions) {
+            set(instruction, true);
+        }
+    }
+
+    @Override
+    protected DatasetLoadInstruction[] getProperties() {
+        return DatasetLoadInstruction.values();
     }
 
     public boolean isUseCurrentFilter() {
-        return useCurrentFilter;
+        return is(DatasetLoadInstruction.USE_CURRENT_FILTER);
     }
 
-    public boolean isKeepChanges() {
-        return keepChanges;
+    public boolean isPreserveChanges() {
+        return is(DatasetLoadInstruction.PRESERVE_CHANGES);
     }
 
     public boolean isDeliberateAction() {
-        return isDeliberateAction;
+        return is(DatasetLoadInstruction.DELIBERATE_ACTION);
     }
 
     public boolean isRebuild() {
-        return rebuild;
+        return is(DatasetLoadInstruction.REBUILD);
     }
 
-    public void setUseCurrentFilter(boolean useCurrentFilter) {
-        this.useCurrentFilter = useCurrentFilter;
+    public void setUseCurrentFilter(boolean value) {
+        set(DatasetLoadInstruction.USE_CURRENT_FILTER, value);
     }
 
-    public void setKeepChanges(boolean keepChanges) {
-        this.keepChanges = keepChanges;
+    public void setKeepChanges(boolean value) {
+        set(DatasetLoadInstruction.PRESERVE_CHANGES, value);
     }
 
-    public void setDeliberateAction(boolean isDeliberateAction) {
-        this.isDeliberateAction = isDeliberateAction;
+    public void setDeliberateAction(boolean value) {
+        set(DatasetLoadInstruction.DELIBERATE_ACTION, value);
     }
 
-    public void setRebuild(boolean rebuild) {
-        this.rebuild = rebuild;
+    public void setRebuild(boolean value) {
+        set(DatasetLoadInstruction.REBUILD, value);
     }
 
     public DatasetLoadInstructions clone( ) {
-        return new DatasetLoadInstructions(useCurrentFilter, keepChanges, isDeliberateAction, rebuild);
+        DatasetLoadInstructions clone = new DatasetLoadInstructions();
+        clone.computed = this.computed;
+        return clone;
     }
+
 }

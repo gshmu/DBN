@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.dispose.FailsafeWeakRef;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
@@ -14,7 +15,7 @@ import com.intellij.openapi.diagnostic.Logger;
 public abstract class ResourceStatusAdapter<T extends Resource> {
     protected static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private final T resource;
+    private final FailsafeWeakRef<T> resource;
     private final ResourceStatus current;
     private final ResourceStatus changing;
     private final ResourceStatus checking;
@@ -26,7 +27,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
     ResourceStatusAdapter(T resource, ResourceStatus current, ResourceStatus changing, ResourceStatus checking, long checkInterval) {
-        this.resource = resource;
+        this.resource = new FailsafeWeakRef<T>(resource);
         this.current = current;
         this.changing = changing;
         this.checking = checking;
@@ -34,13 +35,20 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
     private boolean is(ResourceStatus status) {
+        T resource = getResource();
         return resource.is(status);
     }
 
     private boolean set(ResourceStatus status, boolean value) {
+        T resource = getResource();
         boolean changed = resource.set(status, value);
         if (status == current && changed) resource.statusChanged(current);
         return changed;
+    }
+
+    @NotNull
+    private T getResource() {
+        return this.resource.get();
     }
 
     private boolean isChecking() {
@@ -112,6 +120,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
             @Override
             protected void execute() {
                 boolean daemon = true;
+                T resource = getResource();
                 if (resource.getResourceType() == ResourceType.CONNECTION && current == ResourceStatus.CLOSED) {
                     // non daemon threads for closing connections
                     daemon = false;
@@ -139,7 +148,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
 
     @NotNull
     private String getLogIdentifier() {
-        return changing.toString().toLowerCase() + " " + resource.getResourceType();
+        return changing.toString().toLowerCase() + " " + getResource().getResourceType();
     }
 
     protected abstract void changeInner(boolean value) throws SQLException;
@@ -148,6 +157,6 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
 
     @Override
     public String toString() {
-        return resource.toString();
+        return getResource().toString();
     }
 }

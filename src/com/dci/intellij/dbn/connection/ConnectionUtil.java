@@ -77,7 +77,7 @@ public class ConnectionUtil {
     }
 
     public static DBNConnection connect(ConnectionHandler connectionHandler, ConnectionType connectionType) throws SQLException {
-        ConnectionHandlerStatus connectionStatus = connectionHandler.getConnectionStatus();
+        ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
 
@@ -125,7 +125,7 @@ public class ConnectionUtil {
     public static DBNConnection connect(
             ConnectionSettings connectionSettings,
             @NotNull ConnectionType connectionType,
-            @Nullable ConnectionHandlerStatus connectionStatus,
+            @Nullable ConnectionHandlerStatusHolder connectionStatus,
             @Nullable AuthenticationInfo temporaryAuthenticationInfo,
             boolean autoCommit,
             @Nullable DatabaseAttachmentHandler attachmentHandler) throws SQLException {
@@ -153,7 +153,7 @@ public class ConnectionUtil {
         private ConnectionType connectionType;
         private AuthenticationInfo temporaryAuthenticationInfo;
         private ConnectionSettings connectionSettings;
-        private ConnectionHandlerStatus connectionStatus;
+        private ConnectionHandlerStatusHolder connectionStatus;
         private DatabaseAttachmentHandler databaseAttachmentHandler;
         private boolean autoCommit;
 

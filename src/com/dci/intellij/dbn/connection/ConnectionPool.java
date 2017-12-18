@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.connection;
 
+import java.lang.ref.WeakReference;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
@@ -14,13 +25,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConnectionPool extends DisposableBase implements Disposable {
 
@@ -123,7 +127,8 @@ public class ConnectionPool extends DisposableBase implements Disposable {
                                 "Connected to database \"{0}\"",
                                 connectionHandler.getName());
                     } finally {
-                        notifyStatusChange();
+                        ConnectionHandlerStatusListener changeListener = EventUtil.notify(getProject(), ConnectionHandlerStatusListener.TOPIC);
+                        changeListener.statusChanged(getConnectionHandler().getId());
                     }
                 }
             }
@@ -142,11 +147,6 @@ public class ConnectionPool extends DisposableBase implements Disposable {
 
     public boolean wasNeverAccessed() {
         return lastAccessTimestamp == 0;
-    }
-
-    private void notifyStatusChange() {
-        ConnectionHandlerStatusListener changeListener = EventUtil.notify(getProject(), ConnectionHandlerStatusListener.TOPIC);
-        changeListener.statusChanged(getConnectionHandler().getId());
     }
 
     @NotNull
@@ -186,7 +186,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     @Nullable
     private DBNConnection lookupConnection() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        ConnectionHandlerStatus connectionStatus = connectionHandler.getConnectionStatus();
+        ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
 
         for (DBNConnection connection : poolConnections) {
             checkDisposed();
@@ -213,7 +213,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     private DBNConnection createConnection() throws SQLException {
         checkDisposed();
         ConnectionHandler connectionHandler = getConnectionHandler();
-        ConnectionHandlerStatus connectionStatus = connectionHandler.getConnectionStatus();
+        ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
         String connectionName = connectionHandler.getName();
         LOGGER.debug("[DBN-INFO] Attempt to create new pool connection for '" + connectionName + "'");
         DBNConnection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.POOL);

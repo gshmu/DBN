@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.editor.data;
 
+import java.awt.Component;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -36,15 +45,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.Component;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.sql.SQLException;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 
 @State(
     name = "DBNavigator.Project.DataEditorManager",
@@ -53,8 +54,9 @@ import java.sql.SQLException;
         @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class DatasetEditorManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
-    public static final DatasetLoadInstructions INITIAL_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, false, true);
-    public static final DatasetLoadInstructions RELOAD_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, false);
+    private static final DatasetLoadInstructions INITIAL_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, REBUILD);
+    private static final DatasetLoadInstructions RELOAD_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, DELIBERATE_ACTION);
+
     private ColumnSortingType recordViewColumnSortingType = ColumnSortingType.BY_INDEX;
     private boolean valuePreviewTextWrapping = true;
     private boolean valuePreviewPinned = false;

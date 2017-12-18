@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
@@ -150,7 +150,7 @@ public class DBNConnection extends DBNConnectionBase {
     public void statusChanged(ResourceStatus status) {
         ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(id);
         if (connectionHandler != null && !connectionHandler.isDisposed()) {
-            ConnectionHandlerStatus connectionStatus = connectionHandler.getConnectionStatus();
+            ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
             switch (status) {
                 case CLOSED: connectionStatus.getConnected().markDirty(); break;
                 case INVALID: connectionStatus.getValid().markDirty(); break;

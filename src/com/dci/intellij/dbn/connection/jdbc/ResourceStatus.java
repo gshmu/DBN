@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.property.PropertyGroup;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public enum ResourceStatus implements Property {
-    //shared
+    // shared
     CLOSED,
     CLOSED_CHECKING,
     CLOSED_SETTING,
@@ -14,15 +14,16 @@ public enum ResourceStatus implements Property {
     INVALID_SETTING,
     INVALID_CHECKING,
 
+    // statement
     CANCELLED,
     CANCELLED_SETTING,
     CANCELLED_CHECKING,
 
+    // connection
     AUTO_COMMIT,
     AUTO_COMMIT_SETTING,
     AUTO_COMMIT_CHECKING,
 
-    // connection
     ACTIVE,
     RESERVED,
     COMMITTING,

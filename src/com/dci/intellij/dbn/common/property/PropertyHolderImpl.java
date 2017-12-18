@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.property;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 
 public abstract class PropertyHolderImpl<T extends Property> extends DisposableBase implements PropertyHolder<T>{
-    private int computed = 0;
+    protected int computed = 0;
 
     public PropertyHolderImpl() {
         for (T property : getProperties()) {

@@ -7,10 +7,11 @@ import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 
 public class ReloadDataAction extends AbstractDataEditorAction {
 
-    public static final DatasetLoadInstructions LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, false);
+    private static final DatasetLoadInstructions LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, DELIBERATE_ACTION);
 
     public ReloadDataAction() {
         super("Reload", Icons.DATA_EDITOR_RELOAD_DATA);
