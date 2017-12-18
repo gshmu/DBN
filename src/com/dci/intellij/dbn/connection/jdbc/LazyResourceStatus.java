@@ -1,19 +1,27 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.dispose.FailsafeWeakRef;
+import com.dci.intellij.dbn.common.property.Property;
+import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 
-public abstract class LazyResourceStatus {
+public abstract class LazyResourceStatus<T extends Property> {
     private long interval;
     private long lastCheck;
-    private boolean value;
     private boolean checking;
     private boolean dirty;
+    private T property;
+    private FailsafeWeakRef<PropertyHolder<T>> resource;
 
-    protected LazyResourceStatus(boolean initialValue, long interval){
-        this.value = initialValue;
+    protected LazyResourceStatus(T property, PropertyHolder<T> resource, boolean initialValue, long interval){
+        resource.set(property, initialValue);
+        this.property = property;
         this.interval = interval;
+        this.resource = new FailsafeWeakRef<PropertyHolder<T>>(resource);
     }
 
     public boolean check() {
@@ -32,7 +40,7 @@ public abstract class LazyResourceStatus {
             }
         }
 
-        return value;
+        return get();
     }
 
     private void checkControlled() {
@@ -44,13 +52,13 @@ public abstract class LazyResourceStatus {
                 }
             }.start();
         } else {
-            boolean oldValue = this.value;
+            boolean oldValue = get();
             try {
-                value = doCheck();
+                set(doCheck());
             } finally {
                 dirty = false;
                 checking = false;
-                if (value != oldValue) statusChanged();
+                if (get() != oldValue) statusChanged();
             }
         }
     }
@@ -58,7 +66,12 @@ public abstract class LazyResourceStatus {
     public abstract void statusChanged();
 
     public void set(boolean value) {
-        this.value = value;
+        getResource().set(property, value);
+    }
+
+    @NotNull
+    PropertyHolder<T> getResource() {
+        return this.resource.get();
     }
 
     public void markDirty() {
@@ -66,7 +79,7 @@ public abstract class LazyResourceStatus {
     }
 
     public boolean get() {
-        return value;
+        return getResource().is(property);
     }
 
     protected abstract boolean doCheck();

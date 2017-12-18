@@ -7,9 +7,10 @@ import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 
 public class DatasetColumnSetupDialog extends DBNDialog<DatasetColumnSetupForm> {
-    public static final DatasetLoadInstructions LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, true);
+    private static final DatasetLoadInstructions LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, DELIBERATE_ACTION, REBUILD);
     private DatasetEditor datasetEditor;
 
     public DatasetColumnSetupDialog(Project project, DatasetEditor datasetEditor) {

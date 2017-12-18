@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.connection;
 
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
@@ -22,12 +28,6 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
 
 public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable {
     @NotNull
@@ -59,7 +59,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     List<DBNConnection> getConnections(ConnectionType... connectionTypes);
 
     @NotNull
-    ConnectionHandlerStatus getConnectionStatus();
+    ConnectionHandlerStatusHolder getConnectionStatus();
 
     @NotNull
     DatabaseConsoleBundle getConsoleBundle();
