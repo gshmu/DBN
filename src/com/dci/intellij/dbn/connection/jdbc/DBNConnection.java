@@ -1,24 +1,17 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashSet;
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.connection.ConnectionCache;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionType;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.*;
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.*;
 
 public class DBNConnection extends DBNConnectionBase {
@@ -39,6 +32,38 @@ public class DBNConnection extends DBNConnectionBase {
         @Override
         protected boolean setInner(ResourceStatus status, boolean value) {
             return DBNConnection.super.set(status, value);
+        }
+    };
+
+    private ResourceStatusAdapter<DBNConnection> INVALID_STATUS_ADAPTER =
+            new ResourceStatusAdapter<DBNConnection>(this,
+                    ResourceStatus.INVALID,
+                    ResourceStatus.INVALID_SETTING,
+                    ResourceStatus.INVALID_CHECKING,
+                    TimeUtil.THIRTY_SECONDS) {
+        @Override
+        protected void changeInner(boolean value) throws SQLException {}
+
+        @Override
+        protected boolean checkInner() throws SQLException {
+            return !isActive() && !inner.isValid(2);
+        }
+    };
+
+    private ResourceStatusAdapter<DBNConnection> AUTO_COMMIT_STATUS_ADAPTER =
+            new ResourceStatusAdapter<DBNConnection>(this,
+                    ResourceStatus.AUTO_COMMIT,
+                    ResourceStatus.AUTO_COMMIT_SETTING,
+                    ResourceStatus.AUTO_COMMIT_CHECKING,
+                    TimeUtil.FIVE_MINUTES) {
+        @Override
+        protected void changeInner(boolean value) throws SQLException {
+            inner.setAutoCommit(value);
+        }
+
+        @Override
+        protected boolean checkInner() throws SQLException {
+            return inner.getAutoCommit();
         }
     };
 
@@ -85,16 +110,6 @@ public class DBNConnection extends DBNConnectionBase {
     @Override
     public void closeInner() throws SQLException {
         inner.close();
-    }
-
-    @Override
-    public boolean isInvalidInner() throws SQLException {
-        return !isActive() && !inner.isValid(2);
-    }
-
-    @Override
-    public void invalidateInner() throws SQLException {
-        // do nothing
     }
 
     public ConnectionId getId() {
@@ -152,8 +167,13 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     @Override
-    public boolean getAutoCommit() throws SQLException {
-        return super.getAutoCommit();
+    public boolean getAutoCommit() {
+        return AUTO_COMMIT_STATUS_ADAPTER.get();
+    }
+
+
+    public boolean isAutoCommit() {
+        return getAutoCommit();
     }
 
     @Override
@@ -189,9 +209,19 @@ public class DBNConnection extends DBNConnectionBase {
         return is(ACTIVE);
     }
 
-    public boolean isAutoCommit() {
-        return is(AUTO_COMMIT);
+
+    public boolean isValid() {
+        return isValid(2);
     }
+
+    public boolean isValid(int timeout) {
+        return !isInvalid();
+    }
+
+    public boolean isInvalid() {
+        return INVALID_STATUS_ADAPTER.get();
+    }
+
 
     public boolean set(ResourceStatus status, boolean value) {
         boolean changed;

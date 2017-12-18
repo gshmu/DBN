@@ -292,15 +292,10 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     private void process(StatementExecutionProcessor executionProcessor) {
         try {
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-
-            if (executionInput.getTargetSessionId() == SessionId.POOL) {
-                DBSchema schema = executionInput.getTargetSchema();
-                ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
-                DBNConnection connection = connectionHandler.getPoolConnection(schema, false);
-                executionProcessor.execute(connection, false);
-            } else {
-                executionProcessor.execute();
-            }
+            DBSchema schema = executionInput.getTargetSchema();
+            ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
+            DBNConnection connection = connectionHandler.getConnection(executionInput.getTargetSessionId(), schema);
+            executionProcessor.execute(connection, false);
 
         } catch (SQLException e) {
             NotificationUtil.sendErrorNotification(getProject(), "Error executing " + executionProcessor.getStatementName(), e.getMessage());

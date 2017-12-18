@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Traceable;
 import com.intellij.openapi.diagnostic.Logger;
+
+import java.sql.SQLException;
 
 public abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -14,7 +13,6 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
 
     private ResourceStatusAdapter<Closeable> CLOSED_STATUS_ADAPTER;
     private ResourceStatusAdapter<Cancellable> CANCELLED_STATUS_ADAPTER;
-    private ResourceStatusAdapter<Invalidable> INVALID_STATUS_ADAPTER;
 
     protected Traceable traceable = new Traceable();
     private ResourceType type;
@@ -31,10 +29,10 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
             final Closeable closeable = (Closeable) this;
             CLOSED_STATUS_ADAPTER = new ResourceStatusAdapter<Closeable>(closeable,
                     ResourceStatus.CLOSED,
-                    ResourceStatus.CLOSING,
-                    ResourceStatus.CHECKING_CLOSED) {
+                    ResourceStatus.CLOSED_SETTING,
+                    ResourceStatus.CLOSED_CHECKING) {
                 @Override
-                protected void changeInner() throws SQLException {
+                protected void changeInner(boolean value) throws SQLException {
                     closeable.closeInner();
                 }
 
@@ -49,35 +47,16 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
             final Cancellable cancellable = (Cancellable) this;
             CANCELLED_STATUS_ADAPTER = new ResourceStatusAdapter<Cancellable>(cancellable,
                     ResourceStatus.CANCELLED,
-                    ResourceStatus.CANCELLING,
-                    ResourceStatus.CHECKING_CANCELLED) {
+                    ResourceStatus.CANCELLED_SETTING,
+                    ResourceStatus.CANCELLED_CHECKING) {
                 @Override
-                protected void changeInner() throws SQLException {
+                protected void changeInner(boolean value) throws SQLException {
                     cancellable.cancelInner();
                 }
 
                 @Override
                 protected boolean checkInner() throws SQLException {
                     return cancellable.isCancelledInner();
-                }
-            };
-        }
-
-        if (this instanceof Invalidable) {
-            final Invalidable invalidable = (Invalidable) this;
-            INVALID_STATUS_ADAPTER = new ResourceStatusAdapter<Invalidable>(invalidable,
-                    ResourceStatus.INVALID,
-                    ResourceStatus.INVALIDATING,
-                    ResourceStatus.CHECKING_INVALID,
-                    TimeUtil.THIRTY_SECONDS) {
-                @Override
-                protected void changeInner() throws SQLException {
-                    invalidable.invalidateInner();
-                }
-
-                @Override
-                protected boolean checkInner() throws SQLException {
-                    return invalidable.isInvalidInner();
                 }
             };
         }
@@ -97,34 +76,18 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
     }
 
     public boolean isClosed() {
-        return CLOSED_STATUS_ADAPTER.check();
+        return CLOSED_STATUS_ADAPTER.get();
     }
 
     public void close() {
-        CLOSED_STATUS_ADAPTER.change();
+        CLOSED_STATUS_ADAPTER.change(true);
     }
 
     public boolean isCancelled() {
-        return CANCELLED_STATUS_ADAPTER.check();
+        return CANCELLED_STATUS_ADAPTER.get();
     }
 
     public void cancel() {
-        CANCELLED_STATUS_ADAPTER.change();
-    }
-
-    public boolean isValid() {
-        return isValid(2);
-    }
-
-    public boolean isValid(int timeout) {
-        return !isInvalid();
-    }
-
-    public boolean isInvalid() {
-        return INVALID_STATUS_ADAPTER.check();
-    }
-
-    public void invalidate() {
-        INVALID_STATUS_ADAPTER.change();
+        CANCELLED_STATUS_ADAPTER.change(true);
     }
 }

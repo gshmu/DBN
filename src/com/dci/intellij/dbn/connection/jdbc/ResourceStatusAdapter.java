@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
 public abstract class ResourceStatusAdapter<T extends Resource> {
     protected static final Logger LOGGER = LoggerFactory.createLogger();
@@ -56,8 +56,8 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
 
-    public boolean check() {
-        if (isCurrent() || isChanging()) return true;
+    public final boolean get() {
+        if (isChanging()) return isCurrent();
 
         if (!isChecking() && !isChanging()) {
             synchronized (this) {
@@ -88,18 +88,18 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
         return false;
     }
 
-    public void change() {
-        if (!isCurrent() && !isChanging() && !check()) {
+    public final void change(boolean value) {
+        if (!isCurrent() && !isChanging() && !get()) {
             synchronized (this) {
                 if (!isCurrent() && !isChanging()) {
                     set(changing, true);
-                    changeControlled();
+                    changeControlled(value);
                 }
             }
         }
     }
 
-    private void changeControlled() {
+    private void changeControlled(final boolean value) {
         new SimpleBackgroundTask("change resource status") {
             @Override
             protected void execute() {
@@ -114,11 +114,11 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                     public void run() {
                         try {
                             if (SettingsUtil.isDebugEnabled) LOGGER.info("Started " + getLogIdentifier());
-                            changeInner();
+                            changeInner(value);
                         } catch (Throwable e) {
                             LOGGER.warn("Error " + getLogIdentifier() + ": " + e.getMessage());
                         } finally {
-                            set(current, true);
+                            set(current, value);
                             set(changing, false);
                             if (SettingsUtil.isDebugEnabled) LOGGER.info("Done " + getLogIdentifier());
                         }
@@ -133,7 +133,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
         return changing.toString().toLowerCase() + " " + resource.getResourceType();
     }
 
-    protected abstract void changeInner() throws SQLException;
+    protected abstract void changeInner(boolean value) throws SQLException;
 
     protected abstract boolean checkInner() throws SQLException;
 
