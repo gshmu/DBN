@@ -499,7 +499,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     public boolean isEditable() {
         DatasetEditorModel tableModel = getTableModel();
         ConnectionHandler connectionHandler = tableModel.getConnectionHandler();
-        return tableModel.isEditable() && connectionHandler.isConnected();
+        return tableModel.isEditable() && connectionHandler.isConnected(SessionId.MAIN);
     }
 
     public int getRowCount() {
