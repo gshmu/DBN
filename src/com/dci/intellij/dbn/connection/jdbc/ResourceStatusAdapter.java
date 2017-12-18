@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
 
 public abstract class ResourceStatusAdapter<T extends Resource> {
     protected static final Logger LOGGER = LoggerFactory.createLogger();
@@ -39,7 +39,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
 
     private boolean set(ResourceStatus status, boolean value) {
         boolean changed = resource.set(status, value);
-        if (changed && status == current) resource.statusChanged(current);
+        if (status == current && changed) resource.statusChanged(current);
         return changed;
     }
 
@@ -57,11 +57,9 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
 
 
     public final boolean get() {
-        if (isChanging()) return isCurrent();
-
-        if (!isChecking() && !isChanging()) {
+        if (canCheck()) {
             synchronized (this) {
-                if (!isChecking() && !isChanging()) {
+                if (canCheck()) {
                     try {
                         set(checking, true);
                         if (checkInterval == 0) {
@@ -75,28 +73,38 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                         }
                     } catch (Exception t){
                         LOGGER.warn("Failed to check resource " + current + "status", t);
-                        set(current, true);
+                        fail();
                     } finally {
                         set(checking, false);
                     }
-                    return isCurrent();
-
                 }
             }
         }
 
-        return false;
+        return isCurrent();
+    }
+
+    protected void fail() {
+        set(current, true);
     }
 
     public final void change(boolean value) {
-        if (!isCurrent() && !isChanging() && !get()) {
+        if (canChange(value)) {
             synchronized (this) {
-                if (!isCurrent() && !isChanging()) {
+                if (canChange(value)) {
                     set(changing, true);
                     changeControlled(value);
                 }
             }
         }
+    }
+
+    private boolean canCheck() {
+        return !isChecking() && !isChanging();
+    }
+
+    private boolean canChange(boolean value) {
+        return !isCurrent() && !isChanging() && get() != value;
     }
 
     private void changeControlled(final boolean value) {
@@ -115,10 +123,11 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                         try {
                             if (SettingsUtil.isDebugEnabled) LOGGER.info("Started " + getLogIdentifier());
                             changeInner(value);
+                            set(current, value);
                         } catch (Throwable e) {
                             LOGGER.warn("Error " + getLogIdentifier() + ": " + e.getMessage());
+                            fail();
                         } finally {
-                            set(current, value);
                             set(changing, false);
                             if (SettingsUtil.isDebugEnabled) LOGGER.info("Done " + getLogIdentifier());
                         }

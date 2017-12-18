@@ -1,18 +1,26 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionCache;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.*;
-import java.util.HashSet;
-import java.util.Set;
-
-import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.*;
+import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
+import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.RESERVED;
 
 public class DBNConnection extends DBNConnectionBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -41,14 +49,15 @@ public class DBNConnection extends DBNConnectionBase {
                     ResourceStatus.INVALID_SETTING,
                     ResourceStatus.INVALID_CHECKING,
                     TimeUtil.THIRTY_SECONDS) {
-        @Override
-        protected void changeInner(boolean value) throws SQLException {}
+                @Override
+                protected void changeInner(boolean value) throws SQLException {
+                }
 
-        @Override
-        protected boolean checkInner() throws SQLException {
-            return !isActive() && !inner.isValid(2);
-        }
-    };
+                @Override
+                protected boolean checkInner() throws SQLException {
+                    return !isActive() && !inner.isValid(2);
+                }
+            };
 
     private ResourceStatusAdapter<DBNConnection> AUTO_COMMIT_STATUS_ADAPTER =
             new ResourceStatusAdapter<DBNConnection>(this,
@@ -56,16 +65,21 @@ public class DBNConnection extends DBNConnectionBase {
                     ResourceStatus.AUTO_COMMIT_SETTING,
                     ResourceStatus.AUTO_COMMIT_CHECKING,
                     TimeUtil.FIVE_MINUTES) {
-        @Override
-        protected void changeInner(boolean value) throws SQLException {
-            inner.setAutoCommit(value);
-        }
+                @Override
+                protected void changeInner(boolean value) throws SQLException {
+                    inner.setAutoCommit(value);
+                }
 
-        @Override
-        protected boolean checkInner() throws SQLException {
-            return inner.getAutoCommit();
-        }
-    };
+                @Override
+                protected boolean checkInner() throws SQLException {
+                    return inner.getAutoCommit();
+                }
+
+                @Override
+                protected void fail() {
+                    // do not set the status if check failed
+                }
+            };
 
     public DBNConnection(Connection connection, ConnectionType type, ConnectionId id) {
         super(connection);
@@ -159,21 +173,12 @@ public class DBNConnection extends DBNConnectionBase {
      ********************************************************************/
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-        try {
-            super.setAutoCommit(autoCommit);
-        } finally {
-            set(AUTO_COMMIT, autoCommit);
-        }
+        AUTO_COMMIT_STATUS_ADAPTER.change(autoCommit);
     }
 
     @Override
     public boolean getAutoCommit() {
         return AUTO_COMMIT_STATUS_ADAPTER.get();
-    }
-
-
-    public boolean isAutoCommit() {
-        return getAutoCommit();
     }
 
     @Override
@@ -250,7 +255,7 @@ public class DBNConnection extends DBNConnectionBase {
      *                             Data changes                         *
      ********************************************************************/
     public void notifyDataChanges(VirtualFile virtualFile) {
-        if (!isAutoCommit()) {
+        if (!getAutoCommit()) {
             if (dataChanges == null) {
                 dataChanges = new UncommittedChangeBundle();
             }
