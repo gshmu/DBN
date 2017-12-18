@@ -38,8 +38,8 @@ public abstract class PropertyHolderImpl<T extends Property> extends DisposableB
             PropertyGroup group = property.group();
             if (group != null) {
                 for (T prop : getProperties()) {
-                    if (prop.group() == group) {
-                        unset(prop);
+                    if (is(prop)) {
+                        this.computed -= prop.index();
                         break;
                     }
                 }
@@ -57,9 +57,10 @@ public abstract class PropertyHolderImpl<T extends Property> extends DisposableB
 
             PropertyGroup group = property.group();
             if (group != null) {
+                // set implicit property
                 for (T prop : getProperties()) {
-                    if (prop.group() == group && prop.implicit()) {
-                        set(prop);
+                    if (prop.group() == group && prop.implicit() && prop != property && !is(prop)) {
+                        this.computed += prop.index();
                         break;
                     }
                 }
