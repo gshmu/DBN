@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
@@ -82,7 +83,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
 
     private ConnectionHandlerStatusListener connectionStatusListener = new ConnectionHandlerStatusListener() {
         @Override
-        public void statusChanged(ConnectionId connectionId) {
+        public void statusChanged(ConnectionId connectionId, ConnectionHandlerStatus status) {
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler != null && connectionHandler.getId() == connectionId) {
                 update();

@@ -128,7 +128,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
                                 connectionHandler.getName());
                     } finally {
                         ConnectionHandlerStatusListener changeListener = EventUtil.notify(getProject(), ConnectionHandlerStatusListener.TOPIC);
-                        changeListener.statusChanged(getConnectionHandler().getId());
+                        changeListener.statusChanged(connectionHandler.getId(), ConnectionHandlerStatus.CONNECTED);
                     }
                 }
             }
@@ -306,6 +306,20 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         if (mainConnection != null && !mainConnection.isClosed()) {
             mainConnection.setAutoCommit(autoCommit);
         }
+    }
+
+    public boolean isConnected(SessionId sessionId) {
+
+        if (sessionId == SessionId.POOL) {
+            return poolConnections.size() > 0;
+        }
+
+        DBNConnection connection =
+                sessionId == SessionId.MAIN ?
+                        mainConnection :
+                        sessionConnections.get(sessionId);
+
+        return connection != null && !connection.isClosed() && connection.isValid();
     }
 
     private static class ConnectionPoolCleanTask extends TimerTask {

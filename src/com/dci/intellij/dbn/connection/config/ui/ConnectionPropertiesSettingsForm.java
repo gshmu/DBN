@@ -56,7 +56,7 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
                 if (settingsChanged) {
                     Project project = configuration.getProject();
                     ConnectionHandlerStatusListener listener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-                    listener.statusChanged(configuration.getConnectionId());
+                    listener.statusChanged(configuration.getConnectionId(), null);
                 }
             }
         };

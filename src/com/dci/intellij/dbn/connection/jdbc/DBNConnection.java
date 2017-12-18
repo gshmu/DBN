@@ -30,20 +30,23 @@ public class DBNConnection extends DBNConnectionBase {
     private long lastAccess;
     private Set<DBNStatement> statements = new HashSet<DBNStatement>();
     private UncommittedChangeBundle dataChanges;
-    private IncrementalResourceStatusAdapter<DBNConnection> ACTIVE_STATUS_ADAPTER = new IncrementalResourceStatusAdapter<DBNConnection>(ResourceStatus.ACTIVE, this) {
-        @Override
-        protected boolean setInner(ResourceStatus status, boolean value) {
-            return DBNConnection.super.set(status, value);
-        }
-    };
-    private IncrementalResourceStatusAdapter<DBNConnection> RESERVED_STATUS_ADAPTER = new IncrementalResourceStatusAdapter<DBNConnection>(ResourceStatus.RESERVED, this) {
-        @Override
-        protected boolean setInner(ResourceStatus status, boolean value) {
-            return DBNConnection.super.set(status, value);
-        }
-    };
 
-    private ResourceStatusAdapter<DBNConnection> INVALID_STATUS_ADAPTER =
+    private IncrementalResourceStatusAdapter<DBNConnection> active =
+            new IncrementalResourceStatusAdapter<DBNConnection>(ResourceStatus.ACTIVE, this) {
+                @Override
+                protected boolean setInner(ResourceStatus status, boolean value) {
+                    return DBNConnection.super.set(status, value);
+                }
+            };
+    private IncrementalResourceStatusAdapter<DBNConnection> reserved =
+            new IncrementalResourceStatusAdapter<DBNConnection>(ResourceStatus.RESERVED, this) {
+                @Override
+                protected boolean setInner(ResourceStatus status, boolean value) {
+                    return DBNConnection.super.set(status, value);
+                }
+            };
+
+    private ResourceStatusAdapter<DBNConnection> invalid =
             new ResourceStatusAdapter<DBNConnection>(this,
                     ResourceStatus.INVALID,
                     ResourceStatus.INVALID_SETTING,
@@ -59,7 +62,7 @@ public class DBNConnection extends DBNConnectionBase {
                 }
             };
 
-    private ResourceStatusAdapter<DBNConnection> AUTO_COMMIT_STATUS_ADAPTER =
+    private ResourceStatusAdapter<DBNConnection> autoCommit =
             new ResourceStatusAdapter<DBNConnection>(this,
                     ResourceStatus.AUTO_COMMIT,
                     ResourceStatus.AUTO_COMMIT_SETTING,
@@ -173,12 +176,12 @@ public class DBNConnection extends DBNConnectionBase {
      ********************************************************************/
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-        AUTO_COMMIT_STATUS_ADAPTER.change(autoCommit);
+        this.autoCommit.change(autoCommit);
     }
 
     @Override
     public boolean getAutoCommit() {
-        return AUTO_COMMIT_STATUS_ADAPTER.get();
+        return autoCommit.get();
     }
 
     @Override
@@ -224,14 +227,14 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     public boolean isInvalid() {
-        return INVALID_STATUS_ADAPTER.get();
+        return invalid.get();
     }
 
 
     public boolean set(ResourceStatus status, boolean value) {
         boolean changed;
         if (status == ACTIVE) {
-            changed = ACTIVE_STATUS_ADAPTER.set(status, value);
+            changed = active.set(status, value);
 
         } else if (status == RESERVED) {
             if (value) {
@@ -241,7 +244,7 @@ public class DBNConnection extends DBNConnectionBase {
                     LOGGER.warn("Reserving already reserved connection");
                 }
             }
-            changed = RESERVED_STATUS_ADAPTER.set(status, value);
+            changed = reserved.set(status, value);
         } else {
             changed = super.set(status, value);
             if (changed) statusChanged(status);

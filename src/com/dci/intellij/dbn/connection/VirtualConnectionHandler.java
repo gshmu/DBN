@@ -135,6 +135,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public void setLoggingEnabled(boolean loggingEnabled) {}
 
     @Override public boolean isConnected() {return false;}
+    @Override public boolean isConnected(SessionId sessionId) {return false;}
     @Override public boolean isDisposed() {
         return false;
     }
