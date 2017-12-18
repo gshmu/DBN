@@ -262,8 +262,8 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         poolConnections.clear();
 
         for (SessionId sessionId : sessionConnections.keySet()) {
-            DBNConnection connection = sessionConnections.get(sessionId);
-            sessionConnections.put(sessionId, ConnectionUtil.close(connection));
+            DBNConnection connection = sessionConnections.remove(sessionId);
+            ConnectionUtil.close(connection);
         }
 
         mainConnection = ConnectionUtil.close(mainConnection);
