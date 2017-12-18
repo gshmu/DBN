@@ -174,15 +174,15 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
 
     private abstract class LazyConnectionStatus extends LazyResourceStatus<ConnectionHandlerStatus> {
         LazyConnectionStatus(ConnectionHandlerStatus status, boolean initialValue, long interval) {
-            super(status, ConnectionHandlerStatusHolder.this, initialValue, interval);
+            super(ConnectionHandlerStatusHolder.this, status, initialValue, interval);
         }
 
         @Override
-        public final void statusChanged() {
+        public final void statusChanged(ConnectionHandlerStatus status) {
             ConnectionHandler connectionHandler = connectionHandlerRef.get();
             Project project = connectionHandler.getProject();
             ConnectionHandlerStatusListener statusListener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-            statusListener.statusChanged(connectionHandler.getId());
+            statusListener.statusChanged(connectionHandler.getId(), status);
         }
     }
 }

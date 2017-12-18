@@ -22,9 +22,11 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
@@ -64,6 +66,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
+import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.*;
 import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 
 public class DatasetEditor extends UserDataHolderBase implements FileEditor, FileConnectionMappingProvider, Disposable, ConnectionProvider, DataProviderSupplier {
@@ -71,17 +74,17 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     private static final DatasetLoadInstructions COL_VISIBILITY_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, DELIBERATE_ACTION, REBUILD);
     private static final DatasetLoadInstructions CON_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER);
+
     private DBObjectRef<DBDataset> datasetRef;
     private DBEditableObjectVirtualFile databaseFile;
     private DatasetEditorForm editorForm;
+    private DatasetEditorStatusHolder status;
     private StructureViewModel structureViewModel;
     private ConnectionHandlerRef connectionHandlerRef;
     private DataEditorSettings settings;
     private Project project;
-    private boolean isLoading;
-    private boolean isLoaded;
-
     private String dataLoadError;
+
     private DatasetEditorState editorState = new DatasetEditorState();
 
     public DatasetEditor(DBEditableObjectVirtualFile databaseFile, DBDataset dataset) {
@@ -91,6 +94,8 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         this.settings = DataEditorSettings.getInstance(project);
 
         connectionHandlerRef = ConnectionHandlerRef.from(dataset.getConnectionHandler());
+        status = new DatasetEditorStatusHolder();
+        status.set(CONNECTED, true);
         editorForm = new DatasetEditorForm(this);
 
 /*
@@ -263,7 +268,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public void loadData(final DatasetLoadInstructions instructions) {
-        if (!isLoading) {
+        if (status.isNot(LOADING)) {
             new ConnectionAction("loading table data", this) {
                 @Override
                 protected void execute() {
@@ -298,7 +303,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                     LOGGER.error("Error loading table data", e);
                                 }
                             } finally {
-                                isLoaded = true;
+                                status.set(LOADED, true);
                                 editorForm.hideLoadingHint();
                                 setLoading(false);
                                 EventUtil.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
@@ -386,8 +391,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     protected void setLoading(boolean loading) {
-        if (this.isLoading != loading) {
-            this.isLoading = loading;
+        if (status.set(LOADING, loading)) {
             DatasetEditorTable editorTable = getEditorTable();
             editorTable.setLoading(loading);
             editorTable.revalidate();
@@ -429,20 +433,28 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         int index = editorTable.getSelectedRow();
         if (index == -1) index = 0;
         DatasetEditorModelRow row = model.getRowAtIndex(index);
-        editorTable.stopCellEditing();
-        editorTable.selectRow(row.getIndex());
-        DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(getProject(), row);
-        editorDialog.show();
+        if (row != null) {
+            editorTable.stopCellEditing();
+            editorTable.selectRow(row.getIndex());
+            DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(getProject(), row);
+            editorDialog.show();
+        }
     }
 
     public void openRecordEditor(int index) {
         if (index > -1) {
             DatasetEditorModel model = getTableModel();
-
             DatasetEditorModelRow row = model.getRowAtIndex(index);
-            DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(getProject(), row);
-            editorDialog.show();
+
+            if (row != null) {
+                DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(getProject(), row);
+                editorDialog.show();
+            }
         }
+    }
+
+    public DatasetEditorStatusHolder getStatus() {
+        return status;
     }
 
     public boolean isInserting() {
@@ -450,11 +462,11 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public boolean isLoading() {
-        return isLoading;
+        return status.is(LOADING);
     }
 
     public boolean isLoaded() {
-        return isLoaded;
+        return status.is(LOADED);
     }
 
     public boolean isDirty() {
@@ -511,17 +523,22 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
      *******************************************************/
     private ConnectionHandlerStatusListener connectionStatusListener = new ConnectionHandlerStatusListener() {
         @Override
-        public void statusChanged(ConnectionId connectionId) {
+        public void statusChanged(ConnectionId connectionId, ConnectionHandlerStatus status) {
             DatasetEditorTable editorTable = getEditorTable();
             ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler.getId().equals(connectionId)) {
-                editorTable.updateBackground(!connectionHandler.isConnected());
-                if (connectionHandler.isConnected()) {
-                    loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
-                } else {
-                    editorTable.cancelEditing();
-                    editorTable.revalidate();
-                    editorTable.repaint();
+            if (connectionHandler.getId().equals(connectionId) && status == ConnectionHandlerStatus.CONNECTED) {
+                boolean connected = connectionHandler.isConnected(SessionId.MAIN);
+                boolean statusChanged = getStatus().set(CONNECTED, connected);
+
+                if (statusChanged) {
+                    editorTable.updateBackground(!connected);
+                    if (connected) {
+                        loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
+                    } else {
+                        editorTable.cancelEditing();
+                        editorTable.revalidate();
+                        editorTable.repaint();
+                    }
                 }
             }
         }

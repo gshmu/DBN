@@ -1,18 +1,18 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.Traceable;
 import com.intellij.openapi.diagnostic.Logger;
-
-import java.sql.SQLException;
 
 public abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private long initTimestamp = System.currentTimeMillis();
     protected T inner;
 
-    private ResourceStatusAdapter<Closeable> CLOSED_STATUS_ADAPTER;
-    private ResourceStatusAdapter<Cancellable> CANCELLED_STATUS_ADAPTER;
+    private ResourceStatusAdapter<Closeable> closed;
+    private ResourceStatusAdapter<Cancellable> cancelled;
 
     protected Traceable traceable = new Traceable();
     private ResourceType type;
@@ -27,7 +27,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
 
         if (this instanceof Closeable) {
             final Closeable closeable = (Closeable) this;
-            CLOSED_STATUS_ADAPTER = new ResourceStatusAdapter<Closeable>(closeable,
+            closed = new ResourceStatusAdapter<Closeable>(closeable,
                     ResourceStatus.CLOSED,
                     ResourceStatus.CLOSED_SETTING,
                     ResourceStatus.CLOSED_CHECKING) {
@@ -45,7 +45,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
 
         if (this instanceof Cancellable) {
             final Cancellable cancellable = (Cancellable) this;
-            CANCELLED_STATUS_ADAPTER = new ResourceStatusAdapter<Cancellable>(cancellable,
+            cancelled = new ResourceStatusAdapter<Cancellable>(cancellable,
                     ResourceStatus.CANCELLED,
                     ResourceStatus.CANCELLED_SETTING,
                     ResourceStatus.CANCELLED_CHECKING) {
@@ -76,18 +76,18 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
     }
 
     public boolean isClosed() {
-        return CLOSED_STATUS_ADAPTER.get();
+        return closed.get();
     }
 
     public void close() {
-        CLOSED_STATUS_ADAPTER.change(true);
+        closed.change(true);
     }
 
     public boolean isCancelled() {
-        return CANCELLED_STATUS_ADAPTER.get();
+        return cancelled.get();
     }
 
     public void cancel() {
-        CANCELLED_STATUS_ADAPTER.change(true);
+        cancelled.change(true);
     }
 }

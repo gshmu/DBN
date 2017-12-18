@@ -129,6 +129,9 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     NavigationPsiCache getPsiCache();
 
     boolean isConnected();
+
+    boolean isConnected(SessionId sessionId);
+
     int getIdleMinutes();
 
     ConnectionHandlerRef getRef();

@@ -268,6 +268,11 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return connectionStatus.isConnected();
     }
 
+    @Override
+    public boolean isConnected(SessionId sessionId) {
+        return connectionPool.isConnected(sessionId);
+    }
+
     public String toString() {
         return getPresentableText();
     }

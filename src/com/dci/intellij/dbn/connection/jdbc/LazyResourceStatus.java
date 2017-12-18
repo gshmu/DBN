@@ -14,12 +14,12 @@ public abstract class LazyResourceStatus<T extends Property> {
     private long lastCheck;
     private boolean checking;
     private boolean dirty;
-    private T property;
+    private T status;
     private FailsafeWeakRef<PropertyHolder<T>> resource;
 
-    protected LazyResourceStatus(T property, PropertyHolder<T> resource, boolean initialValue, long interval){
-        resource.set(property, initialValue);
-        this.property = property;
+    protected LazyResourceStatus(PropertyHolder<T> resource, T status, boolean initialValue, long interval){
+        resource.set(status, initialValue);
+        this.status = status;
         this.interval = interval;
         this.resource = new FailsafeWeakRef<PropertyHolder<T>>(resource);
     }
@@ -58,15 +58,15 @@ public abstract class LazyResourceStatus<T extends Property> {
             } finally {
                 dirty = false;
                 checking = false;
-                if (get() != oldValue) statusChanged();
+                if (get() != oldValue) statusChanged(status);
             }
         }
     }
 
-    public abstract void statusChanged();
+    public abstract void statusChanged(T status);
 
     public void set(boolean value) {
-        getResource().set(property, value);
+        getResource().set(status, value);
     }
 
     @NotNull
@@ -79,7 +79,7 @@ public abstract class LazyResourceStatus<T extends Property> {
     }
 
     public boolean get() {
-        return getResource().is(property);
+        return getResource().is(status);
     }
 
     protected abstract boolean doCheck();
