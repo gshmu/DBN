@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionPool;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -27,7 +28,6 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
     }
 
     public void update(@NotNull AnActionEvent e) {
-        Project project = getEventProject(e);
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         boolean enabled = false;
         boolean visible = false;
@@ -37,17 +37,21 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
             if (databaseSession != null && !databaseSession.isPool()) {
                 ConnectionPool connectionPool = connectionHandler.getConnectionPool();
                 DBNConnection sessionConnection = connectionPool.getSessionConnection(databaseSession.getId());
-                if (sessionConnection != null && !sessionConnection.getAutoCommit() && sessionConnection.hasDataChanges()) {
+
+                if (sessionConnection != null && sessionConnection.hasDataChanges()) {
                     enabled = true;
+                }
+
+                if (sessionConnection == null || !sessionConnection.getAutoCommit()) {
                     visible = true;
                     if (virtualFile instanceof DBEditableObjectVirtualFile) {
                         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
                         DBSchemaObject object = databaseFile.getObject();
                         if (object instanceof DBTable) {
+                            Project project = ActionUtil.ensureProject(e);
                             visible = !EnvironmentManager.getInstance(project).isReadonly(object, DBContentType.DATA);
                         }
                     }
-
                 }
             }
         }
