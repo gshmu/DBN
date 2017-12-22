@@ -8,13 +8,20 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.intellij.openapi.project.Project;
 
 public class DatasetRecordEditorDialog extends DBNDialog<DatasetRecordEditorForm> {
+    private DatasetEditorModelRow row;
     public DatasetRecordEditorDialog(Project project, DatasetEditorModelRow row) {
         super(project, row.getModel().isEditable() ? "Edit record" : "View record", true);
+        this.row = row;
         setModal(true);
         setResizable(true);
-        component = new DatasetRecordEditorForm(this, row);
         getCancelAction().putValue(Action.NAME, "Close");
         init();
+    }
+
+    @NotNull
+    @Override
+    protected DatasetRecordEditorForm createComponent() {
+        return new DatasetRecordEditorForm(this, row);
     }
 
     @NotNull
@@ -28,5 +35,11 @@ public class DatasetRecordEditorDialog extends DBNDialog<DatasetRecordEditorForm
     @Override
     protected void doOKAction() {
         super.doOKAction();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        row = null;
     }
 }

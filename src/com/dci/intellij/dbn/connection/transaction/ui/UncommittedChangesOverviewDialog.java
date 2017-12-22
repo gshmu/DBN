@@ -26,11 +26,16 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
     public UncommittedChangesOverviewDialog(Project project, TransactionAction additionalOperation) {
         super(project, "Uncommitted changes overview", true);
         this.additionalOperation = additionalOperation;
-        component = new UncommittedChangesOverviewForm(this);
         setModal(false);
         setResizable(true);
         init();
         EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+    }
+
+    @NotNull
+    @Override
+    protected UncommittedChangesOverviewForm createComponent() {
+        return new UncommittedChangesOverviewForm(this);
     }
 
     @NotNull
@@ -52,7 +57,7 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
         public void actionPerformed(ActionEvent e) {
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();
-                List<ConnectionHandler> connectionHandlers = component.getConnectionHandlers();
+                List<ConnectionHandler> connectionHandlers = getComponent().getConnectionHandlers();
                 for (ConnectionHandler connectionHandler : connectionHandlers) {
                     List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
                     for (DBNConnection connection : connections) {
@@ -67,7 +72,7 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
 
         @Override
         public boolean isEnabled() {
-            return component.hasUncommittedChanges();
+            return getComponent().hasUncommittedChanges();
         }
     };
 
@@ -75,7 +80,7 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
         public void actionPerformed(ActionEvent e) {
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();
-                List<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>(component.getConnectionHandlers());
+                List<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>(getComponent().getConnectionHandlers());
 
                 for (ConnectionHandler connectionHandler : connectionHandlers) {
                     List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
@@ -90,7 +95,7 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
 
         @Override
         public boolean isEnabled() {
-            return component.hasUncommittedChanges();
+            return getComponent().hasUncommittedChanges();
         }
     };
 

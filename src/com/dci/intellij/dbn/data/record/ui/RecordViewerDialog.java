@@ -19,9 +19,14 @@ public class RecordViewerDialog extends DBNDialog<RecordViewerForm> {
         this.record = record; 
         setModal(false);
         setResizable(true);
-        component = new RecordViewerForm(this, record);
         getCancelAction().putValue(Action.NAME, "Close");
         init();
+    }
+
+    @NotNull
+    @Override
+    protected RecordViewerForm createComponent() {
+        return new RecordViewerForm(this, record);
     }
 
     @NotNull

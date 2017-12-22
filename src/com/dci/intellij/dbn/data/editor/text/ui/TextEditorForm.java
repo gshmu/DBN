@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
@@ -50,7 +51,7 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
         return mainPanel;
     }
 
-    public TextEditorForm(TextEditorDialog parent, DocumentListener documentListener, UserValueHolder userValueHolder, TextEditorAdapter textEditorAdapter) throws SQLException {
+    public TextEditorForm(TextEditorDialog parent, DocumentListener documentListener, UserValueHolder userValueHolder, TextEditorAdapter textEditorAdapter) {
         super(parent);
         this.documentListener = documentListener;
         this.userValueHolder = userValueHolder;
@@ -126,18 +127,22 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
     }
 
     @Nullable
-    public String readUserValue() throws SQLException {
-        Object userValue = userValueHolder.getUserValue();
-        if (userValue instanceof String) {
-            return (String) userValue;
-        } else if (userValue instanceof LargeObjectValue) {
-            LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
-            return largeObjectValue.read();
+    public String readUserValue() {
+        try {
+            Object userValue = userValueHolder.getUserValue();
+            if (userValue instanceof String) {
+                return (String) userValue;
+            } else if (userValue instanceof LargeObjectValue) {
+                LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
+                return largeObjectValue.read();
+            }
+        } catch (SQLException e) {
+            MessageUtil.showErrorDialog(getProject(), "Could not load LOB content from database.", e);
         }
         return null;
     }
 
-    public void writeUserValue() throws SQLException {
+    public void writeUserValue() {
         String text = editor.getDocument().getText();
         userValueHolder.updateUserValue(text, false);
         textEditorAdapter.afterUpdate();

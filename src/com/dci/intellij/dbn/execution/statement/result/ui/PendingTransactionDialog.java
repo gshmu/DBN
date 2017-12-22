@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
 
 public class PendingTransactionDialog extends DialogWithTimeout {
     private CommitAction commitAction;
@@ -29,7 +30,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
         rollbackAction = new RollbackAction();
         transactionForm = new PendingTransactionDialogForm(this, executionProcessor);
         DisposerUtil.register(this, transactionForm);
-        setModal(false);
+        setModal(true);
         init();
     }
 
@@ -65,8 +66,13 @@ public class PendingTransactionDialog extends DialogWithTimeout {
         }
 
         public void actionPerformed(ActionEvent e) {
-            DBNConnection connection = getConnection();
-            ConnectionUtil.commit(connection);
+            try {
+                DBNConnection connection = getConnection();
+                ConnectionUtil.commit(connection);
+            } finally {
+                executionProcessor.getExecutionContext().set(PROMPTED, false);
+                executionProcessor.postExecute();
+            }
             doOKAction();
         }
     }
@@ -81,8 +87,13 @@ public class PendingTransactionDialog extends DialogWithTimeout {
         }
 
         public void actionPerformed(ActionEvent e) {
-            DBNConnection connection = getConnection();
-            ConnectionUtil.rollback(connection);
+            try {
+                DBNConnection connection = getConnection();
+                ConnectionUtil.rollback(connection);
+            } finally {
+                executionProcessor.getExecutionContext().set(PROMPTED, false);
+                executionProcessor.postExecute();
+            }
             doOKAction();
         }
     }

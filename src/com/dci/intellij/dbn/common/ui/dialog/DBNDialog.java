@@ -5,18 +5,18 @@ import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 
 public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper implements DisposableProjectComponent{
-    protected C component;
+    private C component;
     private Project project;
     private boolean disposed;
     private boolean rememberSelection;
@@ -27,15 +27,20 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
         this.project = project;
     }
 
+    @NotNull
     public final C getComponent() {
-        return component;
+        if (component == null && !isDisposed()) {
+            component = createComponent();
+        }
+        return FailsafeUtil.get(component);
     }
 
-    @Nullable
+    @NotNull
     protected final JComponent createCenterPanel() {
-        if (component == null) throw new IllegalStateException("Component not created");
-        return component.getComponent();
+        return getComponent().getComponent();
     }
+
+    protected abstract @NotNull C createComponent();
 
     protected String getDimensionServiceKey() {
         return "DBNavigator." + getClass().getSimpleName();
@@ -43,13 +48,13 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        JComponent focusComponent = component == null ? null : component.getPreferredFocusedComponent();
+        JComponent focusComponent = getComponent().getPreferredFocusedComponent();
         return focusComponent == null ? super.getPreferredFocusedComponent() : focusComponent;
     }
 
     @NotNull
     public Project getProject() {
-        return project;
+        return FailsafeUtil.get(project);
     }
 
     public boolean isRememberSelection() {

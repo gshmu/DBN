@@ -9,15 +9,23 @@ import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.intellij.openapi.project.Project;
 
 public class CmdLineInterfaceInputDialog extends DBNDialog<CmdLineInterfaceInputForm> {
-    private CmdLineInterface cmdLineInterface = new CmdLineInterface();
+    private CmdLineInterface cmdLineInterface;
+    private Set<String> usedNames;
 
-    public CmdLineInterfaceInputDialog(Project project, @NotNull CmdLineInterface cmdLineInterface, Set<String> usedNames) {
+    public CmdLineInterfaceInputDialog(Project project, @NotNull CmdLineInterface cmdLineInterface, @NotNull Set<String> usedNames) {
         super(project, "Add command-line interface", true);
+        this.cmdLineInterface = cmdLineInterface;
+        this.usedNames = usedNames;
         setModal(true);
-        component = new CmdLineInterfaceInputForm(this, cmdLineInterface, usedNames);
         Action okAction = getOKAction();
         okAction.putValue(Action.NAME, "Save");
         init();
+    }
+
+    @NotNull
+    @Override
+    protected CmdLineInterfaceInputForm createComponent() {
+        return new CmdLineInterfaceInputForm(this, cmdLineInterface, usedNames);
     }
 
     @Override
@@ -41,10 +49,6 @@ public class CmdLineInterfaceInputDialog extends DBNDialog<CmdLineInterfaceInput
         return cmdLineInterface;
     }
 
-    public void setCmdLineInterface(CmdLineInterface cmdLineInterface) {
-        this.cmdLineInterface = cmdLineInterface;
-    }
-
     @Override
     protected void doOKAction() {
         super.doOKAction();
@@ -53,5 +57,6 @@ public class CmdLineInterfaceInputDialog extends DBNDialog<CmdLineInterfaceInput
     @Override
     public void dispose() {
         super.dispose();
+        usedNames = null;
     }
 }

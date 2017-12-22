@@ -9,17 +9,28 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
-    public DetachDDLFileDialog(List<VirtualFile> virtualFiles, DBSchemaObject object) {
+    private List<VirtualFile> virtualFiles;
+    private DBObjectRef<DBSchemaObject> objectRef;
+    public DetachDDLFileDialog(@NotNull List<VirtualFile> virtualFiles, @NotNull DBSchemaObject object) {
         super(object.getProject(), "Detach DDL files", true);
-        String hint =
-            "Following DDL files are currently attached the selected " + object.getTypeName() + ". " +
-            "Select the files to detach from this object.";
-        component = new SelectDDLFileForm(object, virtualFiles, hint, false);
+        this.virtualFiles = virtualFiles;
+        this.objectRef = object.getRef();
         getOKAction().putValue(Action.NAME, "Detach selected");
         init();
+    }
+
+    @NotNull
+    @Override
+    protected SelectDDLFileForm createComponent() {
+        DBSchemaObject object = objectRef.getnn();
+        String hint =
+                "Following DDL files are currently attached the selected " + object.getTypeName() + ". " +
+                "Select the files to detach from this object.";
+        return new SelectDDLFileForm(object, virtualFiles, hint, false);
     }
 
     @NotNull
@@ -38,7 +49,7 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         }
 
         public void actionPerformed(ActionEvent e) {
-            component.selectAll();
+            getComponent().selectAll();
             doOKAction();
         }
     }
@@ -49,18 +60,24 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         }
 
         public void actionPerformed(ActionEvent e) {
-            component.selectNone();
+            getComponent().selectNone();
             doOKAction();
         }
     }
 
     protected void doOKAction() {
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(getProject());
-        Object[] selectedPsiFiles = component.getSelection();
+        Object[] selectedPsiFiles = getComponent().getSelection();
         for (Object selectedPsiFile : selectedPsiFiles) {
             VirtualFile virtualFile = (VirtualFile) selectedPsiFile;
             fileAttachmentManager.detachDDLFile(virtualFile);
         }
         super.doOKAction();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        virtualFiles = null;
     }
 }

@@ -11,15 +11,22 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 
 public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputForm> {
+    private MethodExecutionInput executionInput;
     private DBDebuggerType debuggerType;
 
-    public MethodExecutionInputDialog(MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
+    public MethodExecutionInputDialog(@NotNull MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
         super(executionInput.getProject(), (debuggerType.isDebug() ? "Debug" : "Execute") + " method", true);
+        this.executionInput = executionInput;
         this.debuggerType = debuggerType;
         setModal(true);
         setResizable(true);
-        component = new MethodExecutionInputForm(this, executionInput, true, debuggerType);
         init();
+    }
+
+    @NotNull
+    @Override
+    protected MethodExecutionInputForm createComponent() {
+        return new MethodExecutionInputForm(this, executionInput, true, debuggerType);
     }
 
     @NotNull
@@ -36,21 +43,25 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
         return null;
     }
 
-    @Override
-    protected void doOKAction() {
-        super.doOKAction();
-    }
-
     private class ExecuteAction extends AbstractAction {
-        public ExecuteAction() {
+        ExecuteAction() {
             super(debuggerType.isDebug() ? "Debug" : "Execute",
                     debuggerType.isDebug() ? Icons.METHOD_EXECUTION_DEBUG : Icons.METHOD_EXECUTION_RUN);
             putValue(FOCUSED_ACTION, Boolean.TRUE);
         }
 
         public void actionPerformed(ActionEvent e) {
-            component.updateExecutionInput();
-            doOKAction();
+            try {
+                getComponent().updateExecutionInput();
+            } finally {
+                doOKAction();
+            }
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        executionInput = null;
     }
 }

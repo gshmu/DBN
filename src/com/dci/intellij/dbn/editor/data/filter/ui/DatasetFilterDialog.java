@@ -18,42 +18,45 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 
 public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
-    private boolean isAutomaticPrompt;
+    private boolean automaticPrompt;
     private DBObjectRef<DBDataset> datasetRef;
     private DatasetFilterGroup filterGroup;
 
-    public DatasetFilterDialog(DBDataset dataset, boolean isAutomaticPrompt, boolean createNewFilter, DatasetFilterType defaultFilterType) {
+    public DatasetFilterDialog(DBDataset dataset, boolean automaticPrompt, boolean createNewFilter, DatasetFilterType defaultFilterType) {
         super(dataset.getProject(), "Data filters", true);
-        construct(dataset, isAutomaticPrompt);
+        this.datasetRef = DBObjectRef.from(dataset);
+        this.automaticPrompt = automaticPrompt;
         if ((createNewFilter || filterGroup.getFilters().isEmpty()) && defaultFilterType != DatasetFilterType.NONE) {
             DatasetFilter filter =
                     defaultFilterType == DatasetFilterType.BASIC ? filterGroup.createBasicFilter(true) :
                     defaultFilterType == DatasetFilterType.CUSTOM ? filterGroup.createCustomFilter(true) : null;
 
-            component.getFilterList().setSelectedValue(filter, true);
+            getComponent().getFilterList().setSelectedValue(filter, true);
         }
         init();
     }
 
-    private DBDataset getDataset() {
-        return DBObjectRef.get(datasetRef);
-    }
-
     public DatasetFilterDialog(DBDataset dataset, DatasetBasicFilter basicFilter) {
         super(dataset.getProject(), "Data filters", true);
-        construct(dataset, false);
-        component.getFilterList().setSelectedValue(basicFilter, true);
+        this.datasetRef = DBObjectRef.from(dataset);
+        this.automaticPrompt = false;
+        getComponent().getFilterList().setSelectedValue(basicFilter, true);
         init();
     }
 
-    private void construct(DBDataset dataset, boolean isAutomaticPrompt) {
-        this.datasetRef = DBObjectRef.from(dataset);
-        this.isAutomaticPrompt = isAutomaticPrompt;
+    @NotNull
+    @Override
+    protected DatasetFilterForm createComponent() {
         setModal(true);
         setResizable(true);
+        DBDataset dataset = getDataset();
         DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
         filterGroup = filterManager.getFilterGroup(dataset);
-        component = filterGroup.createConfigurationEditor();
+        return filterGroup.createConfigurationEditor();
+    }
+
+    private DBDataset getDataset() {
+        return DBObjectRef.get(datasetRef);
     }
 
     public DatasetFilterGroup getFilterGroup() {
@@ -62,7 +65,7 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
 
     @NotNull
     protected final Action[] createActions() {
-        if (isAutomaticPrompt) {
+        if (automaticPrompt) {
             return new Action[]{
                     getOKAction(),
                     new NoFilterAction(),
@@ -90,6 +93,7 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
     }
 
     public void doOKAction() {
+        DatasetFilterForm component = getComponent();
         Project project = getProject();
         DBDataset dataset = getDataset();
         try {
@@ -104,15 +108,17 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
             e.printStackTrace(); 
         }
         super.doOKAction();
-        if (!isAutomaticPrompt) DatasetEditorManager.getInstance(project).reloadEditorData(dataset);
+        if (!automaticPrompt) DatasetEditorManager.getInstance(project).reloadEditorData(dataset);
     }
 
     public void doCancelAction() {
+        DatasetFilterForm component = getComponent();
         component.resetFormChanges();
         super.doCancelAction();
     }
 
     public void doNoFilterAction() {
+        DatasetFilterForm component = getComponent();
         component.resetFormChanges();
         DBDataset dataset = getDataset();
         Project project = getProject();

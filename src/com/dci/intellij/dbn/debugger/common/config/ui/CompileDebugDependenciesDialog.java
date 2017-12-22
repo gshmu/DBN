@@ -15,12 +15,19 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDependenciesForm> {
     private DBRunConfig runConfiguration;
     private List<DBSchemaObject> selection = Collections.emptyList();
+    private List<DBSchemaObject> compileList;
 
     public CompileDebugDependenciesDialog(DBRunConfig runConfiguration, List<DBSchemaObject> compileList) {
         super(runConfiguration.getProject(), "Compile object dependencies", true);
         this.runConfiguration = runConfiguration;
-        this.component = new CompileDebugDependenciesForm(this, runConfiguration, compileList);
+        this.compileList = compileList;
         init();
+    }
+
+    @NotNull
+    @Override
+    protected CompileDebugDependenciesForm createComponent() {
+        return new CompileDebugDependenciesForm(this, runConfiguration, compileList);
     }
 
     @Override
@@ -54,7 +61,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
         }
 
         public void actionPerformed(ActionEvent e) {
-            component.selectAll();
+            getComponent().selectAll();
             doOKAction();
         }
     }
@@ -65,14 +72,14 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
         }
 
         public void actionPerformed(ActionEvent e) {
-            component.selectNone();
+            getComponent().selectNone();
             doOKAction();
         }
     }
 
     @Override
     protected void doOKAction() {
-        selection = component.getSelection();
+        selection = getComponent().getSelection();
         runConfiguration.setCompileDependencies(!isRememberSelection());
         super.doOKAction();
     }
@@ -85,5 +92,11 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
 
     public List<DBSchemaObject> getSelection() {
         return selection;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        compileList = null;
     }
 }

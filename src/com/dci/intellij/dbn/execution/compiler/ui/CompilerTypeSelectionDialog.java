@@ -10,18 +10,27 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 
 public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelectionForm> {
     private CompileType selection;
+    private DBObjectRef<DBSchemaObject> objectRef;
 
     public CompilerTypeSelectionDialog(Project project, @Nullable DBSchemaObject object) {
         super(project, "Compile type", true);
         setModal(true);
         setResizable(false);
+        objectRef = DBObjectRef.from(object);
         //setVerticalStretch(0);
-        component = new CompilerTypeSelectionForm(this, object);
         init();
+    }
+
+    @NotNull
+    @Override
+    protected CompilerTypeSelectionForm createComponent() {
+        DBSchemaObject object = DBObjectRef.get(objectRef);
+        return new CompilerTypeSelectionForm(this, object);
     }
 
     @NotNull

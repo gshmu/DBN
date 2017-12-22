@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.object.factory.ui.common;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.object.factory.DatabaseObjectFactory;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
@@ -7,19 +9,26 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
 public class ObjectFactoryInputDialog extends DBNDialog<ObjectFactoryInputForm> {
-    public ObjectFactoryInputDialog(Project project, ObjectFactoryInputForm inputForm) {
+    private ObjectFactoryInputForm inputForm;
+    public ObjectFactoryInputDialog(Project project, @NotNull ObjectFactoryInputForm inputForm) {
         super(project, "Create " + inputForm.getObjectType().getName(), true);
-        this.component = inputForm;
+        this.inputForm = inputForm;
         setModal(true);
         setResizable(true);
         Disposer.register(this, inputForm);
         init();
     }
 
+    @NotNull
+    @Override
+    protected ObjectFactoryInputForm createComponent() {
+        return inputForm;
+    }
+
     public void doOKAction() {
-        Project project = component.getConnectionHandler().getProject();
+        Project project = getComponent().getConnectionHandler().getProject();
         DatabaseObjectFactory factory = DatabaseObjectFactory.getInstance(project);
-        ObjectFactoryInput factoryInput = component.createFactoryInput(null);
+        ObjectFactoryInput factoryInput = getComponent().createFactoryInput(null);
         if (factory.createObject(factoryInput)) {
             super.doOKAction();
         }
@@ -27,5 +36,11 @@ public class ObjectFactoryInputDialog extends DBNDialog<ObjectFactoryInputForm> 
 
     public void doCancelAction() {
         super.doCancelAction();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        inputForm = null;
     }
 }
