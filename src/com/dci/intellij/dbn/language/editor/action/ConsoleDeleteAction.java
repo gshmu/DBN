@@ -13,9 +13,9 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class RenameConsoleEditorAction extends DumbAwareAction {
-    public RenameConsoleEditorAction() {
-        super("Rename console", "", Icons.ACTION_EDIT);
+public class ConsoleDeleteAction extends DumbAwareAction {
+    ConsoleDeleteAction() {
+        super("Delete console", "", Icons.ACTION_DELETE);
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -23,8 +23,7 @@ public class RenameConsoleEditorAction extends DumbAwareAction {
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         if (project != null && virtualFile instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-            DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(project);
-            consoleManager.showRenameConsoleDialog(consoleVirtualFile);
+            DatabaseConsoleManager.getInstance(project).deleteConsole(consoleVirtualFile);
         }
     }
 
@@ -32,7 +31,7 @@ public class RenameConsoleEditorAction extends DumbAwareAction {
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
         Presentation presentation = e.getPresentation();
-        presentation.setText("Rename Console");
+        presentation.setText("Delete Console");
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         presentation.setEnabled(virtualFile instanceof DBConsoleVirtualFile);
     }

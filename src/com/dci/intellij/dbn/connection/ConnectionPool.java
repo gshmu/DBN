@@ -62,8 +62,19 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         return mainConnection;
     }
 
+    @Nullable
     public DBNConnection getTestConnection() {
         return testConnection;
+    }
+
+    @Nullable
+    public DBNConnection getSessionConnection(SessionId sessionId) {
+        if (sessionId == SessionId.MAIN) {
+            return mainConnection;
+        } if (sessionId != SessionId.POOL) {
+            return sessionConnections.get(sessionId);
+        }
+        return null;
     }
 
     @NotNull

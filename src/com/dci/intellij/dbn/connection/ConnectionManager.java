@@ -401,7 +401,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
         for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers()) {
             if (connectionHandler.hasUncommittedChanges()) {
-                transactionManager.commit(connectionHandler, false, false);
+                transactionManager.commit(connectionHandler, null, false, false);
             }
         }
     }
@@ -410,7 +410,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
         for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers()) {
             if (connectionHandler.hasUncommittedChanges()) {
-                transactionManager.rollback(connectionHandler, false, false);
+                transactionManager.rollback(connectionHandler, null, false, false);
             }
         }
     }

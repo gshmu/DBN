@@ -5,6 +5,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.environment.EnvironmentTypeId;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -15,7 +16,8 @@ import com.intellij.openapi.project.Project;
 
 public class ConnectionDetailSettings extends Configuration<ConnectionDetailSettingsForm> {
     private Charset charset = Charset.forName("UTF-8");
-    private String environmentTypeId = EnvironmentType.DEFAULT.getId();
+    private EnvironmentTypeId environmentTypeId = EnvironmentTypeId.DEFAULT;
+    private boolean enableSessionManagement = true;
     private boolean enableDdlFileBinding = true;
     private boolean enableDatabaseLogging = false;
     private boolean connectAutomatically = true;
@@ -57,12 +59,20 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         return environmentSettings.getEnvironmentType(environmentTypeId);
     }
 
-    public void setEnvironmentTypeId(String environmentTypeId) {
+    public void setEnvironmentTypeId(EnvironmentTypeId environmentTypeId) {
         this.environmentTypeId = environmentTypeId;
     }
 
-    public String getEnvironmentTypeId() {
+    public EnvironmentTypeId getEnvironmentTypeId() {
         return environmentTypeId;
+    }
+
+    public boolean isEnableSessionManagement() {
+        return enableSessionManagement;
+    }
+
+    public void setEnableSessionManagement(boolean enableSessionManagement) {
+        this.enableSessionManagement = enableSessionManagement;
     }
 
     public boolean isEnableDdlFileBinding() {
@@ -155,13 +165,14 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     public void readConfiguration(Element element) {
         String charsetName = getString(element, "charset", "UTF-8");
         charset = Charset.forName(charsetName);
-        
+
+        enableSessionManagement = getBoolean(element, "session-management", enableSessionManagement);
         enableDdlFileBinding = getBoolean(element, "ddl-file-binding", enableDdlFileBinding);
         enableDatabaseLogging = getBoolean(element, "database-logging", enableDatabaseLogging);
         connectAutomatically = getBoolean(element, "connect-automatically", connectAutomatically);
         restoreWorkspace = getBoolean(element, "restore-workspace", restoreWorkspace);
         restoreWorkspaceDeep = getBoolean(element, "restore-workspace-deep", restoreWorkspaceDeep);
-        environmentTypeId = getString(element, "environment-type", EnvironmentType.DEFAULT.getId());
+        environmentTypeId = EnvironmentTypeId.get(getString(element, "environment-type", EnvironmentTypeId.DEFAULT.id()));
         idleTimeToDisconnect = getInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         passwordExpiryTime = getInteger(element, "password-expiry-time", passwordExpiryTime);
         maxConnectionPoolSize = getInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
@@ -172,12 +183,13 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     public void writeConfiguration(Element element) {
         setString(element, "charset", charset.name());
         
+        setBoolean(element, "session-management", enableSessionManagement);
         setBoolean(element, "ddl-file-binding", enableDdlFileBinding);
         setBoolean(element, "database-logging", enableDatabaseLogging);
         setBoolean(element, "connect-automatically", connectAutomatically);
         setBoolean(element, "restore-workspace", restoreWorkspace);
         setBoolean(element, "restore-workspace-deep", restoreWorkspaceDeep);
-        setString(element, "environment-type", environmentTypeId);
+        setString(element, "environment-type", environmentTypeId.id());
         setInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         setInteger(element, "password-expiry-time", passwordExpiryTime);
         setInteger(element, "max-connection-pool-size", maxConnectionPoolSize);

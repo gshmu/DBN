@@ -29,19 +29,19 @@ public class EditorOptionsAction extends GroupPopupAction {
         List<AnAction> actions = new ArrayList<AnAction>();
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         if (virtualFile instanceof DBConsoleVirtualFile) {
-            actions.add(new RenameConsoleEditorAction());
-            actions.add(new DeleteConsoleEditorAction());
-            actions.add(new SaveToFileEditorAction());
+            actions.add(new ConsoleRenameAction());
+            actions.add(new ConsoleDeleteAction());
+            actions.add(new ConsoleSaveToFileAction());
             actions.add(Separator.getInstance());
 
             DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
             if (consoleVirtualFile.getType() != DBConsoleType.DEBUG) {
-                actions.add(new CreateConsoleEditorAction(DBConsoleType.STANDARD));
+                actions.add(new ConsoleCreateAction(DBConsoleType.STANDARD));
             }
 
             ConnectionHandler connectionHandler = consoleVirtualFile.getConnectionHandler();
             if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
-                actions.add(new CreateConsoleEditorAction(DBConsoleType.DEBUG));
+                actions.add(new ConsoleCreateAction(DBConsoleType.DEBUG));
             }
         }
         actions.add(Separator.getInstance());

@@ -47,15 +47,20 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
     protected void doOKAction() {
         CreateRenameSessionForm component = getComponent();
         DatabaseSessionManager databaseSessionManager = DatabaseSessionManager.getInstance(getProject());
-        DatabaseSession session = component.getSession();
         if (session == null) {
-            databaseSessionManager.createSession(
+            session = databaseSessionManager.createSession(
                     component.getConnectionHandler(),
                     component.getSessionName());
+            component.setSession(session);
+
         } else {
             databaseSessionManager.renameSession(session, component.getSessionName());
         }
         super.doOKAction();
+    }
+
+    public DatabaseSession getSession() {
+        return session;
     }
 
     @NotNull

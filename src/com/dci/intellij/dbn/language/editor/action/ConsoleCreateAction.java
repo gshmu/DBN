@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.language.editor.action;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -13,9 +13,11 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class DeleteConsoleEditorAction extends DumbAwareAction {
-    public DeleteConsoleEditorAction() {
-        super("Delete console", "", Icons.ACTION_DELETE);
+public class ConsoleCreateAction extends DumbAwareAction {
+    private DBConsoleType consoleType;
+    ConsoleCreateAction(DBConsoleType consoleType) {
+        super("New " + consoleType.getName() + "...");
+        this.consoleType = consoleType;
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -23,7 +25,8 @@ public class DeleteConsoleEditorAction extends DumbAwareAction {
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         if (project != null && virtualFile instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-            DatabaseConsoleManager.getInstance(project).deleteConsole(consoleVirtualFile);
+            DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(project);
+            consoleManager.showCreateConsoleDialog(consoleVirtualFile.getConnectionHandler(), consoleType);
         }
     }
 
@@ -31,9 +34,7 @@ public class DeleteConsoleEditorAction extends DumbAwareAction {
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
         Presentation presentation = e.getPresentation();
-        presentation.setText("Delete Console");
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
-        presentation.setEnabled(virtualFile instanceof DBConsoleVirtualFile);
+        presentation.setText("New " + consoleType.getName() + "...");
     }
 
 

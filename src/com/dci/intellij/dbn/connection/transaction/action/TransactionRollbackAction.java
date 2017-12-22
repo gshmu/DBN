@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.Project;
 
 public class TransactionRollbackAction extends AbstractConnectionAction {
 
@@ -17,11 +16,9 @@ public class TransactionRollbackAction extends AbstractConnectionAction {
     }
 
     public void actionPerformed(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-            transactionManager.rollback(getConnectionHandler(), false, false);
-        }
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        DatabaseTransactionManager transactionManager = ActionUtil.ensure(e, DatabaseTransactionManager.class);
+        transactionManager.rollback(connectionHandler, null, false, false);
     }
 
     @Override

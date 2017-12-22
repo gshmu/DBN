@@ -8,10 +8,10 @@ import com.intellij.openapi.actionSystem.Constraints;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 
-public class SelectConnectionActionGroup extends DefaultActionGroup {
-    private static SelectConnectionAction NO_CONNECTION = new SelectConnectionAction(null);
+public class ConnectionSelectActionGroup extends DefaultActionGroup {
+    private static ConnectionSelectAction NO_CONNECTION = new ConnectionSelectAction(null);
 
-    public SelectConnectionActionGroup(Project project) {
+    public ConnectionSelectActionGroup(Project project) {
         add(new ConnectionSettingsAction(), new Constraints(Anchor.FIRST, null));
         addSeparator();
         add(NO_CONNECTION);
@@ -20,14 +20,14 @@ public class SelectConnectionActionGroup extends DefaultActionGroup {
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
 
         for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
-            SelectConnectionAction connectionAction = new SelectConnectionAction(virtualConnectionHandler);
+            ConnectionSelectAction connectionAction = new ConnectionSelectAction(virtualConnectionHandler);
             add(connectionAction);
         }
 
         if (connectionBundle.getConnectionHandlers().size() > 0) {
             addSeparator();
             for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler);
+                ConnectionSelectAction connectionAction = new ConnectionSelectAction(connectionHandler);
                 add(connectionAction);
             }
         }
