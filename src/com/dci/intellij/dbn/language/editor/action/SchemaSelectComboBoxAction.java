@@ -5,30 +5,30 @@ import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class SchemaSelectComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "Schema";
 
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
-        Project project = ActionUtil.getProject(component);
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(DataManager.getInstance().getDataContext(component));
+
+        Project project = getProject(component);
+        VirtualFile virtualFile = getVirtualFile(component);
         if (virtualFile != null) {
             ConnectionHandler activeConnection = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
             if (activeConnection != null && !activeConnection.isVirtual() && !activeConnection.isDisposed()) {
@@ -41,8 +41,8 @@ public class SchemaSelectComboBoxAction extends DBNComboBoxAction implements Dum
     }
 
     public void update(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        Project project = getProject(e);
+        VirtualFile virtualFile = getVirtualFile(e);
         String text = NAME;
 
         Icon icon = null;

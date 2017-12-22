@@ -23,6 +23,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getFileEditor;
 
 public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private SessionBrowserFilterType filterType;
@@ -93,7 +94,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
     public static SessionBrowser getSessionBrowser(AnActionEvent e) {
         SessionBrowser sessionBrowser = e.getData((DBNDataKeys.SESSION_BROWSER));
         if (sessionBrowser == null) {
-            FileEditor fileEditor = e.getData(PlatformDataKeys.FILE_EDITOR);
+            FileEditor fileEditor = getFileEditor(e);
             if (fileEditor instanceof SessionBrowser) {
                 sessionBrowser = (SessionBrowser) fileEditor;
             }

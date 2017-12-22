@@ -5,9 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionPool;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -16,11 +14,11 @@ import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import static com.dci.intellij.dbn.common.util.ActionUtil.*;
 
 public abstract class TransactionEditorAction extends DumbAwareAction {
     protected TransactionEditorAction(String text, String description, Icon icon) {
@@ -28,27 +26,25 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
     }
 
     public void update(@NotNull AnActionEvent e) {
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        VirtualFile virtualFile = getVirtualFile(e);
         boolean enabled = false;
         boolean visible = false;
         ConnectionHandler connectionHandler = getConnectionHandler(e);
         if (connectionHandler != null) {
-            DatabaseSession databaseSession = getDatabaseSession(e);
-            if (databaseSession != null && !databaseSession.isPool()) {
-                ConnectionPool connectionPool = connectionHandler.getConnectionPool();
-                DBNConnection sessionConnection = connectionPool.getSessionConnection(databaseSession.getId());
 
-                if (sessionConnection != null && sessionConnection.hasDataChanges()) {
+            DBNConnection connection = getConnection(e);
+            if (connection != null && !connection.isPoolConnection()) {
+                if (connection.hasDataChanges()) {
                     enabled = true;
                 }
 
-                if (sessionConnection == null || !sessionConnection.getAutoCommit()) {
+                if (!connection.getAutoCommit()) {
                     visible = true;
                     if (virtualFile instanceof DBEditableObjectVirtualFile) {
                         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
                         DBSchemaObject object = databaseFile.getObject();
                         if (object instanceof DBTable) {
-                            Project project = ActionUtil.ensureProject(e);
+                            Project project = ensureProject(e);
                             visible = !EnvironmentManager.getInstance(project).isReadonly(object, DBContentType.DATA);
                         }
                     }
@@ -64,8 +60,8 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
 
     @Nullable
     protected ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
-        Project project = getEventProject(e);
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        Project project = getProject(e);
+        VirtualFile virtualFile = getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             return connectionMappingManager.getConnectionHandler(virtualFile);
@@ -75,8 +71,8 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
 
     @Nullable
     protected DatabaseSession getDatabaseSession(@NotNull AnActionEvent e) {
-        Project project = getEventProject(e);
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        Project project = getProject(e);
+        VirtualFile virtualFile = getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             return connectionMappingManager.getDatabaseSession(virtualFile);

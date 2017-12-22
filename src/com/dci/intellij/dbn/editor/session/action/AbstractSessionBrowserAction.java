@@ -6,9 +6,9 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAwareAction;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getFileEditor;
 
 public abstract class AbstractSessionBrowserAction extends DumbAwareAction {
     public AbstractSessionBrowserAction(String text) {
@@ -23,7 +23,7 @@ public abstract class AbstractSessionBrowserAction extends DumbAwareAction {
     public static SessionBrowser getSessionBrowser(AnActionEvent e) {
         SessionBrowser sessionBrowser = e.getData((DBNDataKeys.SESSION_BROWSER));
         if (sessionBrowser == null) {
-            FileEditor fileEditor = e.getData(PlatformDataKeys.FILE_EDITOR);
+            FileEditor fileEditor = getFileEditor(e);
             if (fileEditor instanceof SessionBrowser) {
                 return (SessionBrowser) fileEditor;
             }

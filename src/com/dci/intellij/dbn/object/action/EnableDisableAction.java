@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 
 public class EnableDisableAction extends AnAction {
     private DBSchemaObject object;
@@ -21,7 +22,7 @@ public class EnableDisableAction extends AnAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = getEventProject(e);
+        Project project = getProject(e);
         boolean enabled = object.getStatus().is(DBObjectStatus.ENABLED);
         try {
             DBOperationType operationType = enabled ? DBOperationType.DISABLE : DBOperationType.ENABLE;

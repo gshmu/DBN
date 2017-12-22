@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.execution.logging.LogOutputContext;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 
 public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction {
     public DatabaseLogOutputKillAction() {
@@ -18,7 +19,7 @@ public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        final Project project = getEventProject(e);
+        final Project project = getProject(e);
         final DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
         if (project != null && loggingResult != null && !loggingResult.isDisposed()) {
             final LogOutputContext context = loggingResult.getContext();

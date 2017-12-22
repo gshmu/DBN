@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 
 public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputAction {
     public DatabaseLogOutputCloseAction() {
@@ -17,7 +18,7 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputActio
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        final Project project = getEventProject(e);
+        final Project project = getProject(e);
         final DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
         if (project != null && loggingResult != null && !loggingResult.isDisposed()) {
             if (loggingResult.getContext().isActive()) {

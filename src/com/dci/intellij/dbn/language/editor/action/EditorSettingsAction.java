@@ -6,9 +6,9 @@ import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.action.OpenSettingsAction;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.vfs.VirtualFile;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class EditorSettingsAction extends OpenSettingsAction{
     public EditorSettingsAction() {
@@ -19,7 +19,7 @@ public class EditorSettingsAction extends OpenSettingsAction{
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
         Presentation presentation = e.getPresentation();
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        VirtualFile virtualFile = getVirtualFile(e);
         presentation.setVisible(!(virtualFile instanceof DBConsoleVirtualFile));
     }
 }

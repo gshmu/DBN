@@ -6,28 +6,28 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class SessionSelectComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "Session";
 
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
-        Project project = ActionUtil.getProject(component);
+        Project project = getProject(component);
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(DataManager.getInstance().getDataContext(component));
+        VirtualFile virtualFile = getVirtualFile(component);
         if (virtualFile != null) {
             ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
             if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
@@ -52,8 +52,8 @@ public class SessionSelectComboBoxAction extends DBNComboBoxAction implements Du
     }
 
     public void update(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        Project project = getProject(e);
+        VirtualFile virtualFile = getVirtualFile(e);
         String text = NAME;
 
         Icon icon = null;
@@ -69,7 +69,15 @@ public class SessionSelectComboBoxAction extends DBNComboBoxAction implements Du
                 if (session != null) {
                     text = session.getName();
                     icon = session.getIcon();
-                    enabled = true;
+                    DatabaseSession databaseSession = mappingManager.getDatabaseSession(virtualFile);
+                    if (databaseSession != null) {
+                        DBNConnection connection = connectionHandler.getConnectionPool().getSessionConnection(databaseSession.getId());
+                        enabled = connection == null || !connection.hasDataChanges();
+
+                    } else {
+                        enabled = true;
+                    }
+
                 }
             }
         }

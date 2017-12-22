@@ -5,7 +5,6 @@ import java.awt.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -18,7 +17,11 @@ import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Separator;
+import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public class ActionUtil {
     public static final AnAction SEPARATOR = Separator.getInstance();
@@ -52,12 +55,34 @@ public class ActionUtil {
         return e.getData(PlatformDataKeys.PROJECT);
     }
 
+    @Nullable
+    public static VirtualFile getVirtualFile(@NotNull AnActionEvent e) {
+        return e.getData(PlatformDataKeys.VIRTUAL_FILE);
+    }
+
+    @Nullable
+    public static VirtualFile getVirtualFile(@NotNull Component component) {
+        DataContext dataContext = getDataContext(component);
+        return PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
+    }
+
+    @Nullable
+    public static Editor getEditor(@NotNull AnActionEvent e) {
+        return e.getData(PlatformDataKeys.EDITOR);
+    }
+
+    @Nullable
+    public static FileEditor getFileEditor(@NotNull AnActionEvent e) {
+        return e.getData(PlatformDataKeys.FILE_EDITOR);
+    }
+
+
     @NotNull
     public static Project ensureProject(AnActionEvent e) {
         return FailsafeUtil.get(e.getData(PlatformDataKeys.PROJECT));
     }
 
-    public static <T extends AbstractProjectComponent> T ensure(AnActionEvent e, Class<T> componentClass) {
+    public static <T extends ProjectComponent> T getComponent(AnActionEvent e, Class<T> componentClass) {
         Project project = ensureProject(e);
         return FailsafeUtil.getComponent(project, componentClass);
     }
@@ -71,9 +96,14 @@ public class ActionUtil {
     }
 
     public static Project getProject(Component component){
-        return PlatformDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(component));
+        DataContext dataContext = getDataContext(component);
+        return PlatformDataKeys.PROJECT.getData(dataContext);
     }
-    
+
+    private static DataContext getDataContext(Component component) {
+        return DataManager.getInstance().getDataContext(component);
+    }
+
     public static void registerDataProvider(JComponent component, DataProviderSupplier dataProviderSupplier) {
         DataProvider dataProvider = dataProviderSupplier.getDataProvider();
         if (dataProvider != null) {
