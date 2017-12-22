@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.editor.data.state;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -11,10 +16,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @State(
     name = "DBNavigator.Project.DatasetEditorStateManager",
@@ -32,13 +33,13 @@ public class DatasetEditorStateManager extends AbstractProjectComponent implemen
         return FailsafeUtil.getComponent(project, DatasetEditorStateManager.class);
     }
 
-    public void openSortingDialog(DatasetEditor datasetEditor) {
-        DatasetEditorSortingDialog dialog = new DatasetEditorSortingDialog(getProject(), datasetEditor);
+    public void openSortingDialog(@NotNull DatasetEditor datasetEditor) {
+        DatasetEditorSortingDialog dialog = new DatasetEditorSortingDialog(datasetEditor);
         dialog.show();
     }
 
-    public void openColumnSetupDialog(DatasetEditor datasetEditor) {
-        DatasetColumnSetupDialog dialog = new DatasetColumnSetupDialog(getProject(), datasetEditor);
+    public void openColumnSetupDialog(@NotNull DatasetEditor datasetEditor) {
+        DatasetColumnSetupDialog dialog = new DatasetColumnSetupDialog(datasetEditor);
         dialog.show();
     }
 

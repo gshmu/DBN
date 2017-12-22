@@ -1,11 +1,9 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
 import javax.swing.Action;
-import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -16,14 +14,21 @@ import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.Project;
 
 public class TextEditorDialog extends DBNDialog<TextEditorForm> {
-    private TextEditorDialog(Project project, TextEditorAdapter textEditorAdapter) throws SQLException {
+    private final TextEditorAdapter textEditorAdapter;
+    private TextEditorDialog(Project project, TextEditorAdapter textEditorAdapter){
         super(project, getTitle(textEditorAdapter), true);
-        UserValueHolder userValueHolder = textEditorAdapter.getUserValueHolder();
-        component = new TextEditorForm(this, documentListener, userValueHolder, textEditorAdapter);
+        this.textEditorAdapter = textEditorAdapter;
         getCancelAction().putValue(Action.NAME, "Close");
         getOKAction().setEnabled(false);
         setModal(true);
         init();
+    }
+
+    @NotNull
+    @Override
+    protected TextEditorForm createComponent() {
+        UserValueHolder userValueHolder = textEditorAdapter.getUserValueHolder();
+        return new TextEditorForm(this, documentListener, userValueHolder, textEditorAdapter);
     }
 
     @NotNull
@@ -36,12 +41,8 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
     }
 
     public static void show(Project project, TextEditorAdapter textEditorAdapter) {
-        try {
-            TextEditorDialog dialog = new TextEditorDialog(project, textEditorAdapter);
-            dialog.show();
-        } catch (SQLException e) {
-            MessageUtil.showErrorDialog(project, "Could not load LOB content from database.", e);
-        }
+        TextEditorDialog dialog = new TextEditorDialog(project, textEditorAdapter);
+        dialog.show();
     }
 
     @NotNull
@@ -56,18 +57,17 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
     @Override
     protected void doOKAction() {
         try {
-            component.writeUserValue();
-        } catch (SQLException e) {
-            MessageUtil.showErrorDialog(getProject(), "Could not write LOB content to database.", e);
+            getComponent().writeUserValue();
         } finally {
             super.doOKAction();
         }
     }
 
-    DocumentListener documentListener = new DocumentAdapter() {
+    private DocumentListener documentListener = new DocumentAdapter() {
         @Override
         public void documentChanged(DocumentEvent event) {
             getCancelAction().putValue(Action.NAME, "Cancel");
             getOKAction().setEnabled(true);
-        }    };
+        }
+    };
 }

@@ -14,17 +14,26 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 
-public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrowserForm> implements Disposable, TreeSelectionListener {
+public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrowserForm> implements Disposable {
     private SelectAction selectAction;
     private DBObjectRef<DBMethod> methodRef;
+    private ObjectTreeModel objectTreeModel;
+    private boolean debug;
 
     public MethodExecutionBrowserDialog(Project project, ObjectTreeModel objectTreeModel, boolean debug) {
         super(project, "Method browser", true);
         setModal(true);
         setResizable(true);
-        component = new MethodExecutionBrowserForm(this, objectTreeModel, debug);
-        component.addTreeSelectionListener(this);
+        this.objectTreeModel = objectTreeModel;
+        this.debug = debug;
+        getComponent().addTreeSelectionListener(selectionListener);
         init();
+    }
+
+    @NotNull
+    @Override
+    protected MethodExecutionBrowserForm createComponent() {
+        return new MethodExecutionBrowserForm(this, objectTreeModel, debug);
     }
 
     @Override
@@ -44,13 +53,13 @@ public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrows
         super.doOKAction();
     }
 
-    public void dispose() {
-        super.dispose();
-    }
+    private TreeSelectionListener selectionListener = new TreeSelectionListener() {
+        @Override
+        public void valueChanged(TreeSelectionEvent e) {
+            selectAction.setEnabled(getComponent().getSelectedMethod() != null);
+        }
+    };
 
-    public void valueChanged(TreeSelectionEvent e) {
-        selectAction.setEnabled(component.getSelectedMethod() != null);
-    }
 
     public DBMethod getSelectedMethod() {
         return DBObjectRef.get(methodRef);
@@ -66,9 +75,15 @@ public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrows
         }
 
         public void actionPerformed(ActionEvent e) {
-            methodRef = DBObjectRef.from(component.getSelectedMethod());
+            methodRef = DBObjectRef.from(getComponent().getSelectedMethod());
             close(OK_EXIT_CODE);
         }
 
     }
+
+    public void dispose() {
+        super.dispose();
+        objectTreeModel = null;
+    }
+
 }

@@ -14,10 +14,15 @@ public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputFo
         super(project, "Execute SQL script", true);
         this.executionInput = executionInput;
         setModal(true);
-        component = new ScriptExecutionInputForm(this, executionInput);
         Action okAction = getOKAction();
         okAction.putValue(Action.NAME, "Execute");
         init();
+    }
+
+    @NotNull
+    @Override
+    protected ScriptExecutionInputForm createComponent() {
+        return new ScriptExecutionInputForm(this, executionInput);
     }
 
     @Override
@@ -45,5 +50,8 @@ public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputFo
     @Override
     public void dispose() {
         super.dispose();
+        executionInput = null;
     }
+
+
 }

@@ -271,6 +271,10 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return load(null);
     }
 
+    public T getnn(){
+        return FailsafeUtil.get(get());
+    }
+
     @Nullable
     public T get(Project project) {
         return load(project);

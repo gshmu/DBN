@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
 import javax.swing.Action;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -11,12 +12,18 @@ import com.dci.intellij.dbn.object.filter.name.SimpleNameFilterCondition;
 import com.intellij.openapi.project.Project;
 
 public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterConditionForm> {
+    private CompoundFilterCondition parentCondition;
     private SimpleNameFilterCondition condition;
     private ConditionJoinType joinType;
+    private DBObjectType objectType;
+    private ObjectNameFilterConditionForm.Operation operation;
 
     public ObjectNameFilterConditionDialog(Project project, CompoundFilterCondition parentCondition, SimpleNameFilterCondition condition, DBObjectType objectType, ObjectNameFilterConditionForm.Operation operation) {
         super(project, getTitle(operation), true);
-        component = new ObjectNameFilterConditionForm(this, parentCondition, condition,  objectType, operation);
+        this.condition = condition;
+        this.parentCondition = parentCondition;
+        this.objectType = objectType;
+        this.operation = operation;
         setModal(true);
         setResizable(false);
         switch (operation) {
@@ -28,6 +35,12 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
         init();
     }
 
+    @NotNull
+    @Override
+    protected ObjectNameFilterConditionForm createComponent() {
+        return new ObjectNameFilterConditionForm(this, parentCondition, condition,  objectType, operation);
+    }
+
     @Nullable
     private static String getTitle(ObjectNameFilterConditionForm.Operation operation) {
         return operation == ObjectNameFilterConditionForm.Operation.CREATE ? "Create filter" :
@@ -36,6 +49,7 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
     }
 
     public void doOKAction() {
+        ObjectNameFilterConditionForm component = getComponent();
         condition = component.getCondition();
         joinType = component.getJoinType();
         super.doOKAction();
@@ -51,5 +65,12 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
 
     public ConditionJoinType getJoinType() {
         return joinType;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        parentCondition = null;
+        condition = null;
     }
 }

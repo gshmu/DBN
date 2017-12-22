@@ -5,19 +5,23 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
-import com.intellij.openapi.project.Project;
 
 public class DatasetEditorSortingDialog extends DBNDialog<DatasetEditorSortingForm> {
     private DatasetEditor datasetEditor;
 
-    public DatasetEditorSortingDialog(Project project, DatasetEditor datasetEditor) {
-        super(project, "Sorting", true);
+    public DatasetEditorSortingDialog(@NotNull DatasetEditor datasetEditor) {
+        super(datasetEditor.getProject(), "Sorting", true);
         this.datasetEditor = datasetEditor;
         setModal(true);
         setResizable(true);
-        component = new DatasetEditorSortingForm(this, datasetEditor);
         getCancelAction().putValue(Action.NAME, "Cancel");
         init();
+    }
+
+    @NotNull
+    @Override
+    protected DatasetEditorSortingForm createComponent() {
+        return new DatasetEditorSortingForm(this, datasetEditor);
     }
 
     @NotNull
@@ -31,7 +35,7 @@ public class DatasetEditorSortingDialog extends DBNDialog<DatasetEditorSortingFo
 
     @Override
     protected void doOKAction() {
-        component.applyChanges();
+        getComponent().applyChanges();
         datasetEditor.getEditorTable().sort();
         super.doOKAction();
     }

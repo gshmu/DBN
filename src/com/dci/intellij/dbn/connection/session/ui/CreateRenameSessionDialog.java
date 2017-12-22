@@ -5,22 +5,34 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
 
 public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm> {
-    public CreateRenameSessionDialog(ConnectionHandler connectionHandler) {
+    private ConnectionHandlerRef connectionHandlerRef;
+    private DatabaseSession session;
+
+    public CreateRenameSessionDialog(@NotNull ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject(), "Create session", true);
-        component = new CreateRenameSessionForm(this, connectionHandler, null);
+        connectionHandlerRef = connectionHandler.getRef();
         getOKAction().putValue(Action.NAME, "Create");
         init();
     }
 
     public CreateRenameSessionDialog(ConnectionHandler connectionHandler, @NotNull DatabaseSession session) {
         super(connectionHandler.getProject(), "Rename session", true);
-        component = new CreateRenameSessionForm(this, connectionHandler, session);
+        connectionHandlerRef = connectionHandler.getRef();
+        this.session = session;
         getOKAction().putValue(Action.NAME, "Rename");
         init();
+    }
+
+    @NotNull
+    @Override
+    protected CreateRenameSessionForm createComponent() {
+        ConnectionHandler connectionHandler = connectionHandlerRef.get();
+        return new CreateRenameSessionForm(this, connectionHandler, session);
     }
 
     @NotNull
@@ -33,6 +45,7 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
 
     @Override
     protected void doOKAction() {
+        CreateRenameSessionForm component = getComponent();
         DatabaseSessionManager databaseSessionManager = DatabaseSessionManager.getInstance(getProject());
         DatabaseSession session = component.getSession();
         if (session == null) {

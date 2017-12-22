@@ -11,13 +11,20 @@ import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.intellij.openapi.project.Project;
 
 public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
+    private DBObjectList objectList;
     public ObjectQuickFilterDialog(Project project, DBObjectList objectList) {
         super(project, "Quick filter", true);
-        component = new ObjectQuickFilterForm(this, objectList);
+        this.objectList = objectList;
         setModal(true);
         setResizable(false);
         getOKAction().putValue(Action.NAME, "Apply");
         init();
+    }
+
+    @NotNull
+    @Override
+    protected ObjectQuickFilterForm createComponent() {
+        return new ObjectQuickFilterForm(this, objectList);
     }
 
     @Override
@@ -33,7 +40,7 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
                 new AbstractAction("Clear Filters") {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        component.getFilter().clear();
+                        getComponent().getFilter().clear();
                         doOKAction();
                     }
                 },
@@ -42,12 +49,21 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
     }
 
     public void doOKAction() {
-        ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
-        quickFilterManager.applyFilter(component.getObjectList(), component.getFilter());
-        super.doOKAction();
+        try {
+            ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
+            quickFilterManager.applyFilter(getComponent().getObjectList(), getComponent().getFilter());
+        } finally {
+            super.doOKAction();
+        }
     }
 
     public void doCancelAction() {
         super.doCancelAction();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        objectList = null;
     }
 }

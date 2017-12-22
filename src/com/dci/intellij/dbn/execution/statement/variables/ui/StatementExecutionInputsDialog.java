@@ -18,16 +18,23 @@ public class StatementExecutionInputsDialog extends DBNDialog<StatementExecution
     private ExecuteAction executeAction;
     private DBDebuggerType debuggerType;
     private boolean reuseVariables = false;
+    private boolean bulkExecution;
 
-    public StatementExecutionInputsDialog(StatementExecutionProcessor executionProcessor, DBDebuggerType debuggerType, boolean isBulkExecution) {
+    public StatementExecutionInputsDialog(StatementExecutionProcessor executionProcessor, DBDebuggerType debuggerType, boolean bulkExecution) {
         super(executionProcessor.getProject(), (debuggerType.isDebug() ? "Debug" : "Execute") + " statement", true);
         this.executionProcessor = executionProcessor;
         this.debuggerType = debuggerType;
+        this.bulkExecution = bulkExecution;
         setModal(true);
         setResizable(true);
         executeAction = new ExecuteAction();
-        component = new StatementExecutionInputForm(this, executionProcessor, debuggerType, isBulkExecution);
         init();
+    }
+
+    @NotNull
+    @Override
+    protected StatementExecutionInputForm createComponent() {
+        return new StatementExecutionInputForm(this, executionProcessor, debuggerType, bulkExecution);
     }
 
     @Override
@@ -49,13 +56,13 @@ public class StatementExecutionInputsDialog extends DBNDialog<StatementExecution
     }
 
     private class ExecuteAction extends AbstractAction {
-        public ExecuteAction() {
+        ExecuteAction() {
             super(debuggerType.isDebug() ? "Debug" : "Execute", debuggerType.isDebug() ? Icons.STMT_EXECUTION_DEBUG : Icons.STMT_EXECUTION_RUN);
             putValue(DEFAULT_ACTION, Boolean.TRUE);
         }
 
         public void actionPerformed(ActionEvent e) {
-            component.updateExecutionInput();
+            getComponent().updateExecutionInput();
             StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
             Project project = getProject();
             if (executionVariables != null) {

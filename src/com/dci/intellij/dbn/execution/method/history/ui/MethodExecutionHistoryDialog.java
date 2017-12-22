@@ -22,14 +22,17 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     private SaveAction saveAction;
     private CloseAction closeAction;
     private boolean editable;
+    private boolean debug;
     private MethodExecutionInput selectedExecutionInput;
+    private MethodExecutionHistory executionHistory;
 
     public MethodExecutionHistoryDialog(Project project, MethodExecutionHistory executionHistory, @Nullable MethodExecutionInput selectedExecutionInput, boolean editable, boolean debug) {
         super(project, "Method execution history", true);
         this.editable = editable;
+        this.debug = debug;
+        this.executionHistory = executionHistory;
         setModal(true);
         setResizable(true);
-        component = new MethodExecutionHistoryForm(this, executionHistory, debug);
         if (selectedExecutionInput == null) {
             selectedExecutionInput = executionHistory.getLastSelection();
         }
@@ -37,10 +40,16 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         if (selectedExecutionInput != null && !selectedExecutionInput.isObsolete() && (!debug || DatabaseFeature.DEBUGGING.isSupported(selectedExecutionInput))) {
             showMethodExecutionPanel(selectedExecutionInput);
             this.selectedExecutionInput = selectedExecutionInput;
-            component.setSelectedInput(selectedExecutionInput);
+            getComponent().setSelectedInput(selectedExecutionInput);
         }
         init();
         updateMainButtons(selectedExecutionInput);
+    }
+
+    @NotNull
+    @Override
+    protected MethodExecutionHistoryForm createComponent() {
+        return new MethodExecutionHistoryForm(this, executionHistory, debug);
     }
 
     @NotNull
@@ -68,13 +77,10 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     }
 
     private void saveChanges() {
+        MethodExecutionHistoryForm component = getComponent();
         component.updateMethodExecutionInputs();
         MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
         methodExecutionManager.setExecutionInputs(component.getExecutionInputs());
-    }
-
-    public void dispose() {
-        super.dispose();
     }
 
     public void setSelectedExecutionInput(MethodExecutionInput selectedExecutionInput) {
@@ -89,7 +95,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
      *                         Actions                        *
      **********************************************************/
     private class SelectAction extends AbstractAction {
-        public SelectAction() {
+        SelectAction() {
             super("Select");
         }
 
@@ -100,13 +106,13 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     }
 
     private class ExecuteAction extends AbstractAction {
-        public ExecuteAction() {
+        ExecuteAction() {
             super("Execute", Icons.METHOD_EXECUTION_RUN);
         }
 
         public void actionPerformed(ActionEvent e) {
             saveChanges();
-            MethodExecutionInput executionInput = component.getTree().getSelectedExecutionInput();
+            MethodExecutionInput executionInput = getComponent().getTree().getSelectedExecutionInput();
             if (executionInput != null) {
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(getProject());
                 close(OK_EXIT_CODE);
@@ -116,13 +122,13 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     }
 
     private class DebugAction extends AbstractAction {
-        public DebugAction() {
+        DebugAction() {
             super("Debug", Icons.METHOD_EXECUTION_DEBUG);
         }
 
         public void actionPerformed(ActionEvent e) {
             saveChanges();
-            MethodExecutionInput executionInput = component.getTree().getSelectedExecutionInput();
+            MethodExecutionInput executionInput = getComponent().getTree().getSelectedExecutionInput();
             if (executionInput != null) {
                 DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
                 close(OK_EXIT_CODE);
@@ -132,7 +138,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     }
 
     private class SaveAction extends AbstractAction {
-        public SaveAction() {
+        SaveAction() {
             super("Save");
         }
 
@@ -144,7 +150,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     }
 
     private class CloseAction extends AbstractAction {
-        public CloseAction() {
+        CloseAction() {
             super("Close");
         }
 
@@ -173,6 +179,13 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     }
 
     public void showMethodExecutionPanel(MethodExecutionInput executionInput){
-        component.showMethodExecutionPanel(executionInput);
+        getComponent().showMethodExecutionPanel(executionInput);
+    }
+
+
+    public void dispose() {
+        super.dispose();
+        selectedExecutionInput = null;
+        executionHistory = null;
     }
 }

@@ -16,19 +16,27 @@ import com.intellij.openapi.vfs.VirtualFile;
 public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     private DBObjectRef<DBSchemaObject> objectRef;
     private boolean showLookupOption;
+    private List<VirtualFile> virtualFiles;
 
     public AttachDDLFileDialog(List<VirtualFile> virtualFiles, @NotNull DBSchemaObject object, boolean showLookupOption) {
         super(object.getProject(), "Attach DDL file", true);
+        this.virtualFiles = virtualFiles;
         this.objectRef = DBObjectRef.from(object);
         this.showLookupOption = showLookupOption;
-        String typeName = object.getTypeName();
-        String hint =
-            "Following DDL files were found matching the name of the selected " + typeName + ". " +
-            "Select the files to attach to this object.\n" +
-            "NOTE: Attached DDL files will become readonly and their content will change automatically when the " + typeName + " is edited.";
-        component = new SelectDDLFileForm(object, virtualFiles, hint, showLookupOption);
         getOKAction().putValue(Action.NAME, "Attach selected");
         init();
+    }
+
+    @NotNull
+    @Override
+    protected SelectDDLFileForm createComponent() {
+        DBSchemaObject object = getObject();
+        String typeName = object.getTypeName();
+        String hint =
+                "Following DDL files were found matching the name of the selected " + typeName + ". " +
+                        "Select the files to attach to this object.\n" +
+                        "NOTE: Attached DDL files will become readonly and their content will change automatically when the " + typeName + " is edited.";
+        return new SelectDDLFileForm(object, virtualFiles, hint, showLookupOption);
     }
 
     @NotNull
@@ -52,7 +60,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         }
 
         public void actionPerformed(ActionEvent e) {
-            component.selectAll();
+            getComponent().selectAll();
             doOKAction();
         }
     }
@@ -63,6 +71,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         }
 
         public void actionPerformed(ActionEvent e) {
+            SelectDDLFileForm component = getComponent();
             component.selectNone();
             if (showLookupOption && component.isDoNotPromptSelected()) {
                 ConnectionHandler connectionHandler = getObject().getConnectionHandler();
@@ -73,6 +82,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     }
 
     protected void doOKAction() {
+        SelectDDLFileForm component = getComponent();
         DBSchemaObject object = getObject();
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(object.getProject());
         Object[] selectedPsiFiles = component.getSelection();
@@ -86,5 +96,11 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         }
 
         super.doOKAction();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        virtualFiles = null;
     }
 }

@@ -33,7 +33,6 @@ public class IdleConnectionDialog extends DialogWithTimeout {
         init();
     }
 
-
     @Override
     protected JComponent createContentComponent() {
         return idleConnectionDialogForm.getComponent();

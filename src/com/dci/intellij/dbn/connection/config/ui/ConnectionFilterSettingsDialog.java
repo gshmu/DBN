@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
@@ -16,9 +17,20 @@ import com.intellij.openapi.options.ConfigurationException;
 
 public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHeaderForm<ConnectionFilterSettingsDialog>> {
     private ConnectionFilterSettingsForm configurationEditor;
+    private ConnectionHandlerRef connectionHandlerRef;
     public ConnectionFilterSettingsDialog(@NotNull final ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject(), "Object filters", true);
-        component = new DBNContentWithHeaderForm<ConnectionFilterSettingsDialog>(this) {
+        connectionHandlerRef = connectionHandler.getRef();
+        setModal(true);
+        setResizable(true);
+        init();
+    }
+
+    @NotNull
+    @Override
+    protected DBNContentWithHeaderForm<ConnectionFilterSettingsDialog> createComponent() {
+        final ConnectionHandler connectionHandler = connectionHandlerRef.get();
+        return new DBNContentWithHeaderForm<ConnectionFilterSettingsDialog>(this) {
             @Override
             public DBNHeaderForm createHeaderForm() {
                 return new DBNHeaderForm(connectionHandler);
@@ -32,9 +44,6 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
                 return configurationEditor;
             }
         };
-        setModal(true);
-        setResizable(true);
-        init();
     }
 
     @NotNull

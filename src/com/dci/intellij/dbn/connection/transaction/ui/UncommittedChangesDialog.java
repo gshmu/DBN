@@ -18,17 +18,25 @@ import com.intellij.openapi.project.Project;
 public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> {
     private ConnectionHandlerRef connectionHandlerRef;
     private TransactionAction additionalOperation;
+    private boolean showActions;
 
     public UncommittedChangesDialog(ConnectionHandler connectionHandler, TransactionAction additionalOperation, boolean showActions) {
         super(connectionHandler.getProject(), "Uncommitted changes", true);
         this.connectionHandlerRef = connectionHandler.getRef();
         this.additionalOperation = additionalOperation;
-        component = new UncommittedChangesForm(connectionHandler, additionalOperation, showActions);
+        this.showActions = showActions;
         setModal(false);
         setResizable(true);
         init();
     }
 
+    @NotNull
+    @Override
+    protected UncommittedChangesForm createComponent() {
+        return new UncommittedChangesForm(getConnectionHandler(), additionalOperation, showActions);
+    }
+
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
     }
@@ -57,7 +65,7 @@ public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> 
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                List<DBNConnection> connections = component.getConnections();
+                List<DBNConnection> connections = getComponent().getConnections();
                 for (DBNConnection connection : connections) {
                     transactionManager.execute(connectionHandler, connection, true, TransactionAction.COMMIT, additionalOperation);
                 }
@@ -77,7 +85,7 @@ public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> 
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                List<DBNConnection> connections = component.getConnections();
+                List<DBNConnection> connections = getComponent().getConnections();
                 for (DBNConnection connection : connections) {
                     transactionManager.execute(connectionHandler, connection, true, TransactionAction.ROLLBACK, additionalOperation);
                 }

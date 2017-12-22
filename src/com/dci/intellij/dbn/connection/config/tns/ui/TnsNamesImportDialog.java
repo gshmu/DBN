@@ -16,12 +16,19 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
     private List<TnsName> tnsNames;
     private ImportAllAction importAllAction = new ImportAllAction();
     private ImportSelectedAction importSelectedAction = new ImportSelectedAction();
+    private File file;
 
     public TnsNamesImportDialog(Project project, @Nullable File file) {
         super(project, "Import TNS names", true);
+        this.file = file;
         setModal(true);
-        component = new TnsNamesImportForm(this, file);
         init();
+    }
+
+    @NotNull
+    @Override
+    protected TnsNamesImportForm createComponent() {
+        return new TnsNamesImportForm(this, file);
     }
 
     public AbstractAction getImportSelectedAction() {
@@ -51,7 +58,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
         }
 
         public void actionPerformed(ActionEvent e) {
-            tnsNames = component.getAllTnsNames();
+            tnsNames = getComponent().getAllTnsNames();
             doOKAction();
         }
     }
@@ -62,7 +69,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
         }
 
         public void actionPerformed(ActionEvent e) {
-            tnsNames = component.getSelectedTnsNames();
+            tnsNames = getComponent().getSelectedTnsNames();
             doOKAction();
         }
     }
