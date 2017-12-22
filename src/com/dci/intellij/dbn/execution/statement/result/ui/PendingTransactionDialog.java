@@ -30,7 +30,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
         rollbackAction = new RollbackAction();
         transactionForm = new PendingTransactionDialogForm(this, executionProcessor);
         DisposerUtil.register(this, transactionForm);
-        setModal(true);
+        setModal(false);
         init();
     }
 
