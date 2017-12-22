@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -15,17 +19,14 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
-public class SelectConnectionComboBoxAction extends DBNComboBoxAction implements DumbAware {
+public class ConnectionSelectComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "DB Connections";
 
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
         Project project = ActionUtil.getProject(component);
-        return new SelectConnectionActionGroup(project);
+        return new ConnectionSelectActionGroup(project);
     }
 
     public void update(AnActionEvent e) {

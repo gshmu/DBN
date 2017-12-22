@@ -130,8 +130,14 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         }
     }
 
-    public void commit(final @NotNull ConnectionHandler connectionHandler, boolean fromEditor, boolean background) {
-        List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+    public void commit(final @NotNull ConnectionHandler connectionHandler, @Nullable DBNConnection targetConnection, boolean fromEditor, boolean background) {
+        List<DBNConnection> connections;
+        if (targetConnection == null) {
+            connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+        } else {
+            connections = new ArrayList<>();
+            connections.add(targetConnection);
+        }
         for (DBNConnection connection : connections) {
             UncommittedChangeBundle dataChanges = connection.getDataChanges();
             if (fromEditor && dataChanges != null && dataChanges.size() > 1) {
@@ -152,8 +158,15 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
     }
 
-    public void rollback(final @NotNull ConnectionHandler connectionHandler, boolean fromEditor, boolean background) {
-        List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+    public void rollback(final @NotNull ConnectionHandler connectionHandler, @Nullable DBNConnection targetConnection, boolean fromEditor, boolean background) {
+        List<DBNConnection> connections;
+        if (targetConnection == null) {
+            connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+        } else {
+            connections = new ArrayList<>();
+            connections.add(targetConnection);
+        }
+
         for (DBNConnection connection : connections) {
             UncommittedChangeBundle dataChanges = connection.getDataChanges();
             if (fromEditor && dataChanges != null && dataChanges.size() > 1) {

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.environment;
 
 import javax.swing.Icon;
 import java.awt.Color;
-import java.util.UUID;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,18 +29,18 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         JBColor NONE = new JBColor(new Color(0xffffff), Color.DARK_GRAY);
     }
 
-    public static final EnvironmentType DEFAULT     = new EnvironmentType("default", "", "", null, null, false, false);
-    public static final EnvironmentType DEVELOPMENT = new EnvironmentType("development", "Development", "Development environment", new Color(-2430209), new Color(0x445F80), false, false);
-    public static final EnvironmentType INTEGRATION = new EnvironmentType("integration", "Integration", "Integration environment", new Color(-2621494), new Color(0x466646), true, false);
-    public static final EnvironmentType PRODUCTION  = new EnvironmentType("production", "Production", "Productive environment", new Color(-11574), new Color(0x634544), true, true);
-    public static final EnvironmentType OTHER       = new EnvironmentType("other", "Other", "", new Color(-1576), new Color(0x5C5B41), false, false);
-    public static final EnvironmentType[] DEFAULT_ENVIRONMENT_TYPES = new EnvironmentType[] {
+    public static final EnvironmentType DEFAULT     = new EnvironmentType(EnvironmentTypeId.DEFAULT, "", "", null, null, false, false);
+    public static final EnvironmentType DEVELOPMENT = new EnvironmentType(EnvironmentTypeId.DEVELOPMENT, "Development", "Development environment", new Color(-2430209), new Color(0x445F80), false, false);
+    public static final EnvironmentType INTEGRATION = new EnvironmentType(EnvironmentTypeId.INTEGRATION, "Integration", "Integration environment", new Color(-2621494), new Color(0x466646), true, false);
+    public static final EnvironmentType PRODUCTION  = new EnvironmentType(EnvironmentTypeId.PRODUCTION, "Production", "Productive environment", new Color(-11574), new Color(0x634544), true, true);
+    public static final EnvironmentType OTHER       = new EnvironmentType(EnvironmentTypeId.OTHER, "Other", "", new Color(-1576), new Color(0x5C5B41), false, false);
+    private static final EnvironmentType[] DEFAULT_ENVIRONMENT_TYPES = new EnvironmentType[] {
             DEVELOPMENT,
             INTEGRATION,
             PRODUCTION,
             OTHER};
 
-    private String id;
+    private EnvironmentTypeId id;
     private String name;
     private String description;
     private Color regularColor;
@@ -61,10 +60,10 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
     }
 
     public EnvironmentType() {
-        id = UUID.randomUUID().toString();
+        id = EnvironmentTypeId.create();
     }
 
-    public EnvironmentType(String id, String name, String description, Color regularColor, Color darkColor, boolean readonlyCode, boolean dataEditable) {
+    public EnvironmentType(EnvironmentTypeId id, String name, String description, Color regularColor, Color darkColor, boolean readonlyCode, boolean dataEditable) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -74,7 +73,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         this.readonlyData = dataEditable;
     }
 
-    public String getId() {
+    public EnvironmentTypeId getId() {
         return id;
     }
 
@@ -157,7 +156,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
 
     @Override
     public void readConfiguration(Element element) {
-        id = element.getAttributeValue("id");
+        id = EnvironmentTypeId.get(element.getAttributeValue("id"));
         name = element.getAttributeValue("name");
         description = element.getAttributeValue("description");
 
@@ -176,7 +175,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         if (id == null && defaultEnvironmentType != null) {
             id = defaultEnvironmentType.id;
         }
-        if (id == null) id = name.toLowerCase();
+        if (id == null) id = EnvironmentTypeId.get(name.toLowerCase());
         readonlyCode = ConfigurationUtil.getBooleanAttribute(element, "readonly-code", readonlyCode);
         readonlyData = ConfigurationUtil.getBooleanAttribute(element, "readonly-data", readonlyData);
 
@@ -184,7 +183,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
 
     @Override
     public void writeConfiguration(Element element) {
-        element.setAttribute("id", id);
+        element.setAttribute("id", id.id());
         element.setAttribute("name", name);
         element.setAttribute("description", CommonUtil.nvl(description, ""));
         element.setAttribute("color",

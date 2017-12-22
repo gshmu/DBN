@@ -1,11 +1,17 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
-import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
+import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -14,13 +20,9 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.util.List;
-
-public class SelectDatabaseSessionComboBoxAction extends DBNComboBoxAction implements DumbAware {
-    private static final String NAME = "Session";
+public class SchemaSelectComboBoxAction extends DBNComboBoxAction implements DumbAware {
+    private static final String NAME = "Schema";
 
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
@@ -28,22 +30,11 @@ public class SelectDatabaseSessionComboBoxAction extends DBNComboBoxAction imple
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(DataManager.getInstance().getDataContext(component));
         if (virtualFile != null) {
-            ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
-            if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
-                DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
-                actionGroup.add(new SelectDatabaseSessionAction(sessionBundle.getMainSession()));
-                actionGroup.add(new SelectDatabaseSessionAction(sessionBundle.getPoolSession()));
-                List<DatabaseSession> sessions = sessionBundle.getSessions();
-                if (sessions.size() > 0) {
-                    //actionGroup.addSeparator();
-                    for (DatabaseSession session : sessions){
-                        if (session.isCustom()) {
-                            actionGroup.add(new SelectDatabaseSessionAction(session));
-                        }
-                    }
+            ConnectionHandler activeConnection = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
+            if (activeConnection != null && !activeConnection.isVirtual() && !activeConnection.isDisposed()) {
+                for (DBSchema schema : activeConnection.getObjectBundle().getSchemas()){
+                    actionGroup.add(new SchemaSelectAction(schema));
                 }
-                actionGroup.addSeparator();
-                actionGroup.add(new CreateDatabaseSessionAction(connectionHandler));
             }
         }
         return actionGroup;
@@ -60,21 +51,32 @@ public class SelectDatabaseSessionComboBoxAction extends DBNComboBoxAction imple
 
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
-            ConnectionHandler connectionHandler = mappingManager.getConnectionHandler(virtualFile);
-            visible = connectionHandler != null && !connectionHandler.isVirtual();
+            ConnectionHandler activeConnection = mappingManager.getConnectionHandler(virtualFile);
+            visible = activeConnection != null && !activeConnection.isVirtual();
             if (visible) {
-                DatabaseSession session = mappingManager.getDatabaseSession(virtualFile);
-                if (session != null) {
-                    text = session.getName();
-                    icon = session.getIcon();
+                DBSchema schema = mappingManager.getDatabaseSchema(virtualFile);
+                if (schema != null) {
+                    text = schema.getName();
+                    icon = schema.getIcon();
                     enabled = true;
+                }
+
+                if (virtualFile.isInLocalFileSystem()) {
+                    DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
+                    DBSchemaObject editableObject = fileAttachmentManager.getEditableObject(virtualFile);
+                    if (editableObject != null) {
+                        boolean isOpened = DatabaseFileSystem.isFileOpened(editableObject);
+                        if (isOpened) {
+                            enabled = false;
+                        }
+                    }
                 }
             }
         }
 
         Presentation presentation = e.getPresentation();
         presentation.setText(text, false);
-        presentation.setDescription("Select database session");
+        presentation.setDescription("Select current schema");
         presentation.setIcon(icon);
         presentation.setVisible(visible);
         presentation.setEnabled(enabled);

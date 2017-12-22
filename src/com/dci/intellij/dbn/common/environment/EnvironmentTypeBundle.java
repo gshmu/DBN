@@ -7,7 +7,6 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.util.CollectionUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
 
 public class EnvironmentTypeBundle implements Iterable<EnvironmentType>, Cloneable{
     private List<EnvironmentType> environmentTypes = new ArrayList<EnvironmentType>();
@@ -32,9 +31,9 @@ public class EnvironmentTypeBundle implements Iterable<EnvironmentType>, Cloneab
     }
     
     @NotNull
-    public EnvironmentType getEnvironmentType(String id) {
+    public EnvironmentType getEnvironmentType(EnvironmentTypeId id) {
         for (EnvironmentType environmentType : this) {
-            if (StringUtil.equals(environmentType.getId(), id)) {
+            if (environmentType.getId() == id) {
                 return environmentType;
             }
         }

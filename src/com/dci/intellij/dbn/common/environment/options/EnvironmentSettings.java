@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
+import com.dci.intellij.dbn.common.environment.EnvironmentTypeId;
 import com.dci.intellij.dbn.common.environment.options.ui.EnvironmentSettingsForm;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -28,7 +29,7 @@ public class EnvironmentSettings extends ProjectConfiguration {
     }
 
     @NotNull
-    public EnvironmentType getEnvironmentType(String environmentTypeId) {
+    public EnvironmentType getEnvironmentType(EnvironmentTypeId environmentTypeId) {
         return environmentTypes.getEnvironmentType(environmentTypeId);
     }
 

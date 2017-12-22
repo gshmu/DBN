@@ -7,11 +7,13 @@ import javax.swing.JTextField;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
+import com.dci.intellij.dbn.common.environment.EnvironmentTypeId;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
@@ -22,6 +24,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
@@ -41,6 +44,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JPanel autoConnectHintPanel;
     private JTextField passwordExpiryTextField;
     private JCheckBox databaseLoggingCheckBox;
+    private JCheckBox sessionManagementCheckBox;
     private JCheckBox ddlFileBindingCheckBox;
     private JCheckBox autoConnectCheckBox;
     private JCheckBox restoreWorkspaceCheckBox;
@@ -125,18 +129,15 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     public void applyFormChanges() throws ConfigurationException {
         final ConnectionDetailSettings configuration = getConfiguration();
 
-        boolean newDdlFileBinding = ddlFileBindingCheckBox.isSelected();
-        boolean newDatabaseLogging = databaseLoggingCheckBox.isSelected();
-        EnvironmentType newEnvironmentType = environmentTypesComboBox.getSelectedValue();
-        final String newEnvironmentTypeId = newEnvironmentType.getId();
+        EnvironmentType newEnvironmentType = CommonUtil.nvl(environmentTypesComboBox.getSelectedValue(), EnvironmentType.DEFAULT);
+        final EnvironmentTypeId newEnvironmentTypeId = newEnvironmentType.getId();
 
-        final boolean settingsChanged =
-                !configuration.getCharset().equals(encodingComboBox.getSelectedValue().getCharset()) ||
-                configuration.isEnableDdlFileBinding() != newDdlFileBinding ||
-                configuration.isEnableDatabaseLogging() != newDatabaseLogging;
+        Charset charset = configuration.getCharset();
+        Charset newCharset = encodingComboBox.getSelectedValue().getCharset();
+        final boolean settingsChanged = !charset.equals(newCharset);
 
-        final boolean environmentChanged =
-                !configuration.getEnvironmentType().getId().equals(newEnvironmentTypeId);
+        EnvironmentTypeId environmentTypeId = configuration.getEnvironmentType().getId();
+        final boolean environmentChanged = environmentTypeId != newEnvironmentTypeId;
 
 
         applyFormChanges(configuration);
@@ -164,11 +165,12 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         CharsetOption charsetOption = encodingComboBox.getSelectedValue();
         EnvironmentType environmentType = environmentTypesComboBox.getSelectedValue();
 
-        configuration.setEnvironmentTypeId(environmentType == null ? "" : environmentType.getId());
+        configuration.setEnvironmentTypeId(environmentType == null ? EnvironmentTypeId.DEFAULT : environmentType.getId());
         configuration.setCharset(charsetOption == null ? null : charsetOption.getCharset());
         configuration.setRestoreWorkspace(restoreWorkspaceCheckBox.isSelected());
         configuration.setRestoreWorkspaceDeep(restoreWorkspaceDeepCheckBox.isSelected());
         configuration.setConnectAutomatically(autoConnectCheckBox.isSelected());
+        configuration.setEnableSessionManagement(sessionManagementCheckBox.isSelected());
         configuration.setEnableDdlFileBinding(ddlFileBindingCheckBox.isSelected());
         configuration.setEnableDatabaseLogging(databaseLoggingCheckBox.isSelected());
         configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
@@ -184,6 +186,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     public void resetFormChanges() {
         ConnectionDetailSettings configuration = getConfiguration();
         encodingComboBox.setSelectedValue(CharsetOption.get(configuration.getCharset()));
+        sessionManagementCheckBox.setSelected(configuration.isEnableSessionManagement());
         ddlFileBindingCheckBox.setSelected(configuration.isEnableDdlFileBinding());
         databaseLoggingCheckBox.setSelected(configuration.isEnableDatabaseLogging());
         autoConnectCheckBox.setSelected(configuration.isConnectAutomatically());
@@ -200,7 +203,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         @Override
         public void settingsChanged(EnvironmentTypeBundle environmentTypes) {
             EnvironmentType selectedItem = environmentTypesComboBox.getSelectedValue();
-            String selectedId = selectedItem == null ? EnvironmentType.DEFAULT.getId() : selectedItem.getId();
+            EnvironmentTypeId selectedId = selectedItem == null ? EnvironmentType.DEFAULT.getId() : selectedItem.getId();
             selectedItem = environmentTypes.getEnvironmentType(selectedId);
 
             List<EnvironmentType> newEnvironmentTypes = new ArrayList<EnvironmentType>(environmentTypes.getEnvironmentTypes());

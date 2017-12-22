@@ -1,23 +1,28 @@
 package com.dci.intellij.dbn.connection.session;
 
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.ui.CreateRenameSessionDialog;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 @State(
         name = "DBNavigator.Project.DatabaseSessionManager",
@@ -34,16 +39,16 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         return FailsafeUtil.getComponent(project, DatabaseSessionManager.class);
     }
 
-    public void showCreateSessionDialog(ConnectionHandler connectionHandler) {
-        showCreateRenameSessionDialog(connectionHandler, null);
+    public void showCreateSessionDialog(ConnectionHandler connectionHandler, @Nullable RunnableTask<DatabaseSession> callback) {
+        showCreateRenameSessionDialog(connectionHandler, null, callback);
     }
 
-    public void showRenameSessionDialog(@NotNull DatabaseSession session) {
-        showCreateRenameSessionDialog(session.getConnectionHandler(), session);
+    public void showRenameSessionDialog(@NotNull DatabaseSession session, @Nullable RunnableTask<DatabaseSession> callback) {
+        showCreateRenameSessionDialog(session.getConnectionHandler(), session, callback);
     }
 
 
-    private void showCreateRenameSessionDialog(final ConnectionHandler connectionHandler, final DatabaseSession session) {
+    private void showCreateRenameSessionDialog(final ConnectionHandler connectionHandler, final DatabaseSession session, @Nullable final RunnableTask<DatabaseSession> callback) {
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
@@ -52,6 +57,11 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
                         new CreateRenameSessionDialog(connectionHandler, session);
                 dialog.setModal(true);
                 dialog.show();
+                DatabaseSession session = dialog.getSession();
+                if (callback != null) {
+                    callback.setData(session);
+                    callback.start();
+                }
             }
         }.start();
     }

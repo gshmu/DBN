@@ -2,8 +2,11 @@ package com.dci.intellij.dbn.common.util;
 
 import javax.swing.JComponent;
 import java.awt.Component;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -47,6 +50,16 @@ public class ActionUtil {
     @Nullable
     public static Project getProject(AnActionEvent e) {
         return e.getData(PlatformDataKeys.PROJECT);
+    }
+
+    @NotNull
+    public static Project ensureProject(AnActionEvent e) {
+        return FailsafeUtil.get(e.getData(PlatformDataKeys.PROJECT));
+    }
+
+    public static <T extends AbstractProjectComponent> T ensure(AnActionEvent e, Class<T> componentClass) {
+        Project project = ensureProject(e);
+        return FailsafeUtil.getComponent(project, componentClass);
     }
 
     /**

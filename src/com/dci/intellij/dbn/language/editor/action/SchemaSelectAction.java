@@ -1,32 +1,32 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
-import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
 
-public class SelectDatabaseSessionAction extends DumbAwareAction {
-    private DatabaseSession session;
-    public SelectDatabaseSessionAction(DatabaseSession session) {
-        super(session.getName(), null, session.getIcon());
-        this.session = session;
+public class SchemaSelectAction extends AnObjectAction<DBSchema> {
+    public SchemaSelectAction(DBSchema schema) {
+        super(schema);
     }
 
 
     @NotNull
-    public DatabaseSession getSession() {
-        return session;
+    public DBSchema getSchema() {
+        return FailsafeUtil.get(getObject());
     }
 
 
@@ -34,8 +34,9 @@ public class SelectDatabaseSessionAction extends DumbAwareAction {
         Project project = ActionUtil.getProject(e);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
         if (project != null && editor != null) {
+            DBSchema schema = getSchema();
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            connectionMappingManager.setDatabaseSession(editor, session);
+            connectionMappingManager.setDatabaseSchema(editor, schema);
         }
     }
 
@@ -53,14 +54,8 @@ public class SelectDatabaseSessionAction extends DumbAwareAction {
             }
         }
 
+
         Presentation presentation = e.getPresentation();
-        if (session.isMain()) {
-            presentation.setDescription("Execute statements using main connection");
-        } else if (session.isPool()) {
-            presentation.setDescription("Execute statements in pool connections (async)");
-        }
-
-
         presentation.setEnabled(enabled);
     }
 }

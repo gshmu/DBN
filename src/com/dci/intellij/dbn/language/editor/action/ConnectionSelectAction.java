@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -13,12 +15,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
 
-public class SelectConnectionAction extends DumbAwareAction {
+public class ConnectionSelectAction extends DumbAwareAction {
     private final ConnectionHandler connectionHandler;
 
-    public SelectConnectionAction(ConnectionHandler connectionHandler) {
+    public ConnectionSelectAction(ConnectionHandler connectionHandler) {
         super();
         Presentation presentation = getTemplatePresentation();
         presentation.setText(connectionHandler == null ? "No Connection" : connectionHandler.getQualifiedName(), false);
