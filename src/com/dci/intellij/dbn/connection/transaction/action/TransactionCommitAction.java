@@ -17,7 +17,7 @@ public class TransactionCommitAction extends AbstractConnectionAction {
 
     public void actionPerformed(AnActionEvent e) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DatabaseTransactionManager transactionManager = ActionUtil.ensure(e, DatabaseTransactionManager.class);
+        DatabaseTransactionManager transactionManager = ActionUtil.getComponent(e, DatabaseTransactionManager.class);
         transactionManager.commit(connectionHandler, null, false, false);
     }
 

@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.thread.SimpleTask;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getEditor;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 
 public class SessionCreateAction extends DumbAwareAction {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -23,8 +23,8 @@ public class SessionCreateAction extends DumbAwareAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-        final Project project = ActionUtil.getProject(e);
-        final Editor editor = e.getData(PlatformDataKeys.EDITOR);
+        final Project project = getProject(e);
+        final Editor editor = getEditor(e);
         if (project != null && editor != null) {
             final DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
             ConnectionHandler connectionHandler = connectionHandlerRef.get();

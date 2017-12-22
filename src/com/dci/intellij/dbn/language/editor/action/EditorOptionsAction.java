@@ -14,10 +14,10 @@ import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.vfs.VirtualFile;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class EditorOptionsAction extends GroupPopupAction {
     public EditorOptionsAction() {
@@ -27,7 +27,7 @@ public class EditorOptionsAction extends GroupPopupAction {
     @Override
     protected AnAction[] getActions(AnActionEvent e) {
         List<AnAction> actions = new ArrayList<AnAction>();
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        VirtualFile virtualFile = getVirtualFile(e);
         if (virtualFile instanceof DBConsoleVirtualFile) {
             actions.add(new ConsoleRenameAction());
             actions.add(new ConsoleDeleteAction());
@@ -53,7 +53,7 @@ public class EditorOptionsAction extends GroupPopupAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        VirtualFile virtualFile = getVirtualFile(e);
         presentation.setVisible(virtualFile instanceof DBConsoleVirtualFile);
     }
 }

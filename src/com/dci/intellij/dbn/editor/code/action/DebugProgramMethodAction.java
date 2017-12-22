@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
@@ -21,10 +20,11 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import static com.dci.intellij.dbn.common.util.ActionUtil.SEPARATOR;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class DebugProgramMethodAction extends GroupPopupAction {
     public DebugProgramMethodAction() {
@@ -49,7 +49,7 @@ public class DebugProgramMethodAction extends GroupPopupAction {
                         RunMethodAction action = new RunMethodAction(method);
                         actions.add(action);
                     }
-                    actions.add(ActionUtil.SEPARATOR);
+                    actions.add(SEPARATOR);
                 }
 
                 List<? extends DBObject> objects = schemaObject.getChildObjects(DBObjectType.METHOD);
@@ -67,7 +67,7 @@ public class DebugProgramMethodAction extends GroupPopupAction {
 
     @Nullable
     protected DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        VirtualFile virtualFile = getVirtualFile(e);
         return virtualFile instanceof DBSourceCodeVirtualFile ? (DBSourceCodeVirtualFile) virtualFile : null;
     }
 

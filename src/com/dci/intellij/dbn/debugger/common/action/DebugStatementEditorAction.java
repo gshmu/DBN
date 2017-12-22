@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.debugger.common.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -18,19 +19,19 @@ import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getEditor;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 
 public class DebugStatementEditorAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        Editor editor = e.getData(PlatformDataKeys.EDITOR);
+        Project project = getProject(e);
+        Editor editor = getEditor(e);
         if (project != null && editor != null) {
             VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
             ExecutablePsiElement executablePsiElement = null;
@@ -67,8 +68,8 @@ public class DebugStatementEditorAction extends AnAction {
         Presentation presentation = e.getPresentation();
         presentation.setIcon(Icons.STMT_EXECUTION_DEBUG);
         presentation.setText("Debug Statement");
-        Project project = ActionUtil.getProject(e);
-        Editor editor = e.getData(PlatformDataKeys.EDITOR);
+        Project project = getProject(e);
+        Editor editor = getEditor(e);
         boolean enabled = false;
         boolean visible = false;
         if (project != null && editor != null) {

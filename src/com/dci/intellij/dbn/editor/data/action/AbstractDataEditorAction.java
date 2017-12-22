@@ -4,6 +4,7 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -38,7 +39,7 @@ public abstract class AbstractDataEditorAction extends DumbAwareAction {
     public static DatasetEditor getDatasetEditor(AnActionEvent e) {
         DatasetEditor datasetEditor = e.getData((DBNDataKeys.DATASET_EDITOR));
         if (datasetEditor == null) {
-            FileEditor fileEditor = e.getData(PlatformDataKeys.FILE_EDITOR);
+            FileEditor fileEditor = ActionUtil.getFileEditor(e);
             if (fileEditor instanceof DatasetEditor) {
                 return (DatasetEditor) fileEditor;
             }

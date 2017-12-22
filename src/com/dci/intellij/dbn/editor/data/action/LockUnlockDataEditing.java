@@ -5,12 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getFileEditor;
 
 public class LockUnlockDataEditing extends ToggleAction implements DumbAware {
 
@@ -45,7 +45,7 @@ public class LockUnlockDataEditing extends ToggleAction implements DumbAware {
     }
 
     private static DatasetEditor getDatasetEditor(AnActionEvent e) {
-        FileEditor fileEditor = e.getData(PlatformDataKeys.FILE_EDITOR);
+        FileEditor fileEditor = getFileEditor(e);
         return fileEditor instanceof DatasetEditor ? (DatasetEditor) fileEditor : null;
     }
 }

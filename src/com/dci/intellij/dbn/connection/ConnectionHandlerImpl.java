@@ -468,7 +468,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
                     try {
                         interfaceProvider = DatabaseInterfaceProviderFactory.getInterfaceProvider(this);
                     } catch (SQLException e) {
-
+                        System.out.println();
                     }
                 }
             }

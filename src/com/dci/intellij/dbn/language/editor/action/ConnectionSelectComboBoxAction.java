@@ -5,7 +5,6 @@ import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -14,18 +13,19 @@ import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class ConnectionSelectComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "DB Connections";
 
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
-        Project project = ActionUtil.getProject(component);
+        Project project = getProject(component);
         return new ConnectionSelectActionGroup(project);
     }
 
@@ -34,8 +34,8 @@ public class ConnectionSelectComboBoxAction extends DBNComboBoxAction implements
         String text = NAME;
         Icon icon = null;
 
-        Project project = ActionUtil.getProject(e);
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        Project project = getProject(e);
+        VirtualFile virtualFile = getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);

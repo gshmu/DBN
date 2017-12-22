@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.script.action;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
@@ -11,18 +10,18 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import static com.dci.intellij.dbn.common.util.ActionUtil.*;
 
 public class ExecuteScriptEditorAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        Editor editor = e.getData(PlatformDataKeys.EDITOR);
+        Project project = getProject(e);
+        Editor editor = getEditor(e);
         if (project != null && editor != null) {
             FileDocumentManager.getInstance().saveDocument(editor.getDocument());
             ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
@@ -40,13 +39,13 @@ public class ExecuteScriptEditorAction extends AnAction {
     }
 
     private static boolean isVisible(AnActionEvent e) {
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        VirtualFile virtualFile = getVirtualFile(e);
         return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 
     private static boolean isEnabled(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        Editor editor = e.getData(PlatformDataKeys.EDITOR);
+        Project project = getProject(e);
+        Editor editor = getEditor(e);
         if (project == null || editor == null) {
             return false;
         } else {

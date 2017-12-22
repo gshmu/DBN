@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.logging.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
@@ -8,7 +10,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 
 public class DatabaseLogOutputRerunAction extends AbstractDatabaseLogOutputAction {
     public DatabaseLogOutputRerunAction() {
@@ -17,7 +19,7 @@ public class DatabaseLogOutputRerunAction extends AbstractDatabaseLogOutputActio
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        final Project project = getEventProject(e);
+        final Project project = getProject(e);
         final DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
         if (project != null && loggingResult != null && !loggingResult.isDisposed()) {
             LogOutputContext context = loggingResult.getContext();

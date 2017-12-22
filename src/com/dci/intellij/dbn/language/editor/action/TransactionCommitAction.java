@@ -17,13 +17,13 @@ public class TransactionCommitAction extends TransactionEditorAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        ConnectionHandler activeConnection = getConnectionHandler(e);
-        if (activeConnection != null) {
+        ConnectionHandler connectionHandler = getConnectionHandler(e);
+        if (connectionHandler != null) {
             DBNConnection connection = getConnection(e);
             if (connection != null) {
                 Project project = ActionUtil.ensureProject(e);
                 DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-                transactionManager.commit(activeConnection, connection, true, false);
+                transactionManager.commit(connectionHandler, connection, true, false);
             }
         }
     }

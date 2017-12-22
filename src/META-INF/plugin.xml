@@ -181,6 +181,9 @@
             <action id="DBNavigator.Actions.Connections" class="com.dci.intellij.dbn.language.editor.action.ConnectionSelectComboBoxAction" text="Script Editor - DB Connections"/>
             <action id="DBNavigator.Actions.CurrentSchema" class="com.dci.intellij.dbn.language.editor.action.SchemaSelectComboBoxAction" text="Script Editor - Current schema"/>
             <action id="DBNavigator.Actions.CurrentSession" class="com.dci.intellij.dbn.language.editor.action.SessionSelectComboBoxAction" text="Script Editor - Current session"/>
+            <action id="DBNavigator.Actions.Commit" class="com.dci.intellij.dbn.language.editor.action.TransactionCommitAction" text="Script Editor - Commit transaction" icon="/img/action/ConnectionCommit.png"/>
+            <action id="DBNavigator.Actions.Rollback" class="com.dci.intellij.dbn.language.editor.action.TransactionRollbackAction" text="Script Editor - Rollback transaction" icon="/img/action/ConnectionRollback.png"/>
+            <separator/>
             <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementEditorAction" text="Script Editor - Execute Statement" icon="/img/action/StatementExecution.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl ENTER"/>
             </action>
@@ -188,8 +191,6 @@
             <action id="DBNavigator.Actions.ExplainPlan" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanEditorAction" text="Script Editor - Explain plan" icon="/img/action/StatementExplain.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift ENTER"/>
             </action>
-            <action id="DBNavigator.Actions.Commit" class="com.dci.intellij.dbn.language.editor.action.TransactionCommitAction" text="Script Editor - Commit transaction" icon="/img/action/ConnectionCommit.png"/>
-            <action id="DBNavigator.Actions.Rollback" class="com.dci.intellij.dbn.language.editor.action.TransactionRollbackAction" text="Script Editor - Rollback transaction" icon="/img/action/ConnectionRollback.png"/>
             <separator/>
             <action id="DBNavigator.Actions.ExecuteAsScript" class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptEditorAction" text="Script Editor - Execute as Script" icon="/img/action/ExecuteAsScript.png"/>
             <separator/>

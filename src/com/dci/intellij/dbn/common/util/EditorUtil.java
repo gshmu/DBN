@@ -198,18 +198,21 @@ public class EditorUtil {
         return editor != null && !editor.isDisposed() ? editor : null;
     }
 
-    public static FileEditor getFileEditor(Editor editor) {
-        Project project = editor.getProject();
-        if (project != null) {
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            FileEditor[] allEditors = fileEditorManager.getAllEditors();
-            for (FileEditor fileEditor : allEditors) {
-                if (editor == getEditor(fileEditor)) {
-                    return fileEditor;
+    public static FileEditor getFileEditor(@Nullable Editor editor) {
+        if (editor != null) {
+            Project project = editor.getProject();
+            if (project != null) {
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                FileEditor[] allEditors = fileEditorManager.getAllEditors();
+                for (FileEditor fileEditor : allEditors) {
+                    if (editor == getEditor(fileEditor)) {
+                        return fileEditor;
+                    }
                 }
             }
         }
         return null;
+
     }
     public static void setEditorReadonly(SourceCodeEditor sourceCodeEditor, final boolean readonly) {
         final EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
