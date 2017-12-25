@@ -1,13 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
-import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -15,7 +9,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.*;
 
 public class SessionSelectAction extends DumbAwareAction {
@@ -48,8 +43,11 @@ public class SessionSelectAction extends DumbAwareAction {
         VirtualFile virtualFile = getVirtualFile(e);
         if (project != null &&  virtualFile != null) {
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
-                enabled = false;//objectFile.getObject().getSchema() == schema;
+                enabled = false;
             } else {
+                enabled = true;
+/*
+                // TODO allow selecting "hot" session?
                 PsiFile currentFile = PsiUtil.getPsiFile(project, virtualFile);
                 if (currentFile instanceof DBLanguagePsiFile) {
                     FileConnectionMappingManager connectionMappingManager = getComponent(e, FileConnectionMappingManager.class);
@@ -59,6 +57,7 @@ public class SessionSelectAction extends DumbAwareAction {
                         enabled = connection == null || !connection.hasDataChanges();
                     }
                 }
+*/
 
             }
         }

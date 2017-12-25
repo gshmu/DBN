@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.connection;
 
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.LazyResourceStatus;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<ConnectionHandlerStatus> {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -74,19 +74,12 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
         protected boolean doCheck() {
             try {
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                ConnectionPool connectionPool = connectionHandler.getConnectionPool();
-                DBNConnection mainConnection = connectionPool.getMainConnection();
-                if (mainConnection != null && !mainConnection.isClosed() && mainConnection.isValid()) {
-                    return true;
-                }
-
-                List<DBNConnection> poolConnections = connectionPool.getPoolConnections();
-                for (DBNConnection poolConnection : poolConnections) {
-                    if (!poolConnection.isClosed() && poolConnection.isValid()) {
+                List<DBNConnection> connections = connectionHandler.getConnections();
+                for (DBNConnection connection : connections) {
+                    if (connection != null && !connection.isClosed() && connection.isValid()) {
                         return true;
                     }
                 }
-
             } catch (Exception e) {
                 return false;
             }
