@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import java.lang.ref.WeakReference;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CopyOnWriteArrayList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
@@ -25,6 +14,13 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConnectionPool extends DisposableBase implements Disposable {
 
@@ -300,6 +296,10 @@ public class ConnectionPool extends DisposableBase implements Disposable {
 
     public List<DBNConnection> getPoolConnections() {
         return poolConnections;
+    }
+
+    public Map<SessionId, DBNConnection> getSessionConnections() {
+        return sessionConnections;
     }
 
     public int getPeakPoolSize() {
