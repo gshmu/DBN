@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.getEditor;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 
@@ -32,8 +33,10 @@ public class SessionCreateAction extends DumbAwareAction {
                 @Override
                 protected void execute() {
                     DatabaseSession session = getData();
-                    FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
-                    mappingManager.setDatabaseSession(editor, session);
+                    if (session != null) {
+                        FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
+                        mappingManager.setDatabaseSession(editor, session);
+                    }
                 }
             });
         }
