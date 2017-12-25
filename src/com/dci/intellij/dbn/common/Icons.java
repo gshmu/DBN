@@ -283,9 +283,15 @@ public class Icons {
     public static final Icon CONNECTION_INVALID       = load("/img/connection/ConnectionInvalid.png");
     public static final Icon CONNECTIONS              = load("/img/connection/Connections.png");
 
-    public static final Icon SESSION_CUSTOM           = load("/img/connection/SessionCustom.png");
-    public static final Icon SESSION_MAIN             = load("/img/connection/SessionMain.png");
-    public static final Icon SESSION_POOL             = load("/img/connection/SessionPool.png");
+    public static final Icon SESSION_CUSTOM               = load("/img/connection/SessionCustom.png");
+    public static final Icon SESSION_CUSTOM_CONNECTED     = load("/img/connection/SessionCustomConnected.png");
+    public static final Icon SESSION_CUSTOM_TRANSACTIONAL = load("/img/connection/SessionCustomTransactional.png");
+    public static final Icon SESSION_MAIN                 = load("/img/connection/SessionMain.png");
+    public static final Icon SESSION_MAIN_CONNECTED       = load("/img/connection/SessionMainConnected.png");
+    public static final Icon SESSION_MAIN_TRANSACTIONAL   = load("/img/connection/SessionMainTransactional.png");
+    public static final Icon SESSION_POOL                 = load("/img/connection/SessionPool.png");
+    public static final Icon SESSION_POOL_CONNECTED       = load("/img/connection/SessionPoolConnected.png");
+    public static final Icon SESSION_POOL_TRANSACTIONAL   = load("/img/connection/SessionPoolTransactional.png");
 
 
     public static final Icon DB_ORACLE            = load("/img/database/Oracle.png");

@@ -1,15 +1,16 @@
 package com.dci.intellij.dbn.connection.session;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.SessionId;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 
 public class DatabaseSession extends DisposableBase implements Comparable<DatabaseSession>, Presentable {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -41,10 +42,18 @@ public class DatabaseSession extends DisposableBase implements Comparable<Databa
     @Nullable
     @Override
     public Icon getIcon() {
-        return
-            isMain() ? Icons.SESSION_MAIN :
-            isPool() ? Icons.SESSION_POOL :
-                       Icons.SESSION_CUSTOM;
+        if (isPool()) {
+            return Icons.SESSION_POOL;
+        } else {
+            DBNConnection connection = getConnectionHandler().getConnectionPool().getSessionConnection(id);
+            if (connection == null || !connection.isValid()) {
+                return isMain() ? Icons.SESSION_MAIN : Icons.SESSION_CUSTOM;
+            } else if (connection.hasDataChanges()) {
+                return isMain() ? Icons.SESSION_MAIN_TRANSACTIONAL : Icons.SESSION_CUSTOM_TRANSACTIONAL;
+            } else {
+                return isMain() ? Icons.SESSION_MAIN_CONNECTED : Icons.SESSION_CUSTOM_TRANSACTIONAL;
+            }
+        }
     }
 
     public boolean isMain() {
