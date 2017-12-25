@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.connection.session;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.ui.Presentable;
@@ -11,6 +7,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class DatabaseSession extends DisposableBase implements Comparable<DatabaseSession>, Presentable {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -51,7 +51,7 @@ public class DatabaseSession extends DisposableBase implements Comparable<Databa
             } else if (connection.hasDataChanges()) {
                 return isMain() ? Icons.SESSION_MAIN_TRANSACTIONAL : Icons.SESSION_CUSTOM_TRANSACTIONAL;
             } else {
-                return isMain() ? Icons.SESSION_MAIN_CONNECTED : Icons.SESSION_CUSTOM_TRANSACTIONAL;
+                return isMain() ? Icons.SESSION_MAIN_CONNECTED : Icons.SESSION_CUSTOM_CONNECTED;
             }
         }
     }
