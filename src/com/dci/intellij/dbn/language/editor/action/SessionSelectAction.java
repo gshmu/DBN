@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.editor.action;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -52,8 +53,11 @@ public class SessionSelectAction extends DumbAwareAction {
                 PsiFile currentFile = PsiUtil.getPsiFile(project, virtualFile);
                 if (currentFile instanceof DBLanguagePsiFile) {
                     FileConnectionMappingManager connectionMappingManager = getComponent(e, FileConnectionMappingManager.class);
-                    DBNConnection connection = connectionMappingManager.getConnection(virtualFile);
-                    enabled = connection == null || !connection.hasDataChanges();
+                    ConnectionHandler connectionHandler = connectionMappingManager.getConnectionHandler(virtualFile);
+                    if (connectionHandler != null) {
+                        DBNConnection connection = connectionHandler.getConnectionPool().getSessionConnection(session.getId());
+                        enabled = connection == null || !connection.hasDataChanges();
+                    }
                 }
 
             }
