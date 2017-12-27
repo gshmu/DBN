@@ -32,8 +32,10 @@ public class SessionDisableAction extends DumbAwareAction {
                     0, new MessageCallback() {
                         @Override
                         protected void execute() {
-                            ConnectionHandler connectionHandler = connectionHandlerRef.get();
-                            connectionHandler.getSettings().getDetailSettings().setEnableSessionManagement(false);
+                            if (getData() == 0) {
+                                ConnectionHandler connectionHandler = connectionHandlerRef.get();
+                                connectionHandler.getSettings().getDetailSettings().setEnableSessionManagement(false);
+                            }
                         }
                     });
         }
