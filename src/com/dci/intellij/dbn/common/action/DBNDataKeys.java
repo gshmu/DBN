@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.action;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -27,9 +28,10 @@ public interface DBNDataKeys {
     DataKey<ExplainPlanResult> EXPLAIN_PLAN_RESULT = DataKey.create("DBNavigator.ExplainPlanResult");
     DataKey<DatabaseLoggingResult> DATABASE_LOG_OUTPUT = DataKey.create("DBNavigator.DatabaseLogOutput");
     Key<String> ACTION_PLACE_KEY = Key.create("DBNavigator.ActionPlace");
-    Key<Boolean> PROJECT_SETTINGS_LOADED_KEY = Key.create("DBNavigator.ProjectSettingsLoaded");
-    Key<ConnectionHandler> ACTIVE_CONNECTION_KEY = Key.create("DBNavigator.ConnectionHandler");
-    Key<DatabaseSession> CURRENT_SESSION_KEY = Key.create("DBNavigator.DatabaseSession");
-    Key<DBObjectRef<DBSchema>> CURRENT_SCHEMA_KEY = Key.create("DBNavigator.DatabaseSchema");
+    Key<Boolean> PROJECT_SETTINGS_LOADED = Key.create("DBNavigator.ProjectSettingsLoaded");
+    Key<ConnectionHandler> CONNECTION_HANDLER = Key.create("DBNavigator.ConnectionHandler");
+    Key<DatabaseSession> DATABASE_SESSION = Key.create("DBNavigator.DatabaseSession");
+    Key<DBObjectRef<DBSchema>> DATABASE_SCHEMA = Key.create("DBNavigator.DatabaseSchema");
+    Key<ProjectRef> PROJECT_REF = Key.create("DBNavigator.ProjectRef");
 
 }

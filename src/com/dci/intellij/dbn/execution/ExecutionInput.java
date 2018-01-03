@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.execution;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
@@ -17,9 +21,6 @@ import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class ExecutionInput extends DisposableBase implements Disposable, ConnectionProvider, PersistentConfiguration {
     private ExecutionTimeout executionTimeout;
@@ -60,7 +61,7 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
     };
 
     public ExecutionInput(Project project, ExecutionTarget executionTarget) {
-        projectRef = new ProjectRef(project);
+        projectRef = ProjectRef.from(project);
         this.executionTarget = executionTarget;
         ExecutionTimeoutSettings timeoutSettings = getExecutionTimeoutSettings();
         executionTimeout = new ExecutionTimeout(timeoutSettings.getExecutionTimeout());

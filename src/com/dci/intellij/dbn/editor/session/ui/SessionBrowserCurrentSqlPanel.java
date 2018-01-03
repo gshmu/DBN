@@ -70,8 +70,8 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
         DocumentUtil.setText(document, text);
     }
 
-    public void setCurrentSchema(DBSchema currentSchema) {
-        virtualFile.setCurrentSchema(currentSchema);
+    public void setDatabaseSchema(DBSchema currentSchema) {
+        virtualFile.setDatabaseSchema(currentSchema);
     }
 
     public void loadCurrentStatement() {
@@ -93,7 +93,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
                     SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
                     String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
                     if (sessionId.equals(sessionBrowser.getSelectedSessionId())) {
-                        setCurrentSchema(schema);
+                        setDatabaseSchema(schema);
                         setPreviewText(sql.replace("\r\n", "\n"));
                     }
                 }

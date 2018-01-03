@@ -334,7 +334,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) sourceElement.getOriginalElement().getParent();
                 DBObject parentObject = qualifiedIdentifierPsiElement.lookupParentObjectFor(identifierElementType);
                 if (parentObject != null) {
-                    DBSchema currentSchema = PsiUtil.getCurrentSchema(sourceScope);
+                    DBSchema currentSchema = PsiUtil.getDatabaseSchema(sourceScope);
                     objectBundle.lookupChildObjectsOfType(
                             consumer,
                             parentObject,
@@ -347,7 +347,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 Set<DBObject> parentObjects = LeafPsiElement.identifyPotentialParentObjects(objectType, filter, sourceScope, null);
                 if (parentObjects != null && parentObjects.size() > 0) {
                     for (DBObject parentObject : parentObjects) {
-                        DBSchema currentSchema = PsiUtil.getCurrentSchema(sourceScope);
+                        DBSchema currentSchema = PsiUtil.getDatabaseSchema(sourceScope);
                         objectBundle.lookupChildObjectsOfType(
                                 consumer,
                                 parentObject.getUndisposedElement(),

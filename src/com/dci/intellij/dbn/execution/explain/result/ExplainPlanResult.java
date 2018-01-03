@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.execution.explain.result;
 
+import javax.swing.Icon;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
@@ -23,24 +34,13 @@ import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ExplainPlanResult extends DisposableBase implements ExecutionResult, DataProviderSupplier {
     private String planId;
     private Date timestamp;
     private ExplainPlanEntry root;
     private ConnectionHandlerRef connectionHandlerRef;
-    private DBObjectRef<DBSchema> currentSchemaRef;
+    private DBObjectRef<DBSchema> databaseSchemaRef;
     private String statementText;
     private String resultName;
     private String errorMessage;
@@ -73,7 +73,7 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
         DBLanguagePsiFile file = executablePsiElement.getFile();
         ConnectionHandler connectionHandler = FailsafeUtil.get(file.getConnectionHandler());
         connectionHandlerRef = connectionHandler.getRef();
-        currentSchemaRef = DBObjectRef.from(file.getDatabaseSchema());
+        databaseSchemaRef = DBObjectRef.from(file.getDatabaseSchema());
         virtualFile = file.getVirtualFile();
         this.resultName = CommonUtil.nvl(executablePsiElement.createSubjectList(), "Explain Plan");
         this.errorMessage = errorMessage;
@@ -98,14 +98,14 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
         return ConnectionHandlerRef.get(connectionHandlerRef);
     }
 
-    public DBSchema getCurrentSchema() {
-        return DBObjectRef.get(currentSchemaRef);
+    public DBSchema getDatabaseSchema() {
+        return DBObjectRef.get(databaseSchemaRef);
     }
 
     @Override
     public PsiFile createPreviewFile() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DBSchema currentSchema = getCurrentSchema();
+        DBSchema currentSchema = getDatabaseSchema();
         DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
         return DBLanguagePsiFile.createFromText(getProject(), "preview", languageDialect, statementText, connectionHandler, currentSchema);
     }

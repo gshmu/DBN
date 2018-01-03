@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.code.common.intention.ExplainPlanIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.JumpToExecutionResultIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.RunMethodIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.SelectConnectionIntentionAction;
-import com.dci.intellij.dbn.code.common.intention.SelectCurrentSchemaIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.SelectSchemaIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.ToggleDatabaseLoggingIntentionAction;
 import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.openapi.application.ApplicationManager;
@@ -33,7 +33,7 @@ public class EditorManager implements ApplicationComponent{
         intentionManager.addAction(new DatabaseConnectIntentionAction());
         intentionManager.addAction(new JumpToExecutionResultIntentionAction());
         intentionManager.addAction(new SelectConnectionIntentionAction());
-        intentionManager.addAction(new SelectCurrentSchemaIntentionAction());
+        intentionManager.addAction(new SelectSchemaIntentionAction());
         intentionManager.addAction(new ToggleDatabaseLoggingIntentionAction());
         //intentionManager.addAction(new SetupCodeCompletionIntentionAction());
     }

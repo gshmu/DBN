@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.vfs;
 
+import javax.swing.Icon;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -11,12 +17,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.openapi.vfs.ex.dummy.DummyFileIdGenerator;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable {
     private static AtomicInteger ID_STORE = new AtomicInteger(0);
@@ -31,7 +31,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     public DBVirtualFileImpl(Project project) {
         //id = ID_STORE.getAndIncrement();
         id = DummyFileIdGenerator.next();
-        projectRef = new ProjectRef(project);
+        projectRef = ProjectRef.from(project);
     }
 
     @NotNull

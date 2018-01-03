@@ -37,7 +37,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
     private boolean loggingActive;
 
     private ConnectionHandlerRef connectionHandlerRef;
-    private DBObjectRef<DBSchema> currentSchemaRef;
+    private DBObjectRef<DBSchema> databaseSchemaRef;
 
     public StatementExecutionBasicResult(
             @NotNull StatementExecutionProcessor executionProcessor,
@@ -47,7 +47,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         this.executionProcessor = executionProcessor;
         this.updateCount = updateCount;
         this.connectionHandlerRef = FailsafeUtil.get(executionProcessor.getConnectionHandler()).getRef();
-        this.currentSchemaRef = DBObjectRef.from(executionProcessor.getTargetSchema());
+        this.databaseSchemaRef = DBObjectRef.from(executionProcessor.getTargetSchema());
     }
 
     @Override
@@ -140,8 +140,8 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
     }
 
     @Nullable
-    public DBSchema getCurrentSchema() {
-        return DBObjectRef.get(currentSchemaRef);
+    public DBSchema getDatabaseSchema() {
+        return DBObjectRef.get(databaseSchemaRef);
     }
 
     public ExecutionResultForm getForm(boolean create) {
