@@ -165,21 +165,28 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     }
 
     public DBObjectType getObjectType() {
-        PsiElement referencedElement = getReferencedElement();
-        if (referencedElement instanceof DBObjectPsiElement) {
-            DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) referencedElement;
-            return objectPsiElement.getObjectType();
-        }
-        if (referencedElement instanceof IdentifierPsiElement) {
-            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;
-            return identifierPsiElement.getObjectType();
-        }
+        if (isNot(RESOLVING_OBJECT_TYPE)) {
+            set(RESOLVING_OBJECT_TYPE, true);
+            try {
+                PsiElement referencedElement = getReferencedElement();
+                if (referencedElement instanceof DBObjectPsiElement) {
+                    DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) referencedElement;
+                    return objectPsiElement.getObjectType();
+                }
+                if (referencedElement instanceof IdentifierPsiElement) {
+                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;
+                    return identifierPsiElement.getObjectType();
+                }
 
-        if (referencedElement instanceof BasePsiElement) {
-            BasePsiElement basePsiElement = (BasePsiElement) referencedElement;
-            DBObject object = basePsiElement.resolveUnderlyingObject();
-            if (object != null) {
-                return object.getObjectType();
+                if (referencedElement instanceof BasePsiElement) {
+                    BasePsiElement basePsiElement = (BasePsiElement) referencedElement;
+                    DBObject object = basePsiElement.resolveUnderlyingObject();
+                    if (object != null) {
+                        return object.getObjectType();
+                    }
+                }
+            } finally {
+                set(RESOLVING_OBJECT_TYPE, false);
             }
         }
 

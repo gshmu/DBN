@@ -66,8 +66,10 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                         DBProgram program = method.getProgram();
                         if (program != null) {
                             DBObjectList objectList = program.getChildObjectList(method.getObjectType());
-                            List<DBMethod> methods = objectList.getObjects(method.getName());
-                            context.setItemsToShow(methods.toArray());
+                            if (objectList != null) {
+                                List<DBMethod> methods = objectList.getObjects(method.getName());
+                                context.setItemsToShow(methods.toArray());
+                            }
                         } else {
                             context.setItemsToShow(new Object[]{method});
                         }
