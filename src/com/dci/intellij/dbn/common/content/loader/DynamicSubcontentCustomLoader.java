@@ -2,9 +2,11 @@ package com.dci.intellij.dbn.common.content.loader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
+import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
 
 public abstract class DynamicSubcontentCustomLoader<T extends DynamicContentElement> implements DynamicContentLoader<T> {
@@ -19,7 +21,11 @@ public abstract class DynamicSubcontentCustomLoader<T extends DynamicContentElem
             T element = resolveElement(dynamicContent, sourceElement);
             if (element != null) {
                 dynamicContent.checkDisposed();
-                if (list == null) list = new ArrayList<T>();
+                if (list == null) {
+                    list = dynamicContent.is(DynamicContentStatus.CONCURRENT) ?
+                            new CopyOnWriteArrayList<T>() :
+                            new ArrayList<T>();
+                }
                 list.add(element);
             }
         }

@@ -32,6 +32,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 
 public class DBUserImpl extends DBObjectImpl implements DBUser {
     DBObjectList<DBGrantedRole> roles;
@@ -58,8 +59,8 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     protected void initLists() {
         DBObjectListContainer childObjects = initChildObjects();
         DBObjectBundle sourceContentHolder = getConnectionHandler().getObjectBundle();
-        roles = childObjects.createSubcontentObjectList(DBObjectType.GRANTED_ROLE, this, ROLES_LOADER, sourceContentHolder, DBObjectRelationType.USER_ROLE, true);
-        privileges = childObjects.createSubcontentObjectList(DBObjectType.GRANTED_PRIVILEGE, this, PRIVILEGES_LOADER, sourceContentHolder, DBObjectRelationType.USER_PRIVILEGE, true);
+        roles = childObjects.createSubcontentObjectList(DBObjectType.GRANTED_ROLE, this, ROLES_LOADER, sourceContentHolder, DBObjectRelationType.USER_ROLE, INDEXED);
+        privileges = childObjects.createSubcontentObjectList(DBObjectType.GRANTED_PRIVILEGE, this, PRIVILEGES_LOADER, sourceContentHolder, DBObjectRelationType.USER_PRIVILEGE, INDEXED);
     }
 
 

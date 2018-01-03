@@ -13,8 +13,8 @@ import com.intellij.openapi.project.Project;
 public class SimpleDynamicContent<T extends DynamicContentElement> extends DynamicContentImpl<T> {
     private static ContentDependencyAdapter DEPENDENCY_ADAPTER = new BasicDependencyAdapter();
 
-    public SimpleDynamicContent(@NotNull GenericDatabaseElement parent, DynamicContentLoader<T> loader, boolean indexed) {
-        super(parent, loader, DEPENDENCY_ADAPTER, indexed);
+    public SimpleDynamicContent(@NotNull GenericDatabaseElement parent, DynamicContentLoader<T> loader, DynamicContentStatus ... status) {
+        super(parent, loader, DEPENDENCY_ADAPTER, status);
     }
 
     @Nullable

@@ -28,24 +28,27 @@ import gnu.trove.THashMap;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
-    public static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));
-    public static final List EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(new ArrayList(0));
+    protected static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));
+    protected static final List EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(new ArrayList(0));
 
     private long changeTimestamp = 0;
 
     protected DynamicContentLoader<T> loader;
     private GenericDatabaseElement parent;
     private ContentDependencyAdapter dependencyAdapter;
-    private boolean indexed;
     private Map<String, T> index;
 
     protected List<T> elements = EMPTY_UNTOUCHED_CONTENT;
 
-    protected DynamicContentImpl(@NotNull GenericDatabaseElement parent, @NotNull DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
+    protected DynamicContentImpl(@NotNull GenericDatabaseElement parent, @NotNull DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, DynamicContentStatus ... statuses) {
         this.parent = parent;
         this.loader = loader;
         this.dependencyAdapter = dependencyAdapter;
-        this.indexed = indexed;
+        if (statuses != null && statuses.length > 0) {
+            for (DynamicContentStatus status : statuses) {
+                set(status, true);
+            }
+        }
     }
 
     @Override
@@ -81,6 +84,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
     public boolean isLoading() {
         return is(LOADING);
+    }
+
+    public boolean isIndexed() {
+        return is(INDEXED);
     }
 
     /**
@@ -305,8 +312,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
 
-    protected void updateIndex() {
-        if (indexed) {
+    private void updateIndex() {
+        if (isIndexed()) {
             List<T> elements = this.elements;
             if (elements instanceof FiltrableList) {
                 elements = ((FiltrableList) elements).getFullList();
@@ -329,7 +336,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     public T getElement(String name, int overload) {
         if (name != null) {
             List<T> elements = getAllElements();
-            if (indexed && index != null) {
+            if (isIndexed() && index != null) {
                 return index.get(name.toUpperCase());
             } else {
                 for (T element : elements) {

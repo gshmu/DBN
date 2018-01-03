@@ -72,22 +72,24 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelation;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
-    DBObjectList<DBTable> tables;
-    DBObjectList<DBView> views;
-    DBObjectList<DBMaterializedView> materializedViews;
-    DBObjectList<DBSynonym> synonyms;
-    DBObjectList<DBSequence> sequences;
-    DBObjectList<DBProcedure> procedures;
-    DBObjectList<DBFunction> functions;
-    DBObjectList<DBPackage> packages;
-    DBObjectList<DBType> types;
-    DBObjectList<DBDatabaseTrigger> databaseTriggers;
-    DBObjectList<DBDimension> dimensions;
-    DBObjectList<DBCluster> clusters;
-    DBObjectList<DBDatabaseLink> databaseLinks;
+    private DBObjectList<DBTable> tables;
+    private DBObjectList<DBView> views;
+    private DBObjectList<DBMaterializedView> materializedViews;
+    private DBObjectList<DBSynonym> synonyms;
+    private DBObjectList<DBSequence> sequences;
+    private DBObjectList<DBProcedure> procedures;
+    private DBObjectList<DBFunction> functions;
+    private DBObjectList<DBPackage> packages;
+    private DBObjectList<DBType> types;
+    private DBObjectList<DBDatabaseTrigger> databaseTriggers;
+    private DBObjectList<DBDimension> dimensions;
+    private DBObjectList<DBCluster> clusters;
+    private DBObjectList<DBDatabaseLink> databaseLinks;
 
     public DBSchemaImpl(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
         super(connectionHandler, resultSet);
@@ -107,32 +109,32 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         DBObjectListContainer ol = initChildObjects();
         DBObjectRelationListContainer orl = initChildObjectRelations();
 
-        tables = ol.createObjectList(DBObjectType.TABLE, this, TABLES_LOADER, true, false);
-        views = ol.createObjectList(DBObjectType.VIEW, this, VIEWS_LOADER, true, false);
-        materializedViews = ol.createObjectList(DBObjectType.MATERIALIZED_VIEW, this, MATERIALIZED_VIEWS_LOADER, true, false);
-        synonyms = ol.createObjectList(DBObjectType.SYNONYM, this, SYNONYMS_LOADER, true, false);
-        sequences = ol.createObjectList(DBObjectType.SEQUENCE, this, SEQUENCES_LOADER, true, false);
-        procedures = ol.createObjectList(DBObjectType.PROCEDURE, this, PROCEDURES_LOADER, true, false);
-        functions = ol.createObjectList(DBObjectType.FUNCTION, this, FUNCTIONS_LOADER, true, false);
-        packages = ol.createObjectList(DBObjectType.PACKAGE, this, PACKAGES_LOADER, true, false);
-        types = ol.createObjectList(DBObjectType.TYPE, this, TYPES_LOADER, true, false);
-        databaseTriggers = ol.createObjectList(DBObjectType.DATABASE_TRIGGER, this, DATABASE_TRIGGERS_LOADER, true, false);
-        dimensions = ol.createObjectList(DBObjectType.DIMENSION, this, DIMENSIONS_LOADER, true, false);
-        clusters = ol.createObjectList(DBObjectType.CLUSTER, this, CLUSTERS_LOADER, true, false);
-        databaseLinks = ol.createObjectList(DBObjectType.DBLINK, this, DATABASE_LINKS_LOADER, true, false);
+        tables = ol.createObjectList(DBObjectType.TABLE, this, TABLES_LOADER, INDEXED);
+        views = ol.createObjectList(DBObjectType.VIEW, this, VIEWS_LOADER, INDEXED);
+        materializedViews = ol.createObjectList(DBObjectType.MATERIALIZED_VIEW, this, MATERIALIZED_VIEWS_LOADER, INDEXED);
+        synonyms = ol.createObjectList(DBObjectType.SYNONYM, this, SYNONYMS_LOADER, INDEXED);
+        sequences = ol.createObjectList(DBObjectType.SEQUENCE, this, SEQUENCES_LOADER, INDEXED);
+        procedures = ol.createObjectList(DBObjectType.PROCEDURE, this, PROCEDURES_LOADER, INDEXED);
+        functions = ol.createObjectList(DBObjectType.FUNCTION, this, FUNCTIONS_LOADER, INDEXED);
+        packages = ol.createObjectList(DBObjectType.PACKAGE, this, PACKAGES_LOADER, INDEXED);
+        types = ol.createObjectList(DBObjectType.TYPE, this, TYPES_LOADER, INDEXED);
+        databaseTriggers = ol.createObjectList(DBObjectType.DATABASE_TRIGGER, this, DATABASE_TRIGGERS_LOADER, INDEXED);
+        dimensions = ol.createObjectList(DBObjectType.DIMENSION, this, DIMENSIONS_LOADER, INDEXED);
+        clusters = ol.createObjectList(DBObjectType.CLUSTER, this, CLUSTERS_LOADER, INDEXED);
+        databaseLinks = ol.createObjectList(DBObjectType.DBLINK, this, DATABASE_LINKS_LOADER, INDEXED);
 
-        DBObjectList constraints = ol.createObjectList(DBObjectType.CONSTRAINT, this, CONSTRAINTS_LOADER, true, true);
-        DBObjectList indexes = ol.createObjectList(DBObjectType.INDEX, this, INDEXES_LOADER, true, true);
-        DBObjectList columns = ol.createObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, false, true);
-        ol.createObjectList(DBObjectType.DATASET_TRIGGER, this, DATASET_TRIGGERS_LOADER, true, true);
-        ol.createObjectList(DBObjectType.NESTED_TABLE, this, ALL_NESTED_TABLES_LOADER, true, true);
-        ol.createObjectList(DBObjectType.PACKAGE_FUNCTION, this, ALL_PACKAGE_FUNCTIONS_LOADER, false, true);
-        ol.createObjectList(DBObjectType.PACKAGE_PROCEDURE, this, ALL_PACKAGE_PROCEDURES_LOADER, false, true);
-        ol.createObjectList(DBObjectType.PACKAGE_TYPE, this, ALL_PACKAGE_TYPES_LOADER, false, true);
-        ol.createObjectList(DBObjectType.TYPE_ATTRIBUTE, this, ALL_TYPE_ATTRIBUTES_LOADER, false, true);
-        ol.createObjectList(DBObjectType.TYPE_FUNCTION, this, ALL_TYPE_FUNCTIONS_LOADER, false, true);
-        ol.createObjectList(DBObjectType.TYPE_PROCEDURE, this, ALL_TYPE_PROCEDURES_LOADER, false, true);
-        ol.createObjectList(DBObjectType.ARGUMENT, this, ALL_ARGUMENTS_LOADER, false, true);
+        DBObjectList constraints = ol.createObjectList(DBObjectType.CONSTRAINT, this, CONSTRAINTS_LOADER, INDEXED, INTERNAL);
+        DBObjectList indexes = ol.createObjectList(DBObjectType.INDEX, this, INDEXES_LOADER, INDEXED, INTERNAL);
+        DBObjectList columns = ol.createObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, INTERNAL);
+        ol.createObjectList(DBObjectType.DATASET_TRIGGER, this, DATASET_TRIGGERS_LOADER, INDEXED, INTERNAL);
+        ol.createObjectList(DBObjectType.NESTED_TABLE, this, ALL_NESTED_TABLES_LOADER, INDEXED, INTERNAL);
+        ol.createObjectList(DBObjectType.PACKAGE_FUNCTION, this, ALL_PACKAGE_FUNCTIONS_LOADER, INTERNAL);
+        ol.createObjectList(DBObjectType.PACKAGE_PROCEDURE, this, ALL_PACKAGE_PROCEDURES_LOADER, INTERNAL);
+        ol.createObjectList(DBObjectType.PACKAGE_TYPE, this, ALL_PACKAGE_TYPES_LOADER, INTERNAL);
+        ol.createObjectList(DBObjectType.TYPE_ATTRIBUTE, this, ALL_TYPE_ATTRIBUTES_LOADER, INTERNAL);
+        ol.createObjectList(DBObjectType.TYPE_FUNCTION, this, ALL_TYPE_FUNCTIONS_LOADER, INTERNAL);
+        ol.createObjectList(DBObjectType.TYPE_PROCEDURE, this, ALL_TYPE_PROCEDURES_LOADER, INTERNAL);
+        ol.createObjectList(DBObjectType.ARGUMENT, this, ALL_ARGUMENTS_LOADER, INTERNAL);
 
         //ol.createHiddenObjectList(DBObjectType.TYPE_METHOD, this, TYPE_METHODS_LOADER);
 

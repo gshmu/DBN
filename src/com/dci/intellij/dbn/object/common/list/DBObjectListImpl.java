@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentImpl;
+import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
@@ -36,7 +37,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.HIDDEN;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -44,14 +45,17 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     private final DBObjectType objectType;
     private InternalFilter filter;
 
-    DBObjectListImpl(@NotNull DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed, boolean hidden) {
-        super(treeParent, loader, dependencyAdapter, indexed);
+    DBObjectListImpl(@NotNull DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, DynamicContentStatus ... statuses) {
+        super(treeParent, loader, dependencyAdapter, statuses);
         this.objectType = objectType;
-        set(HIDDEN, hidden);
-        if (treeParent instanceof DBSchema && !hidden) {
+        if (treeParent instanceof DBSchema && !isInternal()) {
             ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
             quickFilterManager.applyCachedFilter(this);
         }
+    }
+
+    public boolean isInternal() {
+        return is(INTERNAL);
     }
 
     @Nullable
@@ -202,7 +206,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         try {
             Project project = getProject();
             BrowserTreeNode treeParent = getParent();
-            if (isNot(HIDDEN) && isTouched() && FailsafeUtil.softCheck(project) && treeParent != null && treeParent.isTreeStructureLoaded()) {
+            if (isNot(INTERNAL) && isTouched() && FailsafeUtil.softCheck(project) && treeParent != null && treeParent.isTreeStructureLoaded()) {
                 BrowserTreeEventListener treeEventListener = EventUtil.notify(project, BrowserTreeEventListener.TOPIC);
                 treeEventListener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
             }
