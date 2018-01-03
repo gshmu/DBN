@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -359,7 +360,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements NonPhysical
     }
 
     public void openEditor(final DBObject object, @Nullable final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
-        new ConnectionAction("opening the object editor", object, new TaskInstructions("Opening editor", false, true)) {
+        new ConnectionAction("opening the object editor", object, new TaskInstructions("Opening editor", TaskInstruction.CAN_BE_CANCELLED)) {
             @Override
             protected void execute() {
                 EditorProviderId providerId = editorProviderId;

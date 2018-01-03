@@ -57,18 +57,25 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
     public void visitLists(DBObjectListVisitor visitor, boolean visitHidden) {
         try {
             if (objectLists != null) {
+                checkDisposed(visitor);
                 for (DBObjectList<DBObject> objectList : objectLists.values()) {
-                    FailsafeUtil.check(visitor);
+                    checkDisposed(visitor);
                     visitor.visitObjectList(objectList);
                 }
             }
             if (visitHidden && internalObjectLists != null) {
+                checkDisposed(visitor);
                 for (DBObjectList<DBObject> objectList : internalObjectLists.values()) {
-                    FailsafeUtil.check(visitor);
+                    checkDisposed(visitor);
                     visitor.visitObjectList(objectList);
                 }
             }
         } catch (ProcessCanceledException ignore) {}
+    }
+
+    private void checkDisposed(DBObjectListVisitor visitor) {
+        FailsafeUtil.check(this);
+        FailsafeUtil.check(visitor);
     }
 
     @NotNull

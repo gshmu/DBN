@@ -1,14 +1,22 @@
 package com.dci.intellij.dbn.common.thread;
 
-public class TaskInstructions {
-    private String title;
-    private boolean startInBackground;
-    private boolean canBeCancelled;
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
-    public TaskInstructions(String title, boolean startInBackground, boolean canBeCancelled) {
+public class TaskInstructions extends PropertyHolderImpl<TaskInstruction> {
+    private String title;
+
+    public TaskInstructions(String title, TaskInstruction ... instructions) {
         this.title = title;
-        this.startInBackground = startInBackground;
-        this.canBeCancelled = canBeCancelled;
+        if (instructions != null && instructions.length > 0) {
+            for (TaskInstruction instruction : instructions) {
+                set(instruction, true);
+            }
+        }
+    }
+
+    @Override
+    protected TaskInstruction[] getProperties() {
+        return TaskInstruction.values();
     }
 
     public String getTitle() {
@@ -16,10 +24,10 @@ public class TaskInstructions {
     }
 
     public boolean isStartInBackground() {
-        return startInBackground;
+        return is(TaskInstruction.START_IN_BACKGROUND);
     }
 
     public boolean isCanBeCancelled() {
-        return canBeCancelled;
+        return is(TaskInstruction.CAN_BE_CANCELLED);
     }
 }

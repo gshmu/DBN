@@ -107,7 +107,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     }
 
     public void promptExecutionDialog(final MethodExecutionInput executionInput, final @NotNull DBDebuggerType debuggerType, final RunnableTask callback) {
-        new ConnectionAction("the method execution", executionInput, new TaskInstructions("Loading method details", false, false)) {
+        new ConnectionAction("the method execution", executionInput, new TaskInstructions("Loading method details")) {
             @Override
             protected void execute() {
                 Project project = getProject();

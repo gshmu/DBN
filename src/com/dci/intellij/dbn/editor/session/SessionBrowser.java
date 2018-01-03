@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -89,7 +90,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     public void loadSessions(boolean force) {
         if (!loading && !isPreventLoading(force)) {
             setLoading(true);
-            new ConnectionAction("loading the sessions", this, new TaskInstructions("Loading sessions", true, false)) {
+            new ConnectionAction("loading the sessions", this, new TaskInstructions("Loading sessions", TaskInstruction.START_IN_BACKGROUND)) {
                 @Override
                 protected void execute() {
                     try {

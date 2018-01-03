@@ -79,6 +79,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.text.DateFormatUtil;
+import static com.dci.intellij.dbn.common.thread.TaskInstruction.START_IN_BACKGROUND;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
 @State(
@@ -499,7 +500,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public void loadSourceCode(final DBSourceCodeVirtualFile sourceCodeFile, final boolean force) {
-        TaskInstructions taskInstructions = new TaskInstructions("Loading source code for " + sourceCodeFile.getObject().getQualifiedNameWithType(), true, false);
+        TaskInstructions taskInstructions = new TaskInstructions("Loading source code for " + sourceCodeFile.getObject().getQualifiedNameWithType(), START_IN_BACKGROUND);
         new ConnectionAction("loading the source code", sourceCodeFile, taskInstructions) {
             @Override
             protected void execute() {
@@ -509,7 +510,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public void saveSourceCode(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable final SourceCodeEditor fileEditor, final Runnable successCallback) {
-        TaskInstructions taskInstructions = new TaskInstructions("Saving source code for " + sourceCodeFile.getObject().getQualifiedNameWithType(), false, false);
+        TaskInstructions taskInstructions = new TaskInstructions("Saving source code for " + sourceCodeFile.getObject().getQualifiedNameWithType());
         new ConnectionAction("saving the source code", sourceCodeFile, taskInstructions) {
             @Override
             protected void execute() {
@@ -519,7 +520,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public void revertSourceCodeChanges(final DBEditableObjectVirtualFile databaseFile, final Runnable successCallback) {
-        TaskInstructions taskInstructions = new TaskInstructions("Loading source code for " + databaseFile.getObject().getQualifiedNameWithType(), true, false);
+        TaskInstructions taskInstructions = new TaskInstructions("Loading source code for " + databaseFile.getObject().getQualifiedNameWithType(), START_IN_BACKGROUND);
         new ConnectionAction("loading the source code", databaseFile, taskInstructions) {
             @Override
             protected void execute() {
@@ -538,7 +539,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public void saveSourceCodeChanges(final DBEditableObjectVirtualFile databaseFile, final Runnable successCallback) {
-        TaskInstructions taskInstructions = new TaskInstructions("Saving source code for " + databaseFile.getObject().getQualifiedNameWithType(), false, false);
+        TaskInstructions taskInstructions = new TaskInstructions("Saving source code for " + databaseFile.getObject().getQualifiedNameWithType());
         new ConnectionAction("saving the source code", databaseFile, taskInstructions) {
             @Override
             protected void execute() {

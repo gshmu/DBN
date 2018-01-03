@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -59,7 +60,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             final ExecutionEnvironment environment) throws ExecutionException {
 
         final DBRunConfig runProfile = (DBRunConfig) environment.getRunProfile();
-        new ConnectionAction("the debug execution", runProfile.getConnectionHandler(), new TaskInstructions("Checking debug privileges", false, true)) {
+        new ConnectionAction("the debug execution", runProfile.getConnectionHandler(), new TaskInstructions("Checking debug privileges", TaskInstruction.CAN_BE_CANCELLED)) {
             @Override
             protected boolean canExecute() {
                 ConnectionHandler connectionHandler = getConnectionHandler();

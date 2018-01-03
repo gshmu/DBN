@@ -15,7 +15,7 @@ public class ConnectAction extends AbstractConnectionAction {
     public void actionPerformed(AnActionEvent anActionEvent) {
         final ConnectionHandler connectionHandler = getConnectionHandler();
         connectionHandler.getInstructions().setAllowAutoConnect(true);
-        TaskInstructions taskInstructions = new TaskInstructions("Trying to connect to " + connectionHandler.getName(), false, false);
+        TaskInstructions taskInstructions = new TaskInstructions("Trying to connect to " + connectionHandler.getName());
         new ConnectionAction("connecting to database", connectionHandler, taskInstructions) {
             @Override
             protected void execute() {

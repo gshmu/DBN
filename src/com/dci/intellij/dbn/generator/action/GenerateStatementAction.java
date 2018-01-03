@@ -6,6 +6,7 @@ import java.awt.datatransfer.StringSelection;
 
 import com.dci.intellij.dbn.common.thread.CommandWriteActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -26,7 +27,7 @@ public abstract class GenerateStatementAction extends AnAction implements Connec
     }
 
     public final void actionPerformed(AnActionEvent e) {
-        TaskInstructions taskInstructions = new TaskInstructions("Extracting select statement", false, true);
+        TaskInstructions taskInstructions = new TaskInstructions("Extracting select statement", TaskInstruction.CAN_BE_CANCELLED);
         new ConnectionAction("generating the statement", this, taskInstructions) {
             @Override
             protected void execute() {
