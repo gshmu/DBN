@@ -4,6 +4,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
@@ -27,9 +28,9 @@ import com.intellij.ui.EditorNotifications;
 
 public class DDLMappedNotificationProvider extends EditorNotifications.Provider<DDLMappedNotificationPanel> {
     private static final Key<DDLMappedNotificationPanel> KEY = Key.create("DBNavigator.DDLMappedNotificationPanel");
-    private Project project;
+    private ProjectRef projectRef;
     public DDLMappedNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
-        this.project = project;
+        this.projectRef = ProjectRef.from(project);
 
         EventUtil.subscribe(project, project, DDLFileAttachmentManagerListener.TOPIC, ddlFileAttachmentManagerListener);
         EventUtil.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
@@ -39,6 +40,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
     DDLFileAttachmentManagerListener ddlFileAttachmentManagerListener = new DDLFileAttachmentManagerListener() {
         @Override
         public void ddlFileDetached(VirtualFile virtualFile) {
+            Project project = getProject();
             if (!project.isDisposed()) {
                 EditorNotifications notifications = EditorNotifications.getInstance(project);
                 notifications.updateNotifications(virtualFile);
@@ -47,6 +49,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
 
         @Override
         public void ddlFileAttached(VirtualFile virtualFile) {
+            Project project = getProject();
             if (!project.isDisposed()) {
                 EditorNotifications notifications = EditorNotifications.getInstance(project);
                 notifications.updateNotifications(virtualFile);
@@ -66,6 +69,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
         }
 
         private void updateDdlFileHeaders(VirtualFile file) {
+            Project project = getProject();
             if (!project.isDisposed() && file instanceof DBEditableObjectVirtualFile) {
                 DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) file;
                 if (!editableObjectFile.isDisposed()) {
@@ -86,6 +90,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
     private final DDLFileSettingsChangeListener ddlFileSettingsChangeListener = new DDLFileSettingsChangeListener() {
         @Override
         public void settingsChanged() {
+            Project project = getProject();
             EditorNotifications notifications = EditorNotifications.getInstance(project);
             notifications.updateAllNotifications();
         }
@@ -100,6 +105,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
     @Nullable
     @Override
     public DDLMappedNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
+        Project project = getProject();
         DDLFileGeneralSettings generalSettings = DDLFileSettings.getInstance(project).getGeneralSettings();
         if (generalSettings.isSynchronizeDDLFilesEnabled()) {
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
@@ -128,5 +134,10 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
 
     private DDLMappedNotificationPanel createPanel(@NotNull final VirtualFile virtualFile, final DBSchemaObject editableObject) {
         return new DDLMappedNotificationPanel(virtualFile, editableObject);
+    }
+
+    @NotNull
+    public Project getProject() {
+        return projectRef.getnn();
     }
 }

@@ -81,7 +81,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
 
     public boolean setConnectionHandler(VirtualFile virtualFile, ConnectionHandler connectionHandler) {
         if (VirtualFileUtil.isLocalFileSystem(virtualFile)) {
-            virtualFile.putUserData(ACTIVE_CONNECTION_KEY, connectionHandler);
+            virtualFile.putUserData(CONNECTION_HANDLER, connectionHandler);
 
             ConnectionId connectionId = connectionHandler == null ? null : connectionHandler.getId();
             String currentSchema = connectionHandler == null ? null  : connectionHandler.getUserName().toUpperCase();
@@ -98,7 +98,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                     if (connectionHandler != null) {
                         // overwrite current schema only if the existing
                         // selection is not a valid schema for the given connection
-                        String currentSchemaName = mapping.getCurrentSchema();
+                        String currentSchemaName = mapping.getSchemaName();
                         DBSchema schema = connectionHandler.isVirtual() || currentSchemaName == null ? null : connectionHandler.getObjectBundle().getSchema(currentSchemaName);
                         setDatabaseSchema(virtualFile, schema);
                     } else {
@@ -113,13 +113,13 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
 
     public boolean setDatabaseSchema(VirtualFile virtualFile, DBSchema schema) {
         if (VirtualFileUtil.isLocalFileSystem(virtualFile) || VirtualFileUtil.isVirtualFileSystem(virtualFile)) {
-            virtualFile.putUserData(CURRENT_SCHEMA_KEY, DBObjectRef.from(schema));
+            virtualFile.putUserData(DATABASE_SCHEMA, DBObjectRef.from(schema));
             FileConnectionMapping mapping = lookupMapping(virtualFile);
             if (mapping != null) {
                 if (schema == null) {
-                    mapping.setCurrentSchema(null);
-                } else if (!schema.getName().equals(mapping.getCurrentSchema())){
-                    mapping.setCurrentSchema(schema.getName());
+                    mapping.setSchemaName(null);
+                } else if (!schema.getName().equals(mapping.getSchemaName())){
+                    mapping.setSchemaName(schema.getName());
                 }
 
                 return true;
@@ -136,7 +136,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
 
     public boolean setDatabaseSession(VirtualFile virtualFile, DatabaseSession session) {
         if (VirtualFileUtil.isLocalFileSystem(virtualFile) || VirtualFileUtil.isVirtualFileSystem(virtualFile)) {
-            virtualFile.putUserData(CURRENT_SESSION_KEY, session);
+            virtualFile.putUserData(DATABASE_SESSION, session);
             FileConnectionMapping mapping = lookupMapping(virtualFile);
             if (mapping != null) {
                 if (session == null) {
@@ -180,7 +180,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                 }
 
                 // lookup connection mappings
-                ConnectionHandler connectionHandler = virtualFile.getUserData(ACTIVE_CONNECTION_KEY);
+                ConnectionHandler connectionHandler = virtualFile.getUserData(CONNECTION_HANDLER);
                 if (connectionHandler == null || connectionHandler.isDisposed()) {
                     FileConnectionMapping mapping = lookupMapping(virtualFile);
                     if (mapping != null) {
@@ -192,7 +192,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                         }
 
                         if (connectionHandler != null)
-                            virtualFile.putUserData(ACTIVE_CONNECTION_KEY, connectionHandler);
+                            virtualFile.putUserData(CONNECTION_HANDLER, connectionHandler);
                     }
                 }
                 return connectionHandler;
@@ -222,13 +222,13 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
             }
 
             // lookup schema mappings
-            DBObjectRef<DBSchema> currentSchemaRef = virtualFile.getUserData(CURRENT_SCHEMA_KEY);
+            DBObjectRef<DBSchema> currentSchemaRef = virtualFile.getUserData(DATABASE_SCHEMA);
             if (currentSchemaRef == null) {
                 ConnectionHandler connectionHandler = getConnectionHandler(virtualFile);
                 if (connectionHandler != null && !connectionHandler.isVirtual()) {
                     FileConnectionMapping mapping = lookupMapping(virtualFile);
                     if (mapping != null) {
-                        String schemaName = mapping.getCurrentSchema();
+                        String schemaName = mapping.getSchemaName();
                         if (StringUtil.isEmptyOrSpaces(schemaName)) {
                             DBSchema defaultSchema = connectionHandler.getDefaultSchema();
                             currentSchemaRef = defaultSchema == null ? null : defaultSchema.getRef();
@@ -237,8 +237,8 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                             DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
                             currentSchemaRef = schema == null ? null : schema.getRef();
                         }
-                        mapping.setCurrentSchema(schemaName);
-                        virtualFile.putUserData(CURRENT_SCHEMA_KEY, currentSchemaRef);
+                        mapping.setSchemaName(schemaName);
+                        virtualFile.putUserData(DATABASE_SCHEMA, currentSchemaRef);
                     }
                 }
             } else {
@@ -261,7 +261,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         if (VirtualFileUtil.isLocalFileSystem(virtualFile) || VirtualFileUtil.isVirtualFileSystem(virtualFile)) {
 
             // lookup schema mappings
-            DatabaseSession databaseSession = virtualFile.getUserData(CURRENT_SESSION_KEY);
+            DatabaseSession databaseSession = virtualFile.getUserData(DATABASE_SESSION);
             if (databaseSession == null) {
                 ConnectionHandler connectionHandler = getConnectionHandler(virtualFile);
                 if (connectionHandler != null && !connectionHandler.isVirtual()) {
@@ -269,7 +269,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                     if (mapping != null) {
                         SessionId sessionId = mapping.getSessionId();
                         databaseSession = connectionHandler.getSessionBundle().getSession(sessionId);
-                        virtualFile.putUserData(CURRENT_SESSION_KEY, databaseSession);
+                        virtualFile.putUserData(DATABASE_SESSION, databaseSession);
                     }
                 }
             }
@@ -479,7 +479,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                 } else {
                     if (file.getDatabaseSchema() == null) {
                         DBSchema defaultSchema = connectionHandler.getDefaultSchema();
-                        file.setCurrentSchema(defaultSchema);
+                        file.setDatabaseSchema(defaultSchema);
                     }
                     if (callback != null) {
                         callback.start();
@@ -550,7 +550,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         public void actionPerformed(@NotNull AnActionEvent e) {
             DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
-                file.setCurrentSchema(getObject());
+                file.setDatabaseSchema(getObject());
                 if (callback != null) {
                     callback.start();
                 }

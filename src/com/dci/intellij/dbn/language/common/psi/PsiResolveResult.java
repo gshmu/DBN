@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import java.lang.ref.WeakReference;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -11,15 +14,11 @@ import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-
 import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.*;
 
 public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     private ConnectionHandlerRef connectionHandlerRef;
-    private DBObjectRef<DBSchema> currentSchema;
+    private DBObjectRef<DBSchema> databaseSchema;
     private WeakReference<IdentifierPsiElement> element;
     private WeakReference<BasePsiElement> parent;
     private WeakReference<PsiElement> referencedElement;
@@ -53,7 +52,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
         this.referencedElement = null;
         this.parent = null;
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
-        this.currentSchema = DBObjectRef.from(psiElement.getCurrentSchema());
+        this.databaseSchema = DBObjectRef.from(psiElement.getDatabaseSchema());
         BasePsiElement enclosingScopePsiElement = psiElement.findEnclosingScopePsiElement();
         this.scopeTextLength = enclosingScopePsiElement == null ? 0 : enclosingScopePsiElement.getTextLength();
         if (StringUtil.isEmpty(text)) {
@@ -94,9 +93,9 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
         IdentifierPsiElement element = this.element.get();
         ConnectionHandler activeConnection = element == null ? null : element.getConnectionHandler();
         if (activeConnection == null || activeConnection.isVirtual()) {
-            if (currentSchema != null) return true;
+            if (databaseSchema != null) return true;
         } else {
-            if (connectionBecameActive(activeConnection) || connectionBecameValid(activeConnection) || currentSchemaChanged()) {
+            if (connectionBecameActive(activeConnection) || connectionBecameValid(activeConnection) || schemaChanged()) {
                 return true;
             }
         }
@@ -142,9 +141,9 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
         return element != null && getConnectionHandler() != element.getConnectionHandler();
     }
 
-    private boolean currentSchemaChanged() {
+    private boolean schemaChanged() {
         IdentifierPsiElement element = this.element.get();
-        return element != null && !CommonUtil.safeEqual(DBObjectRef.get(currentSchema), element.getCurrentSchema());
+        return element != null && !CommonUtil.safeEqual(DBObjectRef.get(databaseSchema), element.getDatabaseSchema());
     }
 
     private boolean connectionBecameValid(ConnectionHandler connectionHandler) {

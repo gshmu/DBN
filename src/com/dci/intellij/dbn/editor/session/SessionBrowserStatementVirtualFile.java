@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.editor.session;
 
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,12 +27,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.LocalTimeCounter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.io.*;
-import java.nio.charset.Charset;
 
 public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -86,7 +90,7 @@ public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implem
         return getConnectionHandler().getSessionBundle().getPoolSession();
     }
 
-    public void setCurrentSchema(DBSchema schema) {
+    public void setDatabaseSchema(DBSchema schema) {
         this.schemaRef = DBObjectRef.from(schema);
     }
 

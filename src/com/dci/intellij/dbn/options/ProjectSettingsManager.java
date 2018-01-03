@@ -177,7 +177,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
     @Override
     public void loadState(Element element) {
         projectSettings.readConfiguration(element);
-        getProject().putUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY, true);
+        getProject().putUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED, true);
     }
 
     private Project getProject() {
@@ -220,7 +220,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
     }
 
     public void importDefaultSettings(final boolean isNewProject) {
-        Boolean settingsLoaded = project.getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY);
+        Boolean settingsLoaded = project.getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED);
         if (settingsLoaded == null || !settingsLoaded || !isNewProject) {
             String message = isNewProject ?
                     "Do you want to import the default project settings into project \"" + project.getName() + "\"?":

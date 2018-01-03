@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.browser.model;
 
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
@@ -14,19 +20,13 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements BrowserTreeNode {
     private List<ConnectionBundle> rootChildren;
     private ProjectRef projectRef;
 
     public SimpleBrowserTreeRoot(@NotNull Project project, ConnectionBundle connectionBundle) {
-        this.projectRef = new ProjectRef(project);
+        this.projectRef = ProjectRef.from(project);
         this.rootChildren = new ArrayList<ConnectionBundle>();
         if (connectionBundle != null) {
             this.rootChildren.add(connectionBundle);

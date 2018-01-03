@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.session;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,10 +18,10 @@ import com.intellij.ui.EditorNotifications;
 
 public class SessionBrowserNotificationProvider extends EditorNotifications.Provider<SessionBrowserErrorNotificationPanel> {
     private static final Key<SessionBrowserErrorNotificationPanel> KEY = Key.create("DBNavigator.SessionBrowserErrorNotificationPanel");
-    private Project project;
+    private ProjectRef projectRef;
 
     public SessionBrowserNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
-        this.project = project;
+        this.projectRef = ProjectRef.from(project);
         EventUtil.subscribe(project, project, SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
 
     }
@@ -28,6 +29,7 @@ public class SessionBrowserNotificationProvider extends EditorNotifications.Prov
     SessionBrowserLoadListener sessionsLoadListener = new SessionBrowserLoadListener() {
         @Override
         public void sessionsLoaded(VirtualFile virtualFile) {
+            Project project = getProject();
             if (virtualFile != null && !project.isDisposed()) {
                 EditorNotifications notifications = EditorNotifications.getInstance(project);
                 notifications.updateNotifications(virtualFile);
@@ -62,5 +64,8 @@ public class SessionBrowserNotificationProvider extends EditorNotifications.Prov
         return new SessionBrowserErrorNotificationPanel(connectionHandler, sourceLoadError);
     }
 
-
+    @NotNull
+    public Project getProject() {
+        return projectRef.getnn();
+    }
 }

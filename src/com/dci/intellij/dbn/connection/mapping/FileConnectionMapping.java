@@ -1,24 +1,25 @@
 package com.dci.intellij.dbn.connection.mapping;
 
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SessionId;
-import org.jdom.Element;
 
 public class FileConnectionMapping implements PersistentStateElement<Element> {
     private String fileUrl = "";
     private ConnectionId connectionId;
     private SessionId sessionId = SessionId.MAIN;
-    private String currentSchema = "";
+    private String schemaName = "";
 
     FileConnectionMapping(){}
 
-    FileConnectionMapping(String fileUrl, ConnectionId connectionId, SessionId sessionId, String currentSchema) {
+    FileConnectionMapping(String fileUrl, ConnectionId connectionId, SessionId sessionId, String schemaName) {
         this.fileUrl = fileUrl;
         this.connectionId = connectionId;
         this.sessionId = sessionId;
-        this.currentSchema = currentSchema;
+        this.schemaName = schemaName;
     }
 
     public String getFileUrl() {
@@ -45,12 +46,12 @@ public class FileConnectionMapping implements PersistentStateElement<Element> {
         this.sessionId = sessionId;
     }
 
-    public String getCurrentSchema() {
-        return currentSchema;
+    public String getSchemaName() {
+        return schemaName;
     }
 
-    public void setCurrentSchema(String currentSchema) {
-        this.currentSchema = currentSchema;
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
     }
 
     /*********************************************
@@ -62,13 +63,13 @@ public class FileConnectionMapping implements PersistentStateElement<Element> {
         if (fileUrl == null) fileUrl = element.getAttributeValue("file-path");
         connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
         sessionId = CommonUtil.nvl(SessionId.get(element.getAttributeValue("session-id")), sessionId);
-        currentSchema = element.getAttributeValue("current-schema");
+        schemaName = element.getAttributeValue("current-schema");
     }
 
     public void writeState(Element element) {
         element.setAttribute("file-url", fileUrl);
         element.setAttribute("connection-id", connectionId == null ? "" : connectionId.id());
         element.setAttribute("session-id", sessionId == null ? "" : sessionId.id());
-        element.setAttribute("current-schema", currentSchema == null ? "" : currentSchema);
+        element.setAttribute("current-schema", schemaName == null ? "" : schemaName);
     }
 }

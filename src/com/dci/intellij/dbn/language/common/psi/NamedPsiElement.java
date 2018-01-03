@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -99,25 +98,6 @@ public class NamedPsiElement extends SequencePsiElement {
             return icon;
         }
         return null;
-    }
-
-    @Override
-    public DBSchema getCurrentSchema() {
-/*        if (is(ElementTypeAttribute.DATA_DEFINITION)) {
-            BasePsiElement subjectPsiElement = lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
-            if (subjectPsiElement != null && subjectPsiElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;
-                PsiElement parentPsiElement = identifierPsiElement.getParent();
-                if (parentPsiElement instanceof QualifiedIdentifierPsiElement) {
-                    QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) parentPsiElement;
-                    DBObject object = qualifiedIdentifierPsiElement.lookupParentObjectFor(identifierPsiElement);
-                    if (object instanceof DBSchema) {
-                        return (DBSchema) object;
-                    }
-                }
-            }
-        }*/
-        return super.getCurrentSchema();
     }
 
     @Nullable
