@@ -110,7 +110,9 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         if (isForeignKey() && getForeignKeyColumn() != null) {
             ttb.append(true, "FK column:&nbsp;", false);
             DBColumn foreignKeyColumn = getForeignKeyColumn();
-            ttb.append(false, foreignKeyColumn.getDataset().getName() + '.' + foreignKeyColumn.getName(), false);
+            if (foreignKeyColumn != null) {
+                ttb.append(false, foreignKeyColumn.getDataset().getName() + '.' + foreignKeyColumn.getName(), false);
+            }
         }
 
         ttb.createEmptyRow();
