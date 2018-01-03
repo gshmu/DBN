@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.data.model.basic.BasicColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
 
 public class ResultSetColumnInfo extends BasicColumnInfo {
-    int resultSetColumnIndex;
+    private int resultSetColumnIndex;
     public ResultSetColumnInfo(ConnectionHandler connectionHandler, ResultSet resultSet, int columnIndex) throws SQLException {
         this(columnIndex);
         ResultSetMetaData metaData = resultSet.getMetaData();

@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -11,15 +14,12 @@ import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 public abstract class ElementTypeLookupCacheBase<T extends ElementType> implements ElementTypeLookupCache<T> {
-    protected Set<TokenType> nextPossibleTokens;
+    private Set<TokenType> nextPossibleTokens;
     protected T elementType;
 
-    public ElementTypeLookupCacheBase(T elementType) {
+    ElementTypeLookupCacheBase(T elementType) {
         this.elementType = elementType;
     }
 
