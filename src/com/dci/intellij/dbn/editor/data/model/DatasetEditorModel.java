@@ -327,7 +327,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         editorTable.fireEditingCancel();
         for (int index : rowIndexes) {
             DatasetEditorModelRow row = getRowAtIndex(index);
-            if (!row.isDeleted()) {
+            if (row != null && !row.isDeleted()) {
                 int rsRowIndex = row.getResultSetRowIndex();
                 row.delete();
                 if (row.isDeleted()) {
