@@ -17,7 +17,7 @@ public class ShowDatabaseInformationAction extends AbstractConnectionAction {
 
     public void actionPerformed(@NotNull AnActionEvent e) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        TaskInstructions taskInstructions = new TaskInstructions("Loading database information for " + connectionHandler.getName(), false, false);
+        TaskInstructions taskInstructions = new TaskInstructions("Loading database information for " + connectionHandler.getName());
         new ConnectionAction("showing database information", connectionHandler, taskInstructions) {
             @Override
             protected void execute() {

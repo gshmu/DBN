@@ -1,10 +1,20 @@
 package com.dci.intellij.dbn.object.action;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
+import java.awt.Point;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -17,12 +27,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.tree.TreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
 
 public abstract class ObjectListShowAction extends AnAction {
     protected DBObjectRef sourceObjectRef;
@@ -49,7 +53,7 @@ public abstract class ObjectListShowAction extends AnAction {
     }
 
     public final void actionPerformed(@NotNull final AnActionEvent e) {
-        TaskInstructions taskInstructions = new TaskInstructions("Loading " + getListName(), false, true);
+        TaskInstructions taskInstructions = new TaskInstructions("Loading " + getListName(), TaskInstruction.CAN_BE_CANCELLED);
         DBObject sourceObject = getSourceObject();
         new ConnectionAction("loading " + getListName(), sourceObject, taskInstructions) {
             @Override

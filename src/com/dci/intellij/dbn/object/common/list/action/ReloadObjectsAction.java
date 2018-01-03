@@ -19,7 +19,7 @@ public class ReloadObjectsAction extends AnAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        TaskInstructions taskInstructions = new TaskInstructions("Reloading " + objectList.getContentDescription() + ".", false, false);
+        TaskInstructions taskInstructions = new TaskInstructions("Reloading " + objectList.getContentDescription() + ".");
         String listName = objectList.getName();
         final boolean loaded = objectList.isLoaded();
         String actionDescription = loaded ? "reloading the " + listName : "loading the " + listName;
