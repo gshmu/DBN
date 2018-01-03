@@ -15,7 +15,6 @@ public class ParseBuilderErrorHandler {
             ParserBuilder builder = context.getBuilder();
             int offset = builder.getCurrentOffset();
             if (ParseBuilderErrorWatcher.show(offset, context.getTimestamp())) {
-
                 Set<String> tokenDescriptions = new THashSet<String>(expectedTokens.size());
                 for (TokenType tokenType : expectedTokens) {
                     if (tokenType.isFunction()) {

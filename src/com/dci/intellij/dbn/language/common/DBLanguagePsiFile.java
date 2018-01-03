@@ -314,7 +314,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
                 }
             }
         }
-        if (!(getVirtualFile() instanceof DBParseableVirtualFile)) {
+        if (!(getVirtualFile() instanceof DBParseableVirtualFile) && canNavigate()) {
             super.navigate(requestFocus);
         }
     }
