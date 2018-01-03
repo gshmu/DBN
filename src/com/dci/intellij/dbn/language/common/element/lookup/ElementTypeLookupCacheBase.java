@@ -44,7 +44,7 @@ public abstract class ElementTypeLookupCacheBase<T extends ElementType> implemen
         if (nextPossibleTokens == null) {
             synchronized (this) {
                 if (nextPossibleTokens == null) {
-                    nextPossibleTokens = new THashSet<TokenType>();
+                    THashSet<TokenType> nextPossibleTokens = new THashSet<>();
                     ElementType elementType = this.elementType;
                     ElementType parentElementType = elementType.getParent();
                     while (parentElementType != null) {
@@ -78,6 +78,7 @@ public abstract class ElementTypeLookupCacheBase<T extends ElementType> implemen
                             parentElementType = elementType.getParent();
                         }
                     }
+                    this.nextPossibleTokens = nextPossibleTokens;
                 }
             }
         }

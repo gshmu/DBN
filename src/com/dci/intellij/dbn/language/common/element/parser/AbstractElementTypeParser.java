@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
+import java.util.Set;
+
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
@@ -65,7 +67,8 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
         try {
             marker = marker == null ? node == null ? null : node.getElementMarker() : marker;
             if (resultType == ParseResultType.PARTIAL_MATCH) {
-                ParseBuilderErrorHandler.updateBuilderError(elementType.getLookupCache().getNextPossibleTokens(), context);
+                Set<TokenType> nextPossibleTokens = elementType.getLookupCache().getNextPossibleTokens();
+                ParseBuilderErrorHandler.updateBuilderError(nextPossibleTokens, context);
             }
             ParserBuilder builder = context.getBuilder();
             if (resultType == ParseResultType.NO_MATCH) {
