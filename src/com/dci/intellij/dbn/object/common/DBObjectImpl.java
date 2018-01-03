@@ -387,7 +387,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         } else {
             DBObject object = childObjects.getObject(objectType, name, overload);
             if (object == null && lookupHidden) {
-                object = childObjects.getHiddenObject(objectType, name, overload);
+                object = childObjects.getInternalObject(objectType, name, overload);
             }
             return object;
         }
@@ -444,7 +444,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
                 if (childObjects != null) {
                     objectList = childObjects.getObjectList(objectType);
                     if (objectList == null) {
-                        objectList = childObjects.getHiddenObjectList(objectType);
+                        objectList = childObjects.getInternalObjectList(objectType);
                     }
                 }
                 return objectList == null ? EMPTY_OBJECT_LIST : objectList.getObjects();
@@ -517,7 +517,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         if(dynamicContentType instanceof DBObjectType && childObjects != null) {
             DBObjectType objectType = (DBObjectType) dynamicContentType;
             DynamicContent dynamicContent = childObjects.getObjectList(objectType);
-            if (dynamicContent == null) dynamicContent = childObjects.getHiddenObjectList(objectType);
+            if (dynamicContent == null) dynamicContent = childObjects.getInternalObjectList(objectType);
             return dynamicContent;
         }
 

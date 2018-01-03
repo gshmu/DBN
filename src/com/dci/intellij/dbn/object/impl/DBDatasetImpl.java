@@ -29,6 +29,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 
 public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBDataset {
     protected DBObjectList<DBColumn> columns;
@@ -43,9 +44,9 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
         super.initLists();
         DBSchema schema = getSchema();
         DBObjectListContainer childObjects = initChildObjects();
-        columns = childObjects.createSubcontentObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, schema, true);
-        constraints = childObjects.createSubcontentObjectList(DBObjectType.CONSTRAINT, this, CONSTRAINTS_LOADER, schema, true);
-        triggers = childObjects.createSubcontentObjectList(DBObjectType.DATASET_TRIGGER, this, TRIGGERS_LOADER, schema, true);
+        columns = childObjects.createSubcontentObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, schema, INDEXED);
+        constraints = childObjects.createSubcontentObjectList(DBObjectType.CONSTRAINT, this, CONSTRAINTS_LOADER, schema, INDEXED);
+        triggers = childObjects.createSubcontentObjectList(DBObjectType.DATASET_TRIGGER, this, TRIGGERS_LOADER, schema, INDEXED);
 
         initChildObjectRelations().createSubcontentObjectRelationList(
                 DBObjectRelationType.CONSTRAINT_COLUMN, this,

@@ -5,12 +5,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
+import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -96,7 +98,11 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
 
                     dynamicContent.checkDisposed();
                     if (element != null) {
-                        if (list == null) list = new ArrayList<T>();
+                        if (list == null) {
+                            list = dynamicContent.is(DynamicContentStatus.CONCURRENT) ?
+                                    new CopyOnWriteArrayList<T>() :
+                                    new ArrayList<T>();
+                        }
                         list.add(element);
                         if (count%10 == 0) {
                             String description = element.getDescription();

@@ -37,6 +37,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 
@@ -88,7 +89,8 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         columns = childObjects.createSubcontentObjectList(
                 DBObjectType.COLUMN, this,
                 COLUMNS_LOADER, getDataset(),
-                DBObjectRelationType.CONSTRAINT_COLUMN, true);
+                DBObjectRelationType.CONSTRAINT_COLUMN,
+                INDEXED);
     }
 
     @Override

@@ -50,7 +50,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
         super.initLists();
         DBDataset dataset = getDataset();
         if (dataset != null) {
-            columns = initChildObjects().createSubcontentObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, dataset, DBObjectRelationType.INDEX_COLUMN, false);
+            columns = initChildObjects().createSubcontentObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, dataset, DBObjectRelationType.INDEX_COLUMN);
         }
     }
 

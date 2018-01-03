@@ -6,7 +6,9 @@ import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public enum DynamicContentStatus implements Property {
     DIRTY,
-    HIDDEN,
+    INDEXED,
+    INTERNAL,
+    CONCURRENT,
     LOADED,
     LOADING,
     LOADING_IN_BACKGROUND;

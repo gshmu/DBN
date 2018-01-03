@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.BasicDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
@@ -30,7 +31,7 @@ import gnu.trove.THashMap;
 
 public class DBObjectListContainer extends DisposableBase implements Disposable {
     private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
-    private Map<DBObjectType, DBObjectList<DBObject>> hiddenObjectLists;
+    private Map<DBObjectType, DBObjectList<DBObject>> internalObjectLists;
     private GenericDatabaseElement owner;
 
     public DBObjectListContainer(@NotNull GenericDatabaseElement owner) {
@@ -42,8 +43,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
         if (objectLists != null)  {
             allObjectLists.addAll(objectLists.values());
         }
-        if (hiddenObjectLists != null)  {
-            allObjectLists.addAll(hiddenObjectLists.values());
+        if (internalObjectLists != null)  {
+            allObjectLists.addAll(internalObjectLists.values());
         }
         Collections.sort(allObjectLists);
         return allObjectLists;
@@ -61,8 +62,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
                     visitor.visitObjectList(objectList);
                 }
             }
-            if (visitHidden && hiddenObjectLists != null) {
-                for (DBObjectList<DBObject> objectList : hiddenObjectLists.values()) {
+            if (visitHidden && internalObjectLists != null) {
+                for (DBObjectList<DBObject> objectList : internalObjectLists.values()) {
                     FailsafeUtil.check(visitor);
                     visitor.visitObjectList(objectList);
                 }
@@ -71,9 +72,9 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
     }
 
     @NotNull
-    public List<? extends DBObject> getObjects(DBObjectType objectType, boolean hidden) {
-        DBObjectList objectList = hidden ?
-                getHiddenObjectList(objectType) :
+    public List<? extends DBObject> getObjects(DBObjectType objectType, boolean internal) {
+        DBObjectList objectList = internal ?
+                getInternalObjectList(objectType) :
                 getObjectList(objectType);
         if (objectList == null) {
             return Collections.emptyList();
@@ -88,15 +89,15 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
     }
 
     @Nullable
-    public DBObjectList getHiddenObjectList(DBObjectType objectType) {
-        return hiddenObjectLists == null ? null : hiddenObjectLists.get(objectType);
+    public DBObjectList getInternalObjectList(DBObjectType objectType) {
+        return internalObjectLists == null ? null : internalObjectLists.get(objectType);
     }
 
 
     public DBObject getObject(DBObjectType objectType, String name, int overload) {
         DBObjectList objectList = getObjectList(objectType);
         if (objectList == null) {
-            objectList = getHiddenObjectList(objectType);
+            objectList = getInternalObjectList(objectType);
         }
         if (objectList != null) {
             return objectList.getObject(name, overload);
@@ -115,11 +116,11 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
         return null;
     }
 
-    public <T extends DBObject> T getHiddenObject(DBObjectType objectType, String name, int overload) {
+    public <T extends DBObject> T getInternalObject(DBObjectType objectType, String name, int overload) {
         if (objectType.isGeneric()) {
             Set<DBObjectType> objectTypes = objectType.getInheritingTypes();
             for (DBObjectType objType : objectTypes) {
-                DBObjectList<T> objectList = getHiddenObjectList(objType);
+                DBObjectList<T> objectList = getInternalObjectList(objType);
                 if (objectList != null) {
                     T object = objectList.getObject(name, overload);
                     if (object != null) {
@@ -128,7 +129,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
                 }
             }
         } else {
-            DBObjectList<T> objectList = getHiddenObjectList(objectType);
+            DBObjectList<T> objectList = getInternalObjectList(objectType);
             if (objectList != null) {
                 return objectList.getObject(name, overload);
             }
@@ -149,14 +150,14 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
     }
 
     @Nullable
-    public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, int overload, boolean lookupHidden) {
+    public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, int overload, boolean lookupInternal) {
         DBObject object = null;
         if (objectLists != null) {
             object = findObject(objectLists, parentObjectType, name, overload);
         }
 
-        if (object == null && hiddenObjectLists != null && lookupHidden) {
-            object = findObject(hiddenObjectLists, parentObjectType, name, overload);
+        if (object == null && internalObjectLists != null && lookupInternal) {
+            object = findObject(internalObjectLists, parentObjectType, name, overload);
         }
         return object;
     }
@@ -205,11 +206,10 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
              @NotNull DBObjectType objectType,
              @NotNull BrowserTreeNode treeParent,
              DynamicContentLoader loader,
-             boolean indexed,
-             boolean hidden) {
+             DynamicContentStatus ... statuses) {
         if (isSupported(objectType)) {
             ContentDependencyAdapter dependencyAdapter = new BasicDependencyAdapter();
-            return createObjectList(objectType, treeParent, loader, dependencyAdapter, indexed, hidden);
+            return createObjectList(objectType, treeParent, loader, dependencyAdapter, statuses);
         }
         return null;
     }
@@ -219,10 +219,10 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
             @NotNull BrowserTreeNode treeParent,
             DynamicContentLoader loader,
             DBObjectList[] sourceContents,
-            boolean indexed, boolean hidden) {
+            DynamicContentStatus ... statuses) {
         if (isSupported(objectType)) {
             ContentDependencyAdapter dependencyAdapter = new MultipleContentDependencyAdapter(sourceContents);
-            return createObjectList(objectType, treeParent, loader, dependencyAdapter, indexed, hidden);
+            return createObjectList(objectType, treeParent, loader, dependencyAdapter, statuses);
         }
         return null;
     }
@@ -233,7 +233,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
             DynamicContentLoader loader,
             GenericDatabaseElement sourceContentHolder,
             DynamicContentType sourceContentType,
-            boolean indexed) {
+            DynamicContentStatus ... statuses) {
         if (isSupported(objectType)) {
             if (sourceContentHolder != null && sourceContentHolder.getDynamicContent(sourceContentType) != null) {
                 ContentDependencyAdapter dependencyAdapter =
@@ -241,7 +241,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
                                 sourceContentHolder,
                                 sourceContentType
                         );
-                return createObjectList(objectType, treeParent, loader, dependencyAdapter, indexed, false);
+                return createObjectList(objectType, treeParent, loader, dependencyAdapter, statuses);
             }
         }
         return null;
@@ -252,7 +252,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
             @NotNull BrowserTreeNode treeParent,
             DynamicContentLoader loader,
             DBObject sourceContentHolder,
-            boolean indexed) {
+            DynamicContentStatus ... statuses) {
         if (isSupported(objectType)) {
             if (sourceContentHolder.getDynamicContent(objectType) != null) {
                 ContentDependencyAdapter dependencyAdapter =
@@ -260,7 +260,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
                                 sourceContentHolder,
                                 objectType
                         );
-                return createObjectList(objectType, treeParent, loader, dependencyAdapter, indexed, false);
+                return createObjectList(objectType, treeParent, loader, dependencyAdapter, statuses);
             }
         }
         return null;
@@ -271,20 +271,19 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
             @NotNull BrowserTreeNode treeParent,
             DynamicContentLoader<T> loader,
             ContentDependencyAdapter dependencyAdapter,
-            boolean indexed,
-            boolean hidden) {
-        DBObjectList<T> objectList = new DBObjectListImpl<T>(objectType, treeParent, loader, dependencyAdapter, indexed, hidden);
-        addObjectList(objectList, hidden);
+            DynamicContentStatus ... statuses) {
+        DBObjectList<T> objectList = new DBObjectListImpl<T>(objectType, treeParent, loader, dependencyAdapter, statuses);
+        addObjectList(objectList);
 
         return objectList;
     }
 
-    public void addObjectList(DBObjectList objectList, boolean hidden) {
+    public void addObjectList(DBObjectList objectList) {
         if (objectList != null) {
             DBObjectType objectType = objectList.getObjectType();
-            if (hidden) {
-                if (hiddenObjectLists == null) hiddenObjectLists = new THashMap<DBObjectType, DBObjectList<DBObject>>();
-                hiddenObjectLists.put(objectType, objectList);
+            if (objectList.isInternal()) {
+                if (internalObjectLists == null) internalObjectLists = new THashMap<DBObjectType, DBObjectList<DBObject>>();
+                internalObjectLists.put(objectType, objectList);
             } else {
                 if (objectLists == null) objectLists = new THashMap<DBObjectType, DBObjectList<DBObject>>();
                 objectLists.put(objectType, objectList);
@@ -299,8 +298,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
                 checkDisposed();
             }
         }
-        if (hiddenObjectLists != null)  {
-            for (DBObjectList objectList : hiddenObjectLists.values()) {
+        if (internalObjectLists != null)  {
+            for (DBObjectList objectList : internalObjectLists.values()) {
                 objectList.reload();
                 checkDisposed();
             }
@@ -314,8 +313,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
                 checkDisposed();
             }
         }
-        if (hiddenObjectLists != null)  {
-            for (DBObjectList objectList : hiddenObjectLists.values()) {
+        if (internalObjectLists != null)  {
+            for (DBObjectList objectList : internalObjectLists.values()) {
                 objectList.refresh();
                 checkDisposed();
             }
@@ -329,8 +328,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
                 checkDisposed();
             }
         }
-        if (hiddenObjectLists != null)  {
-            for (DBObjectList objectList : hiddenObjectLists.values()) {
+        if (internalObjectLists != null)  {
+            for (DBObjectList objectList : internalObjectLists.values()) {
                 if (!objectList.getObjectType().isOneOf(DBObjectType.ANY, DBObjectType.OUTGOING_DEPENDENCY, DBObjectType.INCOMING_DEPENDENCY)) {
                     objectList.load(false);
                 }
@@ -341,7 +340,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
 
     public void loadObjectList(DBObjectType objectType) {
         DBObjectList objectList = getObjectList(objectType);
-        if (objectList == null) objectList = getHiddenObjectList(objectType);
+        if (objectList == null) objectList = getInternalObjectList(objectType);
         if (objectList != null) {
             objectList.getElements();
         }
@@ -352,7 +351,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
             super.dispose();
             owner = null;
             DisposerUtil.dispose(objectLists);
-            DisposerUtil.dispose(hiddenObjectLists);
+            DisposerUtil.dispose(internalObjectLists);
         }
     }
 }

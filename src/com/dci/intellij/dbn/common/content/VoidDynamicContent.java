@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapt
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.VoidDynamicContentLoader;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.intellij.openapi.project.Project;
@@ -176,5 +177,20 @@ public class VoidDynamicContent implements DynamicContent{
     @Override
     public void dispose() {
 
+    }
+
+    @Override
+    public boolean set(Property status, boolean value) {
+        return false;
+    }
+
+    @Override
+    public boolean is(Property status) {
+        return false;
+    }
+
+    @Override
+    public boolean isNot(Property status) {
+        return false;
     }
 }

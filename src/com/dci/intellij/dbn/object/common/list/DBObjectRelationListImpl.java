@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.content.DynamicContentImpl;
+import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -18,8 +19,8 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
     private DBObjectRelationType objectRelationType;
     private String name;
 
-    public DBObjectRelationListImpl(DBObjectRelationType type, @NotNull GenericDatabaseElement parent, String name, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter) {
-        super(parent, loader, dependencyAdapter, false);
+    public DBObjectRelationListImpl(DBObjectRelationType type, @NotNull GenericDatabaseElement parent, String name, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, DynamicContentStatus ... statuses) {
+        super(parent, loader, dependencyAdapter, statuses);
         this.objectRelationType = type;
         this.name = name;
     }

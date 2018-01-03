@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
+import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -42,7 +43,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
 
     @Override
     protected void initLists() {
-        attributes = initChildObjects().createObjectList(DBObjectType.TYPE_ATTRIBUTE, this, ATTRIBUTES_LOADER, true, false);
+        attributes = initChildObjects().createObjectList(DBObjectType.TYPE_ATTRIBUTE, this, ATTRIBUTES_LOADER, DynamicContentStatus.INDEXED);
     }
 
     public DBPackage getPackage() {

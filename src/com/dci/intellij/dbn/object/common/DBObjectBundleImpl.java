@@ -83,6 +83,7 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle {
     private ConnectionHandler connectionHandler;
@@ -111,11 +112,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         connectionConfigHash = connectionHandler.getSettings().getDatabaseSettings().hashCode();
 
         this.objectLists = new DBObjectListContainer(this);
-        users = objectLists.createObjectList(DBObjectType.USER, this, USERS_LOADER, true, false);
-        schemas = objectLists.createObjectList(DBObjectType.SCHEMA, this, SCHEMAS_LOADER, new DBObjectList[]{users}, true, false);
-        roles = objectLists.createObjectList(DBObjectType.ROLE, this, ROLES_LOADER, true, false);
-        systemPrivileges = objectLists.createObjectList(DBObjectType.SYSTEM_PRIVILEGE, this, SYSTEM_PRIVILEGES_LOADER, true, false);
-        charsets = objectLists.createObjectList(DBObjectType.CHARSET, this, CHARSETS_LOADER, true, false);
+        users = objectLists.createObjectList(DBObjectType.USER, this, USERS_LOADER, INDEXED);
+        schemas = objectLists.createObjectList(DBObjectType.SCHEMA, this, SCHEMAS_LOADER, new DBObjectList[]{users}, INDEXED);
+        roles = objectLists.createObjectList(DBObjectType.ROLE, this, ROLES_LOADER, INDEXED);
+        systemPrivileges = objectLists.createObjectList(DBObjectType.SYSTEM_PRIVILEGE, this, SYSTEM_PRIVILEGES_LOADER, INDEXED);
+        charsets = objectLists.createObjectList(DBObjectType.CHARSET, this, CHARSETS_LOADER, INDEXED);
         allPossibleTreeChildren = DatabaseBrowserUtils.createList(schemas, users, roles, systemPrivileges, charsets);
 
         objectRelationLists = new DBObjectRelationListContainer(this);
@@ -162,7 +163,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                 for (DBObjectType childObjectType : childObjectTypes) {
                     DBObjectListContainer childObjects = schema.getChildObjects();
                     if (childObjects != null) {
-                        childObjectList = childObjects.getHiddenObjectList(childObjectType);
+                        childObjectList = childObjects.getInternalObjectList(childObjectType);
                         if (childObjectList != null && childObjectList.isLoaded()) {
                             childObjectList.refresh();
                         }
@@ -675,7 +676,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         if(dynamicContentType instanceof DBObjectType) {
             DBObjectType objectType = (DBObjectType) dynamicContentType;
             DynamicContent dynamicContent = objectLists.getObjectList(objectType);
-            if (dynamicContent == null) dynamicContent = objectLists.getHiddenObjectList(objectType);
+            if (dynamicContent == null) dynamicContent = objectLists.getInternalObjectList(objectType);
             return dynamicContent;
         }
 

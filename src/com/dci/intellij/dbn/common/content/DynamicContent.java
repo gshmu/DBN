@@ -8,11 +8,12 @@ import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.intellij.openapi.project.Project;
 
-public interface DynamicContent<T extends DynamicContentElement> extends Disposable {
+public interface DynamicContent<T extends DynamicContentElement> extends Disposable, PropertyHolder<DynamicContentStatus> {
     /**
      * Checks if the loading of the content is required.
      * e.g. after the content is once loaded, it only has to be loaded again if dependencies are dirty.
