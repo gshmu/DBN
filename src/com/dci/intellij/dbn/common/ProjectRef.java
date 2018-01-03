@@ -25,11 +25,15 @@ public class ProjectRef extends WeakReference<Project>{
 
 
     public static ProjectRef from(Project project) {
-        ProjectRef projectRef = project.getUserData(DBNDataKeys.PROJECT_REF);
-        if (projectRef == null) {
-            projectRef = new ProjectRef(project);
-            project.putUserData(DBNDataKeys.PROJECT_REF, projectRef);
+        if (project == null) {
+            return new ProjectRef(null);
+        } else {
+            ProjectRef projectRef = project.getUserData(DBNDataKeys.PROJECT_REF);
+            if (projectRef == null) {
+                projectRef = new ProjectRef(project);
+                project.putUserData(DBNDataKeys.PROJECT_REF, projectRef);
+            }
+            return projectRef;
         }
-        return projectRef;
     }
 }
