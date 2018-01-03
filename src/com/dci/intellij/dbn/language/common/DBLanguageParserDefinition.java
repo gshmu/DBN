@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
+import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
@@ -62,8 +63,10 @@ public abstract class DBLanguageParserDefinition implements ParserDefinition {
     }
 
     public final PsiFile createFile(FileViewProvider viewProvider) {
-        // ensure the document is initialized
-        FileDocumentManager.getInstance().getDocument(viewProvider.getVirtualFile());
+        if (viewProvider instanceof DatabaseFileViewProvider) {
+            // ensure the document is initialized
+            FileDocumentManager.getInstance().getDocument(viewProvider.getVirtualFile());
+        }
         return createPsiFile(viewProvider);
     }
 
