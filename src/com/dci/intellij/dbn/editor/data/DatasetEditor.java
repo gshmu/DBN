@@ -524,21 +524,26 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     private ConnectionHandlerStatusListener connectionStatusListener = new ConnectionHandlerStatusListener() {
         @Override
         public void statusChanged(ConnectionId connectionId, ConnectionHandlerStatus status) {
-            DatasetEditorTable editorTable = getEditorTable();
-            ConnectionHandler connectionHandler = getConnectionHandler();
+            final ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler.getId().equals(connectionId) && status == ConnectionHandlerStatus.CONNECTED) {
-                boolean connected = connectionHandler.isConnected(SessionId.MAIN);
+                final boolean connected = connectionHandler.isConnected(SessionId.MAIN);
                 boolean statusChanged = getStatus().set(CONNECTED, connected);
 
                 if (statusChanged) {
-                    editorTable.updateBackground(!connected);
-                    if (connected) {
-                        loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
-                    } else {
-                        editorTable.cancelEditing();
-                        editorTable.revalidate();
-                        editorTable.repaint();
-                    }
+                    new SimpleLaterInvocator() {
+                        @Override
+                        protected void execute() {
+                            DatasetEditorTable editorTable = getEditorTable();
+                            editorTable.updateBackground(!connected);
+                            if (connected) {
+                                loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
+                            } else {
+                                editorTable.cancelEditing();
+                                editorTable.revalidate();
+                                editorTable.repaint();
+                            }
+                        }
+                    }.start();
                 }
             }
         }
