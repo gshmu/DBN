@@ -87,19 +87,21 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return preventLoading || editorTable.getSelectedRowCount() > 1;
     }
 
-    public void loadSessions(boolean force) {
-        if (!loading && !isPreventLoading(force)) {
-            setLoading(true);
+    public void loadSessions(final boolean force) {
+        if (shouldLoad(force)) {
             new ConnectionAction("loading the sessions", this, new TaskInstructions("Loading sessions", TaskInstruction.START_IN_BACKGROUND)) {
                 @Override
                 protected void execute() {
-                    try {
-                        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
-                        SessionBrowserModel model = sessionBrowserManager.loadSessions(sessionBrowserFile);
-                        replaceModel(model);
-                    } finally {
-                        EventUtil.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
-                        setLoading(false);
+                    if (shouldLoad(force)) {
+                        try {
+                            setLoading(true);
+                            SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
+                            SessionBrowserModel model = sessionBrowserManager.loadSessions(sessionBrowserFile);
+                            replaceModel(model);
+                        } finally {
+                            EventUtil.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
+                            setLoading(false);
+                        }
                     }
                 }
 
@@ -111,6 +113,10 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                 }
             }.start();
         }
+    }
+
+    boolean shouldLoad(boolean force) {
+        return !loading && !isPreventLoading(force);
     }
 
     private void replaceModel(final SessionBrowserModel newModel) {
@@ -280,16 +286,21 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         if (this.loading != loading) {
             this.loading = loading;
 
-            if (editorForm != null) {
-                if (loading)
-                    editorForm.showLoadingHint(); else
-                    editorForm.hideLoadingHint();
-            }
+            new SimpleLaterInvocator() {
+                @Override
+                protected void execute() {
+                    if (editorForm != null) {
+                        if (SessionBrowser.this.loading)
+                            editorForm.showLoadingHint(); else
+                            editorForm.hideLoadingHint();
+                    }
 
-            SessionBrowserTable editorTable = getEditorTable();
-            editorTable.setLoading(loading);
-            editorTable.revalidate();
-            editorTable.repaint();
+                    SessionBrowserTable editorTable = getEditorTable();
+                    editorTable.setLoading(SessionBrowser.this.loading);
+                    editorTable.revalidate();
+                    editorTable.repaint();
+                }
+            }.start();
         }
 
     }
