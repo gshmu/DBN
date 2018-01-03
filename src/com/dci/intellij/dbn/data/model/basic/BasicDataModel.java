@@ -159,6 +159,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposableBase imple
     @NotNull
     @Override
     public List<T> getRows() {
+        FailsafeUtil.check(this);
         return FailsafeUtil.get(rows);
     }
 

@@ -31,6 +31,7 @@ public class BasicDataModelRow<T extends DataModelCell> extends DisposableBase i
     }
 
     public List<T> getCells() {
+        FailsafeUtil.check(this);
         return FailsafeUtil.get(cells);
     }
 
