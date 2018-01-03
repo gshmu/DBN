@@ -67,6 +67,7 @@ public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeN
     @NotNull
     List<DBObject> getChildObjects(DBObjectType objectType);
 
+    @Nullable
     DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType);
 
     DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden);

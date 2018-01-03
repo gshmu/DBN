@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 public enum PsiResolveStatus implements Property{
     NEW,
     RESOLVING,
+    RESOLVING_OBJECT_TYPE,
     CONNECTION_VALID,
     CONNECTION_ACTIVE;
 
