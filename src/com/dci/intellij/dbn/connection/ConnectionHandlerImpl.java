@@ -60,7 +60,6 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private ConnectionBundle connectionBundle;
     private ConnectionHandlerStatusHolder connectionStatus;
     private ConnectionPool connectionPool;
-    private ConnectionLoadMonitor loadMonitor;
     private DatabaseInterfaceProvider interfaceProvider;
     private DatabaseConsoleBundle consoleBundle;
     private DatabaseSessionBundle sessionBundle;
@@ -106,9 +105,6 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         connectionPool = new ConnectionPool(this);
         consoleBundle = new DatabaseConsoleBundle(this);
         sessionBundle = new DatabaseSessionBundle(this);
-        loadMonitor = new ConnectionLoadMonitor(this);
-
-        Disposer.register(this, loadMonitor);
     }
 
     @NotNull
@@ -351,10 +347,6 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return CommonUtil.nvl(connectionSettings.getDatabaseSettings().getAuthenticationInfo().getUser(), "");
     }
 
-    public ConnectionLoadMonitor getLoadMonitor() {
-        return loadMonitor;
-    }
-
     @NotNull
     public DBObjectBundle getObjectBundle() {
         return objectBundle.get();
@@ -575,7 +567,6 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
             super.dispose();
             connectionPool = null;
             connectionBundle = null;
-            loadMonitor = null;
             sessionBrowserFile = null;
             psiCache = null;
         }

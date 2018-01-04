@@ -88,8 +88,6 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
 
     @NotNull ConnectionBundle getConnectionBundle();
     @NotNull ConnectionPool getConnectionPool();
-    @Deprecated
-    ConnectionLoadMonitor getLoadMonitor();
     DatabaseInterfaceProvider getInterfaceProvider();
     @NotNull DBObjectBundle getObjectBundle();
     @Nullable DBSchema getUserSchema();

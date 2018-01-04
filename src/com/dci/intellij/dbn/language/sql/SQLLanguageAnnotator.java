@@ -1,19 +1,25 @@
 package com.dci.intellij.dbn.language.sql;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementGutterRenderer;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
-import com.dci.intellij.dbn.language.common.psi.*;
+import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
+import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
+import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
 
 public class SQLLanguageAnnotator implements Annotator {
     public static final SQLLanguageAnnotator INSTANCE = new SQLLanguageAnnotator();
@@ -116,7 +122,11 @@ public class SQLLanguageAnnotator implements Annotator {
 
     private static boolean checkConnection(IdentifierPsiElement objectReference) {
         ConnectionHandler connectionHandler = objectReference.getConnectionHandler();
-        return connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.canConnect() && connectionHandler.isValid() && !connectionHandler.getLoadMonitor().isLoading();
+        return connectionHandler != null &&
+                !connectionHandler.isVirtual() &&
+                connectionHandler.canConnect() &&
+                connectionHandler.isValid() &&
+                !connectionHandler.getConnectionStatus().is(ConnectionHandlerStatus.LOADING);
     }
 
     private static void annotateExecutable(ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {

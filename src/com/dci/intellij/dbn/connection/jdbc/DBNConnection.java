@@ -38,6 +38,7 @@ public class DBNConnection extends DBNConnectionBase {
                     return DBNConnection.super.set(status, value);
                 }
             };
+
     private IncrementalResourceStatusAdapter<DBNConnection> reserved =
             new IncrementalResourceStatusAdapter<DBNConnection>(ResourceStatus.RESERVED, this) {
                 @Override
@@ -234,7 +235,7 @@ public class DBNConnection extends DBNConnectionBase {
     public boolean set(ResourceStatus status, boolean value) {
         boolean changed;
         if (status == ACTIVE) {
-            changed = active.set(status, value);
+            changed = active.set(value);
 
         } else if (status == RESERVED) {
             if (value) {
@@ -244,7 +245,7 @@ public class DBNConnection extends DBNConnectionBase {
                     LOGGER.warn("Reserving already reserved connection");
                 }
             }
-            changed = reserved.set(status, value);
+            changed = reserved.set(value);
         } else {
             changed = super.set(status, value);
             if (changed) statusChanged(status);

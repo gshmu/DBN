@@ -147,7 +147,8 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
         sessionBrowser = null;
         detailsForm = null;
         editorTable = null;
-        dataSearchComponent = null;    }
+        dataSearchComponent = null;
+    }
 
     @NotNull
     public SessionBrowser getSessionBrowser() {
