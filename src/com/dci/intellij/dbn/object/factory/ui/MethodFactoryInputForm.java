@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.object.factory.ui;
 
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -15,14 +23,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import java.awt.Color;
 
 public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<MethodFactoryInput> {
     private JPanel mainPanel;
@@ -80,7 +80,8 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
         DBNHeaderForm headerForm = new DBNHeaderForm(
                 headerTitle,
                 headerIcon,
-                headerBackground);
+                headerBackground,
+                this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         return headerForm;
     }

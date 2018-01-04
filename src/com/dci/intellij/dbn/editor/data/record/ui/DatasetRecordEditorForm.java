@@ -44,7 +44,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
         this.row = row;
         DBDataset dataset = row.getModel().getDataset();
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(dataset);
+        DBNHeaderForm headerForm = new DBNHeaderForm(dataset, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(

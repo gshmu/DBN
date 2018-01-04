@@ -33,7 +33,7 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
         return new DBNContentWithHeaderForm<ConnectionFilterSettingsDialog>(this) {
             @Override
             public DBNHeaderForm createHeaderForm() {
-                return new DBNHeaderForm(connectionHandler);
+                return new DBNHeaderForm(connectionHandler, this);
             }
 
             @Override

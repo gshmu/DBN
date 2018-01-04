@@ -16,20 +16,20 @@ import com.intellij.openapi.vfs.VirtualFile;
 
 public class SelectDDLFileForm extends DBNFormImpl {
     private JPanel mainPanel;
-    private JList filesList;
+    private JList<VirtualFile> filesList;
     private JPanel headerPanel;
     private JCheckBox doNotPromptCheckBox;
     private JPanel hintPanel;
 
-    public SelectDDLFileForm(DBSchemaObject object, List<VirtualFile> virtualFiles, String hint, boolean isFileOpenEvent) {
+    SelectDDLFileForm(DBSchemaObject object, List<VirtualFile> virtualFiles, String hint, boolean isFileOpenEvent) {
         Project project = object.getProject();
-        DBNHeaderForm headerForm = new DBNHeaderForm(object);
+        DBNHeaderForm headerForm = new DBNHeaderForm(object, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         DBNHintForm hintForm = new DBNHintForm(hint, null, true);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
-        DefaultListModel listModel = new DefaultListModel();
+        DefaultListModel<VirtualFile> listModel = new DefaultListModel<VirtualFile>();
         for (VirtualFile virtualFile : virtualFiles) {
             listModel.addElement(virtualFile);
         }

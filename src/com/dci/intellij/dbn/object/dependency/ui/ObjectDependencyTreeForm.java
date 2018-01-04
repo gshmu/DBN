@@ -71,7 +71,7 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
         });
 
         this.objectRef = DBObjectRef.from(schemaObject);
-        headerForm = new DBNHeaderForm(schemaObject);
+        headerForm = new DBNHeaderForm(schemaObject, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,

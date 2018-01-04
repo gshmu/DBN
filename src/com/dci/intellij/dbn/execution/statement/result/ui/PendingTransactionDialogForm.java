@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -28,6 +29,7 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.GuiUtils;
+import com.intellij.ui.JBColor;
 
 public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransactionDialog> {
     private JPanel mainPanel;
@@ -51,7 +53,10 @@ public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransaction
         hintTextPane.setText(text);
 
         DBLanguagePsiFile psiFile = executionProcessor.getPsiFile();
-        DBNHeaderForm headerForm = new DBNHeaderForm(psiFile.getName(), psiFile.getIcon(), psiFile.getEnvironmentType().getColor());
+        String headerName = psiFile.getName();
+        Icon headerIcon = psiFile.getIcon();
+        JBColor headerColor = psiFile.getEnvironmentType().getColor();
+        DBNHeaderForm headerForm = new DBNHeaderForm(headerName, headerIcon, headerColor, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         updatePreview();

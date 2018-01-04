@@ -85,15 +85,12 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
     }
 
     private void initHeaderPanel(ConnectionHandler connectionHandler) {
-        DBNHeaderForm headerForm = new DBNHeaderForm();
-        headerForm.setTitle(connectionHandler.getName());
-        headerForm.setIcon(connectionHandler.getIcon());
-        headerForm.setBackground(connectionHandler.getEnvironmentType().getColor());
+        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 
     private void initHeaderPanel(String connectionName, EnvironmentType environmentType) {
-        DBNHeaderForm headerForm = new DBNHeaderForm();
+        DBNHeaderForm headerForm = new DBNHeaderForm(this);
         headerForm.setTitle(connectionName);
         headerForm.setIcon(Icons.CONNECTION_CONNECTED);
         headerForm.setBackground(environmentType.getColor());

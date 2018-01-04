@@ -150,7 +150,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
             headerIcon = Icons.DBO_TABLE;
             headerTitle = instructions.getBaseName();
         }
-        DBNHeaderForm headerComponent = new DBNHeaderForm(headerTitle, headerIcon, headerBackground);
+        DBNHeaderForm headerComponent = new DBNHeaderForm(headerTitle, headerIcon, headerBackground, this);
         headerPanel.add(headerComponent.getComponent());
     }
 

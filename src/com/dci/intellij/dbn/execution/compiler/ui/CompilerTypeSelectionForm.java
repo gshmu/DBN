@@ -22,7 +22,7 @@ public class CompilerTypeSelectionForm extends DBNFormImpl<CompilerTypeSelection
         if (object == null) {
             headerPanel.setVisible(false);
         } else {
-            DBNHeaderForm headerForm = new DBNHeaderForm(object);
+            DBNHeaderForm headerForm = new DBNHeaderForm(object, this);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         }
         String hintText =

@@ -65,7 +65,8 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         DBNHeaderForm headerForm = new DBNHeaderForm(
                 headerTitle,
                 headerIcon,
-                headerBackground);
+                headerBackground,
+                this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(

@@ -31,6 +31,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     public final C getComponent() {
         if (component == null && !isDisposed()) {
             component = createComponent();
+            DisposerUtil.register(this, component);
         }
         return FailsafeUtil.get(component);
     }
@@ -77,7 +78,6 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            DisposerUtil.dispose(component);
             component = null;
             project = null;
             super.dispose();

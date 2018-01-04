@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -43,6 +44,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.GuiUtils;
+import com.intellij.ui.JBColor;
 
 public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionInputsDialog> {
     private JPanel mainPanel;
@@ -84,7 +86,10 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         }
 
         DBLanguagePsiFile psiFile = executionProcessor.getPsiFile();
-        DBNHeaderForm headerForm = new DBNHeaderForm(psiFile.getName(), psiFile.getIcon(), psiFile.getEnvironmentType().getColor());
+        String headerTitle = psiFile.getName();
+        Icon headerIcon = psiFile.getIcon();
+        JBColor headerBackground = psiFile.getEnvironmentType().getColor();
+        DBNHeaderForm headerForm = new DBNHeaderForm(headerTitle, headerIcon, headerBackground, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();

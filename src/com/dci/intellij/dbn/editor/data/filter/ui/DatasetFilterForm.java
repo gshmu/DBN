@@ -48,7 +48,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
         this.dataset = dataset;
         Project project = dataset.getProject();
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(dataset);
+        DBNHeaderForm headerForm = new DBNHeaderForm(dataset, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         DatasetFilterList filters = getFilterList();
