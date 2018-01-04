@@ -28,6 +28,6 @@ public class TaskInstructions extends PropertyHolderImpl<TaskInstruction> {
     }
 
     public boolean isCanBeCancelled() {
-        return is(TaskInstruction.CAN_BE_CANCELLED);
+        return is(TaskInstruction.CANCELLABLE);
     }
 }

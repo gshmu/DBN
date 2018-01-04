@@ -27,7 +27,7 @@ public abstract class GenerateStatementAction extends AnAction implements Connec
     }
 
     public final void actionPerformed(AnActionEvent e) {
-        TaskInstructions taskInstructions = new TaskInstructions("Extracting select statement", TaskInstruction.CAN_BE_CANCELLED);
+        TaskInstructions taskInstructions = new TaskInstructions("Extracting select statement", TaskInstruction.CANCELLABLE);
         new ConnectionAction("generating the statement", this, taskInstructions) {
             @Override
             protected void execute() {

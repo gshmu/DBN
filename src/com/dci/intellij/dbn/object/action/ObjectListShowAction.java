@@ -53,7 +53,7 @@ public abstract class ObjectListShowAction extends AnAction {
     }
 
     public final void actionPerformed(@NotNull final AnActionEvent e) {
-        TaskInstructions taskInstructions = new TaskInstructions("Loading " + getListName(), TaskInstruction.CAN_BE_CANCELLED);
+        TaskInstructions taskInstructions = new TaskInstructions("Loading " + getListName(), TaskInstruction.CANCELLABLE);
         DBObject sourceObject = getSourceObject();
         new ConnectionAction("loading " + getListName(), sourceObject, taskInstructions) {
             @Override

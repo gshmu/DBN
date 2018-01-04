@@ -134,6 +134,14 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
         return null;
     }
 
+    public void initialize() {
+        for (MethodExecutionInput executionInput : executionInputs) {
+            // try to locate method
+            executionInput.getMethod();
+        }
+    }
+
+
     @Override
     public void dispose() {
         DisposerUtil.dispose(executionInputs);
