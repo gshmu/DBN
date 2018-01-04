@@ -51,7 +51,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
 
         String hintText;
         if (connectionHandler != null) {
-            DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
+            DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
             int passwordExpiryTime = connectionHandler.getSettings().getDetailSettings().getPasswordExpiryTime();

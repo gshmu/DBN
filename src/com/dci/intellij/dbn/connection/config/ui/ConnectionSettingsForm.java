@@ -35,6 +35,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.UIUtil;
@@ -92,7 +93,10 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                    connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_CONNECTED :
                    connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
 
-        headerForm = new DBNHeaderForm(connectionSettings.getDatabaseSettings().getName(), icon, detailSettings.getEnvironmentType().getColor());
+        String name = connectionSettings.getDatabaseSettings().getName();
+        JBColor color = detailSettings.getEnvironmentType().getColor();
+
+        headerForm = new DBNHeaderForm(name, icon, color, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         Project project = databaseSettings.getProject();
         EventUtil.subscribe(project, this, ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);

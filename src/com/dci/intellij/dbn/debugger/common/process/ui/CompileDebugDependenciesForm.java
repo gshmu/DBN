@@ -67,8 +67,8 @@ public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDepend
 
         Presentable source = runConfiguration.getSource();
         DBNHeaderForm headerForm = source instanceof DBObject ?
-                new DBNHeaderForm((DBObject) source) :
-                new DBNHeaderForm(CommonUtil.nvl(source, Presentable.UNKNOWN));
+                new DBNHeaderForm((DBObject) source, this) :
+                new DBNHeaderForm(CommonUtil.nvl(source, Presentable.UNKNOWN), this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         parentComponent.registerRememberSelectionCheckBox(rememberSelectionCheckBox);
     }

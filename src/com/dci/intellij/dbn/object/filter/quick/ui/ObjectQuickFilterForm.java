@@ -1,8 +1,26 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.border.CompoundBorder;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.ui.*;
+import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.ValueSelector;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -15,14 +33,6 @@ import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.JBUI;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> {
     private JPanel mainPanel;
@@ -72,7 +82,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
                 (parentElement instanceof DBSchema ? (parentElement.getName() + " - ") : "") +
                 NamingUtil.capitalizeWords(objectList.getObjectType().getListName()) + " filter";
         Color headerBackground = connectionHandler.getEnvironmentType().getColor();
-        DBNHeaderForm headerForm = new DBNHeaderForm(headerText, headerIcon, headerBackground);
+        DBNHeaderForm headerForm = new DBNHeaderForm(headerText, headerIcon, headerBackground, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 

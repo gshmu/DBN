@@ -8,10 +8,18 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 
 public class DBNHeaderForm extends DBNFormImpl{
@@ -19,26 +27,56 @@ public class DBNHeaderForm extends DBNFormImpl{
     private JLabel objectLabel;
     private JPanel mainPanel;
 
-    public DBNHeaderForm() {
+    public DBNHeaderForm(Disposable parentDisposable) {
         mainPanel.setBorder(BORDER);
+        DisposerUtil.register(parentDisposable, this);
     }
 
-    public DBNHeaderForm(String title, Icon icon) {
-        this(title, icon, null);
+    public DBNHeaderForm(String title, Icon icon, Disposable parentDisposable) {
+        this(title, icon, null, parentDisposable);
     }
 
-
-    public DBNHeaderForm(String title, Icon icon, Color background) {
+    public DBNHeaderForm(String title, Icon icon, Color background, Disposable parentDisposable) {
+        this(parentDisposable);
         objectLabel.setText(title);
         objectLabel.setIcon(icon);
         if (background != null) {
             mainPanel.setBackground(background);
         }
-        mainPanel.setBorder(BORDER);
     }
 
-    public DBNHeaderForm(@NotNull DBObject object) {
+    public DBNHeaderForm(@NotNull DBObject object, Disposable parentDisposable) {
+        this(parentDisposable);
         update(object);
+    }
+
+    public DBNHeaderForm(@NotNull Presentable presentable, Disposable parentDisposable) {
+        this(parentDisposable);
+        objectLabel.setText(presentable.getName());
+        objectLabel.setIcon(presentable.getIcon());
+        updateBorderAndBackground(presentable);
+    }
+
+    public DBNHeaderForm(@NotNull ConnectionHandler connectionHandler, Disposable parentDisposable) {
+        this(parentDisposable);
+        objectLabel.setText(connectionHandler.getName());
+        objectLabel.setIcon(connectionHandler.getIcon());
+        updateBorderAndBackground(connectionHandler);
+        final ConnectionId id = connectionHandler.getId();
+        final Project project = connectionHandler.getProject();
+
+        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, new ConnectionHandlerStatusListener() {
+            @Override
+            public void statusChanged(ConnectionId connectionId, ConnectionHandlerStatus status) {
+                if (connectionId == id) {
+                    ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                    ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+                    if (connectionHandler != null) {
+                        objectLabel.setIcon(connectionHandler.getIcon());
+                    }
+                }
+            }
+        });
     }
 
     public void update(@NotNull DBObject object) {
@@ -50,25 +88,14 @@ public class DBNHeaderForm extends DBNFormImpl{
         updateBorderAndBackground(object);
     }
 
-    public DBNHeaderForm(@NotNull Presentable presentable) {
-        objectLabel.setText(presentable.getName());
-        objectLabel.setIcon(presentable.getIcon());
-        updateBorderAndBackground(presentable);
-    }
-
-    public DBNHeaderForm(@NotNull ConnectionHandler connectionHandler) {
-        objectLabel.setText(connectionHandler.getName());
-        objectLabel.setIcon(connectionHandler.getIcon());
-        updateBorderAndBackground(connectionHandler);
-    }
-
     private void updateBorderAndBackground(Presentable presentable) {
         if (presentable instanceof ConnectionProvider) {
             ConnectionProvider connectionProvider = (ConnectionProvider) presentable;
             ConnectionHandler connectionHandler = connectionProvider.getConnectionHandler();
             Color background = null;
             if (connectionHandler != null) {
-                if (getEnvironmentSettings(connectionHandler.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
+                Project project = connectionHandler.getProject();
+                if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
                     background = connectionHandler.getEnvironmentType().getColor();
                 }
             }
@@ -96,5 +123,10 @@ public class DBNHeaderForm extends DBNFormImpl{
     @Override
     public JComponent getComponent() {
         return mainPanel;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
     }
 }

@@ -40,7 +40,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         this.connectionHandlerRef = connectionHandler.getRef();
         Project project = connectionHandler.getProject();
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
+        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         tableModel = new ResourceMonitorTableModel(connectionHandler);

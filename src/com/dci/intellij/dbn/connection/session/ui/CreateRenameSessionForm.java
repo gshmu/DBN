@@ -38,7 +38,7 @@ public class CreateRenameSessionForm extends DBNFormImpl<CreateRenameSessionDial
         errorLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
         errorLabel.setVisible(false);
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
+        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         final Set<String> sessionNames = connectionHandler.getSessionBundle().getSessionNames();

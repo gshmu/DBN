@@ -65,7 +65,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDi
     }
 
     private void createHeaderForm(DBDataset dataset) {
-        DBNHeaderForm headerForm = new DBNHeaderForm(dataset);
+        DBNHeaderForm headerForm = new DBNHeaderForm(dataset, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 

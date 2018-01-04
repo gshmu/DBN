@@ -26,7 +26,7 @@ public class IdleConnectionDialogForm extends DBNFormImpl {
         hintTextPane.setText(text);
 
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
+        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
     }

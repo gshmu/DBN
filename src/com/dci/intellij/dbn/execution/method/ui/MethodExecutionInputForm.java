@@ -70,7 +70,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         //objectPanel.add(new ObjectDetailsPanel(method).getComponent(), BorderLayout.NORTH);
 
         if (showHeader) {
-            DBNHeaderForm headerForm = new DBNHeaderForm(method);
+            DBNHeaderForm headerForm = new DBNHeaderForm(method, this);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         }
         headerPanel.setVisible(showHeader);

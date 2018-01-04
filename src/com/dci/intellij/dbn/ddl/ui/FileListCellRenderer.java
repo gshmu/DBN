@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.ddl.ui;
 
 import javax.swing.JList;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.intellij.openapi.module.Module;
@@ -11,29 +12,28 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 
-public class FileListCellRenderer extends ColoredListCellRenderer {
+public class FileListCellRenderer extends ColoredListCellRenderer<VirtualFile> {
     private Project project;
 
-    public FileListCellRenderer(Project project) {
+    FileListCellRenderer(Project project) {
         this.project = project;
     }
 
-    protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        VirtualFile virtualFile = (VirtualFile) value;
+    protected void customizeCellRenderer(@NotNull JList list, VirtualFile value, int index, boolean selected, boolean hasFocus) {
 
-        Module module = ModuleUtil.findModuleForFile(virtualFile, project);
+        Module module = ModuleUtil.findModuleForFile(value, project);
         if (module == null) {
-            append(virtualFile.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            append(value.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         } else {
-            VirtualFile contentRoot = getModuleContentRoot(module, virtualFile);
-            VirtualFile parent = contentRoot.getParent();
+            VirtualFile contentRoot = getModuleContentRoot(module, value);
+            VirtualFile parent = contentRoot == null ? null : contentRoot.getParent();
             int relativePathIndex = parent == null ? 0 : parent.getPath().length();
-            String relativePath = virtualFile.getPath().substring(relativePathIndex);
+            String relativePath = value.getPath().substring(relativePathIndex);
             append('[' + module.getName() + ']', SimpleTextAttributes.REGULAR_ATTRIBUTES);
             append(relativePath, SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
 
-        setIcon(VirtualFileUtil.getIcon(virtualFile));
+        setIcon(VirtualFileUtil.getIcon(value));
     }
 
     private static VirtualFile getModuleContentRoot(Module module, VirtualFile virtualFile) {
