@@ -18,6 +18,8 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -57,6 +59,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
 
         Project project = getProject();
         EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, connectionHandlerStatusListener);
     }
 
     private void updateListModel() {
@@ -116,7 +119,9 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
                 changes += dataChanges == null ? 0 : dataChanges.size();
             }
 
-            append(" (" + changes + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
+            if (changes > 0) {
+                append(" (" + changes + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
+            }
         }
     }
 
@@ -131,6 +136,14 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
         @Override
         public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
             refreshForm();
+        }
+    };
+
+    private ConnectionHandlerStatusListener connectionHandlerStatusListener = new ConnectionHandlerStatusListener() {
+        @Override
+        public void statusChanged(ConnectionId connectionId, ConnectionHandlerStatus status) {
+            connectionsList.revalidate();
+            connectionsList.repaint();
         }
     };
 

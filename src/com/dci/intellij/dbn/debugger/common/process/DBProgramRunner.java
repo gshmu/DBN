@@ -60,7 +60,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             final ExecutionEnvironment environment) throws ExecutionException {
 
         final DBRunConfig runProfile = (DBRunConfig) environment.getRunProfile();
-        new ConnectionAction("the debug execution", runProfile.getConnectionHandler(), new TaskInstructions("Checking debug privileges", TaskInstruction.CAN_BE_CANCELLED)) {
+        new ConnectionAction("the debug execution", runProfile.getConnectionHandler(), new TaskInstructions("Checking debug privileges", TaskInstruction.CANCELLABLE)) {
             @Override
             protected boolean canExecute() {
                 ConnectionHandler connectionHandler = getConnectionHandler();

@@ -185,7 +185,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
 
     public void dispose() {
         super.dispose();
-        selectedExecutionInput = null;
+        //selectedExecutionInput = null;
         executionHistory = null;
     }
 }

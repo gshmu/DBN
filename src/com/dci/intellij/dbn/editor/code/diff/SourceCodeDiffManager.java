@@ -31,7 +31,7 @@ import com.intellij.openapi.diff.SimpleContent;
 import com.intellij.openapi.diff.SimpleDiffRequest;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Consumer;
-import static com.dci.intellij.dbn.common.thread.TaskInstruction.CAN_BE_CANCELLED;
+import static com.dci.intellij.dbn.common.thread.TaskInstruction.CANCELLABLE;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 @State(
@@ -182,7 +182,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
 
     public void opedDatabaseDiffWindow(final DBSourceCodeVirtualFile sourceCodeFile) {
-        new ConnectionAction("comparing changes", sourceCodeFile, new TaskInstructions("Loading database source code", CAN_BE_CANCELLED)) {
+        new ConnectionAction("comparing changes", sourceCodeFile, new TaskInstructions("Loading database source code", CANCELLABLE)) {
             @Override
             protected void execute() {
                 DBSchemaObject object = sourceCodeFile.getObject();

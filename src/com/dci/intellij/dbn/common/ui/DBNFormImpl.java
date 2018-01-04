@@ -4,6 +4,7 @@ import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -15,7 +16,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 
 public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends DisposableBase implements DBNForm {
-    private Project project;
+    private ProjectRef projectRef;
     private P parentComponent;
 
     public DBNFormImpl() {
@@ -27,7 +28,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
     }
 
     public DBNFormImpl(Project project) {
-        this.project = project;
+        this.projectRef = ProjectRef.from(project);
     }
 
     public EnvironmentSettings getEnvironmentSettings(Project project) {
@@ -40,8 +41,8 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
 
     @NotNull
     public final Project getProject() {
-        if (project != null) {
-            return project;
+        if (projectRef != null) {
+            return projectRef.getnn();
         }
 
         if (parentComponent != null) {
@@ -62,7 +63,6 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
     @Override
     public void dispose() {
         super.dispose();
-        project = null;
         parentComponent = null;
     }
 

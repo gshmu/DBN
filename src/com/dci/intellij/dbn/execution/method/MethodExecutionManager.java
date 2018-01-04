@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -146,16 +147,32 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     }
 
 
-    public MethodExecutionHistoryDialog showExecutionHistoryDialog(boolean editable, boolean debug) {
-        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, null, editable, debug);
-        executionHistoryDialog.show();
-        return executionHistoryDialog;
+    private void initMethodExecutionHistory() {
+        executionHistory.initialize();
     }
 
-    public MethodExecutionHistoryDialog showExecutionHistoryDialog(MethodExecutionInput selectedExecutionInput, boolean editable, boolean debug) {
-        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, selectedExecutionInput, editable, debug);
-        executionHistoryDialog.show();
-        return executionHistoryDialog;
+    public void showExecutionHistoryDialog(@Nullable final MethodExecutionInput selected, final boolean editable, final boolean debug, @Nullable final RunnableTask<MethodExecutionInput> callback) {
+        new BackgroundTask(getProject(), new TaskInstructions("Loading method execution history", TaskInstruction.CANCELLABLE)) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                initMethodExecutionHistory();
+
+                new SimpleLaterInvocator() {
+                    @Override
+                    protected void execute() {
+                        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, selected, editable, debug);
+                        executionHistoryDialog.show();
+                        MethodExecutionInput selected = executionHistoryDialog.getSelectedExecutionInput();
+                        if (selected != null && callback != null) {
+                            if (executionHistoryDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                                callback.setData(selected);
+                                callback.start();
+                            }
+                        }
+                    }
+                }.start();
+            }
+        }.start();
     }
 
     public MethodExecutionInput selectHistoryMethodExecutionInput(@Nullable MethodExecutionInput selectedExecutionInput, boolean debug) {

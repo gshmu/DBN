@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -137,11 +138,15 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
             Project project = ActionUtil.getProject(e);
             if (project != null) {
                 MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                MethodExecutionInput executionInput = getExecutionInput();
-                MethodExecutionInput methodExecutionInput = methodExecutionManager.selectHistoryMethodExecutionInput(executionInput, true);
-                if (methodExecutionInput != null) {
-                    setExecutionInput(methodExecutionInput, true);
-                }
+                methodExecutionManager.showExecutionHistoryDialog(getExecutionInput(), false, true, new SimpleTask<MethodExecutionInput>() {
+                    @Override
+                    protected void execute() {
+                        MethodExecutionInput executionInput = getData();
+                        if (executionInput != null) {
+                            setExecutionInput(executionInput, true);
+                        }
+                    }
+                });
             }
         }
     }
