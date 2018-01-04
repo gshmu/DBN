@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.connection;
 
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
 import com.dci.intellij.dbn.connection.jdbc.LazyResourceStatus;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<ConnectionHandlerStatus> {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -87,6 +88,23 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
         }
     };
 
+    private IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus> loading =
+            new IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus>(ConnectionHandlerStatus.LOADING, this) {
+                @Override
+                protected boolean setInner(ConnectionHandlerStatus status, boolean value) {
+                    return ConnectionHandlerStatusHolder.super.set(status, value);
+                }
+
+                @Override
+                protected void statusChanged() {
+                    if (getResource().isNot(ConnectionHandlerStatus.LOADING)) {
+                        ConnectionHandler connectionHandler = getConnectionHandler();
+                        Project project = connectionHandler.getProject();
+                        EventUtil.notify(project, ConnectionLoadListener.TOPIC).contentsLoaded(connectionHandler);
+                    }
+                }
+            };
+
     ConnectionHandlerStatusHolder(@NotNull ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = connectionHandler.getRef();
     }
@@ -163,6 +181,10 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
 
     public LazyResourceStatus getConnected() {
         return connected;
+    }
+
+    public IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus> getLoading() {
+        return loading;
     }
 
     private abstract class LazyConnectionStatus extends LazyResourceStatus<ConnectionHandlerStatus> {

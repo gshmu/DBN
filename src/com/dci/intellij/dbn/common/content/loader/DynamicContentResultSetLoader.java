@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
@@ -17,8 +16,11 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
+import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
@@ -70,9 +72,9 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
         DBNConnection connection = null;
         ResultSet resultSet = null;
         int count = 0;
-        Counter runningMetaLoaders = connectionHandler.getLoadMonitor().getRunningMetaLoaders();
+        IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus> loading = connectionHandler.getConnectionStatus().getLoading();
         try {
-            runningMetaLoaders.increment();
+            loading.set(true);
             dynamicContent.checkDisposed();
             connection = connectionHandler.getPoolConnection(true);
             try {
@@ -137,7 +139,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
             throw new DynamicContentLoadException(e, modelException);
         } finally {
             ConnectionUtil.close(resultSet);
-            runningMetaLoaders.decrement();
+            loading.set(false);
             connectionHandler.freePoolConnection(connection);
         }
     }

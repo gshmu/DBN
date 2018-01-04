@@ -225,11 +225,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @NotNull
     public ConnectionPool getConnectionPool() {return null;}
 
-    @Override
-    public ConnectionLoadMonitor getLoadMonitor() {
-        return null;
-    }
-
     @NotNull
     public DBObjectBundle getObjectBundle() {return objectBundle;}
     public DBSchema getUserSchema() {return null;}
