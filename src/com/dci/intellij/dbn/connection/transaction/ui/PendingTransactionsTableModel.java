@@ -11,15 +11,15 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.connection.transaction.UncommittedChange;
-import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
+import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
+import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.intellij.openapi.project.Project;
 
-public class UncommittedChangesTableModel extends DisposableBase implements DBNTableModel {
+public class PendingTransactionsTableModel extends DisposableBase implements DBNTableModel {
     private ConnectionHandlerRef connectionHandlerRef;
     private List<DBNConnection> connections;
 
-    public UncommittedChangesTableModel(ConnectionHandler connectionHandler) {
+    public PendingTransactionsTableModel(ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = connectionHandler.getRef();
         connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
     }
@@ -40,7 +40,7 @@ public class UncommittedChangesTableModel extends DisposableBase implements DBNT
     public int getRowCount() {
         int count = 0;
         for (DBNConnection connection : getConnections()) {
-            UncommittedChangeBundle dataChanges = connection.getDataChanges();
+            PendingTransactionBundle dataChanges = connection.getDataChanges();
             count += dataChanges == null ? 0 : dataChanges.size();
         }
 
@@ -59,7 +59,7 @@ public class UncommittedChangesTableModel extends DisposableBase implements DBNT
     }
 
     public Class<?> getColumnClass(int columnIndex) {
-        return UncommittedChange.class;
+        return PendingTransaction.class;
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -69,11 +69,11 @@ public class UncommittedChangesTableModel extends DisposableBase implements DBNT
     public Object getValueAt(int rowIndex, int columnIndex) {
         int count = 0;
         for (DBNConnection connection : getConnections()) {
-            UncommittedChangeBundle dataChanges = connection.getDataChanges();
+            PendingTransactionBundle dataChanges = connection.getDataChanges();
             int size = dataChanges == null ? 0 : dataChanges.size();
             count += size;
             if (dataChanges != null && count > rowIndex) {
-                return dataChanges.getChanges().get(count - size + rowIndex);
+                return dataChanges.getEntries().get(count - size + rowIndex);
             }
         }
 

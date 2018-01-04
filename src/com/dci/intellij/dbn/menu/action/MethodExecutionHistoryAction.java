@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
-public class OpenMethodExecutionHistoryAction extends DumbAwareAction {
+public class MethodExecutionHistoryAction extends DumbAwareAction {
 
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);

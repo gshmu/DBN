@@ -198,10 +198,11 @@
             <action id="DBNavigator.Actions.EditorSettings" class="com.dci.intellij.dbn.language.editor.action.EditorSettingsAction" text="Script Editor - Settings"/>
         </group>
         <group id="DBNavigator.Actions.MainMenu" text="_DB Navigator">
-            <action class="com.dci.intellij.dbn.menu.action.OpenSQLConsoleAction" text="Open SQL Console..." id="DBNavigator.Actions.MainMenu.OpenSQLConsole" icon="/img/file/SQLConsole.png"/>
-            <action class="com.dci.intellij.dbn.menu.action.OpenSessionBrowserAction" text="Open Session Browser..." id="DBNavigator.Actions.MainMenu.OpenSessionBrowser" icon="/img/file/SessionBrowser.png"/>
-            <action class="com.dci.intellij.dbn.menu.action.OpenMethodExecutionHistoryAction" text="Method Execution History" id="DBNavigator.Actions.MainMenu.OpenMethodExecutionHistory"/>
-            <action class="com.dci.intellij.dbn.menu.action.OpenUncommittedChangesOverviewAction" text="Uncommitted Changes" id="DBNavigator.Actions.MainMenu.OpenUncommittedChangesOverview"/>
+            <action class="com.dci.intellij.dbn.menu.action.SQLConsoleAction" text="Open SQL Console..." id="DBNavigator.Actions.MainMenu.OpenSQLConsole" icon="/img/file/SQLConsole.png"/>
+            <action class="com.dci.intellij.dbn.menu.action.SessionBrowserAction" text="Open Session Browser..." id="DBNavigator.Actions.MainMenu.OpenSessionBrowser" icon="/img/file/SessionBrowser.png"/>
+            <action class="com.dci.intellij.dbn.menu.action.MethodExecutionHistoryAction" text="Method Execution History" id="DBNavigator.Actions.MainMenu.MethodExecutionHistory"/>
+            <action class="com.dci.intellij.dbn.menu.action.PendingTransactionsAction" text="Uncommitted Changes" id="DBNavigator.Actions.MainMenu.PendingTransactions"/>
+            <action class="com.dci.intellij.dbn.menu.action.ResourceMonitorAction" text="Resource monitor" id="DBNavigator.Actions.MainMenu.ResourceMonitor"/>
             <separator/>
             <group id="DBNavigator.ActionGroup.Development" text="Development" popup="true">
                 <action id="DBNavigator.Actions.MainMenu.DevelopmentReset" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>

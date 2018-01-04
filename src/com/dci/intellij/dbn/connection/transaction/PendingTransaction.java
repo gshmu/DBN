@@ -2,13 +2,13 @@ package com.dci.intellij.dbn.connection.transaction;
 
 import javax.swing.Icon;
 
-public class UncommittedChange {
+public class PendingTransaction {
     private String filePath;
     private String displayFilePath;
     private Icon icon;
     private int changesCount = 0;
 
-    public UncommittedChange(String filePath, String displayFilePath, Icon icon) {
+    public PendingTransaction(String filePath, String displayFilePath, Icon icon) {
         this.filePath = filePath;
         this.displayFilePath = displayFilePath;
         this.icon = icon;

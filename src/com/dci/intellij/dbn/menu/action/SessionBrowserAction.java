@@ -18,8 +18,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 
-public class OpenSessionBrowserAction extends DumbAwareAction {
-    public OpenSessionBrowserAction() {
+public class SessionBrowserAction extends DumbAwareAction {
+    public SessionBrowserAction() {
         super("Open Session Browser...", null, Icons.FILE_SESSION_BROWSER);
     }
 

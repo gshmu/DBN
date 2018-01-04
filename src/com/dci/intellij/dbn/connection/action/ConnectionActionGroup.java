@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.action;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.transaction.action.ShowUncommittedChangesAction;
+import com.dci.intellij.dbn.connection.transaction.action.PendingTransactionsOpenAction;
 import com.dci.intellij.dbn.connection.transaction.action.ToggleAutoCommitAction;
 import com.dci.intellij.dbn.connection.transaction.action.ToggleAutoConnectAction;
 import com.dci.intellij.dbn.connection.transaction.action.ToggleDatabaseLoggingAction;
@@ -19,7 +19,7 @@ public class ConnectionActionGroup extends DefaultActionGroup {
         add(new ToggleDatabaseLoggingAction(connectionHandler));
         addSeparator();
         add(new OpenSQLConsoleAction(connectionHandler));
-        add(new ShowUncommittedChangesAction(connectionHandler));
+        add(new PendingTransactionsOpenAction(connectionHandler));
         addSeparator();
         add(new ToggleAutoConnectAction(connectionHandler));
         add(new ConnectAction(connectionHandler));

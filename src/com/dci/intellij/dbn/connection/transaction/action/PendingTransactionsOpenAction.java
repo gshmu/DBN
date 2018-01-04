@@ -6,9 +6,9 @@ import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 
-public class ShowUncommittedChangesAction extends AbstractConnectionAction {
+public class PendingTransactionsOpenAction extends AbstractConnectionAction {
 
-    public ShowUncommittedChangesAction(ConnectionHandler connectionHandler) {
+    public PendingTransactionsOpenAction(ConnectionHandler connectionHandler) {
         super("Show uncommitted changes", connectionHandler);
 
     }
@@ -17,7 +17,7 @@ public class ShowUncommittedChangesAction extends AbstractConnectionAction {
         ConnectionHandler connectionHandler = getConnectionHandler();
         Project project = connectionHandler.getProject();
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-        transactionManager.showUncommittedChangesDialog(connectionHandler, null);
+        transactionManager.showPendingTransactionsDialog(connectionHandler, null);
     }
 
     @Override

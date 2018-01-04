@@ -33,8 +33,8 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
 
-public class OpenSQLConsoleAction extends DumbAwareAction {
-    public OpenSQLConsoleAction() {
+public class SQLConsoleAction extends DumbAwareAction {
+    public SQLConsoleAction() {
         super("Open SQL console...", null, Icons.FILE_SQL_CONSOLE);
     }
 

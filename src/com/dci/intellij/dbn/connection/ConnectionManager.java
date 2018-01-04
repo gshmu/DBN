@@ -513,7 +513,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             switch (result) {
                 case COMMIT: commitAll(); return true;
                 case ROLLBACK: rollbackAll(); return true;
-                case REVIEW_CHANGES: return DatabaseTransactionManager.getInstance(project).showUncommittedChangesOverviewDialog(null);
+                case REVIEW_CHANGES: return DatabaseTransactionManager.getInstance(project).showPendingTransactionsOverviewDialog(null);
                 case CANCEL: return false;
             }
         }
