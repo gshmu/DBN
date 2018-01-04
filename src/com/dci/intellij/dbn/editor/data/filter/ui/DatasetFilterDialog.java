@@ -26,12 +26,13 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
         super(dataset.getProject(), "Data filters", true);
         this.datasetRef = DBObjectRef.from(dataset);
         this.automaticPrompt = automaticPrompt;
+        DatasetFilterForm component = getComponent();
         if ((createNewFilter || filterGroup.getFilters().isEmpty()) && defaultFilterType != DatasetFilterType.NONE) {
             DatasetFilter filter =
                     defaultFilterType == DatasetFilterType.BASIC ? filterGroup.createBasicFilter(true) :
                     defaultFilterType == DatasetFilterType.CUSTOM ? filterGroup.createCustomFilter(true) : null;
 
-            getComponent().getFilterList().setSelectedValue(filter, true);
+            component.getFilterList().setSelectedValue(filter, true);
         }
         init();
     }
