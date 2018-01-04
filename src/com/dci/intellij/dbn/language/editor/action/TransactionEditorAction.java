@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -14,11 +18,6 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-
 import static com.dci.intellij.dbn.common.util.ActionUtil.*;
 
 public abstract class TransactionEditorAction extends DumbAwareAction {
@@ -31,7 +30,7 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
         boolean enabled = false;
         boolean visible = false;
         ConnectionHandler connectionHandler = getConnectionHandler(e);
-        if (connectionHandler != null) {
+        if (connectionHandler != null && !connectionHandler.isVirtual()) {
 
             DatabaseSession session = getDatabaseSession(e);
             if (session != null && !session.isPool()) {
