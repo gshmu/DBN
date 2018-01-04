@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionType;
-import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
+import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
@@ -29,7 +29,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     private long lastAccess;
     private Set<DBNStatement> statements = new HashSet<DBNStatement>();
-    private UncommittedChangeBundle dataChanges;
+    private PendingTransactionBundle dataChanges;
 
     private IncrementalResourceStatusAdapter<DBNConnection> active =
             new IncrementalResourceStatusAdapter<DBNConnection>(ResourceStatus.ACTIVE, this) {
@@ -261,7 +261,7 @@ public class DBNConnection extends DBNConnectionBase {
     public void notifyDataChanges(VirtualFile virtualFile) {
         if (!getAutoCommit()) {
             if (dataChanges == null) {
-                dataChanges = new UncommittedChangeBundle();
+                dataChanges = new PendingTransactionBundle();
             }
             dataChanges.notifyChange(virtualFile);
         }
@@ -272,7 +272,7 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     @Nullable
-    public UncommittedChangeBundle getDataChanges() {
+    public PendingTransactionBundle getDataChanges() {
         return dataChanges;
     }
 

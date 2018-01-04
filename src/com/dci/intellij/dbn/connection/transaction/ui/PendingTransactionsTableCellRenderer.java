@@ -1,15 +1,15 @@
-package com.dci.intellij.dbn.connection.transaction.action;
-
-import com.dci.intellij.dbn.connection.transaction.UncommittedChange;
-import com.intellij.ui.ColoredTableCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
+package com.dci.intellij.dbn.connection.transaction.ui;
 
 import javax.swing.JTable;
 
-public class UncommittedChangesTableCellRenderer extends ColoredTableCellRenderer{
+import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
+import com.intellij.ui.ColoredTableCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
+
+public class PendingTransactionsTableCellRenderer extends ColoredTableCellRenderer{
     @Override
     protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
-        UncommittedChange change = (UncommittedChange) value;
+        PendingTransaction change = (PendingTransaction) value;
         if (column == 0) {
             setIcon(change.getIcon());
             append(change.getDisplayFilePath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);

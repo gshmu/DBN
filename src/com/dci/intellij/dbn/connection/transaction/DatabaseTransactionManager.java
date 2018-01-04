@@ -22,9 +22,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.resource.ui.ResourceMonitorDialog;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
-import com.dci.intellij.dbn.connection.transaction.ui.UncommittedChangesDialog;
-import com.dci.intellij.dbn.connection.transaction.ui.UncommittedChangesOverviewDialog;
+import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDetailDialog;
+import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -139,7 +140,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             connections.add(targetConnection);
         }
         for (DBNConnection connection : connections) {
-            UncommittedChangeBundle dataChanges = connection.getDataChanges();
+            PendingTransactionBundle dataChanges = connection.getDataChanges();
             if (fromEditor && dataChanges != null && dataChanges.size() > 1) {
                 Project project = connectionHandler.getProject();
                 VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
@@ -148,7 +149,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                     TransactionOption result = commitMultipleChanges.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
                     switch (result) {
                         case COMMIT: execute(connectionHandler, connection, background, TransactionAction.COMMIT); break;
-                        case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, null); break;
+                        case REVIEW_CHANGES: showPendingTransactionsDialog(connectionHandler, null); break;
                     }
                 }
             } else {
@@ -168,7 +169,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         }
 
         for (DBNConnection connection : connections) {
-            UncommittedChangeBundle dataChanges = connection.getDataChanges();
+            PendingTransactionBundle dataChanges = connection.getDataChanges();
             if (fromEditor && dataChanges != null && dataChanges.size() > 1) {
                 Project project = connectionHandler.getProject();
                 VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
@@ -177,7 +178,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                     TransactionOption result = rollbackMultipleChanges.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
                     switch (result) {
                         case ROLLBACK: execute(connectionHandler, connection, background, TransactionAction.ROLLBACK); break;
-                        case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, null); break;
+                        case REVIEW_CHANGES: showPendingTransactionsDialog(connectionHandler, null); break;
                     }
                 }
             } else {
@@ -194,14 +195,19 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     }
 
 
-    public boolean showUncommittedChangesOverviewDialog(@Nullable TransactionAction additionalOperation) {
-        UncommittedChangesOverviewDialog executionDialog = new UncommittedChangesOverviewDialog(getProject(), additionalOperation);
+    public void showResourceMonitorDialog() {
+        ResourceMonitorDialog resourceMonitorDialog = new ResourceMonitorDialog(getProject());
+        resourceMonitorDialog.show();
+    }
+
+    public boolean showPendingTransactionsOverviewDialog(@Nullable TransactionAction additionalOperation) {
+        PendingTransactionsDialog executionDialog = new PendingTransactionsDialog(getProject(), additionalOperation);
         executionDialog.show();
         return executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE;
     }
 
-    public boolean showUncommittedChangesDialog(ConnectionHandler connectionHandler, @Nullable TransactionAction additionalOperation) {
-        UncommittedChangesDialog executionDialog = new UncommittedChangesDialog(connectionHandler, additionalOperation, false);
+    public boolean showPendingTransactionsDialog(ConnectionHandler connectionHandler, @Nullable TransactionAction additionalOperation) {
+        PendingTransactionsDetailDialog executionDialog = new PendingTransactionsDetailDialog(connectionHandler, additionalOperation, false);
         executionDialog.show();
         return executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE;
     }
@@ -220,7 +226,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 switch (result) {
                     case COMMIT: execute(connectionHandler, connection, true, TransactionAction.COMMIT, autoCommitAction); break;
                     case ROLLBACK: execute(connectionHandler, connection, true, TransactionAction.ROLLBACK, autoCommitAction); break;
-                    case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, autoCommitAction);
+                    case REVIEW_CHANGES: showPendingTransactionsDialog(connectionHandler, autoCommitAction);
                 }
             } else {
                 execute(connectionHandler, connection, false, autoCommitAction);
@@ -238,7 +244,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 switch (result) {
                     case COMMIT: execute(connectionHandler, connection, false, TransactionAction.COMMIT, TransactionAction.DISCONNECT); break;
                     case ROLLBACK: execute(connectionHandler, connection, false, TransactionAction.DISCONNECT); break;
-                    case REVIEW_CHANGES: showUncommittedChangesDialog(connectionHandler, TransactionAction.DISCONNECT);
+                    case REVIEW_CHANGES: showPendingTransactionsDialog(connectionHandler, TransactionAction.DISCONNECT);
                 }
             } else {
                 execute(connectionHandler, connection, false, TransactionAction.DISCONNECT);

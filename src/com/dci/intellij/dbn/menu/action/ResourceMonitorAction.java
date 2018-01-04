@@ -7,13 +7,13 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
-public class OpenUncommittedChangesOverviewAction extends DumbAwareAction {
+public class ResourceMonitorAction extends DumbAwareAction {
 
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
             DatabaseTransactionManager executionManager = DatabaseTransactionManager.getInstance(project);
-            executionManager.showUncommittedChangesOverviewDialog(null);
+            executionManager.showResourceMonitorDialog();
         }
     }
 

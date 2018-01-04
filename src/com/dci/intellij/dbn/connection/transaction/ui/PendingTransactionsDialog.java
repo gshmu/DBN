@@ -20,10 +20,10 @@ import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.intellij.openapi.project.Project;
 
-public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChangesOverviewForm> {
+public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm> {
     private TransactionAction additionalOperation;
 
-    public UncommittedChangesOverviewDialog(Project project, TransactionAction additionalOperation) {
+    public PendingTransactionsDialog(Project project, TransactionAction additionalOperation) {
         super(project, "Uncommitted changes overview", true);
         this.additionalOperation = additionalOperation;
         setModal(false);
@@ -34,8 +34,8 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
 
     @NotNull
     @Override
-    protected UncommittedChangesOverviewForm createComponent() {
-        return new UncommittedChangesOverviewForm(this);
+    protected PendingTransactionsForm createComponent() {
+        return new PendingTransactionsForm(this);
     }
 
     @NotNull

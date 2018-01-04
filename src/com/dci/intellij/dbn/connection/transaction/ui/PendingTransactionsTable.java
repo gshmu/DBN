@@ -10,17 +10,17 @@ import java.awt.event.MouseEvent;
 
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.connection.transaction.UncommittedChange;
+import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 
-public class UncommittedChangesTable extends DBNTable {
-    public UncommittedChangesTable(UncommittedChangesTableModel model) {
+public class PendingTransactionsTable extends DBNTable {
+    public PendingTransactionsTable(PendingTransactionsTableModel model) {
         super(model.getProject(), model, false);
-        setDefaultRenderer(UncommittedChange.class, new CellRenderer());
+        setDefaultRenderer(PendingTransaction.class, new CellRenderer());
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setCellSelectionEnabled(true);
         adjustRowHeight(2);
@@ -38,14 +38,14 @@ public class UncommittedChangesTable extends DBNTable {
         }
     }
 
-    public UncommittedChange getChangeAtMouseLocation() {
+    public PendingTransaction getChangeAtMouseLocation() {
         Point location = MouseInfo.getPointerInfo().getLocation();
         location.setLocation(location.getX() - getLocationOnScreen().getX(), location.getY() - getLocationOnScreen().getY());
 
         int columnIndex = columnAtPoint(location);
         int rowIndex = rowAtPoint(location);
         if (columnIndex > -1 && rowIndex > -1) {
-            return (UncommittedChange) getModel().getValueAt(rowIndex, columnIndex);
+            return (PendingTransaction) getModel().getValueAt(rowIndex, columnIndex);
         }
 
         return null;
@@ -54,7 +54,7 @@ public class UncommittedChangesTable extends DBNTable {
     public class CellRenderer extends ColoredTableCellRenderer {
         @Override
         protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
-            UncommittedChange change = (UncommittedChange) value;
+            PendingTransaction change = (PendingTransaction) value;
             if (column == 0) {
                 // TODO
             }
@@ -75,7 +75,7 @@ public class UncommittedChangesTable extends DBNTable {
         public void mouseClicked(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
                 int selectedRow = getSelectedRow();
-                UncommittedChange change = (UncommittedChange) getModel().getValueAt(selectedRow, 0);
+                PendingTransaction change = (PendingTransaction) getModel().getValueAt(selectedRow, 0);
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
                 VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(change.getFilePath());
                 if (virtualFile != null) {

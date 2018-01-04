@@ -15,12 +15,12 @@ import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.intellij.openapi.project.Project;
 
-public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> {
+public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactionsDetailForm> {
     private ConnectionHandlerRef connectionHandlerRef;
     private TransactionAction additionalOperation;
     private boolean showActions;
 
-    public UncommittedChangesDialog(ConnectionHandler connectionHandler, TransactionAction additionalOperation, boolean showActions) {
+    public PendingTransactionsDetailDialog(ConnectionHandler connectionHandler, TransactionAction additionalOperation, boolean showActions) {
         super(connectionHandler.getProject(), "Uncommitted changes", true);
         this.connectionHandlerRef = connectionHandler.getRef();
         this.additionalOperation = additionalOperation;
@@ -32,8 +32,8 @@ public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> 
 
     @NotNull
     @Override
-    protected UncommittedChangesForm createComponent() {
-        return new UncommittedChangesForm(getConnectionHandler(), additionalOperation, showActions);
+    protected PendingTransactionsDetailForm createComponent() {
+        return new PendingTransactionsDetailForm(getConnectionHandler(), additionalOperation, showActions);
     }
 
     @NotNull

@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.connection.transaction.ui;
+package com.dci.intellij.dbn.connection.resource.ui;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -24,7 +24,7 @@ import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.intellij.openapi.project.Project;
 
-public class UncommittedChangesForm extends DBNFormImpl {
+public class ResourceMonitorDetailForm extends DBNFormImpl {
     private JTable changesTable;
     private JPanel mainPanel;
     private JPanel headerPanel;
@@ -34,17 +34,17 @@ public class UncommittedChangesForm extends DBNFormImpl {
     private JPanel transactionActionsPanel;
 
     private ConnectionHandlerRef connectionHandlerRef;
-    private UncommittedChangesTableModel tableModel;
+    private ResourceMonitorTableModel tableModel;
 
-    public UncommittedChangesForm(final ConnectionHandler connectionHandler, final TransactionAction additionalOperation, boolean showActions) {
+    ResourceMonitorDetailForm(final ConnectionHandler connectionHandler, final TransactionAction additionalOperation, boolean showActions) {
         this.connectionHandlerRef = connectionHandler.getRef();
         Project project = connectionHandler.getProject();
 
         DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        tableModel = new UncommittedChangesTableModel(connectionHandler);
-        changesTable = new UncommittedChangesTable(tableModel);
+        tableModel = new ResourceMonitorTableModel(connectionHandler);
+        changesTable = new ResourceMonitorTable(tableModel);
         changesTableScrollPane.setViewportView(changesTable);
         changesTableScrollPane.getViewport().setBackground(changesTable.getBackground());
 
@@ -111,8 +111,8 @@ public class UncommittedChangesForm extends DBNFormImpl {
             @Override
             protected void execute() {
                 if (!isDisposed()) {
-                    UncommittedChangesTableModel oldTableModel = tableModel;
-                    tableModel = new UncommittedChangesTableModel(connectionHandler);
+                    ResourceMonitorTableModel oldTableModel = tableModel;
+                    tableModel = new ResourceMonitorTableModel(connectionHandler);
                     changesTable.setModel(tableModel);
                     commitButton.setEnabled(false);
                     rollbackButton.setEnabled(false);
