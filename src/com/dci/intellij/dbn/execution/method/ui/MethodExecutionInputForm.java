@@ -4,6 +4,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -84,17 +85,26 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         for (DBArgument argument: arguments) {
             if (argument.isInput()) {
                 metrics = addArgumentPanel(argument, metrics);
-                argumentsScrollPane.setBorder(Borders.BOTTOM_LINE_BORDER);
                 //topSeparator.setVisible(true);
             }
         }
+        argumentsScrollPane.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         for (MethodExecutionInputArgumentForm component : argumentForms) {
             component.adjustMetrics(metrics);
         }
 
         if (argumentForms.size() > 0) {
-            argumentsScrollPane.getVerticalScrollBar().setUnitIncrement(argumentForms.get(0).getScrollUnitIncrement());
+            MethodExecutionInputArgumentForm firstArgumentForm = argumentForms.get(0);
+            int scrollUnitIncrement = firstArgumentForm.getScrollUnitIncrement();
+            Dimension minSize = new Dimension(-1, Math.min(argumentForms.size(), 10) * scrollUnitIncrement + 2);
+            argumentsScrollPane.setMinimumSize(minSize);
+            argumentsScrollPane.getVerticalScrollBar().setUnitIncrement(scrollUnitIncrement);
+        } else {
+            argumentsScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+            Dimension preferredSize = argumentsScrollPane.getViewport().getComponent(0).getPreferredSize();
+            preferredSize.setSize(preferredSize.getWidth(), preferredSize.getHeight() + 2);
+            argumentsScrollPane.setMinimumSize(preferredSize);
         }
 
 
