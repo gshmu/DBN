@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
 import com.intellij.util.xmlb.annotations.Attribute;
 
 public class DBJdwpBreakpointProperties extends JavaBreakpointProperties<DBJdwpBreakpointProperties> implements DBBreakpointProperties {
-    @Attribute("connection-id")
+    @Attribute(value = "connection-id", converter = ConnectionId.Converter.class)
     private ConnectionId connectionId;
 
     private ConnectionHandlerRef connectionHandlerRef;

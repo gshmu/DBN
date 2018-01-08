@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import java.util.UUID;
 
 import com.dci.intellij.dbn.common.constant.PseudoConstant;
+import com.dci.intellij.dbn.common.constant.PseudoConstantConverter;
 
 public final class SessionId extends PseudoConstant<SessionId> {
 
@@ -19,5 +20,11 @@ public final class SessionId extends PseudoConstant<SessionId> {
 
     public static SessionId create() {
         return SessionId.get(UUID.randomUUID().toString());
+    }
+
+    public static class Converter extends PseudoConstantConverter<SessionId> {
+        public Converter() {
+            super(SessionId.class);
+        }
     }
 }
