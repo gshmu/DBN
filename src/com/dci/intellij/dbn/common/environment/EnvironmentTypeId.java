@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.environment;
 import java.util.UUID;
 
 import com.dci.intellij.dbn.common.constant.PseudoConstant;
+import com.dci.intellij.dbn.common.constant.PseudoConstantConverter;
 
 public final class EnvironmentTypeId extends PseudoConstant<EnvironmentTypeId> {
 
@@ -22,5 +23,11 @@ public final class EnvironmentTypeId extends PseudoConstant<EnvironmentTypeId> {
 
     public static EnvironmentTypeId create() {
         return EnvironmentTypeId.get(UUID.randomUUID().toString());
+    }
+
+    public static class Converter extends PseudoConstantConverter<EnvironmentTypeId> {
+        public Converter() {
+            super(EnvironmentTypeId.class);
+        }
     }
 }

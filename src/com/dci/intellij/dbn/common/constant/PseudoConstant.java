@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.constant;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import gnu.trove.THashMap;
 /**
  * Use this "constant" if the possible values are variable (i.e. cannot be implemented with enum).
  */
-public abstract class PseudoConstant<T extends PseudoConstant> implements Constant<T> {
+public abstract class PseudoConstant<T extends PseudoConstant> implements Constant<T>, Serializable {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private static final Map<Class<? extends PseudoConstant>, Map<String, PseudoConstant>> REGISTRY = new HashMap<Class<? extends PseudoConstant>, Map<String, PseudoConstant>>();

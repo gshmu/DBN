@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import java.util.UUID;
 
 import com.dci.intellij.dbn.common.constant.PseudoConstant;
+import com.dci.intellij.dbn.common.constant.PseudoConstantConverter;
 
 public final class ConnectionId extends PseudoConstant<ConnectionId> {
     public static final ConnectionId VIRTUAL_ORACLE_CONNECTION = get("virtual-oracle-connection");
@@ -23,5 +24,11 @@ public final class ConnectionId extends PseudoConstant<ConnectionId> {
 
     public static ConnectionId create() {
         return ConnectionId.get(UUID.randomUUID().toString());
+    }
+
+    public static class Converter extends PseudoConstantConverter<ConnectionId> {
+        public Converter() {
+            super(ConnectionId.class);
+        }
     }
 }
