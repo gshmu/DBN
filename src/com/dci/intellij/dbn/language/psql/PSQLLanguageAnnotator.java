@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.psql;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.code.psql.color.PSQLTextAttributesKeys;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
@@ -12,8 +14,17 @@ import com.dci.intellij.dbn.execution.statement.StatementGutterRenderer;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.navigation.*;
-import com.dci.intellij.dbn.language.common.psi.*;
+import com.dci.intellij.dbn.language.common.navigation.NavigateToDefinitionAction;
+import com.dci.intellij.dbn.language.common.navigation.NavigateToObjectAction;
+import com.dci.intellij.dbn.language.common.navigation.NavigateToSpecificationAction;
+import com.dci.intellij.dbn.language.common.navigation.NavigationAction;
+import com.dci.intellij.dbn.language.common.navigation.NavigationGutterRenderer;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
+import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
+import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.options.ProjectSettings;
@@ -22,9 +33,9 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
 
 public class PSQLLanguageAnnotator implements Annotator {
 
@@ -63,6 +74,7 @@ public class PSQLLanguageAnnotator implements Annotator {
 
             if (psiElement instanceof ExecutablePsiElement)  annotateExecutable(psiElement, holder);
 
+        } catch (ProcessCanceledException ignore){
         } finally {
             DatabaseLoadMonitor.setEnsureDataLoaded(ensureDataLoaded);
         }
@@ -170,7 +182,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                                                 identifierPsiElement.getChars(),
                                                 identifierPsiElement.getObjectType());
 
-                                if (targetElement != null) {
+                                if (targetElement != null && targetElement.isValid()) {
                                     NavigationAction navigationAction = targetContentType == DBContentType.CODE_BODY ?
                                             new NavigateToDefinitionAction(null, targetElement, objectType) :
                                             new NavigateToSpecificationAction(null, targetElement, objectType);
@@ -184,7 +196,7 @@ public class PSQLLanguageAnnotator implements Annotator {
 
 
                             BasePsiElement targetElement = codeEditorManager.getObjectNavigationElement(object, targetContentType, identifierPsiElement.getObjectType(), identifierPsiElement.getChars());
-                            if (targetElement != null) {
+                            if (targetElement != null && targetElement.isValid()) {
                                 NavigationAction navigationAction = targetContentType == DBContentType.CODE_BODY ?
                                         new NavigateToDefinitionAction(object, targetElement, objectType) :
                                         new NavigateToSpecificationAction(object, targetElement, objectType);

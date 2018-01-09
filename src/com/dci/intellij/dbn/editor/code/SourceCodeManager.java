@@ -426,15 +426,18 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     public void navigateToObject(DBSchemaObject parentObject, BasePsiElement basePsiElement) {
         DBEditableObjectVirtualFile editableObjectFile = parentObject.getEditableVirtualFile();
-        VirtualFile elementVirtualFile = basePsiElement.getFile().getVirtualFile();
-        if (elementVirtualFile instanceof DBSourceCodeVirtualFile) {
-            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) elementVirtualFile;
-            BasicTextEditor textEditor = EditorUtil.getTextEditor(sourceCodeFile);
-            if (textEditor != null) {
-                Project project = getProject();
-                EditorProviderId editorProviderId = textEditor.getEditorProviderId();
-                FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, editableObjectFile, editorProviderId, NavigationInstruction.OPEN);
-                basePsiElement.navigateInEditor(fileEditor, NavigationInstruction.FOCUS_SCROLL);
+        DBLanguagePsiFile psiFile = basePsiElement.getFile();
+        if (psiFile != null) {
+            VirtualFile elementVirtualFile = psiFile.getVirtualFile();
+            if (elementVirtualFile instanceof DBSourceCodeVirtualFile) {
+                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) elementVirtualFile;
+                BasicTextEditor textEditor = EditorUtil.getTextEditor(sourceCodeFile);
+                if (textEditor != null) {
+                    Project project = getProject();
+                    EditorProviderId editorProviderId = textEditor.getEditorProviderId();
+                    FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, editableObjectFile, editorProviderId, NavigationInstruction.OPEN);
+                    basePsiElement.navigateInEditor(fileEditor, NavigationInstruction.FOCUS_SCROLL);
+                }
             }
         }
     }
