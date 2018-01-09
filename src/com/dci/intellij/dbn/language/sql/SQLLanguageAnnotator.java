@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 
@@ -52,6 +53,7 @@ public class SQLLanguageAnnotator implements Annotator {
                     holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
                 }
             }
+        } catch (ProcessCanceledException ignore){
         } finally {
             DatabaseLoadMonitor.setEnsureDataLoaded(ensureDataLoaded);
         }

@@ -39,6 +39,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.IncorrectOperationException;
@@ -254,7 +255,8 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             if (psiReferenceElement != this) {
                 if (psiReferenceElement instanceof DBObjectPsiElement) {
                     DBObjectPsiElement underlyingObject = (DBObjectPsiElement) psiReferenceElement;
-                    return resolveActualObject(underlyingObject.getObject().getUndisposedElement());
+                    DBObject object = underlyingObject.getObjectLenient();
+                    return object == null ? null : resolveActualObject(object.getUndisposedElement());
                 }
 
                 if (psiReferenceElement instanceof IdentifierPsiElement) {
@@ -274,12 +276,14 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             }
 
             return resolveActualObject(underlyingObject);
+        } catch (ProcessCanceledException ignore){
+            return null;
         } finally {
             isResolvingUnderlyingObject = false;
         }
     }
 
-    private static DBObject resolveActualObject(DBObject object) {
+    private static DBObject resolveActualObject(@Nullable DBObject object) {
         while (object != null && object instanceof DBSynonym) {
             DBSynonym synonym = (DBSynonym) object;
             object = synonym.getUnderlyingObject();
