@@ -149,7 +149,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public boolean canConnect() {
-        if (isDisposed()) {
+        if (isDisposed() || !connectionSettings.isActive()) {
             return false;
         }
 
