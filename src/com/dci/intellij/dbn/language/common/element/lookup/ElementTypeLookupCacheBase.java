@@ -1,19 +1,15 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.IterationElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.SequenceElementType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.*;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public abstract class ElementTypeLookupCacheBase<T extends ElementType> implements ElementTypeLookupCache<T> {
     private Set<TokenType> nextPossibleTokens;
@@ -44,7 +40,7 @@ public abstract class ElementTypeLookupCacheBase<T extends ElementType> implemen
         if (nextPossibleTokens == null) {
             synchronized (this) {
                 if (nextPossibleTokens == null) {
-                    THashSet<TokenType> nextPossibleTokens = new THashSet<>();
+                    THashSet<TokenType> nextPossibleTokens = new THashSet<TokenType>();
                     ElementType elementType = this.elementType;
                     ElementType parentElementType = elementType.getParent();
                     while (parentElementType != null) {
