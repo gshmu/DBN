@@ -2,11 +2,11 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.7621.0</version>
+    <version>3.0.8001.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
-    <idea-version since-build="172.0001" until-build="173.*"/>
+    <idea-version since-build="172.0001" until-build="181.*"/>
     <description><![CDATA[
             <b>Database development, scripting and navigation tool</b><br>
             This product adds extensive database development and maintenance capabilities to the IntelliJ IDEA development environment and related products.
@@ -28,11 +28,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.0.NEXT</b>
+            <li><b>3.0.8001 (beta)</b>
             <ul>
                 - Connectivity status indicator<br>
-                - Session management<br>
+                - Session management (dedicated connectivity)<br>
                 - Redesigned resource management<br>
+                - Resource monitor dialog (work in progress - not released)<br>
                 - Important stability and performance improvements<br>
             </ul>
             <li><b>3.0.7621</b>
@@ -202,7 +203,7 @@
             <action class="com.dci.intellij.dbn.menu.action.SessionBrowserAction" text="Open Session Browser..." id="DBNavigator.Actions.MainMenu.OpenSessionBrowser" icon="/img/file/SessionBrowser.png"/>
             <action class="com.dci.intellij.dbn.menu.action.MethodExecutionHistoryAction" text="Method Execution History" id="DBNavigator.Actions.MainMenu.MethodExecutionHistory"/>
             <action class="com.dci.intellij.dbn.menu.action.PendingTransactionsAction" text="Uncommitted Changes" id="DBNavigator.Actions.MainMenu.PendingTransactions"/>
-            <action class="com.dci.intellij.dbn.menu.action.ResourceMonitorAction" text="Resource monitor" id="DBNavigator.Actions.MainMenu.ResourceMonitor"/>
+            <!--<action class="com.dci.intellij.dbn.menu.action.ResourceMonitorAction" text="Resource monitor" id="DBNavigator.Actions.MainMenu.ResourceMonitor"/>-->
             <separator/>
             <group id="DBNavigator.ActionGroup.Development" text="Development" popup="true">
                 <action id="DBNavigator.Actions.MainMenu.DevelopmentReset" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>
