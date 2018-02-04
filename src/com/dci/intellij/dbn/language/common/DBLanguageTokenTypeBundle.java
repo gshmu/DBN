@@ -177,11 +177,11 @@ public abstract class DBLanguageTokenTypeBundle {
     }
 
     private Map<String, Set<String>> parseTokenSets(Element tokenSetDefs) {
-        Map<String, Set<String>> tokenSetDef = new HashMap<>();
+        Map<String, Set<String>> tokenSetDef = new HashMap<String, Set<String>>();
         for (Object o : tokenSetDefs.getChildren()) {
             Element element = (Element) o;
             String tokenSetId = element.getAttributeValue("id");
-            Set<String> tokenIds = new HashSet<>();
+            Set<String> tokenIds = new HashSet<String>();
 
             for (String tokenId : element.getText().split(",")) {
                 if (StringUtil.isNotEmpty(tokenId)) {
