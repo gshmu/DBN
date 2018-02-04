@@ -29,7 +29,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
         super(debugName, language, false);
     }
 
-    public SimpleTokenType(SimpleTokenType source, Language language) {
+/*    public SimpleTokenType(SimpleTokenType source, Language language) {
         super(source.toString(), language);
         idx = INDEXER.incrementAndGet();
         this.id = source.id;
@@ -42,10 +42,10 @@ public class SimpleTokenType extends IElementType implements TokenType {
 
         formatting = FormattingDefinitionFactory.cloneDefinition(source.getFormatting());
         tokenPairTemplate = TokenPairTemplate.get(id);
-    }
+    }*/
 
-    public SimpleTokenType(Element element, Language language) {
-        super(element.getAttributeValue("id"), language, false);
+    public SimpleTokenType(Element element, Language language, boolean register) {
+        super(element.getAttributeValue("id"), language, register);
         idx = INDEXER.incrementAndGet();
         id = element.getAttributeValue("id");
         value = element.getAttributeValue("value");
