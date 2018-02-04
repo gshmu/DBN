@@ -1,17 +1,15 @@
 package com.dci.intellij.dbn.language.common;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-import org.jdom.Document;
-import org.jdom.Element;
-
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import gnu.trove.THashMap;
+import org.jdom.Document;
+import org.jdom.Element;
+
+import java.util.*;
 
 public abstract class DBLanguageTokenTypeBundle {
     protected final Logger log = Logger.getInstance(getClass().getName());
@@ -52,15 +50,19 @@ public abstract class DBLanguageTokenTypeBundle {
     protected void loadDefinition(Language language, Document document) {
         try {
             Element root = document.getRootElement();
-            parseTokens(root.getChild("tokens"), language);
-            parseTokenSets(root.getChild("token-sets"));
+            Element tokensElement = root.getChild("tokens");
+            Element tokenSetsElement = root.getChild("token-sets");
+            
+            Map<String, Set<String>> tokenSetIds = parseTokenSets(tokenSetsElement);
+            createTokens(tokensElement, language, tokenSetIds);
+            createTokenSets(tokenSetIds);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void parseTokens(Element tokenDefs, Language language) {
+    private void createTokens(Element tokenDefs, Language language, Map<String, Set<String>> tokenSetIds) {
         List<SimpleTokenType> keywordList = new ArrayList<SimpleTokenType>();
         List<SimpleTokenType> functionList = new ArrayList<SimpleTokenType>();
         List<SimpleTokenType> parameterList = new ArrayList<SimpleTokenType>();
@@ -70,7 +72,9 @@ public abstract class DBLanguageTokenTypeBundle {
         List<SimpleTokenType> characterList = new ArrayList<SimpleTokenType>();
         List<SimpleTokenType> operatorList = new ArrayList<SimpleTokenType>();
         for (Object o : tokenDefs.getChildren()) {
-            SimpleTokenType tokenType = new SimpleTokenType((Element) o, language);
+            Element element = (Element) o;
+            String tokenTypeId = element.getAttributeValue("id");
+            SimpleTokenType tokenType = new SimpleTokenType(element, language, isRegisteredToken(tokenSetIds, tokenTypeId));
             log.debug("Creating token type '" + tokenType.getId() + "'");
             tokenTypes.put(tokenType.getId(), tokenType);
             switch(tokenType.getCategory()) {
@@ -172,28 +176,50 @@ public abstract class DBLanguageTokenTypeBundle {
         return operators[index];
     }
 
-    private void parseTokenSets(Element tokenSetDefs) {
+    private Map<String, Set<String>> parseTokenSets(Element tokenSetDefs) {
+        Map<String, Set<String>> tokenSetDef = new HashMap<>();
         for (Object o : tokenSetDefs.getChildren()) {
             Element element = (Element) o;
-            String id = element.getAttributeValue("id");
+            String tokenSetId = element.getAttributeValue("id");
+            Set<String> tokenIds = new HashSet<>();
 
+            for (String tokenId : element.getText().split(",")) {
+                if (StringUtil.isNotEmpty(tokenId)) {
+                    tokenIds.add(tokenId.trim());
+                }
+            }
+            tokenSetDef.put(tokenSetId, tokenIds);
+        }
+        
+        return tokenSetDef;
+    }
+    
+    private void createTokenSets(Map<String, Set<String>> tokenSetIds) {
+        for (String tokenSetId : tokenSetIds.keySet()) {
+            Set<String> tokenIds = tokenSetIds.get(tokenSetId);
             List<SimpleTokenType> tokenSetList = new ArrayList<SimpleTokenType>();
-            StringTokenizer tokenizer = new StringTokenizer(element.getText(), ",");
-            while (tokenizer.hasMoreTokens()) {
-                String tokenId = tokenizer.nextToken().trim();
+            for (String tokenId : tokenIds) {
                 SimpleTokenType tokenType = tokenTypes.get(tokenId);
                 if (tokenType == null) {
                     System.out.println("DEBUG - [" + language.getID() + "] undefined token type: " + tokenId);
                 } else {
                     tokenSetList.add(tokenType);
-                }
+                }                
             }
             IElementType[] tokenSetArray = tokenSetList.toArray(new IElementType[tokenSetList.size()]);
             TokenSet tokenSet = TokenSet.create(tokenSetArray);
-            tokenSets.put(id, tokenSet);
+            tokenSets.put(tokenSetId, tokenSet);
         }
     }
 
+    private boolean isRegisteredToken(Map<String, Set<String>> tokenSetIds, String tokenId) {
+        for (Set<String> tokenIds : tokenSetIds.values()) {
+            if (tokenIds.contains(tokenId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public SimpleTokenType getTokenType(String id) {
         return tokenTypes.get(id);
