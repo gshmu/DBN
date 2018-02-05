@@ -112,6 +112,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
             inputDialog.show();
             if (inputDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                final ExecutionManager executionManager = ExecutionManager.getInstance(project);
                 final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
                 final DBSchema schema = executionInput.getSchema();
                 final CmdLineInterface cmdLineExecutable = executionInput.getCmdLineInterface();
@@ -149,6 +150,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         final LogOutputContext outputContext = new LogOutputContext(connectionHandler, sourceFile, null);
         final ExecutionManager executionManager = ExecutionManager.getInstance(project);
         int timeout = input.getExecutionTimeout();
+        executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Initializing script execution", input.isClearOutput()));
 
         try {
             new CancellableDatabaseCall<Object>(connectionHandler, null, timeout, TimeUnit.SECONDS) {
@@ -159,6 +161,8 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
                     String content = new String(sourceFile.contentsToByteArray());
                     File temporaryScriptFile = createTempScriptFile();
+
+                    executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput("Creating temporary script file " + temporaryScriptFile));
                     tempScriptFile.set(temporaryScriptFile);
 
                     DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
@@ -171,15 +175,23 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                             connectionHandler.getAuthenticationInfo()
                     );
 
+
                     FileUtil.writeToFile(temporaryScriptFile, executionInput.getTextContent());
                     if (!temporaryScriptFile.isFile() || !temporaryScriptFile.exists()) {
+                        executionManager.writeLogOutput(outputContext, LogOutput.createErrOutput("Failed to create temporary script file " + temporaryScriptFile + "."));
                         throw new IllegalStateException("Failed to create temporary script file " + temporaryScriptFile + ". Check access rights at location.");
                     }
 
                     ProcessBuilder processBuilder = new ProcessBuilder(executionInput.getCommand());
                     processBuilder.environment().putAll(executionInput.getEnvironmentVars());
                     processBuilder.redirectErrorStream(true);
-                    executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Executing command: " + executionInput.getLineCommand(), input.isClearOutput()));
+                    String password = connectionHandler.getAuthenticationInfo().getPassword();
+                    String lineCommand = executionInput.getLineCommand();
+                    if (StringUtil.isNotEmpty(password)) {
+                        lineCommand = lineCommand.replace(password, "*********");
+                    }
+                    executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput("Executing command: " + lineCommand));
+                    executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(""));
                     Process process = processBuilder.start();
 
                     outputContext.setProcess(process);
@@ -188,7 +200,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                     outputContext.setHideEmptyLines(false);
                     outputContext.start();
                     String line;
-                    executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution started", input.isClearOutput()));
+                    executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution started", false));
 
                     BufferedReader consoleReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     logReader.set(consoleReader);

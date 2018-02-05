@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -93,7 +93,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResult(final CompilerResult compilerResult) {
-        new ConditionalLaterInvocator() {
+        new SimpleLaterInvocator() {
             @Override
             protected void execute() {
                 showExecutionConsole();
@@ -104,7 +104,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResults(final List<CompilerResult> compilerResults) {
-        new ConditionalLaterInvocator() {
+        new SimpleLaterInvocator() {
             @Override
             protected void execute() {
                 showExecutionConsole();
@@ -115,7 +115,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExplainPlanResult(final ExplainPlanResult explainPlanResult) {
-        new ConditionalLaterInvocator() {
+        new SimpleLaterInvocator() {
             @Override
             protected void execute() {
                 showExecutionConsole();
@@ -126,7 +126,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void writeLogOutput(@NotNull final LogOutputContext context, final LogOutput output) {
-        new ConditionalLaterInvocator() {
+        new SimpleLaterInvocator() {
             @Override
             protected void execute() {
                 if (!context.isClosed()) {
@@ -139,7 +139,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResult(@NotNull final StatementExecutionResult executionResult) {
-        new ConditionalLaterInvocator() {
+        new SimpleLaterInvocator() {
             @Override
             protected void execute() {
                 showExecutionConsole();
@@ -180,7 +180,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
 
     public void addExecutionResult(final MethodExecutionResult executionResult) {
-        new ConditionalLaterInvocator() {
+        new SimpleLaterInvocator() {
             @Override
             protected void execute() {
                 showExecutionConsole();
@@ -191,7 +191,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void selectExecutionResult(final StatementExecutionResult executionResult) {
-        new ConditionalLaterInvocator() {
+        new SimpleLaterInvocator() {
             @Override
             protected void execute() {
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
