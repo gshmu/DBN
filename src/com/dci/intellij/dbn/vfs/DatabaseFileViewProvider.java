@@ -24,14 +24,25 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
 
     public DatabaseFileViewProvider(@NotNull PsiManager manager, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled) {
         super(manager, virtualFile, eventSystemEnabled);
-        virtualFile.putUserData(CACHED_VIEW_PROVIDER, this);
+        if (isCacheableViewProvider(virtualFile)) {
+            virtualFile.putUserData(CACHED_VIEW_PROVIDER, this);
+        }
         //virtualFile.putUserData(FREE_THREADED, true);
     }
 
     public DatabaseFileViewProvider(@NotNull PsiManager psiManager, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled, @NotNull Language language) {
         super(psiManager, virtualFile, eventSystemEnabled, language);
-        virtualFile.putUserData(CACHED_VIEW_PROVIDER, this);
+        if (isCacheableViewProvider(virtualFile)) {
+            virtualFile.putUserData(CACHED_VIEW_PROVIDER, this);
+        }
         //virtualFile.putUserData(FREE_THREADED, true);
+    }
+
+    private boolean isCacheableViewProvider(VirtualFile virtualFile) {
+        if (virtualFile instanceof DBSourceCodeVirtualFile || virtualFile instanceof DBConsoleVirtualFile || virtualFile instanceof LightVirtualFile) {
+            return false;
+        }
+        return true;
     }
 
     @Override

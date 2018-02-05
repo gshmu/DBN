@@ -18,6 +18,7 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
     public CreateRenameConsoleDialog(ConnectionHandler connectionHandler, @NotNull DBConsoleType consoleType) {
         super(connectionHandler.getProject(), "Create " + consoleType.getName(), true);
         connectionHandlerRef = connectionHandler.getRef();
+        this.consoleType = consoleType;
         getOKAction().putValue(Action.NAME, "Create");
         init();
     }
@@ -25,6 +26,7 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
     public CreateRenameConsoleDialog(ConnectionHandler connectionHandler, @NotNull DBConsoleVirtualFile console) {
         super(connectionHandler.getProject(), "Rename " + console.getType().getName(), true);
         connectionHandlerRef = connectionHandler.getRef();
+        this.console = console;
         getOKAction().putValue(Action.NAME, "Rename");
         init();
     }
