@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.language.common;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -36,13 +30,9 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
-import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
-import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
-import com.dci.intellij.dbn.vfs.DBVirtualFile;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import com.dci.intellij.dbn.vfs.*;
 import com.intellij.ide.util.EditSourceUtil;
+import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
@@ -52,18 +42,17 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.SingleRootFileViewProvider;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Set;
 
 public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, PresentableConnectionProvider, Disposable {
     private Language language;
@@ -209,6 +198,10 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
                 super.getVirtualFile() :
                 originalFile.getVirtualFile();
 
+    }
+
+    public boolean isInjectedContext() {
+        return getVirtualFile() instanceof VirtualFileWindow;
     }
 
     private FileConnectionMappingManager getConnectionMappingManager() {
