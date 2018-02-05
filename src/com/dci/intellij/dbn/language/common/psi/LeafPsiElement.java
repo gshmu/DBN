@@ -171,4 +171,19 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
     public BasePsiElement findFirstLeafPsiElement() {
         return this;
     }
+
+    @Override
+    public boolean isScopeDemarcation() {
+        return false;
+    }
+
+    @Override
+    public boolean isScopeIsolation() {
+        return false;
+    }
+
+    @Override
+    public boolean isScopeBoundary() {
+        return false;
+    }
 }
