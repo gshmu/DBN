@@ -35,13 +35,7 @@ public class StatementGutterAction extends AnAction {
         StatementExecutionManager executionManager = getExecutionManager();
         if (executionManager != null) {
             StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
-
-            if (executionProcessor == null) {
-                executionProcessor = getExecutionProcessor(true);
-                if (executionProcessor != null) {
-                    executionManager.executeStatement(executionProcessor);
-                }
-            } else {
+            if (executionProcessor != null) {
                 ExecutionContext context = executionProcessor.getExecutionContext();
                 if (context.is(EXECUTING) || context.is(QUEUED)) {
                     executionProcessor.cancelExecution();
@@ -53,6 +47,11 @@ public class StatementGutterAction extends AnAction {
                         executionProcessor.navigateToResult();
                     }
                 }
+            } else {
+                executionProcessor = getExecutionProcessor(true);
+                if (executionProcessor != null) {
+                    executionManager.executeStatement(executionProcessor);
+                }
             }
         }
     }
@@ -61,14 +60,13 @@ public class StatementGutterAction extends AnAction {
     public Icon getIcon() {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
         if (executionProcessor != null) {
-            StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
-            if (executionResult == null) {
-                ExecutionContext context = executionProcessor.getExecutionContext();
-                return
-                    context.is(EXECUTING) ? Icons.STMT_EXECUTION_STOP :
-                    context.is(QUEUED) ? Icons.STMT_EXECUTION_STOP_QUEUED :
-                            Icons.STMT_EXECUTION_RUN;
+            ExecutionContext context = executionProcessor.getExecutionContext();
+            if (context.is(EXECUTING)) return Icons.STMT_EXECUTION_STOP;
+            if (context.is(QUEUED)) return Icons.STMT_EXECUTION_STOP_QUEUED;
 
+            StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
+            if (executionResult == null)  {
+                return Icons.STMT_EXECUTION_RUN;
             } else {
                 StatementExecutionStatus executionStatus = executionResult.getExecutionStatus();
                 if (executionStatus == StatementExecutionStatus.SUCCESS){
@@ -79,11 +77,10 @@ public class StatementGutterAction extends AnAction {
                     } else {
                         return Icons.STMT_EXECUTION_INFO_RERUN;
                     }
-                } else if (executionStatus == StatementExecutionStatus.ERROR){
-                    return Icons.STMT_EXECUTION_ERROR_RERUN;
-                } else if (executionStatus == StatementExecutionStatus.WARNING){
-                    return Icons.STMT_EXECUTION_WARNING_RERUN;
                 }
+
+                if (executionStatus == StatementExecutionStatus.ERROR) return Icons.STMT_EXECUTION_ERROR_RERUN;
+                if (executionStatus == StatementExecutionStatus.WARNING) return Icons.STMT_EXECUTION_WARNING_RERUN;
             }
         }
 
