@@ -76,6 +76,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                     explainPlanResult = new ExplainPlanResult(executable, e.getMessage());
                 } finally {
                     ConnectionUtil.close(resultSet);
+                    ConnectionUtil.close(statement);
                     ConnectionUtil.rollback(connection);
                     connectionHandler.freePoolConnection(connection);
                 }
