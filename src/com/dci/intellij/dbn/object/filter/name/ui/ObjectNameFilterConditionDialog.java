@@ -71,6 +71,6 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
     public void dispose() {
         super.dispose();
         parentCondition = null;
-        condition = null;
+        //condition = null;
     }
 }
