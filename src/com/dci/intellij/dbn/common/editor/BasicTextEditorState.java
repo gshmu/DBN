@@ -92,7 +92,12 @@ public class BasicTextEditorState implements FileEditorState {
         if(FileEditorStateLevel.FULL == level) {
             selectionStart = selectionModel.getSelectionStart();
             selectionEnd = selectionModel.getSelectionEnd();
+            Project project = editor.getProject();
+            if (project != null && !editor.isDisposed()) {
+                foldingState = CodeFoldingManager.getInstance(project).saveFoldingState(editor);
+            }
 
+/*
             new WriteActionRunner() {
                 @Override
                 public void run() {
@@ -109,6 +114,7 @@ public class BasicTextEditorState implements FileEditorState {
                     }
                 }
             }.start();
+*/
         }
         verticalScrollProportion = level != FileEditorStateLevel.UNDO ? EditorUtil.calcVerticalScrollProportion(editor) : -1F;
     }
