@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.execution.statement;
 
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -10,6 +14,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.ExecutionContext;
+import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -24,10 +29,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class StatementExecutionInput extends LocalExecutionInput {
     private StatementExecutionProcessor executionProcessor;
@@ -53,7 +54,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
             connectionHandler = FailsafeUtil.get(connectionHandler);
-            getOptions().setEnableLogging(connectionHandler.isLoggingEnabled());
+            getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
         }
     }
 
@@ -176,7 +177,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
         this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
-            getOptions().setEnableLogging(connectionHandler.isLoggingEnabled());
+            getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
         }
     }
 

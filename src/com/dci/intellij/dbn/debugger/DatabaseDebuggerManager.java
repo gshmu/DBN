@@ -421,7 +421,10 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         DBSchema schema = schemaObject.getSchema();
         DBObjectStatusHolder objectStatus = schemaObject.getStatus();
         if (!schema.isPublicSchema() && !schema.isSystemSchema() && schemaObject.is(DBObjectProperty.DEBUGABLE) && !objectStatus.is(DBObjectStatus.DEBUG)) {
-            compileList.add(schemaObject);
+            if (!compileList.contains(schemaObject)) {
+                compileList.add(schemaObject);
+            }
+
             return true;
         }
         return false;

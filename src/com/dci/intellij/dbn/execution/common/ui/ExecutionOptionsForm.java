@@ -1,9 +1,28 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.ui.*;
+import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.ValueSelector;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
@@ -12,21 +31,11 @@ import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.util.Disposer;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent> {
     private JPanel mainPanel;
@@ -82,14 +91,14 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         autoCommitLabel.setConnectionHandler(connectionHandler);
 
         ExecutionOptions options = executionInput.getOptions();
-        commitCheckBox.setSelected(options.isCommitAfterExecution());
+        commitCheckBox.setSelected(options.is(ExecutionOption.COMMIT_AFTER_EXECUTION));
         commitCheckBox.setEnabled(!connectionHandler.isAutoCommit());
 
         commitCheckBox.addActionListener(actionListener);
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler) && executionInput.isDatabaseLogProducer()) {
             enableLoggingCheckBox.setEnabled(!debuggerType.isDebug());
-            enableLoggingCheckBox.setSelected(!debuggerType.isDebug() && options.isEnableLogging());
+            enableLoggingCheckBox.setSelected(!debuggerType.isDebug() && options.is(ExecutionOption.ENABLE_LOGGING));
             DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
             String databaseLogName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();
             if (StringUtil.isNotEmpty(databaseLogName)) {
@@ -125,8 +134,8 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
     public void updateExecutionInput() {
         ExecutionOptions options = executionInput.getOptions();
         //options.setUsePoolConnection(usePoolConnectionCheckBox.isSelected());
-        options.setCommitAfterExecution(commitCheckBox.isSelected());
-        options.setEnableLogging(enableLoggingCheckBox.isSelected());
+        options.set(ExecutionOption.COMMIT_AFTER_EXECUTION, commitCheckBox.isSelected());
+        options.set(ExecutionOption.ENABLE_LOGGING, enableLoggingCheckBox.isSelected());
         //DBSchema schema = (DBSchema) schemaList.getSelectedValue();
         //executionInput.setExecutionSchema(schema);
     }

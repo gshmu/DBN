@@ -47,10 +47,8 @@ public class DatasetLoadInstructions extends PropertyHolderImpl<DatasetLoadInstr
         set(DatasetLoadInstruction.REBUILD, value);
     }
 
-    public DatasetLoadInstructions clone( ) {
-        DatasetLoadInstructions clone = new DatasetLoadInstructions();
-        clone.computed = this.computed;
-        return clone;
+    @Override
+    public DatasetLoadInstructions clone() {
+        return (DatasetLoadInstructions) super.clone();
     }
-
 }

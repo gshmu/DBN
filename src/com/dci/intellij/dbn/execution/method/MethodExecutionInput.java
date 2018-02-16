@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.execution.method;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -8,6 +16,7 @@ import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
+import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
@@ -21,14 +30,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 public class MethodExecutionInput extends LocalExecutionInput implements Comparable<MethodExecutionInput> {
     private DBObjectRef<DBMethod> methodRef;
@@ -43,7 +44,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         targetSchemaRef = new DBObjectRef<DBSchema>();
 
         ExecutionOptions options = getOptions();
-        options.setCommitAfterExecution(true);
+        options.set(ExecutionOption.COMMIT_AFTER_EXECUTION, true);
         //setSessionId(SessionId.POOL);
     }
 
@@ -54,7 +55,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
             ConnectionHandler connectionHandler = FailsafeUtil.get(method.getConnectionHandler());
-            getOptions().setEnableLogging(connectionHandler.isLoggingEnabled());
+            getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
         }
     }
 
