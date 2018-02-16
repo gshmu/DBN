@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.common.property;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 
-public abstract class PropertyHolderImpl<T extends Property> extends DisposableBase implements PropertyHolder<T>{
-    protected int computed = 0;
+public abstract class PropertyHolderImpl<T extends Property> extends DisposableBase implements PropertyHolder<T>, Cloneable{
+    private int computed = 0;
 
     public PropertyHolderImpl() {
         for (T property : getProperties()) {
@@ -99,5 +99,14 @@ public abstract class PropertyHolderImpl<T extends Property> extends DisposableB
             }
         }
         return builder.toString();
+    }
+
+    @Override
+    public PropertyHolderImpl clone() {
+        try {
+            return (PropertyHolderImpl) super.clone();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

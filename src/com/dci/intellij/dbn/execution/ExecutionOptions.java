@@ -1,29 +1,16 @@
 package com.dci.intellij.dbn.execution;
 
-public class ExecutionOptions implements Cloneable{
-    private boolean enableLogging = false;
-    private boolean commitAfterExecution = false;
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
-    public boolean isEnableLogging() {
-        return enableLogging;
+public class ExecutionOptions extends PropertyHolderImpl<ExecutionOption>{
+
+    @Override
+    protected ExecutionOption[] getProperties() {
+        return ExecutionOption.values();
     }
 
-    public void setEnableLogging(boolean enableLogging) {
-        this.enableLogging = enableLogging;
-    }
-
-    public boolean isCommitAfterExecution() {
-        return commitAfterExecution;
-    }
-
-    public void setCommitAfterExecution(boolean commitAfterExecution) {
-        this.commitAfterExecution = commitAfterExecution;
-    }
-
+    @Override
     public ExecutionOptions clone() {
-        ExecutionOptions clone = new ExecutionOptions();
-        clone.enableLogging = enableLogging;
-        clone.commitAfterExecution = commitAfterExecution;
-        return clone;
+        return (ExecutionOptions) super.clone();
     }
 }

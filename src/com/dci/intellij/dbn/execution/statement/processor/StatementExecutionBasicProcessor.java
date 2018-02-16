@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
+import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
@@ -290,6 +291,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                         executionException = e;
                         executionResult = createErrorExecutionResult(e.getMessage());
                         executionResult.calculateExecDuration();
+                        consumeLoggerOutput(context);
                     }
                 } finally {
                     disableLogging(context);
@@ -368,7 +370,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     private void initLogging(ExecutionContext context, boolean debug) {
         boolean logging = false;
-        if (!debug && executionInput.getOptions().isEnableLogging() && executionInput.isDatabaseLogProducer()) {
+        if (!debug && executionInput.getOptions().is(ExecutionOption.ENABLE_LOGGING) && executionInput.isDatabaseLogProducer()) {
             ConnectionHandler connectionHandler = getTargetConnection();
             DBNConnection connection = context.getConnection();
 

@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution;
 
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -8,7 +10,8 @@ import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
+import static com.dci.intellij.dbn.execution.ExecutionOption.COMMIT_AFTER_EXECUTION;
+import static com.dci.intellij.dbn.execution.ExecutionOption.ENABLE_LOGGING;
 
 public abstract class LocalExecutionInput extends ExecutionInput{
     private ExecutionOptions options = new ExecutionOptions();
@@ -21,7 +24,7 @@ public abstract class LocalExecutionInput extends ExecutionInput{
         if (connectionHandler != null) {
             if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
                 connectionHandler = FailsafeUtil.get(connectionHandler);
-                options.setEnableLogging(connectionHandler.isLoggingEnabled());
+                options.set(ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
             }
         }
     }
@@ -60,14 +63,14 @@ public abstract class LocalExecutionInput extends ExecutionInput{
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
         targetSessionId = CommonUtil.nvl(SessionId.get(element.getAttributeValue("session-id")), targetSessionId);
-        options.setEnableLogging(SettingsUtil.getBooleanAttribute(element, "enable-logging", true));
-        options.setCommitAfterExecution(SettingsUtil.getBooleanAttribute(element, "commit-after-execution", true));
+        options.set(ENABLE_LOGGING, SettingsUtil.getBooleanAttribute(element, "enable-logging", true));
+        options.set(COMMIT_AFTER_EXECUTION, SettingsUtil.getBooleanAttribute(element, "commit-after-execution", true));
     }
 
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         element.setAttribute("session-id", targetSessionId.id());
-        SettingsUtil.setBooleanAttribute(element, "enable-logging", options.isEnableLogging());
-        SettingsUtil.setBooleanAttribute(element, "commit-after-execution", options.isCommitAfterExecution());
+        SettingsUtil.setBooleanAttribute(element, "enable-logging", options.is(ENABLE_LOGGING));
+        SettingsUtil.setBooleanAttribute(element, "commit-after-execution", options.is(COMMIT_AFTER_EXECUTION));
     }
 }
