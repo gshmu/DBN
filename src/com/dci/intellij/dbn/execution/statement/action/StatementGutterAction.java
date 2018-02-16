@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.action;
 
 import javax.swing.Icon;
+import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +14,8 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCurs
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -21,40 +24,77 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
 
 public class StatementGutterAction extends AnAction {
-    private final transient ExecutablePsiElement executablePsiElement;
+    private final WeakReference<DBLanguagePsiFile> psiFile;
+    private final int elementOffset;
+
 
     public StatementGutterAction(ExecutablePsiElement executablePsiElement) {
-        this.executablePsiElement = executablePsiElement;
+        psiFile = new WeakReference<DBLanguagePsiFile>(executablePsiElement.getFile());
+        elementOffset = executablePsiElement.getTextOffset();
     }
 
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        StatementExecutionManager executionManager = getExecutionManager();
-        if (executionManager != null) {
-            StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
-            if (executionProcessor != null) {
-                ExecutionContext context = executionProcessor.getExecutionContext();
-                if (context.is(EXECUTING) || context.is(QUEUED)) {
-                    executionProcessor.cancelExecution();
-                } else {
-                    StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
-                    if (executionResult == null || !(executionProcessor instanceof StatementExecutionCursorProcessor) || executionProcessor.isDirty()) {
-                        executionManager.executeStatement(executionProcessor);
-                    } else {
-                        executionProcessor.navigateToResult();
-                    }
-                }
-            } else {
-                executionProcessor = getExecutionProcessor(true);
-                if (executionProcessor != null) {
-                    executionManager.executeStatement(executionProcessor);
+
+    @Nullable
+    private DBLanguagePsiFile getPsiFile() {
+        DBLanguagePsiFile languagePsiFile = psiFile.get();
+        if (languagePsiFile != null && !languagePsiFile.isValid()) {
+            languagePsiFile = null;
+        }
+        return languagePsiFile;
+    }
+
+    @Nullable
+    private ExecutablePsiElement getExecutablePsiElement() {
+        DBLanguagePsiFile psiFile = getPsiFile();
+        if (psiFile != null) {
+            PsiElement elementAtOffset = psiFile.findElementAt(elementOffset);
+            if (elementAtOffset != null && !(elementAtOffset instanceof BasePsiElement)) {
+                elementAtOffset = elementAtOffset.getParent();
+            }
+            if (elementAtOffset instanceof ExecutablePsiElement) {
+                return (ExecutablePsiElement) elementAtOffset;
+            } else if (elementAtOffset instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
+                ExecutablePsiElement executablePsiElement = basePsiElement.findEnclosingPsiElement(ExecutablePsiElement.class);
+                if (executablePsiElement != null && executablePsiElement.isValid()) {
+                    return executablePsiElement;
                 }
             }
         }
+        return null;
     }
+
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
+        if (executionProcessor != null) {
+            Project project = executionProcessor.getProject();
+            StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
+            ExecutionContext context = executionProcessor.getExecutionContext();
+            if (context.is(EXECUTING) || context.is(QUEUED)) {
+                executionProcessor.cancelExecution();
+            } else {
+                StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
+                if (executionResult == null || !(executionProcessor instanceof StatementExecutionCursorProcessor) || executionProcessor.isDirty()) {
+                    executionManager.executeStatement(executionProcessor);
+                } else {
+                    executionProcessor.navigateToResult();
+                }
+            }
+        } else {
+            executionProcessor = getExecutionProcessor(true);
+            if (executionProcessor != null) {
+                Project project = executionProcessor.getProject();
+                StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
+                executionManager.executeStatement(executionProcessor);
+            }
+        }
+    }
+
 
     @NotNull
     public Icon getIcon() {
@@ -89,30 +129,22 @@ public class StatementGutterAction extends AnAction {
     }
 
     @Nullable
-    private StatementExecutionManager getExecutionManager() {
-        if (executablePsiElement.isValid()) {
-            Project project = executablePsiElement.getProject();
-            return StatementExecutionManager.getInstance(project);
-        } else {
-            return null;
-        }
-    }
-
-    @Nullable
     private StatementExecutionProcessor getExecutionProcessor(boolean create) {
-        StatementExecutionManager executionManager = getExecutionManager();
-        if (executionManager != null) {
-            Document document = DocumentUtil.getDocument(executablePsiElement.getFile());
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(executablePsiElement.getProject());
+        DBLanguagePsiFile psiFile = getPsiFile();
+        ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
+        if (psiFile != null && executablePsiElement != null) {
+            Project project = psiFile.getProject();
+            Document document = DocumentUtil.getDocument(psiFile);
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
             FileEditor[] selectedEditors = fileEditorManager.getSelectedEditors();
             for (FileEditor fileEditor : selectedEditors) {
                 Editor editor = EditorUtil.getEditor(fileEditor);
                 if (editor != null) {
                     if (editor.getDocument() == document) {
+                        StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
                         return executionManager.getExecutionProcessor(fileEditor, executablePsiElement, create);
                     }
                 }
-
             }
         }
         return null;
