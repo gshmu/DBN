@@ -1,17 +1,18 @@
 package com.dci.intellij.dbn.data.value;
 
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import oracle.jdbc.OracleCallableStatement;
-import oracle.jdbc.OracleResultSet;
-import oracle.sql.OPAQUE;
-import oracle.xdb.XMLType;
-import org.jetbrains.annotations.Nullable;
-
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import oracle.jdbc.OracleCallableStatement;
+import oracle.jdbc.OracleResultSet;
+import oracle.sql.OPAQUE;
+import oracle.xdb.XMLType;
 
 public class XmlTypeValue extends LargeObjectValue{
     private XMLType xmlType;
@@ -30,6 +31,10 @@ public class XmlTypeValue extends LargeObjectValue{
     }
 
     public XmlTypeValue(ResultSet resultSet, int columnIndex) throws SQLException {
+        if (resultSet instanceof DBNResultSet) {
+            DBNResultSet dbnResultSet = (DBNResultSet) resultSet;
+            resultSet = dbnResultSet.getInner();
+        }
         OracleResultSet oracleResultSet = (OracleResultSet) resultSet;
         OPAQUE opaque = oracleResultSet.getOPAQUE(columnIndex);
         if (opaque instanceof XMLType) {
@@ -62,6 +67,11 @@ public class XmlTypeValue extends LargeObjectValue{
 
     @Override
     public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
+        if (resultSet instanceof DBNResultSet) {
+            DBNResultSet dbnResultSet = (DBNResultSet) resultSet;
+            resultSet = dbnResultSet.getInner();
+        }
+
         OracleResultSet oracleResultSet = (OracleResultSet) resultSet;
         xmlType = value == null ? null : XMLType.createXML(connection, value);
         oracleResultSet.updateOracleObject(columnIndex, xmlType);
