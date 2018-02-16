@@ -90,4 +90,8 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
     public void cancel() {
         cancelled.change(true);
     }
+
+    public T getInner() {
+        return inner;
+    }
 }
