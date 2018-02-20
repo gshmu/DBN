@@ -255,8 +255,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public void disconnect() {}
     @Override
     public void ping(boolean check) {}
-    @Override
-    public int getIdleMinutes() {return 0;}
 
     @Override
     public ConnectionHandlerRef getRef() {

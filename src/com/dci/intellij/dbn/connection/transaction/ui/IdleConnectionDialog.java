@@ -27,7 +27,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
         super(connectionHandler.getProject(), "Idle connection", true, TimeUtil.getSeconds(5));
         this.connectionHandlerRef = connectionHandler.getRef();
         this.connection = connection;
-        idleConnectionDialogForm = new IdleConnectionDialogForm(connectionHandler, 5);
+        idleConnectionDialogForm = new IdleConnectionDialogForm(connectionHandler, connection, 5);
         DisposerUtil.register(this, idleConnectionDialogForm);
         setModal(false);
         init();

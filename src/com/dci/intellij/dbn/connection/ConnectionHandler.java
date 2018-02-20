@@ -130,8 +130,6 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
 
     boolean isConnected(SessionId sessionId);
 
-    int getIdleMinutes();
-
     ConnectionHandlerRef getRef();
 
     DatabaseInfo getDatabaseInfo();
