@@ -436,7 +436,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             for (final DBNConnection connection : activeConnections) {
                 if (connection.isIdle() && connection.isNot(ResourceStatus.RESOLVING_TRANSACTION)) {
 
-                    int idleMinutes = connectionHandler.getIdleMinutes();
+                    int idleMinutes = connection.getIdleMinutes();
                     int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
                     if (idleMinutes > idleMinutesToDisconnect) {
                         if (connection.hasDataChanges()) {

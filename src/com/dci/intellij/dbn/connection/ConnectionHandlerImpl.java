@@ -279,11 +279,6 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @Override
-    public int getIdleMinutes() {
-        return connectionPool == null ? 0 : connectionPool.getIdleMinutes();
-    }
-
-    @Override
     public ConnectionHandlerRef getRef() {
         return ref;
     }

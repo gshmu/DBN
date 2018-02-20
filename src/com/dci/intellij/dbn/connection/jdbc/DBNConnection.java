@@ -26,6 +26,7 @@ public class DBNConnection extends DBNConnectionBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private ConnectionType type;
     private ConnectionId id;
+    private String sessionName;
 
     private long lastAccess;
     private Set<DBNStatement> statements = new HashSet<DBNStatement>();
@@ -89,6 +90,7 @@ public class DBNConnection extends DBNConnectionBase {
         super(connection);
         this.type = type;
         this.id = id;
+        this.sessionName = type.getName();
     }
 
     protected <S extends Statement> S wrap(S statement) {
@@ -136,6 +138,15 @@ public class DBNConnection extends DBNConnectionBase {
 
     public ConnectionType getType() {
         return type;
+    }
+
+
+    public String getSessionName() {
+        return sessionName;
+    }
+
+    public void setSessionName(String sessionName) {
+        this.sessionName = sessionName;
     }
 
     public boolean isPoolConnection() {
