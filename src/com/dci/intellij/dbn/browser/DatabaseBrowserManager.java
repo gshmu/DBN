@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.browser;
 
+import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
@@ -7,6 +15,7 @@ import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.browser.ui.BrowserToolWindowForm;
+import com.dci.intellij.dbn.browser.ui.DatabaseBrowserForm;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -29,21 +38,21 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
-import com.intellij.openapi.components.*;
-import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
+import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.tree.TreePath;
-import java.util.ArrayList;
-import java.util.List;
 
 @State(
     name = "DBNavigator.Project.DatabaseBrowserManager",
@@ -120,19 +129,31 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return "DB Browser";
     }
 
-    public void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean focus, boolean scroll) {
-        ToolWindow toolWindow = getBrowserToolWindow();
+    public void navigateToElement(@Nullable final BrowserTreeNode treeNode, final boolean focus, final boolean scroll) {
+        new SimpleLaterInvocator() {
+            @Override
+            protected void execute() {
+                ToolWindow toolWindow = getBrowserToolWindow();
 
-        toolWindow.show(null);
-        if (treeNode != null) {
-            getToolWindowForm().getBrowserForm().selectElement(treeNode, focus, scroll);
-        }
+                toolWindow.show(null);
+                if (treeNode != null) {
+                    DatabaseBrowserForm browserForm = getToolWindowForm().getBrowserForm();
+                    browserForm.selectElement(treeNode, focus, scroll);
+                }
+            }
+        }.start();
     }
 
-    public void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean scroll) {
-        if (treeNode != null) {
-            getToolWindowForm().getBrowserForm().selectElement(treeNode, false, scroll);
-        }
+    public void navigateToElement(@Nullable final BrowserTreeNode treeNode, final boolean scroll) {
+        new SimpleLaterInvocator() {
+            @Override
+            protected void execute() {
+                if (treeNode != null) {
+                    DatabaseBrowserForm browserForm = getToolWindowForm().getBrowserForm();
+                    browserForm.selectElement(treeNode, false, scroll);
+                }
+            }
+        }.start();
     }
 
     public boolean isVisible() {
@@ -239,8 +260,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
             if (scroll()) {
-                VirtualFile newFile = event.getNewFile();
                 VirtualFile oldFile = event.getOldFile();
+                VirtualFile newFile = event.getNewFile();
 
                 if (oldFile != null && !oldFile.equals(newFile)) {
                     if (newFile instanceof DBEditableObjectVirtualFile) {
