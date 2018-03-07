@@ -59,6 +59,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
@@ -449,7 +450,17 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                 actionGroup,
                 SimpleDataContext.getProjectContext(null),
                 JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                true);
+                true,
+                null,
+                1000,
+                new Condition<AnAction>() {
+                    @Override
+                    public boolean value(AnAction anAction) {
+                        SelectConnectionAction selectConnectionAction = (SelectConnectionAction) anAction;
+                        return selectConnectionAction.isSelected();
+                    }
+                },
+                null);
 
         popupBuilder.showCenteredInCurrentWindow(project);
     }
@@ -487,6 +498,16 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                 }
 
             }
+        }
+
+        public boolean isSelected() {
+            DBLanguagePsiFile file = fileRef.get();
+            if (file != null) {
+                ConnectionHandler connectionHandler = file.getConnectionHandler();
+                return connectionHandler != null && connectionHandler.getId().equals(getConnectionHandler().getId());
+            }
+            return false;
+
         }
     }
 
@@ -528,7 +549,17 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                         actionGroup,
                         SimpleDataContext.getProjectContext(null),
                         JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                        true);
+                        true,
+                        null,
+                        1000,
+                        new Condition<AnAction>() {
+                            @Override
+                            public boolean value(AnAction anAction) {
+                                SelectSchemaAction selectSchemaAction = (SelectSchemaAction) anAction;
+                                return selectSchemaAction.isSelected();
+                            }
+                        },
+                        null);
 
                 popupBuilder.showCenteredInCurrentWindow(getProject());
             }
@@ -555,6 +586,15 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                     callback.start();
                 }
             }
+        }
+
+        public boolean isSelected() {
+            DBLanguagePsiFile file = fileRef.get();
+            if (file != null) {
+                DBSchema fileSchema = file.getDatabaseSchema();
+                return fileSchema != null && fileSchema.equals(getObject());
+            }
+            return false;
         }
     }
 

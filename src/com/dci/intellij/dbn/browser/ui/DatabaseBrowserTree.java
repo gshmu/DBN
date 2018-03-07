@@ -117,7 +117,7 @@ public class DatabaseBrowserTree extends DBNTree {
 
     }
 
-    public synchronized void scrollToSelectedElement() {
+    public void scrollToSelectedElement() {
         if (getProject().isOpen() && targetSelection != null) {
             targetSelection = (BrowserTreeNode) targetSelection.getUndisposedElement();
             TreePath treePath = DatabaseBrowserUtils.createTreePath(targetSelection);
