@@ -28,7 +28,7 @@ public class DatabaseFileViewProviderFactory implements FileViewProviderFactory{
             }
             return viewProvider;
         } else{
-            return new SingleRootFileViewProvider(manager, file);
+            return new SingleRootFileViewProvider(manager, file, eventSystemEnabled);
         }
     }
 }
