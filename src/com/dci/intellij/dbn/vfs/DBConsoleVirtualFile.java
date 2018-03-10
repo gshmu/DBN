@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.vfs;
 
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
@@ -30,13 +42,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.LocalTimeCounter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.List;
 
 public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentListener, DBParseableVirtualFile, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -152,9 +157,10 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
     @NotNull
     @Override
     protected String createPath() {
+        ConnectionHandler connectionHandler = getConnectionHandler();
         switch (type) {
-            case STANDARD: return DatabaseFileSystem.createPath(getConnectionHandler()) + " CONSOLE - " + name;
-            case DEBUG: return DatabaseFileSystem.createPath(getConnectionHandler()) + " DEBUG CONSOLE - " + name;
+            case STANDARD: return DatabaseFileSystem.createPath(connectionHandler) + "consoles" + File.separatorChar + name;
+            case DEBUG: return DatabaseFileSystem.createPath(connectionHandler) + "debug consoles" + File.separatorChar + name;
         }
         throw new IllegalArgumentException("Unsupported console type " + type);
     }
@@ -162,9 +168,10 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
     @NotNull
     @Override
     protected String createUrl() {
+        ConnectionHandler connectionHandler = getConnectionHandler();
         switch (type) {
-            case STANDARD: return DatabaseFileSystem.createUrl(getConnectionHandler()) + "/console#" + name;
-            case DEBUG: return DatabaseFileSystem.createUrl(getConnectionHandler()) + "/console#" + name;
+            case STANDARD: return DatabaseFileSystem.createUrl(connectionHandler) + "/console#" + name;
+            case DEBUG: return DatabaseFileSystem.createUrl(connectionHandler) + "/console#" + name;
         }
         throw new IllegalArgumentException("Unsupported console type " + type);
     }
