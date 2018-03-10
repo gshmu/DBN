@@ -632,8 +632,11 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                         new Condition<AnAction>() {
                             @Override
                             public boolean value(AnAction anAction) {
-                                SessionSelectAction sessionSelectAction = (SessionSelectAction) anAction;
-                                return sessionSelectAction.isSelected();
+                                if (anAction instanceof SessionSelectAction) {
+                                    SessionSelectAction sessionSelectAction = (SessionSelectAction) anAction;
+                                    return sessionSelectAction.isSelected();
+                                }
+                                return false;
                             }
                         },
                         null);
