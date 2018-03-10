@@ -58,7 +58,7 @@ public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implem
     @NotNull
     @Override
     protected String createPath() {
-        return DatabaseFileSystem.createPath(getConnectionHandler()) + " SESSION_BROWSER_STATEMENT";
+        return DatabaseFileSystem.createPath(getConnectionHandler()) + ".STATEMENT";
 
     }
 

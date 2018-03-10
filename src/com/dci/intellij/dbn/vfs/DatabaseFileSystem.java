@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -163,26 +164,29 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     @NotNull
     public static String createPath(DBObjectRef objectRef, DBContentType contentType) {
         StringBuilder buffer = new StringBuilder(objectRef.getFileName());
-        DBObjectRef parent = objectRef.getParent();
-        while (parent != null) {
-            buffer.insert(0, '.');
-            buffer.insert(0, parent.getObjectName());
-            parent = parent.getParent();
+        DBObjectRef parentRef = objectRef.getParent();
+        while (parentRef != null) {
+            buffer.insert(0, File.separatorChar);
+            buffer.insert(0, parentRef.getObjectName());
+            parentRef = parentRef.getParent();
         }
-        buffer.insert(0, " - ");
-        if (contentType == DBContentType.CODE_SPEC) {
-            buffer.insert(0, " SPEC");
-        }
-
-        if (contentType == DBContentType.CODE_BODY) {
-            buffer.insert(0, " BODY");
-        }
-
-        buffer.insert(0, objectRef.getObjectType().getName().toUpperCase());
-        buffer.insert(0, "] ");
+        buffer.insert(0, File.separatorChar);
+        buffer.insert(0, objectRef.getObjectType().getListName());
+        buffer.insert(0, ']');
         ConnectionHandler connectionHandler = objectRef.lookupConnectionHandler();
         buffer.insert(0, connectionHandler == null ? "UNKNOWN" : connectionHandler.getName());
         buffer.insert(0, '[');
+        if (contentType != null) {
+            buffer.append('.');
+            switch (contentType) {
+                case CODE: buffer.append("CODE"); break;
+                case DATA: buffer.append("DATA"); break;
+                case CODE_SPEC: buffer.append("SPEC"); break;
+                case CODE_BODY: buffer.append("BODY"); break;
+                case CODE_SPEC_AND_BODY: buffer.append("CODE"); break;
+                case CODE_AND_DATA: buffer.append("CODE_AND_DATA"); break;
+            }
+        }
 
         return buffer.toString();
     }
@@ -192,13 +196,11 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         StringBuilder buffer = new StringBuilder(objectList.getName());
         GenericDatabaseElement parent = objectList.getParentElement();
         while (parent != null) {
-            buffer.insert(0, '.');
+            buffer.insert(0, File.separatorChar);
             buffer.insert(0, parent.getName());
             parent = parent.getParentElement();
         }
-        buffer.insert(0, " - ");
 
-        buffer.insert(0, objectList.getName().toUpperCase() + "LIST");
         buffer.insert(0, "] ");
         ConnectionHandler connectionHandler = objectList.getConnectionHandler();
         buffer.insert(0, connectionHandler == null ? "UNKNOWN" : connectionHandler.getName());
@@ -209,21 +211,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
     @NotNull
     public static String createPath(DBObjectRef objectRef) {
-        StringBuilder buffer = new StringBuilder(objectRef.getFileName());
-        DBObjectRef parent = objectRef.getParent();
-        while (parent != null) {
-            buffer.insert(0, '.');
-            buffer.insert(0, parent.getObjectName());
-            parent = parent.getParent();
-        }
-        buffer.insert(0, " - ");
-        buffer.insert(0, objectRef.getObjectType().getName().toUpperCase());
-        buffer.insert(0, "] ");
-        ConnectionHandler connectionHandler = objectRef.lookupConnectionHandler();
-        buffer.insert(0, connectionHandler == null ? "UNKNOWN" : connectionHandler.getName());
-        buffer.insert(0, '[');
-
-        return buffer.toString();
+        return createPath(objectRef, null);
     }
 
     @NotNull

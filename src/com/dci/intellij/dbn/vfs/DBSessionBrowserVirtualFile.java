@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.vfs;
 
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -9,12 +20,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.LocalTimeCounter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.io.*;
-import java.nio.charset.Charset;
 
 public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Comparable<DBSessionBrowserVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -24,7 +29,7 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     public DBSessionBrowserVirtualFile(ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject());
         this.connectionHandlerRef = connectionHandler.getRef();
-        this.name = connectionHandler.getName();
+        this.name = connectionHandler.getName() + " Sessions";
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
 
@@ -62,7 +67,7 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     @NotNull
     @Override
     protected String createPath() {
-        return DatabaseFileSystem.createPath(getConnectionHandler()) + " SESSION BROWSER - " + name;
+        return DatabaseFileSystem.createPath(getConnectionHandler()) + "sessions" + File.separatorChar + name;
 
     }
 
