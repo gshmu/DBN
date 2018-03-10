@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.options.ui;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -11,16 +12,12 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 
-import javax.swing.AbstractButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -48,7 +45,7 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
     }
 
     public final E getConfiguration() {
-        return configuration;
+        return FailsafeUtil.get(configuration);
     }
 
     public abstract void applyFormChanges() throws ConfigurationException;
