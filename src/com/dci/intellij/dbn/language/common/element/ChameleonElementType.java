@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.common.element;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -24,12 +20,16 @@ import com.intellij.lang.PsiParser;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.ILazyParseableElementType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class ChameleonElementType extends ILazyParseableElementType implements ElementType, TokenType {
     private int uniqueIndex;
     private DBLanguageDialect parentLanguage;
     public ChameleonElementType(DBLanguageDialect language,DBLanguageDialect parentLanguage) {
-        super("chameleon (" + language.getDisplayName() + ")", language);
+        super("chameleon (" + language.getDisplayName() + ")", language, false);
         this.parentLanguage = parentLanguage;
         uniqueIndex = INDEXER.incrementAndGet();
     }
