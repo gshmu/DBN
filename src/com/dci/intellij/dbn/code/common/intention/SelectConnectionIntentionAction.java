@@ -25,7 +25,7 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction impl
     }
 
     public Icon getIcon(int flags) {
-        return Icons.CONNECTION_ACTIVE;
+        return Icons.FILE_CONNECTION_MAPPING;
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
