@@ -26,7 +26,7 @@ public class SelectSchemaIntentionAction extends GenericIntentionAction implemen
     }
 
     public Icon getIcon(int flags) {
-        return Icons.FILE_SCHEMA_MAPPING;
+        return Icons.DBO_SCHEMA;
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
