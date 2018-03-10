@@ -4,8 +4,10 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -13,10 +15,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 
-public class SelectConnectionIntentionAction extends GenericIntentionAction implements LowPriorityAction {
+public class SelectSessionIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     @NotNull
     public String getText() {
-        return "Select connection...";
+        return "Select current session...";
     }
 
     @NotNull
@@ -25,15 +27,19 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction impl
     }
 
     public Icon getIcon(int flags) {
-        return Icons.CONNECTION_ACTIVE;
+        return Icons.SESSION_CUSTOM;
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
-            if (virtualFile != null && virtualFile.isInLocalFileSystem()) {
-                //DBLanguageFile file = (DBLanguageFile) psiFile;
-                return true;
+            if (virtualFile != null && (virtualFile.isInLocalFileSystem() || virtualFile instanceof DBConsoleVirtualFile) ) {
+                DBLanguagePsiFile file = (DBLanguagePsiFile) psiFile;
+                ConnectionHandler connectionHandler = file.getConnectionHandler();
+                return
+                    connectionHandler != null &&
+                    !connectionHandler.isVirtual() &&
+                    connectionHandler.getSettings().getDetailSettings().isEnableSessionManagement();
             }
         }
         return false;
@@ -43,10 +49,9 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction impl
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            connectionMappingManager.promptConnectionSelector(dbLanguageFile, true, true, false, null);
+            connectionMappingManager.promptSessionSelector(dbLanguageFile, null);
         }
     }
-
 
     public boolean startInWriteAction() {
         return false;

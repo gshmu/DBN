@@ -23,12 +23,14 @@ import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
+import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.editor.ui.DBLanguageFileEditorToolbarForm;
@@ -56,6 +58,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -595,6 +598,112 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                 return fileSchema != null && fileSchema.equals(getObject());
             }
             return false;
+        }
+    }
+
+    /***************************************************
+     *             Select schema popup                 *
+     ***************************************************/
+    public void promptSessionSelector(final DBLanguagePsiFile psiFile, final RunnableTask callback) throws IncorrectOperationException {
+        new ConnectionAction("selecting the current session", psiFile) {
+            @Override
+            protected void execute() {
+                DefaultActionGroup actionGroup = new DefaultActionGroup();
+
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                if (!connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
+                    List<DatabaseSession> sessions = connectionHandler.getSessionBundle().getSessions();
+                    for (DatabaseSession session : sessions) {
+                        SessionSelectAction sessionAction = new SessionSelectAction(psiFile, session, callback);
+                        actionGroup.add(sessionAction);
+                    }
+                    actionGroup.addSeparator();
+                    actionGroup.add(new SessionCreateAction(psiFile, connectionHandler));
+                }
+
+                ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
+                        "Select Session",
+                        actionGroup,
+                        SimpleDataContext.getProjectContext(null),
+                        JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                        true,
+                        null,
+                        1000,
+                        new Condition<AnAction>() {
+                            @Override
+                            public boolean value(AnAction anAction) {
+                                SessionSelectAction sessionSelectAction = (SessionSelectAction) anAction;
+                                return sessionSelectAction.isSelected();
+                            }
+                        },
+                        null);
+
+                popupBuilder.showCenteredInCurrentWindow(getProject());
+            }
+        }.start();
+    }
+
+
+    private class SessionSelectAction extends AnAction {
+        private WeakReference<DBLanguagePsiFile> fileRef;
+        private WeakReference<DatabaseSession> sessionRef;
+        private RunnableTask callback;
+
+        private SessionSelectAction(DBLanguagePsiFile file, DatabaseSession session, RunnableTask callback) {
+            super(session.getName(), null, session.getIcon());
+            this.fileRef = new WeakReference<DBLanguagePsiFile>(file);
+            this.sessionRef = new WeakReference<DatabaseSession>(session);
+            this.callback = callback;
+        }
+
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            DBLanguagePsiFile file = fileRef.get();
+            DatabaseSession session = sessionRef.get();
+            if (file != null && session != null) {
+                file.setDatabaseSession(session);
+                if (callback != null) {
+                    callback.start();
+                }
+            }
+        }
+
+        public boolean isSelected() {
+            DBLanguagePsiFile file = fileRef.get();
+            if (file != null) {
+                DatabaseSession fileSession = file.getDatabaseSession();
+                return fileSession != null && fileSession.equals(sessionRef.get());
+            }
+            return false;
+        }
+    }
+
+    private class SessionCreateAction extends DumbAwareAction {
+        private WeakReference<DBLanguagePsiFile> fileRef;
+        private ConnectionHandlerRef connectionHandlerRef;
+
+        private SessionCreateAction(DBLanguagePsiFile file, ConnectionHandler connectionHandler) {
+            super("New session...");
+            this.fileRef = new WeakReference<DBLanguagePsiFile>(file);
+            this.connectionHandlerRef = connectionHandler.getRef();
+        }
+
+        @Override
+        public void actionPerformed(AnActionEvent e) {
+            final DBLanguagePsiFile file = fileRef.get();
+            if (file != null) {
+                final DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
+                ConnectionHandler connectionHandler = connectionHandlerRef.get();
+                sessionManager.showCreateSessionDialog(connectionHandler, new SimpleTask<DatabaseSession>() {
+                    @Override
+                    protected void execute() {
+                        DatabaseSession session = getData();
+                        if (session != null) {
+                            file.setDatabaseSession(session);
+                        }
+                    }
+                });
+            }
         }
     }
 
