@@ -1,15 +1,16 @@
 package com.dci.intellij.dbn.editor.code.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.editor.code.options.ui.CodeEditorGeneralSettingsForm;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSettingsForm> {
     private boolean showObjectsNavigationGutter = false;
     private boolean showSpecDeclarationNavigationGutter = true;
+    private boolean enableSpellchecking = true;
+    private boolean enableReferenceSpellchecking = false;
 
     public String getDisplayName() {
         return "Code editor general settings";
@@ -39,6 +40,22 @@ public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSe
         this.showSpecDeclarationNavigationGutter = showSpecDeclarationNavigationGutter;
     }
 
+    public boolean isEnableSpellchecking() {
+        return enableSpellchecking;
+    }
+
+    public void setEnableSpellchecking(boolean enableSpellchecking) {
+        this.enableSpellchecking = enableSpellchecking;
+    }
+
+    public boolean isEnableReferenceSpellchecking() {
+        return enableReferenceSpellchecking;
+    }
+
+    public void setEnableReferenceSpellchecking(boolean enableReferenceSpellchecking) {
+        this.enableReferenceSpellchecking = enableReferenceSpellchecking;
+    }
+
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
@@ -55,10 +72,14 @@ public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSe
     public void readConfiguration(Element element) {
         showObjectsNavigationGutter = SettingsUtil.getBoolean(element, "show-object-navigation-gutter", showObjectsNavigationGutter);
         showSpecDeclarationNavigationGutter = SettingsUtil.getBoolean(element, "show-spec-declaration-navigation-gutter", showSpecDeclarationNavigationGutter);
+        enableSpellchecking = SettingsUtil.getBoolean(element, "enable-spellchecking", enableSpellchecking);
+        enableReferenceSpellchecking = SettingsUtil.getBoolean(element, "enable-reference-spellchecking", enableReferenceSpellchecking);
     }
 
     public void writeConfiguration(Element element) {
         SettingsUtil.setBoolean(element, "show-object-navigation-gutter", showObjectsNavigationGutter);
         SettingsUtil.setBoolean(element, "show-spec-declaration-navigation-gutter", showSpecDeclarationNavigationGutter);
+        SettingsUtil.setBoolean(element, "enable-spellchecking", enableSpellchecking);
+        SettingsUtil.setBoolean(element, "enable-reference-spellchecking", enableReferenceSpellchecking);
     }
 }
