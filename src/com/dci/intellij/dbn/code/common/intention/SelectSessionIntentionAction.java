@@ -18,7 +18,7 @@ import javax.swing.*;
 public class SelectSessionIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     @NotNull
     public String getText() {
-        return "Select current session...";
+        return "Set current session...";
     }
 
     @NotNull
