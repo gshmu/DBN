@@ -8,6 +8,7 @@ public class TimeUtil {
     public static int THIRTY_SECONDS = 30 * ONE_SECOND;
     public static int ONE_MINUTE = 60 * ONE_SECOND;
     public static int ONE_HOUR = 60 * ONE_MINUTE;
+    public static int THREE_MINUTES = 3 * ONE_MINUTE;
     public static int FIVE_MINUTES = 5 * ONE_MINUTE;
 
     public static int getMinutes(int seconds) {

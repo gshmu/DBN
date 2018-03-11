@@ -1,24 +1,17 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashSet;
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.connection.ConnectionCache;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionType;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.*;
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.RESERVED;
 
@@ -108,8 +101,8 @@ public class DBNConnection extends DBNConnectionBase {
 
         if (isPoolConnection()) {
             for (DBNStatement currentStatement : statements) {
-                if (TimeUtil.isOlderThan(currentStatement.getInitTimestamp(), TimeUtil.ONE_MINUTE)) {
-                    LOGGER.error("Statement not released", new Throwable(currentStatement.traceable.getTrace()));
+                if (TimeUtil.isOlderThan(currentStatement.getInitTimestamp(), TimeUtil.THREE_MINUTES)) {
+                    LOGGER.error("Statement not released", new SQLException(currentStatement.traceable.getTrace()));
                 }
             }
         }
