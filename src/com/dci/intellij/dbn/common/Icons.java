@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common;
 
-import javax.swing.Icon;
-import java.util.Map;
-
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.RowIcon;
 import gnu.trove.THashMap;
+
+import javax.swing.*;
+import java.util.Map;
 
 public class Icons {
     private static final Map<String, Icon> REGISTERED_ICONS = new THashMap<String, Icon>();
@@ -233,6 +233,7 @@ public class Icons {
     public static final Icon PROJECT = load("/img/project/Project.png");
     public static final Icon FILE_CONNECTION_MAPPING = load("/img/FileConnection.png");
     public static final Icon FILE_SCHEMA_MAPPING = load("/img/FileSchema.png");
+    public static final Icon FILE_SESSION_MAPPING = load("/img/FileSession.png");
 
     public static final Icon CODE_EDITOR_SAVE_TO_DATABASE = load("/img/action/SaveToDatabase.png");
     public static final Icon CODE_EDITOR_SAVE_TO_FILE = load("/img/action/SaveToFile.png");
