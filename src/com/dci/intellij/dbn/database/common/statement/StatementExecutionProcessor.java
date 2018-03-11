@@ -1,18 +1,5 @@
 package com.dci.intellij.dbn.database.common.statement;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -20,6 +7,14 @@ import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.intellij.openapi.diagnostic.Logger;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class StatementExecutionProcessor {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -106,6 +101,7 @@ public class StatementExecutionProcessor {
         if (forceExecution || statementDefinition.canExecute(connection)) {
             return new StatementExecutor<ResultSet>(timeout) {
                 private Statement statement;
+                private ResultSet resultSet;
                 @Override
                 public ResultSet execute() throws Exception {
                     String statementText = null;
@@ -119,7 +115,8 @@ public class StatementExecutionProcessor {
                             PreparedStatement preparedStatement = statementDefinition.prepareStatement(connection, arguments);
                             statement = preparedStatement;
                             preparedStatement.setQueryTimeout(timeout);
-                            return preparedStatement.executeQuery();
+                            resultSet = preparedStatement.executeQuery();
+                            return resultSet;
                         } else {
                             if (statementText == null)
                                 statementText = statementDefinition.prepareStatementText(arguments);
@@ -128,7 +125,8 @@ public class StatementExecutionProcessor {
                             statement.execute(statementText);
                             if (isQuery) {
                                 try {
-                                    return statement.getResultSet();
+                                    resultSet = statement.getResultSet();
+                                    return resultSet;
                                 } catch (SQLException e) {
                                     ConnectionUtil.close(statement);
                                     return null;
@@ -154,6 +152,9 @@ public class StatementExecutionProcessor {
                         throw exception;
                     } finally {
                         statementDefinition.updateExecutionStatus(executionSuccessful);
+                        if (resultSet == null) {
+                            ConnectionUtil.close(statement);
+                        }
                     }
                 }
 
