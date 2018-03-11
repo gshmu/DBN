@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.common.action;
 
-import javax.swing.Icon;
-import java.awt.Component;
-import java.awt.Point;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -14,6 +8,12 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.InputEvent;
 
 public abstract class GroupPopupAction extends DumbAwareAction {
     private String groupTitle;
@@ -40,7 +40,10 @@ public abstract class GroupPopupAction extends DumbAwareAction {
         if (dataProvider != null) {
             ActionUtil.registerDataProvider(popup.getContent(), dataProvider);
         }
-        showBelowComponent(popup, (Component) e.getInputEvent().getSource());
+        InputEvent inputEvent = e.getInputEvent();
+        if (inputEvent != null) {
+            showBelowComponent(popup, (Component) inputEvent.getSource());
+        }
     }
 
     public DataProviderSupplier getDataProviderSupplier(AnActionEvent e) {
