@@ -1,22 +1,5 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -30,6 +13,18 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.ui.DocumentAdapter;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectComponent> {
     private JPanel mainPanel;
@@ -41,6 +36,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
     private JPanel versionPanel;
     private JLabel debuggerTypeLabel;
     private JPanel executionOptionsPanel;
+    private JPanel argumentsContainerPanel;
 
 
     private List<MethodExecutionInputArgumentForm> argumentForms = new ArrayList<MethodExecutionInputArgumentForm>();
@@ -88,7 +84,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
                 //topSeparator.setVisible(true);
             }
         }
-        argumentsScrollPane.setBorder(Borders.BOTTOM_LINE_BORDER);
+        argumentsContainerPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         for (MethodExecutionInputArgumentForm component : argumentForms) {
             component.adjustMetrics(metrics);
