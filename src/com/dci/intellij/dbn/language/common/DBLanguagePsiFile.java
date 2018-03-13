@@ -168,8 +168,10 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     }
 
     public void accept(@NotNull PsiElementVisitor visitor) {
-        // TODO: check if any visitor relevant
-        //visitor.visitFile(this);
+        // TODO: check if any other visitor relevant
+        if (visitor.getClass().getName().contains("SpellCheckingInspection")) {
+            visitor.visitFile(this);
+        }
     }
 
     @NotNull
