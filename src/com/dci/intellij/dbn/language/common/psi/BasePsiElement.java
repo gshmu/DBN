@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import javax.swing.Icon;
+import java.util.HashSet;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
@@ -45,15 +51,14 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.util.HashSet;
-import java.util.Set;
 
 public abstract class BasePsiElement extends ASTWrapperPsiElement implements ItemPresentation, FormattingProviderPsiElement {
     private ElementType elementType;
@@ -212,7 +217,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     public void accept(@NotNull PsiElementVisitor visitor) {
         // TODO: check if any visitor relevant
-        //super.accept(visitor);
+        super.accept(visitor);
     }
 
     public String getText() {
@@ -233,7 +238,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     public PsiElement getLastChildIgnoreWhiteSpace() {
         PsiElement psiElement = this.getLastChild();
-        while (psiElement != null && psiElement instanceof PsiWhiteSpace) {
+        while (psiElement instanceof PsiWhiteSpace) {
             psiElement = psiElement.getPrevSibling();
         }
         return psiElement;
@@ -242,7 +247,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     @Nullable
     public BasePsiElement getPrevElement() {
         PsiElement preElement = getPrevSibling();
-        while (preElement != null && preElement instanceof PsiWhiteSpace && preElement instanceof PsiComment) {
+        while (preElement instanceof PsiWhiteSpace || preElement instanceof PsiComment) {
             preElement = preElement.getPrevSibling();
         }
 
@@ -258,7 +263,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     public LeafPsiElement getPrevLeaf() {
         PsiElement previousElement = getPrevSibling();
-        while (previousElement != null && previousElement instanceof PsiWhiteSpace && previousElement instanceof PsiComment) {
+        while (previousElement instanceof PsiWhiteSpace || previousElement instanceof PsiComment) {
             previousElement = previousElement.getPrevSibling();
         }
 
@@ -286,7 +291,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     protected BasePsiElement getNextElement() {
         PsiElement nextElement = getNextSibling();
-        while (nextElement != null && (nextElement instanceof PsiWhiteSpace || nextElement instanceof PsiComment || nextElement instanceof PsiErrorElement)) {
+        while (nextElement instanceof PsiWhiteSpace || nextElement instanceof PsiComment || nextElement instanceof PsiErrorElement) {
             nextElement = nextElement.getNextSibling();
         }
         BasePsiElement next = (BasePsiElement) nextElement;
