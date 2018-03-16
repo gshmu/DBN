@@ -182,7 +182,7 @@ public class ConnectionUtil {
                     }
                 }
 
-                String appName = "Database Navigator - " + connectionType.getName() + "";
+                String appName = "Database Navigator - " + connectionType.getName();
                 properties.put("ApplicationName", appName);
                 properties.put("v$session.program", appName);
                 Map<String, String> configProperties = databaseSettings.getParent().getPropertiesSettings().getProperties();
