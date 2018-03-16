@@ -2229,14 +2229,18 @@
 
     <statement-execution-processor id="session-sql" is-prepared-statement="true" timeout="10">
         <statement>
-            select replace (q.SQL_FULLTEXT, chr (0)) sql_statement
-            from
-                GV$SESSION s,
-                GV$SQL q
-            where
-                s.SQL_ADDRESS = q.ADDRESS and
-                s.SQL_HASH_VALUE = q.HASH_VALUE and
-                s.SID = {0}
+            select replace (sql.SQL_FULLTEXT, chr (0))  as sql_statement
+              from V$SESSION s
+              join V$SQL sql
+                on sql.SQL_ID = nvl(s.SQL_ID, s.PREV_SQL_ID)
+             where s.SID = {0}
+        </statement>
+        <statement>
+            select replace (sql.SQL_FULLTEXT, chr (0)) as sql_statement
+              from GV$SESSION s
+              join GV$SQL sql
+                on sql.SQL_ID = nvl(s.SQL_ID, s.PREV_SQL_ID)
+             where s.SID = {0}
         </statement>
     </statement-execution-processor>
 

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -51,6 +52,8 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     private Document document;
     private EditorEx viewer;
     private SessionBrowser sessionBrowser;
+    private Object selectedSessionId;
+
 
     public SessionBrowserCurrentSqlPanel(SessionBrowser sessionBrowser) {
         this.sessionBrowser = sessionBrowser;
@@ -77,8 +80,10 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     public void loadCurrentStatement() {
         SessionBrowserTable editorTable = sessionBrowser.getEditorTable();
         if (editorTable.getSelectedRowCount() == 1) {
+            setPreviewText("-- Loading...");
             SessionBrowserModelRow selectedRow = editorTable.getModel().getRowAtIndex(editorTable.getSelectedRow());
-            final Object sessionId = selectedRow.getSessionId();
+            selectedSessionId = selectedRow.getSessionId();
+            final Object sessionId = selectedSessionId;
             final String schemaName = selectedRow.getSchema();
             final Project project = sessionBrowser.getProject();
             new BackgroundTask(project, "Loading session current SQL", true) {
@@ -91,15 +96,21 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
                     }
 
                     SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
+                    checkCancelled(sessionId);
                     String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
-                    if (sessionId.equals(sessionBrowser.getSelectedSessionId())) {
-                        setDatabaseSchema(schema);
-                        setPreviewText(sql.replace("\r\n", "\n"));
-                    }
+                    checkCancelled(sessionId);
+                    setDatabaseSchema(schema);
+                    setPreviewText(sql.replace("\r\n", "\n"));
                 }
             }.start();
         } else {
             setPreviewText("");
+        }
+    }
+
+    private void checkCancelled(Object sessionId) {
+        if (selectedSessionId == null || !selectedSessionId.equals(sessionId)) {
+            throw AlreadyDisposedException.INSTANCE;
         }
     }
 
