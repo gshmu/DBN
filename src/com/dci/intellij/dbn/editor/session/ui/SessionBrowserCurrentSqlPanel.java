@@ -95,9 +95,10 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
                         schema = connectionHandler.getObjectBundle().getSchema(schemaName);
                     }
 
-                    SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
                     checkCancelled(sessionId);
+                    SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
                     String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
+
                     checkCancelled(sessionId);
                     setDatabaseSchema(schema);
                     setPreviewText(sql.replace("\r\n", "\n"));
