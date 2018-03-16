@@ -80,30 +80,34 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     public void loadCurrentStatement() {
         SessionBrowserTable editorTable = sessionBrowser.getEditorTable();
         if (editorTable.getSelectedRowCount() == 1) {
-            setPreviewText("-- Loading...");
             SessionBrowserModelRow selectedRow = editorTable.getModel().getRowAtIndex(editorTable.getSelectedRow());
-            selectedSessionId = selectedRow.getSessionId();
-            final Object sessionId = selectedSessionId;
-            final String schemaName = selectedRow.getSchema();
-            final Project project = sessionBrowser.getProject();
-            new BackgroundTask(project, "Loading session current SQL", true) {
-                @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    ConnectionHandler connectionHandler = getConnectionHandler();
-                    DBSchema schema = null;
-                    if (StringUtil.isNotEmpty(schemaName)) {
-                        schema = connectionHandler.getObjectBundle().getSchema(schemaName);
+            if (selectedRow != null) {
+                setPreviewText("-- Loading...");
+                selectedSessionId = selectedRow.getSessionId();
+                final Object sessionId = selectedSessionId;
+                final String schemaName = selectedRow.getSchema();
+                final Project project = sessionBrowser.getProject();
+                new BackgroundTask(project, "Loading session current SQL", true) {
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                        ConnectionHandler connectionHandler = getConnectionHandler();
+                        DBSchema schema = null;
+                        if (StringUtil.isNotEmpty(schemaName)) {
+                            schema = connectionHandler.getObjectBundle().getSchema(schemaName);
+                        }
+
+                        checkCancelled(sessionId);
+                        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
+                        String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
+
+                        checkCancelled(sessionId);
+                        setDatabaseSchema(schema);
+                        setPreviewText(sql.replace("\r\n", "\n"));
                     }
-
-                    checkCancelled(sessionId);
-                    SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
-                    String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
-
-                    checkCancelled(sessionId);
-                    setDatabaseSchema(schema);
-                    setPreviewText(sql.replace("\r\n", "\n"));
-                }
-            }.start();
+                }.start();
+            } else {
+                setPreviewText("");
+            }
         } else {
             setPreviewText("");
         }
