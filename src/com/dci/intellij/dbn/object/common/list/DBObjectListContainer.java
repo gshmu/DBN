@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,45 +26,46 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import gnu.trove.THashMap;
 
 public class DBObjectListContainer extends DisposableBase implements Disposable {
-    private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
-    private Map<DBObjectType, DBObjectList<DBObject>> internalObjectLists;
+    private List<DBObjectList<DBObject>>  objectLists;
+    private List<DBObjectList<DBObject>>  internalObjectLists;
     private GenericDatabaseElement owner;
 
     public DBObjectListContainer(@NotNull GenericDatabaseElement owner) {
         this.owner = owner;
     }
 
+    @NotNull
     public List<DBObjectList<DBObject>> getAllObjectLists() {
         List<DBObjectList<DBObject>> allObjectLists = new ArrayList<DBObjectList<DBObject>>();
         if (objectLists != null)  {
-            allObjectLists.addAll(objectLists.values());
+            allObjectLists.addAll(objectLists);
         }
         if (internalObjectLists != null)  {
-            allObjectLists.addAll(internalObjectLists.values());
+            allObjectLists.addAll(internalObjectLists);
         }
         Collections.sort(allObjectLists);
         return allObjectLists;
     }
 
+    @Nullable
     public Collection<DBObjectList<DBObject>> getObjectLists() {
-        return objectLists == null ? null : objectLists.values();
+        return objectLists;
     }
 
     public void visitLists(DBObjectListVisitor visitor, boolean visitHidden) {
         try {
             if (objectLists != null) {
                 checkDisposed(visitor);
-                for (DBObjectList<DBObject> objectList : objectLists.values()) {
+                for (DBObjectList<DBObject> objectList : objectLists) {
                     checkDisposed(visitor);
                     visitor.visitObjectList(objectList);
                 }
             }
             if (visitHidden && internalObjectLists != null) {
                 checkDisposed(visitor);
-                for (DBObjectList<DBObject> objectList : internalObjectLists.values()) {
+                for (DBObjectList<DBObject> objectList : internalObjectLists) {
                     checkDisposed(visitor);
                     visitor.visitObjectList(objectList);
                 }
@@ -92,12 +92,27 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
 
     @Nullable
     public DBObjectList getObjectList(DBObjectType objectType) {
-        return objectLists == null ? null : objectLists.get(objectType);
+        if (objectLists != null) {
+            for (DBObjectList<DBObject> objectList : objectLists) {
+                if (objectList.getObjectType() == objectType) {
+                    return objectList;
+                }
+            }
+
+        }
+        return null;
     }
 
     @Nullable
     public DBObjectList getInternalObjectList(DBObjectType objectType) {
-        return internalObjectLists == null ? null : internalObjectLists.get(objectType);
+        if (internalObjectLists != null) {
+            for (DBObjectList<DBObject> objectList : internalObjectLists) {
+                if (objectList.getObjectType() == objectType) {
+                    return objectList;
+                }
+            }
+        }
+        return null;
     }
 
 
@@ -146,7 +161,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
 
     public DBObject getObject(String name, int overload) {
         if (objectLists != null) {
-            for (DBObjectList objectList : objectLists.values()) {
+            for (DBObjectList objectList : objectLists) {
                 DBObject object = objectList.getObject(name, overload);
                 if (object != null) {
                     return object;
@@ -170,8 +185,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
     }
 
     @Nullable
-    private DBObject findObject(Map<DBObjectType, DBObjectList<DBObject>> objectLists, DBObjectType parentObjectType, String name, int overload) {
-        for (DBObjectList objectList : objectLists.values()) {
+    private DBObject findObject(List<DBObjectList<DBObject>> objectLists, DBObjectType parentObjectType, String name, int overload) {
+        for (DBObjectList objectList : objectLists) {
             DBObjectType objectType = objectList.getObjectType();
             if (objectType.getParents().contains(parentObjectType)) {
                 DBObject object = objectList.getObject(name, overload);
@@ -191,7 +206,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
 
     public DBObject getObjectNoLoad(String name, int overload) {
         if (objectLists != null) {
-            for (DBObjectList objectList : objectLists.values()) {
+            for (DBObjectList objectList : objectLists) {
                 if (objectList.isLoaded() && !objectList.isDirty()) {
                     DBObject object = objectList.getObject(name, overload);
                     if (object != null) {
@@ -287,26 +302,25 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
 
     public void addObjectList(DBObjectList objectList) {
         if (objectList != null) {
-            DBObjectType objectType = objectList.getObjectType();
             if (objectList.isInternal()) {
-                if (internalObjectLists == null) internalObjectLists = new THashMap<DBObjectType, DBObjectList<DBObject>>();
-                internalObjectLists.put(objectType, objectList);
+                if (internalObjectLists == null) internalObjectLists = new ArrayList<DBObjectList<DBObject>>();
+                internalObjectLists.add(objectList);
             } else {
-                if (objectLists == null) objectLists = new THashMap<DBObjectType, DBObjectList<DBObject>>();
-                objectLists.put(objectType, objectList);
+                if (objectLists == null) objectLists = new ArrayList<DBObjectList<DBObject>>();
+                objectLists.add(objectList);
             }
         }
     }
 
     public void reload() {
         if (objectLists != null)  {
-            for (DBObjectList objectList : objectLists.values()) {
+            for (DBObjectList objectList : objectLists) {
                 objectList.reload();
                 checkDisposed();
             }
         }
         if (internalObjectLists != null)  {
-            for (DBObjectList objectList : internalObjectLists.values()) {
+            for (DBObjectList objectList : internalObjectLists) {
                 objectList.reload();
                 checkDisposed();
             }
@@ -315,13 +329,13 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
 
     public void refresh() {
         if (objectLists != null)  {
-            for (DBObjectList objectList : objectLists.values()) {
+            for (DBObjectList objectList : objectLists) {
                 objectList.refresh();
                 checkDisposed();
             }
         }
         if (internalObjectLists != null)  {
-            for (DBObjectList objectList : internalObjectLists.values()) {
+            for (DBObjectList objectList : internalObjectLists) {
                 objectList.refresh();
                 checkDisposed();
             }
@@ -330,13 +344,13 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
 
     public void load() {
         if (objectLists != null)  {
-            for (DBObjectList objectList : objectLists.values()) {
+            for (DBObjectList objectList : objectLists) {
                 objectList.load(false);
                 checkDisposed();
             }
         }
         if (internalObjectLists != null)  {
-            for (DBObjectList objectList : internalObjectLists.values()) {
+            for (DBObjectList objectList : internalObjectLists) {
                 if (!objectList.getObjectType().isOneOf(DBObjectType.ANY, DBObjectType.OUTGOING_DEPENDENCY, DBObjectType.INCOMING_DEPENDENCY)) {
                     objectList.load(false);
                 }
