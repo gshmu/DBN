@@ -24,7 +24,7 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
-import gnu.trove.THashMap;
+import com.intellij.util.containers.hash.HashMap;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
@@ -320,7 +320,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             }
             if (elements.size() > 30) {
                 if (index == null)
-                    index = new THashMap<String, T>(); else
+                    index = new HashMap<String, T>(); else
                     index.clear();
 
                 for (T element : elements) {
