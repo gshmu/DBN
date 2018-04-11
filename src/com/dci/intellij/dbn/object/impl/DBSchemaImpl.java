@@ -452,7 +452,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 while (resultSet != null && resultSet.next()) {
                     String objectName = resultSet.getString("OBJECT_NAME");
                     DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
-                    if (schemaObject != null && schemaObject.is(DETERMINISTIC)) {
+                    if (schemaObject != null && schemaObject.is(DEBUGABLE)) {
                         DBObjectStatusHolder objectStatus = schemaObject.getStatus();
                         boolean statusChanged;
 
