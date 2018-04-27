@@ -289,14 +289,6 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         testConnection = ConnectionUtil.close(testConnection);
     }
 
-    @Deprecated
-    public void keepAlive(boolean check) {
-        if (mainConnection != null) {
-            mainConnection.updateLastAccess();
-            if (check) mainConnection.isValid();
-        }
-    }
-
     public int getSize() {
         return poolConnections.size();
     }

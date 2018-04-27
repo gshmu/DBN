@@ -113,8 +113,6 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     @Deprecated
     void rollback() throws SQLException;
 
-    void ping(boolean check);
-
     @Nullable
     DBLanguageDialect resolveLanguageDialect(Language language);
     DBLanguageDialect getLanguageDialect(DBLanguage language);
