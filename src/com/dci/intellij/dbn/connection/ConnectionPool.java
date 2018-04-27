@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.IntervalLoader;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -29,7 +30,6 @@ import com.intellij.util.containers.ContainerUtil;
 public class ConnectionPool extends DisposableBase implements Disposable {
 
     private static Logger LOGGER = LoggerFactory.createLogger();
-    private long lastAccessTimestamp = 0;
     private int peakPoolSize = 0;
 
     protected final Logger log = Logger.getInstance(getClass().getName());
@@ -39,6 +39,19 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     private Map<SessionId, DBNConnection> sessionConnections = ContainerUtil.newConcurrentMap();
     private DBNConnection mainConnection;
     private DBNConnection testConnection;
+    private IntervalLoader<Long> lastAccessTimestamp = new IntervalLoader<Long>(TimeUtil.THIRTY_SECONDS) {
+        @Override
+        protected Long load() {
+            long lastAccessTimestamp = 0;
+            for (DBNConnection poolConnection : poolConnections) {
+                if (poolConnection.getLastAccess() > lastAccessTimestamp) {
+                    lastAccessTimestamp = poolConnection.getLastAccess();
+                }
+            }
+
+            return lastAccessTimestamp;
+        }
+    };
 
     ConnectionPool(@NotNull ConnectionHandler connectionHandler) {
         super(connectionHandler);
@@ -121,7 +134,6 @@ public class ConnectionPool extends DisposableBase implements Disposable {
 
     @NotNull
     private DBNConnection init(DBNConnection connection, ConnectionType connectionType) throws SQLException {
-        lastAccessTimestamp = System.currentTimeMillis();
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.setLastUsedConnection(connectionHandler);
 
@@ -153,11 +165,11 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     }
 
     public long getLastAccessTimestamp() {
-        return lastAccessTimestamp;
+        return lastAccessTimestamp.get();
     }
 
     public boolean wasNeverAccessed() {
-        return lastAccessTimestamp == 0;
+        return getLastAccessTimestamp() == 0;
     }
 
     @NotNull
@@ -172,7 +184,6 @@ public class ConnectionPool extends DisposableBase implements Disposable {
 
     @NotNull
     public DBNConnection allocateConnection(boolean readonly) throws SQLException {
-        lastAccessTimestamp = System.currentTimeMillis();
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.setLastUsedConnection(connectionHandler);
 
@@ -243,7 +254,6 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         poolConnections.add(connection);
         int size = poolConnections.size();
         if (size > peakPoolSize) peakPoolSize = size;
-        lastAccessTimestamp = System.currentTimeMillis();
         LOGGER.debug("[DBN-INFO] Pool connection for '" + connectionName + "' created. Pool size = " + getSize());
         return connection;
     }
@@ -255,7 +265,6 @@ public class ConnectionPool extends DisposableBase implements Disposable {
             ConnectionUtil.setReadonly(connection, true);
             connection.set(ResourceStatus.RESERVED, false);
         }
-        lastAccessTimestamp = System.currentTimeMillis();
     }
 
     public void dropConnection(DBNConnection connection) {
@@ -263,7 +272,6 @@ public class ConnectionPool extends DisposableBase implements Disposable {
             poolConnections.remove(connection);
             ConnectionUtil.close(connection);
         }
-        lastAccessTimestamp = System.currentTimeMillis();
     }
 
     public void closeConnections() {
@@ -338,19 +346,22 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         public void run() {
             for (WeakReference<ConnectionPool> connectionPoolRef : connectionPools) {
                 ConnectionPool connectionPool = connectionPoolRef.get();
-                if (connectionPool != null && TimeUtil.isOlderThan(connectionPool.lastAccessTimestamp, TimeUtil.ONE_MINUTE)) {
-                    // close connections only if pool is passive
-                    for (DBNConnection connection : connectionPool.poolConnections) {
-                        if (connection.isActive()) return;
-                    }
+                if (connectionPool != null) {
+                    ConnectionDetailSettings detailSettings = connectionPool.getConnectionHandler().getSettings().getDetailSettings();
+                    long lastAccessTimestamp = connectionPool.getLastAccessTimestamp();
+                    if (TimeUtil.isOlderThan(lastAccessTimestamp, detailSettings.getIdleTimeToDisconnectPool())) {
+                        // close connections only if pool is passive
+                        for (DBNConnection connection : connectionPool.poolConnections) {
+                            if (!connection.isIdle()) return;
+                        }
 
-                    for (DBNConnection connection : connectionPool.poolConnections) {
-                        ConnectionUtil.close(connection);
+                        for (DBNConnection connection : connectionPool.poolConnections) {
+                            ConnectionUtil.close(connection);
+                        }
+                        connectionPool.poolConnections.clear();
                     }
-                    connectionPool.poolConnections.clear();
                 }
             }
-
         }
 
         public void registerConnectionPool(ConnectionPool connectionPool) {
