@@ -255,11 +255,6 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @Override
-    public void ping(boolean check) {
-        getConnectionPool().keepAlive(check);
-    }
-
-    @Override
     public boolean isConnected() {
         return connectionStatus.isConnected();
     }

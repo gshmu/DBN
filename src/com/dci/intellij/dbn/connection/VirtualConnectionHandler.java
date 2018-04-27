@@ -253,8 +253,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public boolean isValid() {return true;}
     @Override
     public void disconnect() {}
-    @Override
-    public void ping(boolean check) {}
 
     @Override
     public ConnectionHandlerRef getRef() {
