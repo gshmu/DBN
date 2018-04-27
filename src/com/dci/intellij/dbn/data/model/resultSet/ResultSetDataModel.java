@@ -97,6 +97,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
                 }
             } finally {
                 connection.set(ResourceStatus.ACTIVE, false);
+                connection.updateLastAccess();
             }
         }
 
