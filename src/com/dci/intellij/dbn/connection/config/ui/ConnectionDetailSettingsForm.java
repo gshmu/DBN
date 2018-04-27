@@ -49,6 +49,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JCheckBox autoConnectCheckBox;
     private JCheckBox restoreWorkspaceCheckBox;
     private JCheckBox restoreWorkspaceDeepCheckBox;
+    private JTextField idleTimePoolTextField;
 
     public ConnectionDetailSettingsForm(final ConnectionDetailSettings configuration) {
         super(configuration);
@@ -175,9 +176,11 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         configuration.setEnableDatabaseLogging(databaseLoggingCheckBox.isSelected());
         configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
         int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle time to disconnect (minutes)", true, 0, 60, "");
+        int idleTimeToDisconnectPool = ConfigurationEditorUtil.validateIntegerInputValue(idleTimePoolTextField, "Idle time to disconnect pool (minutes)", true, 1, 60, "");
         int passwordExpiryTime = ConfigurationEditorUtil.validateIntegerInputValue(passwordExpiryTextField, "Idle time to request password (minutes)", true, 0, 60, "");
         int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max connection pool size", true, 3, 20, "");
         configuration.setIdleTimeToDisconnect(idleTimeToDisconnect);
+        configuration.setIdleTimeToDisconnectPool(idleTimeToDisconnectPool);
         configuration.setPasswordExpiryTime(passwordExpiryTime);
         configuration.setMaxConnectionPoolSize(maxPoolSize);
     }
@@ -194,6 +197,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         restoreWorkspaceDeepCheckBox.setSelected(configuration.isRestoreWorkspaceDeep());
         environmentTypesComboBox.setSelectedValue(configuration.getEnvironmentType());
         idleTimeTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnect()));
+        idleTimePoolTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnectPool()));
         passwordExpiryTextField.setText(Integer.toString(configuration.getPasswordExpiryTime()));
         maxPoolSizeTextField.setText(Integer.toString(configuration.getMaxConnectionPoolSize()));
         alternativeStatementDelimiterTextField.setText(configuration.getAlternativeStatementDelimiter());
