@@ -88,6 +88,7 @@ public class DatasetRecord implements Disposable {
                 }
             } finally {
                 connection.set(ResourceStatus.ACTIVE, false);
+                connection.updateLastAccess();
             }
         }  finally {
             ConnectionUtil.close(resultSet);
