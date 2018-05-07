@@ -50,7 +50,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     ConnectionHandler getLastCheckedConnection() {
         if (lastChecked != null && lastChecked.get() != null) {
             ConnectionHandler connectionHandler = getConnectionHandler(lastChecked.get());
-            if (connectionHandler != null && supportsLogging(connectionHandler)) {
+            if (supportsLogging(connectionHandler)) {
                 return connectionHandler;
             }
         }
@@ -77,7 +77,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
 
     public void invoke(@NotNull final Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
-        if (connectionHandler != null && DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
+        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
             connectionHandler.setLoggingEnabled(!connectionHandler.isLoggingEnabled());
         }
     }
@@ -85,5 +85,11 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
 
     public boolean startInWriteAction() {
         return false;
+    }
+
+    @NotNull
+    @Override
+    public Priority getPriority() {
+        return Priority.LOW;
     }
 }
