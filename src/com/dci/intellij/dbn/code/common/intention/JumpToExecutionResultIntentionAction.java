@@ -88,4 +88,10 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
     public boolean startInWriteAction() {
         return false;
     }
+
+    @NotNull
+    @Override
+    public Priority getPriority() {
+        return Priority.NORMAL;
+    }
 }
