@@ -20,7 +20,7 @@ public class SetupCodeCompletionIntentionAction extends GenericIntentionAction i
 
     @NotNull
     public String getFamilyName() {
-        return "Setup intentions";
+        return IntentionActionGroups.SETUP;
     }
 
     @Override

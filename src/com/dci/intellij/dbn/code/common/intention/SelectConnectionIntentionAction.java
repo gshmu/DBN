@@ -21,7 +21,7 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction impl
 
     @NotNull
     public String getFamilyName() {
-        return "Connection intentions";
+        return IntentionActionGroups.CONNECTION;
     }
 
     public Icon getIcon(int flags) {

@@ -24,7 +24,7 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction {
 
     @NotNull
     public String getFamilyName() {
-        return "Statement execution intentions";
+        return IntentionActionGroups.STATEMENT_EXECUTION;
     }
 
     public Icon getIcon(int flags) {
