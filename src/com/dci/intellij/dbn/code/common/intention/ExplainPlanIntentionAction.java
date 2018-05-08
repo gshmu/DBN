@@ -29,7 +29,7 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
 
     @NotNull
     public String getFamilyName() {
-        return "Statement execution intentions";
+        return IntentionActionGroups.STATEMENT_EXECUTION;
     }
 
     @Override

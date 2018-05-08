@@ -31,7 +31,7 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
 
     @NotNull
     public String getFamilyName() {
-        return "Statement execution intentions";
+        return IntentionActionGroups.STATEMENT_EXECUTION;
     }
 
     @Override

@@ -44,7 +44,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
 
     @NotNull
     public String getFamilyName() {
-        return "Statement execution intentions";
+        return IntentionActionGroups.STATEMENT_EXECUTION;
     }
 
     ConnectionHandler getLastCheckedConnection() {
