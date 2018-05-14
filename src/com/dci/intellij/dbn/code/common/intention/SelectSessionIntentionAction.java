@@ -23,7 +23,7 @@ public class SelectSessionIntentionAction extends GenericIntentionAction impleme
 
     @NotNull
     public String getFamilyName() {
-        return "Connection intentions";
+        return IntentionActionGroups.CONNECTION;
     }
 
     public Icon getIcon(int flags) {

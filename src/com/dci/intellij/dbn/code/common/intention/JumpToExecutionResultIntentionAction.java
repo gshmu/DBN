@@ -28,7 +28,7 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
 
     @NotNull
     public String getFamilyName() {
-        return "Statement execution intentions";
+        return IntentionActionGroups.STATEMENT_EXECUTION;
     }
 
     @Override
@@ -87,5 +87,11 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
 
     public boolean startInWriteAction() {
         return false;
+    }
+
+    @NotNull
+    @Override
+    public Priority getPriority() {
+        return Priority.NORMAL;
     }
 }
