@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
@@ -46,6 +47,11 @@ public class StatementGutterAction extends AnAction {
             languagePsiFile = null;
         }
         return languagePsiFile;
+    }
+
+    private VirtualFile getVirtualFile() {
+        DBLanguagePsiFile languagePsiFile = psiFile.get();
+        return languagePsiFile == null ? null : languagePsiFile.getVirtualFile();
     }
 
     @Nullable
@@ -178,4 +184,26 @@ public class StatementGutterAction extends AnAction {
         return null;//"Execute statement";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StatementGutterAction)) return false;
+
+        StatementGutterAction that = (StatementGutterAction) o;
+
+        if (elementOffset != that.elementOffset) return false;
+
+        VirtualFile thisVirtualFile = this.getVirtualFile();
+        VirtualFile thatVirtualFile = that.getVirtualFile();
+
+        return thisVirtualFile != null ? thisVirtualFile.equals(thatVirtualFile) : thatVirtualFile == null;
+    }
+
+    @Override
+    public int hashCode() {
+        VirtualFile virtualFile = getVirtualFile();
+        int result = virtualFile != null ? virtualFile.hashCode() : 0;
+        result = 31 * result + elementOffset;
+        return result;
+    }
 }
