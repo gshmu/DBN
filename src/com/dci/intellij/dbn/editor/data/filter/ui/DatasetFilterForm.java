@@ -109,7 +109,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
 
     public void valueChanged(ListSelectionEvent e) {
         DatasetFilterGroup configuration = getConfiguration();
-        if (configuration != null && (e == null || !e.getValueIsAdjusting())) {
+        if (e == null || !e.getValueIsAdjusting()) {
             int[] indices = filtersList.getSelectedIndices();
             List<DatasetFilter> filters = configuration.getFilters();
             DatasetFilterImpl filter = filters.size() > 0 && indices.length == 1 ? (DatasetFilterImpl) filters.get(indices[0]) : null;

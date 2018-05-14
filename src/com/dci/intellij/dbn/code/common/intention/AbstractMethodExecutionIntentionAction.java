@@ -76,6 +76,6 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
 
     @NotNull
     public String getFamilyName() {
-        return "Method execution intentions";
+        return IntentionActionGroups.METHOD_EXECUTION;
     }
 }
