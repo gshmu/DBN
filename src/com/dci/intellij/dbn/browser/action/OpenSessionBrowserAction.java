@@ -8,12 +8,12 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.session.SessionBrowserManager;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
-public class OpenSessionBrowserAction extends AnAction {
+public class OpenSessionBrowserAction extends DumbAwareAction {
     public OpenSessionBrowserAction() {
         super("Open Session Browser", "", Icons.FILE_SESSION_BROWSER);
     }
