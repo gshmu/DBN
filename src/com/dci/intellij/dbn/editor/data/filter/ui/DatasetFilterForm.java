@@ -112,7 +112,13 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
         if (e == null || !e.getValueIsAdjusting()) {
             int[] indices = filtersList.getSelectedIndices();
             List<DatasetFilter> filters = configuration.getFilters();
-            DatasetFilterImpl filter = filters.size() > 0 && indices.length == 1 ? (DatasetFilterImpl) filters.get(indices[0]) : null;
+            DatasetFilterImpl filter = null;
+            int filtersCount = filters.size();
+            if (filtersCount > 0 && indices.length == 1) {
+                if (filtersCount > indices[0]) {
+                    filter = (DatasetFilterImpl) filters.get(indices[0]);
+                }
+            }
 
             CardLayout cardLayout = (CardLayout) filterDetailsPanel.getLayout();
             if (filter == null) {
