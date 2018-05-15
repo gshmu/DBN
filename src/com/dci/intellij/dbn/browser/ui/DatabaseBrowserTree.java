@@ -104,17 +104,18 @@ public class DatabaseBrowserTree extends DBNTree {
     }
 
     public void selectElement(BrowserTreeNode treeNode, boolean focus) {
-        ConnectionHandler connectionHandler = treeNode.getConnectionHandler();
-        Filter<BrowserTreeNode> filter = connectionHandler == null ?
-                DatabaseBrowserManager.getInstance(getProject()).getObjectTypeFilter() :
-                connectionHandler.getObjectTypeFilter();
+        if (treeNode != null) {
+            ConnectionHandler connectionHandler = treeNode.getConnectionHandler();
+            Filter<BrowserTreeNode> filter = connectionHandler == null ?
+                    DatabaseBrowserManager.getInstance(getProject()).getObjectTypeFilter() :
+                    connectionHandler.getObjectTypeFilter();
 
-        if (filter.accepts(treeNode)) {
-            targetSelection = treeNode;
-            scrollToSelectedElement();
-            if (focus) requestFocus();
+            if (filter.accepts(treeNode)) {
+                targetSelection = treeNode;
+                scrollToSelectedElement();
+                if (focus) requestFocus();
+            }
         }
-
     }
 
     public void scrollToSelectedElement() {
