@@ -84,6 +84,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
             DBNConnection connection = resultSet.getConnection();
             try {
                 connection.set(ResourceStatus.ACTIVE, true);
+                connection.updateLastAccess();
                 while (count < records) {
                     checkDisposed();
                     if (resultSet != null && resultSet.next()) {

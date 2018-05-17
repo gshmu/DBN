@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.connection.transaction;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -25,14 +33,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class DatabaseTransactionManager extends AbstractProjectComponent implements ProjectManagerListener{
 
@@ -64,7 +64,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             if (actionList.size() > 0) {
                 pendingActions.addAll(actionList);
                 Project project = connectionHandler.getProject();
-                String connectionName = connectionHandler.getName();
+                String connectionName = connectionHandler.getName() + " (" + connection.getSessionName() + ")";
                 if (ApplicationManager.getApplication().isDisposeInProgress()) {
                     executeActions(connectionHandler, connection, actionList);
                 } else {

@@ -91,6 +91,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                     if (keepChanges) snapshotChanges(); else clearChanges();
 
                     int rowCount = computeRowCount();
+
                     fetchNextRecords(rowCount, true);
                     restoreChanges();
                 }
