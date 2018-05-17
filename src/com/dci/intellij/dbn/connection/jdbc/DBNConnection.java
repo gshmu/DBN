@@ -120,6 +120,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     protected void release(DBNStatement statement) {
         statements.remove(statement);
+        updateLastAccess();
     }
 
     @Override

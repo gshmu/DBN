@@ -338,19 +338,23 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         public void run() {
             for (WeakReference<ConnectionPool> connectionPoolRef : connectionPools) {
                 ConnectionPool connectionPool = connectionPoolRef.get();
-                if (connectionPool != null) {
-                    ConnectionDetailSettings detailSettings = connectionPool.getConnectionHandler().getSettings().getDetailSettings();
-                    long lastAccessTimestamp = connectionPool.getLastAccessTimestamp();
-                    if (TimeUtil.isOlderThan(lastAccessTimestamp, detailSettings.getIdleTimeToDisconnectPool())) {
-                        // close connections only if pool is passive
-                        for (DBNConnection connection : connectionPool.poolConnections) {
-                            if (!connection.isIdle()) return;
-                        }
+                if (connectionPool != null && !connectionPool.poolConnections.isEmpty()) {
+                    try {
+                        ConnectionDetailSettings detailSettings = connectionPool.getConnectionHandler().getSettings().getDetailSettings();
+                        long lastAccessTimestamp = connectionPool.getLastAccessTimestamp();
+                        if (TimeUtil.isOlderThan(lastAccessTimestamp, detailSettings.getIdleTimeToDisconnectPool())) {
+                            // close connections only if pool is passive
+                            for (DBNConnection connection : connectionPool.poolConnections) {
+                                if (!connection.isIdle()) return;
+                            }
 
-                        for (DBNConnection connection : connectionPool.poolConnections) {
-                            ConnectionUtil.close(connection);
+                            for (DBNConnection connection : connectionPool.poolConnections) {
+                                ConnectionUtil.close(connection);
+                            }
+                            connectionPool.poolConnections.clear();
                         }
-                        connectionPool.poolConnections.clear();
+                    } catch (Exception ignore) {
+                        LOGGER.warn("Failed to close pool connections: " + ignore.getMessage());
                     }
                 }
             }
