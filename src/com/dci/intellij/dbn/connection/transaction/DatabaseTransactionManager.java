@@ -85,7 +85,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
     private void executeActions(ConnectionHandler connectionHandler, DBNConnection connection, List<TransactionAction> actions) {
         Project project = getProject();
-        String connectionName = connectionHandler.getName();
+        String connectionName = connectionHandler.getName() + " (" + connection.getSessionName() + ")";
         TransactionListener transactionListener = EventUtil.notify(project, TransactionListener.TOPIC);
         for (TransactionAction action : actions) {
             executeAction(connectionHandler, connection, project, connectionName, transactionListener, action);
