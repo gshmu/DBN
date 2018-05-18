@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public enum ConnectionHandlerStatus implements Property {
     CONNECTED,
+    CLEANING,
     LOADING,
     ACTIVE,
     VALID,
