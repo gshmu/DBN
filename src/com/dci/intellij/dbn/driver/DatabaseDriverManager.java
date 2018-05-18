@@ -31,7 +31,8 @@ public class DatabaseDriverManager implements ApplicationComponent {
     private static Map<DatabaseType, Map<String, String>> INTERNAL_LIB_MAP = new HashMap<DatabaseType, Map<String, String>>();
     static {
         HashMap<String, String> mysql = new HashMap<String, String>();
-        mysql.put("1.", "mysql-connector-java-5.1.35-bin.jar");
+        //mysql.put("1.", "mysql-connector-java-5.1.35-bin.jar");
+        mysql.put("1.", "mysql-connector-java-5.1.46.jar");
         INTERNAL_LIB_MAP.put(DatabaseType.MYSQL, mysql);
 
         HashMap<String, String> sqlite = new HashMap<String, String>();
