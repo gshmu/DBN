@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
@@ -24,18 +25,16 @@ import com.dci.intellij.dbn.object.filter.quick.ui.ObjectQuickFilterDialog;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import gnu.trove.THashMap;
 
 @State(
-        name = "DBNavigator.Project.ObjectQuickFilterManager",
-        storages = {
-                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = ObjectQuickFilterManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class ObjectQuickFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+    public static final String COMPONENT_NAME = "DBNavigator.Project.ObjectQuickFilterManager";
+
     private Map<CacheKey, ObjectQuickFilter> cachedFilters = new THashMap<CacheKey, ObjectQuickFilter>();
     private ConditionOperator lastUsedOperator = ConditionOperator.EQUAL;
 
@@ -153,7 +152,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.ObjectQuickFilterManager";
+        return COMPONENT_NAME;
     }
 
     /*********************************************

@@ -11,6 +11,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
@@ -28,8 +29,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
@@ -45,12 +44,12 @@ import com.intellij.psi.impl.file.impl.FileManagerImpl;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 @State(
-    name = "DBNavigator.Project.DatabaseFileManager",
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = DatabaseFileManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DatabaseFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+    public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseFileManager";
+
     private Map<DBObjectRef, DBEditableObjectVirtualFile> openFiles = new HashMap<DBObjectRef, DBEditableObjectVirtualFile>();
     private boolean projectInitialized = false;
     private String sessionId;
@@ -98,7 +97,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
      ***************************************/
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.DatabaseFileManager";
+        return COMPONENT_NAME;
     }
 
     public void projectOpened() {

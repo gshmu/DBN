@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -39,8 +40,6 @@ import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
@@ -51,12 +50,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 @State(
-    name = "DBNavigator.Project.SessionEditorManager",
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = SessionBrowserManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class SessionBrowserManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+
+    public static final String COMPONENT_NAME = "DBNavigator.Project.SessionEditorManager";
 
     private Timer timestampUpdater;
     private List<DBSessionBrowserVirtualFile> openFiles = new ArrayList<DBSessionBrowserVirtualFile>();
@@ -263,7 +262,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.SessionEditorManager";
+        return COMPONENT_NAME;
     }
 
     @Override

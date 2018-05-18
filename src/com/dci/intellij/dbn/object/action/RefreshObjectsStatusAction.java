@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.object.action;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAwareAction;
 
-public class RefreshObjectsStatusAction extends AnAction {
+public class RefreshObjectsStatusAction extends DumbAwareAction {
 
     private ConnectionHandler connectionHandler;
 

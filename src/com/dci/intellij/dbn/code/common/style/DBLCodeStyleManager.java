@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
@@ -20,8 +21,6 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -32,12 +31,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
 @State(
-    name = "DBNavigator.Project.CodeStyleManager",
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = DBLCodeStyleManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DBLCodeStyleManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+
+    public static final String COMPONENT_NAME = "DBNavigator.Project.CodeStyleManager";
+
     private DBLCodeStyleManager(Project project) {
         super(project);
     }
@@ -117,7 +117,7 @@ public class DBLCodeStyleManager extends AbstractProjectComponent implements Per
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.CodeStyleManager";
+        return COMPONENT_NAME;
     }
 
     /*********************************************

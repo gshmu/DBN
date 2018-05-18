@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -70,9 +70,6 @@ import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -82,13 +79,12 @@ import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 
 @State(
-    name = "DBNavigator.Project.DebuggerManager",
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = DatabaseDebuggerManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DatabaseDebuggerManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
+    public static final String COMPONENT_NAME = "DBNavigator.Project.DebuggerManager";
+
     public static final String GENERIC_METHOD_RUNNER_HINT = "This is the generic Database Method debug runner. This is used when debugging is invoked on a given method. No specific method information can be specified here.";
     public static final String GENERIC_STATEMENT_RUNNER_HINT = "This is the generic Database Statement debug runner. This is used when debugging is invoked on a given SQL statement. No specific statement information can be specified here.";
 
@@ -485,7 +481,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.DebuggerManager";
+        return COMPONENT_NAME;
     }
 
     /*********************************************

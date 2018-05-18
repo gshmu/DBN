@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyManager;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
-public class ObjectDependencyTreeAction extends AnAction {
+public class ObjectDependencyTreeAction extends DumbAwareAction {
     private DBObjectRef<DBSchemaObject> schemaObjectRef;
 
     public ObjectDependencyTreeAction(DBSchemaObject schemaObject) {

@@ -8,11 +8,11 @@ import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
-public class CompileInvalidObjectsAction extends AnAction {
+public class CompileInvalidObjectsAction extends DumbAwareAction {
     private DBObjectRef<DBSchema> schemaRef;
     public CompileInvalidObjectsAction(DBSchema schema) {
         super("Compile invalid objects");

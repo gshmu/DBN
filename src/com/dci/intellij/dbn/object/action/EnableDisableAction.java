@@ -8,12 +8,12 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
 import com.dci.intellij.dbn.object.common.operation.DBOperationType;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 
-public class EnableDisableAction extends AnAction {
+public class EnableDisableAction extends DumbAwareAction {
     private DBSchemaObject object;
 
     public EnableDisableAction(DBSchemaObject object) {

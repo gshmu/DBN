@@ -1,5 +1,20 @@
 package com.dci.intellij.dbn.ddl;
 
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -27,31 +42,31 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.SelectFromListDialog;
-import com.intellij.openapi.vfs.*;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileCopyEvent;
+import com.intellij.openapi.vfs.VirtualFileEvent;
+import com.intellij.openapi.vfs.VirtualFileListener;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.VirtualFileMoveEvent;
+import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 
 @State(
-    name = "DBNavigator.Project.DDLFileAttachmentManager",
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = DDLFileAttachmentManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DDLFileAttachmentManager extends AbstractProjectComponent implements VirtualFileListener, PersistentStateComponent<Element> {
+
+    public static final String COMPONENT_NAME = "DBNavigator.Project.DDLFileAttachmentManager";
 
     private Map<String, DBObjectRef<DBSchemaObject>> mappings = new HashMap<String, DBObjectRef<DBSchemaObject>>();
     private DDLFileAttachmentManager(Project project) {
@@ -385,7 +400,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.DDLFileAttachmentManager";
+        return COMPONENT_NAME;
     }
     public void dispose() {
         super.dispose();

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -13,17 +14,16 @@ import com.dci.intellij.dbn.editor.data.state.sorting.ui.DatasetEditorSortingDia
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 
 @State(
-    name = "DBNavigator.Project.DatasetEditorStateManager",
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = DatasetEditorStateManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DatasetEditorStateManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+
+    public static final String COMPONENT_NAME = "DBNavigator.Project.DatasetEditorStateManager";
+
     private DatasetEditorStateManager(Project project) {
         super(project);
     }
@@ -49,7 +49,7 @@ public class DatasetEditorStateManager extends AbstractProjectComponent implemen
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.DatasetEditorStateManager";
+        return COMPONENT_NAME;
     }
 
     /*********************************************

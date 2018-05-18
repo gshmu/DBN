@@ -5,10 +5,10 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAwareAction;
 
-public class ReloadObjectsAction extends AnAction {
+public class ReloadObjectsAction extends DumbAwareAction {
 
     private DBObjectList objectList;
 

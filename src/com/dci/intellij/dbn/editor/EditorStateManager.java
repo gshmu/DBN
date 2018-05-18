@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserEditorSettings;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
@@ -31,8 +32,6 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
@@ -43,12 +42,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 
 @State(
-    name = "DBNavigator.Project.EditorStateManager",
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = EditorStateManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class EditorStateManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+    public static final String COMPONENT_NAME = "DBNavigator.Project.EditorStateManager";
+
     private Map<DBObjectType, EditorProviderId> lastUsedEditorProviders = new THashMap<DBObjectType, EditorProviderId>();
     private EditorStateManager(Project project) {
         super(project);
@@ -116,7 +115,7 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.EditorStateManager";
+        return COMPONENT_NAME;
     }
 
     @Override

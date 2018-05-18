@@ -4,14 +4,14 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 
-public class ObjectNavigationListShowAllAction extends AnAction {
+public class ObjectNavigationListShowAllAction extends DumbAwareAction {
     private DBObjectNavigationList navigationList;
     private DBObject parentObject;
 

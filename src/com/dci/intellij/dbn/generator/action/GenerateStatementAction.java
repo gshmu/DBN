@@ -15,13 +15,13 @@ import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.generator.StatementGeneratorResult;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
-public abstract class GenerateStatementAction extends AnAction implements ConnectionProvider {
+public abstract class GenerateStatementAction extends DumbAwareAction implements ConnectionProvider {
     public GenerateStatementAction(String text) {
         super(text);
     }

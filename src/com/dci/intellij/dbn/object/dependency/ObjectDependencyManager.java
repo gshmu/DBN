@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.object.dependency;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.ConfigurationUtil;
@@ -9,20 +14,15 @@ import com.dci.intellij.dbn.object.dependency.ui.ObjectDependencyTreeDialog;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 @State(
-        name = "DBNavigator.Project.ObjectDependencyManager",
-        storages = {
-                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = ObjectDependencyManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class ObjectDependencyManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+    public static final String COMPONENT_NAME = "DBNavigator.Project.ObjectDependencyManager";
+
     private ObjectDependencyType lastUserDependencyType = ObjectDependencyType.INCOMING;
 
     private ObjectDependencyManager(final Project project) {
@@ -54,7 +54,7 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.ObjectDependencyManager";
+        return COMPONENT_NAME;
     }
 
     public Element getState() {

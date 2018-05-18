@@ -6,10 +6,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.factory.DatabaseObjectFactory;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAwareAction;
 
-public class DropObjectAction extends AnAction {
+public class DropObjectAction extends DumbAwareAction {
     private DBObjectRef<DBSchemaObject> objectRef;
 
     public DropObjectAction(DBSchemaObject object) {
