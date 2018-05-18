@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn;
 
+import java.net.ProxySelector;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -14,23 +22,17 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.util.proxy.CommonProxy;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.net.ProxySelector;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @State(
-    name = "DBNavigator.Application.Settings",
-    storages = {@Storage(file = StoragePathMacros.APP_CONFIG + "/other.xml")}
+    name = DatabaseNavigator.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DatabaseNavigator implements ApplicationComponent, PersistentStateComponent<Element> {
+    public static final String COMPONENT_NAME = "DBNavigator.Application.Settings";
+    public static final String STORAGE_FILE = "dbnavigator.xml";
+
     private static final String SQL_PLUGIN_ID = "com.intellij.sql";
     public static final String DBN_PLUGIN_ID = "DBN";
     /*static {
@@ -41,7 +43,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
 
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Application.Settings";
+        return COMPONENT_NAME;
     }
 
     private boolean debugModeEnabled;

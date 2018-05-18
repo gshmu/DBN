@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -28,17 +29,15 @@ import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 
 @State(
-    name = "DBNavigator.Project.DataExportManager",
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = DataExportManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DataExportManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+    public static final String COMPONENT_NAME = "DBNavigator.Project.DataExportManager";
+
     private DataExportInstructions exportInstructions = new DataExportInstructions();
 
     private DataExportManager(Project project) {
@@ -145,7 +144,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.DataExportManager";
+        return COMPONENT_NAME;
     }
 
     /****************************************

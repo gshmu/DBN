@@ -18,9 +18,10 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.dependency.action.ObjectDependencyTreeAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.project.DumbAware;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
-public class ObjectActionGroup extends DefaultActionGroup {
+public class ObjectActionGroup extends DefaultActionGroup implements DumbAware {
 
     public ObjectActionGroup(DBObject object) {
         if(object instanceof DBSchemaObject) {

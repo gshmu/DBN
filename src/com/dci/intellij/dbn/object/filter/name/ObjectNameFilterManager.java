@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -18,18 +19,16 @@ import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 
 @State(
-        name = "DBNavigator.Project.ObjectNameFilterManager",
-        storages = {
-                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = ObjectNameFilterManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class ObjectNameFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+
+    public static final String COMPONENT_NAME = "DBNavigator.Project.ObjectNameFilterManager";
 
     private ObjectNameFilterManager(Project project) {
         super(project);
@@ -213,7 +212,7 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.ObjectNameFilterManager";
+        return COMPONENT_NAME;
     }
 
     /*********************************************

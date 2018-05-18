@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
@@ -20,20 +21,19 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 @State(
-        name = "DBNavigator.Project.EnvironmentManager",
-        storages = {
-                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = EnvironmentManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class EnvironmentManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, Disposable {
+
+    public static final String COMPONENT_NAME = "DBNavigator.Project.EnvironmentManager";
+
     private EnvironmentManager(Project project) {
         super(project);
         EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
@@ -81,7 +81,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.EnvironmentManager";
+        return COMPONENT_NAME;
     }
 
     private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerAdapter() {

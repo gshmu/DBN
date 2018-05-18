@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -36,8 +37,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -46,12 +45,12 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 @State(
-    name = "DBNavigator.Project.MethodExecutionManager",
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = MethodExecutionManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class MethodExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+    public static final String COMPONENT_NAME = "DBNavigator.Project.MethodExecutionManager";
+
     private MethodBrowserSettings browserSettings = new MethodBrowserSettings();
     private MethodExecutionHistory executionHistory = new MethodExecutionHistory(getProject());
     private MethodExecutionArgumentValuesCache argumentValuesCache = new MethodExecutionArgumentValuesCache();
@@ -281,7 +280,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     @NotNull
     @NonNls
     public String getComponentName() {
-        return "DBNavigator.Project.MethodExecutionManager";
+        return COMPONENT_NAME;
     }
 
     public void projectOpened() {

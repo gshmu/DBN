@@ -7,10 +7,10 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAwareAction;
 
-public class EditObjectDataAction extends AnAction {
+public class EditObjectDataAction extends DumbAwareAction {
     private DBObjectRef<DBSchemaObject> objectRef;
     public EditObjectDataAction(DBSchemaObject object) {
         super("Edit Data", null, Icons.OBEJCT_EDIT_DATA);

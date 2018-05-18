@@ -6,8 +6,9 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.project.DumbAware;
 
-public class CompileActionGroup extends DefaultActionGroup {
+public class CompileActionGroup extends DefaultActionGroup implements DumbAware {
 
     public CompileActionGroup(DBSchemaObject object) {
         super("Compile", true);

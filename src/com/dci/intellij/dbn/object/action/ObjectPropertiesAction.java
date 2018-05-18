@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
-public class ObjectPropertiesAction extends AnAction {
+public class ObjectPropertiesAction extends DumbAwareAction {
     private DBObject object;
     public ObjectPropertiesAction(DBObject object) {
         super("Properties");

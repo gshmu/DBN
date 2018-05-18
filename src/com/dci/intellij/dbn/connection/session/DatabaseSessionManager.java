@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -20,17 +21,15 @@ import com.dci.intellij.dbn.connection.session.ui.CreateRenameSessionDialog;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 
 @State(
-        name = "DBNavigator.Project.DatabaseSessionManager",
-        storages = {
-                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = DatabaseSessionManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DatabaseSessionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+    public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseSessionManager";
+
     private DatabaseSessionManager(final Project project) {
         super(project);
     }
@@ -79,7 +78,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.DatabaseSessionManager";
+        return COMPONENT_NAME;
     }
 
     public void deleteSession(final DatabaseSession session) {

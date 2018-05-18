@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -20,17 +21,15 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 
 @State(
-    name = "DBNavigator.Project.DatasetFilterManager",
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = DatasetFilterManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DatasetFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+    public static final String COMPONENT_NAME = "DBNavigator.Project.DatasetFilterManager";
+
     public static final DatasetFilter EMPTY_FILTER = new DatasetEmptyFilter();
     private Map<ConnectionId, Map<String, DatasetFilterGroup>> filters =  new HashMap<ConnectionId, Map<String, DatasetFilterGroup>>();
 
@@ -180,7 +179,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.DatasetFilterManager";
+        return COMPONENT_NAME;
     }
     public void dispose() {
         super.dispose();

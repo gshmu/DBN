@@ -6,10 +6,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.object.DBView;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAwareAction;
 
-public class OpenViewDataAction extends AnAction {
+public class OpenViewDataAction extends DumbAwareAction {
     private DBView view;
 
     public OpenViewDataAction(DBView view) {

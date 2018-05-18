@@ -5,9 +5,11 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
+import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -29,27 +31,23 @@ import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 
 @State(
-        name = "DBNavigator.Project.Settings",
-        storages = {
-                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+    name = ProjectSettingsManager.COMPONENT_NAME,
+    storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class ProjectSettingsManager implements ProjectComponent, PersistentStateComponent<Element> {
-    private Project project;
+public class ProjectSettingsManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+    public static final String COMPONENT_NAME = "DBNavigator.Project.Settings";
+
     private ProjectSettings projectSettings;
     private ConfigId lastConfigId;
 
     private ProjectSettingsManager(Project project) {
-        this.project = project;
+        super(project);
         projectSettings = new ProjectSettings(project);
     }
 
@@ -180,10 +178,6 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
         getProject().putUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED, true);
     }
 
-    private Project getProject() {
-        return project;
-    }
-
     @Override
     public void projectOpened() {
     }
@@ -197,6 +191,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
     }
 
     public void exportToDefaultSettings() {
+        final Project project = getProject();
         MessageUtil.showQuestionDialog(
                 project, "Default project settings",
                 "This will overwrite your default settings with the ones from the current project (including database connections configuration). \nAre you sure you want to continue?",
@@ -220,6 +215,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
     }
 
     public void importDefaultSettings(final boolean isNewProject) {
+        final Project project = getProject();
         Boolean settingsLoaded = project.getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED);
         if (settingsLoaded == null || !settingsLoaded || !isNewProject) {
             String message = isNewProject ?
@@ -254,12 +250,9 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
         }
     }
 
-    @Override
-    public void disposeComponent() {}
-
     @NotNull
     @Override
     public String getComponentName() {
-        return "DBNavigator.Project.Settings";
+        return COMPONENT_NAME;
     }
 }
