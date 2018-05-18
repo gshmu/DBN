@@ -203,7 +203,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
         buffer.insert(0, "] ");
         ConnectionHandler connectionHandler = objectList.getConnectionHandler();
-        buffer.insert(0, connectionHandler == null ? "UNKNOWN" : connectionHandler.getName());
+        buffer.insert(0, connectionHandler.getName());
         buffer.insert(0, '[');
 
         return buffer.toString();

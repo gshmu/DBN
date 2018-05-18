@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -34,4 +35,8 @@ public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, Dynam
     T getObject(String name);
     T getObject(String name, int overload);
     T getObject(String name, String parentName);
+
+    @NotNull
+    @Override
+    ConnectionHandler getConnectionHandler();
 }
