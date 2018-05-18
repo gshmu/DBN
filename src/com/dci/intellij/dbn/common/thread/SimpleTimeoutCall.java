@@ -24,7 +24,13 @@ public abstract class SimpleTimeoutCall<T> extends Traceable implements Callable
         try {
             ExecutorService executorService = ThreadFactory.timeoutExecutor(daemon);
             Future<T> future = executorService.submit(this);
-            return future.get(timeout, timeoutUnit);
+            try {
+                return future.get(timeout, timeoutUnit);
+            } catch (InterruptedException e) {
+                future.cancel(true);
+                return handleException(e);
+            }
+
         } catch (Exception e) {
             return handleException(e);
         }

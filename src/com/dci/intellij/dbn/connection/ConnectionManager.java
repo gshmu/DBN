@@ -54,7 +54,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -425,7 +424,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers()) {
                     resolveIdleStatus(connectionHandler);
                 }
-            } catch (ProcessCanceledException ignore){}
+            } catch (Exception ignore){}
         }
 
         private void resolveIdleStatus(final ConnectionHandler connectionHandler) {
