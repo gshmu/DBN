@@ -145,7 +145,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
     @Override
     public final boolean equals(Object obj) {
-        return obj instanceof DBVirtualFileImpl && hashCode() == obj.hashCode();
+        return this == obj || (obj instanceof DBVirtualFileImpl && hashCode() == obj.hashCode());
     }
 
     @NotNull protected abstract String createPath();
