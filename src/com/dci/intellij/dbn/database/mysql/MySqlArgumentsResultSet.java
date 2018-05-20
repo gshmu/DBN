@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.database.mysql;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.WordTokenizer;
+import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.common.util.WordTokenizer;
-import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
 
 public class MySqlArgumentsResultSet extends ResultSetAdapter {
     private class Argument {

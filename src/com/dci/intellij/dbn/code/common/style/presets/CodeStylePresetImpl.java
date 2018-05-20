@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.code.common.style.presets;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public abstract class CodeStylePresetImpl implements CodeStylePreset {
     private String id;

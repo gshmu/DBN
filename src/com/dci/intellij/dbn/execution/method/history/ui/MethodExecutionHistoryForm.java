@@ -23,11 +23,10 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBSplitter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPanel;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

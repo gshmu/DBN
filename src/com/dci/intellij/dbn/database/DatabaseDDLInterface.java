@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.database;
 
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 import com.intellij.openapi.project.Project;
+
+import java.sql.SQLException;
 
 public interface DatabaseDDLInterface extends DatabaseInterface{
     String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code, String alternativeDelimiter);

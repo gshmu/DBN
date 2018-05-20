@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import java.lang.ref.WeakReference;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -14,7 +11,15 @@ import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.psi.PsiElement;
-import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.*;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.CONNECTION_ACTIVE;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.CONNECTION_VALID;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.NEW;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.RESOLVING;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.RESOLVING_OBJECT_TYPE;
 
 public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     private ConnectionHandlerRef connectionHandlerRef;

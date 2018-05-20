@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.browser.options;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserEditorSettingsForm;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.editor.DefaultEditorOption;
 import com.dci.intellij.dbn.object.common.editor.DefaultEditorType;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseBrowserEditorSettings extends ProjectConfiguration<DatabaseBrowserEditorSettingsForm> {
     private List<DefaultEditorOption> options = new ArrayList<DefaultEditorOption>();

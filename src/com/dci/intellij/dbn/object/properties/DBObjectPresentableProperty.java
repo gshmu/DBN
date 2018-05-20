@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.object.properties;
 
-import javax.swing.Icon;
-
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.pom.Navigatable;
+
+import javax.swing.*;
 
 public class DBObjectPresentableProperty extends PresentableProperty{
     private DBObjectRef objectRef;

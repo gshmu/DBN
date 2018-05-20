@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.structure;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.sql.structure.SQLStructureViewElement;
@@ -13,6 +11,7 @@ import com.intellij.ide.util.treeView.smartTree.Grouper;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class DBLanguageStructureViewModel extends TextEditorBasedStructureViewModel implements StructureViewModel.ElementInfoProvider {
 

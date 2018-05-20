@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.common.thread;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public abstract class BackgroundQueue<T extends Queueable> {
 

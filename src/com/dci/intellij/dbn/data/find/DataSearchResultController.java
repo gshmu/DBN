@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.data.find;
 
-import java.awt.Rectangle;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
@@ -15,6 +12,9 @@ import com.intellij.find.FindResult;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 public class DataSearchResultController implements Disposable{
     private SearchableDataComponent searchableComponent;

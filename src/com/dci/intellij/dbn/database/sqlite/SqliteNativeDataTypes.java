@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.database.sqlite;
 
+import com.dci.intellij.dbn.common.util.LazyThreadLocal;
+import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
+import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -7,11 +12,6 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.util.LazyThreadLocal;
-import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
-import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
 
 public class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
     private static final LazyThreadLocal<SimpleDateFormat> DATE_FORMAT = new LazyThreadLocal<SimpleDateFormat>() {

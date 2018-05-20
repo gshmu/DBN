@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
-import javax.swing.event.TableModelListener;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
+
+import javax.swing.event.TableModelListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectPropertiesTableModel extends DisposableBase implements DBNTableModel {
     private List<PresentableProperty> presentableProperties = new ArrayList<PresentableProperty>();

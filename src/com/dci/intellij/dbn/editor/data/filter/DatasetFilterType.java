@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.Presentable;
+import javax.swing.*;
 
 public enum DatasetFilterType implements Presentable{
     NONE("None", Icons.DATASET_FILTER_EMPTY, Icons.DATASET_FILTER_EMPTY),

@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.code.common.lookup;
 
-import javax.swing.Icon;
-
 import com.dci.intellij.dbn.code.common.completion.BasicInsertHandler;
 import com.dci.intellij.dbn.code.common.completion.BracketsInsertHandler;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
@@ -15,6 +13,8 @@ import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.project.Project;
+
+import javax.swing.*;
 
 public class TokenChainLookupItemBuilder extends LookupItemBuilder {
 

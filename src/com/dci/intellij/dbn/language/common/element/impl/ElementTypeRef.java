@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import java.util.Set;
-
 import com.dci.intellij.dbn.common.ChainElement;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
+
+import java.util.Set;
 
 public class ElementTypeRef extends ChainElement<ElementTypeRef> {
     private ElementType parentElementType;

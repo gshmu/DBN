@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.execution.explain.result.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JTable;
-import java.awt.Component;
-
 import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.ui.treeStructure.treetable.TreeTableCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class ExplainPlanTreeTableCellRenderer extends TreeTableCellRenderer {
     private final TreeTableTree tree;

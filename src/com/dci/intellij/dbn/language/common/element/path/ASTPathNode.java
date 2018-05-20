@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.language.common.element.path;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.Nullable;
 
 public class ASTPathNode implements PathNode{
     private ASTNode astNode;

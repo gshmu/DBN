@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.code.common.completion.options.general;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.code.common.completion.options.general.ui.CodeCompletionFormatSettingsForm;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class CodeCompletionFormatSettings extends Configuration<CodeCompletionFormatSettingsForm>{
     private boolean enforceCodeStyleCase = true;

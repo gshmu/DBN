@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.database.generic;
 
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
@@ -9,6 +7,8 @@ import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 import com.intellij.openapi.project.Project;
+
+import java.sql.SQLException;
 
 public class GenericDDLInterface extends DatabaseDDLInterfaceImpl {
     public GenericDDLInterface(DatabaseInterfaceProvider provider) {

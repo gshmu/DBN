@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.database;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
+import org.jetbrains.annotations.Nullable;
 
 public enum DatabaseFeature {
     OBJECT_REPLACING("Replacing existing objects via DDL"),

@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.browser.action;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
@@ -10,6 +7,9 @@ import com.dci.intellij.dbn.connection.config.action.ConnectionSettingsAction;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class NewConnectionAction extends ConnectionSettingsAction {
     private DatabaseType databaseType;

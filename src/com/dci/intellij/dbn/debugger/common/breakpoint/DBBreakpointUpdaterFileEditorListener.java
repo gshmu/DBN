@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
@@ -14,6 +12,8 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.impl.breakpoints.XBreakpointManagerImpl;
 import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointImpl;
 import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointManager;
+import org.jetbrains.annotations.NotNull;
+
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getVirtualFile;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.setBreakpointId;
 

@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ExecVariableElementType;
@@ -12,6 +10,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
+import org.jetbrains.annotations.NotNull;
 
 public class ExecVariableElementTypeParser extends AbstractElementTypeParser<ExecVariableElementType> {
     public ExecVariableElementTypeParser(ExecVariableElementType elementType) {

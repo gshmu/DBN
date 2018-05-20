@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.data.type;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Constructor;
 import java.util.Date;
-import org.jetbrains.annotations.Nullable;
 
 public class DateTimeDataTypeDefinition extends BasicDataTypeDefinition {
     private Constructor constructor;

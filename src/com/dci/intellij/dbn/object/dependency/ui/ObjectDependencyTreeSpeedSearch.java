@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import javax.swing.JTree;
-import javax.swing.tree.TreePath;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.Disposable;
 import com.intellij.ui.SpeedSearchBase;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectDependencyTreeSpeedSearch extends SpeedSearchBase<JTree> implements Disposable {
     private static final Object[] EMPTY_ARRAY = new Object[0];

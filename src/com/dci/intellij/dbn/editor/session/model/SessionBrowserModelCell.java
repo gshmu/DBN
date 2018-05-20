@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.editor.session.model;
 
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
+import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
-import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
 
 public class SessionBrowserModelCell extends ResultSetDataModelCell implements ChangeListener {
 

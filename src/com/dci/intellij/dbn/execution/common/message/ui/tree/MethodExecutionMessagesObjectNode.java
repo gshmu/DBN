@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import javax.swing.tree.TreePath;
-
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.execution.method.MethodExecutionMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+
+import javax.swing.tree.TreePath;
 
 public class MethodExecutionMessagesObjectNode extends BundleTreeNode {
     private DBEditableObjectVirtualFile databaseFile;

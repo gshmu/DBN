@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.session;
 
-import javax.swing.Icon;
-
 import com.dci.intellij.dbn.common.Icons;
+
+import javax.swing.*;
 
 public enum SessionBrowserFilterType {
     USER("user", Icons.SB_FILTER_USER),

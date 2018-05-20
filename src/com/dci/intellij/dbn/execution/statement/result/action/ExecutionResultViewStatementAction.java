@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
-import java.awt.Component;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.common.ui.StatementViewerPopup;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 public class ExecutionResultViewStatementAction extends AbstractExecutionResultAction {
     public ExecutionResultViewStatementAction() {

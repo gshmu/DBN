@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.resolve;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
@@ -9,6 +7,7 @@ import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import org.jetbrains.annotations.NotNull;
 
 public class LocalDeclarationObjectResolver extends UnderlyingObjectResolver{
     private static final LocalDeclarationObjectResolver INSTANCE = new LocalDeclarationObjectResolver();

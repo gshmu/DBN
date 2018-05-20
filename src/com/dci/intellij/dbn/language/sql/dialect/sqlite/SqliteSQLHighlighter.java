@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.language.sql.dialect.sqlite;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.sql.SQLSyntaxHighlighter;
 import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.lexer.LayeredLexer;
 import com.intellij.lexer.Lexer;
+import org.jetbrains.annotations.NotNull;
 
 public class SqliteSQLHighlighter extends SQLSyntaxHighlighter {
 

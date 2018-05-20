@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.connection.transaction.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.ui.TransactionManagerSettingsForm;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class TransactionManagerSettings extends Configuration<TransactionManagerSettingsForm> {
     public static final String REMEMBER_OPTION_HINT = ""/*"\n\n(you can remember your option and change it at any time in Settings > Operations > Transaction Manager)"*/;

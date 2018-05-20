@@ -8,7 +8,7 @@ import com.intellij.openapi.options.colors.AttributesDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class SQLColorSettingsPage extends DBLColorSettingsPage {
 

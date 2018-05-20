@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.execution.logging.ui;
 
-import java.io.StringReader;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
@@ -11,6 +8,9 @@ import com.intellij.diagnostic.logging.DefaultLogFilterModel;
 import com.intellij.diagnostic.logging.LogConsoleBase;
 import com.intellij.diagnostic.logging.LogFilterModel;
 import com.intellij.openapi.actionSystem.ActionGroup;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.StringReader;
 
 public class DatabaseLoggingResultConsole extends LogConsoleBase{
     public static final StringReader EMPTY_READER = new StringReader("");

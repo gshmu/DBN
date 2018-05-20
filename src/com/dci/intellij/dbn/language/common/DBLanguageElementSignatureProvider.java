@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.language.common;
 
-import java.util.StringTokenizer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.intellij.codeInsight.folding.impl.ElementSignatureProvider;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.StringTokenizer;
 
 public class DBLanguageElementSignatureProvider implements ElementSignatureProvider {
     public String getSignature(@NotNull PsiElement psiElement) {

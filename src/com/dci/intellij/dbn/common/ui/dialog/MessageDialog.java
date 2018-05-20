@@ -1,18 +1,13 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import java.awt.Component;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.uiDesigner.core.GridConstraints;
+
+import javax.swing.*;
+import java.awt.*;
 
 @Deprecated
 public class MessageDialog extends DialogBuilder {

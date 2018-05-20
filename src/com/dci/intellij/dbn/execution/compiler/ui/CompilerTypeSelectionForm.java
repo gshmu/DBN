@@ -1,15 +1,13 @@
 package com.dci.intellij.dbn.execution.compiler.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class CompilerTypeSelectionForm extends DBNFormImpl<CompilerTypeSelectionDialog> {
     private JPanel mainPanel;

@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.common.util;
 
-import java.sql.Timestamp;
 import org.jetbrains.annotations.NotNull;
+
+import java.sql.Timestamp;
 
 public class ChangeTimestamp {
     private Timestamp value;

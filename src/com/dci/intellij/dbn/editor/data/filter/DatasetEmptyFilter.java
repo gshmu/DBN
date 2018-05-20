@@ -1,15 +1,14 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class DatasetEmptyFilter implements DatasetFilter{
 

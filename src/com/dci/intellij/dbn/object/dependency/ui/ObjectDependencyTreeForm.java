@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.tree.TreeModel;
-import java.awt.BorderLayout;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -24,6 +19,10 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.JBScrollPane;
+
+import javax.swing.*;
+import javax.swing.tree.TreeModel;
+import java.awt.*;
 
 public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDialog>{
     private JPanel mainPanel;

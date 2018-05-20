@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public enum RecordNavigationTarget implements Presentable{
     VIEWER("Record Viewer", null),

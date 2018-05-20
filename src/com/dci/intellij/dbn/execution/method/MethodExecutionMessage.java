@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.method;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -9,6 +7,7 @@ import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import org.jetbrains.annotations.Nullable;
 
 public class MethodExecutionMessage extends ConsoleMessage {
     private MethodExecutionProcessor executionProcessor;

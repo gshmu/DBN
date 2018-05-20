@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.object.properties;
 
-import javax.swing.Icon;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.pom.Navigatable;
+
+import javax.swing.*;
 
 public class ConnectionPresentableProperty extends PresentableProperty{
     private ConnectionHandlerRef connectionHandlerRef;

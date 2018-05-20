@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
 import javax.swing.tree.TreeNode;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 
 public class FolderTreeNode extends LeafTreeNode{
     List<TreeNode> children = new ArrayList<TreeNode>();

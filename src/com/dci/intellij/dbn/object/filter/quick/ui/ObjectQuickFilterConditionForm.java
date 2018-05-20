@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -23,6 +15,11 @@ import com.dci.intellij.dbn.object.filter.quick.action.DeleteQuickFilterConditio
 import com.dci.intellij.dbn.object.filter.quick.action.EnableDisableQuickFilterConditionAction;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.ui.DocumentAdapter;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import java.awt.*;
 
 public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilterForm> {
     private JPanel mainPanel;

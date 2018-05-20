@@ -5,7 +5,7 @@ import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 public class DatabaseFilesTableCellRenderer extends ColoredTableCellRenderer{

@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.connection.session.ui;
 
-import javax.swing.Action;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm> {
     private ConnectionHandlerRef connectionHandlerRef;

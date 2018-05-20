@@ -1,15 +1,13 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.ui.JBColor;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class DialogWithTimeoutForm extends DBNFormImpl {
     private JPanel mainPanel;

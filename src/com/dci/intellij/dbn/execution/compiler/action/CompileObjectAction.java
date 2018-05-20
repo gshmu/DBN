@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.compiler.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
@@ -17,6 +15,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class CompileObjectAction extends DumbAwareAction {
     private DBObjectRef<DBSchemaObject> objectRef;

@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -13,6 +9,10 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class QualifiedIdentifierPsiElement extends SequencePsiElement {
     private ParseVariants parseVariants;

@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.object.common.list.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class ObjectListFilterAction extends AnAction {
 

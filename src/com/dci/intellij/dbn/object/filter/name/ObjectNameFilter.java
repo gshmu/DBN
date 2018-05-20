@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.object.filter.name;
 
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
+import org.jdom.Element;
 
 public class ObjectNameFilter extends CompoundFilterCondition {
     private ObjectNameFilterSettings settings;

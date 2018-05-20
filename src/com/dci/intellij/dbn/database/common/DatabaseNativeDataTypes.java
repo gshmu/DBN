@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.database.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.data.type.BasicDataTypeDefinition;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
 import com.dci.intellij.dbn.data.type.DateTimeDataTypeDefinition;
@@ -11,6 +8,9 @@ import com.dci.intellij.dbn.data.type.LargeObjectDataTypeDefinition;
 import com.dci.intellij.dbn.data.type.LiteralDataTypeDefinition;
 import com.dci.intellij.dbn.data.type.NumericDataTypeDefinition;
 import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DatabaseNativeDataTypes {
     protected List<DataTypeDefinition> dataTypes = new ArrayList<DataTypeDefinition>();

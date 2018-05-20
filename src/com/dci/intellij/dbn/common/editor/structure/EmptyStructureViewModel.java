@@ -12,7 +12,7 @@ import com.intellij.navigation.ItemPresentation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class EmptyStructureViewModel implements StructureViewModel {
     public static final StructureViewModel INSTANCE = new EmptyStructureViewModel();

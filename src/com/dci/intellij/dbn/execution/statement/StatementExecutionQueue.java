@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -11,6 +7,11 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProc
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
 
 public abstract class StatementExecutionQueue extends DisposableBase{

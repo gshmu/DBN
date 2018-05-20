@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.KeyStroke;
-import java.awt.event.KeyEvent;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.openapi.actionSystem.CustomShortcutSet;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.actionSystem.Shortcut;
@@ -11,6 +7,10 @@ import com.intellij.openapi.actionSystem.ShortcutSet;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.event.KeyEvent;
 
 public class KeyUtil {
     public static boolean match(Shortcut[] shortcuts, KeyEvent e) {

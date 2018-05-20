@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.execution.script.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
@@ -10,6 +7,8 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
 import com.dci.intellij.dbn.execution.script.options.ui.ScriptExecutionSettingsForm;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettingsForm> implements ExecutionTimeoutSettings{
     private ExecutionEngineSettings parent;

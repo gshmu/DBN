@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.database;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jetbrains.annotations.NotNull;
 
 public class CmdLineExecutionInput {
     private StringBuilder content;

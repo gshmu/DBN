@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeWeakRef;
 import com.dci.intellij.dbn.common.property.Property;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class IncrementalStatusAdapter<T, P extends Property> {
     private final P status;

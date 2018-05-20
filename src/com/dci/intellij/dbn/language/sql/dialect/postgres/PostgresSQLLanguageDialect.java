@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.language.sql.dialect.postgres;
 
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.ChameleonTokenType;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.common.DBLanguageSyntaxHighlighter;
 import com.dci.intellij.dbn.language.sql.dialect.SQLLanguageDialect;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public class PostgresSQLLanguageDialect extends SQLLanguageDialect {
     public PostgresSQLLanguageDialect() {

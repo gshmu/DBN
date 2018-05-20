@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
-import javax.swing.Action;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
 import com.dci.intellij.dbn.object.filter.name.SimpleNameFilterCondition;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterConditionForm> {
     private CompoundFilterCondition parentCondition;

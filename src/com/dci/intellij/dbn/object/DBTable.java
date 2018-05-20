@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.object;
 
-import java.util.List;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface DBTable extends DBDataset {
     boolean isTemporary();

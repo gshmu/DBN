@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.data.type;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.content.DynamicContentElement;
+import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
+import com.intellij.openapi.diagnostic.Logger;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -7,15 +16,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
-import com.dci.intellij.dbn.data.value.ValueAdapter;
-import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
-import com.intellij.openapi.diagnostic.Logger;
 
 public class DBNativeDataType implements DynamicContentElement{
     private static final Logger LOGGER = LoggerFactory.createLogger();

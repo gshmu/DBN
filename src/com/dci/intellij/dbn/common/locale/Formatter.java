@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.common.locale;
 
+import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
@@ -9,12 +15,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.data.value.ValueAdapter;
-import com.intellij.openapi.project.Project;
 
 
 public class Formatter implements Cloneable{

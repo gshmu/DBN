@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.RefreshableValue;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
@@ -15,6 +11,10 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     private static final List<String> EMPTY_LIST = new ArrayList<String>(0);

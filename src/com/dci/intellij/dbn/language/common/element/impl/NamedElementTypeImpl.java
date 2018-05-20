@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import java.util.Set;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
@@ -16,6 +13,9 @@ import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
+import org.jdom.Element;
+
+import java.util.Set;
 
 public class NamedElementTypeImpl extends SequenceElementTypeImpl implements NamedElementType {
     private boolean definitionLoaded;

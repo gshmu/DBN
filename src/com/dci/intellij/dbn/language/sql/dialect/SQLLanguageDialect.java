@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.sql.dialect;
 
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -12,6 +8,9 @@ import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.sql.SQLFileElementType;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.psi.tree.IFileElementType;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class SQLLanguageDialect extends DBLanguageDialect {
     private LazyValue<ChameleonElementType> psqlChameleonElementType = new SimpleLazyValue<ChameleonElementType>() {

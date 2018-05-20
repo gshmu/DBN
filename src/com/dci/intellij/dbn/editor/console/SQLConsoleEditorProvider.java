@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.editor.console;
 
-import java.awt.BorderLayout;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.console.ui.SQLConsoleEditorToolbarForm;
@@ -16,6 +11,11 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 
 public class SQLConsoleEditorProvider extends BasicTextEditorProvider implements DumbAware{

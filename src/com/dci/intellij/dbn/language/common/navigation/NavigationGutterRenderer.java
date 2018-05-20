@@ -5,7 +5,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class NavigationGutterRenderer extends GutterIconRenderer {
     private AnAction action;

@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.language.psql;
 
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -12,6 +9,9 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class PSQLDocumentationProvider implements DocumentationProvider {
 

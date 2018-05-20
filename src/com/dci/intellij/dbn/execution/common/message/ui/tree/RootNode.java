@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 public class RootNode extends BundleTreeNode {
     private MessagesTreeModel messagesTreeModel;

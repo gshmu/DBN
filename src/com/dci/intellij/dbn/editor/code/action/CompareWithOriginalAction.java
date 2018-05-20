@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 public class CompareWithOriginalAction extends AbstractDiffAction {

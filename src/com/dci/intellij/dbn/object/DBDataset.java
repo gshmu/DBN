@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.object;
 
-import java.util.List;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import java.util.List;
 
 public interface DBDataset extends DBSchemaObject {
     @NotNull List<DBColumn> getColumns();

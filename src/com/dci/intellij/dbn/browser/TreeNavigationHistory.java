@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.browser;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.intellij.openapi.Disposable;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TreeNavigationHistory implements Disposable{
     private List<BrowserTreeNode> history = new ArrayList<BrowserTreeNode>();

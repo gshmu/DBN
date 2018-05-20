@@ -1,16 +1,15 @@
 package com.dci.intellij.dbn.debugger.common.config.ui;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import java.awt.event.ActionEvent;
-import java.util.Collections;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.process.ui.CompileDebugDependenciesForm;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.util.Collections;
+import java.util.List;
 
 public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDependenciesForm> {
     private DBRunConfig runConfiguration;

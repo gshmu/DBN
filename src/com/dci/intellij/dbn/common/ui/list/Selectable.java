@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.list;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public interface Selectable<T> extends Comparable<T>{
     Icon getIcon();

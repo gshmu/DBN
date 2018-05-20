@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -13,6 +11,7 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class DBMethodJdwpRunner extends DBProgramRunner<MethodExecutionInput> {
     public static final String RUNNER_ID = "DBNMethodJdwpRunner";

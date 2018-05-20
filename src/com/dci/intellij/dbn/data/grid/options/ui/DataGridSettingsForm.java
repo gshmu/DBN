@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.data.grid.options.ui;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
 public class DataGridSettingsForm extends CompositeConfigurationEditorForm<DataGridSettings> {
     private JPanel mainPanel;

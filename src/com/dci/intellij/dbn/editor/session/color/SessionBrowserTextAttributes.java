@@ -9,7 +9,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.SimpleTextAttributes;
 
-import java.awt.Color;
+import java.awt.*;
 
 public class SessionBrowserTextAttributes extends CommonUtil implements DataGridTextAttributes {
     private SimpleTextAttributes activeSession;

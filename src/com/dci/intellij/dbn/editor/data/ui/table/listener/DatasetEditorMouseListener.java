@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.editor.data.ui.table.listener;
 
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
@@ -11,6 +7,10 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.Disposable;
+
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class DatasetEditorMouseListener extends MouseAdapter implements Disposable {
     private DatasetEditorTable table;

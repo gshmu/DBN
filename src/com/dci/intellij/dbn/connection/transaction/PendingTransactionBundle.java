@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.connection.transaction;
 
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.intellij.openapi.vfs.VirtualFile;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PendingTransactionBundle {
     private List<PendingTransaction> entries = new ArrayList<PendingTransaction>();

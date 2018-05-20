@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.object.common;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBObjectSelectionHistory implements Disposable{
     private List<DBObjectRef> history = new ArrayList<DBObjectRef>();

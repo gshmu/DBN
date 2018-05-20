@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.Icon;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.ui.Presentable;
+import javax.swing.*;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CharsetOption implements Presentable {
     public static List<CharsetOption> ALL = new ArrayList<CharsetOption>();

@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.editor.data.state.column.ui;
 
-import javax.swing.*;
-import java.util.Comparator;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.list.Selectable;
 import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnState;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.util.Comparator;
 
 public class ColumnStateSelectable implements Selectable {
     public static final Comparator<ColumnStateSelectable> NAME_COMPARATOR = new Comparator<ColumnStateSelectable>() {

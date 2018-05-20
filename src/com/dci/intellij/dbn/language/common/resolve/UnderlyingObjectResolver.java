@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.language.common.resolve;
 
-import java.util.Map;
-
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import gnu.trove.THashMap;
+
+import java.util.Map;
 
 public abstract class UnderlyingObjectResolver {
     public static Map<String, UnderlyingObjectResolver> RESOLVERS = new THashMap<String, UnderlyingObjectResolver>();

@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTreeNodeProvider;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterTreeNode;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.intellij.ui.CheckedTreeNode;
+import org.jdom.Element;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider, PersistentConfiguration {
     private List<CodeCompletionFilterOption> options = new ArrayList<CodeCompletionFilterOption>();

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.record;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class RecordViewInfo {
     private String title;

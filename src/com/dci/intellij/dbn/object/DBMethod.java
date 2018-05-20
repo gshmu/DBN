@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.object;
 
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface DBMethod extends DBSchemaObject {
     List<DBArgument> getArguments();

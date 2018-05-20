@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.object.properties;
 
-import javax.swing.Icon;
-
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBType;
 import com.intellij.pom.Navigatable;
+
+import javax.swing.*;
 
 public class DBDataTypePresentableProperty extends PresentableProperty{
     private DBDataType dataType;

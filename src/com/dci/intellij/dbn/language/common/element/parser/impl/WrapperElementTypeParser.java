@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -16,6 +13,9 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperElementType> {
     public WrapperElementTypeParser(WrapperElementType elementType) {

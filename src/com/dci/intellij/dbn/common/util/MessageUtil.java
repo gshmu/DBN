@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
@@ -13,6 +10,9 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class MessageUtil {
 

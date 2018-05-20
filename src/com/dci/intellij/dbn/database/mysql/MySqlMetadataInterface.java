@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
-
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
 
 
 public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {

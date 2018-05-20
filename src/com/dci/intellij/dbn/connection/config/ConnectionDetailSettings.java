@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.nio.charset.Charset;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeId;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
@@ -13,6 +9,10 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDetailSettingsForm;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.nio.charset.Charset;
 
 public class ConnectionDetailSettings extends Configuration<ConnectionDetailSettingsForm> {
     private Charset charset = Charset.forName("UTF-8");

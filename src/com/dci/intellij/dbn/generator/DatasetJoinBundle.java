@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.generator;
 
+import com.dci.intellij.dbn.object.DBDataset;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import com.dci.intellij.dbn.object.DBDataset;
 
 public class DatasetJoinBundle {
     private List<DatasetJoin> joins = new ArrayList<DatasetJoin>();

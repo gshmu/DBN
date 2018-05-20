@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.code.common.completion.options.ui;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class CodeCompletionSettingsForm extends CompositeConfigurationEditorForm<CodeCompletionSettings> {
     private JPanel mainPanel;

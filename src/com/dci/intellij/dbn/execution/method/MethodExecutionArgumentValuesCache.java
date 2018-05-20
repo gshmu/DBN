@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.execution.method;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import gnu.trove.THashMap;
+import org.jdom.Element;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class MethodExecutionArgumentValuesCache implements PersistentStateElement<Element> {
     private Map<ConnectionId, Set<MethodExecutionArgumentValue>> variablesMap = new THashMap<ConnectionId, Set<MethodExecutionArgumentValue>>();

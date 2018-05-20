@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteResultSetAdapter;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public abstract class SqliteDatasetInfoResultSetStub<T extends ResultSetElement> extends SqliteResultSetAdapter<T> {
     private DBNConnection connection;

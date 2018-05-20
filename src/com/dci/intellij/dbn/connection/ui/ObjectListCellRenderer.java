@@ -4,11 +4,8 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.ui.DottedBorder;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import java.awt.Color;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 
 public class ObjectListCellRenderer extends DefaultListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {

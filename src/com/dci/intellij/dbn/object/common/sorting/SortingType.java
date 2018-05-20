@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.object.common.sorting;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.ui.Presentable;
+import javax.swing.*;
 
 public enum SortingType implements Presentable{
     NAME("Name"),

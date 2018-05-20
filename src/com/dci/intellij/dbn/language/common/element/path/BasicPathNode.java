@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.language.common.element.path;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.list.ReversedList;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BasicPathNode implements PathNode {
     private PathNode parent;

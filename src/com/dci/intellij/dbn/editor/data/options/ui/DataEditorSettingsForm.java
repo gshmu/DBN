@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.editor.data.options.ui;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class DataEditorSettingsForm extends CompositeConfigurationEditorForm<DataEditorSettings> {
     private JPanel mainPanel;

@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
-import javax.swing.Icon;
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugValue;
 import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.intellij.xdebugger.frame.XValueModifier;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.Set;
 
 public class DBJdbcDebugValue extends DBDebugValue<DBJdbcDebugStackFrame>{
     private DBJdbcDebugValueModifier modifier;

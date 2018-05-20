@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.editor.code;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class SourceCodeManagerAdapter implements SourceCodeManagerListener {
     @Override

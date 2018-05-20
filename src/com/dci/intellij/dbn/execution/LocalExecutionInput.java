@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution;
 
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -10,6 +8,8 @@ import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+
 import static com.dci.intellij.dbn.execution.ExecutionOption.COMMIT_AFTER_EXECUTION;
 import static com.dci.intellij.dbn.execution.ExecutionOption.ENABLE_LOGGING;
 

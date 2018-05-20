@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import com.dci.intellij.dbn.data.export.DataExportFormat;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-
-import com.dci.intellij.dbn.data.export.DataExportFormat;
 
 public class ExcelXDataExportProcessor extends ExcelDataExportProcessor{
 

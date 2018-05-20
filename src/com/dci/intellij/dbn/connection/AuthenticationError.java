@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.connection;
 
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+
+import java.sql.SQLException;
 
 public class AuthenticationError {
     public static final int THREE_MINUTES = TimeUtil.ONE_MINUTE * 3;

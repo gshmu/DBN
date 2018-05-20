@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.common.thread;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.jetbrains.annotations.NotNull;
 
 public class ThreadFactory {
 

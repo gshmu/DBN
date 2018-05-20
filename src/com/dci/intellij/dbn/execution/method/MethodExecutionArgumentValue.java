@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.execution.method;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.CDATA;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.list.MostRecentStack;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import org.jdom.CDATA;
+import org.jdom.Element;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MethodExecutionArgumentValue implements PersistentStateElement<Element>, Cloneable, ArgumentValueHolder<String> {
     private String name;

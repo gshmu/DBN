@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.editor.data.state.column;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.object.DBColumn;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class DatasetColumnState implements Comparable<DatasetColumnState>, PersistentStateElement<Element>{
     private String name;

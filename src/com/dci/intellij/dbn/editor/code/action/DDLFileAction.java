@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.editor.code.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.ddl.action.AttachDDLFileAction;
@@ -13,6 +11,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class DDLFileAction extends GroupPopupAction {

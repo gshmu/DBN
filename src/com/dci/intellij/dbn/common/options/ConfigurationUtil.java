@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.common.options;
 
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import org.jdom.Element;
 
 public class ConfigurationUtil extends SettingsUtil{
 

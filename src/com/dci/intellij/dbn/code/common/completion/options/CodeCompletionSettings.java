@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.code.common.completion.options;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFiltersSettings;
 import com.dci.intellij.dbn.code.common.completion.options.general.CodeCompletionFormatSettings;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingSettings;
@@ -15,6 +11,9 @@ import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCompletionSettingsForm> implements TopLevelConfig {
     private CodeCompletionFiltersSettings filterSettings;

@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.TableNames;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteResultSetAdapter;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * DATASET_NAME

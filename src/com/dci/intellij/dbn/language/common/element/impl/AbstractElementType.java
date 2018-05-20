@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import javax.swing.Icon;
-import java.util.Set;
-import java.util.StringTokenizer;
-import org.apache.commons.lang.StringUtils;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinitionFactory;
 import com.dci.intellij.dbn.code.common.style.formatting.IndentDefinition;
@@ -36,6 +28,14 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import gnu.trove.THashSet;
+import org.apache.commons.lang.StringUtils;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 public abstract class AbstractElementType extends IElementType implements ElementType {
     private static final Logger LOGGER = LoggerFactory.createLogger();

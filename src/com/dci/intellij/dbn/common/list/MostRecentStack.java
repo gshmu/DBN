@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.common.list;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.jetbrains.annotations.Nullable;
 
 public class MostRecentStack<T> implements Iterable<T>{
     private List<T> values = new ArrayList<T>();

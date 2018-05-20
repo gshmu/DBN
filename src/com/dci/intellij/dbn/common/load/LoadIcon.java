@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.common.load;
 
-import javax.swing.Icon;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.util.IconLoader;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LoadIcon implements Icon{
     public static final Icon INSTANCE = new LoadIcon();

@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.option.ui;
 
-import javax.swing.JList;
-
 import com.dci.intellij.dbn.common.option.InteractiveOption;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+
+import javax.swing.*;
 
 public class InteractiveOptionComboBoxRenderer extends ColoredListCellRenderer<InteractiveOption>{
     public static final InteractiveOptionComboBoxRenderer INSTANCE = new InteractiveOptionComboBoxRenderer();

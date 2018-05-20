@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.Icon;
-
 import com.intellij.openapi.actionSystem.ex.CheckboxAction;
+
+import javax.swing.*;
 
 public abstract class DBNCheckboxAction extends CheckboxAction{
     protected DBNCheckboxAction() {

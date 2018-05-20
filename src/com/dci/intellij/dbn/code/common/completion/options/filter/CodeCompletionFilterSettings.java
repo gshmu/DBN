@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter;
 
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTreeNodeProvider;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterSettingsForm;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterTreeNode;
@@ -13,6 +9,10 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.ObjectTypeFilter;
 import com.intellij.ui.CheckedTreeNode;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFilterSettingsForm> implements CheckedTreeNodeProvider, ObjectTypeFilter {
     public static final int SCHEMA_TYPE_USER = 0;

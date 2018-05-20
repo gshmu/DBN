@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import java.awt.Cursor;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
@@ -16,6 +8,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class PendingTransactionsTable extends DBNTable {
     public PendingTransactionsTable(PendingTransactionsTableModel model) {

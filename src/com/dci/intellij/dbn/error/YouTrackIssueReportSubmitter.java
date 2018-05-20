@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.error;
 
+import com.intellij.diagnostic.LogMessageEx;
+import com.intellij.errorreport.bean.ErrorBean;
+import com.intellij.idea.IdeaLogger;
+import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
+import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -9,13 +16,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import org.jetbrains.annotations.NotNull;
-
-import com.intellij.diagnostic.LogMessageEx;
-import com.intellij.errorreport.bean.ErrorBean;
-import com.intellij.idea.IdeaLogger;
-import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
-import com.intellij.util.containers.ContainerUtil;
 
 public class YouTrackIssueReportSubmitter extends IssueReportSubmitter {
 

@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.ddl.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.ddl.options.ui.DDLFileGeneralSettingsForm;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettingsForm> {
     private BooleanSetting lookupDDLFilesEnabled = new BooleanSetting("lookup-ddl-files", true);

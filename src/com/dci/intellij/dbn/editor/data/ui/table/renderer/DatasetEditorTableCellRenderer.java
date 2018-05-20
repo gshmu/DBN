@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
-import javax.swing.JTable;
-import javax.swing.border.Border;
-import java.awt.Color;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
@@ -13,6 +9,10 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.ui.SimpleTextAttributes;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 
 public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
 

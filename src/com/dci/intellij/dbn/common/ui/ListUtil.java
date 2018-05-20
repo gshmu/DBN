@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.common.ui;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.ui.SelectFromListDialog;
+
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.util.List;
 import java.util.Set;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.ui.SelectFromListDialog;
 
 public class ListUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();

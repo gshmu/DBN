@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -12,6 +7,11 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionPropertiesSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConnectionPropertiesSettings extends Configuration<ConnectionPropertiesSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();

@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.language.sql;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
+import org.jetbrains.annotations.NotNull;
 
 public class SQLFile extends DBLanguagePsiFile {
     public SQLFile(FileViewProvider fileViewProvider, @NotNull SQLLanguage language) {

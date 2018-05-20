@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.JComponent;
+import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
+import javax.swing.*;
 
 public interface DBNForm extends DisposableProjectComponent {
     JComponent getComponent();

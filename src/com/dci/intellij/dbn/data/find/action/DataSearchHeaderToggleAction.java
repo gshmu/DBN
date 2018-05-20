@@ -6,8 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 public abstract class DataSearchHeaderToggleAction extends DBNCheckboxAction implements DumbAware {
 

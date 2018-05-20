@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
-import javax.swing.Action;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.util.Set;
 
 public class CmdLineInterfaceInputDialog extends DBNDialog<CmdLineInterfaceInputForm> {
     private CmdLineInterface cmdLineInterface;

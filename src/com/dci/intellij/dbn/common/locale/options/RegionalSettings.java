@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.common.locale.options;
 
-import java.util.Locale;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.locale.DBDateFormat;
 import com.dci.intellij.dbn.common.locale.DBNumberFormat;
 import com.dci.intellij.dbn.common.locale.Formatter;
@@ -15,6 +11,10 @@ import com.dci.intellij.dbn.common.options.setting.StringSetting;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 public class RegionalSettings extends ProjectConfiguration<RegionalSettingsEditorForm> {
     private Locale locale = Locale.getDefault();

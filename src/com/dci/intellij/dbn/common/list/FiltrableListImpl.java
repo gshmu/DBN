@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.list;
 
-import java.util.List;
-
 import com.dci.intellij.dbn.common.filter.Filter;
+
+import java.util.List;
 
 public class FiltrableListImpl<T> extends AbstractFiltrableList<T> {
     private Filter<T> filter;

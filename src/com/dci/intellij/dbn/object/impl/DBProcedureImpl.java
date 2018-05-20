@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import javax.swing.Icon;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -22,6 +17,11 @@ import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
     protected DBProcedureImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {

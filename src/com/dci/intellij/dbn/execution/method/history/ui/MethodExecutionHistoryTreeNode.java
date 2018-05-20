@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import javax.swing.Icon;
-import javax.swing.tree.DefaultMutableTreeNode;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.util.List;
 
 public class MethodExecutionHistoryTreeNode extends DefaultMutableTreeNode {
     public static enum Type {

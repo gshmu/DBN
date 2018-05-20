@@ -5,7 +5,7 @@ import com.intellij.execution.ExecutorRegistry;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class DatabaseDebugExecutor extends DefaultDebugExecutor{
 

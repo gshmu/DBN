@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.common.editor;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -22,6 +19,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class BasicTextEditorState implements FileEditorState {
     private int line;

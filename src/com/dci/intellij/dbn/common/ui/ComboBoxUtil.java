@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
+import javax.swing.*;
 
 public class ComboBoxUtil {
     public static void addItems(JComboBox comboBox, Iterable items) {

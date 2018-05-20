@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.debugger;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -12,6 +10,7 @@ import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
+import org.jetbrains.annotations.Nullable;
 
 public class DBDebugUtil {
 

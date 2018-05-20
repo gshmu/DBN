@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.connection.ssh;
 
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -14,6 +11,9 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.impl.ProjectLifecycleListener;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 public class SshTunnelManager implements ApplicationComponent{
     private Map<String, SshTunnelConnector> sshTunnelConnectors = new THashMap<String, SshTunnelConnector>();

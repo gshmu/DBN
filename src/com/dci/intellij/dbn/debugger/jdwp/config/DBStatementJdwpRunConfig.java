@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp.config;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -19,6 +16,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.Range;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DBJdwpRunConfig {
     private Range<Integer> tcpPortRange = new Range<Integer>(4000, 4999);

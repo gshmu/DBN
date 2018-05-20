@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.data.model.resultSet;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelCell;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class ResultSetDataModelCell extends SortableDataModelCell {
     public ResultSetDataModelCell(ResultSetDataModelRow row, ResultSet resultSet, ResultSetColumnInfo columnInfo) throws SQLException {

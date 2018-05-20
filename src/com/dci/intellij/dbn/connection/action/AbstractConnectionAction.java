@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.connection.action;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public abstract class AbstractConnectionAction extends DumbAwareAction {
     private ConnectionHandlerRef connectionHandlerRef;

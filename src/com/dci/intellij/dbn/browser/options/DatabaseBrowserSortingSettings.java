@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.browser.options;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserSortingSettingsForm;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.common.sorting.SortingType;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseBrowserSortingSettings extends ProjectConfiguration<DatabaseBrowserSortingSettingsForm> {
     private List<DBObjectComparator> comparators = new ArrayList<DBObjectComparator>();

@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
-import javax.swing.JComponent;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public abstract class DBRunConfigEditor<T extends DBRunConfig, F extends DBProgramRunConfigurationEditorForm<T>, I extends ExecutionInput> extends SettingsEditor<T> {
     private T configuration;

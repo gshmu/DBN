@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
+
+import java.util.Set;
 
 public class SequenceElementTypeLookupCache<T extends SequenceElementType> extends ElementTypeLookupCacheBaseIndexed<T> {
 

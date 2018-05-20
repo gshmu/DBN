@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.connection.mapping;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -70,7 +62,18 @@ import com.intellij.openapi.vfs.VirtualFileMoveEvent;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.util.IncorrectOperationException;
 import gnu.trove.THashSet;
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.*;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.CONNECTION_HANDLER;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SCHEMA;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SESSION;
 
 @State(
     name = FileConnectionMappingManager.COMPONENT_NAME,

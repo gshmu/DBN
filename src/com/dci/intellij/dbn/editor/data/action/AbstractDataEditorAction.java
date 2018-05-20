@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.editor.data.action;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -11,6 +8,9 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public abstract class AbstractDataEditorAction extends DumbAwareAction {
     public AbstractDataEditorAction(String text) {

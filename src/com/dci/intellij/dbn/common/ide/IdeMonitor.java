@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.common.ide;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.ApplicationEx;
@@ -9,6 +7,7 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeFrame;
+import org.jetbrains.annotations.NotNull;
 
 public class IdeMonitor implements ApplicationComponent{
 

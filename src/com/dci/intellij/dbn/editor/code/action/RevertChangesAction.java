@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.editor.code.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
@@ -16,6 +14,8 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LOADING;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 

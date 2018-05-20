@@ -9,7 +9,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 
-import java.awt.Component;
+import java.awt.*;
 
 public class CreateFilterAction extends ObjectNameFilterAction{
     private static final DBObjectType[] OBJECT_TYPES = new DBObjectType[] {

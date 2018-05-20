@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.Traceable;
 import com.intellij.openapi.diagnostic.Logger;
+
+import java.sql.SQLException;
 
 public abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
     private static final Logger LOGGER = LoggerFactory.createLogger();

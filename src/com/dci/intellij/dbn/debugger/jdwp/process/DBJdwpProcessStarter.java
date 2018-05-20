@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
-import java.net.ServerSocket;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
@@ -25,6 +21,10 @@ import com.intellij.openapi.util.Key;
 import com.intellij.util.Range;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.net.ServerSocket;
 
 public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
 

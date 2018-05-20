@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.intellij.util.containers.HashSet;
+
+import java.util.Set;
 
 public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache<IdentifierElementType>{
     public IdentifierElementTypeLookupCache(IdentifierElementType elementType) {

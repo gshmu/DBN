@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.data.grid.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.data.grid.options.ui.DataGridSortingSettingsForm;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class DataGridSortingSettings extends ProjectConfiguration<DataGridSortingSettingsForm> {
     private boolean nullsFirst = true;

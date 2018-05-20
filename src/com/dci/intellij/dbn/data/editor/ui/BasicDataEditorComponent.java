@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import javax.swing.JTextField;
-
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+
+import javax.swing.*;
 
 public class BasicDataEditorComponent extends JTextField implements DataEditorComponent{
     private UserValueHolder userValueHolder;

@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterGroup;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
+
+import javax.swing.*;
 
 public class DatasetFilterList extends JList {
 

@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.util.Traceable;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import com.dci.intellij.dbn.common.util.Traceable;
 
 public abstract class SimpleTimeoutCall<T> extends Traceable implements Callable<T>{
     private long timeout;

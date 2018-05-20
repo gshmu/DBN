@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.generator.action;
 
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.generator.StatementGenerationManager;
 import com.dci.intellij.dbn.generator.StatementGeneratorResult;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class GenerateSelectStatementAction extends GenerateStatementAction {
     private List<DBObjectRef> selectedObjectRefs;

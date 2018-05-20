@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.common.environment.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeId;
@@ -10,6 +7,8 @@ import com.dci.intellij.dbn.common.environment.options.ui.EnvironmentSettingsFor
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class EnvironmentSettings extends ProjectConfiguration {
     private EnvironmentTypeBundle environmentTypes = new EnvironmentTypeBundle(EnvironmentTypeBundle.DEFAULT);

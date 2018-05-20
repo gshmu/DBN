@@ -1,14 +1,12 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import java.awt.BorderLayout;
-
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class IdleConnectionDialogForm extends DBNFormImpl {
     private JPanel mainPanel;

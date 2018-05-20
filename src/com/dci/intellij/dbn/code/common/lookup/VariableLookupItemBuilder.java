@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.code.common.lookup;
 
-import javax.swing.Icon;
-
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
+
+import javax.swing.*;
 
 public class VariableLookupItemBuilder extends LookupItemBuilder {
 

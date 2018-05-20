@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdbc.process;
 
-import javax.swing.Icon;
-import java.sql.SQLException;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
@@ -18,6 +12,12 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugSession;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.sql.SQLException;
+import java.util.List;
 
 public class DBStatementJdbcDebugProcess extends DBJdbcDebugProcess<StatementExecutionInput> {
     public DBStatementJdbcDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {

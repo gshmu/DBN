@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.editor.data.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.options.setting.IntegerSetting;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorGeneralSettingsForm;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class DataEditorGeneralSettings extends Configuration<DataEditorGeneralSettingsForm> {
     private IntegerSetting fetchBlockSize = new IntegerSetting("fetch-block-size", 100);

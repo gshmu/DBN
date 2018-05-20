@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.execution.explain.result.ui;
 
-import javax.swing.JTree;
-import javax.swing.event.TreeModelListener;
-import javax.swing.tree.TreePath;
-import java.math.BigDecimal;
-import java.util.List;
-
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
+
+import javax.swing.*;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreePath;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class ExplainPlanTreeTableModel implements TreeTableModel{
     private ExplainPlanResult result;

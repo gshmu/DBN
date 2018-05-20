@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.intellij.openapi.project.Project;
 
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 
 public class TnsNamesTable extends DBNTable<TnsNamesTableModel> {
 

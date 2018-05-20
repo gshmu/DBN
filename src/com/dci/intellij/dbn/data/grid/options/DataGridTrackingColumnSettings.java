@@ -1,19 +1,19 @@
 package com.dci.intellij.dbn.data.grid.options;
 
+import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.data.grid.options.ui.DataGridTrackingColumnSettingsForm;
+import com.intellij.openapi.project.Project;
+import gnu.trove.THashSet;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.data.grid.options.ui.DataGridTrackingColumnSettingsForm;
-import com.intellij.openapi.project.Project;
-import gnu.trove.THashSet;
 
 public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGridTrackingColumnSettingsForm> {
     private List<String> columnNames = new ArrayList<String>();

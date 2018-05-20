@@ -1,16 +1,14 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
+
+import javax.swing.*;
 import javax.swing.text.Document;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -23,12 +21,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 
 public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
     private JTextField textField;

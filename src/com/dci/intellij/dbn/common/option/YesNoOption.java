@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.common.option;
 
-import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public enum YesNoOption implements InteractiveOption {
     YES("Yes", true),

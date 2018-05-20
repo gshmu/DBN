@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.editor;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.code.common.intention.DatabaseConnectIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.DebugMethodIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.DebugStatementIntentionAction;
@@ -17,6 +15,7 @@ import com.dci.intellij.dbn.code.common.intention.ToggleDatabaseLoggingIntention
 import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
+import org.jetbrains.annotations.NotNull;
 
 public class EditorManager implements ApplicationComponent{
     public static EditorManager getInstance() {

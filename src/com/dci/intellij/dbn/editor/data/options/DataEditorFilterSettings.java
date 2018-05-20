@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.editor.data.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterType;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorFilterSettingsForm;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class DataEditorFilterSettings extends Configuration<DataEditorFilterSettingsForm> {
     private boolean promptFilterDialog = true;

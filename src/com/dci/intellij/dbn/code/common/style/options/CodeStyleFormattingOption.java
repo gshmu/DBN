@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.code.common.style.options;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import org.jdom.Element;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CodeStyleFormattingOption implements PersistentConfiguration {
     private List<CodeStylePreset> presets = new ArrayList<CodeStylePreset>();

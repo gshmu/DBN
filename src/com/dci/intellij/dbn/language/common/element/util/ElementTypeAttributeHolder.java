@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
-import java.util.StringTokenizer;
-
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+
+import java.util.StringTokenizer;
 
 public class ElementTypeAttributeHolder extends PropertyHolderImpl<ElementTypeAttribute>{
 

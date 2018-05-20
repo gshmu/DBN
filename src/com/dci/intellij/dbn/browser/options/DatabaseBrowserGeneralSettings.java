@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.browser.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserGeneralSettingsForm;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.options.setting.IntegerSetting;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class DatabaseBrowserGeneralSettings extends ProjectConfiguration<DatabaseBrowserGeneralSettingsForm> {
     private BrowserDisplayMode displayMode = BrowserDisplayMode.TABBED;

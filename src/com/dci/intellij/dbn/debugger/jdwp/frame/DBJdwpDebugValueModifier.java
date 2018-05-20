@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.intellij.xdebugger.frame.XValueModifier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DBJdwpDebugValueModifier extends XValueModifier {
     private DBJdwpDebugValue value;

@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.data.export;
 
-import java.io.File;
-import java.nio.charset.Charset;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import org.jdom.Element;
+
+import java.io.File;
+import java.nio.charset.Charset;
 
 public class DataExportInstructions extends SettingsUtil implements PersistentStateElement<Element>, Cloneable {
     private boolean createHeader = true;

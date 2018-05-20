@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.editor.code.content;
 
+import com.intellij.openapi.editor.RangeMarker;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.intellij.openapi.editor.RangeMarker;
 
 public class GuardedBlockMarkers {
     private List<GuardedBlockMarker> ranges = new ArrayList<GuardedBlockMarker>();

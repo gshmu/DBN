@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.execution.statement.variables;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class StatementExecutionVariablesCache implements PersistentStateElement<Element> {
     private Map<String, Set<StatementExecutionVariable>> fileVariablesMap = new THashMap<String, Set<StatementExecutionVariable>>();

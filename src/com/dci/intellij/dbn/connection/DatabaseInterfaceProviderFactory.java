@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import java.sql.SQLException;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
@@ -11,6 +8,9 @@ import com.dci.intellij.dbn.database.mysql.MySqlInterfaceProvider;
 import com.dci.intellij.dbn.database.oracle.OracleInterfaceProvider;
 import com.dci.intellij.dbn.database.postgres.PostgresInterfaceProvider;
 import com.dci.intellij.dbn.database.sqlite.SqliteInterfaceProvider;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.SQLException;
 
 public class DatabaseInterfaceProviderFactory {
     // fixme replace with generic data dictionary

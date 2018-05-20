@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.debugger;
 
-import java.util.concurrent.ExecutorService;
-
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.AbstractTask;
 import com.dci.intellij.dbn.common.thread.ThreadFactory;
 import com.intellij.openapi.project.Project;
+
+import java.util.concurrent.ExecutorService;
 
 public abstract class DBDebugOperationTask<T> extends AbstractTask<T> {
     private Project project;

@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import javax.swing.Icon;
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -15,6 +11,10 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.Set;
 
 public class NamedPsiElement extends SequencePsiElement {
     public NamedPsiElement(ASTNode astNode, NamedElementType elementType) {

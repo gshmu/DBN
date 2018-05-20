@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.data.model.sortable;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModelCell;
+import org.jetbrains.annotations.NotNull;
 
 public class SortableDataModelCell extends BasicDataModelCell implements Comparable {
 

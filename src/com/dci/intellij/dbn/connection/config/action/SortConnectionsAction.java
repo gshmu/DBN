@@ -8,8 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 
-import javax.swing.Icon;
-import javax.swing.JList;
+import javax.swing.*;
 
 public class SortConnectionsAction extends DumbAwareAction {
     private SortDirection currentSortDirection = SortDirection.ASCENDING;

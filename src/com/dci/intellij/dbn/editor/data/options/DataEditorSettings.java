@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.editor.data.options;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorSettingsForm;
@@ -9,6 +7,7 @@ import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class DataEditorSettings extends CompositeProjectConfiguration<DataEditorSettingsForm> implements TopLevelConfig {
     private DataEditorPopupSettings popupSettings = new DataEditorPopupSettings();

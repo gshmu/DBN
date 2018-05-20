@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.editor.data.filter.global;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBTable;
+import org.jetbrains.annotations.NotNull;
 
 public class DataDependencyPathBuilder {
     public static void buildDependencyPath(DataDependencyPath path, @NotNull DBColumn sourceColumn, DBColumn targetColumn, DataDependencyPath[] shortestPath) {

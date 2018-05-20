@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
+import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
+import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
-import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker;
 
 public class SqliteTriggerSourceResultSet extends ResultSetAdapter {
     public static final Pattern DDL_STUB_REGEX = Pattern.compile("(CREATE\\s+(TEMP(ORARY)?\\s+)?)", Pattern.CASE_INSENSITIVE);

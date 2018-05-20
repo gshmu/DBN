@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.navigation.options;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.ui.list.Selectable;
@@ -15,6 +7,14 @@ import com.dci.intellij.dbn.navigation.options.ui.ObjectsLookupSettingsForm;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSettingsForm> {
     private List<ObjectTypeEntry> lookupObjectTypes;

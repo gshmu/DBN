@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
+import com.dci.intellij.dbn.object.common.DBObjectType;
+
 import java.util.EnumMap;
 import java.util.Map;
-
-import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public class LookupAdapterCache {
     public static Cache<DBObjectType, ObjectDefinitionLookupAdapter> OBJECT_DEFINITION = new Cache<DBObjectType, ObjectDefinitionLookupAdapter>(DBObjectType.class) {

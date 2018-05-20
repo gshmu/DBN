@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import javax.swing.ListModel;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.util.DisposableLazyValue;
+import com.dci.intellij.dbn.common.util.LazyValue;
+
+import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.util.DisposableLazyValue;
-import com.dci.intellij.dbn.common.util.LazyValue;
 
 public abstract class DBNEditableTableModel extends DisposableBase implements DBNTableWithGutterModel {
     private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();

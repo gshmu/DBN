@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.JComboBox;
+import javax.swing.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

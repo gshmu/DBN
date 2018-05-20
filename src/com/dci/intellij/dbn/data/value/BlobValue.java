@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.data.value;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,12 +15,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.intellij.openapi.diagnostic.Logger;
 
 public class BlobValue extends LargeObjectValue {
     private static final Logger LOGGER = LoggerFactory.createLogger();

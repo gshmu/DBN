@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.language.psql.dialect.oracle;
 
-import java.util.Map;
-
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.common.DBLanguageSyntaxHighlighter;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.parser.TokenPairRangeMonitor;
 import com.dci.intellij.dbn.language.psql.dialect.PSQLLanguageDialect;
 import com.intellij.lang.PsiBuilder;
+
+import java.util.Map;
 
 public class OraclePLSQLLanguageDialect extends PSQLLanguageDialect {
     public OraclePLSQLLanguageDialect() {

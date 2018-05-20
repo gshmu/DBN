@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.code.common.lookup;
 
-import javax.swing.Icon;
-
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingSettings;
+
+import javax.swing.*;
 
 public abstract class LookupItemBuilder {
     public void createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {

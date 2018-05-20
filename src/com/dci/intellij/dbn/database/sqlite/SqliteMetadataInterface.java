@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.database.sqlite;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
@@ -18,6 +13,11 @@ import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteSchemasResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteTriggerSourceResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteTriggersResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteViewSourceResultSet;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
 
 
 public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {

@@ -38,7 +38,11 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LATEST;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MERGED;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.OUTDATED;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.REFRESHING;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider, DocumentListener {
 

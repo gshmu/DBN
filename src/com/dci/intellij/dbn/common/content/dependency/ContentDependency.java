@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.common.content.dependency;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.intellij.openapi.Disposable;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class ContentDependency implements Disposable {
     private long changeTimestamp;

@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
-import javax.swing.Action;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class ResourceMonitorDialog extends DBNDialog<ResourceMonitorForm> {
 

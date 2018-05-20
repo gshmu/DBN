@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.object.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -9,6 +7,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.NotNull;
 
 public class EditObjectDataAction extends DumbAwareAction {
     private DBObjectRef<DBSchemaObject> objectRef;

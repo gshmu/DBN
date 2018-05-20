@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.editor.code.diff;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.diff.SimpleContent;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class SourceCodeFileContent extends SimpleContent {
     DBSourceCodeVirtualFile sourceCodeFile;

@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import javax.swing.Icon;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
@@ -37,7 +29,20 @@ import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.FOREIGN_KEY;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.HIDDEN;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NULLABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.PRIMARY_KEY;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.UNIQUE_KEY;
 
 public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     private DBDataType dataType;

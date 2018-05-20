@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
@@ -14,6 +12,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class DBLanguageParserDefinition implements ParserDefinition {
     private DBLanguageParser parser;

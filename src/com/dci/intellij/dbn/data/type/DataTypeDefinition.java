@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.data.type;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
+import org.jetbrains.annotations.Nullable;
 
 public interface DataTypeDefinition {
     @Nullable

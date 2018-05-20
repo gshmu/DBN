@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.database;
 
-import java.sql.SQLException;
 import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
 
 public interface DatabaseMessageParserInterface {
 

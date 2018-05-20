@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
-import javax.swing.Action;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class ResultSetRecordViewerDialog extends DBNDialog<ResultSetRecordViewerForm> {
     private ResultSetTable table;

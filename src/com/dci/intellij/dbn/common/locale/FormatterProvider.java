@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.common.locale;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.LazyThreadLocal;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class FormatterProvider extends LazyThreadLocal<Formatter> {
     private Project project;

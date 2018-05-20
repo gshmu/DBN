@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.execution.method.browser.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserForm;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class SelectSchemaAction extends AnObjectAction<DBSchema> {
     private MethodExecutionBrowserForm browserComponent;

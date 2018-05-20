@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.ddl.ui;
 
-import javax.swing.JList;
-
 import com.dci.intellij.dbn.ddl.DDLFileNameProvider;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+
+import javax.swing.*;
 
 public class DDLFileNameListCellRenderer extends ColoredListCellRenderer {
     protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {

@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
-import javax.swing.Action;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class DatasetEditorSortingDialog extends DBNDialog<DatasetEditorSortingForm> {
     private DatasetEditor datasetEditor;
