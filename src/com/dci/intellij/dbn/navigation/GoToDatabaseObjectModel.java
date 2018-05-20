@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.navigation;
 
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -30,6 +22,13 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByNameModel {
     private ProjectRef project;
@@ -108,7 +107,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
             Set<String> bucket = collector.getBucket();
             return bucket == null ?
                     EMPTY_STRING_ARRAY :
-                    bucket.toArray(new String[bucket.size()]);
+                    bucket.toArray(new String[0]);
         } catch (ProcessCanceledException e) {
             return new String[0];
         }

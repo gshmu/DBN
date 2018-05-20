@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,6 +13,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class EditorOptionsAction extends GroupPopupAction {
@@ -47,7 +48,7 @@ public class EditorOptionsAction extends GroupPopupAction {
         actions.add(Separator.getInstance());
         actions.add(new OpenSettingsAction(ConfigId.CODE_EDITOR, false));
 
-        return actions.toArray(new AnAction[actions.size()]);
+        return actions.toArray(new AnAction[0]);
     }
 
     @Override

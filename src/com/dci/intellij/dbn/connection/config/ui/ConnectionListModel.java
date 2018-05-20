@@ -4,13 +4,13 @@ import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 
-import javax.swing.DefaultListModel;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class ConnectionListModel extends DefaultListModel {
+public class ConnectionListModel extends DefaultListModel<ConnectionSettings> {
     public ConnectionListModel(ConnectionBundleSettings connectionBundleSettings) {
         List<ConnectionSettings> connections = connectionBundleSettings.getConnections();
         for (ConnectionSettings connection : connections) {

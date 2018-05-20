@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.navigation.psi;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
@@ -38,6 +32,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
     private DBObjectListVirtualFile virtualFile;
@@ -135,7 +135,7 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
                 children.add(NavigationPsiCache.getPsiDirectory(object));                
             }
         }
-        return children.toArray(new PsiElement[children.size()]);
+        return children.toArray(new PsiElement[0]);
     }
 
     public PsiElement getFirstChild() {

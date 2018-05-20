@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.constant;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import com.dci.intellij.dbn.common.util.StringUtil;
 
 public abstract class ConstantUtil {
     public static List<String> getIdList(Class<? extends Constant> constantClass) {
@@ -14,7 +14,7 @@ public abstract class ConstantUtil {
 
     public static String[] getIdArray(Class<? extends Constant> constantClass) {
         List<String> idList = toIdList(Arrays.asList(constantClass.getEnumConstants()));
-        return idList.toArray(new String[idList.size()]);
+        return idList.toArray(new String[0]);
     }
 
 

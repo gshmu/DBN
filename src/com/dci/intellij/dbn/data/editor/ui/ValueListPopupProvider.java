@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -30,6 +22,13 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.util.List;
 
 public class ValueListPopupProvider implements TextFieldPopupProvider{
     private TextFieldWithPopup editorComponent;
@@ -131,7 +130,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
         List<String> values = getValues();
         List<String> secondaryValues = getSecondaryValues();
         if (false && values.size() < 20)  {
-            String[] valuesArray = values.toArray(new String[values.size()]);
+            String[] valuesArray = values.toArray(new String[0]);
             BaseListPopupStep<String> listPopupStep = new BaseListPopupStep<String>(null, valuesArray){
                 @Override
                 public PopupStep onChosen(String selectedValue, boolean finalChoice) {

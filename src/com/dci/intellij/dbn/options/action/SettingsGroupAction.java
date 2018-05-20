@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.options.action;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -16,6 +12,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SettingsGroupAction extends ActionGroup {
     private ConfigId[] configIds;
@@ -31,7 +31,7 @@ public class SettingsGroupAction extends ActionGroup {
         for (ConfigId configId : configIds) {
             actions.add(new SettingsAction(configId));
         }
-        return actions.toArray(new AnAction[actions.size()]);
+        return actions.toArray(new AnAction[0]);
     }
 
     @Override

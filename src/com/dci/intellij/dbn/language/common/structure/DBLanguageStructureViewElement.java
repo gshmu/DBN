@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.language.common.structure;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -15,6 +9,12 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DBLanguageStructureViewElement<T> implements StructureViewTreeElement {
     private PsiElement psiElement;
@@ -65,7 +65,7 @@ public abstract class DBLanguageStructureViewElement<T> implements StructureView
         List<T> elements = getChildren(psiElement, null);
         return elements == null ?
                 EMPTY_ARRAY :
-                elements.toArray(new StructureViewTreeElement[elements.size()]);
+                elements.toArray(new StructureViewTreeElement[0]);
     }
 
     private List<T> getChildren(PsiElement parent, List<T> elements) {
