@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilderProvider;
 import com.dci.intellij.dbn.code.common.lookup.TokenLookupItemBuilder;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -32,6 +25,13 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupItemBuilderProvider, TokenElementType {
     private TokenLookupItemBuilder lookupItemBuilder = new TokenLookupItemBuilder(this);

@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.options.ui;
 
-import javax.swing.JTextField;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.openapi.options.ConfigurationException;
+import javax.swing.*;
 
 public class ConfigurationEditorUtil {
     public static int validateIntegerInputValue(@NotNull JTextField inputField, @NotNull String name, boolean required, int min, int max, @Nullable String hint) throws ConfigurationException {

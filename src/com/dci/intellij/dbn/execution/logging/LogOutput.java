@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.execution.logging;
 
-import java.util.Date;
-
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+
+import java.util.Date;
 
 public class LogOutput {
     public enum Type {

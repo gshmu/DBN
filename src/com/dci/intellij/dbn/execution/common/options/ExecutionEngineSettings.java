@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.common.options;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
@@ -13,6 +11,7 @@ import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class ExecutionEngineSettings extends CompositeProjectConfiguration<ExecutionEngineSettingsForm> implements TopLevelConfig {
     private StatementExecutionSettings statementExecutionSettings = new StatementExecutionSettings(this);

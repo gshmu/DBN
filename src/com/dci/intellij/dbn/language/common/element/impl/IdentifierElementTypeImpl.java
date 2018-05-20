@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.SpacingDefinition;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -20,6 +18,7 @@ import com.dci.intellij.dbn.language.common.resolve.UnderlyingObjectResolver;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import org.jdom.Element;
 
 
 public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements IdentifierElementType {

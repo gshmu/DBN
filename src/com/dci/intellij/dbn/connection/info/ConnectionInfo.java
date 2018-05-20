@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.connection.info;
 
+import com.dci.intellij.dbn.connection.DatabaseType;
+
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-
-import com.dci.intellij.dbn.connection.DatabaseType;
 
 public class ConnectionInfo {
     private DatabaseType databaseType;

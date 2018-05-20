@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.object.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBPackageFunction;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NAVIGABLE;
 
 public class DBPackageFunctionImpl extends DBFunctionImpl implements DBPackageFunction {

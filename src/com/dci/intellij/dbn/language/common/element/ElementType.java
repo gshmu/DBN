@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.language.common.element;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.index.Indexable;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
@@ -18,6 +15,9 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public interface ElementType extends Indexable, PropertyHolder<ElementTypeAttribute>{
 

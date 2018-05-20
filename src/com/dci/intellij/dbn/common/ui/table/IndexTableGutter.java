@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import javax.swing.ListCellRenderer;
+import javax.swing.*;
 
 public class IndexTableGutter<T extends DBNTableWithGutter> extends DBNTableGutter<T>{
     public IndexTableGutter(T table) {

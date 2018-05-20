@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.object.common.ui;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.SpeedSearchBase;
 import com.intellij.util.ui.tree.TreeUtil;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 public class ObjectTreeSpeedSearch extends SpeedSearchBase {
 

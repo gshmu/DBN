@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.code.common.style.presets;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.intellij.formatting.Spacing;
 import com.intellij.formatting.Wrap;
 import com.intellij.formatting.WrapType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import org.jetbrains.annotations.Nullable;
 
 public interface CodeStylePreset extends Presentable{
     Wrap WRAP_NONE = Wrap.createWrap(WrapType.NONE, false);

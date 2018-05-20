@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import javax.swing.Icon;
-import javax.swing.JTree;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.load.LoadIcon;
 import com.dci.intellij.dbn.common.ui.MergedIcon;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
@@ -14,6 +10,9 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
 

@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.common.content.dependency;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.VoidDynamicContent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import org.jetbrains.annotations.NotNull;
 
 public class BasicContentDependency extends ContentDependency {
     private DynamicContent sourceContent;

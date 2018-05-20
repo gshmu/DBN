@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.execution.method.action;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
@@ -12,6 +8,10 @@ import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.action.ObjectListShowAction;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.actionSystem.AnAction;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DebugProgramMethodAction extends ObjectListShowAction {
     public DebugProgramMethodAction(DBProgram program) {

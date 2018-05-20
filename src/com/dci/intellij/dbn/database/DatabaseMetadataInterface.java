@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.database;
 
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 
 public interface DatabaseMetadataInterface extends DatabaseInterface{
     ResultSet getDistinctValues(String ownerName, String datasetName, String columnName, DBNConnection connection) throws SQLException;

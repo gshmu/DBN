@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import java.awt.Color;
-
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.util.ui.UIUtil;
+
+import java.awt.*;
 
 public class BasicTableColors {
     private static boolean isDarkScheme;

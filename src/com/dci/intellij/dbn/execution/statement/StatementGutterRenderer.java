@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.execution.statement.action.StatementGutterAction;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.codeInsight.daemon.impl.ShowIntentionsPass;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class StatementGutterRenderer extends GutterIconRenderer {
     private StatementGutterAction action;

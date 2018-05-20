@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.common.dispose;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.mock.MockProject;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FailsafeUtil {
     private static final VirtualFile DUMMY_VIRTUAL_FILE = new LightVirtualFile();

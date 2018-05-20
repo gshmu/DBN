@@ -1,17 +1,5 @@
 package com.dci.intellij.dbn.common.editor;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.event.HyperlinkEvent;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.intellij.codeInsight.hint.HintUtil;
@@ -23,6 +11,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.util.ui.PlatformColors;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
 
 public class EditorNotificationPanel extends JPanel{
     protected final JLabel label = new JLabel();

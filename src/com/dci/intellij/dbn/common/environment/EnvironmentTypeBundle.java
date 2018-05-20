@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.common.environment;
 
+import com.dci.intellij.dbn.common.util.CollectionUtil;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 
 public class EnvironmentTypeBundle implements Iterable<EnvironmentType>, Cloneable{
     private List<EnvironmentType> environmentTypes = new ArrayList<EnvironmentType>();

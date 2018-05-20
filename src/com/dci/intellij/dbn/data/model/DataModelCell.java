@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.data.model;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.intellij.openapi.Disposable;
+import org.jetbrains.annotations.NotNull;
 
 public interface DataModelCell extends Disposable, UserValueHolder {
     ColumnInfo getColumnInfo();

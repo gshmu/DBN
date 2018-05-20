@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
-import javax.swing.JTable;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
-
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ui.ColoredSideBorder;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+
+import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 
 public class EnvironmentTypesTableCellRenderer extends ColoredTableCellRenderer{
     @Override

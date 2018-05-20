@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.data.model.basic;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.intellij.openapi.util.Disposer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BasicDataModelHeader<T extends ColumnInfo> extends DisposableBase implements DataModelHeader<T> {
     private List<T> columnInfos = new ArrayList<T>();

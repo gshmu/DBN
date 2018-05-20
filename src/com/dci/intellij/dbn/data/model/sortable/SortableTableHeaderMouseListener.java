@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.data.model.sortable;
 
-import javax.swing.table.JTableHeader;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
+
+import javax.swing.table.JTableHeader;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class SortableTableHeaderMouseListener extends MouseAdapter {
     private SortableTable table;

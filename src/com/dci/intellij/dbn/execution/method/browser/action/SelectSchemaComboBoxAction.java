@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.execution.method.browser.action;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserForm;
@@ -11,6 +7,9 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class SelectSchemaComboBoxAction extends DBNComboBoxAction {
     MethodExecutionBrowserForm browserComponent;

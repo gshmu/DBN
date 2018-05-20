@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -19,6 +12,12 @@ import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm> {
     private TransactionAction additionalOperation;

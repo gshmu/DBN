@@ -7,9 +7,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.JLabel;
-import java.awt.Component;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseWheelEvent;
 
 public class BasicTableScrollPane extends JBScrollPane{

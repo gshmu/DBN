@@ -1,17 +1,13 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectHierarchyPanel2 extends JPanel {
     private DBObject object;

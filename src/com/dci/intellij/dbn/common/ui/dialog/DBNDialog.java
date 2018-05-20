@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
@@ -14,6 +8,11 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper implements DisposableProjectComponent{
     private C component;

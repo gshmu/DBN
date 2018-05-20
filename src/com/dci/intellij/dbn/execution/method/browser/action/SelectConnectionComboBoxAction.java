@@ -13,8 +13,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
     private MethodExecutionBrowserForm browserComponent;

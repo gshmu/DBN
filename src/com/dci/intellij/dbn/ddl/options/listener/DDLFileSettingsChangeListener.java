@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.ddl.options.listener;
 
-import java.util.EventListener;
-
 import com.intellij.util.messages.Topic;
+
+import java.util.EventListener;
 
 public interface DDLFileSettingsChangeListener extends EventListener {
     Topic<DDLFileSettingsChangeListener> TOPIC = Topic.create("DDLFileSettingsEvents", DDLFileSettingsChangeListener.class);

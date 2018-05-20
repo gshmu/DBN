@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.script.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
@@ -11,6 +9,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 

@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.data.model.basic;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -13,6 +11,7 @@ import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class BasicDataModelCell implements DataModelCell {
     protected BasicDataModelRow row;

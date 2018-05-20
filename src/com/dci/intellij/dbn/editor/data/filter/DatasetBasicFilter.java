@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.object.DBDataset;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 

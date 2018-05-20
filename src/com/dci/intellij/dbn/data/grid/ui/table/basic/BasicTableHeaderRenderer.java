@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
 import javax.swing.table.TableCellRenderer;
-import java.awt.Font;
+import java.awt.*;
 
 public interface BasicTableHeaderRenderer extends TableCellRenderer {
     void setFont(Font font);

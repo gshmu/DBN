@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.connection.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import org.jetbrains.annotations.NotNull;
 
 public class OpenSQLConsoleAction extends AbstractConnectionAction {
     public OpenSQLConsoleAction(ConnectionHandler connectionHandler) {

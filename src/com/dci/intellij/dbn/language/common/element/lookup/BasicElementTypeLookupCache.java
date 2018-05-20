@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.BasicElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public class BasicElementTypeLookupCache extends ElementTypeLookupCacheBaseIndexed<BasicElementType> {
     public BasicElementTypeLookupCache(BasicElementType elementType) {

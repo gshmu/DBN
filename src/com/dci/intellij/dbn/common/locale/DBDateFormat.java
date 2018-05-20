@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.locale;
 
-import javax.swing.Icon;
-import java.text.DateFormat;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.ui.Presentable;
+import javax.swing.*;
+import java.text.DateFormat;
 
 public enum DBDateFormat implements Presentable {
     FULL("Full", DateFormat.FULL),

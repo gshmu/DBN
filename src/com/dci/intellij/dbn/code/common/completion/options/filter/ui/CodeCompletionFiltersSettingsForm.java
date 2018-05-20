@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFiltersSettings;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
@@ -11,6 +7,9 @@ import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.keymap.KeymapUtil;
+
+import javax.swing.*;
+
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CodeCompletionFiltersSettingsForm extends CompositeConfigurationEditorForm<CodeCompletionFiltersSettings> {

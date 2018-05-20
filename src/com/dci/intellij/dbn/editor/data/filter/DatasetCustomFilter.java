@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import javax.swing.Icon;
-import org.jdom.CDATA;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -13,6 +8,11 @@ import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetCustomFilterForm;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.util.text.StringUtil;
+import org.jdom.CDATA;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class DatasetCustomFilter extends DatasetFilterImpl {
     private String condition;

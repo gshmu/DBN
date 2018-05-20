@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.JLabel;
-import java.awt.Color;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -16,6 +12,10 @@ import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class AutoCommitLabel extends JLabel implements Disposable {
     private interface Colors {

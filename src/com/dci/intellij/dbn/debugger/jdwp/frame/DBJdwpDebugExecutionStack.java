@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
@@ -15,6 +10,11 @@ import com.intellij.debugger.engine.JavaStackFrame;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBJdwpDebugExecutionStack extends XExecutionStack {
     private DBJdwpDebugSuspendContext suspendContext;

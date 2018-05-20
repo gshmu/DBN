@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.object.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.object.DBNestedTable;
 import com.dci.intellij.dbn.object.DBNestedTableColumn;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 public class DBNestedTableColumnImpl extends DBObjectImpl implements DBNestedTableColumn {
 

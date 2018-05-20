@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.table.TableCellEditor;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
@@ -19,6 +13,11 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
+
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
+
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class EnvironmentSettingsForm extends ConfigurationEditorForm<EnvironmentSettings> {

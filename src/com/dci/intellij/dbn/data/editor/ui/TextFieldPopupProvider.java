@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.Shortcut;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
 
 public interface TextFieldPopupProvider extends Disposable{
     TextFieldPopupType getPopupType();

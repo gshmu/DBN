@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.intellij.openapi.diagnostic.Logger;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.intellij.openapi.diagnostic.Logger;
 
 public abstract class SimpleTimeoutTask implements Runnable{
     private static final Logger LOGGER = LoggerFactory.createLogger();

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.code.content;
 
-import java.util.List;
-
 import com.intellij.openapi.editor.RangeMarker;
+
+import java.util.List;
 
 public class SourceCodeOffsets {
     private GuardedBlockMarkers guardedBlocks = new GuardedBlockMarkers();

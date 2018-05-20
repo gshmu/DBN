@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.common.cache;
 
-import java.util.Map;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.Nullable;
 
-import gnu.trove.THashMap;
+import java.util.Map;
 
 public class Cache {
     private Map<String, CacheValue> elements = new THashMap<String, CacheValue>();

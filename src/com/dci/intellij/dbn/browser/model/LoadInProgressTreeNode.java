@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.browser.model;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -18,6 +13,11 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
 
 public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements BrowserTreeNode {
     private BrowserTreeNode parent;

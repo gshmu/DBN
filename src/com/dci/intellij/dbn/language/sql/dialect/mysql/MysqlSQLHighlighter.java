@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.language.sql.dialect.mysql;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.sql.SQLSyntaxHighlighter;
 import com.dci.intellij.dbn.language.sql.dialect.SQLLanguageDialect;
 import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.lexer.LayeredLexer;
 import com.intellij.lexer.Lexer;
+import org.jetbrains.annotations.NotNull;
 
 public class MysqlSQLHighlighter extends SQLSyntaxHighlighter {
     public MysqlSQLHighlighter(SQLLanguageDialect languageDialect) {

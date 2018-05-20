@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.data.export.processor;
 
-import java.util.Date;
-
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
@@ -14,6 +12,8 @@ import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+
+import java.util.Date;
 
 
 public class SQLDataExportProcessor extends DataExportProcessor{

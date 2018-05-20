@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.object.factory;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class MethodFactoryInput extends ObjectFactoryInput{
     private List<ArgumentFactoryInput> arguments = new ArrayList<ArgumentFactoryInput>();

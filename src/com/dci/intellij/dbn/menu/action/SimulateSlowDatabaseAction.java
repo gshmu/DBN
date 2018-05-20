@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.menu.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
+import org.jetbrains.annotations.NotNull;
 
 public class SimulateSlowDatabaseAction extends ToggleAction {
     @Override

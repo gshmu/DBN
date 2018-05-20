@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.common.util;
 
-import java.awt.Color;
-
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.ui.SimpleTextAttributes;
+
+import java.awt.*;
 
 public class TextAttributesUtil {
     

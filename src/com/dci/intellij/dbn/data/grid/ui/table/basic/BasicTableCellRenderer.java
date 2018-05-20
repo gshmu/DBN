@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import javax.swing.JTable;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.find.DataSearchResultMatch;
@@ -20,6 +12,14 @@ import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 public class BasicTableCellRenderer extends ColoredTableCellRenderer {

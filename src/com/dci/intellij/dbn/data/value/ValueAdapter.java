@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.data.value;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.CallableStatement;
@@ -9,11 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumMap;
 import java.util.Map;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.intellij.openapi.diagnostic.Logger;
 
 public abstract class ValueAdapter<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();

@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
 
 public abstract class DBNContentWithHeaderForm<T extends DBNDialog> extends DBNFormImpl<T>{
     private JPanel mainPanel;

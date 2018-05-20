@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.code.common.intention;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
@@ -11,6 +8,9 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class SetupCodeCompletionIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     @NotNull

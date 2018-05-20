@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -13,7 +11,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import static com.dci.intellij.dbn.common.util.ActionUtil.*;
+import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.util.ActionUtil.getEditor;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class ConnectionSelectAction extends DumbAwareAction {
     private final ConnectionHandler connectionHandler;

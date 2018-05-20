@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.resolve;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -12,6 +10,7 @@ import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 
 public class AliasObjectResolver extends UnderlyingObjectResolver{
     private static final Logger LOGGER = LoggerFactory.createLogger();

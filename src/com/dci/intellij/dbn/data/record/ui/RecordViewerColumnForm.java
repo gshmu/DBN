@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.data.record.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -18,6 +8,12 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
     private JLabel columnLabel;

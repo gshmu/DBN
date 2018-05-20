@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.ddl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DDLFileType {
     private DBLanguageFileType languageFileType;

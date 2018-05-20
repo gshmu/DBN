@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
+import com.dci.intellij.dbn.execution.method.ArgumentValue;
+import com.dci.intellij.dbn.object.DBArgument;
+import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.DBTypeAttribute;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
@@ -7,12 +13,6 @@ import javax.swing.tree.TreePath;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.dci.intellij.dbn.execution.method.ArgumentValue;
-import com.dci.intellij.dbn.object.DBArgument;
-import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.DBTypeAttribute;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public class ArgumentValuesTreeModel implements TreeModel {
     private ArgumentValuesTreeNode root;

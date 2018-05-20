@@ -1,19 +1,15 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import java.awt.Color;
-import java.awt.Insets;
-
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.intellij.ui.RoundedLineBorder;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.*;
+import java.awt.*;
+
 import static com.dci.intellij.dbn.common.ui.GUIUtil.adjustColor;
 
 public class DBNHintForm extends DBNFormImpl{

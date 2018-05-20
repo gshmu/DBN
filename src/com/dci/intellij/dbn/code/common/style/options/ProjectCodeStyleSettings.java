@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.code.common.style.options;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.code.common.style.options.ui.CodeStyleSettingsForm;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCustomCodeStyleSettings;
@@ -13,6 +11,7 @@ import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
+import org.jetbrains.annotations.NotNull;
 
 public class ProjectCodeStyleSettings extends CompositeProjectConfiguration<CodeStyleSettingsForm> {
     public ProjectCodeStyleSettings(Project project){

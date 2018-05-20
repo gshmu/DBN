@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.database.oracle;
 
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -15,6 +11,10 @@ import com.dci.intellij.dbn.database.oracle.execution.OracleMethodDebugExecution
 import com.dci.intellij.dbn.database.oracle.execution.OracleMethodExecutionProcessor;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.object.DBMethod;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class OracleExecutionInterface implements DatabaseExecutionInterface {
     private static final String SQLPLUS_CONNECT_PATTERN_SID = "[USER]/[PASSWORD]@\"(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=[HOST])(Port=[PORT]))(CONNECT_DATA=(SID=[DATABASE])))\"";

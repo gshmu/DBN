@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.common.environment;
 
-import java.util.UUID;
-
 import com.dci.intellij.dbn.common.constant.PseudoConstant;
 import com.dci.intellij.dbn.common.constant.PseudoConstantConverter;
+
+import java.util.UUID;
 
 public final class EnvironmentTypeId extends PseudoConstant<EnvironmentTypeId> {
 

@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.common.content;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
@@ -25,7 +18,19 @@ import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.containers.hash.HashMap;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING_IN_BACKGROUND;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
     protected static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));

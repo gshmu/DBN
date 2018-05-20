@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.option.InteractiveOption;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.option.InteractiveOption;
+import javax.swing.*;
 
 public enum CompileType implements InteractiveOption {
     NORMAL("Normal", Icons.OBEJCT_COMPILE, true),

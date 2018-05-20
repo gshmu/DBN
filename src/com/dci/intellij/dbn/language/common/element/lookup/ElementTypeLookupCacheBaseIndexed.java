@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import java.util.Set;
-
 import com.dci.intellij.dbn.common.index.IndexedContainer;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -11,6 +9,8 @@ import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashSet;
+
+import java.util.Set;
 
 public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> extends ElementTypeLookupCacheBase<T> {
 

@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.border.LineBorder;
-import java.awt.BorderLayout;
-
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -30,6 +22,10 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBColor;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 
 public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransactionDialog> {
     private JPanel mainPanel;

@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import javax.swing.Icon;
-import javax.swing.JTree;
-import java.awt.Color;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.message.MessageType;
@@ -22,6 +17,10 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
     public static final JBColor HIGHLIGHT_BACKGROUND = new JBColor(0xE0EFFF, 0x364135);

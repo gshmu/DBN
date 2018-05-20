@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
@@ -12,6 +10,7 @@ import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import org.jetbrains.annotations.Nullable;
 
 public class IdentifierLookupAdapter extends PsiLookupAdapter {
     private IdentifierType identifierType;

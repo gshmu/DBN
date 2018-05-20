@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.execution.explain.result.action;
 
-import java.awt.Component;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.common.ui.StatementViewerPopup;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 public class ExplainPlanResultViewStatementAction extends AbstractExplainPlanResultAction {
     public ExplainPlanResultViewStatementAction() {

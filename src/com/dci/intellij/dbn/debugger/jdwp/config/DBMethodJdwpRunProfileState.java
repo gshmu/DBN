@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp.config;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.debugger.common.config.DBRunProfileState;
 import com.intellij.debugger.engine.RemoteDebugProcessHandler;
 import com.intellij.execution.DefaultExecutionResult;
@@ -13,6 +11,7 @@ import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 
 public class DBMethodJdwpRunProfileState extends DBRunProfileState {

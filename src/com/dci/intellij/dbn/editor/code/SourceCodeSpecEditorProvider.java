@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class SourceCodeSpecEditorProvider extends BasicSourceCodeEditorProvider {
 

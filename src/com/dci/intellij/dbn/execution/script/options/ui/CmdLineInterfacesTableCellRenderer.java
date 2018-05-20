@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.execution.script.options.ui;
 
-import javax.swing.JTable;
-
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+
+import javax.swing.*;
 
 public class CmdLineInterfacesTableCellRenderer extends ColoredTableCellRenderer{
     @Override

@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.generator.action;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.generator.StatementGenerationManager;
 import com.dci.intellij.dbn.generator.StatementGeneratorResult;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GenerateInsertStatementAction extends GenerateStatementAction {
     private DBObjectRef<DBTable> tableRef;

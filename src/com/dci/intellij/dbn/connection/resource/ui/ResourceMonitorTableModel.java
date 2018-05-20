@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
-import javax.swing.event.TableModelListener;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
@@ -14,6 +10,10 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.event.TableModelListener;
+import java.util.List;
 
 public class ResourceMonitorTableModel extends DisposableBase implements DBNTableModel {
     private ConnectionHandlerRef connectionHandlerRef;

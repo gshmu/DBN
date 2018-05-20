@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
 
 public class SqliteTriggersResultSet extends ResultSetAdapter {
     public static final Pattern TRIGGER_EVENT_REGEX = Pattern.compile("(before|after|instead\\s+of)\\s+(delete|insert|update)", Pattern.CASE_INSENSITIVE);

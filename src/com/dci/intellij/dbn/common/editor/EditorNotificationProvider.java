@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.common.editor;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorNotifications;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class EditorNotificationProvider<T extends EditorNotificationPanel> extends EditorNotifications.Provider<T> {
     protected Project project;

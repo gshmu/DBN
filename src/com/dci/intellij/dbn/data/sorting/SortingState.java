@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.data.sorting;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import org.jdom.Element;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SortingState implements PersistentStateElement<Element>{
     private List<SortingInstruction> sortingInstructions = new ArrayList<SortingInstruction>();

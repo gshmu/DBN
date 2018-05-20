@@ -11,7 +11,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.*;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getEditor;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class SessionSelectAction extends DumbAwareAction {
     private DatabaseSession session;

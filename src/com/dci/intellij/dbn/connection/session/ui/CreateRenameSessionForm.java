@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.connection.session.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -20,6 +10,13 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import java.awt.*;
+import java.util.Set;
 
 public class CreateRenameSessionForm extends DBNFormImpl<CreateRenameSessionDialog>{
     private JPanel headerPanel;

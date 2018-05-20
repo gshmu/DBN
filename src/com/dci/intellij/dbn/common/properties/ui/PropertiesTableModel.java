@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.common.properties.ui;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.dci.intellij.dbn.common.properties.KeyValueProperty;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PropertiesTableModel extends DBNEditableTableModel {
     private List<KeyValueProperty> properties = new ArrayList<KeyValueProperty>();

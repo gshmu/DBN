@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-
 import com.dci.intellij.dbn.common.Icons;
+
+import javax.swing.*;
 
 public enum DBConsoleType {
     STANDARD("SQL Console", Icons.FILE_SQL_CONSOLE),

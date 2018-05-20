@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
@@ -17,6 +15,8 @@ import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+
+import java.sql.SQLException;
 
 public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
     public MySqlDDLInterface(DatabaseInterfaceProvider provider) {

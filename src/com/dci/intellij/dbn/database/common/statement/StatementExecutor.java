@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.database.common.statement;
 
+import com.dci.intellij.dbn.common.thread.ThreadFactory;
+import com.dci.intellij.dbn.common.util.Traceable;
+
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.util.concurrent.Callable;
@@ -8,9 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import com.dci.intellij.dbn.common.thread.ThreadFactory;
-import com.dci.intellij.dbn.common.util.Traceable;
 
 public abstract class StatementExecutor<T> extends Traceable implements Callable<T>{
 

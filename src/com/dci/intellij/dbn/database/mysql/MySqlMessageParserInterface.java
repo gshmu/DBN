@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 
 public class MySqlMessageParserInterface implements DatabaseMessageParserInterface {
     @Nullable

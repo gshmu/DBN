@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.code.common.style.presets;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class CodeStylePresetsRegister {
     private static Map<String, CodeStylePreset> wrapPresets = new HashMap<String, CodeStylePreset>();

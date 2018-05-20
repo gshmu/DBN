@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.editor.data.action;
 
-import javax.swing.JComponent;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -15,6 +12,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class SelectDatasetFilterComboBoxAction extends DBNComboBoxAction {
     public SelectDatasetFilterComboBoxAction() {

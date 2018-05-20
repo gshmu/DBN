@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
@@ -10,6 +7,9 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorR
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public abstract class AbstractExecutionResultAction extends DumbAwareAction {
     protected AbstractExecutionResultAction(String text, Icon icon) {

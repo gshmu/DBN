@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RootPsiElement extends NamedPsiElement implements ExecutableBundlePsiElement{
 

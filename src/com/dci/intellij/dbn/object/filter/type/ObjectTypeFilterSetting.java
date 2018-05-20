@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.object.filter.type;
 
-import javax.swing.*;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.list.Selectable;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.type.ui.ObjectTypeFilterSettingsForm;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class ObjectTypeFilterSetting implements Selectable<ObjectTypeFilterSetting> {
     private DBObjectType objectType;

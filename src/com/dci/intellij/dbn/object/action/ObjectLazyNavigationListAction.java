@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.object.action;
 
-import java.util.List;
-
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnAction;
+
+import java.util.List;
 
 public class ObjectLazyNavigationListAction extends ObjectListShowAction {
     private DBObjectNavigationList navigationList;

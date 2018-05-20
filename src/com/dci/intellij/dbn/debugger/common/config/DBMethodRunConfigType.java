@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodJdbcRunConfigFactory;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfigFactory;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class DBMethodRunConfigType extends DBRunConfigType<DBMethodRunConfigFactory> {
     public static final String DEFAULT_RUNNER_NAME = "DB Method Runner";

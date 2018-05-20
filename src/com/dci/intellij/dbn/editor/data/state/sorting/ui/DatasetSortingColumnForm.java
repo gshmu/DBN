@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
@@ -21,6 +13,12 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingForm> {
     private JPanel actionsPanel;

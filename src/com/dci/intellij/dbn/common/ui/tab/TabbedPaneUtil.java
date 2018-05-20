@@ -2,10 +2,9 @@ package com.dci.intellij.dbn.common.ui.tab;
 
 import com.intellij.ui.tabs.TabInfo;
 
-import javax.swing.Icon;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 import javax.swing.plaf.TabbedPaneUI;
-import java.awt.Component;
+import java.awt.*;
 
 public class TabbedPaneUtil {
     public static void setSelectComponentTab(Component component) {

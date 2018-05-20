@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
-import javax.swing.Action;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionInput;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputForm> {
     private ScriptExecutionInput executionInput;

@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.common.editor.structure;
 
-import java.util.HashSet;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.ide.structureView.FileEditorPositionListener;
 import com.intellij.ide.structureView.ModelListener;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.util.treeView.smartTree.Filter;
 import com.intellij.ide.util.treeView.smartTree.Grouper;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class DBObjectStructureViewModel implements StructureViewModel {
     protected Set<FileEditorPositionListener> fileEditorPositionListeners = new HashSet<FileEditorPositionListener>();

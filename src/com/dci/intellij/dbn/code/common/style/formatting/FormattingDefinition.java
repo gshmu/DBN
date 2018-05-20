@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.formatting.Indent;
 import com.intellij.formatting.Spacing;
 import com.intellij.formatting.Wrap;
+import org.jdom.Element;
 
 public class FormattingDefinition {
     public static final FormattingDefinition LINE_BREAK_BEFORE = new FormattingDefinition(null, null, SpacingDefinition.MIN_LINE_BREAK, null);

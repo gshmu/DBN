@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import java.awt.event.ActionEvent;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -12,6 +7,10 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 public class StatementExecutionInputsDialog extends DBNDialog<StatementExecutionInputForm> {
     private StatementExecutionProcessor executionProcessor;

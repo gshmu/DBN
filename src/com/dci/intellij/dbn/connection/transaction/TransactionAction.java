@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.connection.transaction;
 
-import java.io.Serializable;
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.intellij.notification.NotificationType;
+
+import java.io.Serializable;
+import java.sql.SQLException;
 
 public enum TransactionAction implements Serializable {
     COMMIT(

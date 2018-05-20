@@ -6,10 +6,8 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Container;
+import javax.swing.*;
+import java.awt.*;
 import java.util.Map;
 
 public class PropertiesEditorForm extends DBNFormImpl<DBNForm> {

@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
-import javax.swing.JComponent;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>{
     private Timer timeoutTimer;

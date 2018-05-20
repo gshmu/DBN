@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.editor.session;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import gnu.trove.THashMap;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class SessionBrowserState extends SortableDataModelState implements FileEditorState, PersistentStateElement<Element> {
     public static final SessionBrowserState VOID = new SessionBrowserState();

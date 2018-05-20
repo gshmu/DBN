@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class PendingTransaction {
     private String filePath;

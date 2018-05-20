@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.object.common.ui;
 
-import javax.swing.tree.TreeModel;
-
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
+
+import javax.swing.tree.TreeModel;
 
 public class ObjectTree extends DBNTree {
 

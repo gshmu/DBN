@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
@@ -12,6 +8,10 @@ import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class CompilerMessage extends ConsoleMessage implements Comparable<CompilerMessage> {
     private CompilerResult compilerResult;

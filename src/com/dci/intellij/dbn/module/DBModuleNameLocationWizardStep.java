@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.module;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
+
+import javax.swing.*;
 
 public class DBModuleNameLocationWizardStep extends DBModuleWizardStep {
 

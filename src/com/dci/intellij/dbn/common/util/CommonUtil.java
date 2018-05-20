@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.intellij.openapi.diagnostic.Logger;
+import org.jdom.Document;
+import org.jdom.adapters.XML4JDOMAdapter;
+import org.jdom.input.DOMBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,14 +19,6 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
-import org.jdom.Document;
-import org.jdom.adapters.XML4JDOMAdapter;
-import org.jdom.input.DOMBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.intellij.openapi.diagnostic.Logger;
 
 public class CommonUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();

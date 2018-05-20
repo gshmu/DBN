@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.database.common.debug;
 
+import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
+
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
 
 public class ExecutionBacktraceInfo implements CallableStatementOutput {
     private List<DebuggerRuntimeInfo> frames = new ArrayList<DebuggerRuntimeInfo>();

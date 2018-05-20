@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
-import java.awt.Point;
+import com.dci.intellij.dbn.editor.session.model.SessionBrowserColumnInfo;
+
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import com.dci.intellij.dbn.editor.session.model.SessionBrowserColumnInfo;
 
 public class SessionBrowserTableHeaderMouseListener extends MouseAdapter {
     private SessionBrowserTable table;

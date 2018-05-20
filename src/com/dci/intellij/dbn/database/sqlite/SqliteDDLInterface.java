@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.database.sqlite;
 
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
@@ -15,6 +13,8 @@ import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+
+import java.sql.SQLException;
 
 public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
     public SqliteDDLInterface(DatabaseInterfaceProvider provider) {

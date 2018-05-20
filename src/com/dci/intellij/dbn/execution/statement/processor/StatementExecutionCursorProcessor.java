@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import java.sql.SQLException;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
@@ -13,6 +10,9 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.openapi.fileEditor.FileEditor;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.SQLException;
 
 public class StatementExecutionCursorProcessor extends StatementExecutionBasicProcessor {
 

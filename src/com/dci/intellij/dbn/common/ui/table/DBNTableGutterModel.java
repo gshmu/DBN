@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import javax.swing.ListModel;
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.util.HashSet;
 import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 
 public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends DisposableBase implements ListModel, Disposable{
     private T tableModel;

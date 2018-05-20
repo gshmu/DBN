@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.common.constant;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.intellij.openapi.diagnostic.Logger;
+import gnu.trove.THashMap;
+
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -7,11 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.openapi.diagnostic.Logger;
-import gnu.trove.THashMap;
 
 /**
  * Use this "constant" if the possible values are variable (i.e. cannot be implemented with enum).

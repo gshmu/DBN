@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp.config.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
@@ -12,6 +8,8 @@ import com.dci.intellij.dbn.debugger.jdwp.config.DBStatementJdwpRunConfig;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.util.Range;
+
+import javax.swing.*;
 
 public class DBStatementJdwpRunConfigEditorForm extends DBProgramRunConfigurationEditorForm<DBStatementJdwpRunConfig>{
     private JPanel headerPanel;

@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.editor.session.options.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.editor.session.options.SessionInterruptionOption;
 import com.intellij.openapi.options.ConfigurationException;
+
+import javax.swing.*;
+
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionBrowserSettings> {

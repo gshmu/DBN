@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.intellij.lang.Language;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class PSQLFileType extends DBLanguageFileType {
 

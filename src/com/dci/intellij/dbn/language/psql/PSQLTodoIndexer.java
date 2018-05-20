@@ -15,12 +15,12 @@
  */
 package com.dci.intellij.dbn.language.psql;
 
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.psi.impl.cache.impl.todo.PlainTextTodoIndexer;
 import com.intellij.psi.impl.cache.impl.todo.TodoIndexEntry;
 import com.intellij.util.indexing.FileContent;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 public class PSQLTodoIndexer extends PlainTextTodoIndexer {
 

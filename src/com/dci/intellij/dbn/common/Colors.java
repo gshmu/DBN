@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common;
 
-import java.awt.Color;
-
 import com.intellij.ui.JBColor;
+
+import java.awt.*;
 
 public interface Colors {
     Color LIGHT_BLUE = new JBColor(new Color(235, 244, 254), new Color(0x2D3548));

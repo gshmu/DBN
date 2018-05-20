@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -10,6 +7,9 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
 import com.dci.intellij.dbn.connection.jdbc.LazyResourceStatus;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<ConnectionHandlerStatus> {
     private ConnectionHandlerRef connectionHandlerRef;

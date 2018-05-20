@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import javax.swing.Icon;
-import java.util.Date;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.ui.Presentable;
+import javax.swing.*;
+import java.util.Date;
 
 public enum ConditionOperator implements Presentable {
     EQUAL("=", false),

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.data.ui.table.listener;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 

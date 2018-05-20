@@ -1,13 +1,6 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.TableCellEditor;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -28,6 +21,13 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.TableCellEditor;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DatasetEditorModelCell extends ResultSetDataModelCell implements ChangeListener {
     private static final Logger LOGGER = LoggerFactory.createLogger();

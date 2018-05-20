@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.execution.compiler.options.ui;
 
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.Presentable;
@@ -12,6 +7,11 @@ import com.dci.intellij.dbn.execution.compiler.CompileDependenciesOption;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettings> {

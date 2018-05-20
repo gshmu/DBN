@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.text.DateFormatUtil;
+
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotificationPanel{

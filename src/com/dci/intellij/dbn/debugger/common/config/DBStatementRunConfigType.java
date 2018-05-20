@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementJdbcRunConfigFactory;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBStatementJdwpRunConfigFactory;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class DBStatementRunConfigType extends DBRunConfigType<DBStatementRunConfigFactory> {
     public static final String DEFAULT_RUNNER_NAME = "DB Statement Runner";

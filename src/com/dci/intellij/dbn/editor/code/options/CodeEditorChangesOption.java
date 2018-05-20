@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.editor.code.options;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.option.InteractiveOption;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.option.InteractiveOption;
+import javax.swing.*;
 
 public enum CodeEditorChangesOption implements InteractiveOption {
     ASK("Ask"),

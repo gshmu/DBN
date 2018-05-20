@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.connection.config.tns.ui;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
+import com.dci.intellij.dbn.connection.config.tns.TnsName;
+
 import javax.swing.event.TableModelListener;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
-import com.dci.intellij.dbn.connection.config.tns.TnsName;
 
 public class TnsNamesTableModel extends DisposableBase implements DBNTableModel {
     private TnsName[] tnsNames;

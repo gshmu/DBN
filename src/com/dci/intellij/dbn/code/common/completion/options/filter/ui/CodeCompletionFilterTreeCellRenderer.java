@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter.ui;
 
-import javax.swing.Icon;
-import javax.swing.JTree;
-
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterOption;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterOptionBundle;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
@@ -10,6 +7,8 @@ import com.intellij.ui.CheckboxTree;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.*;
 
 public class CodeCompletionFilterTreeCellRenderer extends CheckboxTree.CheckboxTreeCellRenderer { //implements TreeCellEditor {
     public static final CodeCompletionFilterTreeCellRenderer CELL_RENDERER = new CodeCompletionFilterTreeCellRenderer();

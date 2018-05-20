@@ -12,9 +12,8 @@ import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.AnActionButtonUpdater;
 import com.intellij.ui.ToolbarDecorator;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 
 public class DatabaseFileSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm> {
     private JPanel mainPanel;

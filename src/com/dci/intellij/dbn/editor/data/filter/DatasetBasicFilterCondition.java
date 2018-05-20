@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import java.text.ParseException;
-import java.util.Date;
-import java.util.StringTokenizer;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -17,6 +11,12 @@ import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterConditionForm;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.text.ParseException;
+import java.util.Date;
+import java.util.StringTokenizer;
 
 public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilterConditionForm> {
 

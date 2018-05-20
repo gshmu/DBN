@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.debugger.common.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -25,6 +23,8 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.getEditor;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 

@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
@@ -23,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.impl.source.codeStyle.CodeFormatterFacade;
+import org.jetbrains.annotations.NotNull;
 
 public class DBLFormattingModelBuilder implements FormattingModelBuilder {
 

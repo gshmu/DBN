@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.language.editor;
 
-import java.awt.BorderLayout;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.editor.ui.DBLanguageFileEditorToolbarForm;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -10,6 +7,9 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 public class DBLanguageFileEditorListener implements FileEditorManagerListener{
     public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {

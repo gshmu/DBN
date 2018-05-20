@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter;
 
-import javax.swing.*;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTreeNodeProvider;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterTreeNode;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
@@ -10,6 +7,9 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.ui.CheckedTreeNode;
+import org.jdom.Element;
+
+import javax.swing.*;
 
 public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, PersistentConfiguration{
     private CodeCompletionFilterSettings filterSettings;

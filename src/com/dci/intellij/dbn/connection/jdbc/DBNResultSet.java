@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.ref.WeakReference;
@@ -21,8 +23,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
-
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 
 public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, Closeable {
     private WeakReference<DBNStatement> statement;

@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.database.mysql;
 
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Timestamp;
 import java.sql.Types;
-
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 
 public class MySqlNativeDataTypes extends DatabaseNativeDataTypes {
     {

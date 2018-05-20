@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.data.grid.color;
 
-import java.awt.Color;
-
 import com.intellij.ui.SimpleTextAttributes;
+
+import java.awt.*;
 
 public interface DataGridTextAttributes {
     void load();

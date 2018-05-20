@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp.evaluation;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -17,6 +14,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.ui.DebuggerColors;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DBExecutionPointHighlighter {
     private final Project project;

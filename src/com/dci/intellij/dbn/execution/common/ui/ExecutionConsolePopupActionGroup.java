@@ -1,6 +1,10 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.TabLabel;
 

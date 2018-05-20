@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
-import javax.swing.Action;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
@@ -12,6 +9,9 @@ import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class TextEditorDialog extends DBNDialog<TextEditorForm> {
     private final TextEditorAdapter textEditorAdapter;

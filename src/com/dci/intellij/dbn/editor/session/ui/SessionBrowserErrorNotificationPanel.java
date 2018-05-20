@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
-import javax.swing.JLabel;
-
 import com.dci.intellij.dbn.common.editor.EditorNotificationPanel;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+
+import javax.swing.*;
 
 public class SessionBrowserErrorNotificationPanel extends EditorNotificationPanel{
     protected final JLabel label = new JLabel();

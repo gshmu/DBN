@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdbc.evaluation;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.impl.DocumentImpl;
@@ -11,6 +8,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.EvaluationMode;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DBJdbcDebuggerEditorsProvider extends XDebuggerEditorsProvider {
     public static final DBJdbcDebuggerEditorsProvider INSTANCE = new DBJdbcDebuggerEditorsProvider();

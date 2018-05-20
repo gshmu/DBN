@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.execution.method.browser;
 
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -15,6 +8,13 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
 
 public class MethodBrowserSettings implements PersistentConfiguration {
     private ConnectionId connectionId;

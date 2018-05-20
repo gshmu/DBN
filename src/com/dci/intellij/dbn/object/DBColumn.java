@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.object;
 
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.common.DBObject;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface DBColumn extends DBObject {
     DBDataType getDataType();

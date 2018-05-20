@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.code.common.style.presets.clause;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
@@ -9,6 +7,7 @@ import com.intellij.formatting.Spacing;
 import com.intellij.formatting.Wrap;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import org.jetbrains.annotations.Nullable;
 
 public class ClauseChopDownIfLongStatementPreset extends ClauseAbstractPreset {
     public ClauseChopDownIfLongStatementPreset() {

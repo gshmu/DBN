@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.debugger.jdbc.config.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementJdbcRunConfig;
+
+import javax.swing.*;
 
 public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfigurationEditorForm<DBStatementJdbcRunConfig> {
     private JPanel headerPanel;

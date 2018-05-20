@@ -6,7 +6,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.ui.JBColor;
 
-import java.awt.Color;
+import java.awt.*;
 
 public interface DataGridTextAttributesKeys {
     TextAttributesKey DEFAULT_PLAIN_DATA     = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.PlainData");

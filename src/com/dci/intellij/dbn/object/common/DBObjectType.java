@@ -1,6 +1,13 @@
 package com.dci.intellij.dbn.object.common;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.editor.DBContentType;
+import gnu.trove.THashSet;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -8,13 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
-import com.dci.intellij.dbn.editor.DBContentType;
-import gnu.trove.THashSet;
 
 public enum DBObjectType implements DynamicContentType {
     

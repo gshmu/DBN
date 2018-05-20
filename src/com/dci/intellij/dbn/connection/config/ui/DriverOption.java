@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.Icon;
-import java.sql.Driver;
-import java.util.List;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.ui.Presentable;
+import javax.swing.*;
+import java.sql.Driver;
+import java.util.List;
 
 public class DriverOption implements Presentable {
     private Driver driver;

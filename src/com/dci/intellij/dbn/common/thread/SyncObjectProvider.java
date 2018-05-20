@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.common.thread;
 
+import gnu.trove.THashMap;
+
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import gnu.trove.THashMap;
 
 public class SyncObjectProvider {
 	private Map<String, AtomicInteger> SYNC_OBJECTS = new THashMap<String, AtomicInteger>();

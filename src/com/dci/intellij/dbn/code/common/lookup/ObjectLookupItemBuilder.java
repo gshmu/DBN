@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.code.common.lookup;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
@@ -19,6 +16,9 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class ObjectLookupItemBuilder extends LookupItemBuilder {
     private DBLanguage language;

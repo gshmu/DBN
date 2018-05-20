@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
-import java.util.Set;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import java.util.Set;
 
 public abstract class PsiLookupAdapter {
     private boolean assertResolved = false;

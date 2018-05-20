@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.action.OpenSettingsAction;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class EditorSettingsAction extends OpenSettingsAction{

@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.common.locale.options.ui;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.ui.Presentable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.ui.Presentable;
 
 public class LocaleOption implements Presentable{
     public static List<LocaleOption> ALL = new ArrayList<LocaleOption>();

@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.code.common.style.presets.clause;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -10,6 +8,7 @@ import com.intellij.formatting.Spacing;
 import com.intellij.formatting.Wrap;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import org.jetbrains.annotations.Nullable;
 
 public class ClauseChopDownNeverPreset extends ClauseAbstractPreset {
     public ClauseChopDownNeverPreset() {

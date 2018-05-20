@@ -1,18 +1,18 @@
 package com.dci.intellij.dbn.data.value;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleResultSet;
 import oracle.sql.OPAQUE;
 import oracle.xdb.XMLType;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class XmlTypeValue extends LargeObjectValue{
     private XMLType xmlType;

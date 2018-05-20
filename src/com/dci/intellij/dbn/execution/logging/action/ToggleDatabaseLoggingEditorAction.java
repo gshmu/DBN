@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.logging.action;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -15,6 +13,8 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 

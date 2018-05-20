@@ -2,7 +2,8 @@ package com.dci.intellij.dbn.language.psql;
 
 import com.dci.intellij.dbn.code.psql.color.PSQLTextAttributesKeys;
 import com.dci.intellij.dbn.language.common.DBLanguageSyntaxHighlighter;
-import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;import com.dci.intellij.dbn.language.common.TokenTypeBundle;
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
+import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.dci.intellij.dbn.language.psql.dialect.PSQLLanguageDialect;
 
 public abstract class PSQLSyntaxHighlighter extends DBLanguageSyntaxHighlighter {

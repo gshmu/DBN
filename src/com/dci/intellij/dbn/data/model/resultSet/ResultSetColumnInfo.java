@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.data.model.resultSet;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.basic.BasicColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 
 public class ResultSetColumnInfo extends BasicColumnInfo {
     private int resultSetColumnIndex;

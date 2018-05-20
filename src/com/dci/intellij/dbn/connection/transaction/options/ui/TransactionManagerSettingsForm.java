@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.connection.transaction.options.ui;
 
-import javax.swing.JPanel;
-
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.intellij.openapi.options.ConfigurationException;
+
+import javax.swing.*;
+
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class TransactionManagerSettingsForm extends ConfigurationEditorForm<TransactionManagerSettings> {

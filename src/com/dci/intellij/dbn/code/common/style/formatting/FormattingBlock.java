@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingOption;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStyleDefaultPresets;
@@ -35,6 +30,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.impl.source.tree.TreeElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FormattingBlock implements Block {
     private PsiElement psiElement;

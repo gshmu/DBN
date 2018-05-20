@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.OneOfElementType;
@@ -12,6 +10,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import org.jetbrains.annotations.NotNull;
 
 public class OneOfElementTypeParser extends AbstractElementTypeParser<OneOfElementType> {
     public OneOfElementTypeParser(OneOfElementType elementType) {

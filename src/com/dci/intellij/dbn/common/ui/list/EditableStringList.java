@@ -1,8 +1,16 @@
 package com.dci.intellij.dbn.common.ui.list;
 
-import javax.swing.JTextField;
+import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
+import com.dci.intellij.dbn.common.ui.table.IndexTableGutter;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.intellij.openapi.project.Project;
+
+import javax.swing.*;
 import javax.swing.table.TableCellEditor;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -11,14 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
-import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
-import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
-import com.dci.intellij.dbn.common.ui.table.IndexTableGutter;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.openapi.project.Project;
 
 public class EditableStringList extends DBNEditableTable<EditableStringList.EditableListModel> {
     private boolean sorted;

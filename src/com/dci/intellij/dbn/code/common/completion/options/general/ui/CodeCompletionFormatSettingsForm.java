@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.code.common.completion.options.general.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-
 import com.dci.intellij.dbn.code.common.completion.options.general.CodeCompletionFormatSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.options.ConfigurationException;
+
+import javax.swing.*;
+
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CodeCompletionFormatSettingsForm extends ConfigurationEditorForm<CodeCompletionFormatSettings> {

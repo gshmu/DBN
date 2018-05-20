@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.execution.compiler.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.execution.compiler.CompileDependenciesOption;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.options.ui.CompilerSettingsForm;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class CompilerSettings extends Configuration<CompilerSettingsForm>{
     private CompileType compileType = CompileType.KEEP;

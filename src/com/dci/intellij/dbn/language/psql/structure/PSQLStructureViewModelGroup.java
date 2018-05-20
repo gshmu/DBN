@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.language.psql.structure;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.ide.util.treeView.smartTree.Group;
@@ -14,6 +7,13 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class PSQLStructureViewModelGroup implements Group {
     private static TextAttributesKey TEXT_ATTRIBUTES_KEY =

@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.object.filter.quick;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
@@ -11,6 +7,10 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
+import org.jdom.Element;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectQuickFilter extends Filter<DBObject> implements Cloneable<ObjectQuickFilter>, PersistentStateElement<Element> {
     private DBObjectType objectType;

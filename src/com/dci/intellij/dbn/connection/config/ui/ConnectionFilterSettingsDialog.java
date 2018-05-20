@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.Action;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.DBNContentWithHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -14,6 +11,9 @@ import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHeaderForm<ConnectionFilterSettingsDialog>> {
     private ConnectionFilterSettingsForm configurationEditor;

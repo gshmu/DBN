@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.connection.operation.options.ui;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class OperationsSettingsForm extends CompositeConfigurationEditorForm<OperationSettings> {
     private JPanel mainPanel;

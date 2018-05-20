@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.options.setting;
 
 import com.intellij.openapi.options.ConfigurationException;
 
-import javax.swing.JTextField;
+import javax.swing.*;
 
 public class IntegerSettingValidator implements SettingValidator<IntegerSetting>{
     private String fieldName;

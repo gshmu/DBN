@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
@@ -14,6 +9,11 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.formatting.Indent;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChameleonPsiElement extends ASTWrapperPsiElement implements ExecutableBundlePsiElement, FormattingProviderPsiElement {
     public static final FormattingAttributes FORMATTING_ATTRIBUTES = new FormattingAttributes(null, Indent.getAbsoluteNoneIndent(), CodeStylePreset.SPACING_MIN_ONE_LINE, null);

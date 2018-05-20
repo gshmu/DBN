@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.connection.ssh;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class SshTunnelConnector {
     private String proxyHost;

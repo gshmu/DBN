@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.data.model;
 
-import java.util.List;
-
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.data.type.DBDataType;
+
+import java.util.List;
 
 public interface DataModelHeader<T extends ColumnInfo> extends Disposable {
     List<T> getColumnInfos();

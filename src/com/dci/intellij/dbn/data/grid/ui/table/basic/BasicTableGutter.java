@@ -1,17 +1,14 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
+
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
-import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 
 public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
     public BasicTableGutter(final T table) {

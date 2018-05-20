@@ -8,7 +8,7 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 
-import java.awt.Color;
+import java.awt.*;
 
 public class BasicTableTextAttributes extends CommonUtil implements DataGridTextAttributes {
     private SimpleTextAttributes plainData;

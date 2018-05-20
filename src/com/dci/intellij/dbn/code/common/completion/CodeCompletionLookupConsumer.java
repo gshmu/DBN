@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.code.common.completion;
 
-import java.util.Collection;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.BasicLookupItemBuilder;
@@ -20,6 +16,10 @@ import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 public class CodeCompletionLookupConsumer implements LookupConsumer {
     private CodeCompletionContext context;

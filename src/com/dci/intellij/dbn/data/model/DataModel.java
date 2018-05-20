@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.data.model;
 
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.table.DBNTableWithGutterModel;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface DataModel<T extends DataModelRow> extends DBNTableWithGutterModel {
     boolean isReadonly();

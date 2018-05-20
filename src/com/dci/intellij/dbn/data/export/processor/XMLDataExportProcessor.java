@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.data.export.processor;
 
-import java.awt.datatransfer.Transferable;
-import java.util.Date;
-
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -12,6 +9,9 @@ import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.type.GenericDataType;
+
+import java.awt.datatransfer.Transferable;
+import java.util.Date;
 
 
 public class XMLDataExportProcessor extends DataExportProcessor{

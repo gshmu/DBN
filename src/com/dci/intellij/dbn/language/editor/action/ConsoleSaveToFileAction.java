@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import java.io.IOException;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -22,6 +19,10 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 

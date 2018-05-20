@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.object.common.status;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.editor.DBContentType;
+import org.jetbrains.annotations.Nullable;
 
 public class DBObjectStatusHolder {
     private DBContentType mainContentType;

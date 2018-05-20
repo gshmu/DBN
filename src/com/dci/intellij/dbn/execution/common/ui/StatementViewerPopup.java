@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
-import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
-
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -25,6 +19,10 @@ import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.psi.PsiFile;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 
 public class StatementViewerPopup implements Disposable {
     private EditorEx viewer;

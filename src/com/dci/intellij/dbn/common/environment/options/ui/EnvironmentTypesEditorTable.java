@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableColumn;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.intellij.openapi.project.Project;
@@ -16,6 +7,13 @@ import com.intellij.ui.BooleanTableCellEditor;
 import com.intellij.ui.BooleanTableCellRenderer;
 import com.intellij.ui.ColorChooser;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.*;
+import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class EnvironmentTypesEditorTable extends DBNEditableTable<EnvironmentTypesTableModel> {
 

@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common;
 
-import java.util.ResourceBundle;
+import com.intellij.CommonBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.PropertyKey;
 
-import com.intellij.CommonBundle;
+import java.util.ResourceBundle;
 
 public class SQLBundle {
   @NonNls private static final String COM_INTELLIJ_LANG_SQL_BUNDLE = "com.dci.intellij.dbn.common.SQLBundle";

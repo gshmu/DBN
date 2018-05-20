@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.database.oracle;
 
-import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
-import java.util.StringTokenizer;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.database.common.DatabaseObjectIdentifierImpl;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
+import java.util.StringTokenizer;
 
 public class OracleMessageParserInterface implements DatabaseMessageParserInterface {
     @Nullable

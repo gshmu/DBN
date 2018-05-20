@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.connection.config.action;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class CreateConnectionAction extends ConnectionSettingsAction {
     private DatabaseType databaseType;

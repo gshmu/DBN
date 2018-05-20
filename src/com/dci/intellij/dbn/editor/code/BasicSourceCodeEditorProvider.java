@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.editor.code;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import java.awt.BorderLayout;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
@@ -23,6 +17,11 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
 
 public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvider implements DumbAware {
     @NotNull

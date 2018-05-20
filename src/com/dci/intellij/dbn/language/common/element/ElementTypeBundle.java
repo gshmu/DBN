@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.language.common.element;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.io.StringWriter;
-import java.util.Map;
-import java.util.Set;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.XMLOutputter;
-
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
@@ -32,6 +22,16 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.diagnostic.Logger;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.XMLOutputter;
+
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.io.StringWriter;
+import java.util.Map;
+import java.util.Set;
 
 public class ElementTypeBundle {
     private final Logger log = Logger.getInstance(getClass().getName());

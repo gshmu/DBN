@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdbc.evaluation;
 
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
@@ -13,6 +10,9 @@ import com.dci.intellij.dbn.debugger.jdbc.frame.DBJdbcDebugStackFrame;
 import com.dci.intellij.dbn.debugger.jdbc.frame.DBJdbcDebugValue;
 import com.intellij.xdebugger.frame.XValueNode;
 import com.intellij.xdebugger.frame.XValuePlace;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 public class DBJdbcDebuggerEvaluator extends DBDebuggerEvaluator<DBJdbcDebugStackFrame, DBJdbcDebugValue> {
 

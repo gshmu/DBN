@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.editor.console;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.editor.BasicTextEditorState;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -14,6 +11,8 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 class SQLConsoleEditorState extends BasicTextEditorState {
     private String schemaName = "";

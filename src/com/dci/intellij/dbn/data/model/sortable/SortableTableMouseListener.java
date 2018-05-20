@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.data.model.sortable;
 
+import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 
 public class SortableTableMouseListener extends MouseAdapter{
     private SortableTable table;

@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.data.export.ui;
 
-import javax.swing.Action;
-import java.awt.event.ActionEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -17,6 +12,11 @@ import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.progress.ProgressIndicator;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     private ResultSetTable table;

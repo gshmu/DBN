@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -19,6 +13,12 @@ import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorModelCell> {
     private static final Logger LOGGER = LoggerFactory.createLogger();

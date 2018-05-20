@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
-import java.util.Set;
-
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
@@ -16,6 +14,8 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeLogger;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeUtil;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import com.intellij.lang.PsiBuilder;
+
+import java.util.Set;
 
 public abstract class AbstractElementTypeParser<T extends ElementType> implements ElementTypeParser<T>{
     private T elementType;

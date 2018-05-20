@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import javax.swing.JTable;
-import java.awt.Rectangle;
+import javax.swing.*;
+import java.awt.*;
 
 public class TableUtil {
     public static Rectangle getCellRectangle(JTable table, int row, int column) {

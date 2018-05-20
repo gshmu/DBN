@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.connection.config;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> implements ConnectionRef{
     private ConnectionBundleSettings parent;

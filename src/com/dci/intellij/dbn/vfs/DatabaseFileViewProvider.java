@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -18,6 +16,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.testFramework.LightVirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     public static final Key<DatabaseFileViewProvider> CACHED_VIEW_PROVIDER = new Key<DatabaseFileViewProvider>("CACHED_VIEW_PROVIDER");

@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.editor.code.action;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -11,6 +9,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public abstract class AbstractSourceCodeEditorAction extends DumbAwareAction {

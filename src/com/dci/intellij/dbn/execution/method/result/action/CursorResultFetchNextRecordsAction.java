@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
-import java.sql.SQLException;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -13,6 +10,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.SQLException;
 
 public class CursorResultFetchNextRecordsAction extends MethodExecutionCursorResultAction {
     public CursorResultFetchNextRecordsAction() {

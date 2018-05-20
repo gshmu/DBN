@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -12,6 +8,10 @@ import com.dci.intellij.dbn.database.common.DatabaseExecutionInterfaceImpl;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.object.DBMethod;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class MySqlExecutionInterface extends DatabaseExecutionInterfaceImpl {
 

@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
+import com.dci.intellij.dbn.execution.method.ArgumentValue;
+import com.dci.intellij.dbn.object.common.DBObject;
+
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-
-import com.dci.intellij.dbn.execution.method.ArgumentValue;
-import com.dci.intellij.dbn.object.common.DBObject;
 
 public class ArgumentValuesTreeNode implements TreeNode{
     private Object userValue;

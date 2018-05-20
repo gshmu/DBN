@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdbc.config;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
@@ -12,6 +10,7 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class DBMethodJdbcRunConfigFactory extends DBMethodRunConfigFactory<DBMethodRunConfigType, DBMethodJdbcRunConfig> {
     public DBMethodJdbcRunConfigFactory(@NotNull DBMethodRunConfigType type) {

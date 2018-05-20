@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.object.common.sorting;
 
+import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public abstract class DBObjectComparator<T extends DBObject> implements Comparator<T>{
     public static final List<DBObjectComparator> REGISTRY = new ArrayList<DBObjectComparator>();

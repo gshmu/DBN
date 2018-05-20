@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.connection.mapping;
 
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SessionId;
+import org.jdom.Element;
 
 public class FileConnectionMapping implements PersistentStateElement<Element> {
     private String fileUrl = "";

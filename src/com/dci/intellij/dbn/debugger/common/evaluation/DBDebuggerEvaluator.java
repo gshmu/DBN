@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.debugger.common.evaluation;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugStackFrame;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugValue;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
@@ -18,6 +15,8 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XValueNode;
 import com.intellij.xdebugger.frame.XValuePlace;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class DBDebuggerEvaluator<F extends DBDebugStackFrame<? extends DBDebugProcess, V>, V extends DBDebugValue> extends XDebuggerEvaluator {
     private F frame;

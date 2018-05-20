@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.language.common.element;
 
-import java.util.Set;
-
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
+
+import java.util.Set;
 
 public interface SequenceElementType extends ElementType {
     ElementTypeRef[] getChildren();

@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -17,6 +11,12 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import org.jdom.Element;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 public class OneOfElementTypeImpl extends AbstractElementType implements OneOfElementType {
     protected final ElementTypeRef[] children;

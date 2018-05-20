@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.editor.session.action;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
@@ -18,6 +13,11 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.getFileEditor;
 
 public class TimedReloadComboBoxAction extends DBNComboBoxAction implements DumbAware {

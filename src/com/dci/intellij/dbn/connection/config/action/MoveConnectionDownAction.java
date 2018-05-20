@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.connection.config.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import org.jetbrains.annotations.NotNull;
 
 public class MoveConnectionDownAction extends ConnectionSettingsAction {
     public MoveConnectionDownAction() {

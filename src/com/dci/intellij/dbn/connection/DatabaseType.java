@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public enum DatabaseType implements Presentable {
     ORACLE   ("ORACLE",   "Oracle",     Icons.DB_ORACLE,     Icons.DB_ORACLE_LARGE,     "oracle.jdbc.driver.OracleDriver", true, DatabaseUrlPattern.ORACLE_SID, DatabaseUrlPattern.ORACLE_SERVICE),

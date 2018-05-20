@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.editor.session.model;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelHeader;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class SessionBrowserModelHeader extends ResultSetDataModelHeader<SessionBrowserColumnInfo> {
     public SessionBrowserModelHeader() {

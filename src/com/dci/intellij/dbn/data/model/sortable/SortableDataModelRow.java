@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.data.model.sortable;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.data.model.basic.BasicDataModelRow;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
+import org.jetbrains.annotations.NotNull;
 
 public class SortableDataModelRow<T extends SortableDataModelCell> extends BasicDataModelRow<T> implements Comparable {
 

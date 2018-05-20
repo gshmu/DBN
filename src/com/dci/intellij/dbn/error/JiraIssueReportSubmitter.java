@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.error;
 
-import java.io.InputStream;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -8,10 +11,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
+import java.io.InputStream;
 
 public class JiraIssueReportSubmitter extends IssueReportSubmitter {
     private static final HttpClientBuilder HTTP_CLIENT_BUILDER = HttpClientBuilder.create();

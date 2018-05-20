@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.ui.ListUtil;
 
-import javax.swing.JList;
+import javax.swing.*;
 
 public class MoveUpAction extends AnAction {
     private CodeCompletionSortingSettings settings;

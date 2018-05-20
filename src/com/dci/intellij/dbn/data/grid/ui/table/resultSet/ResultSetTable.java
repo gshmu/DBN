@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.record.ResultSetRecordViewerDialog;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
+import org.jetbrains.annotations.NotNull;
 
 public class ResultSetTable<T extends ResultSetDataModel> extends SortableTable<T> {
     private RecordViewInfo recordViewInfo;

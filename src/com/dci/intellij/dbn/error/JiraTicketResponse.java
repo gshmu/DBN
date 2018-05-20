@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.error;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 class JiraTicketResponse implements TicketResponse{
     private static final GsonBuilder GSON_BUILDER = new GsonBuilder();

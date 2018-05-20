@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import javax.swing.JTable;
-
 import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+
+import javax.swing.*;
 
 public class PendingTransactionsTableCellRenderer extends ColoredTableCellRenderer{
     @Override

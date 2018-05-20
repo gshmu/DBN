@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.common.options.setting;
 
-import javax.swing.JToggleButton;
+import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import org.jdom.Element;
 
-import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import javax.swing.*;
 
 public class BooleanSetting extends Setting<Boolean, JToggleButton> implements PersistentConfiguration {
     public BooleanSetting(String name, Boolean value) {

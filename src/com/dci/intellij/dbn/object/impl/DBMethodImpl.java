@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContent;
@@ -26,8 +21,17 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEBUGABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DETERMINISTIC;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
 
 public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMethod {
     protected DBObjectList<DBArgument> arguments;

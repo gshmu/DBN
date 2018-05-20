@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.language.common.element;
 
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 public interface LeafElementType extends ElementType {
     void setTokenType(TokenType tokenType);

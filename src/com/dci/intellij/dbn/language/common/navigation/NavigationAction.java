@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.navigation;
 
-import javax.swing.Icon;
-
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -9,6 +7,8 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+
+import javax.swing.*;
 
 public abstract class NavigationAction extends AnAction {
     private BasePsiElement navigationElement;

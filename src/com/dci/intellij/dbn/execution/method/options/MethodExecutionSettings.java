@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.execution.method.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.method.options.ui.MethodExecutionSettingsForm;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class MethodExecutionSettings extends Configuration implements ExecutionTimeoutSettings {
     private ExecutionEngineSettings parent;

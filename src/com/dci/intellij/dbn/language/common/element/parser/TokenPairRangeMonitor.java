@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -10,6 +8,7 @@ import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.util.containers.Stack;
+import org.jetbrains.annotations.NotNull;
 
 public class TokenPairRangeMonitor {
     private int stackSize = 0;

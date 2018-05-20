@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.data.model.resultSet;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.model.basic.BasicDataModelHeader;
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.data.model.basic.BasicDataModelHeader;
 
 public class ResultSetDataModelHeader<T extends ResultSetColumnInfo> extends BasicDataModelHeader<T> {
 

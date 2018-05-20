@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.database.common.debug;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
-import org.jetbrains.annotations.Nullable;
 
 public class BreakpointInfo extends BasicOperationInfo {
     private Integer breakpointId;

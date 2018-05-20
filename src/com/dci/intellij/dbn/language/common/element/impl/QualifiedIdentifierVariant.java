@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 public class QualifiedIdentifierVariant implements Comparable{
     private LeafElementType[] leafs;

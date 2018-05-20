@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.object.filter.name;
 
+import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.config.ConnectionRef;
+import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
+import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -11,17 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.config.ConnectionRef;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
-import com.intellij.openapi.project.Project;
 
 public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFilterSettingsForm> implements TreeModel {
     private List<ObjectNameFilter> filters = new ArrayList<ObjectNameFilter>();

@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.editor.code.content;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.util.Range;
+import org.jetbrains.annotations.NotNull;
 
 public class GuardedBlockMarker extends Range<Integer> implements Comparable<GuardedBlockMarker>{
     public static final String START_OFFSET_IDENTIFIER = "$$DBN_GUARDED_BLOCK_START_OFFSET$$";

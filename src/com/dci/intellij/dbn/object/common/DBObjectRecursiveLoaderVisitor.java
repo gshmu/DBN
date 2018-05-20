@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.object.common;
 
-import java.util.List;
-
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectListVisitor;
+
+import java.util.List;
 
 public class DBObjectRecursiveLoaderVisitor extends DisposableBase implements DBObjectListVisitor{
     public static final DBObjectRecursiveLoaderVisitor INSTANCE = new DBObjectRecursiveLoaderVisitor();

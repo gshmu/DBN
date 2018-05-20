@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.object.filter.quick;
 
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.NameFilterCondition;
+import org.jdom.Element;
+
 import static com.dci.intellij.dbn.common.options.setting.SettingsUtil.getBooleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsUtil.setBooleanAttribute;
 

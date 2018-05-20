@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.object.action;
 
-import java.util.List;
-
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+
+import java.util.List;
 
 public class ObjectListActionGroup extends DefaultActionGroup {
 

@@ -1,6 +1,16 @@
 package com.dci.intellij.dbn.data.export.processor;
 
-import java.awt.Toolkit;
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.export.DataExportException;
+import com.dci.intellij.dbn.data.export.DataExportFormat;
+import com.dci.intellij.dbn.data.export.DataExportInstructions;
+import com.dci.intellij.dbn.data.export.DataExportModel;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
+
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -13,16 +23,6 @@ import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.data.export.DataExportException;
-import com.dci.intellij.dbn.data.export.DataExportFormat;
-import com.dci.intellij.dbn.data.export.DataExportInstructions;
-import com.dci.intellij.dbn.data.export.DataExportModel;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
 
 public abstract class DataExportProcessor {
     public abstract boolean canCreateHeader();

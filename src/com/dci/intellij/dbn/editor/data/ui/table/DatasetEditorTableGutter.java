@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.editor.data.ui.table;
 
-import javax.swing.ListCellRenderer;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
+import com.dci.intellij.dbn.editor.data.ui.table.renderer.DatasetEditorTableGutterRenderer;
+
+import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
-import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
-import com.dci.intellij.dbn.editor.data.ui.table.renderer.DatasetEditorTableGutterRenderer;
 
 public class DatasetEditorTableGutter extends BasicTableGutter<DatasetEditorTable> {
     public DatasetEditorTableGutter(DatasetEditorTable table) {

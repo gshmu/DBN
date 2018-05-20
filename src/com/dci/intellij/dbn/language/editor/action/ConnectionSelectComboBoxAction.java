@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -17,6 +13,10 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 

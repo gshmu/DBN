@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -16,7 +14,11 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import static com.dci.intellij.dbn.common.util.ActionUtil.*;
+import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.util.ActionUtil.getEditor;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class ExecuteStatementEditorAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {

@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
+import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
 
 public class SqliteViewSourceResultSet extends ResultSetAdapter {
     public static final Pattern DDL_STUB_REGEX = Pattern.compile("CREATE\\s+(TEMP(ORARY)?\\s+)?VIEW[^.]+\\s+AS\\s+(?=SELECT)", Pattern.CASE_INSENSITIVE);

@@ -12,7 +12,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.lang.ref.WeakReference;
 
 public class ExecutablePsiElement extends NamedPsiElement{

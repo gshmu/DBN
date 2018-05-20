@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.editor.session.details;
 
-import javax.swing.event.TableModelListener;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.event.TableModelListener;
 
 public class SessionDetailsTableModel extends DisposableBase implements DBNTableModel {
     private String sessionId = "";

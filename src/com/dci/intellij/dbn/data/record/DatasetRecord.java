@@ -1,10 +1,6 @@
 package com.dci.intellij.dbn.data.record;
 
 
-import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.Map;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -16,6 +12,10 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.Disposable;
 import gnu.trove.THashMap;
+
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Map;
 
 public class DatasetRecord implements Disposable {
     private DatasetFilterInput filterInput;

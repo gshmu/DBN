@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.editor.session.model;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelRow;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.session.SessionStatus;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowserModelCell> {
 

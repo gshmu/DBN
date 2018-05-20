@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.connection.operation.options;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.operation.options.ui.OperationsSettingsForm;
@@ -13,6 +11,7 @@ import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class OperationSettings extends CompositeProjectConfiguration<OperationsSettingsForm> implements TopLevelConfig {
     private TransactionManagerSettings transactionManagerSettings = new TransactionManagerSettings();

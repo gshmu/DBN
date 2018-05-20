@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.intellij.openapi.project.Project;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public abstract class ObjectFactoryInputForm<T extends ObjectFactoryInput> extends DBNFormImpl {
     private int index;

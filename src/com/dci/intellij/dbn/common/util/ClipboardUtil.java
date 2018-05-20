@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.common.util;
 
-import java.awt.Toolkit;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import org.jetbrains.annotations.Nullable;
 
 public class ClipboardUtil {
 

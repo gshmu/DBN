@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.editor.session.action;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.getFileEditor;
 
 public abstract class AbstractSessionBrowserAction extends DumbAwareAction {

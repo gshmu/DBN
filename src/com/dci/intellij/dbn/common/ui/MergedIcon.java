@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.Icon;
-import java.awt.Component;
-import java.awt.Graphics;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class MergedIcon implements Icon {
 

@@ -7,14 +7,9 @@ import com.intellij.openapi.editor.colors.EditorFontType;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
+import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Font;
+import java.awt.*;
 
 public class BasicTableGutterCellRenderer extends JPanel implements ListCellRenderer {
 

@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.common.constant;
 
+import com.intellij.util.xmlb.Converter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import com.intellij.util.xmlb.Converter;
 
 public class PseudoConstantConverter<T extends PseudoConstant> extends Converter<T> {
     private Class<T> typeClass;
