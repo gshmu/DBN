@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.navigation.action;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
@@ -41,6 +37,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAware {
     private ConnectionId latestConnectionId;
@@ -170,7 +170,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
             for (DBSchema schema : connectionHandler.getObjectBundle().getSchemas()) {
                 schemaActions.add(new SelectSchemaAction(schema));
             }
-            return schemaActions.toArray(new AnAction[schemaActions.size()]);
+            return schemaActions.toArray(new AnAction[0]);
         }
     }
 

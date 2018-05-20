@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
-import java.util.Arrays;
-import java.util.Set;
-
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import gnu.trove.THashSet;
+
+import java.util.Arrays;
+import java.util.Set;
 
 public class ParseBuilderErrorHandler {
     public static void updateBuilderError(Set<TokenType> expectedTokens, ParserContext context) {
@@ -29,7 +29,7 @@ public class ParseBuilderErrorHandler {
                     tokenDescriptions.add(description);
                 }
 
-                String [] tokenDesc = tokenDescriptions.toArray(new String[tokenDescriptions.size()]);
+                String [] tokenDesc = tokenDescriptions.toArray(new String[0]);
                 Arrays.sort(tokenDesc);
 
                 StringBuilder buffer = new StringBuilder("expected");

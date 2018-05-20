@@ -1,24 +1,26 @@
 package com.dci.intellij.dbn.data.find.action;
 
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
+import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.data.find.DataSearchComponent;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CustomShortcutSet;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.KeyboardShortcut;
+import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.project.DumbAware;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.data.find.DataSearchComponent;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CustomShortcutSet;
-import com.intellij.openapi.actionSystem.KeyboardShortcut;
-import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.openapi.project.DumbAware;
 
 public class CloseOnESCAction extends DataSearchHeaderAction implements DumbAware {
-    public CloseOnESCAction(DataSearchComponent searchComponent, JComponent component) {
+    public CloseOnESCAction(final DataSearchComponent searchComponent, JComponent component) {
         super(searchComponent);
 
         ArrayList<Shortcut> shortcuts = new ArrayList<Shortcut>();
@@ -27,7 +29,10 @@ public class CloseOnESCAction extends DataSearchHeaderAction implements DumbAwar
             ActionListener actionListener = new ActionListener() {
                 @Override
                 public void actionPerformed(final ActionEvent e) {
-                    CloseOnESCAction.this.actionPerformed(null);
+                    DataContext dataContext = DataManager.getInstance().getDataContext(searchComponent);
+                    ActionManager actionManager = ActionManager.getInstance();
+                    AnActionEvent actionEvent = new AnActionEvent(null, dataContext, "", getTemplatePresentation(), actionManager, 2);
+                    CloseOnESCAction.this.actionPerformed(actionEvent);
                 }
             };
             component.registerKeyboardAction(
@@ -38,7 +43,7 @@ public class CloseOnESCAction extends DataSearchHeaderAction implements DumbAwar
             shortcuts.add(new KeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), null));
         }
 
-        registerCustomShortcutSet(new CustomShortcutSet(shortcuts.toArray(new Shortcut[shortcuts.size()])), component);
+        registerCustomShortcutSet(new CustomShortcutSet(shortcuts.toArray(new Shortcut[0])), component);
     }
 
     @Override

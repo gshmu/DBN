@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.language.common;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -16,6 +12,10 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAware {
 
@@ -26,7 +26,7 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
         } else  {
             List<FoldingDescriptor> descriptors = new ArrayList<FoldingDescriptor>();
             createFoldingDescriptors(node.getPsi(), document, descriptors, 0);
-            return descriptors.toArray(new FoldingDescriptor[descriptors.size()]);
+            return descriptors.toArray(new FoldingDescriptor[0]);
         }
     }
 

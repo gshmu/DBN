@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,12 +53,12 @@ public class DataGridColorSettingsPage implements ColorSettingsPage {
 
     @NotNull
     public AttributesDescriptor[] getAttributeDescriptors() {
-        return attributeDescriptors.toArray(new AttributesDescriptor[attributeDescriptors.size()]);
+        return attributeDescriptors.toArray(new AttributesDescriptor[0]);
     }
 
     @NotNull
     public ColorDescriptor[] getColorDescriptors() {
-        return colorDescriptors.toArray(new ColorDescriptor[colorDescriptors.size()]);
+        return colorDescriptors.toArray(new ColorDescriptor[0]);
     }
 
     @NotNull

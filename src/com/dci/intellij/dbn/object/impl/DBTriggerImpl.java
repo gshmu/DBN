@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -26,7 +20,21 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEBUGABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.EDITABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.FOR_EACH_ROW;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.REFERENCEABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 
 public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
     private TriggerType triggerType;
@@ -67,7 +75,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
         if (triggeringEventString.contains("DDL")) triggeringEventList.add(TRIGGERING_EVENT_DDL);
         if (triggeringEventList.size() == 0) triggeringEventList.add(TRIGGERING_EVENT_UNKNOWN);
 
-        triggeringEvents = triggeringEventList.toArray(new TriggeringEvent[triggeringEventList.size()]);    }
+        triggeringEvents = triggeringEventList.toArray(new TriggeringEvent[0]);    }
 
     public void initStatus(ResultSet resultSet) throws SQLException {
         boolean isEnabled = resultSet.getString("IS_ENABLED").equals("Y");

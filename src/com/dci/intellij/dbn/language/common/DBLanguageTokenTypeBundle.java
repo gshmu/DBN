@@ -9,7 +9,12 @@ import gnu.trove.THashMap;
 import org.jdom.Document;
 import org.jdom.Element;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class DBLanguageTokenTypeBundle {
     protected final Logger log = Logger.getInstance(getClass().getName());
@@ -206,7 +211,7 @@ public abstract class DBLanguageTokenTypeBundle {
                     tokenSetList.add(tokenType);
                 }                
             }
-            IElementType[] tokenSetArray = tokenSetList.toArray(new IElementType[tokenSetList.size()]);
+            IElementType[] tokenSetArray = tokenSetList.toArray(new IElementType[0]);
             TokenSet tokenSet = TokenSet.create(tokenSetArray);
             tokenSets.put(tokenSetId, tokenSet);
         }

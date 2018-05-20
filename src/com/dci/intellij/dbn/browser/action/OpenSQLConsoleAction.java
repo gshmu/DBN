@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.browser.action;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
@@ -21,6 +16,11 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class OpenSQLConsoleAction extends GroupPopupAction {
     public OpenSQLConsoleAction() {
@@ -58,7 +58,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
                 actions.add(new SelectConsoleAction(connectionHandler, DBConsoleType.DEBUG));
             }
         }
-        return actions.toArray(new AnAction[actions.size()]);
+        return actions.toArray(new AnAction[0]);
     }
 
 

@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.editor.session.color;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.PlainSyntaxHighlighter;
@@ -15,6 +7,14 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class SessionBrowserColorSettingsPage implements ColorSettingsPage {
     protected final List<AttributesDescriptor> attributeDescriptors = new ArrayList<AttributesDescriptor>();
@@ -47,12 +47,12 @@ public class SessionBrowserColorSettingsPage implements ColorSettingsPage {
 
     @NotNull
     public AttributesDescriptor[] getAttributeDescriptors() {
-        return attributeDescriptors.toArray(new AttributesDescriptor[attributeDescriptors.size()]);
+        return attributeDescriptors.toArray(new AttributesDescriptor[0]);
     }
 
     @NotNull
     public ColorDescriptor[] getColorDescriptors() {
-        return colorDescriptors.toArray(new ColorDescriptor[colorDescriptors.size()]);
+        return colorDescriptors.toArray(new ColorDescriptor[0]);
     }
 
     @NotNull

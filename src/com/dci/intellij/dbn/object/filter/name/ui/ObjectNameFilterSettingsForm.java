@@ -1,17 +1,5 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.tree.TreePath;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.HashSet;
-import java.util.Set;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -33,6 +21,17 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+
+import javax.swing.*;
+import javax.swing.tree.TreePath;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<ObjectNameFilterSettings> {
@@ -149,7 +148,7 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
                 if (notifyFilterListeners) {
                     Project project = filterSettings.getProject();
                     ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
-                    DBObjectType[] refreshObjectTypes = filterObjectTypes.toArray(new DBObjectType[filterObjectTypes.size()]);
+                    DBObjectType[] refreshObjectTypes = filterObjectTypes.toArray(new DBObjectType[0]);
                     listener.nameFiltersChanged(filterSettings.getConnectionId(), refreshObjectTypes);
                 }
             }

@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import javax.swing.Icon;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.fileTypes.FileTypeManager;
@@ -16,6 +9,13 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VirtualFileUtil {
 
@@ -76,7 +76,7 @@ public class VirtualFileUtil {
         for (VirtualFile root: roots) {
             collectFilesForName(root, name, bucket);
         }
-        return bucket.toArray(new VirtualFile[bucket.size()]);
+        return bucket.toArray(new VirtualFile[0]);
     }
 
     private static void collectFilesForName(VirtualFile root, String name, List<VirtualFile> bucket) {

@@ -50,7 +50,7 @@ public class StatementDefinition {
             }
         }
         this.statementText = buffer.toString();
-        this.placeholderIndexes = placeholders.toArray(new Integer[placeholders.size()]);
+        this.placeholderIndexes = placeholders.toArray(new Integer[0]);
     }
 
     public PreparedStatement prepareStatement(Connection connection, Object[] arguments) throws SQLException {

@@ -10,9 +10,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.containers.ContainerUtil;
 
-import javax.swing.JComponent;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -35,7 +33,7 @@ public class ShowHistoryAction extends DataSearchHeaderAction implements DumbAwa
         ContainerUtil.addAll(shortcuts, ActionManager.getInstance().getAction("IncrementalSearch").getShortcutSet().getShortcuts());
         shortcuts.add(new KeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK), null));
 
-        registerCustomShortcutSet(new CustomShortcutSet(shortcuts.toArray(new Shortcut[shortcuts.size()])), searchField);
+        registerCustomShortcutSet(new CustomShortcutSet(shortcuts.toArray(new Shortcut[0])), searchField);
         searchField.registerKeyboardAction(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {

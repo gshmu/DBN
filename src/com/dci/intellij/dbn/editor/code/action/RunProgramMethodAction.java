@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.editor.code.action;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -22,6 +17,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.dci.intellij.dbn.common.util.ActionUtil.SEPARATOR;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
@@ -61,7 +62,7 @@ public class RunProgramMethodAction extends GroupPopupAction {
             }
         }
 
-        return actions.toArray(new AnAction[actions.size()]);
+        return actions.toArray(new AnAction[0]);
     }
 
     @Nullable

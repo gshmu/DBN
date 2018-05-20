@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
@@ -14,6 +9,11 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ObjectDependencyTreeNode extends DisposableBase implements Disposable {
     private DBObjectRef<DBObject> objectRef;
@@ -147,7 +147,7 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
             path.add(0, parent);
             parent = parent.getParent();
         }
-        return path.toArray(new ObjectDependencyTreeNode[path.size()]);
+        return path.toArray(new ObjectDependencyTreeNode[0]);
     }
 
     @Override

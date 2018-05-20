@@ -73,7 +73,7 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
                         FormattingDefinition.ONE_SPACE_BEFORE);
                 separators.add(separatorToken);
             }
-            separatorTokens = separators.toArray(new TokenElementType[separators.size()]);
+            separatorTokens = separators.toArray(new TokenElementType[0]);
         }
 
         List children = def.getChildren();

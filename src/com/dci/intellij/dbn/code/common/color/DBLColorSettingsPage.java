@@ -37,7 +37,7 @@ public abstract class DBLColorSettingsPage implements ColorSettingsPage {
 
     @NotNull
     public AttributesDescriptor[] getAttributeDescriptors() {
-        return attributeDescriptors.toArray(new AttributesDescriptor[attributeDescriptors.size()]);
+        return attributeDescriptors.toArray(new AttributesDescriptor[0]);
     }
 
     @NotNull

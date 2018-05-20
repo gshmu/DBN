@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.menu.action;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -32,6 +27,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class SQLConsoleAction extends DumbAwareAction {
     public SQLConsoleAction() {
@@ -132,7 +132,7 @@ public class SQLConsoleAction extends DumbAwareAction {
                 actions.add(new SelectConsoleAction(connectionHandler, DBConsoleType.DEBUG));
             }
 
-            return actions.toArray(new AnAction[actions.size()]);
+            return actions.toArray(new AnAction[0]);
         }
     }
 
