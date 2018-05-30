@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.common.status;
 
-import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.editor.DBContentType;
 import org.jetbrains.annotations.Nullable;
@@ -104,25 +103,15 @@ public class DBObjectStatusHolder {
         return !is(contentType, status);
     }
 
-    private class Entry {
+    private class Entry extends PropertyHolderImpl<DBObjectStatus>{
         private DBContentType contentType;
-        private PropertyHolder<DBObjectStatus> status = new PropertyHolderImpl<DBObjectStatus>(){
-            @Override
-            protected DBObjectStatus[] getProperties() {
-                return DBObjectStatus.values();
-            }
-        };
+
+        protected DBObjectStatus[] getProperties() {
+            return DBObjectStatus.values();
+        }
 
         Entry(DBContentType contentType) {
             this.contentType = contentType;
-        }
-
-        boolean set(DBObjectStatus status, boolean value) {
-            return this.status.set(status, value);
-        }
-
-        boolean is(DBObjectStatus status) {
-            return this.status.is(status);
         }
 
         DBContentType getContentType() {

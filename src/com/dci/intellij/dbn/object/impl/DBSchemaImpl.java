@@ -170,7 +170,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     public DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden) {
         if (objectType.isSchemaObject()) {
             DBObject object = super.getChildObject(objectType, name, overload, lookupHidden);
-            if (object == null) {
+            if (object == null && objectType != DBObjectType.SYNONYM) {
                 DBSynonym synonym = (DBSynonym) super.getChildObject(DBObjectType.SYNONYM, name, overload, lookupHidden);
                 if (synonym != null) {
                     DBObject underlyingObject = synonym.getUnderlyingObject();
