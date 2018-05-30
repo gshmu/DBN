@@ -41,6 +41,8 @@ public interface ElementTypeLookupCache<T extends ElementType> {
 
     void init();
 
+    void cleanup();
+
     boolean isFirstPossibleToken(TokenType tokenType);
 
     boolean isFirstRequiredToken(TokenType tokenType);

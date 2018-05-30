@@ -14,4 +14,6 @@ public interface FiltrableList<T> extends List<T> {
 
     // update methods should not be affected by filtering
     void sort(Comparator<? super T> comparator);
+
+    void trimToSize();
 }

@@ -39,7 +39,7 @@ public class NavigationBarExtension extends AbstractNavBarModelExtension {
             if (virtualFile instanceof DBVirtualFileImpl) {
                 DBObject object = databaseFile.getUnderlyingObject();
                 if (object != null) {
-                    return DBObjectPsiFacade.getPsiDirectory(object);
+                    return DBObjectPsiFacade.getPsiFile(object);
                 }
             }
         }

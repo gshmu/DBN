@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.util.containers.hash.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
@@ -54,6 +54,13 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                 set(status, true);
             }
         }
+    }
+
+    @Override
+    public void compact() {
+         if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
+             CollectionUtil.compact(elements);
+         }
     }
 
     @Override
@@ -267,6 +274,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                 }
             };
             updateIndex();
+            compact();
             if (oldElements.size() != 0 || elements.size() != 0 ){
                 notifyChangeListeners();
             }
@@ -325,11 +333,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             }
             if (elements.size() > 30) {
                 if (index == null)
-                    index = new HashMap<String, T>(); else
+                    index = new TreeMap<>(String.CASE_INSENSITIVE_ORDER); else
                     index.clear();
 
                 for (T element : elements) {
-                    String name = element.getName().toUpperCase();
+                    String name = element.getName();
                     index.put(name, element);
                 }
             } else {
@@ -341,8 +349,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     public T getElement(String name, int overload) {
         if (name != null) {
             List<T> elements = getAllElements();
-            if (isIndexed() && index != null) {
-                return index.get(name.toUpperCase());
+            if (/*isIndexed() && */index != null) {
+                return index.get(name);
             } else {
                 for (T element : elements) {
                     if (element.getName().equalsIgnoreCase(name)) {

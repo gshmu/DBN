@@ -91,7 +91,8 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
 
     @Override
     public VirtualFile getParent() {
-        return null;
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        return connectionHandler.getPsiDirectory().getVirtualFile();
     }
 
     @Override

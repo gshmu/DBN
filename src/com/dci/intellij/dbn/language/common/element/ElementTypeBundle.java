@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element;
 
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
@@ -39,17 +40,24 @@ public class ElementTypeBundle {
     private BasicElementType unknownElementType;
     private NamedElementType rootElementType;
 
-    private Set<LeafElementType> leafElementTypes = new THashSet<LeafElementType>();
-    private Set<WrapperElementType> wrapperElementTypes = new THashSet<WrapperElementType>();
-    private Set<ElementType> wrappedElementTypes = new THashSet<ElementType>();
-    private Set<OneOfElementType> oneOfElementTypes = new THashSet<OneOfElementType>();
-    private final Map<String, NamedElementType> namedElementTypes = new THashMap<String, NamedElementType>();
     private final DBLanguageDialect languageDialect;
-    private boolean rewriteIndexes;
-
     private int idCursor;
 
-    public ElementTypeBundle(DBLanguageDialect languageDialect, TokenTypeBundle tokenTypeBundle, Document elementTypesDef) {
+    private transient Builder builder = new Builder();
+    private final Map<String, NamedElementType> namedElementTypes = new THashMap<String, NamedElementType>();
+
+
+    private static class Builder {
+        private Set<LeafElementType> leafElementTypes = new THashSet<LeafElementType>();
+        private Set<WrapperElementType> wrapperElementTypes = new THashSet<WrapperElementType>();
+        private Set<ElementType> wrappedElementTypes = new THashSet<ElementType>();
+        //private Set<OneOfElementType> oneOfElementTypes = new THashSet<OneOfElementType>();
+        private Set<ElementType> allElementTypes = new THashSet<ElementType>();
+        private boolean rewriteIndexes;
+    }
+
+
+    public ElementTypeBundle(DBLanguageDialect languageDialect, TokenTypeBundle tokenTypeBundle, final Document elementTypesDef) {
         this.languageDialect = languageDialect;
         this.tokenTypeBundle = tokenTypeBundle;
         try {
@@ -73,22 +81,22 @@ public class ElementTypeBundle {
                 }
             }
 
-            for (LeafElementType leafElementType: leafElementTypes) {
+            for (LeafElementType leafElementType: builder.leafElementTypes) {
                 leafElementType.registerLeaf();
             }
 
-            for (WrapperElementType wrapperElementType : wrapperElementTypes) {
+            for (WrapperElementType wrapperElementType : builder.wrapperElementTypes) {
                 wrapperElementType.getBeginTokenElement().registerLeaf();
                 wrapperElementType.getEndTokenElement().registerLeaf();
             }
 
-            for (ElementType wrappedElementType : wrappedElementTypes) {
+            for (ElementType wrappedElementType : builder.wrappedElementTypes) {
                 WrappingDefinition wrapping = wrappedElementType.getWrapping();
                 wrapping.getBeginElementType().registerLeaf();
                 wrapping.getEndElementType().registerLeaf();
             }
 
-            if (rewriteIndexes) {
+            if (builder.rewriteIndexes) {
                 StringWriter stringWriter = new StringWriter();
                 new XMLOutputter().output(elementTypesDef, stringWriter);
 
@@ -100,6 +108,15 @@ public class ElementTypeBundle {
             } else {
             }
 
+            new SimpleBackgroundTask("cleanup builder") {
+                @Override
+                protected void execute() {
+                    for (ElementType allElementType : builder.allElementTypes) {
+                        allElementType.getLookupCache().cleanup();
+                    }
+                    builder = null;
+                }
+            }.start();
             //warnAmbiguousBranches();
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,11 +128,7 @@ public class ElementTypeBundle {
     }
 
     public void markIndexesDirty() {
-        this.rewriteIndexes = true;
-    }
-
-    public boolean isRewriteIndexes() {
-        return rewriteIndexes;
+        builder.rewriteIndexes = true;
     }
 
     private void createNamedElementType(Element def) throws ElementTypeDefinitionException {
@@ -150,28 +163,36 @@ public class ElementTypeBundle {
         if (ElementTypeDefinition.SEQUENCE.is(type)){
             result = new SequenceElementTypeImpl(this, parent, createId(), def);
             log.debug("Created sequence element definition");
+
         } else if (ElementTypeDefinition.BLOCK.is(type)) {
             result = new BlockElementTypeImpl(this, parent, createId(), def);
             log.debug("Created iteration element definition");
+
         } else if (ElementTypeDefinition.ITERATION.is(type)) {
             result = new IterationElementTypeImpl(this, parent, createId(), def);
             log.debug("Created iteration element definition");
+
         } else if (ElementTypeDefinition.ONE_OF.is(type)) {
-            result =  new OneOfElementTypeImpl(this, parent, createId(), def);
-            oneOfElementTypes.add((OneOfElementType) result);
+            result = new OneOfElementTypeImpl(this, parent, createId(), def);
+            //builder.oneOfElementTypes.add((OneOfElementType) result);
             log.debug("Created one-of element definition");
+
         } else if (ElementTypeDefinition.QUALIFIED_IDENTIFIER.is(type)) {
             result =  new QualifiedIdentifierElementTypeImpl(this, parent, createId(), def);
             log.debug("Created qualified identifier element definition");
+
         } else if (ElementTypeDefinition.WRAPPER.is(type)) {
             result = new WrapperElementTypeImpl(this, parent, createId(), def);
-            wrapperElementTypes.add((WrapperElementType) result);
+            builder.wrapperElementTypes.add((WrapperElementType) result);
             log.debug("Created wrapper element definition");
+
         } else if (ElementTypeDefinition.ELEMENT.is(type)) {
             String id = determineMandatoryAttribute(def, "ref-id", "Invalid reference to element.");
             result = getNamedElementType(id, parent);
+
         } else if (ElementTypeDefinition.TOKEN.is(type)) {
             result = new TokenElementTypeImpl(this, parent, createId(), def);
+
         } else if (
                 ElementTypeDefinition.OBJECT_DEF.is(type) ||
                 ElementTypeDefinition.OBJECT_REF.is(type) ||
@@ -180,17 +201,22 @@ public class ElementTypeBundle {
                 ElementTypeDefinition.VARIABLE_DEF.is(type) ||
                 ElementTypeDefinition.VARIABLE_REF.is(type)) {
             result = new IdentifierElementTypeImpl(this, parent, createId(), def);
+
         } else if (ElementTypeDefinition.EXEC_VARIABLE.is(type)) {
-            result = new ExecVariableElementTypeImpl(this, parent, createId(), def);            
+            result = new ExecVariableElementTypeImpl(this, parent, createId(), def);
+
         }  else {
             throw new ElementTypeDefinitionException("Could not resolve element definition '" + type + '\'');
         }
         if (result instanceof LeafElementType) {
-            leafElementTypes.add((LeafElementType) result);
+            builder.leafElementTypes.add((LeafElementType) result);
         }
+
+        builder.allElementTypes.add(result);
+
         WrappingDefinition wrapping = result.getWrapping();
         if (wrapping != null) {
-            wrappedElementTypes.add(result);
+            builder.wrappedElementTypes.add(result);
         }
         return result;
     }
@@ -214,7 +240,7 @@ public class ElementTypeBundle {
         return elementType;
     }*/
 
-    protected NamedElementType getNamedElementType(String id, ElementType parent) {
+    private NamedElementType getNamedElementType(String id, ElementType parent) {
         NamedElementType elementType = namedElementTypes.get(id);
         if (elementType == null) {
             synchronized (this) {
@@ -222,6 +248,7 @@ public class ElementTypeBundle {
                 if (elementType == null) {
                     elementType = new NamedElementTypeImpl(this, id);
                     namedElementTypes.put(id, elementType);
+                    builder.allElementTypes.add(elementType);
                     log.debug("Created named element type '" + id + '\'');
                 }
             }

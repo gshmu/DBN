@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -31,6 +32,11 @@ public abstract class ElementTypeLookupCacheBase<T extends ElementType> implemen
     @Override
     public void init() {
 
+    }
+
+    @Override
+    public void cleanup() {
+        CollectionUtil.compact(nextPossibleTokens);
     }
 
     /**
