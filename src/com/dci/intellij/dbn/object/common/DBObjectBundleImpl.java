@@ -145,6 +145,8 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                 ROLE_PRIVILEGE_RELATION_LOADER,
                 roles, systemPrivileges);
 
+        objectLists.compact();
+        objectRelationLists.compact();
         Project project = connectionHandler.getProject();
         EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
         EventUtil.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);

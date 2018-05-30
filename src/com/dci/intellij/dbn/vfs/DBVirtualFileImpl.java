@@ -173,4 +173,5 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     public void checkDisposed() {
         if (disposed) throw AlreadyDisposedException.INSTANCE;
     }
+
 }

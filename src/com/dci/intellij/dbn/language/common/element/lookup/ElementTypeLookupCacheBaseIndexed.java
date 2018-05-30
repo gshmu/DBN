@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
 import com.dci.intellij.dbn.common.index.IndexedContainer;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -33,6 +34,18 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
             firstPossibleTokens = new THashSet<TokenType>();
             firstRequiredTokens = new THashSet<TokenType>();
         }
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+        CollectionUtil.compact(allPossibleLeafs);
+        CollectionUtil.compact(firstPossibleLeafs);
+        CollectionUtil.compact(firstRequiredLeafs);
+
+        CollectionUtil.compact(allPossibleTokens);
+        CollectionUtil.compact(firstPossibleTokens);
+        CollectionUtil.compact(firstRequiredTokens);
     }
 
     @Override

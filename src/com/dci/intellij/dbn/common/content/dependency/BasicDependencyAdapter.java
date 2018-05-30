@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 
 public class BasicDependencyAdapter implements ContentDependencyAdapter {
+    public static BasicDependencyAdapter INSTANCE = new BasicDependencyAdapter();
 
     @Override
     public boolean canConnect(ConnectionHandler connectionHandler) {

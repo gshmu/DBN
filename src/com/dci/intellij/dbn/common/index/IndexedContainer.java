@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.common.index;
 
+import com.dci.intellij.dbn.common.util.Compactable;
 import gnu.trove.TIntArrayList;
 
-public class IndexedContainer<T extends Indexable> {
+public class IndexedContainer<T extends Indexable> implements Compactable {
     private TIntArrayList INDEX = new TIntArrayList();
 
     public void put(T indexable) {
@@ -14,5 +15,9 @@ public class IndexedContainer<T extends Indexable> {
 
     public boolean contains(T indexable) {
         return INDEX.contains(indexable.getIdx());
+    }
+
+    public void compact() {
+        INDEX.trimToSize();
     }
 }

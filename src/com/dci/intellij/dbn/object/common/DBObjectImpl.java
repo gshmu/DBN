@@ -124,6 +124,8 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         initProperties();
         initLists();
 
+        CollectionUtil.compact(childObjects);
+        CollectionUtil.compact(childObjectRelations);
         objectRef = new DBObjectRef(this);
     }
 
@@ -644,6 +646,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
             synchronized (this) {
                 if (allPossibleTreeChildren == null) {
                     allPossibleTreeChildren = buildAllPossibleTreeChildren();
+                    CollectionUtil.compact(allPossibleTreeChildren);
                 }
             }
         }
@@ -701,6 +704,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
             }
         }
         visibleTreeChildren = newTreeChildren;
+        CollectionUtil.compact(visibleTreeChildren);
         treeChildrenLoaded = true;
 
 

@@ -12,6 +12,8 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Compactable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -27,13 +29,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class DBObjectListContainer extends DisposableBase implements Disposable {
+public class DBObjectListContainer extends DisposableBase implements Disposable, Compactable {
     private List<DBObjectList<DBObject>>  objectLists;
     private List<DBObjectList<DBObject>>  internalObjectLists;
     private GenericDatabaseElement owner;
 
     public DBObjectListContainer(@NotNull GenericDatabaseElement owner) {
         this.owner = owner;
+    }
+
+    public void compact() {
+        CollectionUtil.compactElements(objectLists);
+        CollectionUtil.compactElements(internalObjectLists);
     }
 
     @NotNull
@@ -230,8 +237,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable 
              DynamicContentLoader loader,
              DynamicContentStatus ... statuses) {
         if (isSupported(objectType)) {
-            ContentDependencyAdapter dependencyAdapter = new BasicDependencyAdapter();
-            return createObjectList(objectType, treeParent, loader, dependencyAdapter, statuses);
+            return createObjectList(objectType, treeParent, loader, BasicDependencyAdapter.INSTANCE, statuses);
         }
         return null;
     }

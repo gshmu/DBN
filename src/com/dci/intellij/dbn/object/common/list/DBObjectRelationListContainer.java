@@ -5,6 +5,8 @@ import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyA
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Compactable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -16,12 +18,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBObjectRelationListContainer implements Disposable {
+public class DBObjectRelationListContainer implements Disposable, Compactable {
     private GenericDatabaseElement owner;
     private List<DBObjectRelationList> objectRelationLists;
 
     public DBObjectRelationListContainer(GenericDatabaseElement owner) {
         this.owner = owner;
+    }
+
+    public void compact() {
+        CollectionUtil.compactElements(objectRelationLists);
     }
 
     public List<DBObjectRelationList> getObjectRelationLists() {

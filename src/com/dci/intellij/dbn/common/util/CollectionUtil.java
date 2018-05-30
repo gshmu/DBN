@@ -1,6 +1,11 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.common.list.FiltrableList;
+import gnu.trove.THashSet;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class CollectionUtil {
@@ -23,4 +28,30 @@ public class CollectionUtil {
         }
     }
 
+    public static void compactElements(List<? extends Compactable> elements) {
+        if (elements != null) {
+            compact(elements);
+            for (Compactable element : elements) {
+                element.compact();
+            }
+        }
+    }
+
+    public static void compact(Compactable compactable) {
+        if (compactable != null) compactable.compact();
+    }
+    public static void compact(Collection elements) {
+        if (elements != null) {
+            if (elements instanceof ArrayList) {
+                ArrayList arrayList = (ArrayList) elements;
+                arrayList.trimToSize();
+            } else if (elements instanceof FiltrableList) {
+                FiltrableList filtrableList = (FiltrableList) elements;
+                filtrableList.trimToSize();
+            } else if (elements instanceof THashSet) {
+                THashSet hashSet = (THashSet) elements;
+                hashSet.trimToSize();
+            }
+        }
+    }
 }

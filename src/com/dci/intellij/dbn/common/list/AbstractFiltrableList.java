@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.list;
 
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -245,4 +246,8 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     @NotNull
     public List<T> subList(int fromIndex, int toIndex)  {throw new UnsupportedOperationException("Sublist not implemented in filtrable list");}
 
+    @Override
+    public void trimToSize() {
+        CollectionUtil.compact(list);
+    }
 }

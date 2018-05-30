@@ -193,4 +193,9 @@ public class VoidDynamicContent implements DynamicContent{
     public boolean isNot(Property status) {
         return false;
     }
+
+    @Override
+    public void compact() {
+
+    }
 }
