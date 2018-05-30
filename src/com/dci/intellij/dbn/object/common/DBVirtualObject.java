@@ -69,14 +69,13 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private static final ObjectReferenceLookupAdapter DATASET_LOOKUP_ADAPTER = new ObjectReferenceLookupAdapter(null, DBObjectType.DATASET, null);
 
     private DBObjectType objectType;
-    private BasePsiElement underlyingPsiElement;
     private BasePsiElement relevantPsiElement;
     private boolean loadingChildren;
 
     private BasicProperty<Boolean> valid = new BasicProperty<Boolean>(true) {
         @Override
         protected Boolean load() {
-            if (underlyingPsiElement.isValid()) {
+            if (getUnderlyingPsiElement().isValid()) {
                 if (objectType == DBObjectType.DATASET) {
                     return true;
                 }
@@ -95,7 +94,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     public DBVirtualObject(DBObjectType objectType, BasePsiElement psiElement) {
         super(psiElement.getConnectionHandler(), psiElement.getText());
 
-        underlyingPsiElement = psiElement;
+        psiFacade = new DBObjectPsiFacade(psiElement);
         relevantPsiElement = psiElement;
         this.objectType = objectType;
 
@@ -151,8 +150,8 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     @Override
-    public PsiElement getPsi() {
-        return underlyingPsiElement;
+    public DBObjectPsiFacade getPsiFacade() {
+        return super.getPsiFacade();
     }
 
     public boolean isValid() {
@@ -205,7 +204,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
         if (objectList.size() == 0) {
             VirtualObjectLookupAdapter lookupAdapter = new VirtualObjectLookupAdapter(this.objectType, objectType);
-            Set<BasePsiElement> children = underlyingPsiElement.collectPsiElements(lookupAdapter, null, 100);
+            Set<BasePsiElement> children = getUnderlyingPsiElement().collectPsiElements(lookupAdapter, null, 100);
             if (children != null) {
                 for (BasePsiElement child : children) {
 
@@ -227,7 +226,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                                     }
                                 }
                             } else {
-                                Set<BasePsiElement> basePsiElements = DATASET_LOOKUP_ADAPTER.collectInElement(underlyingPsiElement, null);
+                                Set<BasePsiElement> basePsiElements = DATASET_LOOKUP_ADAPTER.collectInElement(getUnderlyingPsiElement(), null);
                                 if (basePsiElements != null) {
                                     for (BasePsiElement basePsiElement : basePsiElements) {
                                         DBObject object = basePsiElement.resolveUnderlyingObject();
@@ -265,7 +264,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        DBLanguagePsiFile file = underlyingPsiElement.getFile();
+        DBLanguagePsiFile file = getUnderlyingPsiElement().getFile();
         ConnectionHandler connectionHandler = file == null ? null : file.getConnectionHandler();
         if (connectionHandler == null) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
@@ -285,6 +284,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     public Project getProject() {
+        PsiElement underlyingPsiElement = getUnderlyingPsiElement();
         if (underlyingPsiElement.isValid()) {
             return underlyingPsiElement.getProject();
         }
@@ -333,11 +333,11 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     public PsiElement resolve() {
-        return underlyingPsiElement;
+        return getUnderlyingPsiElement();
     }
 
     public BasePsiElement getUnderlyingPsiElement() {
-        return underlyingPsiElement;
+        return (BasePsiElement) getPsiFacade().getPsiElement();
     }
 
     public BasePsiElement getRelevantPsiElement() {
@@ -358,7 +358,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     public boolean isReferenceTo(PsiElement element) {
-        return underlyingPsiElement == element;
+        return getUnderlyingPsiElement() == element;
     }
 
     @NotNull

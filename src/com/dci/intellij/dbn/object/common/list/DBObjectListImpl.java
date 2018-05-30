@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.navigation.psi.DBObjectListPsiDirectory;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -28,6 +29,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +47,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     private final DBObjectType objectType;
     private InternalFilter filter;
+    private PsiDirectory psiDirectory;
 
     DBObjectListImpl(@NotNull DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, DynamicContentStatus ... statuses) {
         super(treeParent, loader, dependencyAdapter, statuses);
@@ -196,6 +199,19 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     public GenericDatabaseElement getUndisposedElement() {
         return this;
+    }
+
+    @Override
+    public PsiDirectory getPsiDirectory() {
+        if (psiDirectory == null) {
+            synchronized (this) {
+                if (psiDirectory == null) {
+                    FailsafeUtil.check(this);
+                    psiDirectory = new DBObjectListPsiDirectory(this);
+                }
+            }
+        }
+        return psiDirectory;
     }
 
     @Nullable
@@ -407,5 +423,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     public int compareTo(@NotNull DBObjectList objectList) {
         return objectType.compareTo(objectList.getObjectType());
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        psiDirectory = null;
     }
 }

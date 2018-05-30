@@ -33,7 +33,7 @@ import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
+import com.dci.intellij.dbn.navigation.psi.DBConnectionPsiDirectory;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectBundleImpl;
@@ -43,6 +43,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,20 +73,14 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private ConnectionInfo connectionInfo;
     private Cache metaDataCache = new Cache(TimeUtil.ONE_MINUTE);
 
+    private DBConnectionPsiDirectory psiDirectory;
+
     @Override
     public Set<TransactionAction> getPendingActions() {
         return pendingActions;
     }
 
     private Set<TransactionAction> pendingActions = new HashSet<TransactionAction>();
-
-
-    private LazyValue<NavigationPsiCache> psiCache = new DisposableLazyValue<NavigationPsiCache>(this) {
-        @Override
-        protected NavigationPsiCache load() {
-            return new NavigationPsiCache(ConnectionHandlerImpl.this);
-        }
-    };
 
     private LazyValue<DBObjectBundle> objectBundle = new DisposableLazyValue<DBObjectBundle>(this) {
         @Override
@@ -208,12 +203,32 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @Override
+    @NotNull
     public DBSessionBrowserVirtualFile getSessionBrowserFile() {
         if (sessionBrowserFile == null) {
-            sessionBrowserFile = new DBSessionBrowserVirtualFile(this);
-            Disposer.register(this, sessionBrowserFile);
+            synchronized (this) {
+                if (sessionBrowserFile == null) {
+                    FailsafeUtil.check(this);
+                    sessionBrowserFile = new DBSessionBrowserVirtualFile(this);
+                    Disposer.register(this, sessionBrowserFile);
+                }
+            }
         }
         return sessionBrowserFile;
+    }
+
+    @Override
+    @NotNull
+    public PsiDirectory getPsiDirectory() {
+        if (psiDirectory == null) {
+            synchronized (this) {
+                if (psiDirectory == null) {
+                    FailsafeUtil.check(this);
+                    psiDirectory = new DBConnectionPsiDirectory(this);
+                }
+            }
+        }
+        return psiDirectory;
     }
 
     public boolean isEnabled() {
@@ -231,11 +246,6 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     public Filter<BrowserTreeNode> getObjectTypeFilter() {
         return connectionSettings.getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
-    }
-
-    @Override
-    public NavigationPsiCache getPsiCache() {
-        return psiCache.get();
     }
 
     @NotNull
@@ -558,7 +568,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
             connectionPool = null;
             connectionBundle = null;
             sessionBrowserFile = null;
-            psiCache = null;
+            psiDirectory = null;
         }
     }
 

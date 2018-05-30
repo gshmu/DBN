@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.object.DBSynonym;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
+import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.intellij.lang.ASTNode;
@@ -444,7 +445,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
     private boolean updateReference(@Nullable BasePsiElement parent, ElementType elementType, DBObject referenceObject) {
         if (isValidReference(referenceObject)) {
             ref.setParent(parent);
-            ref.setReferencedElement(referenceObject.getPsi());
+            ref.setReferencedElement(DBObjectPsiFacade.getPsiElement(referenceObject));
             setElementType(elementType);
             return true;
         }

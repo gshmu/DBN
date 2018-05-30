@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -95,7 +94,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
             BrowserTreeNode treeParent = object.getParent();
             if (treeParent instanceof DBObjectList<?>) {
                 DBObjectList objectList = (DBObjectList) treeParent;
-                return NavigationPsiCache.getPsiDirectory(objectList).getVirtualFile();
+                return objectList.getPsiDirectory().getVirtualFile();
             }
         }
         return null;

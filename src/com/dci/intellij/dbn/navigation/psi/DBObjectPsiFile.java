@@ -44,8 +44,8 @@ import javax.swing.*;
 public class DBObjectPsiFile implements PsiFile, Disposable {
     private DBObjectRef objectRef;
 
-    public DBObjectPsiFile(DBObject object) {
-        this.objectRef = object.getRef();
+    public DBObjectPsiFile(DBObjectRef objectRef) {
+        this.objectRef = objectRef;
     }
 
     @NotNull
@@ -89,7 +89,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
         GenericDatabaseElement parent = object.getParent();
         if (parent instanceof DBObjectList) {
             DBObjectList objectList = (DBObjectList) parent;
-            return NavigationPsiCache.getPsiDirectory(objectList);
+            return objectList.getPsiDirectory();
         }
         return null;
     }

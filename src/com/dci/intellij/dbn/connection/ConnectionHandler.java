@@ -16,12 +16,12 @@ import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,7 +67,9 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     @NotNull
     DatabaseSessionBundle getSessionBundle();
 
+    @NotNull
     DBSessionBrowserVirtualFile getSessionBrowserFile();
+
     ConnectionInstructions getInstructions();
 
     void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo);
@@ -122,7 +124,6 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     double getDatabaseVersion();
 
     Filter<BrowserTreeNode> getObjectTypeFilter();
-    NavigationPsiCache getPsiCache();
 
     boolean isConnected();
 
@@ -136,4 +137,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
 
     @Deprecated
     boolean hasUncommittedChanges();
+
+    @NotNull
+    PsiDirectory getPsiDirectory();
 }

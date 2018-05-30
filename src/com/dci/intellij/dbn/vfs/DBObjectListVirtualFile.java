@@ -5,10 +5,10 @@ import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
@@ -101,12 +101,12 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
         GenericDatabaseElement parent = objectList.getParentElement();
         if (parent instanceof DBObject) {
             DBObject parentObject = (DBObject) parent;
-            return NavigationPsiCache.getPsiDirectory(parentObject).getVirtualFile();
+            return DBObjectPsiFacade.getPsiDirectory(parentObject).getVirtualFile();
         }
 
         if (parent instanceof DBObjectBundle) {
             DBObjectBundle objectBundle = (DBObjectBundle) parent;
-            return NavigationPsiCache.getPsiDirectory(objectBundle.getConnectionHandler()).getVirtualFile();
+            return objectBundle.getConnectionHandler().getPsiDirectory().getVirtualFile();
 
         }
 
