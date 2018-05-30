@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguageParserDefinition;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
-import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -46,7 +46,7 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
             if (virtualFile instanceof DBObjectVirtualFile) {
                 DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
                 DBObject object = objectFile.getObject();
-                return NavigationPsiCache.getPsiFile(object);
+                return DBObjectPsiFacade.getPsiFile(object);
             }
 
             Language baseLanguage = getBaseLanguage();

@@ -21,7 +21,6 @@ import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,11 +100,11 @@ public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeN
 
     boolean isValid();
 
-    PsiElement getPsi();
-
     boolean isParentOf(DBObject object);
 
     @NotNull
     @Override
     BrowserTreeNode getParent();
+
+    DBObjectPsiFacade getPsiFacade();
 }

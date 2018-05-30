@@ -161,4 +161,9 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
         project = null;
         //textEditor = null;
     }
+
+    @Override
+    public String toString() {
+        return virtualFile == null ? super.toString() : virtualFile.getPath();
+    }
 }

@@ -262,7 +262,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                 VirtualFile oldFile = event.getOldFile();
                 VirtualFile newFile = event.getNewFile();
 
-                if (oldFile != null && !oldFile.equals(newFile)) {
+                if (oldFile == null || !oldFile.equals(newFile)) {
                     if (newFile instanceof DBEditableObjectVirtualFile) {
                         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) newFile;
                         navigateToElement(databaseFile.getObject(), true);

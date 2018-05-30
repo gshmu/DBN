@@ -184,7 +184,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
         private T presentable;
 
         @Override
-        public synchronized void addMouseListener(MouseListener l) {
+        public void addMouseListener(MouseListener l) {
             label.addMouseListener(l);
         }
 

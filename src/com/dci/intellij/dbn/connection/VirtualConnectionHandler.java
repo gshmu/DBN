@@ -15,13 +15,13 @@ import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBVirtualObjectBundle;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +42,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     private ConnectionHandlerStatusHolder connectionStatus;
     private DatabaseInterfaceProvider interfaceProvider;
     private Map<String, String> properties = new HashMap<String, String>();
-    private NavigationPsiCache psiCache;
     private ConnectionHandlerRef ref;
     private DBObjectBundle objectBundle;
     private ConnectionInstructions instructions = new ConnectionInstructions();
@@ -78,14 +77,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     public Filter<BrowserTreeNode> getObjectTypeFilter() {
         return null;
-    }
-
-    @Override
-    public NavigationPsiCache getPsiCache() {
-        if (psiCache == null) {
-            psiCache = new NavigationPsiCache(this);
-        }
-        return psiCache;
     }
 
     @NotNull
@@ -221,9 +212,14 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public boolean isDatabaseInitialized() {return true;}
 
     @NotNull
-    public ConnectionBundle getConnectionBundle() {return null;}
+    public ConnectionBundle getConnectionBundle() {
+        throw new UnsupportedOperationException();
+    }
+
     @NotNull
-    public ConnectionPool getConnectionPool() {return null;}
+    public ConnectionPool getConnectionPool() {
+        throw new UnsupportedOperationException();
+    }
 
     @NotNull
     public DBObjectBundle getObjectBundle() {return objectBundle;}
@@ -235,18 +231,27 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     }
 
     @Override
+    @NotNull
     public DBSessionBrowserVirtualFile getSessionBrowserFile() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
-    public DatabaseConsoleBundle getConsoleBundle() {return null;}
+    public PsiDirectory getPsiDirectory() {
+        throw new UnsupportedOperationException();
+    }
+
+    @NotNull
+    @Override
+    public DatabaseConsoleBundle getConsoleBundle() {
+        throw new UnsupportedOperationException();
+    }
 
     @NotNull
     @Override
     public DatabaseSessionBundle getSessionBundle() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override

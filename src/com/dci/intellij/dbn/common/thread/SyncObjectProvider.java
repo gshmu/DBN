@@ -8,26 +8,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SyncObjectProvider {
 	private Map<String, AtomicInteger> SYNC_OBJECTS = new THashMap<String, AtomicInteger>();
 
-	public synchronized Object get(String key) {
+	public Object get(String key) {
 		if (key != null) {
-			AtomicInteger syncObject = SYNC_OBJECTS.get(key);
-			if (syncObject == null) {
-				syncObject = new AtomicInteger(1);
-				SYNC_OBJECTS.put(key, syncObject);
-			} else {
-				syncObject.incrementAndGet();
+			synchronized (this) {
+				AtomicInteger syncObject = SYNC_OBJECTS.get(key);
+				if (syncObject == null) {
+					syncObject = new AtomicInteger(1);
+					SYNC_OBJECTS.put(key, syncObject);
+				} else {
+					syncObject.incrementAndGet();
+				}
+				return syncObject;
 			}
-			return syncObject;
 		} else {
 			return null;
 		}
 	}
 
-	public synchronized void release(String key) {
+	public void release(String key) {
 		if (key != null) {
-			AtomicInteger syncObject = SYNC_OBJECTS.get(key);
-			if (syncObject.decrementAndGet() == 0 ) {
-				SYNC_OBJECTS.remove(key);
+			synchronized (this) {
+				AtomicInteger syncObject = SYNC_OBJECTS.get(key);
+				if (syncObject.decrementAndGet() == 0 ) {
+					SYNC_OBJECTS.remove(key);
+				}
 			}
 		}
 	}

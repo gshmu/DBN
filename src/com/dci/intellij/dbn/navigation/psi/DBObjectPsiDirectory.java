@@ -41,8 +41,8 @@ import java.util.List;
 public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     private DBObjectRef objectRef;
 
-    public DBObjectPsiDirectory(@NotNull DBObject object) {
-        this.objectRef = DBObjectRef.from(object);
+    public DBObjectPsiDirectory(@NotNull DBObjectRef objectRef) {
+        this.objectRef = objectRef;
     }
 
     @NotNull
@@ -86,7 +86,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
         GenericDatabaseElement parent = object.getParent();
         if (parent instanceof DBObjectList) {
             DBObjectList objectList = (DBObjectList) parent;
-            return NavigationPsiCache.getPsiDirectory(objectList);
+            return objectList.getPsiDirectory();
         }
 
         return null;
@@ -123,7 +123,9 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
             Collection<DBObjectList<DBObject>> objectLists = childObjects.getObjectLists();
             if (objectLists != null) {
                 for (DBObjectList objectList : objectLists) {
-                    children.add(NavigationPsiCache.getPsiDirectory(objectList));
+                    if (FailsafeUtil.softCheck(objectList)) {
+                        children.add(objectList.getPsiDirectory());
+                    }
                 }
                 return children.toArray(new PsiElement[0]);
             }

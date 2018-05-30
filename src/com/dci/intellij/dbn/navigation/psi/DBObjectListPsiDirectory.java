@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.vfs.DBObjectListVirtualFile;
@@ -93,12 +94,12 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
         GenericDatabaseElement parent = getObjectList().getParent();
         if (parent instanceof DBObject) {
             DBObject parentObject = (DBObject) parent;
-            return NavigationPsiCache.getPsiDirectory(parentObject);
+            return DBObjectPsiFacade.getPsiDirectory(parentObject);
         }
 
         if (parent instanceof DBObjectBundle) {
             DBObjectBundle objectBundle = (DBObjectBundle) parent;
-            return NavigationPsiCache.getPsiDirectory(objectBundle.getConnectionHandler());
+            return objectBundle.getConnectionHandler().getPsiDirectory();
         }
 
         return null;
@@ -130,9 +131,9 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
         for (Object obj : getObjectList().getObjects()) {
             DBObject object = (DBObject) obj;
             if (object instanceof DBSchemaObject) {
-                children.add(NavigationPsiCache.getPsiFile(object));    
+                children.add(DBObjectPsiFacade.getPsiFile(object));
             } else {
-                children.add(NavigationPsiCache.getPsiDirectory(object));                
+                children.add(DBObjectPsiFacade.getPsiDirectory(object));
             }
         }
         return children.toArray(new PsiElement[0]);

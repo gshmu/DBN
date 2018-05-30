@@ -24,9 +24,9 @@ import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierDefinitionLooku
 import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -353,7 +353,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         DBObject underlyingObject = getUnderlyingObject();
         if (underlyingObject != null) {
             DBObject parentObject = underlyingObject.getParentObject();
-            return NavigationPsiCache.getPsiDirectory(parentObject);
+            return DBObjectPsiFacade.getPsiDirectory(parentObject);
 
         }
         return new ConditionalReadActionRunner<PsiDirectory>() {

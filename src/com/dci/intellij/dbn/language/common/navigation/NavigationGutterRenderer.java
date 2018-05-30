@@ -25,7 +25,7 @@ public class NavigationGutterRenderer extends GutterIconRenderer {
     }
 
     @Nullable
-    public synchronized AnAction getClickAction() {
+    public AnAction getClickAction() {
         return action;
     }
 

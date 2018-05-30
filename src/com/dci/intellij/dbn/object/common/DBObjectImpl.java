@@ -36,7 +36,6 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -58,7 +57,6 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vcs.FileStatus;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import org.jetbrains.annotations.NotNull;
@@ -84,10 +82,13 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     protected String name;
     protected DBObjectRef objectRef;
     protected DBObjectRef parentObjectRef;
+
+    protected DBObjectPsiFacade psiFacade;
+
     protected DBObjectProperties properties = new DBObjectProperties();
     private DBObjectListContainer childObjects;
     private DBObjectRelationListContainer childObjectRelations;
-    private DBObjectPsiElement psi;
+
 
     private LookupItemBuilder sqlLookupItemBuilder;
     private LookupItemBuilder psqlLookupItemBuilder;
@@ -167,16 +168,18 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return objectRef;
     }
 
+
     @Override
-    public PsiElement getPsi() {
-        if (psi == null) {
+    public DBObjectPsiFacade getPsiFacade() {
+        if (psiFacade == null) {
             synchronized (this) {
-                if (psi == null) {
-                    psi = new DBObjectPsiElement(objectRef);
+                if (psiFacade == null) {
+                    FailsafeUtil.check(this);
+                    psiFacade = new DBObjectPsiFacade(objectRef);
                 }
             }
         }
-        return psi;
+        return psiFacade;
     }
 
     @Override
@@ -813,6 +816,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
+            psiFacade = null;
             DisposerUtil.dispose(childObjects);
             DisposerUtil.dispose(childObjectRelations);
             CollectionUtil.clearCollection(visibleTreeChildren);
@@ -842,7 +846,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
 
     //@Override
     public PsiFile getContainingFile() throws PsiInvalidElementAccessException {
-        return NavigationPsiCache.getPsiFile(this);
+        return DBObjectPsiFacade.getPsiFile(this);
     }
 
     @Override
