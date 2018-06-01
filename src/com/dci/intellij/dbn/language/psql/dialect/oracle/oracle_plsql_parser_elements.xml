@@ -3014,7 +3014,7 @@
         <token id="000001494" type-id="KW_END" />
         <token id="000001495" type-id="KW_IF" />
     </element-def>
-    <element-def attributes="SPECIFIC" description="CASE statement" id="case_statement">
+    <element-def attributes="SPECIFIC, FOLDABLE_BLOCK" description="CASE statement" id="case_statement">
         <token id="000001496" type-id="KW_CASE" />
         <one-of id="000001497">
             <sequence id="000001498" original-name="searched_case_statement">

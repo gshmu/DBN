@@ -57,7 +57,7 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
     }
 
     protected static void createAttributeFolding(FoldingContext context, BasePsiElement basePsiElement) {
-        if (basePsiElement.is(ElementTypeAttribute.FOLDABLE_BLOCK)) {
+        if (basePsiElement.is(ElementTypeAttribute.FOLDABLE_BLOCK) && basePsiElement.containsLineBreaks()) {
             BasePsiElement subjectPsiElement = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
             if (subjectPsiElement == null) {
                 PsiElement firstChild = basePsiElement.getFirstChild();
