@@ -7525,7 +7525,7 @@
         </one-of>
     </element-def>
 
-    <element-def description="CASE expression" id="case_expression">
+    <element-def attributes="FOLDABLE_BLOCK" description="CASE expression" id="case_expression">
         <token id="000004115" type-id="KW_CASE" />
         <one-of id="000004116" sortable="true">
             <element ref-id="simple_case_expression" />
