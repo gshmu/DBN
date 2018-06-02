@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public abstract class SimpleTimeoutCall<T> extends Traceable implements Callable<T>{
     private long timeout;
@@ -26,7 +27,7 @@ public abstract class SimpleTimeoutCall<T> extends Traceable implements Callable
             Future<T> future = executorService.submit(this);
             try {
                 return future.get(timeout, timeoutUnit);
-            } catch (InterruptedException e) {
+            } catch (TimeoutException | InterruptedException e) {
                 future.cancel(true);
                 return handleException(e);
             }

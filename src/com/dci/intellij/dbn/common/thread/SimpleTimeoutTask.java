@@ -24,7 +24,8 @@ public abstract class SimpleTimeoutTask implements Runnable{
         Future future = ThreadFactory.timeoutExecutor(daemon).submit(this);
         try {
             future.get(timeout, timeoutUnit);
-        } catch (TimeoutException ignore) {
+        } catch (TimeoutException | InterruptedException e) {
+            future.cancel(true);
         } catch (Exception e) {
             LOGGER.warn("Failed to execute timeout task", e);
         }
