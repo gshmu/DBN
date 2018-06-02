@@ -119,12 +119,12 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                     }
 
                     if (!registered) {
-                        console.warning("Failed to register breakpoint" + breakpointLocation);
+                        console.warning("Failed to register breakpoint" + breakpointLocation + ". Resource not found");
                     }
                 }
             }
         } catch (Exception e) {
-            console.error("Failed to register breakpoint" + breakpointLocation + ": " + e.getMessage());
+            console.error("Failed to register breakpoint" + breakpointLocation + ". " + e.getMessage());
         }
     }
 
