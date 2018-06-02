@@ -94,7 +94,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
             ConnectionId connectionId = connectionHandler.getId();
             ResourceMonitorDetailForm detailForm = resourceMonitorForms.get(connectionId);
             if (detailForm == null) {
-                detailForm = new ResourceMonitorDetailForm(connectionHandler, null, true);
+                detailForm = new ResourceMonitorDetailForm(connectionHandler);
                 resourceMonitorForms.put(connectionId, detailForm);
             }
             detailsPanel.add(detailForm.getComponent(), BorderLayout.CENTER);
@@ -128,11 +128,11 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
      ********************************************************/
     private TransactionListener transactionListener = new TransactionListener() {
         @Override
-        public void beforeAction(ConnectionHandler connectionHandler, TransactionAction action) {
+        public void beforeAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action) {
         }
 
         @Override
-        public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
+        public void afterAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             refreshForm();
         }
     };

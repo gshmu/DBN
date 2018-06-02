@@ -23,7 +23,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SessionBrowserDetailsForm extends DBNFormImpl{
-    private JPanel mailPanel;
+    private JPanel mainPanel;
     private JPanel sessionDetailsTabsPanel;
     private JBScrollPane sessionDetailsTablePane;
     private SessionDetailsTable sessionDetailsTable;
@@ -38,8 +38,8 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         sessionDetailsTable = new SessionDetailsTable(sessionBrowser.getProject());
         sessionDetailsTablePane.setViewportView(sessionDetailsTable);
         sessionDetailsTablePane.getViewport().setBackground(sessionDetailsTable.getBackground());
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mailPanel);
-        JBSplitter splitter = (JBSplitter) mailPanel.getComponent(0);
+        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
+        JBSplitter splitter = (JBSplitter) mainPanel.getComponent(0);
         splitter.setProportion((float) 0.3);
 
         detailsTabbedPane = new TabbedPane(this);
@@ -94,7 +94,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
 
     @Override
     public JComponent getComponent() {
-        return mailPanel;
+        return mainPanel;
     }
 
     @Override

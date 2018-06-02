@@ -17,7 +17,7 @@ public class IdleConnectionDialogForm extends DBNFormImpl {
         int idleMinutes = connection.getIdleMinutes();
         int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
 
-        String text = "The connection \"" + connectionHandler.getName()+ " \" (session \"" + connection.getSessionName() +  "\") is been idle for more than " + idleMinutes + " minutes. You have uncommitted changes on this connection. " +
+        String text = "The connection \"" + connectionHandler.getName() + " (" + connection.getSessionName() + ")\" is been idle for more than " + idleMinutes + " minutes. You have uncommitted changes on this connection. " +
                 "Please specify whether to commit or rollback the changes. You can choose to keep the connection alive for another " + idleMinutesToDisconnect + " more minutes. \n\n" +
                 "NOTE: Connection will close automatically and changes will be rolled-back if this prompt stays unattended for more than " + timeoutMinutes + " minutes.";
         hintTextPane.setBackground(mainPanel.getBackground());

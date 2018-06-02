@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.intellij.util.messages.Topic;
 
 import java.util.EventListener;
@@ -10,16 +11,13 @@ public interface TransactionListener extends EventListener{
 
     /**
      * This is typically called before the connection has been operationally committed
-     * @param connectionHandler
-     * @param action
      */
-    void beforeAction(ConnectionHandler connectionHandler, TransactionAction action);
+    void beforeAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action);
 
     /**
      * This is typically called after the connection has been operationally committed
-     * @param connectionHandler indicates if the commit operation was successful or not
      * @param succeeded indicates if the commit operation was successful or not
      */
-    void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded);
+    void afterAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded);
 
 }

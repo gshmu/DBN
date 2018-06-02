@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
@@ -556,7 +557,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     };
 
     private TransactionListener transactionListener = new TransactionListener() {
-        public void beforeAction(ConnectionHandler connectionHandler, TransactionAction action) {
+        public void beforeAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action) {
             if (connectionHandler == getConnectionHandler()) {
                 DatasetEditorModel model = getTableModel();
                 DatasetEditorTable editorTable = getEditorTable();
@@ -587,7 +588,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             }
         }
 
-        public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
+        public void afterAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             if (connectionHandler == getConnectionHandler()) {
                 DatasetEditorModel model = getTableModel();
                 DatasetEditorTable editorTable = getEditorTable();

@@ -205,12 +205,14 @@ public class DBNConnection extends DBNConnectionBase {
     @Override
     public void commit() throws SQLException {
         super.commit();
+        updateLastAccess();
         resetDataChanges();
     }
 
     @Override
     public void rollback() throws SQLException {
         super.rollback();
+        updateLastAccess();
         resetDataChanges();
     }
 
