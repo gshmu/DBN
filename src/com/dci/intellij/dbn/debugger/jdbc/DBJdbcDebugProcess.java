@@ -283,12 +283,12 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
      */
     private void registerBreakpoints(final RunnableTask callback) {
         console.system("Registering breakpoints...");
-        final Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
+        final List<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
 
         new WriteActionRunner() {
             @Override
             public void run() {
-                getBreakpointHandler().registerBreakpoints(breakpoints);
+                getBreakpointHandler().registerBreakpoints(breakpoints, null);
                 registerDefaultBreakpoint();
                 console.system("Done registering breakpoints");
                 callback.start();

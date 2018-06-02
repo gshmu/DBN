@@ -19,7 +19,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -35,7 +34,6 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.util.List;
 
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointDesc;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointId;
@@ -123,11 +121,6 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
                 }
             }
         }
-    }
-
-    @Override
-    public void initializeResources(List<XLineBreakpoint<XBreakpointProperties>> breakpoints, List<? extends DBObject> objects) {
-        // nothing to do
     }
 
     public void registerDefaultBreakpoint(DBMethod method) {
