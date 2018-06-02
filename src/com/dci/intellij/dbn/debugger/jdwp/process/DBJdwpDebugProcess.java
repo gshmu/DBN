@@ -272,7 +272,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         new ReadActionRunner() {
             @Override
             protected Object run() {
-
+                console.system("Loading resources");
                 List<DBMethod> methods = getRunProfile().getMethods();
                 List<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
                 getBreakpointHandler().initializeResources(breakpoints, methods);

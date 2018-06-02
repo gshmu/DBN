@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
@@ -41,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getDatabaseObject;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getProgramIdentifier;
 
 public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProcess> {
@@ -98,6 +100,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                     LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
 
                     if (lineBreakpoint != null && !isBreakpointRequested(lineBreakpoint)) {
+                        boolean registered = false;
                         List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
                         if (referenceTypes.size() > 0) {
                             ReferenceType referenceType = referenceTypes.get(0);
@@ -107,7 +110,16 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                                 BreakpointRequest breakpointRequest = requestsManager.createBreakpointRequest(lineBreakpoint, location);
                                 breakpointRequest.addThreadFilter(getMainThread());
                                 requestsManager.enableRequest(breakpointRequest);
+                                registered = true;
                             }
+                        }
+
+                        if (!registered) {
+                            DBSchemaObject databaseObject = getDatabaseObject(breakpoint);
+                            String location = databaseObject == null ? "" : " on " + databaseObject.getQualifiedName() + " at line " + (breakpoint.getLine() + 1);
+
+                            DBDebugConsoleLogger console = getDebugProcess().getConsole();
+                            console.warning("Failed to register breakpoint" + location);
                         }
                     }
                 }
@@ -175,7 +187,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
         }
     }
 
-    public void prepareObjectClasses(final DBSchemaObject object, final DBContentType contentType) {
+    private void prepareObjectClasses(final DBSchemaObject object, final DBContentType contentType) {
         new ManagedThreadCommand(getJdiDebugProcess()) {
             @Override
             protected void action() throws Exception {
