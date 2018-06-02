@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -33,9 +34,11 @@ public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExe
     @Override
     @Nullable
     public VirtualFile getVirtualFile(Location location) {
-        try {
-            if (location != null) {
-                String sourcePath = location.sourcePath();
+
+        if (location != null) {
+            String sourcePath = "<NULL>";
+            try {
+                sourcePath = location.sourcePath();
                 StringTokenizer tokenizer = new StringTokenizer(sourcePath, "\\.");
                 tokenizer.nextToken(); // signature
                 String programType = tokenizer.nextToken();
@@ -45,9 +48,9 @@ public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExe
                         return executionProcessor.getVirtualFile();
                     }
                 }
+            } catch (Exception e) {
+                getConsole().warning("Error evaluating suspend position '" + sourcePath + "': " + CommonUtil.nvl(e.getMessage(), e.getClass().getSimpleName()));
             }
-        } catch (Exception e) {
-            getConsole().error("Error evaluating suspend position: " + e.getMessage());
         }
 
         return super.getVirtualFile(location);

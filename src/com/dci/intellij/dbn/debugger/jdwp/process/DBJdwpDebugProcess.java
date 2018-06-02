@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
@@ -377,9 +378,10 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
     @Nullable
     public VirtualFile getVirtualFile(Location location) {
-        try {
-            if (location != null) {
-                String sourcePath = location.sourcePath();
+        if (location != null) {
+            String sourcePath = "<NULL>";
+            try {
+                sourcePath = location.sourcePath();
                 StringTokenizer tokenizer = new StringTokenizer(sourcePath, "\\.");
                 tokenizer.nextToken(); // signature
                 String programType = tokenizer.nextToken();// program type
@@ -399,11 +401,10 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                         }
                     }
                 }
+            } catch (Exception e) {
+                getConsole().warning("Error evaluating suspend position '" + sourcePath + "': " + CommonUtil.nvl(e.getMessage(), e.getClass().getSimpleName()));
             }
-        } catch (Exception e) {
-            getConsole().error("Error evaluating suspend position: " + e.getMessage());
         }
-
         return null;
     }
 
