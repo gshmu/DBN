@@ -77,7 +77,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 List<DBNConnection> connections = connectionHandler.getConnections();
                 for (DBNConnection connection : connections) {
-                    if (connection != null && !connection.isClosed() && connection.isValid()) {
+                    if (connection != null && !connection.isActive() && !connection.isClosed() && connection.isValid()) {
                         return true;
                     }
                 }

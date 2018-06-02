@@ -382,18 +382,20 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 String sourcePath = location.sourcePath();
                 StringTokenizer tokenizer = new StringTokenizer(sourcePath, "\\.");
                 tokenizer.nextToken(); // signature
-                tokenizer.nextToken(); // program type
-                String schemaName = tokenizer.nextToken();
-                String programName = tokenizer.nextToken();
-                DBSchema schema = getConnectionHandler().getObjectBundle().getSchema(schemaName);
-                if (schema != null) {
-                    DBProgram program = schema.getProgram(programName);
-                    if (program != null) {
-                        return program.getVirtualFile();
-                    } else {
-                        DBMethod method = schema.getMethod(programName, 0);
-                        if (method != null) {
-                            return method.getVirtualFile();
+                String programType = tokenizer.nextToken();// program type
+                if (!programType.equals("Block")) {
+                    String schemaName = tokenizer.nextToken();
+                    String programName = tokenizer.nextToken();
+                    DBSchema schema = getConnectionHandler().getObjectBundle().getSchema(schemaName);
+                    if (schema != null) {
+                        DBProgram program = schema.getProgram(programName);
+                        if (program != null) {
+                            return program.getVirtualFile();
+                        } else {
+                            DBMethod method = schema.getMethod(programName, 0);
+                            if (method != null) {
+                                return method.getVirtualFile();
+                            }
                         }
                     }
                 }

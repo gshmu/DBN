@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeWeakRef;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.diagnostic.Logger;
@@ -71,12 +72,12 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                     try {
                         set(checking, true);
                         if (checkInterval == 0) {
-                            set(current, checkInner());
+                            set(current, checkControlled());
                         } else {
                             long currentTimeMillis = System.currentTimeMillis();
                             if (TimeUtil.isOlderThan(checkTimestamp, checkInterval)) {
                                 checkTimestamp = currentTimeMillis;
-                                set(current, checkInner());
+                                set(current, checkControlled());
                             }
                         }
                     } catch (Exception t){
@@ -113,6 +114,15 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
 
     private boolean canChange(boolean value) {
         return !isCurrent() && !isChanging() && get() != value;
+    }
+
+    private boolean checkControlled() {
+        return new SimpleTimeoutCall<Boolean>(5, TimeUnit.SECONDS, is(current), true) {
+            @Override
+            public Boolean call() throws Exception {
+                return checkInner();
+            }
+        }.start();
     }
 
     private void changeControlled(final boolean value) {
