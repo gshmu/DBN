@@ -1,24 +1,24 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
-import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.TableModelListener;
+import java.util.List;
 
-public class ResourceMonitorTableModel extends DisposableBase implements DBNTableModel {
+public class ResourceMonitorSessionsTableModel extends DisposableBase implements DBNTableModel {
     private ConnectionHandlerRef connectionHandlerRef;
-    private DBNConnection connection;
+    private List<DatabaseSession> sessions;
 
-    public ResourceMonitorTableModel(ConnectionHandler connectionHandler, @Nullable DBNConnection connection) {
+    public ResourceMonitorSessionsTableModel(ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = connectionHandler.getRef();
-        this.connection = connection;
+        sessions = connectionHandler.getSessionBundle().getSessions();
     }
 
     public ConnectionHandler getConnectionHandler() {
@@ -29,27 +29,31 @@ public class ResourceMonitorTableModel extends DisposableBase implements DBNTabl
         return getConnectionHandler().getProject();
     }
 
-    public DBNConnection getConnection() {
-        return connection;
+    @NotNull
+    public List<DatabaseSession> getSessions() {
+        return FailsafeUtil.get(sessions);
     }
 
     public int getRowCount() {
-        PendingTransactionBundle dataChanges = connection == null ? null : connection.getDataChanges();
-        return dataChanges == null ? 0 : dataChanges.size();
+        return getSessions().size();
     }
 
     public int getColumnCount() {
-        return 2;
+        return 4;
     }
 
     public String getColumnName(int columnIndex) {
-        return
-            columnIndex == 0 ? "Source" :
-            columnIndex == 1 ? "Details" : null ;
+        switch (columnIndex) {
+            case 0: return "Session";
+            case 1: return "Status";
+            case 2: return "Last access";
+            case 3: return "Size / Peak";
+        }
+        return null;
     }
 
     public Class<?> getColumnClass(int columnIndex) {
-        return PendingTransaction.class;
+        return DatabaseSession.class;
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -57,11 +61,11 @@ public class ResourceMonitorTableModel extends DisposableBase implements DBNTabl
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        PendingTransactionBundle dataChanges = connection == null ? null : connection.getDataChanges();
-        if (dataChanges != null) {
-            return dataChanges.getEntries().get(rowIndex);
-        }
-        return null;
+        return getSession(rowIndex);
+    }
+
+    public DatabaseSession getSession(int rowIndex) {
+        return sessions.get(rowIndex);
     }
 
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
@@ -74,7 +78,7 @@ public class ResourceMonitorTableModel extends DisposableBase implements DBNTabl
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
-            connection = null;
+            sessions = null;
         }
 
     }

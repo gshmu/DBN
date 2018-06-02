@@ -53,13 +53,10 @@ public class ResourceMonitorTable extends DBNTable {
         protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             PendingTransaction change = (PendingTransaction) value;
             if (column == 0) {
-                // TODO
-            }
-            else if (column == 1) {
                 setIcon(change.getIcon());
                 append(change.getDisplayFilePath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
-            } else if (column == 2) {
+            } else if (column == 1) {
                 append(change.getChangesCount() + " uncommitted changes", SimpleTextAttributes.REGULAR_ATTRIBUTES);
             }
             setBorder(Borders.TEXT_FIELD_BORDER);

@@ -104,12 +104,12 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
 
     TransactionListener transactionListener = new TransactionListener() {
         @Override
-        public void beforeAction(ConnectionHandler connectionHandler, TransactionAction action) {
+        public void beforeAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action) {
 
         }
 
         @Override
-        public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
+        public void afterAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(connectionHandler.getProject());
             if (!connectionManager.hasUncommittedChanges()) {
                 new ConditionalLaterInvocator() {

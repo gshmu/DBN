@@ -204,7 +204,7 @@
             <action class="com.dci.intellij.dbn.menu.action.SessionBrowserAction" text="Open Session Browser..." id="DBNavigator.Actions.MainMenu.OpenSessionBrowser" icon="/img/file/SessionBrowser.png"/>
             <action class="com.dci.intellij.dbn.menu.action.MethodExecutionHistoryAction" text="Method Execution History" id="DBNavigator.Actions.MainMenu.MethodExecutionHistory"/>
             <action class="com.dci.intellij.dbn.menu.action.PendingTransactionsAction" text="Uncommitted Changes" id="DBNavigator.Actions.MainMenu.PendingTransactions"/>
-            <!--<action class="com.dci.intellij.dbn.menu.action.ResourceMonitorAction" text="Resource monitor" id="DBNavigator.Actions.MainMenu.ResourceMonitor"/>-->
+            <action class="com.dci.intellij.dbn.menu.action.ResourceMonitorAction" text="Resource monitor" id="DBNavigator.Actions.MainMenu.ResourceMonitor"/>
             <separator/>
             <group id="DBNavigator.ActionGroup.Development" text="Development" popup="true">
                 <action id="DBNavigator.Actions.MainMenu.DevelopmentReset" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>

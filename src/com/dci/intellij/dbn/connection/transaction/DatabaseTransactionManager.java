@@ -96,7 +96,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         boolean success = true;
         try {
             // notify pre-action
-            transactionListener.beforeAction(connectionHandler, action);
+            transactionListener.beforeAction(connectionHandler, connection, action);
             ProgressMonitor.setTaskDescription("Performing " + action.getName() + " on connection " + connectionName);
 
             action.execute(connectionHandler, connection);
@@ -120,7 +120,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         } finally {
             if (action != null && !project.isDisposed()) {
                 // notify post-action
-                transactionListener.afterAction(connectionHandler, action, success);
+                transactionListener.afterAction(connectionHandler, connection, action, success);
 
                 if (action.isStatusChange()) {
                     ConnectionHandlerStatusListener statusListener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
