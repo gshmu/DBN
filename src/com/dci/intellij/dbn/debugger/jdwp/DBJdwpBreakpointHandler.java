@@ -88,43 +88,44 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
 
     @Override
     protected void registerDatabaseBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
-        new ManagedThreadCommand(getJdiDebugProcess()) {
+        // not supported (see callback on class prepare)
+    }
 
-            @Override
-            protected void action() throws Exception {
-                VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
-                RequestManagerImpl requestsManager = getRequestsManager();
+    private void createBreakpointRequest(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
+        DBDebugConsoleLogger console = getDebugProcess().getConsole();
+        DBSchemaObject databaseObject = getDatabaseObject(breakpoint);
+        String breakpointLocation = databaseObject == null ? "" : " on " + databaseObject.getQualifiedName() + " at line " + (breakpoint.getLine() + 1);
+        try {
+            VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
+            RequestManagerImpl requestsManager = getRequestsManager();
 
-                String programIdentifier = getProgramIdentifier(getConnectionHandler(), breakpoint);
-                if (programIdentifier != null) {
-                    LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
+            String programIdentifier = getProgramIdentifier(getConnectionHandler(), breakpoint);
+            if (programIdentifier != null) {
+                LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
 
-                    if (lineBreakpoint != null && !isBreakpointRequested(lineBreakpoint)) {
-                        boolean registered = false;
-                        List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
-                        if (referenceTypes.size() > 0) {
-                            ReferenceType referenceType = referenceTypes.get(0);
-                            List<Location> locations = referenceType.locationsOfLine(breakpoint.getLine() + 1);
-                            if (locations.size() > 0) {
-                                Location location = locations.get(0);
-                                BreakpointRequest breakpointRequest = requestsManager.createBreakpointRequest(lineBreakpoint, location);
-                                breakpointRequest.addThreadFilter(getMainThread());
-                                requestsManager.enableRequest(breakpointRequest);
-                                registered = true;
-                            }
+                if (lineBreakpoint != null && !isBreakpointRequested(lineBreakpoint)) {
+                    boolean registered = false;
+                    List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
+                    if (referenceTypes.size() > 0) {
+                        ReferenceType referenceType = referenceTypes.get(0);
+                        List<Location> locations = referenceType.locationsOfLine(breakpoint.getLine() + 1);
+                        if (locations.size() > 0) {
+                            Location location = locations.get(0);
+                            BreakpointRequest breakpointRequest = requestsManager.createBreakpointRequest(lineBreakpoint, location);
+                            breakpointRequest.addThreadFilter(getMainThread());
+                            requestsManager.enableRequest(breakpointRequest);
+                            registered = true;
                         }
+                    }
 
-                        if (!registered) {
-                            DBSchemaObject databaseObject = getDatabaseObject(breakpoint);
-                            String location = databaseObject == null ? "" : " on " + databaseObject.getQualifiedName() + " at line " + (breakpoint.getLine() + 1);
-
-                            DBDebugConsoleLogger console = getDebugProcess().getConsole();
-                            console.warning("Failed to register breakpoint" + location);
-                        }
+                    if (!registered) {
+                        console.warning("Failed to register breakpoint" + breakpointLocation);
                     }
                 }
             }
-        }.invoke();
+        } catch (Exception e) {
+            console.error("Failed to register breakpoint" + breakpointLocation + ": " + e.getMessage());
+        }
     }
 
     boolean isBreakpointRequested(LineBreakpoint lineBreakpoint) {
@@ -138,68 +139,67 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
         return false;
     }
 
-    @Override
-    public void initializeResources(List<XLineBreakpoint<XBreakpointProperties>> breakpoints, List<? extends DBObject> objects) {
-        for (DBObject object : objects) {
-            if (object instanceof DBSchemaObject) {
-                DBSchemaObject schemaObject = (DBSchemaObject) object;
-                DBContentType contentType = schemaObject.getContentType();
-                if (contentType == DBContentType.CODE) {
-                    prepareObjectClasses(schemaObject, DBContentType.CODE);
-                } else if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
-                    prepareObjectClasses(schemaObject, DBContentType.CODE_SPEC);
-                    prepareObjectClasses(schemaObject, DBContentType.CODE_BODY);
-                }
-            }
-        }
-
-        for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
-            prepareObjectClasses(breakpoint);
-        }
-    }
-
-    public void prepareObjectClasses(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
-        XBreakpointProperties properties = breakpoint.getProperties();
-        if (properties instanceof DBBreakpointProperties) {
-            DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
-            if (breakpointProperties.getConnectionHandler() == getConnectionHandler()) {
-                new ManagedThreadCommand(getJdiDebugProcess()) {
-                    @Override
-                    protected void action() throws Exception {
-                        RequestManagerImpl requestsManager = getRequestsManager();
-
-                        String programIdentifier = getProgramIdentifier(getConnectionHandler(), breakpoint);
-                        if (programIdentifier != null) {
-                            LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
-                            if (lineBreakpoint != null) {
-                                Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
-                                if (requests.size() == 0) {
-                                    ClassPrepareRequest request = requestsManager.createClassPrepareRequest(lineBreakpoint, programIdentifier);
-                                    if (request != null) {
-                                        requestsManager.enableRequest(request);
-                                    }
-                                }
-                            }
+    public void registerBreakpoints(final List<XLineBreakpoint<XBreakpointProperties>> breakpoints, final List<? extends DBObject> objects) {
+        new ManagedThreadCommand(getJdiDebugProcess()) {
+            @Override
+            protected void action() throws Exception {
+                for (DBObject object : objects) {
+                    if (object instanceof DBSchemaObject) {
+                        DBSchemaObject schemaObject = (DBSchemaObject) object;
+                        DBContentType contentType = schemaObject.getContentType();
+                        if (contentType == DBContentType.CODE) {
+                            prepareObjectClasses(schemaObject, DBContentType.CODE);
+                        } else if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
+                            prepareObjectClasses(schemaObject, DBContentType.CODE_SPEC);
+                            prepareObjectClasses(schemaObject, DBContentType.CODE_BODY);
                         }
                     }
-                }.invoke();
+                }
+
+                for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
+                    XBreakpointProperties properties = breakpoint.getProperties();
+                    if (properties instanceof DBBreakpointProperties) {
+                        DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
+                        if (breakpointProperties.getConnectionHandler() == getConnectionHandler()) {
+                            prepareObjectClasses(breakpoint);
+                        }
+                    }
+                }
+            }
+        }.invoke();
+    }
+
+    private void prepareObjectClasses(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
+        RequestManagerImpl requestsManager = getRequestsManager();
+
+        String programIdentifier = getProgramIdentifier(getConnectionHandler(), breakpoint);
+        if (programIdentifier != null) {
+            LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
+            if (lineBreakpoint != null) {
+                Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
+                if (requests.size() == 0) {
+                    ClassPrepareRequest request = requestsManager.createClassPrepareRequest(new ClassPrepareRequestor() {
+                        @Override
+                        public void processClassPrepare(DebugProcess debuggerProcess, ReferenceType referenceType) {
+                            createBreakpointRequest(breakpoint);
+                        }
+                    }, programIdentifier);
+                    if (request != null) {
+                        requestsManager.enableRequest(request);
+                    }
+                }
             }
         }
     }
 
     private void prepareObjectClasses(final DBSchemaObject object, final DBContentType contentType) {
-        new ManagedThreadCommand(getJdiDebugProcess()) {
-            @Override
-            protected void action() throws Exception {
-                RequestManagerImpl requestsManager = getRequestsManager();
-                String programIdentifier = getProgramIdentifier(getConnectionHandler(), object, contentType);
+        RequestManagerImpl requestsManager = getRequestsManager();
+        String programIdentifier = getProgramIdentifier(getConnectionHandler(), object, contentType);
 
-                ClassPrepareRequest request = requestsManager.createClassPrepareRequest(GENERIC_CLASS_PREPARE_REQUESTOR, programIdentifier);
-                if (request != null) {
-                    requestsManager.enableRequest(request);
-                }
-            }
-        }.schedule();
+        ClassPrepareRequest request = requestsManager.createClassPrepareRequest(GENERIC_CLASS_PREPARE_REQUESTOR, programIdentifier);
+        if (request != null) {
+            requestsManager.enableRequest(request);
+        }
     }
 
     @Override

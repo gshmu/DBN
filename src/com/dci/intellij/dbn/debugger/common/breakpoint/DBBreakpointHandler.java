@@ -13,7 +13,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
 
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointDesc;
@@ -70,7 +69,7 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
 
     protected abstract void unregisterDatabaseBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, boolean temporary);
 
-    public void registerBreakpoints(Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints) {
+    public void registerBreakpoints(List<XLineBreakpoint<XBreakpointProperties>> breakpoints, List<? extends DBObject> objects) {
         for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
             registerBreakpoint(breakpoint);
         }
@@ -101,6 +100,4 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
     public abstract void registerDefaultBreakpoint(DBMethod method);
 
     public abstract void unregisterDefaultBreakpoint();
-
-    public abstract void initializeResources(List<XLineBreakpoint<XBreakpointProperties>> breakpoints, List<? extends DBObject> objects);
 }

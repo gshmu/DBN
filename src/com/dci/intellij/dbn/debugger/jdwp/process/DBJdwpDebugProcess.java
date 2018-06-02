@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.debugger.jdwp.process;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -255,7 +254,6 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                         console.system("Debug session initialized (JDWP)");
                         set(BREAKPOINT_SETTING_ALLOWED, true);
 
-                        initializeResources();
                         initializeBreakpoints();
                         startTargetProgram();
                     }
@@ -268,29 +266,11 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         }.start();
     }
 
-    private void initializeResources() {
-        new ReadActionRunner() {
-            @Override
-            protected Object run() {
-                console.system("Loading resources");
-                List<DBMethod> methods = getRunProfile().getMethods();
-                List<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
-                getBreakpointHandler().initializeResources(breakpoints, methods);
-                return null;
-            }
-        }.start();
-    }
-
     private void initializeBreakpoints() {
-        new ReadActionRunner() {
-            @Override
-            protected Object run() {
-                console.system("Registering breakpoints");
-                List<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
-                getBreakpointHandler().registerBreakpoints(breakpoints);
-                return null;
-            }
-        }.start();
+        console.system("Registering breakpoints");
+        List<DBMethod> methods = getRunProfile().getMethods();
+        List<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
+        getBreakpointHandler().registerBreakpoints(breakpoints, methods);
     }
 
     private void overwriteSuspendContext(final @Nullable XSuspendContext suspendContext) {
