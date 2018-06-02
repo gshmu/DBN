@@ -44,7 +44,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
                 objectType = objectType + " body";
             }
             code = updateNameQualification(code, useQualified, objectType, schemaName, objectName, styleCaseSettings);
-            return kco.format("create" + (makeRerunnable ? " or replace" : "") + "\n") + code + "\n/";
+            return kco.format("create" + (makeRerunnable ? " or replace" : "") + " ") + code + "\n/";
         }
     }
 
