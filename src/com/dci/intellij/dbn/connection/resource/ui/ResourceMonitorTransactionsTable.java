@@ -14,8 +14,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class ResourceMonitorTable extends DBNTable {
-    public ResourceMonitorTable(ResourceMonitorTableModel model) {
+public class ResourceMonitorTransactionsTable extends DBNTable<ResourceMonitorTransactionsTableModel> {
+    ResourceMonitorTransactionsTable(ResourceMonitorTransactionsTableModel model) {
         super(model.getProject(), model, false);
         setDefaultRenderer(PendingTransaction.class, new CellRenderer());
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -35,7 +35,7 @@ public class ResourceMonitorTable extends DBNTable {
         }
     }
 
-    public PendingTransaction getChangeAtMouseLocation() {
+    private PendingTransaction getChangeAtMouseLocation() {
         Point location = MouseInfo.getPointerInfo().getLocation();
         location.setLocation(location.getX() - getLocationOnScreen().getX(), location.getY() - getLocationOnScreen().getY());
 

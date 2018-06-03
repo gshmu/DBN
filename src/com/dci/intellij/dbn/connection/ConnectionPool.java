@@ -41,7 +41,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     private Map<SessionId, DBNConnection> sessionConnections = ContainerUtil.newConcurrentMap();
     private DBNConnection mainConnection;
     private DBNConnection testConnection;
-    private IntervalLoader<Long> lastAccessTimestamp = new IntervalLoader<Long>(TimeUtil.THIRTY_SECONDS) {
+    private IntervalLoader<Long> lastAccessTimestamp = new IntervalLoader<Long>(TimeUtil.TEN_SECONDS) {
         @Override
         protected Long load() {
             if (poolConnections.size() > 0) {
@@ -65,13 +65,13 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         POOL_CLEANER_TASK.registerConnectionPool(this);
     }
 
-    public DBNConnection ensureTestConnection() throws SQLException {
+    DBNConnection ensureTestConnection() throws SQLException {
         testConnection = init(testConnection, ConnectionType.TEST);
         return testConnection;
     }
 
     @NotNull
-    public DBNConnection ensureMainConnection() throws SQLException {
+    DBNConnection ensureMainConnection() throws SQLException {
         mainConnection = init(mainConnection, ConnectionType.MAIN);
         return mainConnection;
     }
@@ -97,7 +97,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     }
 
     @NotNull
-    public DBNConnection ensureSessionConnection(SessionId sessionId) throws SQLException {
+    DBNConnection ensureSessionConnection(SessionId sessionId) throws SQLException {
         DBNConnection connection = sessionConnections.get(sessionId);
         connection = init(connection, ConnectionType.SESSION);
         sessionConnections.put(sessionId, connection);
@@ -174,7 +174,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         return lastAccessTimestamp.get();
     }
 
-    public boolean wasNeverAccessed() {
+    boolean wasNeverAccessed() {
         return getLastAccessTimestamp() == 0;
     }
 
@@ -189,7 +189,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     }
 
     @NotNull
-    public DBNConnection allocateConnection(boolean readonly) throws SQLException {
+    DBNConnection allocateConnection(boolean readonly) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.setLastUsedConnection(connectionHandler);
 
@@ -264,7 +264,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         return connection;
     }
 
-    public void releaseConnection(DBNConnection connection) {
+    void releaseConnection(DBNConnection connection) {
         if (connection != null) {
             ConnectionUtil.rollback(connection);
             ConnectionUtil.setAutocommit(connection, true);
@@ -273,14 +273,14 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         }
     }
 
-    public void dropConnection(DBNConnection connection) {
+    void dropConnection(DBNConnection connection) {
         if (connection != null) {
             poolConnections.remove(connection);
             ConnectionUtil.close(connection);
         }
     }
 
-    public void closeConnections() {
+    void closeConnections() {
         for (DBNConnection connection : poolConnections) {
             ConnectionUtil.close(connection);
         }
@@ -377,7 +377,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
             }
         }
 
-        public void registerConnectionPool(ConnectionPool connectionPool) {
+        void registerConnectionPool(ConnectionPool connectionPool) {
             connectionPools.add(new WeakReference<ConnectionPool>(connectionPool));
         }
     }
