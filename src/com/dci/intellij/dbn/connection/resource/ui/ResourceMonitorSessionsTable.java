@@ -41,7 +41,8 @@ class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTable
                 } else if (column == 1) {
                     append(connectionPoolSize == 0 ? "Not connected" : "Connected", textAttributes);
                 } else if (column == 2) {
-                    append(connectionPoolSize == 0 ? "" : DateFormatUtil.formatPrettyDateTime(connectionPool.getLastAccessTimestamp()), textAttributes);
+                    long lastAccessTimestamp = connectionPool.getLastAccessTimestamp();
+                    append(connectionPoolSize == 0 || lastAccessTimestamp == 0 ? "" : DateFormatUtil.formatPrettyDateTime(lastAccessTimestamp), textAttributes);
                 } else if (column == 3) {
                     append(connectionPoolSize + " / " + connectionPool.getPeakPoolSize(), textAttributes);
                 }

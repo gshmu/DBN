@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
@@ -43,14 +44,18 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     private IntervalLoader<Long> lastAccessTimestamp = new IntervalLoader<Long>(TimeUtil.THIRTY_SECONDS) {
         @Override
         protected Long load() {
-            long lastAccessTimestamp = 0;
-            for (DBNConnection poolConnection : poolConnections) {
-                if (poolConnection.getLastAccess() > lastAccessTimestamp) {
-                    lastAccessTimestamp = poolConnection.getLastAccess();
+            if (poolConnections.size() > 0) {
+                long lastAccessTimestamp = 0;
+                for (DBNConnection poolConnection : poolConnections) {
+                    if (poolConnection.getLastAccess() > lastAccessTimestamp) {
+                        lastAccessTimestamp = poolConnection.getLastAccess();
+                    }
                 }
-            }
 
-            return lastAccessTimestamp;
+                return lastAccessTimestamp;
+            } else {
+                return CommonUtil.nvl(getValue(), 0L);
+            }
         }
     };
 
@@ -349,7 +354,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
 
                                 ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
                                 long lastAccessTimestamp = connectionPool.getLastAccessTimestamp();
-                                if (TimeUtil.isOlderThan(lastAccessTimestamp, detailSettings.getIdleTimeToDisconnectPool(), TimeUnit.MINUTES)) {
+                                if (lastAccessTimestamp > 0 && TimeUtil.isOlderThan(lastAccessTimestamp, detailSettings.getIdleTimeToDisconnectPool(), TimeUnit.MINUTES)) {
                                     // close connections only if pool is passive
                                     for (DBNConnection connection : connectionPool.poolConnections) {
                                         if (!connection.isIdle()) return;
