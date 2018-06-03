@@ -82,7 +82,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
             }
 
         });
-        decorator.setPreferredSize(new Dimension(-1, 300));
+        decorator.setPreferredSize(new Dimension(-1, 400));
         JPanel panel = decorator.createPanel();
         environmentTypesTablePanel.add(panel, BorderLayout.CENTER);
         environmentTypesTable.getParent().setBackground(environmentTypesTable.getBackground());

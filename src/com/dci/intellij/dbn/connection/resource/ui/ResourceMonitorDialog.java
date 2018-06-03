@@ -10,7 +10,7 @@ import javax.swing.*;
 public class ResourceMonitorDialog extends DBNDialog<ResourceMonitorForm> {
 
     public ResourceMonitorDialog(Project project) {
-        super(project, "Resource monitor", true);
+        super(project, "Resource Monitor", true);
         setModal(false);
         setResizable(true);
         setCancelButtonText("Close");

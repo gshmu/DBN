@@ -39,12 +39,9 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.SelectFromListDialog;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileCopyEvent;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.VirtualFileMoveEvent;
-import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -63,15 +60,14 @@ import java.util.Map;
     name = DDLFileAttachmentManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DDLFileAttachmentManager extends AbstractProjectComponent implements VirtualFileListener, PersistentStateComponent<Element> {
+public class DDLFileAttachmentManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.DDLFileAttachmentManager";
 
     private Map<String, DBObjectRef<DBSchemaObject>> mappings = new HashMap<String, DBObjectRef<DBSchemaObject>>();
     private DDLFileAttachmentManager(Project project) {
         super(project);
-        VirtualFileManager.getInstance().addVirtualFileListener(this);
-
+        VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
         EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
@@ -409,52 +405,17 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
      *               VirtualFileListener            *
      ************************************************/
 
-    @Override
-    public void propertyChanged(@NotNull VirtualFilePropertyEvent event) {
-        
-    }
-
-    @Override
-    public void contentsChanged(@NotNull VirtualFileEvent event) {
-    }
-
-    @Override
-    public void fileCreated(@NotNull VirtualFileEvent event) {
-    }
-
-    @Override
-    public void fileDeleted(@NotNull VirtualFileEvent event) {
-        DBObjectRef<DBSchemaObject> objectRef = mappings.get(event.getFile().getPath());
-        DBSchemaObject object = DBObjectRef.get(objectRef);
-        if (object != null) {
-            detachDDLFile(event.getFile());
-            DatabaseFileSystem.getInstance().reopenEditor(object);
+    private VirtualFileListener virtualFileListener = new VirtualFileListener() {
+        @Override
+        public void fileDeleted(@NotNull VirtualFileEvent event) {
+            DBObjectRef<DBSchemaObject> objectRef = mappings.get(event.getFile().getPath());
+            DBSchemaObject object = DBObjectRef.get(objectRef);
+            if (object != null) {
+                detachDDLFile(event.getFile());
+                DatabaseFileSystem.getInstance().reopenEditor(object);
+            }
         }
-    }
-
-    @Override
-    public void fileMoved(@NotNull VirtualFileMoveEvent event) {
-    }
-
-    @Override
-    public void fileCopied(@NotNull VirtualFileCopyEvent event) {
-    }
-
-    @Override
-    public void beforePropertyChange(@NotNull VirtualFilePropertyEvent event) {
-    }
-
-    @Override
-    public void beforeContentsChange(@NotNull VirtualFileEvent event) {
-    }
-
-    @Override
-    public void beforeFileDeletion(@NotNull VirtualFileEvent event) {
-    }
-
-    @Override
-    public void beforeFileMovement(@NotNull VirtualFileMoveEvent event) {
-    }
+    };
 
     /*********************************************
      *            PersistentStateComponent       *

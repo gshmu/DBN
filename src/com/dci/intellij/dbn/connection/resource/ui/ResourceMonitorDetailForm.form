@@ -87,7 +87,7 @@
                     <border type="none"/>
                     <children/>
                   </scrollpane>
-                  <component id="e06a2" class="javax.swing.JLabel">
+                  <component id="e06a2" class="javax.swing.JLabel" binding="openTransactionsLabel">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -105,14 +105,6 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <scrollpane id="4c4af" class="com.intellij.ui.components.JBScrollPane" binding="sessionsTableScrollPane">
-                    <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties/>
-                    <border type="none"/>
-                    <children/>
-                  </scrollpane>
                   <component id="f3e74" class="javax.swing.JLabel">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -121,6 +113,14 @@
                       <text value="&amp;Sessions"/>
                     </properties>
                   </component>
+                  <grid id="aaf2a" binding="sessionsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children/>
+                  </grid>
                 </children>
               </grid>
             </children>

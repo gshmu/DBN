@@ -73,7 +73,7 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
                 return session;
             }
         }
-        throw new IllegalArgumentException("Unknown session id " + id);
+        return mainSession;
     }
 
     void addSession(SessionId id, String name) {
@@ -89,7 +89,7 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
         return session;
     }
 
-    void removeSession(SessionId id) {
+    void deleteSession(SessionId id) {
         DatabaseSession session = getSession(id);
         sessions.remove(session);
         DisposerUtil.dispose(session);

@@ -6,11 +6,14 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.console.ui.CreateRenameConsoleDialog;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
+import com.dci.intellij.dbn.connection.session.SessionManagerListener;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -42,6 +45,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
 
     private DatabaseConsoleManager(final Project project) {
         super(project);
+        EventUtil.subscribe(getProject(), this, SessionManagerListener.TOPIC, sessionManagerListener);
     }
 
     public static DatabaseConsoleManager getInstance(@NotNull Project project) {
@@ -112,6 +116,33 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                     }
                 });
     }
+
+
+    /***************************************
+     *         SessionManagerListener      *
+     ***************************************/
+    private SessionManagerListener sessionManagerListener = new SessionManagerListener() {
+        @Override
+        public void sessionCreated(DatabaseSession session) {}
+
+        @Override
+        public void sessionDeleted(DatabaseSession session) {
+            ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+            List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionBundle().getAllConnectionHandlers();
+            for (ConnectionHandler connectionHandler : connectionHandlers) {
+                List<DBConsoleVirtualFile> consoles = connectionHandler.getConsoleBundle().getConsoles();
+                for (DBConsoleVirtualFile console : consoles) {
+                    if (console.getDatabaseSession() == session) {
+                        DatabaseSession mainSession = connectionHandler.getSessionBundle().getMainSession();
+                        console.setDatabaseSession(mainSession);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void sessionChanged(DatabaseSession session) {}
+    };
 
     /*********************************************
      *            PersistentStateComponent       *
