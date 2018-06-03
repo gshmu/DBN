@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileSystem;
+import com.intellij.openapi.vfs.VirtualFilePathWrapper;
 import com.intellij.openapi.vfs.ex.dummy.DummyFileIdGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +18,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable {
+public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable, VirtualFilePathWrapper {
     private static AtomicInteger ID_STORE = new AtomicInteger(0);
     private int documentHashCode;
     private int id;
@@ -26,13 +26,15 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     protected String path;
     protected String url;
     private ProjectRef projectRef;
-    private VirtualFileSystem fileSystem = DatabaseFileSystem.getInstance();
+    private DatabaseFileSystem fileSystem = DatabaseFileSystem.getInstance();
 
     public DBVirtualFileImpl(Project project) {
         //id = ID_STORE.getAndIncrement();
         id = DummyFileIdGenerator.next();
         projectRef = ProjectRef.from(project);
     }
+
+
 
     @NotNull
     @Override
@@ -63,7 +65,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
     @NotNull
     @Override
-    public VirtualFileSystem getFileSystem() {
+    public DatabaseFileSystem getFileSystem() {
         return fileSystem;
     }
 
@@ -102,6 +104,17 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
             }
         }
         return path;
+    }
+
+    @NotNull
+    @Override
+    public String getPresentablePath() {
+        return getFileSystem().extractPresentablePath(getPath());
+    }
+
+    @Override
+    public boolean enforcePresentableName() {
+        return false;
     }
 
     @NotNull

@@ -87,13 +87,14 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     private static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
 
     private final Map<FileEditor, List<StatementExecutionProcessor>> fileExecutionProcessors = new HashMap<FileEditor, List<StatementExecutionProcessor>>();
-    private final StatementExecutionVariablesCache variablesCache = new StatementExecutionVariablesCache();
+    private final StatementExecutionVariablesCache variablesCache;
     private Map<SessionId, StatementExecutionQueue> executionQueues = new HashMap<SessionId, StatementExecutionQueue>();
 
     private static final AtomicInteger RESULT_SEQUENCE = new AtomicInteger(0);
 
     private StatementExecutionManager(Project project) {
         super(project);
+        variablesCache = new StatementExecutionVariablesCache(project);
         EventUtil.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
         EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
