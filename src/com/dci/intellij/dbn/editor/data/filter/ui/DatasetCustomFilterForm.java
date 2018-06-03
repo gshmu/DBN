@@ -7,10 +7,10 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.data.filter.DatasetCustomFilter;
-import com.dci.intellij.dbn.editor.data.filter.DatasetFilterVirtualFile;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
+import com.dci.intellij.dbn.vfs.file.DBDatasetFilterVirtualFile;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -54,7 +54,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
         boolean isValidCondition = StringUtil.isNotEmptyOrSpaces(condition);
         selectStatement.append(isValidCondition ? condition : COMMENT);
 
-        DatasetFilterVirtualFile filterFile = new DatasetFilterVirtualFile(dataset, selectStatement.toString());
+        DBDatasetFilterVirtualFile filterFile = new DBDatasetFilterVirtualFile(dataset, selectStatement.toString());
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), filterFile, true);
         PsiFile selectStatementFile = filterFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 

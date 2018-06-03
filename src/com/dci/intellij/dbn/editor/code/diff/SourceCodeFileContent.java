@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.code.diff;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
-import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.diff.SimpleContent;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;

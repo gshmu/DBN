@@ -67,7 +67,7 @@ import com.dci.intellij.dbn.object.impl.DBSystemPrivilegeImpl;
 import com.dci.intellij.dbn.object.impl.DBUserImpl;
 import com.dci.intellij.dbn.object.impl.DBUserPrivilegeRelation;
 import com.dci.intellij.dbn.object.impl.DBUserRoleRelation;
-import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;

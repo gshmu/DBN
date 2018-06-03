@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.vfs;
+package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.message.MessageCallback;

@@ -148,8 +148,14 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
         return this == obj || (obj instanceof DBVirtualFileImpl && hashCode() == obj.hashCode());
     }
 
-    @NotNull protected abstract String createPath();
-    @NotNull protected abstract String createUrl();
+    @NotNull
+    private String createPath() {
+        return DatabaseFileSystem.createPath(this);
+    }
+    @NotNull
+    private String createUrl() {
+        return DatabaseFileSystem.createUrl(this);
+    }
 
     @Override
     public boolean isValid() {

@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.vfs;
+package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;

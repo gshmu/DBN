@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
+import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;

@@ -20,7 +20,7 @@ import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
-import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;

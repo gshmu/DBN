@@ -1,19 +1,19 @@
-package com.dci.intellij.dbn.vfs;
+package com.dci.intellij.dbn.vfs.file;
 
+import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.intellij.ide.navigationToolbar.NavBarPresentation;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,70 +22,50 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFileImpl {
+public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
-    protected T objectList;
+    protected DBObjectRef<T> objectRef;
 
-    public DBObjectListVirtualFile(T objectList) {
-        super(objectList.getProject());
-        this.objectList = objectList;
-        this.name = NamingUtil.capitalize(objectList.getName());
+    public DBObjectVirtualFile(@NotNull T object) {
+        super(object.getProject());
+        this.objectRef = DBObjectRef.from(object);
+        this.name = objectRef.getFileName();
     }
 
-    public T getObjectList() {
-        return objectList;
+    public DBObjectRef<T> getObjectRef() {
+        return objectRef;
+    }
+
+    @NotNull
+    public T getObject() {
+        return DBObjectRef.getnn(objectRef);
     }
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return objectList.getConnectionHandler();
+        return getObject().getConnectionHandler();
     }
 
     @Override
     public DBSchema getDatabaseSchema() {
-        GenericDatabaseElement parent = objectList.getParentElement();
-        if (parent instanceof DBObject) {
-            DBObject object = (DBObject) parent;
-            return object.getSchema();
-        }
-        return null;
+        return getObject().getSchema();
     }
 
-    @Nullable
-    @Override
     public DatabaseSession getDatabaseSession() {
         return getConnectionHandler().getSessionBundle().getPoolSession();
     }
+
+    @Override
+    public boolean isValid() {
+        return super.isValid() && objectRef.get() != null;
+    }    
 
     /*********************************************************
      *                     VirtualFile                       *
      *********************************************************/
     @NotNull
-    @NonNls
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getPresentableName() {
-        return name;
-    }
-
-    @NotNull
     public FileType getFileType() {
         return UnknownFileType.INSTANCE;
-    }
-
-    @NotNull
-    @Override
-    protected String createPath() {
-        return DatabaseFileSystem.createPath(objectList);
-    }
-
-    @NotNull
-    @Override
-    protected String createUrl() {
-        return DatabaseFileSystem.createUrl(objectList);
     }
 
     public boolean isWritable() {
@@ -98,23 +78,19 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
 
     @Nullable
     public VirtualFile getParent() {
-        GenericDatabaseElement parent = objectList.getParentElement();
-        if (parent instanceof DBObject) {
-            DBObject parentObject = (DBObject) parent;
-            return DBObjectPsiFacade.getPsiDirectory(parentObject).getVirtualFile();
+        if (CommonUtil.isCalledThrough(NavBarPresentation.class)) {
+            T object = getObject();
+            BrowserTreeNode treeParent = object.getParent();
+            if (treeParent instanceof DBObjectList<?>) {
+                DBObjectList objectList = (DBObjectList) treeParent;
+                return objectList.getPsiDirectory().getVirtualFile();
+            }
         }
-
-        if (parent instanceof DBObjectBundle) {
-            DBObjectBundle objectBundle = (DBObjectBundle) parent;
-            return objectBundle.getConnectionHandler().getPsiDirectory().getVirtualFile();
-
-        }
-
         return null;
     }
 
     public Icon getIcon() {
-        return null;
+        return objectRef.getObjectType().getIcon();
     }
 
     public VirtualFile[] getChildren() {
@@ -155,12 +131,5 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     public String getExtension() {
         return null;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        objectList = null;
-    }
-
 }
 

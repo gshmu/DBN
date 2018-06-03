@@ -1,16 +1,16 @@
-package com.dci.intellij.dbn.editor.session;
+package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
+import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileType;
@@ -28,14 +28,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
+public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     private SessionBrowser sessionBrowser;
     private DBObjectRef<DBSchema> schemaRef;
 
 
-    public SessionBrowserStatementVirtualFile(SessionBrowser sessionBrowser, String content) {
+    public DBSessionStatementVirtualFile(SessionBrowser sessionBrowser, String content) {
         super(sessionBrowser.getProject());
         this.sessionBrowser = sessionBrowser;
         this.content = content;
@@ -53,19 +53,6 @@ public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implem
 
     public SessionBrowser getSessionBrowser() {
         return sessionBrowser;
-    }
-
-    @NotNull
-    @Override
-    protected String createPath() {
-        return DatabaseFileSystem.createPath(getConnectionHandler()) + ".STATEMENT";
-
-    }
-
-    @NotNull
-    @Override
-    protected String createUrl() {
-        return DatabaseFileSystem.createUrl(getConnectionHandler()) + "#SESSION_BROWSER_STATEMENT";
     }
 
     public Icon getIcon() {
@@ -130,7 +117,7 @@ public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implem
     public OutputStream getOutputStream(Object requestor, final long modificationTimestamp, long newTimeStamp) throws IOException {
         return new ByteArrayOutputStream() {
             public void close() {
-                SessionBrowserStatementVirtualFile.this.modificationTimestamp = modificationTimestamp;
+                DBSessionStatementVirtualFile.this.modificationTimestamp = modificationTimestamp;
                 content = toString();
             }
         };

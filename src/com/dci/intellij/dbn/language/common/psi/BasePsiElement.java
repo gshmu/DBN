@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
-import com.dci.intellij.dbn.editor.session.SessionBrowserStatementVirtualFile;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserForm;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -29,9 +28,10 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
-import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBSessionStatementVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.lang.ASTNode;
@@ -339,8 +339,8 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                         return;
                     }
 
-                    if (virtualFile instanceof SessionBrowserStatementVirtualFile) {
-                        SessionBrowserStatementVirtualFile sessionBrowserStatementFile = (SessionBrowserStatementVirtualFile) virtualFile;
+                    if (virtualFile instanceof DBSessionStatementVirtualFile) {
+                        DBSessionStatementVirtualFile sessionBrowserStatementFile = (DBSessionStatementVirtualFile) virtualFile;
                         SessionBrowser sessionBrowser = sessionBrowserStatementFile.getSessionBrowser();
                         if (sessionBrowser != null) {
                             SessionBrowserForm editorForm = sessionBrowser.getEditorForm();

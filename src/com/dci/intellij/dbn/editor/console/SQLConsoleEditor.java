@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.console;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorImpl;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorState;
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 

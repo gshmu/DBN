@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection.transaction;
 
 
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
-import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import javax.swing.*;
