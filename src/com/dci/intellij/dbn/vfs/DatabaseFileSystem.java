@@ -56,12 +56,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.CONSOLES;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.DATASET_FILTERS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECTS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECT_CONTENTS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_BROWSERS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_STATEMENTS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.values;
+
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */ApplicationComponent {
     public static final String PS = "/";
     private static final String PROTOCOL = "db";
     private static final String PROTOCOL_PREFIX = PROTOCOL + "://";
 
-    private enum FilePathType {
+    public enum FilePathType {
         OBJECTS("objects", "objects"),
         OBJECT_CONTENTS("object_contents", "object contents"),
         CONSOLES("consoles", "consoles"),
@@ -77,13 +85,17 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             this.presentableUrlToken = presentableUrlToken + PS;
         }
 
-        int length() {
-            return urlToken.length();
-        }
-
         @Override
         public String toString() {
             return urlToken;
+        }
+
+        boolean is(String path) {
+            return path.startsWith(urlToken);
+        }
+
+        String collate(String path) {
+            return path.substring(urlToken.length());
         }
     }
 
@@ -111,41 +123,41 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
      */
 
     @Nullable
-    public VirtualFile findFileByPath(@NotNull @NonNls String url) {
+    public VirtualFile findFileByPath(@NotNull @NonNls String path) {
         int startIndex = 0;
-        if (url.startsWith(PROTOCOL_PREFIX)) {
+        if (path.startsWith(PROTOCOL_PREFIX)) {
             startIndex = PROTOCOL_PREFIX.length();
         }
 
-        int index = url.indexOf('/', startIndex);
+        int index = path.indexOf('/', startIndex);
 
         if (index > -1) {
-            ConnectionId connectionId = ConnectionId.get(url.substring(startIndex, index));
+            ConnectionId connectionId = ConnectionId.get(path.substring(startIndex, index));
             ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
             if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isEnabled()) {
-                String objectPath = url.substring(index + 1);
-                if (isValidPath(objectPath) && allowFileLookup(connectionHandler)) {
-                    if (objectPath.startsWith(FilePathType.CONSOLES.urlToken)) {
-                        String consoleName = objectPath.substring(FilePathType.CONSOLES.length());
+                String relativePath = path.substring(index + 1);
+                if (isValidPath(relativePath) && allowFileLookup(connectionHandler)) {
+                    if (CONSOLES.is(relativePath)) {
+                        String consoleName = CONSOLES.collate(relativePath);
                         return connectionHandler.getConsoleBundle().getConsole(consoleName);
 
-                    } else if (objectPath.startsWith(FilePathType.SESSION_BROWSERS.urlToken)) {
+                    } else if (SESSION_BROWSERS.is(relativePath)) {
                         return connectionHandler.getSessionBrowserFile();
 
-                    } else if (objectPath.startsWith(FilePathType.OBJECTS.urlToken)) {
-                        String objectIdentifier = objectPath.substring(FilePathType.OBJECTS.length());
+                    } else if (OBJECTS.is(relativePath)) {
+                        String objectIdentifier = OBJECTS.collate(relativePath);
                         DBObjectRef objectRef = new DBObjectRef(connectionId, objectIdentifier);
                         DBObject object = objectRef.get();
                         if (object != null && object.is(DBObjectProperty.EDITABLE)) {
                             return findOrCreateDatabaseFile((DBSchemaObject) object);
                         }
-                    } else if (objectPath.startsWith(FilePathType.OBJECT_CONTENTS.urlToken)) {
-                        String contentIdentifier = objectPath.substring(FilePathType.OBJECT_CONTENTS.length());
+                    } else if (OBJECT_CONTENTS.is(relativePath)) {
+                        String contentIdentifier = OBJECT_CONTENTS.collate(relativePath);
                         int contentTypeEndIndex = contentIdentifier.indexOf(PS);
                         String contentTypeStr = contentIdentifier.substring(0, contentTypeEndIndex);
                         DBContentType contentType = DBContentType.valueOf(contentTypeStr.toUpperCase());
 
-                        String objectIdentifier = objectPath.substring(contentTypeEndIndex + 1);
+                        String objectIdentifier = relativePath.substring(contentTypeEndIndex + 1);
                         DBObjectRef objectRef = new DBObjectRef(connectionId, objectIdentifier);
                         DBObject object = objectRef.get();
                         if (object != null && object.is(DBObjectProperty.EDITABLE)) {
@@ -171,7 +183,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             path = path.replace(connectionId.id(), connectionHandler.getName());
         }
 
-        for (FilePathType value : FilePathType.values()) {
+        for (FilePathType value : values()) {
             path = path.replace(value.urlToken, value.presentableUrlToken);
         }
 
@@ -244,7 +256,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         if (virtualFile instanceof DBObjectVirtualFile) {
             DBObjectVirtualFile file = (DBObjectVirtualFile) virtualFile;
             DBObjectRef objectRef = file.getObjectRef();
-            return objectRef.getConnectionId() + PS + FilePathType.OBJECTS + objectRef.serialize();
+            return objectRef.getConnectionId() + PS + OBJECTS + objectRef.serialize();
 
         }
 
@@ -252,7 +264,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             DBContentVirtualFile file = (DBContentVirtualFile) virtualFile;
             DBObjectRef objectRef = file.getObject().getRef();
             DBContentType contentType = file.getContentType();
-            return objectRef.getConnectionId() + PS + FilePathType.OBJECT_CONTENTS + contentType.name() + PS + objectRef.serialize();
+            return objectRef.getConnectionId() + PS + OBJECT_CONTENTS + contentType.name() + PS + objectRef.serialize();
         }
 
         if (virtualFile instanceof DBObjectListVirtualFile) {
@@ -271,23 +283,23 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
         if (virtualFile instanceof DBDatasetFilterVirtualFile) {
             DBDatasetFilterVirtualFile file = (DBDatasetFilterVirtualFile) virtualFile;
-            return createPath(connectionHandler) + PS + FilePathType.DATASET_FILTERS + file.getDataset().getRef().serialize();
+            return createPath(connectionHandler) + PS + DATASET_FILTERS + file.getDataset().getRef().serialize();
         }
 
         if (virtualFile instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile file = (DBConsoleVirtualFile) virtualFile;
-            return createPath(connectionHandler) + PS + FilePathType.CONSOLES + file.getName();
+            return createPath(connectionHandler) + PS + CONSOLES + file.getName();
         }
 
         if (virtualFile instanceof DBSessionBrowserVirtualFile) {
             DBSessionBrowserVirtualFile file = (DBSessionBrowserVirtualFile) virtualFile;
-            return createPath(connectionHandler) + PS + FilePathType.SESSION_BROWSERS + file.getName();
+            return createPath(connectionHandler) + PS + SESSION_BROWSERS + file.getName();
 
         }
 
         if (virtualFile instanceof DBSessionStatementVirtualFile) {
             DBSessionStatementVirtualFile file = (DBSessionStatementVirtualFile) virtualFile;
-            return createPath(connectionHandler) + PS + FilePathType.SESSION_STATEMENTS + file.getName();
+            return createPath(connectionHandler) + PS + SESSION_STATEMENTS + file.getName();
         }
 
         throw new IllegalArgumentException("File of type " + virtualFile.getClass() + " is not supported");
