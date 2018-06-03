@@ -462,4 +462,27 @@ public enum DBObjectType implements DynamicContentType {
 
         return false;
     }
+
+    public static DBObjectType forName(String name) {
+        for (DBObjectType objectType : values()) {
+            if (objectType.getName().equals(name)) {
+                return objectType;
+            }
+        }
+        throw new IllegalArgumentException("No ObjectType found for name '" + name + "'");
+    }
+
+    public static DBObjectType forListName(String name, DBObjectType parent) {
+        for (DBObjectType objectType : values()) {
+            if (objectType.getListName().equals(name) && (parent == null || objectType.getParents().contains(parent))) {
+                return objectType;
+            }
+        }
+        if (parent != null) {
+            return forListName(name, null);
+        }
+
+        throw new IllegalArgumentException("No ObjectType found for list name '" + name + "'");
+    }
+
 }
