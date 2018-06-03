@@ -90,4 +90,9 @@ public class DatabaseSession extends DisposableBase implements Comparable<Databa
         }
         return name.compareTo(o.name);
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
