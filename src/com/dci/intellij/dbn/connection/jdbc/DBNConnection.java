@@ -83,6 +83,7 @@ public class DBNConnection extends DBNConnectionBase {
 
                 @Override
                 protected void fail() {
+                    checkTimestamp = 0;
                     // do not set the status if check failed
                 }
             };
