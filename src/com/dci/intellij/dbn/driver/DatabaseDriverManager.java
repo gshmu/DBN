@@ -40,7 +40,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
         INTERNAL_LIB_MAP.put(DatabaseType.MYSQL, mysql);
 
         HashMap<String, String> sqlite = new HashMap<String, String>();
-        sqlite.put("1.", "sqlite-jdbc-3.21.10.jar");
+        sqlite.put("1.", "sqlite-jdbc-3.21.0.jar");
         INTERNAL_LIB_MAP.put(DatabaseType.SQLITE, sqlite);
 
         HashMap<String, String> postgres = new HashMap<String, String>();
