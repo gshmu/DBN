@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -58,11 +59,21 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     @Override
     public boolean isValid() {
         return super.isValid() && objectRef.get() != null;
-    }    
+    }
+
+    @NotNull
+    @Override
+    public String getPresentablePath() {
+        return getConnectionHandler().getName() + File.separatorChar +
+                getObjectRef().getObjectType().getListName() + File.separatorChar +
+                getObjectRef().getQualifiedName();
+    }
 
     /*********************************************************
      *                     VirtualFile                       *
      *********************************************************/
+
+
     @NotNull
     public FileType getFileType() {
         return UnknownFileType.INSTANCE;
