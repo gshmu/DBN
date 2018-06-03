@@ -85,7 +85,6 @@ import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SESSION;
 public class FileConnectionMappingManager extends AbstractProjectComponent implements ProjectComponent, PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.FileConnectionMappingManager";
 
-    private Project project;
     private Set<FileConnectionMapping> mappings = new THashSet<FileConnectionMapping>();
 
     private FileConnectionMappingManager(Project project) {
@@ -186,6 +185,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     @Nullable
     public ConnectionHandler getConnectionHandler(@NotNull VirtualFile virtualFile) {
         try {
+            Project project = getProject();
             // if the file is a database content file then get the connection from the underlying database object
             if (VirtualFileUtil.isDatabaseFileSystem(virtualFile)) {
                 if (virtualFile instanceof FileConnectionMappingProvider) {
@@ -242,6 +242,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         if (VirtualFileUtil.isLocalFileSystem(virtualFile) || VirtualFileUtil.isVirtualFileSystem(virtualFile)) {
             // if the file is an attached ddl file, then resolve the object which it is
             // linked to, and return its parent schema
+            Project project = getProject();
             DBSchemaObject schemaObject = DDLFileAttachmentManager.getInstance(project).getEditableObject(virtualFile);
             if (schemaObject != null && DatabaseFileSystem.isFileOpened(schemaObject)) {
                 return schemaObject.getSchema();
@@ -361,7 +362,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             boolean changed = setConnectionHandler(virtualFile, connectionHandler);
             if (changed) {
                 DocumentUtil.touchDocument(editor, true);
-
+                Project project = getProject();
                 FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile);
                 if (fileEditor != null) {
                     DBLanguageFileEditorToolbarForm toolbarForm = fileEditor.getUserData(DBLanguageFileEditorToolbarForm.USER_DATA_KEY);
@@ -397,6 +398,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
+                Project project = getProject();
                 ConnectionHandler activeConnection = file.getConnectionHandler();
                 if (activeConnection == null || activeConnection.isVirtual()) {
                     String message =
@@ -445,6 +447,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
      *             Select connection popup             *
      ***************************************************/
     public void promptConnectionSelector(DBLanguagePsiFile psiFile, boolean showVirtualConnections, boolean showCreateOption, boolean promptSchemaSelection, SimpleTask callback) {
+        Project project = getProject();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         FiltrableList<ConnectionHandler> connectionHandlers = connectionBundle.getConnectionHandlers();
@@ -723,7 +726,8 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         public void actionPerformed(AnActionEvent e) {
             final DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
-                final DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
+                Project project = getProject();
+                DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
                 ConnectionHandler connectionHandler = connectionHandlerRef.get();
                 sessionManager.showCreateSessionDialog(connectionHandler, new SimpleTask<DatabaseSession>() {
                     @Override
