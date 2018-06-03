@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,5 +59,22 @@ public class FileUtil {
             }
         }
         return path;
+    }
+
+    public static boolean isValidFileUrl(String fileUrl, Project project) {
+        DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+        LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
+
+        if (databaseFileSystem.isDatabaseUrl(fileUrl)) {
+            if (!databaseFileSystem.isValidPath(fileUrl, project)) {
+                return false;
+            }
+        } else if (fileUrl.startsWith("file://")) {
+            VirtualFile virtualFile = localFileSystem.findFileByPath(fileUrl.substring(7));
+            if (virtualFile == null) {
+                return false;
+            }
+        }
+        return true;
     }
 }

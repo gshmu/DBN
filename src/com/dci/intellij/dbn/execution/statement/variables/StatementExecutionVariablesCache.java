@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.execution.statement.variables;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.util.FileUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -12,7 +15,16 @@ import java.util.Map;
 import java.util.Set;
 
 public class StatementExecutionVariablesCache implements PersistentStateElement<Element> {
+    private ProjectRef projectRef;
     private Map<String, Set<StatementExecutionVariable>> fileVariablesMap = new THashMap<String, Set<StatementExecutionVariable>>();
+
+    public StatementExecutionVariablesCache(Project project) {
+        this.projectRef = ProjectRef.from(project);
+    }
+
+    public Project getProject() {
+        return projectRef.getnn();
+    }
 
     public Set<StatementExecutionVariable> getVariables(VirtualFile virtualFile) {
         String fileUrl = virtualFile.getUrl();
@@ -55,11 +67,12 @@ public class StatementExecutionVariablesCache implements PersistentStateElement<
         if (variablesElement != null) {
             this.fileVariablesMap.clear();
             List<Element> fileElements = variablesElement.getChildren();
+
             for (Element fileElement : fileElements) {
-                String filePath = fileElement.getAttributeValue("path");
+                String fileUrl = fileElement.getAttributeValue("path");
 
                 Set<StatementExecutionVariable> fileVariables = new THashSet<StatementExecutionVariable>();
-                this.fileVariablesMap.put(filePath, fileVariables);
+                this.fileVariablesMap.put(fileUrl, fileVariables);
 
                 List<Element> variableElements = fileElement.getChildren();
                 for (Element variableElement : variableElements) {
@@ -75,14 +88,17 @@ public class StatementExecutionVariablesCache implements PersistentStateElement<
         element.addContent(variablesElement);
 
         for (String fileUrl : fileVariablesMap.keySet()) {
-            Element fileElement = new Element("file");
-            fileElement.setAttribute("path", fileUrl);
-            Set<StatementExecutionVariable> executionVariables = fileVariablesMap.get(fileUrl);
-            for (StatementExecutionVariable executionVariable : executionVariables) {
-                Element variableElement = executionVariable.getState();
-                fileElement.addContent(variableElement);
+
+            if (FileUtil.isValidFileUrl(fileUrl, getProject())) {
+                Element fileElement = new Element("file");
+                fileElement.setAttribute("path", fileUrl);
+                Set<StatementExecutionVariable> executionVariables = fileVariablesMap.get(fileUrl);
+                for (StatementExecutionVariable executionVariable : executionVariables) {
+                    Element variableElement = executionVariable.getState();
+                    fileElement.addContent(variableElement);
+                }
+                variablesElement.addContent(fileElement);
             }
-            variablesElement.addContent(fileElement);
         }
     }
 }

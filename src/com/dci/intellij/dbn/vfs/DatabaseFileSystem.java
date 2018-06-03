@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.ddl.DDLFileType;
@@ -124,19 +125,18 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
     @Nullable
     public VirtualFile findFileByPath(@NotNull @NonNls String path) {
-        int startIndex = 0;
         if (path.startsWith(PROTOCOL_PREFIX)) {
-            startIndex = PROTOCOL_PREFIX.length();
+            path = path.substring(PROTOCOL_PREFIX.length());
         }
 
-        int index = path.indexOf('/', startIndex);
+        int index = path.indexOf(PS);
 
         if (index > -1) {
-            ConnectionId connectionId = ConnectionId.get(path.substring(startIndex, index));
+            ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
             ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
             if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isEnabled()) {
-                String relativePath = path.substring(index + 1);
-                if (isValidPath(relativePath) && allowFileLookup(connectionHandler)) {
+                if (allowFileLookup(connectionHandler)) {
+                    String relativePath = path.substring(index + 1);
                     if (CONSOLES.is(relativePath)) {
                         String consoleName = CONSOLES.collate(relativePath);
                         return connectionHandler.getConsoleBundle().getConsole(consoleName);
@@ -171,29 +171,63 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         return null;
     }
 
+    public boolean isValidPath(String path, Project project) {
+        if (path.startsWith(PROTOCOL_PREFIX)) {
+            path = path.substring(PROTOCOL_PREFIX.length());
+        }
+        if (path.startsWith("null")) {
+            return false;
+        }
+
+        int index = path.indexOf(PS);
+        if (index > -1) {
+            ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
+            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+            ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+            //ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
+            if (connectionHandler != null || !project.isInitialized()) {
+                String relativePath = path.substring(index + 1);
+                for (FilePathType pathType : FilePathType.values()) {
+                    if (pathType.is(relativePath)) {
+                        return true;
+                    }
+                }
+
+            }
+        }
+
+        return false;
+    }
+
+
     @NotNull
     @Override
     public String extractPresentableUrl(@NotNull String url) {
-        ConnectionId connectionId = ConnectionId.get(url.substring(0, url.indexOf(PS)));
+        if (url.startsWith(PROTOCOL_PREFIX)) {
+            url = url.substring(PROTOCOL_PREFIX.length());
+        }
+        return extractPresentablePath(url);
+    }
+
+    public String extractPresentablePath(@NotNull String path) {
+        int index = path.indexOf(PS);
+        ConnectionId connectionId = ConnectionId.get(index == -1 ? path : path.substring(0, index));
         ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
-        String path = url;
         if (connectionHandler == null) {
             path = path.replace(connectionId.id(), "UNKNOWN");
         } else {
             path = path.replace(connectionId.id(), connectionHandler.getName());
         }
 
-        for (FilePathType value : values()) {
-            path = path.replace(value.urlToken, value.presentableUrlToken);
+        if (index > -1) {
+            for (FilePathType value : values()) {
+                path = path.replace(value.urlToken, value.presentableUrlToken);
+            }
+
+            path = path.replace(PS, File.separator);
         }
 
-        path = path.replace(PS, File.separator);
-
         return path;
-    }
-
-    boolean isValidPath(String objectPath) {
-        return !objectPath.startsWith("null");
     }
 
     private boolean allowFileLookup(ConnectionHandler connectionHandler) {
