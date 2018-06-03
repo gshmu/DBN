@@ -20,5 +20,9 @@ public abstract class IntervalLoader<T> {
         return value;
     }
 
+    public T getValue() {
+        return value;
+    }
+
     protected abstract T load();
 }
