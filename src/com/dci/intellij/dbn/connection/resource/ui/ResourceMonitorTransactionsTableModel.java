@@ -12,11 +12,11 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TableModelListener;
 
-public class ResourceMonitorTableModel extends DisposableBase implements DBNTableModel {
+public class ResourceMonitorTransactionsTableModel extends DisposableBase implements DBNTableModel {
     private ConnectionHandlerRef connectionHandlerRef;
     private DBNConnection connection;
 
-    public ResourceMonitorTableModel(ConnectionHandler connectionHandler, @Nullable DBNConnection connection) {
+    public ResourceMonitorTransactionsTableModel(ConnectionHandler connectionHandler, @Nullable DBNConnection connection) {
         this.connectionHandlerRef = connectionHandler.getRef();
         this.connection = connection;
     }

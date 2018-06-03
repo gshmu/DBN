@@ -25,16 +25,16 @@ import java.awt.event.ActionListener;
 
 public class ResourceMonitorDetailForm extends DBNFormImpl {
     private JTable sessionsTable;
-    private JTable changesTable;
+    private JTable transactionsTable;
     private JPanel mainPanel;
     private JPanel headerPanel;
-    private JBScrollPane changesTableScrollPane;
+    private JBScrollPane transactionsTableScrollPane;
     private JBScrollPane sessionsTableScrollPane;
     private JButton commitButton;
     private JButton rollbackButton;
 
     private ConnectionHandlerRef connectionHandlerRef;
-    private ResourceMonitorTableModel changesTableModel;
+    private ResourceMonitorTransactionsTableModel transactionsTableModel;
     private ResourceMonitorSessionsTableModel sessionsTableModel;
 
     ResourceMonitorDetailForm(final ConnectionHandler connectionHandler) {
@@ -57,10 +57,10 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
             }
         });
 
-        changesTableModel = new ResourceMonitorTableModel(connectionHandler, null);
-        changesTable = new ResourceMonitorTable(changesTableModel);
-        changesTableScrollPane.setViewportView(changesTable);
-        changesTableScrollPane.getViewport().setBackground(changesTable.getBackground());
+        transactionsTableModel = new ResourceMonitorTransactionsTableModel(connectionHandler, null);
+        transactionsTable = new ResourceMonitorTransactionsTable(transactionsTableModel);
+        transactionsTableScrollPane.setViewportView(transactionsTable);
+        transactionsTableScrollPane.getViewport().setBackground(transactionsTable.getBackground());
 
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
 
@@ -69,7 +69,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
 
         EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
         DisposerUtil.register(this, sessionsTable);
-        DisposerUtil.register(this, changesTable);
+        DisposerUtil.register(this, transactionsTable);
     }
 
     public ConnectionHandler getConnectionHandler() {
@@ -96,7 +96,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
 
         @Override
         public void afterAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
-            if (connectionHandler == getConnectionHandler() && changesTableModel.getConnection() == connection && succeeded) {
+            if (connectionHandler == getConnectionHandler() && transactionsTableModel.getConnection() == connection && succeeded) {
                 refreshForm(connectionHandler, connection);
             }
         }
@@ -135,9 +135,9 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
             @Override
             protected void execute() {
                 if (!isDisposed()) {
-                    ResourceMonitorTableModel oldTableModel = changesTableModel;
-                    changesTableModel = new ResourceMonitorTableModel(connectionHandler, connection);
-                    changesTable.setModel(changesTableModel);
+                    ResourceMonitorTransactionsTableModel oldTableModel = transactionsTableModel;
+                    transactionsTableModel = new ResourceMonitorTransactionsTableModel(connectionHandler, connection);
+                    transactionsTable.setModel(transactionsTableModel);
                     boolean transactional = connection != null && connection.hasDataChanges();
                     commitButton.setEnabled(transactional);
                     rollbackButton.setEnabled(transactional);
