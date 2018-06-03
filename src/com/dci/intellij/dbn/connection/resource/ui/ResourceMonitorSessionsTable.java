@@ -30,7 +30,8 @@ class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTable
             ConnectionPool connectionPool = session.getConnectionHandler().getConnectionPool();
 
             if (session.isPool()) {
-                SimpleTextAttributes textAttributes = connectionPool.getSize() == 0 ?
+                int connectionPoolSize = connectionPool.getSize();
+                SimpleTextAttributes textAttributes = connectionPoolSize == 0 ?
                         SimpleTextAttributes.GRAY_ATTRIBUTES :
                         SimpleTextAttributes.REGULAR_ATTRIBUTES;
 
@@ -38,11 +39,11 @@ class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTable
                     append(session.getName(), textAttributes);
                     setIcon(session.getIcon());
                 } else if (column == 1) {
-                    append(connectionPool.getSize() == 0 ? "Not connected" : "Connected", textAttributes);
+                    append(connectionPoolSize == 0 ? "Not connected" : "Connected", textAttributes);
                 } else if (column == 2) {
-
+                    append(connectionPoolSize == 0 ? "" : DateFormatUtil.formatPrettyDateTime(connectionPool.getLastAccessTimestamp()), textAttributes);
                 } else if (column == 3) {
-                    append(connectionPool.getSize() + " / " + connectionPool.getPeakPoolSize(), textAttributes);
+                    append(connectionPoolSize + " / " + connectionPool.getPeakPoolSize(), textAttributes);
                 }
             } else {
                 DBNConnection connection = connectionPool.getSessionConnection(session.getId());
