@@ -12,13 +12,13 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.SessionBrowserManager;
-import com.dci.intellij.dbn.editor.session.SessionBrowserStatementVirtualFile;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
+import com.dci.intellij.dbn.vfs.file.DBSessionStatementVirtualFile;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -45,7 +45,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     private JPanel mainPanel;
 
 
-    private SessionBrowserStatementVirtualFile virtualFile;
+    private DBSessionStatementVirtualFile virtualFile;
     private DBLanguagePsiFile psiFile;
     private Document document;
     private EditorEx viewer;
@@ -129,7 +129,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     private void createStatementViewer() {
         Project project = sessionBrowser.getProject();
         ConnectionHandler connectionHandler = getConnectionHandler();
-        virtualFile = new SessionBrowserStatementVirtualFile(sessionBrowser, "");
+        virtualFile = new DBSessionStatementVirtualFile(sessionBrowser, "");
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), virtualFile, true);
         psiFile = (DBLanguagePsiFile) virtualFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 

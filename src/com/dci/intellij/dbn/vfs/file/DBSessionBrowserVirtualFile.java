@@ -1,22 +1,14 @@
-package com.dci.intellij.dbn.editor.data.filter;
+package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
-import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,51 +21,36 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
+public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Comparable<DBSessionBrowserVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
-    private DBObjectRef<DBDataset> datasetRef;
+    private ConnectionHandlerRef connectionHandlerRef;
 
-    public DatasetFilterVirtualFile(DBDataset dataset, String content) {
-        super(dataset.getProject());
-        this.datasetRef = DBObjectRef.from(dataset);
-        this.content = content;
-        name = dataset.getName();
-        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+    public DBSessionBrowserVirtualFile(ConnectionHandler connectionHandler) {
+        super(connectionHandler.getProject());
+        this.connectionHandlerRef = connectionHandler.getRef();
+        this.name = connectionHandler.getName() + " Sessions";
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
-        putUserData(PARSE_ROOT_ID_KEY, "subquery");
-    }
-
-    public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
-        DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
-        return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
-    }
-
-    public DBDataset getDataset() {
-        return DBObjectRef.get(datasetRef);
     }
 
     public Icon getIcon() {
-        return Icons.DBO_TABLE;
+        return Icons.FILE_SESSION_BROWSER;
     }
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(datasetRef.lookupConnectionHandler());
+        return connectionHandlerRef.get();
     }
 
-    @Nullable
     @Override
     public DBSchema getDatabaseSchema() {
-        DBDataset dataset = getDataset();
-        return dataset == null ? null : dataset.getSchema();
+        return null;
     }
 
     @Nullable
     @Override
     public DatabaseSession getDatabaseSession() {
-        return getConnectionHandler().getSessionBundle().getMainSession();
+        return getConnectionHandler().getSessionBundle().getPoolSession();
     }
 
     @NotNull
@@ -82,17 +59,10 @@ public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBPar
         return name;
     }
 
-    @NotNull
     @Override
-    protected String createPath() {
-        return DatabaseFileSystem.createPath(datasetRef) + ".FILTER";
-    }
-
-    @NotNull
-    @Override
-    protected String createUrl() {
-        return DatabaseFileSystem.createUrl(datasetRef) + "#FILTER";
-    }
+    public boolean isValid() {
+        return super.isValid() && connectionHandlerRef.isValid();
+    }    
 
     @Override
     public boolean isWritable() {
@@ -104,9 +74,12 @@ public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBPar
         return false;
     }
 
+    public boolean isDefault() {return name.equals(getConnectionHandler().getName());}
+
     @Override
     public VirtualFile getParent() {
-        return null;
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        return connectionHandler.getPsiDirectory().getVirtualFile();
     }
 
     @Override
@@ -124,7 +97,7 @@ public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBPar
     public OutputStream getOutputStream(Object requestor, final long modificationTimestamp, long newTimeStamp) throws IOException {
         return new ByteArrayOutputStream() {
             public void close() {
-                DatasetFilterVirtualFile.this.modificationTimestamp = modificationTimestamp;
+                DBSessionBrowserVirtualFile.this.modificationTimestamp = modificationTimestamp;
                 content = toString();
             }
         };
@@ -147,13 +120,7 @@ public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBPar
 
     @Override
     public long getLength() {
-        try {
-            return contentsToByteArray().length;
-        } catch (IOException e) {
-            e.printStackTrace();
-            assert false;
-            return 0;
-        }
+        return 0;
     }
 
     @Override
@@ -168,6 +135,11 @@ public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBPar
     @Override
     public String getExtension() {
         return "sql";
+    }
+
+    @Override
+    public int compareTo(@NotNull DBSessionBrowserVirtualFile o) {
+        return name.compareTo(o.name);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.vfs;
+package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -14,6 +14,9 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBView;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.VirtualFileStatus;
+import com.dci.intellij.dbn.vfs.VirtualFileStatusHolder;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
@@ -25,7 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements PropertyHolder<VirtualFileStatus>  {
-    protected DBEditableObjectVirtualFile mainDatabaseFile;
+    DBEditableObjectVirtualFile mainDatabaseFile;
     protected DBContentType contentType;
     private FileType fileType;
     private VirtualFileStatusHolder status = new VirtualFileStatusHolder();
@@ -109,18 +112,6 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     @NotNull
     public FileType getFileType() {
         return fileType;
-    }
-
-    @NotNull
-    @Override
-    protected String createPath() {
-        return DatabaseFileSystem.createPath(getObject().getRef(), contentType);
-    }
-
-    @NotNull
-    @Override
-    protected String createUrl() {
-        return DatabaseFileSystem.createUrl(getObject().getRef(), contentType);
     }
 
     public boolean isWritable() {

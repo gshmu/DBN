@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.code.diff;
 
-import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.util.messages.Topic;
 
 import java.util.EventListener;

@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.vfs;
+package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
@@ -19,6 +19,10 @@ import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
+import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
@@ -36,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -152,28 +155,6 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
 
     public DBConsoleType getType() {
         return type;
-    }
-
-    @NotNull
-    @Override
-    protected String createPath() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        switch (type) {
-            case STANDARD: return DatabaseFileSystem.createPath(connectionHandler) + "consoles" + File.separatorChar + name;
-            case DEBUG: return DatabaseFileSystem.createPath(connectionHandler) + "debug consoles" + File.separatorChar + name;
-        }
-        throw new IllegalArgumentException("Unsupported console type " + type);
-    }
-
-    @NotNull
-    @Override
-    protected String createUrl() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        switch (type) {
-            case STANDARD: return DatabaseFileSystem.createUrl(connectionHandler) + "/console#" + name;
-            case DEBUG: return DatabaseFileSystem.createUrl(connectionHandler) + "/console#" + name;
-        }
-        throw new IllegalArgumentException("Unsupported console type " + type);
     }
 
     @Override

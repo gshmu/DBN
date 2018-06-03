@@ -26,7 +26,7 @@ import com.dci.intellij.dbn.language.common.psi.lookup.VirtualObjectLookupAdapte
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;

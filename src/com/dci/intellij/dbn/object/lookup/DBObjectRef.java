@@ -21,8 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
+
 public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement<Element> {
-    public static final String SEPARATOR = "/";
     protected DBObjectRef parent;
     protected DBObjectType objectType;
     protected String objectName;
@@ -104,7 +105,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         if (objectIdentifier.contains("]")) {
             deserializeOld(connectionId, objectIdentifier);
         } else {
-            String[] tokens = objectIdentifier.split(SEPARATOR);
+            String[] tokens = objectIdentifier.split(PS);
 
             DBObjectRef objectRef = null;
             DBObjectType objectType = null;
@@ -136,12 +137,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @Deprecated
     private void deserializeOld(ConnectionId connectionId, String objectIdentifier) {
         int typeEndIndex = objectIdentifier.indexOf("]");
-        StringTokenizer objectTypes = new StringTokenizer(objectIdentifier.substring(1, typeEndIndex), SEPARATOR);
+        StringTokenizer objectTypes = new StringTokenizer(objectIdentifier.substring(1, typeEndIndex), PS);
 
         int objectStartIndex = typeEndIndex + 2;
         int objectEndIndex = objectIdentifier.lastIndexOf("]");
 
-        StringTokenizer objectNames = new StringTokenizer(objectIdentifier.substring(objectStartIndex, objectEndIndex), SEPARATOR);
+        StringTokenizer objectNames = new StringTokenizer(objectIdentifier.substring(objectStartIndex, objectEndIndex), PS);
 
         DBObjectRef objectRef = null;
         while (objectTypes.hasMoreTokens()) {
@@ -176,20 +177,20 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     public String serialize() {
         StringBuilder builder = new StringBuilder();
         builder.append(objectType.getListName());
-        builder.append(SEPARATOR);
+        builder.append(PS);
         builder.append(objectName);
 
         DBObjectRef parent = this.parent;
         while (parent != null) {
-            builder.insert(0, SEPARATOR);
+            builder.insert(0, PS);
             builder.insert(0, parent.objectName);
-            builder.insert(0, SEPARATOR);
+            builder.insert(0, PS);
             builder.insert(0, parent.objectType.getListName());
             parent = parent.parent;
         }
 
         if (overload > 0) {
-            builder.append(SEPARATOR);
+            builder.append(PS);
             builder.append(overload);
         }
 
@@ -456,7 +457,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         if (hashCode == -1) {
             synchronized (this) {
                 if (hashCode == -1) {
-                    hashCode = (getConnectionId().id() + '#' + serialize()).hashCode();
+                    hashCode = (getConnectionId().id() + PS + serialize()).hashCode();
                 }
             }
         }
@@ -471,7 +472,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         if (overload == 0) {
             return objectName;
         } else {
-            return objectName + '#' + overload;
+            return objectName + PS + overload;
         }
     }
 

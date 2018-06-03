@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.environment.options.listener;
 
-import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 
 public class EnvironmentManagerAdapter implements EnvironmentManagerListener {
     @Override

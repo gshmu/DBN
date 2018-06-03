@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.editor;
 
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.Nullable;
