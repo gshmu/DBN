@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TableModelListener;
 import java.util.List;
@@ -16,7 +17,7 @@ public class ResourceMonitorSessionsTableModel extends DisposableBase implements
     private ConnectionHandlerRef connectionHandlerRef;
     private List<DatabaseSession> sessions;
 
-    public ResourceMonitorSessionsTableModel(ConnectionHandler connectionHandler) {
+    ResourceMonitorSessionsTableModel(ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = connectionHandler.getRef();
         sessions = connectionHandler.getSessionBundle().getSessions();
     }
@@ -46,7 +47,7 @@ public class ResourceMonitorSessionsTableModel extends DisposableBase implements
         switch (columnIndex) {
             case 0: return "Session";
             case 1: return "Status";
-            case 2: return "Last access";
+            case 2: return "Last Access";
             case 3: return "Size / Peak";
         }
         return null;
@@ -64,8 +65,9 @@ public class ResourceMonitorSessionsTableModel extends DisposableBase implements
         return getSession(rowIndex);
     }
 
+    @Nullable
     public DatabaseSession getSession(int rowIndex) {
-        return sessions.get(rowIndex);
+        return rowIndex == -1 ? null : sessions.get(rowIndex);
     }
 
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}

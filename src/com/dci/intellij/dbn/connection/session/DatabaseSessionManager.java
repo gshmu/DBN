@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -66,13 +67,16 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     }
 
     public DatabaseSession createSession(ConnectionHandler connectionHandler, String name) {
-        return connectionHandler.getSessionBundle().createSession(name);
+        DatabaseSession session = connectionHandler.getSessionBundle().createSession(name);
+        EventUtil.notify(getProject(), SessionManagerListener.TOPIC).sessionCreated(session);
+        return session;
     }
 
     public void renameSession(DatabaseSession session, String newName) {
         ConnectionHandler connectionHandler = session.getConnectionHandler();
         String oldName = session.getName();
         connectionHandler.getSessionBundle().renameSession(oldName, newName);
+        EventUtil.notify(getProject(), SessionManagerListener.TOPIC).sessionChanged(session);
     }
 
     @NonNls
@@ -81,20 +85,28 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         return COMPONENT_NAME;
     }
 
-    public void deleteSession(final DatabaseSession session) {
-        final Project project = getProject();
-        MessageUtil.showQuestionDialog(
-                project,
-                "Delete session",
-                "Are you sure you want to delete this session?",
-                MessageUtil.OPTIONS_YES_NO, 0,
-                new MessageCallback(0) {
-                    @Override
-                    protected void execute() {
-                        ConnectionHandler connectionHandler = session.getConnectionHandler();
-                        connectionHandler.getSessionBundle().removeSession(session.getId());
-                    }
-                });
+    public void deleteSession(final DatabaseSession session, boolean confirm) {
+        if (confirm) {
+            MessageUtil.showQuestionDialog(
+                    getProject(),
+                    "Delete Session",
+                    "Are you sure you want to delete the session \"" + session.getName() + "\" for connection\"" + session.getConnectionHandler().getName() + "\"" ,
+                    MessageUtil.OPTIONS_YES_NO, 0,
+                    new MessageCallback(0) {
+                        @Override
+                        protected void execute() {
+                            deleteSession(session);
+                        }
+                    });
+        } else {
+            deleteSession(session);
+        }
+    }
+
+    public void deleteSession(@NotNull DatabaseSession session) {
+        ConnectionHandler connectionHandler = session.getConnectionHandler();
+        connectionHandler.getSessionBundle().deleteSession(session.getId());
+        EventUtil.notify(getProject(), SessionManagerListener.TOPIC).sessionDeleted(session);
     }
 
     /*********************************************

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.intellij.openapi.application.ApplicationAdapter;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
@@ -12,10 +11,10 @@ import com.intellij.openapi.project.ProjectManagerListener;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractProjectComponent extends ApplicationAdapter implements ProjectComponent, ProjectManagerListener, Disposable{
-    private Project project;
+    private ProjectRef projectRef;
 
     protected AbstractProjectComponent(Project project) {
-        this.project = project;
+        this.projectRef = ProjectRef.from(project);
         ProjectManager projectManager = ProjectManager.getInstance();
         projectManager.addProjectManagerListener(project, this);
         ApplicationManager.getApplication().addApplicationListener(this);
@@ -23,7 +22,7 @@ public abstract class AbstractProjectComponent extends ApplicationAdapter implem
 
     @NotNull
     public Project getProject() {
-        return FailsafeUtil.get(project);
+        return projectRef.getnn();
     }
 
     public void projectOpened() {
@@ -71,7 +70,6 @@ public abstract class AbstractProjectComponent extends ApplicationAdapter implem
     @Override
     public void dispose() {
         disposed = true;
-        project = null;
     }
 
     @Override
@@ -79,6 +77,7 @@ public abstract class AbstractProjectComponent extends ApplicationAdapter implem
         if (disposed) throw AlreadyDisposedException.INSTANCE;
     }
 
-    public final void disposeComponent() {
+    public void disposeComponent() {
+        dispose();
     }
 }

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.mapping;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
+import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.list.FiltrableList;
@@ -10,6 +11,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -24,6 +26,7 @@ import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
+import com.dci.intellij.dbn.connection.session.SessionManagerListener;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.editor.ui.DBLanguageFileEditorToolbarForm;
@@ -55,8 +58,8 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
+import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileMoveEvent;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
@@ -79,11 +82,28 @@ import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SESSION;
     name = FileConnectionMappingManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class FileConnectionMappingManager extends VirtualFileAdapter implements ProjectComponent, PersistentStateComponent<Element> {
+public class FileConnectionMappingManager extends AbstractProjectComponent implements ProjectComponent, PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.FileConnectionMappingManager";
 
     private Project project;
     private Set<FileConnectionMapping> mappings = new THashSet<FileConnectionMapping>();
+
+    private FileConnectionMappingManager(Project project) {
+        super(project);
+        VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
+        EventUtil.subscribe(getProject(), this, SessionManagerListener.TOPIC, sessionManagerListener);
+    }
+
+    @NotNull
+    public static FileConnectionMappingManager getInstance(@NotNull Project project) {
+        return FailsafeUtil.getComponent(project, FileConnectionMappingManager.class);
+    }
+
+    @NotNull
+    public String getComponentName() {
+        return COMPONENT_NAME;
+    }
+
 
     public boolean setConnectionHandler(VirtualFile virtualFile, ConnectionHandler connectionHandler) {
         if (VirtualFileUtil.isLocalFileSystem(virtualFile)) {
@@ -721,56 +741,62 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     /***************************************
      *         VirtualFileListener         *
      ***************************************/
-
-    @Override
-    public void fileDeleted(@NotNull VirtualFileEvent event) {
-        removeMapping(event.getFile());
-    }
-
-    public void fileMoved(@NotNull VirtualFileMoveEvent event) {
-        String oldFileUrl = event.getOldParent().getUrl() + "/" + event.getFileName();
-        FileConnectionMapping fileConnectionMapping = lookupMapping(oldFileUrl);
-        if (fileConnectionMapping != null) {
-            fileConnectionMapping.setFileUrl(event.getFile().getUrl());
+    private VirtualFileListener virtualFileListener = new VirtualFileListener() {
+        @Override
+        public void fileDeleted(@NotNull VirtualFileEvent event) {
+            removeMapping(event.getFile());
         }
-    }
 
-    public void propertyChanged(@NotNull VirtualFilePropertyEvent event) {
-        VirtualFile file = event.getFile();
-        VirtualFile parent = file.getParent();
-        if (file.isInLocalFileSystem() && parent != null) {
-            String oldFileUrl = parent.getUrl() + "/" + event.getOldValue();
+        public void fileMoved(@NotNull VirtualFileMoveEvent event) {
+            String oldFileUrl = event.getOldParent().getUrl() + "/" + event.getFileName();
             FileConnectionMapping fileConnectionMapping = lookupMapping(oldFileUrl);
             if (fileConnectionMapping != null) {
-                fileConnectionMapping.setFileUrl(file.getUrl());
+                fileConnectionMapping.setFileUrl(event.getFile().getUrl());
             }
         }
-    }
+
+        public void propertyChanged(@NotNull VirtualFilePropertyEvent event) {
+            VirtualFile file = event.getFile();
+            VirtualFile parent = file.getParent();
+            if (file.isInLocalFileSystem() && parent != null) {
+                String oldFileUrl = parent.getUrl() + "/" + event.getOldValue();
+                FileConnectionMapping fileConnectionMapping = lookupMapping(oldFileUrl);
+                if (fileConnectionMapping != null) {
+                    fileConnectionMapping.setFileUrl(file.getUrl());
+                }
+            }
+        }
+    };
+
+    /***************************************
+     *         SessionManagerListener      *
+     ***************************************/
+    private SessionManagerListener sessionManagerListener = new SessionManagerListener() {
+        @Override
+        public void sessionCreated(DatabaseSession session) {}
+
+        @Override
+        public void sessionDeleted(DatabaseSession session) {
+            for (FileConnectionMapping mapping : mappings) {
+                if (session.getId() == mapping.getSessionId()) {
+                    mapping.setSessionId(SessionId.MAIN);
+                }
+            }
+        }
+
+        @Override
+        public void sessionChanged(DatabaseSession session) {}
+    };
 
     /***************************************
      *          ProjectComponent         *
      ***************************************/
-    private FileConnectionMappingManager(Project project) {
-        this.project = project;
-        VirtualFileManager.getInstance().addVirtualFileListener(this);
-    }
-
-    @NotNull
-    public static FileConnectionMappingManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, FileConnectionMappingManager.class);
-    }
-
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
-
     public void projectOpened() {}
     public void projectClosed() {}
     public void initComponent() {}
     public void disposeComponent() {
+        super.disposeComponent();
         mappings.clear();
-        project = null;
     }
 
     /*********************************************
