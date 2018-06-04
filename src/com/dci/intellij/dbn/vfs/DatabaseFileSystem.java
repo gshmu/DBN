@@ -157,7 +157,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                         String contentTypeStr = contentIdentifier.substring(0, contentTypeEndIndex);
                         DBContentType contentType = DBContentType.valueOf(contentTypeStr.toUpperCase());
 
-                        String objectIdentifier = relativePath.substring(contentTypeEndIndex + 1);
+                        String objectIdentifier = contentIdentifier.substring(contentTypeEndIndex + 1);
                         DBObjectRef objectRef = new DBObjectRef(connectionId, objectIdentifier);
                         DBObject object = objectRef.get();
                         if (object != null && object.is(DBObjectProperty.EDITABLE)) {
