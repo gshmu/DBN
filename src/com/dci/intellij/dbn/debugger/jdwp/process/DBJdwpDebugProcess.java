@@ -245,6 +245,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         new DBDebugOperationTask(project, "initialize debug environment") {
             public void execute() {
                 try {
+                    console.system("Initializing debug environment");
                     T executionInput = getExecutionInput();
                     if (executionInput != null) {
                         ConnectionHandler connectionHandler = getConnectionHandler();
@@ -260,8 +261,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     }
                 } catch (Exception e) {
                     set(SESSION_INITIALIZATION_THREW_EXCEPTION, true);
+                    console.error("Error initializing debug environment\n" + e.getMessage());
                     stop();
-                    NotificationUtil.sendErrorNotification(project, "Error initializing debug environment.", e.getMessage());
                 }
             }
         }.start();

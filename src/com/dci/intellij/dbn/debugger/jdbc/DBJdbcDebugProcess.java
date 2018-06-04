@@ -190,7 +190,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                     synchronizeSession();
                 } catch (SQLException e) {
                     set(SESSION_INITIALIZATION_THREW_EXCEPTION, true);
-                    NotificationUtil.sendErrorNotification(getProject(), "Error initializing debug environment.", e.getMessage());
+                    console.error("Error initializing debug environment\n" + e.getMessage());
                     session.stop();
                 }
             }

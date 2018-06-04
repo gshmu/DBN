@@ -73,7 +73,7 @@ public abstract class PropertyHolderImpl<T extends Property> extends DisposableB
     }
 
     public void reset() {
-        computed = 0;
+        computed = 1;
         for (T property : getProperties()) {
             if (property.implicit()) {
                 set(property);

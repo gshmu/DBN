@@ -70,7 +70,7 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
         RemoteConnection remoteConnection = new RemoteConnection(true, "localhost", Integer.toString(freePort), true);
         RunProfileState state = FailsafeUtil.get(runProfile.getState(executor, environment));
 
-        DebugEnvironment debugEnvironment = new DefaultDebugEnvironment(environment, state, remoteConnection, false);
+        DebugEnvironment debugEnvironment = new DefaultDebugEnvironment(environment, state, remoteConnection, true);
         DebuggerManagerEx debuggerManagerEx = DebuggerManagerEx.getInstanceEx(session.getProject());
         DebuggerSession debuggerSession = debuggerManagerEx.attachVirtualMachine(debugEnvironment);
         assertNotNull(debuggerSession, "Could not initialize JDWP listener");
