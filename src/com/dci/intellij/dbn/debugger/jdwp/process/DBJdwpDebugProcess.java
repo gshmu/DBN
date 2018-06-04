@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -331,8 +330,9 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             set(DEBUGGER_STOPPING, true);
             set(BREAKPOINT_SETTING_ALLOWED, false);
             console.system("Stopping debugger...");
-            super.stop();
+            getSession().stop();
             stopDebugger();
+            super.stop();
         }
     }
 
@@ -355,8 +355,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     debuggerInterface.disconnectJdwpSession(targetConnection);
 
                 } catch (final SQLException e) {
-                    NotificationUtil.sendErrorNotification(getProject(), "Error stopping debugger.", e.getMessage());
-                    //showErrorDialog(e);
+                    console.error("Error stopping debugger: " + e.getMessage());
                 } finally {
                     DBRunConfig<T> runProfile = getRunProfile();
                     if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
@@ -365,6 +364,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
                     DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
                     releaseTargetConnection();
+                    console.system("Debugger stopped");
                 }
             }
         }.start();

@@ -495,8 +495,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                     }
                 }
             } catch (SQLException e) {
-                NotificationUtil.sendErrorNotification(project, "Error suspending debugger session.", e.getMessage());
-                //showErrorDialog(e);
+                console.error("Error suspending debugger session: " + e.getMessage());
             }
 
             DBJdbcDebugSuspendContext suspendContext = new DBJdbcDebugSuspendContext(this);
@@ -549,8 +548,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 }
             }
         } catch (SQLException e) {
-            NotificationUtil.sendErrorNotification(getProject(), "Error stopping debugger session.", e.getMessage());
-            //showErrorDialog(e);
+            console.error("Error stopping debugger session: " + e.getMessage());
         }
     }
 
