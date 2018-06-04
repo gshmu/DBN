@@ -32,6 +32,7 @@ import javax.swing.*;
 public class ProjectSettings
         extends CompositeProjectConfiguration<ProjectSettingsEditorForm>
         implements SearchableConfigurable.Parent, com.dci.intellij.dbn.common.util.Cloneable<ProjectSettings> {
+
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private GeneralProjectSettings generalSettings;
@@ -213,10 +214,15 @@ public class ProjectSettings
 
     @Override
     public ProjectSettings clone() {
-        Element element = new Element("project-settings");
-        writeConfiguration(element);
-        ProjectSettings projectSettings = new ProjectSettings(getProject());
-        projectSettings.readConfiguration(element);
-        return projectSettings;
+        try {
+            IS_TRANSITORY.set(true);
+            Element element = new Element("project-settings");
+            writeConfiguration(element);
+            ProjectSettings projectSettings = new ProjectSettings(getProject());
+            projectSettings.readConfiguration(element);
+            return projectSettings;
+        } finally {
+            IS_TRANSITORY.set(false);
+        }
     }
 }
