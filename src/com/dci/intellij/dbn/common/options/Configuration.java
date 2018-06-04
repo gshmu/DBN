@@ -21,10 +21,14 @@ import java.util.List;
 
 public abstract class Configuration<T extends ConfigurationEditorForm> extends ConfigurationUtil implements SearchableConfigurable, PersistentConfiguration {
     private static final Logger LOGGER = LoggerFactory.createLogger();
+    protected static ThreadLocalFlag IS_TRANSITORY = new ThreadLocalFlag(false);
+
     private static ThreadLocalFlag IS_RESETTING = new ThreadLocalFlag(false);
     private static ThreadLocal<List<SettingsChangeNotifier>> SETTINGS_CHANGE_NOTIFIERS = new ThreadLocal<List<SettingsChangeNotifier>>();
     private T configurationEditorForm;
-    private boolean isModified = false;
+
+    private boolean modified = false;
+    private boolean transitory = IS_TRANSITORY.get();
 
     public String getHelpTopic() {
         return null;
@@ -64,7 +68,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
 
     public void setModified(boolean modified) {
         if (!isResetting()) {
-            isModified = modified;
+            this.modified = modified;
         }
     }
 
@@ -83,14 +87,18 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     }
 
     public boolean isModified() {
-        return isModified;
+        return modified;
+    }
+
+    public final boolean isTransitory() {
+        return transitory;
     }
 
     public void apply() throws ConfigurationException {
         if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
             configurationEditorForm.applyFormChanges();
         }
-        isModified = false;
+        modified = false;
 
         if (this instanceof TopLevelConfig) {
             TopLevelConfig topLevelConfig = (TopLevelConfig) this;
@@ -136,7 +144,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
                         configurationEditorForm.resetFormChanges();
                     }
                 } finally {
-                    isModified = false;
+                    modified = false;
                     IS_RESETTING.set(false);
                 }
             }

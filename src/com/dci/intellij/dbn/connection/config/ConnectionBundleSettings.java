@@ -111,7 +111,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
             connections.add(connection);
         }
 
-        if (!project.isDefault()) {
+        if (!project.isDefault() && !isTransitory()) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
             ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
             connectionBundle.applySettings(this);

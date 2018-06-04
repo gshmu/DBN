@@ -97,19 +97,19 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     public void applySettings(ConnectionBundleSettings settings) {
         AbstractFiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableListImpl<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
         final List<ConnectionHandler> oldConnectionHandlers = new ArrayList<ConnectionHandler>(this.connectionHandlers.getFullList());
-        List<ConnectionSettings> connections = settings.getConnections();
+        List<ConnectionSettings> connectionSettings = settings.getConnections();
         boolean listChanged = false;
-        for (ConnectionSettings connection : connections) {
-            ConnectionId connectionId = connection.getConnectionId();
+        for (ConnectionSettings connectionSetting : connectionSettings) {
+            ConnectionId connectionId = connectionSetting.getConnectionId();
             ConnectionHandler connectionHandler = getConnectionHandler(oldConnectionHandlers, connectionId);
             if (connectionHandler == null) {
-                connectionHandler = new ConnectionHandlerImpl(this, connection);
+                connectionHandler = new ConnectionHandlerImpl(this, connectionSetting);
                 newConnectionHandlers.add(connectionHandler);
                 Disposer.register(this, connectionHandler);
                 listChanged = true;
             } else {
-                listChanged = listChanged || connectionHandler.isEnabled() != connection.isActive();
-                connectionHandler.setSettings(connection);
+                listChanged = listChanged || connectionHandler.isEnabled() != connectionSetting.isActive();
+                connectionHandler.setSettings(connectionSetting);
                 newConnectionHandlers.add(connectionHandler);
                 oldConnectionHandlers.remove(connectionHandler);
             }
