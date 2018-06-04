@@ -95,7 +95,6 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
 
     protected void fail() {
         set(current, true);
-        checkTimestamp = 0;
     }
 
     public final void change(boolean value) {
