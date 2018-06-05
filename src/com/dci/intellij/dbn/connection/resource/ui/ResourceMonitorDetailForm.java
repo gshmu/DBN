@@ -68,6 +68,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(sessionsTable);
         decorator.addExtraAction(commitAction);
         decorator.addExtraAction(rollbackAction);
+        decorator.addExtraAction(disconnectAction);
         decorator.addExtraAction(deleteSessionAction);
         decorator.setPreferredSize(new Dimension(-1, 400));
         sessionsPanel.add(decorator.createPanel(), BorderLayout.CENTER);
@@ -161,6 +162,42 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
 
     };
 
+    private final AnActionButton disconnectAction = new DumbAwareActionButton("Disconnect", null, Icons.ACTION_DISCONNECT_SESSION) {
+        @Override
+        public void actionPerformed(AnActionEvent e) {
+            DatabaseSession session = getSelectedSession();
+            if (session != null) {
+                final ConnectionHandler connectionHandler = getConnectionHandler();
+                MessageUtil.showQuestionDialog(getProject(),
+                        "Disconnect Session",
+                        "Are you sure you want to disconnect the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
+                        MessageUtil.OPTIONS_YES_NO, 0,
+                        new MessageCallback(0) {
+                            @Override
+                            protected void execute() {
+                                DBNConnection connection = getSelectedConnection();
+                                if (connection != null) {
+                                    DatabaseTransactionManager transactionManager = getTransactionManager();
+                                    transactionManager.execute(
+                                            connectionHandler,
+                                            connection,
+                                            false,
+                                            TransactionAction.DISCONNECT,
+                                            null);
+                                }
+                            }
+                        });
+            }
+        }
+
+        @Override
+        public void updateButton(AnActionEvent e) {
+            DBNConnection connection = getSelectedConnection();
+            e.getPresentation().setEnabled(connection != null && !connection.isClosed());
+        }
+
+    };
+
     private final AnActionButton deleteSessionAction = new DumbAwareActionButton("Delete Session", null, Icons.ACTION_DELETE) {
         @Override
         public void actionPerformed(AnActionEvent e) {
@@ -185,8 +222,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
             DBNConnection connection = getSelectedConnection();
             e.getPresentation().setEnabled(
                     session != null &&
-                    !session.isPool() &&
-                    !session.isMain() &&
+                    session.isCustom() &&
                     (connection == null || !connection.hasDataChanges()));
         }
     };
