@@ -70,7 +70,7 @@ public class DatabaseSession extends DisposableBase implements Comparable<Databa
     }
 
     public boolean isDebug() {
-        return id == SessionId.DEBUG;
+        return id == SessionId.DEBUG || id == SessionId.DEBUGGER;
     }
 
     public boolean isPool() {

@@ -13,7 +13,7 @@ public class DeleteSortingCriteriaAction extends DumbAwareAction {
     }
 
     public void update(AnActionEvent e) {
-        e.getPresentation().setIcon(Icons.ACTION_DELETE);
+        e.getPresentation().setIcon(Icons.ACTION_CLOSE);
         e.getPresentation().setText("Remove Sorting Criteria");
     }
 

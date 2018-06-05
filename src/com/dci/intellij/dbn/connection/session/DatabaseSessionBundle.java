@@ -28,11 +28,9 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     public DatabaseSessionBundle(ConnectionHandler connectionHandler) {
         super(connectionHandler);
         this.connectionHandlerRef = connectionHandler.getRef();
-        mainSession = new DatabaseSession(SessionId.MAIN, "Main", connectionHandler);
-        poolSession = new DatabaseSession(SessionId.POOL, "Pool", connectionHandler);
 
+        mainSession = new DatabaseSession(SessionId.MAIN, "Main", connectionHandler);
         sessions.add(mainSession);
-        sessions.add(poolSession);
 
         if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
             debugSession = new DatabaseSession(SessionId.DEBUG, "Debug", connectionHandler);
@@ -40,6 +38,9 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
             sessions.add(debugSession);
             sessions.add(debuggerSession);
         }
+
+        poolSession = new DatabaseSession(SessionId.POOL, "Pool", connectionHandler);
+        sessions.add(poolSession);
     }
 
     public List<DatabaseSession> getSessions() {

@@ -15,7 +15,7 @@ import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class ConsoleDeleteAction extends DumbAwareAction {
     ConsoleDeleteAction() {
-        super("Delete console", "", Icons.ACTION_DELETE);
+        super("Delete console", "", Icons.ACTION_CLOSE);
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
