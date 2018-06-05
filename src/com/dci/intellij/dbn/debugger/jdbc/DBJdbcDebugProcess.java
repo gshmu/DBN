@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
@@ -173,9 +174,10 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                     T executionInput = getExecutionInput();
                     console.system("Initializing debug environment...");
                     ConnectionHandler connectionHandler = getConnectionHandler();
-                    targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionContext().getTargetSchema(), false);
+                    DBSchema schema = executionInput.getExecutionContext().getTargetSchema();
+                    targetConnection = connectionHandler.getDebugConnection(schema);
                     targetConnection.setAutoCommit(false);
-                    debugConnection = connectionHandler.getPoolConnection(true);
+                    debugConnection = connectionHandler.getDebuggerConnection();
                     console.system("Debug connections allocated");
 
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
@@ -367,14 +369,12 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     private void releaseDebugConnection() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        connectionHandler.dropPoolConnection(debugConnection);
+        ConnectionUtil.close(debugConnection);
         debugConnection = null;
     }
 
     protected void releaseTargetConnection() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        connectionHandler.dropPoolConnection(targetConnection);
+        ConnectionUtil.close(targetConnection);
         targetConnection = null;
     }
 

@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.database.common.execution;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -143,22 +142,19 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 loggingManager.disableLogger(connectionHandler, connection);
             }
 
-            try {
-                if (options.is(ExecutionOption.COMMIT_AFTER_EXECUTION)) {
-                    connection.commit();
-                } else {
-                    if (targetSessionId == SessionId.POOL) {
-                        connection.rollback();
-                    }
+            if (options.is(ExecutionOption.COMMIT_AFTER_EXECUTION)) {
+                ConnectionUtil.commit(connection);
+            } else {
+                if (targetSessionId == SessionId.POOL) {
+                    ConnectionUtil.rollback(connection);
                 }
-            } catch (SQLException e) {
-                NotificationUtil.sendErrorNotification(getProject(), "Error committing / rolling-back after method execution.", e.getMessage());
             }
 
-            if (targetSessionId == SessionId.POOL) {
-                if (debuggerType == DBDebuggerType.JDBC)
-                    connectionHandler.dropPoolConnection(connection); else
-                    connectionHandler.freePoolConnection(connection);
+            if (connection.isDebugConnection()) {
+                ConnectionUtil.close(connection);
+
+            } else if (connection.isPoolConnection()) {
+                connectionHandler.freePoolConnection(connection);
             }
         }
     }

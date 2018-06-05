@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     private ConnectionHandlerRef connectionHandlerRef;
     private DatabaseSession mainSession;
+    private DatabaseSession debugSession;
     private DatabaseSession poolSession;
 
     private List<DatabaseSession> sessions = new CopyOnWriteArrayList<DatabaseSession>();
@@ -27,8 +29,14 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
         this.connectionHandlerRef = connectionHandler.getRef();
         mainSession = new DatabaseSession(SessionId.MAIN, "Main", connectionHandler);
         poolSession = new DatabaseSession(SessionId.POOL, "Pool", connectionHandler);
+
         sessions.add(mainSession);
         sessions.add(poolSession);
+
+        if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
+            debugSession = new DatabaseSession(SessionId.DEBUG, "Debug", connectionHandler);
+            sessions.add(debugSession);
+        }
     }
 
     public List<DatabaseSession> getSessions() {
@@ -46,6 +54,10 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
 
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
+    }
+
+    public DatabaseSession getDebugSession() {
+        return debugSession;
     }
 
     public DatabaseSession getMainSession() {

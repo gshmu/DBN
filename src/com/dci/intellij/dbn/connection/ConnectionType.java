@@ -5,7 +5,8 @@ public enum ConnectionType {
     MAIN("Main"),
     POOL("Pool"),
     SESSION("Session"),
-    DEBUG("Debug")
+    DEBUG("Debug"),
+    DEBUGGER("Debugger")
     ;
 
     private String name;

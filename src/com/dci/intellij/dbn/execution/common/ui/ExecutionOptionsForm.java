@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -50,7 +51,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
     private LocalExecutionInput executionInput;
     private Set<ChangeListener> changeListeners = new HashSet<ChangeListener>();
 
-    public ExecutionOptionsForm(DBNForm parent, LocalExecutionInput executionInput, DBDebuggerType debuggerType) {
+    public ExecutionOptionsForm(DBNForm parent, LocalExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
         super(parent);
         this.executionInput = executionInput;
 
@@ -72,12 +73,12 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
             }
         }
 
-        if (executionInput.isSessionSelectionAllowed()) {
+        if (executionInput.isSessionSelectionAllowed() && debuggerType == DBDebuggerType.NONE) {
             targetSessionPanel.add(new SessionSelector(), BorderLayout.CENTER);
             targetSessionLabel.setVisible(false);
         } else {
             targetSessionLabel.setVisible(true);
-            SessionId sessionId = executionInput.getTargetSessionId();
+            SessionId sessionId = debuggerType == DBDebuggerType.NONE ? executionInput.getTargetSessionId() : SessionId.DEBUG;
             DatabaseSession targetSession = connectionHandler.getSessionBundle().getSession(sessionId);
             targetSessionLabel.setText(targetSession.getName());
             targetSessionLabel.setIcon(targetSession.getIcon());

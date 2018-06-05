@@ -5,6 +5,8 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
+import com.dci.intellij.dbn.vfs.DBConsoleType;
+import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -30,21 +32,32 @@ public class SessionSelectComboBoxAction extends DBNComboBoxAction implements Du
         if (virtualFile != null) {
             ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
             if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
-                DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
-                actionGroup.add(new SessionSelectAction(sessionBundle.getMainSession()));
-                actionGroup.add(new SessionSelectAction(sessionBundle.getPoolSession()));
-                List<DatabaseSession> sessions = sessionBundle.getSessions();
-                if (sessions.size() > 0) {
-                    //actionGroup.addSeparator();
-                    for (DatabaseSession session : sessions){
-                        if (session.isCustom()) {
-                            actionGroup.add(new SessionSelectAction(session));
-                        }
+                boolean isDebugConsole = false;
+                if (virtualFile instanceof DBConsoleVirtualFile) {
+                    DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+                    if (consoleVirtualFile.getType() == DBConsoleType.DEBUG) {
+                        isDebugConsole = true;
                     }
                 }
-                actionGroup.addSeparator();
-                actionGroup.add(new SessionCreateAction(connectionHandler));
-                actionGroup.add(new SessionDisableAction(connectionHandler));
+                DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
+                if (isDebugConsole) {
+                    actionGroup.add(new SessionSelectAction(sessionBundle.getDebugSession()));
+                } else {
+                    actionGroup.add(new SessionSelectAction(sessionBundle.getMainSession()));
+                    actionGroup.add(new SessionSelectAction(sessionBundle.getPoolSession()));
+                    List<DatabaseSession> sessions = sessionBundle.getSessions();
+                    if (sessions.size() > 0) {
+                        //actionGroup.addSeparator();
+                        for (DatabaseSession session : sessions){
+                            if (session.isCustom()) {
+                                actionGroup.add(new SessionSelectAction(session));
+                            }
+                        }
+                    }
+                    actionGroup.addSeparator();
+                    actionGroup.add(new SessionCreateAction(connectionHandler));
+                    actionGroup.add(new SessionDisableAction(connectionHandler));
+                }
             }
         }
         return actionGroup;

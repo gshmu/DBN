@@ -166,6 +166,18 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @NotNull
     @Override
+    public DBNConnection getDebugConnection(DBSchema schema) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @NotNull
+    @Override
+    public DBNConnection getDebuggerConnection() throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @NotNull
+    @Override
     public DBNConnection getConnection(SessionId sessionId, @Nullable DBSchema schema) throws SQLException {throw new UnsupportedOperationException();}
 
     @NotNull

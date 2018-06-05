@@ -454,7 +454,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
     public String getDebuggerVersion(ConnectionHandler connectionHandler) {
 
-        if (connectionHandler != null && DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
+        if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
             DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
             DBNConnection connection = null;
             try {
