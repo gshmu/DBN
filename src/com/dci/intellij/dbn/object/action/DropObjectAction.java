@@ -12,7 +12,7 @@ public class DropObjectAction extends DumbAwareAction {
     private DBObjectRef<DBSchemaObject> objectRef;
 
     public DropObjectAction(DBSchemaObject object) {
-        super("Drop...", null, Icons.ACTION_DELETE);
+        super("Drop...", null, Icons.ACTION_CLOSE);
         objectRef = DBObjectRef.from(object);
     }
 
