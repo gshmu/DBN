@@ -54,7 +54,8 @@ public class DBNConnection extends DBNConnectionBase {
                     ResourceStatus.INVALID,
                     ResourceStatus.INVALID_SETTING,
                     ResourceStatus.INVALID_CHECKING,
-                    TimeUtil.THIRTY_SECONDS) {
+                    0,
+                    true) { // true is terminal status
                 @Override
                 protected void changeInner(boolean value) throws SQLException {
                 }
@@ -70,7 +71,8 @@ public class DBNConnection extends DBNConnectionBase {
                     ResourceStatus.AUTO_COMMIT,
                     ResourceStatus.AUTO_COMMIT_SETTING,
                     ResourceStatus.AUTO_COMMIT_CHECKING,
-                    TimeUtil.FIVE_MINUTES) {
+                    0,
+                    false) { // no terminal status
                 @Override
                 protected void changeInner(boolean value) throws SQLException {
                     inner.setAutoCommit(value);
@@ -79,12 +81,6 @@ public class DBNConnection extends DBNConnectionBase {
                 @Override
                 protected boolean checkInner() throws SQLException {
                     return inner.getAutoCommit();
-                }
-
-                @Override
-                protected void fail() {
-                    checkTimestamp = 0;
-                    // do not set the status if check failed
                 }
             };
 
@@ -128,6 +124,12 @@ public class DBNConnection extends DBNConnectionBase {
     @Override
     public boolean isClosedInner() throws SQLException {
         return inner.isClosed();
+    }
+
+    @Override
+    public boolean isClosed() {
+        // skip checking "closed" on active connections
+        return !isActive() && super.isClosed();
     }
 
     @Override

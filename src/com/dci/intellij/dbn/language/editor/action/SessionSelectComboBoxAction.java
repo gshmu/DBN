@@ -32,15 +32,9 @@ public class SessionSelectComboBoxAction extends DBNComboBoxAction implements Du
         if (virtualFile != null) {
             ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
             if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
-                boolean isDebugConsole = false;
-                if (virtualFile instanceof DBConsoleVirtualFile) {
-                    DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-                    if (consoleVirtualFile.getType() == DBConsoleType.DEBUG) {
-                        isDebugConsole = true;
-                    }
-                }
                 DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
-                if (isDebugConsole) {
+
+                if (isDebugConsole(virtualFile)) {
                     actionGroup.add(new SessionSelectAction(sessionBundle.getDebugSession()));
                 } else {
                     actionGroup.add(new SessionSelectAction(sessionBundle.getMainSession()));
@@ -63,6 +57,17 @@ public class SessionSelectComboBoxAction extends DBNComboBoxAction implements Du
         return actionGroup;
     }
 
+    private boolean isDebugConsole(VirtualFile virtualFile) {
+        boolean isDebugConsole = false;
+        if (virtualFile instanceof DBConsoleVirtualFile) {
+            DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+            if (consoleVirtualFile.getType() == DBConsoleType.DEBUG) {
+                isDebugConsole = true;
+            }
+        }
+        return isDebugConsole;
+    }
+
     public void update(AnActionEvent e) {
         Project project = getProject(e);
         VirtualFile virtualFile = getVirtualFile(e);
@@ -77,11 +82,17 @@ public class SessionSelectComboBoxAction extends DBNComboBoxAction implements Du
             ConnectionHandler connectionHandler = mappingManager.getConnectionHandler(virtualFile);
             visible = connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.getSettings().getDetailSettings().isEnableSessionManagement();
             if (visible) {
-                DatabaseSession session = mappingManager.getDatabaseSession(virtualFile);
-                if (session != null) {
-                    text = session.getName();
-                    icon = session.getIcon();
-                    enabled = true;
+                if (isDebugConsole(virtualFile)) {
+                    DatabaseSession debugSession = connectionHandler.getSessionBundle().getDebugSession();
+                    text = debugSession.getName();
+                    icon = debugSession.getIcon();
+                    enabled = false;
+                } else {
+                    DatabaseSession session = mappingManager.getDatabaseSession(virtualFile);
+                    if (session != null) {
+                        text = session.getName();
+                        icon = session.getIcon();
+                        enabled = true;
 /*
                     // TODO allow selecting "hot" session?
                     DatabaseSession databaseSession = mappingManager.getDatabaseSession(virtualFile);
@@ -94,6 +105,7 @@ public class SessionSelectComboBoxAction extends DBNComboBoxAction implements Du
                     }
 */
 
+                    }
                 }
             }
         }

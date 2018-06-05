@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Traceable;
 import com.intellij.openapi.diagnostic.Logger;
 
@@ -30,7 +31,9 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
             closed = new ResourceStatusAdapter<Closeable>(closeable,
                     ResourceStatus.CLOSED,
                     ResourceStatus.CLOSED_SETTING,
-                    ResourceStatus.CLOSED_CHECKING) {
+                    ResourceStatus.CLOSED_CHECKING,
+                    TimeUtil.FIVE_SECONDS,
+                    true) {
                 @Override
                 protected void changeInner(boolean value) throws SQLException {
                     closeable.closeInner();
@@ -48,7 +51,9 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
             cancelled = new ResourceStatusAdapter<Cancellable>(cancellable,
                     ResourceStatus.CANCELLED,
                     ResourceStatus.CANCELLED_SETTING,
-                    ResourceStatus.CANCELLED_CHECKING) {
+                    ResourceStatus.CANCELLED_CHECKING,
+                    TimeUtil.FIVE_SECONDS,
+                    true) {
                 @Override
                 protected void changeInner(boolean value) throws SQLException {
                     cancellable.cancelInner();
@@ -58,6 +63,8 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
                 protected boolean checkInner() throws SQLException {
                     return cancellable.isCancelledInner();
                 }
+
+
             };
         }
     }

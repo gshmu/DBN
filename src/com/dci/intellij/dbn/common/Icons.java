@@ -48,7 +48,7 @@ public class Icons {
     public static final Icon ACTION_EXPAND_ALL = load("/img/action/ExpandAll.png");
     public static final Icon ACTION_GROUP = load("/img/action/Group.png");
     public static final Icon ACTION_DELETE = load("/img/action/Delete.png");
-    public static final Icon ACTION_CLOSE = ACTION_DELETE;
+    public static final Icon ACTION_CLOSE = load("/img/action/Close.png");
     public static final Icon ACTION_UP_DOWN = load("/img/action/UpDown.png");
     public static final Icon ACTION_REFRESH = load("/img/action/Synchronize.png");
     public static final Icon ACTION_TIMED_REFRESH = load("/img/action/TimedSynchronize.png");

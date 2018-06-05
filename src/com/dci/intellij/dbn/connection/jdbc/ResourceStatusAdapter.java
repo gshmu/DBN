@@ -17,22 +17,20 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     protected static final Logger LOGGER = LoggerFactory.createLogger();
 
     private final FailsafeWeakRef<T> resource;
-    private final ResourceStatus current;
+    private final ResourceStatus value;
     private final ResourceStatus changing;
     private final ResourceStatus checking;
     private final long checkInterval;
     protected long checkTimestamp;
+    private boolean terminal;
 
-    ResourceStatusAdapter(T resource, ResourceStatus current, ResourceStatus changing, ResourceStatus checking) {
-        this(resource, current, changing, checking, 0);
-    }
-
-    ResourceStatusAdapter(T resource, ResourceStatus current, ResourceStatus changing, ResourceStatus checking, long checkInterval) {
+    ResourceStatusAdapter(T resource, ResourceStatus value, ResourceStatus changing, ResourceStatus checking, long checkInterval, boolean terminal) {
         this.resource = new FailsafeWeakRef<T>(resource);
-        this.current = current;
+        this.value = value;
         this.changing = changing;
         this.checking = checking;
         this.checkInterval = checkInterval;
+        this.terminal = terminal;
     }
 
     private boolean is(ResourceStatus status) {
@@ -43,7 +41,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     private boolean set(ResourceStatus status, boolean value) {
         T resource = getResource();
         boolean changed = resource.set(status, value);
-        if (status == current && changed) resource.statusChanged(current);
+        if (status == this.value && changed) resource.statusChanged(this.value);
         return changed;
     }
 
@@ -52,12 +50,12 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
         return this.resource.get();
     }
 
-    private boolean isChecking() {
-        return is(checking);
+    private boolean value() {
+        return is(value);
     }
 
-    private boolean isCurrent() {
-        return is(current);
+    private boolean isChecking() {
+        return is(checking);
     }
 
     private boolean isChanging() {
@@ -72,16 +70,16 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                     try {
                         set(checking, true);
                         if (checkInterval == 0) {
-                            set(current, checkControlled());
+                            set(value, checkControlled());
                         } else {
                             long currentTimeMillis = System.currentTimeMillis();
                             if (TimeUtil.isOlderThan(checkTimestamp, checkInterval)) {
                                 checkTimestamp = currentTimeMillis;
-                                set(current, checkControlled());
+                                set(value, checkControlled());
                             }
                         }
                     } catch (Exception t){
-                        LOGGER.warn("Failed to check resource " + current + "status", t);
+                        LOGGER.warn("Failed to check resource " + value + "status", t);
                         fail();
                     } finally {
                         set(checking, false);
@@ -90,11 +88,19 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
             }
         }
 
-        return isCurrent();
+        return value();
     }
 
     protected void fail() {
-        set(current, true);
+        if (isTerminal()) {
+            set(value, true); // TODO really
+        } else {
+            if (checkInterval > 0) {
+                checkTimestamp =
+                    System.currentTimeMillis() - checkInterval + TimeUtil.FIVE_SECONDS; // retry in 5 seconds
+            }
+
+        }
     }
 
     public final void change(boolean value) {
@@ -109,15 +115,20 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
     private boolean canCheck() {
-        return !isChecking() && !isChanging();
+        return !isTerminal() && !isChecking() && !isChanging();
     }
 
+    private boolean isTerminal() {
+        return terminal && value();
+    }
+
+
     private boolean canChange(boolean value) {
-        return !isCurrent() && !isChanging() && get() != value;
+        return !value() && !isChanging() && get() != value;
     }
 
     private boolean checkControlled() {
-        return new SimpleTimeoutCall<Boolean>(5, TimeUnit.SECONDS, is(current), true) {
+        return new SimpleTimeoutCall<Boolean>(5, TimeUnit.SECONDS, is(value), true) {
             @Override
             public Boolean call() throws Exception {
                 return checkInner();
@@ -131,7 +142,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
             protected void execute() {
                 boolean daemon = true;
                 T resource = getResource();
-                if (resource.getResourceType() == ResourceType.CONNECTION && current == ResourceStatus.CLOSED) {
+                if (resource.getResourceType() == ResourceType.CONNECTION && ResourceStatusAdapter.this.value == ResourceStatus.CLOSED) {
                     // non daemon threads for closing connections
                     daemon = false;
                 }
@@ -142,7 +153,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                         try {
                             if (SettingsUtil.isDebugEnabled) LOGGER.info("Started " + getLogIdentifier());
                             changeInner(value);
-                            set(current, value);
+                            set(ResourceStatusAdapter.this.value, value);
                         } catch (Throwable e) {
                             LOGGER.warn("Error " + getLogIdentifier() + ": " + e.getMessage());
                             fail();

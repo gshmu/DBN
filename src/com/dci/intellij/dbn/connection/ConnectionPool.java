@@ -103,13 +103,22 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     @Nullable
     public DBNConnection getSessionConnection(SessionId sessionId) {
         if (sessionId == SessionId.MAIN) {
-            return mainConnection;
+            return verify(mainConnection);
         } else if (sessionId == SessionId.DEBUG) {
-            return debugConnection;
+            return verify(debugConnection);
         } else if (sessionId != SessionId.POOL) {
             return sessionConnections.get(sessionId);
         }
         return null;
+    }
+
+    private static DBNConnection verify(DBNConnection connection) {
+        if (connection != null) {
+            if (!connection.isActive() && !connection.isReserved() && !connection.isValid()){
+                return null;
+            }
+        }
+        return connection;
     }
 
     @NotNull
