@@ -44,6 +44,12 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     DBNConnection getConnection(SessionId sessionId, @Nullable DBSchema schema) throws SQLException;
 
     @NotNull
+    DBNConnection getDebugConnection(@Nullable DBSchema schema) throws SQLException;
+
+    @NotNull
+    DBNConnection getDebuggerConnection() throws SQLException;
+
+    @NotNull
     DBNConnection getPoolConnection(boolean readonly) throws SQLException;
 
     @NotNull

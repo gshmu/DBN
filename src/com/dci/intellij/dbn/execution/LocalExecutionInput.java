@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -56,6 +57,12 @@ public abstract class LocalExecutionInput extends ExecutionInput{
     public abstract boolean isSessionSelectionAllowed();
 
     public abstract boolean isDatabaseLogProducer();
+
+    @Override
+    public ConnectionId getConnectionHandlerId() {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        return connectionHandler == null ? null : connectionHandler.getId();
+    }
 
     /*********************************************************
      *                 PersistentConfiguration               *

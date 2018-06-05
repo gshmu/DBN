@@ -41,6 +41,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     private Map<SessionId, DBNConnection> sessionConnections = ContainerUtil.newConcurrentMap();
     private DBNConnection mainConnection;
     private DBNConnection debugConnection; // TODO
+    private DBNConnection debuggerConnection; // TODO
     private DBNConnection testConnection;
     private IntervalLoader<Long> lastAccessTimestamp = new IntervalLoader<Long>(TimeUtil.TEN_SECONDS) {
         @Override
@@ -77,6 +78,18 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         return mainConnection;
     }
 
+    @NotNull
+    DBNConnection ensureDebugConnection() throws SQLException {
+        debugConnection = init(debugConnection, ConnectionType.DEBUG);
+        return debugConnection;
+    }
+
+    @NotNull
+    DBNConnection ensureDebuggerConnection() throws SQLException {
+        debuggerConnection = init(debuggerConnection, ConnectionType.DEBUGGER);
+        return debuggerConnection;
+    }
+
     @Nullable
     public DBNConnection getMainConnection() {
         return mainConnection;
@@ -91,7 +104,9 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     public DBNConnection getSessionConnection(SessionId sessionId) {
         if (sessionId == SessionId.MAIN) {
             return mainConnection;
-        } if (sessionId != SessionId.POOL) {
+        } else if (sessionId == SessionId.DEBUG) {
+            return debugConnection;
+        } else if (sessionId != SessionId.POOL) {
             return sessionConnections.get(sessionId);
         }
         return null;
@@ -110,6 +125,14 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         ArrayList<DBNConnection> connections = new ArrayList<DBNConnection>();
         if (isOneOf(ConnectionType.MAIN, connectionTypes) && mainConnection != null) {
             connections.add(mainConnection);
+        }
+
+        if (isOneOf(ConnectionType.DEBUG, connectionTypes) && debugConnection != null) {
+            connections.add(debugConnection);
+        }
+
+        if (isOneOf(ConnectionType.DEBUGGER, connectionTypes) && debuggerConnection != null) {
+            connections.add(debuggerConnection);
         }
 
         if (isOneOf(ConnectionType.TEST, connectionTypes) && testConnection != null) {
@@ -267,10 +290,15 @@ public class ConnectionPool extends DisposableBase implements Disposable {
 
     void releaseConnection(DBNConnection connection) {
         if (connection != null) {
-            ConnectionUtil.rollback(connection);
-            ConnectionUtil.setAutocommit(connection, true);
-            ConnectionUtil.setReadonly(connection, true);
-            connection.set(ResourceStatus.RESERVED, false);
+            if (connection.isPoolConnection()) {
+                ConnectionUtil.rollback(connection);
+                ConnectionUtil.setAutocommit(connection, true);
+                ConnectionUtil.setReadonly(connection, true);
+                connection.set(ResourceStatus.RESERVED, false);
+            } else {
+                LOGGER.error("Trying to release non-POOL connection: " + connection.getType(), new IllegalArgumentException("No POOL connection"));
+            }
+
         }
     }
 

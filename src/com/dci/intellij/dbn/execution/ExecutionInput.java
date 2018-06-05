@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
@@ -120,6 +121,8 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
     public void setDebugExecutionTimeout(int timeout) {
         debugExecutionTimeout.set(timeout);
     }
+
+    public abstract ConnectionId getConnectionHandlerId();
 
     public void readConfiguration(Element element) {
         executionTimeout.set(SettingsUtil.getIntegerAttribute(element, "execution-timeout", executionTimeout.get()));

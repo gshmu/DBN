@@ -96,6 +96,11 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     }
 
     @Override
+    public ConnectionId getConnectionHandlerId() {
+        return methodRef.getConnectionId();
+    }
+
+    @Override
     public boolean hasExecutionVariables() {
         return false;
     }

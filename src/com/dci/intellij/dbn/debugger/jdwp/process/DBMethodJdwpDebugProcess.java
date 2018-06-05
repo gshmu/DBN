@@ -70,6 +70,8 @@ public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecution
 
     @Override
     protected void releaseTargetConnection() {
+        // method execution processor is responsible for closing
+        // the connection after the result is read
         targetConnection = null;
     }
 

@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.common.property;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 
 public abstract class PropertyHolderImpl<T extends Property> extends DisposableBase implements PropertyHolder<T>, Cloneable{
-    private static PrimeNumberIndex INDEX = new PrimeNumberIndex(100);
+    //private static PrimeNumberIndex INDEX = new PrimeNumberIndex(100);
 
-    private int computed = 1;
+    private int computed = 0;
 
     public PropertyHolderImpl() {
         for (T property : getProperties()) {
@@ -27,7 +27,7 @@ public abstract class PropertyHolderImpl<T extends Property> extends DisposableB
     @Override
     public boolean is(T property) {
         int idx = property.index();
-        return (computed % idx) == 0;
+        return (computed & idx) == idx;
     }
 
     @Override
@@ -41,13 +41,13 @@ public abstract class PropertyHolderImpl<T extends Property> extends DisposableB
             if (group != null) {
                 for (T prop : getProperties()) {
                     if (is(prop)) {
-                        computed = computed / prop.index();
+                        computed -= prop.index();
                         break;
                     }
                 }
             }
 
-            computed = computed * property.index();
+            computed = computed += property.index();
             return true;
         }
         return false;
@@ -55,14 +55,14 @@ public abstract class PropertyHolderImpl<T extends Property> extends DisposableB
 
     private boolean unset(T property) {
         if (is(property)) {
-            computed = computed / property.index();
+            computed -= property.index();
 
             PropertyGroup group = property.group();
             if (group != null) {
                 // set implicit property
                 for (T prop : getProperties()) {
                     if (prop.group() == group && prop.implicit() && prop != property && !is(prop)) {
-                        computed = computed * prop.index();
+                        computed += prop.index();
                         break;
                     }
                 }
@@ -73,7 +73,7 @@ public abstract class PropertyHolderImpl<T extends Property> extends DisposableB
     }
 
     public void reset() {
-        computed = 1;
+        computed = 0;
         for (T property : getProperties()) {
             if (property.implicit()) {
                 set(property);
@@ -82,7 +82,13 @@ public abstract class PropertyHolderImpl<T extends Property> extends DisposableB
     }
 
     public static int idx(Enum property) {
-        return INDEX.getPrime(property.ordinal());
+        //return INDEX.getPrime(property.ordinal());
+        double pow = Math.pow(2, property.ordinal());
+        if (pow > Integer.MAX_VALUE) {
+            System.out.println(pow);
+        }
+        return (int) pow;
+
     }
 
     @Override

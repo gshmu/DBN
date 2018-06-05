@@ -73,6 +73,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     private ConnectionHandlerRef connectionHandlerRef;
     private DBDebugProcessStatusHolder status = new DBDebugProcessStatusHolder();
     private int localTcpPort = 4000;
+    private String declaredBlockIdentifier;
 
     private DBBreakpointHandler<DBJdwpDebugProcess>[] breakpointHandlers;
     private DBDebugConsoleLogger console;
@@ -91,6 +92,9 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         breakpointHandlers = new DBBreakpointHandler[]{breakpointHandler};
         localTcpPort = tcpPort;
         debuggerSession.getProcess().putUserData(KEY, this);
+
+        DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
+        declaredBlockIdentifier = debuggerInterface.getJdwpBlockIdentifier().replace(".", "\\");
     }
 
     @Override
@@ -248,7 +252,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     T executionInput = getExecutionInput();
                     if (executionInput != null) {
                         ConnectionHandler connectionHandler = getConnectionHandler();
-                        targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionContext().getTargetSchema(), false);
+                        DBSchema schema = executionInput.getExecutionContext().getTargetSchema();
+                        targetConnection = connectionHandler.getDebugConnection(schema);
                         targetConnection.setAutoCommit(false);
                         DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                         debuggerInterface.initializeJdwpSession(targetConnection, Inet4Address.getLocalHost().getHostAddress(), String.valueOf(localTcpPort));
@@ -372,8 +377,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
 
     protected void releaseTargetConnection() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        connectionHandler.dropPoolConnection(targetConnection);
+        ConnectionUtil.close(targetConnection);
         targetConnection = null;
     }
 
@@ -425,6 +429,21 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
         return null;
     }
+
+    public boolean isDeclaredBlock(@Nullable Location location) {
+        try {
+            if (location != null && declaredBlockIdentifier != null && declaredBlockIdentifier.length() > 0) {
+                String sourcePath = location.sourcePath();
+                return sourcePath.startsWith(declaredBlockIdentifier);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+
 
     @Nullable
     private Location getLocation(@Nullable XStackFrame stackFrame) {

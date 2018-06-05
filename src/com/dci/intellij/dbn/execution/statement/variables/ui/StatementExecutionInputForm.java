@@ -29,6 +29,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBColor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -58,7 +59,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     private EditorEx viewer;
     private String statementText;
 
-    public StatementExecutionInputForm(final StatementExecutionInputsDialog parentComponent, final StatementExecutionProcessor executionProcessor, DBDebuggerType debuggerType, boolean isBulkExecution) {
+    public StatementExecutionInputForm(final StatementExecutionInputsDialog parentComponent, final StatementExecutionProcessor executionProcessor, @NotNull DBDebuggerType debuggerType, boolean isBulkExecution) {
         super(parentComponent);
         this.executionProcessor = executionProcessor;
         this.statementText = executionProcessor.getExecutionInput().getExecutableStatementText();

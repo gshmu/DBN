@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -51,8 +50,7 @@ public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistor
             MethodTreeNode methodNode) {
         for (MethodExecutionInput executionInput : executionInputs) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-            ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-            if (connectionHandler.getId().equals(connectionNode.getConnectionHandlerId()) &&
+            if (executionInput.getConnectionHandlerId() == connectionNode.getConnectionHandlerId() &&
                 methodRef.getSchemaName().equalsIgnoreCase(schemaNode.getName()) &&
                 methodRef.getQualifiedObjectName().equalsIgnoreCase(methodNode.getName()) &&
                 methodRef.getOverload() == methodNode.getOverload() ) {

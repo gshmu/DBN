@@ -156,6 +156,14 @@ public class DBNConnection extends DBNConnectionBase {
         return type == ConnectionType.POOL;
     }
 
+    public boolean isDebugConnection() {
+        return type == ConnectionType.DEBUG;
+    }
+
+    public boolean isDebuggerConnection() {
+        return type == ConnectionType.DEBUGGER;
+    }
+
     public boolean isMainConnection() {
         return type == ConnectionType.MAIN;
     }
@@ -205,20 +213,24 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public void commit() throws SQLException {
-        super.commit();
         updateLastAccess();
+
+        super.commit();
         resetDataChanges();
     }
 
     @Override
     public void rollback() throws SQLException {
-        super.rollback();
         updateLastAccess();
+
+        super.rollback();
         resetDataChanges();
     }
 
     @Override
     public void close() {
+        updateLastAccess();
+
         super.close();
         resetDataChanges();
     }

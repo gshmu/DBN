@@ -62,8 +62,7 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
         int lineNumber = location == null ? 0 : location.lineNumber() - 1;
 
         DBJdwpDebugProcess debugProcess = getDebugProcess();
-        String ownerName = debugProcess.getOwnerName(location);
-        if (ownerName == null) {
+        if (debugProcess.isDeclaredBlock(location) || debugProcess.getOwnerName(location) == null) {
             ExecutionInput executionInput = debugProcess.getExecutionInput();
             if (executionInput instanceof StatementExecutionInput) {
                 StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;

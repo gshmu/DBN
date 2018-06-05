@@ -47,11 +47,20 @@ public class DatabaseSession extends DisposableBase implements Comparable<Databa
         } else {
             DBNConnection connection = getConnectionHandler().getConnectionPool().getSessionConnection(id);
             if (connection == null || !connection.isValid()) {
-                return isMain() ? Icons.SESSION_MAIN : Icons.SESSION_CUSTOM;
+                return
+                    isMain() ?  Icons.SESSION_MAIN :
+                    isDebug() ? Icons.SESSION_DEBUG :
+                            Icons.SESSION_CUSTOM;
             } else if (connection.hasDataChanges()) {
-                return isMain() ? Icons.SESSION_MAIN_TRANSACTIONAL : Icons.SESSION_CUSTOM_TRANSACTIONAL;
+                return
+                    isMain() ? Icons.SESSION_MAIN_TRANSACTIONAL :
+                    isDebug() ? Icons.SESSION_DEBUG_TRANSACTIONAL :
+                            Icons.SESSION_CUSTOM_TRANSACTIONAL;
             } else {
-                return isMain() ? Icons.SESSION_MAIN/*_CONNECTED*/ : Icons.SESSION_CUSTOM/*_CONNECTED*/;
+                return
+                    isMain() ? Icons.SESSION_MAIN :
+                    isDebug() ? Icons.SESSION_DEBUG :
+                        Icons.SESSION_CUSTOM;
             }
         }
     }
@@ -60,12 +69,16 @@ public class DatabaseSession extends DisposableBase implements Comparable<Databa
         return id == SessionId.MAIN;
     }
 
+    public boolean isDebug() {
+        return id == SessionId.DEBUG;
+    }
+
     public boolean isPool() {
         return id == SessionId.POOL;
     }
 
     public boolean isCustom() {
-        return !isMain() && !isPool();
+        return !isMain() && !isPool() && !isDebug();
     }
 
     public void setName(String name) {

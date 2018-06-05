@@ -293,6 +293,9 @@ public class Icons {
     public static final Icon SESSION_POOL                 = load("/img/connection/SessionPool.png");
     public static final Icon SESSION_POOL_CONNECTED       = load("/img/connection/SessionPoolConnected.png");
     public static final Icon SESSION_POOL_TRANSACTIONAL   = load("/img/connection/SessionPoolTransactional.png");
+    public static final Icon SESSION_DEBUG                = load("/img/connection/SessionDebug.png");
+    public static final Icon SESSION_DEBUG_CONNECTED      = load("/img/connection/SessionDebugConnected.png");
+    public static final Icon SESSION_DEBUG_TRANSACTIONAL  = load("/img/connection/SessionDebugTransactional.png");
 
 
     public static final Icon DB_ORACLE            = load("/img/database/Oracle.png");
