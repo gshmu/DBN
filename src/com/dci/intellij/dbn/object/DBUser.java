@@ -6,6 +6,9 @@ public interface DBUser extends DBRoleGrantee, DBPrivilegeGrantee {
     boolean isExpired();
     boolean isLocked();
     DBSchema getSchema();
+
+    boolean isSessionUser();
+
     List<DBGrantedPrivilege> getPrivileges();
     List<DBGrantedRole> getRoles();
 

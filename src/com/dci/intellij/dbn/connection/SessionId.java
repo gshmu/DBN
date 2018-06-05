@@ -9,6 +9,7 @@ public final class SessionId extends PseudoConstant<SessionId> {
 
     public static final SessionId MAIN = get("MAIN");
     public static final SessionId POOL = get("POOL");
+    public static final SessionId DEBUG = get("DEBUG");
 
     public SessionId(String id) {
         super(id);
