@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SESSION_USER;
 
 public class DBUserImpl extends DBObjectImpl implements DBUser {
     DBObjectList<DBGrantedRole> roles;
@@ -54,6 +55,7 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
         name = resultSet.getString("USER_NAME");
         set(DBObjectProperty.EXPIRED, resultSet.getString("IS_EXPIRED").equals("Y"));
         set(DBObjectProperty.LOCKED, resultSet.getString("IS_LOCKED").equals("Y"));
+        set(SESSION_USER, getName().equalsIgnoreCase(getConnectionHandler().getUserName()));
     }
 
     @Override
@@ -80,6 +82,11 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     @Override
     public boolean isLocked() {
         return is(DBObjectProperty.LOCKED);
+    }
+
+    @Override
+    public boolean isSessionUser() {
+        return is(DBObjectProperty.SESSION_USER);
     }
 
     @Nullable

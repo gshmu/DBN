@@ -43,6 +43,7 @@ public enum DBObjectProperty implements Property {
     LOCKED,
     ADMIN_OPTION,
     DEFAULT_ROLE,
+    SESSION_USER,
 
     // trigger
     FOR_EACH_ROW

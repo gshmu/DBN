@@ -40,6 +40,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     private List<DBNConnection> poolConnections = ContainerUtil.createLockFreeCopyOnWriteList();
     private Map<SessionId, DBNConnection> sessionConnections = ContainerUtil.newConcurrentMap();
     private DBNConnection mainConnection;
+    private DBNConnection debugConnection; // TODO
     private DBNConnection testConnection;
     private IntervalLoader<Long> lastAccessTimestamp = new IntervalLoader<Long>(TimeUtil.TEN_SECONDS) {
         @Override
