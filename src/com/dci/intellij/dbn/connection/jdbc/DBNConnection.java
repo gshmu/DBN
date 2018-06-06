@@ -93,6 +93,7 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     protected <S extends Statement> S wrap(S statement) {
+        updateLastAccess();
         if (statement instanceof CallableStatement) {
             CallableStatement callableStatement = (CallableStatement) statement;
             statement = (S) new DBNCallableStatement(callableStatement, this);
