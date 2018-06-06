@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -122,6 +123,17 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Nullable
     public ConnectionInfo getConnectionInfo() {
         return connectionInfo;
+    }
+
+    @Override
+    @NotNull
+    public String getConnectionName(@Nullable DBNConnection connection) {
+        if (connection == null) {
+            return getName();
+        } else {
+            DatabaseSession session = sessionBundle.getSession(connection.getSessionId());
+            return getName() + " (" + session.getName() + ")";
+        }
     }
 
     @Override
@@ -326,8 +338,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @Override
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
-        getConnectionPool().setAutoCommit(autoCommit);
+    public void setAutoCommit(boolean autoCommit) {
         connectionSettings.getPropertiesSettings().setEnableAutoCommit(autoCommit);
     }
 

@@ -64,10 +64,10 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             if (actionList.size() > 0) {
                 pendingActions.addAll(actionList);
                 Project project = connectionHandler.getProject();
-                String connectionName = connectionHandler.getName() + " (" + connection.getSessionName() + ")";
                 if (ApplicationManager.getApplication().isDisposeInProgress()) {
                     executeActions(connectionHandler, connection, actionList);
                 } else {
+                    String connectionName = connectionHandler.getConnectionName(connection);
                     new BackgroundTask(project, "Performing \"" + actionList.get(0).getName() + "\" on connection " + connectionName, background) {
                         @Override
                         protected void execute(@NotNull ProgressIndicator indicator) {
@@ -85,14 +85,14 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
     private void executeActions(ConnectionHandler connectionHandler, DBNConnection connection, List<TransactionAction> actions) {
         Project project = getProject();
-        String connectionName = connectionHandler.getName() + " (" + connection.getSessionName() + ")";
         TransactionListener transactionListener = EventUtil.notify(project, TransactionListener.TOPIC);
         for (TransactionAction action : actions) {
-            executeAction(connectionHandler, connection, project, connectionName, transactionListener, action);
+            executeAction(connectionHandler, connection, project, transactionListener, action);
         }
     }
 
-    private void executeAction(ConnectionHandler connectionHandler, DBNConnection connection, Project project, String connectionName, TransactionListener transactionListener, TransactionAction action) {
+    private void executeAction(ConnectionHandler connectionHandler, DBNConnection connection, Project project, TransactionListener transactionListener, TransactionAction action) {
+        String connectionName = connectionHandler.getConnectionName(connection);
         boolean success = true;
         try {
             // notify pre-action
@@ -145,8 +145,10 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 Project project = connectionHandler.getProject();
                 VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
                 if (selectedFile != null) {
+                    String connectionName = connectionHandler.getConnectionName(connection);
+
                     InteractiveOptionHandler<TransactionOption> commitMultipleChanges = getTransactionManagerSettings().getCommitMultipleChanges();
-                    TransactionOption result = commitMultipleChanges.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
+                    TransactionOption result = commitMultipleChanges.resolve(connectionName, selectedFile.getPresentableUrl());
                     switch (result) {
                         case COMMIT: execute(connectionHandler, connection, background, TransactionAction.COMMIT); break;
                         case REVIEW_CHANGES: showPendingTransactionsDialog(connectionHandler, null); break;
@@ -174,8 +176,10 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 Project project = connectionHandler.getProject();
                 VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
                 if (selectedFile != null) {
+                    String connectionName = connectionHandler.getConnectionName(connection);
+
                     InteractiveOptionHandler<TransactionOption> rollbackMultipleChanges = getTransactionManagerSettings().getRollbackMultipleChanges();
-                    TransactionOption result = rollbackMultipleChanges.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
+                    TransactionOption result = rollbackMultipleChanges.resolve(connectionName, selectedFile.getPresentableUrl());
                     switch (result) {
                         case ROLLBACK: execute(connectionHandler, connection, background, TransactionAction.ROLLBACK); break;
                         case REVIEW_CHANGES: showPendingTransactionsDialog(connectionHandler, null); break;
@@ -213,23 +217,29 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     }
 
     public void toggleAutoCommit(ConnectionHandler connectionHandler) {
-        boolean isAutoCommit = connectionHandler.isAutoCommit();
-        TransactionAction autoCommitAction = isAutoCommit ?
+        boolean autoCommit = connectionHandler.isAutoCommit();
+        TransactionAction autoCommitAction = autoCommit ?
                 TransactionAction.TURN_AUTO_COMMIT_OFF :
                 TransactionAction.TURN_AUTO_COMMIT_ON;
 
         List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
-        for (DBNConnection connection : connections) {
-            if (!isAutoCommit && connection.hasDataChanges()) {
-                InteractiveOptionHandler<TransactionOption> toggleAutoCommit = getTransactionManagerSettings().getToggleAutoCommit();
-                TransactionOption result = toggleAutoCommit.resolve(connectionHandler.getName());
-                switch (result) {
-                    case COMMIT: execute(connectionHandler, connection, true, TransactionAction.COMMIT, autoCommitAction); break;
-                    case ROLLBACK: execute(connectionHandler, connection, true, TransactionAction.ROLLBACK, autoCommitAction); break;
-                    case REVIEW_CHANGES: showPendingTransactionsDialog(connectionHandler, autoCommitAction);
+        if (connections.size() == 0) {
+            connectionHandler.setAutoCommit(!autoCommit);
+        } else {
+            for (DBNConnection connection : connections) {
+                if (!autoCommit && connection.hasDataChanges()) {
+                    String connectionName = connectionHandler.getConnectionName(connection);
+
+                    InteractiveOptionHandler<TransactionOption> toggleAutoCommit = getTransactionManagerSettings().getToggleAutoCommit();
+                    TransactionOption result = toggleAutoCommit.resolve(connectionName);
+                    switch (result) {
+                        case COMMIT: execute(connectionHandler, connection, true, TransactionAction.COMMIT, autoCommitAction); break;
+                        case ROLLBACK: execute(connectionHandler, connection, true, TransactionAction.ROLLBACK, autoCommitAction); break;
+                        case REVIEW_CHANGES: showPendingTransactionsDialog(connectionHandler, autoCommitAction);
+                    }
+                } else {
+                    execute(connectionHandler, connection, false, autoCommitAction);
                 }
-            } else {
-                execute(connectionHandler, connection, false, autoCommitAction);
             }
         }
     }

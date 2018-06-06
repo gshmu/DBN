@@ -183,7 +183,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     AuthenticationInfo authenticationInfo = getData();
                     try {
-                        DBNConnection connection = ConnectionUtil.connect(connectionSettings, ConnectionType.TEST, null, authenticationInfo, false, null);
+                        DBNConnection connection = ConnectionUtil.connect(connectionSettings, null, authenticationInfo, SessionId.TEST, false, null);
                         ConnectionUtil.close(connection);
                         databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
                         if (showMessageDialog) {
@@ -231,7 +231,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                         protected void execute(@NotNull ProgressIndicator progressIndicator) {
                             AuthenticationInfo authenticationInfo = getData();
                             try {
-                                DBNConnection connection = ConnectionUtil.connect(connectionSettings, ConnectionType.TEST, null, authenticationInfo, false, null);
+                                DBNConnection connection = ConnectionUtil.connect(connectionSettings, null, authenticationInfo, SessionId.TEST, false, null);
                                 ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
                                 ConnectionUtil.close(connection);
                                 showConnectionInfoDialog(connectionInfo, connectionName, environmentType);
