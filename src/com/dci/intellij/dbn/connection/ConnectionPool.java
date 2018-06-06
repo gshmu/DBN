@@ -185,7 +185,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
                         connection = ConnectionUtil.connect(connectionHandler, sessionId);
                         NotificationUtil.sendInfoNotification(
                                 getProject(),
-                                Constants.DBN_TITLE_PREFIX + "Connect",
+                                Constants.DBN_TITLE_PREFIX + "Session",
                                 "Connected to database \"{0}\"",
                                 connectionHandler.getConnectionName(connection));
                     } finally {
@@ -278,6 +278,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         String connectionName = connectionHandler.getName();
         LOGGER.debug("[DBN-INFO] Attempt to create new pool connection for '" + connectionName + "'");
         DBNConnection connection = ConnectionUtil.connect(connectionHandler, SessionId.POOL);
+
         ConnectionUtil.setAutoCommit(connection, true);
         ConnectionUtil.setReadonly(connection, true);
         connectionStatus.setConnected(true);
@@ -289,6 +290,15 @@ public class ConnectionPool extends DisposableBase implements Disposable {
         // pool connections do not need to have current schema set
         //connectionHandler.getDataDictionary().setTargetSchema(connectionHandler.getCurrentSchemaName(), connection);
         connection.set(ResourceStatus.RESERVED, true);
+
+        if (poolConnections.size() == 0) {
+            // Notify first pool connection
+            NotificationUtil.sendInfoNotification(
+                    getProject(),
+                    Constants.DBN_TITLE_PREFIX + "Session",
+                    "Connected to database \"{0}\"",
+                    connectionHandler.getConnectionName(connection));
+        }
 
         poolConnections.add(connection);
         int size = poolConnections.size();
