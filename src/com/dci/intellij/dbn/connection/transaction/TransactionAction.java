@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 public enum TransactionAction implements Serializable {
     COMMIT(
-            "Commit",
+            "Transaction",
             NotificationType.INFORMATION, "Connection \"{0}\" committed",
             NotificationType.ERROR, "Error committing connection \"{0}\". Details: {1}",
             false,
@@ -21,7 +21,7 @@ public enum TransactionAction implements Serializable {
             }),
 
     ROLLBACK(
-            "Rollback",
+            "Transaction",
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
@@ -32,7 +32,7 @@ public enum TransactionAction implements Serializable {
             }),
 
     ROLLBACK_IDLE(
-            "Rollback",
+            "Transaction",
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
@@ -43,8 +43,8 @@ public enum TransactionAction implements Serializable {
             }),
 
     DISCONNECT(
-            "Disconnect",
-            NotificationType.INFORMATION, "Successfully disconnected from \"{0}\"",
+            "Session",
+            NotificationType.INFORMATION, "Disconnected from \"{0}\"",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
             new Executor() {
@@ -55,7 +55,7 @@ public enum TransactionAction implements Serializable {
             }),
 
     DISCONNECT_IDLE(
-            "Idle Disconnect",
+            "Session",
             NotificationType.INFORMATION, "Disconnected from \"{0}\" because it has exceeded the configured idle timeout.",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
@@ -78,7 +78,7 @@ public enum TransactionAction implements Serializable {
             }),
 
     TURN_AUTO_COMMIT_ON(
-            "Auto-Commit Switch ON",
+            "Transaction",
             NotificationType.WARNING,
             "Auto-Commit switched ON for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit ON for connection \"{0}\". Details: {1}",
@@ -90,7 +90,7 @@ public enum TransactionAction implements Serializable {
             }),
 
     TURN_AUTO_COMMIT_OFF(
-            "Auto-Commit Switch OFF",
+            "Transaction",
             NotificationType.INFORMATION, "Auto-Commit switched OFF for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit OFF for connection\"{0}\". Details: {1}",
             true,

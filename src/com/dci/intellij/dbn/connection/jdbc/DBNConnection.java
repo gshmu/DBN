@@ -30,7 +30,7 @@ public class DBNConnection extends DBNConnectionBase {
     private ConnectionId id;
     private SessionId sessionId;
 
-    private long lastAccess;
+    private long lastAccess = System.currentTimeMillis();
     private Set<DBNStatement> statements = new HashSet<DBNStatement>();
     private PendingTransactionBundle dataChanges;
 
