@@ -122,7 +122,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public boolean isAutoCommit() {return false;}
 
     @Override public boolean isLoggingEnabled() {return false;}
-    @Override public void setAutoCommit(boolean autoCommit) throws SQLException {}
+    @Override public void setAutoCommit(boolean autoCommit) {}
     @Override public void setLoggingEnabled(boolean loggingEnabled) {}
 
     @Override public boolean isConnected() {return false;}
@@ -201,6 +201,12 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Nullable
     @Override public ConnectionInfo getConnectionInfo() { return null;}
+
+    @NotNull
+    @Override
+    public String getConnectionName(@Nullable DBNConnection connection) {
+        return getName();
+    }
 
     @Override public void setConnectionInfo(ConnectionInfo connectionInfo) {}
     @Override public boolean canConnect() {

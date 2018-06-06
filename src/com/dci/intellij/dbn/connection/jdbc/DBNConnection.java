@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionType;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,7 +28,7 @@ public class DBNConnection extends DBNConnectionBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private ConnectionType type;
     private ConnectionId id;
-    private String sessionName;
+    private SessionId sessionId;
 
     private long lastAccess;
     private Set<DBNStatement> statements = new HashSet<DBNStatement>();
@@ -84,11 +85,11 @@ public class DBNConnection extends DBNConnectionBase {
                 }
             };
 
-    public DBNConnection(Connection connection, ConnectionType type, ConnectionId id) {
+    public DBNConnection(Connection connection, ConnectionType type, ConnectionId id, SessionId sessionId) {
         super(connection);
         this.type = type;
         this.id = id;
-        this.sessionName = type.getName();
+        this.sessionId = sessionId;
     }
 
     protected <S extends Statement> S wrap(S statement) {
@@ -145,13 +146,8 @@ public class DBNConnection extends DBNConnectionBase {
         return type;
     }
 
-
-    public String getSessionName() {
-        return sessionName;
-    }
-
-    public void setSessionName(String sessionName) {
-        this.sessionName = sessionName;
+    public SessionId getSessionId() {
+        return sessionId;
     }
 
     public boolean isPoolConnection() {
@@ -204,7 +200,7 @@ public class DBNConnection extends DBNConnectionBase {
      *                        Transaction                               *
      ********************************************************************/
     @Override
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
+    public void setAutoCommit(boolean autoCommit) {
         this.autoCommit.change(autoCommit);
     }
 

@@ -83,6 +83,9 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     @Nullable
     ConnectionInfo getConnectionInfo();
 
+    @NotNull
+    String getConnectionName(@Nullable DBNConnection connection);
+
     void setConnectionInfo(ConnectionInfo connectionInfo);
 
     @NotNull
@@ -106,7 +109,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     boolean isAutoCommit();
     boolean isLoggingEnabled();
     boolean hasPendingTransactions(@NotNull DBNConnection connection);
-    void setAutoCommit(boolean autoCommit) throws SQLException;
+    void setAutoCommit(boolean autoCommit);
     void setLoggingEnabled(boolean loggingEnabled);
     void disconnect() throws SQLException;
 

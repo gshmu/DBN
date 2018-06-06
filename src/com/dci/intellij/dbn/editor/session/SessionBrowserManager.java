@@ -132,7 +132,6 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
 
     public void interruptSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, SessionInterruptionType type) {
         final ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
-        final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
         if (DatabaseFeature.SESSION_INTERRUPTION_TIMING.isSupported(connectionHandler)) {
 
             SessionBrowserSettings sessionBrowserSettings = getSessionBrowserSettings();

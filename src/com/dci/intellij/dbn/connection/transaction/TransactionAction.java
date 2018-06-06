@@ -85,7 +85,6 @@ public enum TransactionAction implements Serializable {
             true,
             new Executor() {
                 void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
-                    assert !connectionHandler.isAutoCommit();
                     connectionHandler.setAutoCommit(true);
                 }
             }),
@@ -97,7 +96,6 @@ public enum TransactionAction implements Serializable {
             true,
             new Executor() {
                 void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
-                    assert connectionHandler.isAutoCommit();
                     connectionHandler.setAutoCommit(false);
                 }
             });

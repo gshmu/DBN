@@ -76,7 +76,7 @@ public class ConnectionUtil {
         }
     }
 
-    public static DBNConnection connect(ConnectionHandler connectionHandler, ConnectionType connectionType) throws SQLException {
+    public static DBNConnection connect(ConnectionHandler connectionHandler, SessionId sessionId) throws SQLException {
         ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
@@ -101,9 +101,9 @@ public class ConnectionUtil {
             DatabaseAttachmentHandler attachmentHandler = interfaceProvider == null ? null : interfaceProvider.getCompatibilityInterface().getDatabaseAttachmentHandler();
             DBNConnection connection = connect(
                     connectionSettings,
-                    connectionType,
                     connectionStatus,
                     connectionHandler.getTemporaryAuthenticationInfo(),
+                    sessionId,
                     propertiesSettings.isEnableAutoCommit(),
                     attachmentHandler);
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
@@ -124,13 +124,11 @@ public class ConnectionUtil {
 
     public static DBNConnection connect(
             ConnectionSettings connectionSettings,
-            @NotNull ConnectionType connectionType,
-            @Nullable ConnectionHandlerStatusHolder connectionStatus,
-            @Nullable AuthenticationInfo temporaryAuthenticationInfo,
+            @Nullable ConnectionHandlerStatusHolder connectionStatus, @Nullable AuthenticationInfo temporaryAuthenticationInfo, @NotNull SessionId sessionId,
             boolean autoCommit,
             @Nullable DatabaseAttachmentHandler attachmentHandler) throws SQLException {
         ConnectTimeoutCall connectCall = new ConnectTimeoutCall();
-        connectCall.connectionType = connectionType;
+        connectCall.sessionId = sessionId;
         connectCall.temporaryAuthenticationInfo = temporaryAuthenticationInfo;
         connectCall.connectionSettings = connectionSettings;
         connectCall.connectionStatus = connectionStatus;
@@ -150,7 +148,7 @@ public class ConnectionUtil {
     }
 
     private static class ConnectTimeoutCall extends SimpleTimeoutCall<DBNConnection> {
-        private ConnectionType connectionType;
+        private SessionId sessionId;
         private AuthenticationInfo temporaryAuthenticationInfo;
         private ConnectionSettings connectionSettings;
         private ConnectionHandlerStatusHolder connectionStatus;
@@ -181,7 +179,7 @@ public class ConnectionUtil {
                         properties.put("password", password);
                     }
                 }
-
+                ConnectionType connectionType = sessionId.getConnectionType();
                 String appName = "Database Navigator - " + connectionType.getName();
                 properties.put("ApplicationName", appName);
                 properties.put("v$session.program", appName);
@@ -235,7 +233,7 @@ public class ConnectionUtil {
                 databaseSettings.setDatabaseType(databaseType);
                 databaseSettings.setDatabaseVersion(getDatabaseVersion(connection));
                 databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
-                return new DBNConnection(connection, connectionType, connectionSettings.getConnectionId());
+                return new DBNConnection(connection, connectionType, connectionSettings.getConnectionId(), sessionId);
 
             } catch (Throwable e) {
                 DatabaseType databaseType = getDatabaseType(databaseSettings.getDriver());
