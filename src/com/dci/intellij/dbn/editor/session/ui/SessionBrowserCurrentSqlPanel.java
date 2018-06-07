@@ -67,15 +67,20 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
         return mainPanel;
     }
 
-    public void setPreviewText(String text) {
+    private void setPreviewText(String text) {
         DocumentUtil.setText(document, text);
     }
 
-    public void setDatabaseSchema(DBSchema currentSchema) {
-        virtualFile.setDatabaseSchema(currentSchema);
+    private void setDatabaseSchema(DBSchema currentSchema) {
+        getVirtualFile().setDatabaseSchema(currentSchema);
     }
 
-    public void loadCurrentStatement() {
+    @NotNull
+    public DBSessionStatementVirtualFile getVirtualFile() {
+        return FailsafeUtil.get(virtualFile);
+    }
+
+    void loadCurrentStatement() {
         SessionBrowserTable editorTable = sessionBrowser.getEditorTable();
         if (editorTable.getSelectedRowCount() == 1) {
             SessionBrowserModelRow selectedRow = editorTable.getModel().getRowAtIndex(editorTable.getSelectedRow());
