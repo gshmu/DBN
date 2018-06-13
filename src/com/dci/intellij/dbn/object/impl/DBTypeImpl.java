@@ -69,7 +69,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         assert this.getClass() != DBTypeImpl.class;
     }
 
-    public DBTypeImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBTypeImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 

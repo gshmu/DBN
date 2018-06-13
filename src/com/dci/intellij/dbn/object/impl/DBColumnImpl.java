@@ -51,7 +51,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     private DBObjectList<DBConstraint> constraints;
     private DBObjectList<DBIndex> indexes;
 
-    public DBColumnImpl(@NotNull DBDataset dataset, ResultSet resultSet) throws SQLException {
+    DBColumnImpl(@NotNull DBDataset dataset, ResultSet resultSet) throws SQLException {
         super(dataset, resultSet);
     }
 

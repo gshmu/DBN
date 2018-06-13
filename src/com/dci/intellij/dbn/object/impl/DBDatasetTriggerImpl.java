@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrigger {
-    public DBDatasetTriggerImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
+    DBDatasetTriggerImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
         super(dataset, resultSet);
     }
 

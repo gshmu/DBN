@@ -30,7 +30,7 @@ import java.util.List;
 
 public class DBViewImpl extends DBDatasetImpl implements DBView {
     private DBType type;
-    public DBViewImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBViewImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 

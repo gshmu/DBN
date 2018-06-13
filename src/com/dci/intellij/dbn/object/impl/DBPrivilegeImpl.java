@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class DBPrivilegeImpl extends DBObjectImpl implements DBPrivilege {
-    public DBPrivilegeImpl(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
+    DBPrivilegeImpl(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
         super(connectionHandler, resultSet);
     }
 

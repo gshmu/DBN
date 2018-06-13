@@ -25,7 +25,7 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NAVIG
 
 public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
 
-    public DBPackageTypeImpl(DBPackage packagee, ResultSet resultSet) throws SQLException {
+    DBPackageTypeImpl(DBPackage packagee, ResultSet resultSet) throws SQLException {
         super(packagee, resultSet);
     }
 

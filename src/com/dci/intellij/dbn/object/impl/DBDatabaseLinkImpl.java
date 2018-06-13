@@ -17,7 +17,7 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEM
 public class DBDatabaseLinkImpl extends DBSchemaObjectImpl implements DBDatabaseLink {
     private String userName;
     private String host;
-    public DBDatabaseLinkImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBDatabaseLinkImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 

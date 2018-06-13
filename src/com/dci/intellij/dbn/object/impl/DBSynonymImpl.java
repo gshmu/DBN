@@ -30,7 +30,7 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEM
 public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
     private DBObjectRef<DBObject> underlyingObject;
 
-    public DBSynonymImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBSynonymImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 

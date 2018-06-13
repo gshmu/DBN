@@ -41,7 +41,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     private DBObjectList<DBIndex> indexes;
     private DBObjectList<DBNestedTable> nestedTables;
 
-    public DBTableImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBTableImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 

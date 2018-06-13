@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class DBClusterImpl extends DBSchemaObjectImpl implements DBCluster {
-    public DBClusterImpl(DBSchema parent, ResultSet resultSet) throws SQLException {
+    DBClusterImpl(DBSchema parent, ResultSet resultSet) throws SQLException {
         super(parent, resultSet);
     }
 

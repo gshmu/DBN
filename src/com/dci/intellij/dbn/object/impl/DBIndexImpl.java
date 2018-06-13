@@ -27,7 +27,7 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.UNIQU
 public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     private DBObjectList<DBColumn> columns;
 
-    public DBIndexImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
+    DBIndexImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
         super(dataset, resultSet);
     }
 

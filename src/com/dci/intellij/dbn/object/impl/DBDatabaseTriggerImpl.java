@@ -20,7 +20,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTrigger {
-    public DBDatabaseTriggerImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBDatabaseTriggerImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 

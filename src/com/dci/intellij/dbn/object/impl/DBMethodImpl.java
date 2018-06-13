@@ -39,11 +39,11 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     protected int overload;
     private DBLanguage language;
 
-    public DBMethodImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
+    DBMethodImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
         super(parent, resultSet);
     }
 
-    public DBMethodImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBMethodImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 
