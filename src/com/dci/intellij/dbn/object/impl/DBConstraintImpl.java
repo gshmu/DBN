@@ -49,7 +49,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
     private String checkCondition;
     private DBObjectList<DBColumn> columns;
 
-    public DBConstraintImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
+    DBConstraintImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
         super(dataset, resultSet);
     }
 

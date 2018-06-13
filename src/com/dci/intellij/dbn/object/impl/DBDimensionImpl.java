@@ -14,7 +14,7 @@ import java.util.List;
 
 public class DBDimensionImpl extends DBSchemaObjectImpl implements DBDimension {
 
-    public DBDimensionImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBDimensionImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 

@@ -24,13 +24,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
-    protected DBProcedureImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
+    DBProcedureImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
         // type functions are not editable independently
         super(parent, resultSet);
         assert this.getClass() != DBProcedureImpl.class;
     }
 
-    public DBProcedureImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBProcedureImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 

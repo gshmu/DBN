@@ -31,7 +31,7 @@ public class DBFunctionImpl extends DBMethodImpl implements DBFunction {
         assert this.getClass() != DBFunctionImpl.class;
     }
 
-    public DBFunctionImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBFunctionImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 

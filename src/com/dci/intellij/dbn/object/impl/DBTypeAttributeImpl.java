@@ -22,7 +22,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute
     private DBDataType dataType;
     private int position;
 
-    public DBTypeAttributeImpl(DBType parent, ResultSet resultSet) throws SQLException {
+    DBTypeAttributeImpl(DBType parent, ResultSet resultSet) throws SQLException {
         super(parent, resultSet);
     }
 

@@ -24,7 +24,7 @@ import java.util.List;
 public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterializedView {
     private DBObjectList<DBIndex> indexes;
 
-    public DBMaterializedViewImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBMaterializedViewImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 

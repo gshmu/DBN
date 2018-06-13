@@ -40,11 +40,11 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
     private TriggerType triggerType;
     private TriggeringEvent[] triggeringEvents;
 
-    public DBTriggerImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBTriggerImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 
-    public DBTriggerImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
+    DBTriggerImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
         super(dataset, resultSet);
     }
 

@@ -16,7 +16,7 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.REFER
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 
 public class DBSequenceImpl extends DBSchemaObjectImpl implements DBSequence {
-    public DBSequenceImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBSequenceImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 

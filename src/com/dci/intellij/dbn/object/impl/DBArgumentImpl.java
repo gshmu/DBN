@@ -31,7 +31,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
     private int position;
     private int sequence;
 
-    public DBArgumentImpl(@NotNull DBMethod method, ResultSet resultSet) throws SQLException {
+    DBArgumentImpl(@NotNull DBMethod method, ResultSet resultSet) throws SQLException {
         super(method, resultSet);
     }
 

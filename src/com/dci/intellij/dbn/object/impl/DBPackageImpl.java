@@ -39,7 +39,7 @@ import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 
 public class DBPackageImpl extends DBProgramImpl implements DBPackage {
     protected DBObjectList<DBPackageType> types;
-    public DBPackageImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBPackageImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 
@@ -246,5 +246,10 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
     public DBObjectTimestampLoader getTimestampLoader(DBContentType contentType) {
         return contentType == DBContentType.CODE_SPEC ? SPEC_TIMESTAMP_LOADER :
                contentType == DBContentType.CODE_BODY ? BODY_TIMESTAMP_LOADER : null;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
     }
 }

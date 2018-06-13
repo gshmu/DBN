@@ -20,7 +20,7 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
     private List<DBNestedTableColumn> columns;
     private DBObjectRef<DBType> typeRef;
 
-    public DBNestedTableImpl(DBTable parent, ResultSet resultSet) throws SQLException {
+    DBNestedTableImpl(DBTable parent, ResultSet resultSet) throws SQLException {
         super(parent, resultSet);
 
     }
