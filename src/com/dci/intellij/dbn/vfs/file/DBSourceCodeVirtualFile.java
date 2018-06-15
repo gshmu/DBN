@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
@@ -203,6 +204,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
         updateFileContent(newContent, null);
         originalContent.setText(newContent.getText());
+        object.getStatus().set(contentType, DBObjectStatus.PRESENT, newContent.length() > 0);
 
         databaseContent = null;
         sourceLoadError = null;
