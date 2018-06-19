@@ -123,7 +123,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
             Collection<DBObjectList<DBObject>> objectLists = childObjects.getObjectLists();
             if (objectLists != null) {
                 for (DBObjectList objectList : objectLists) {
-                    if (FailsafeUtil.softCheck(objectList)) {
+                    if (FailsafeUtil.softCheck(objectList) && !objectList.isInternal()) {
                         children.add(objectList.getPsiDirectory());
                     }
                 }

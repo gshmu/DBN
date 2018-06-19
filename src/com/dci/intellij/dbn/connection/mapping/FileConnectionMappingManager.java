@@ -542,7 +542,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         }
     }
 
-    private class ConnectionSetupAction extends AnAction {
+    private static class ConnectionSetupAction extends AnAction {
         private ConnectionSetupAction() {
             super("Setup New Connection", null, Icons.CONNECTION_NEW);
         }
@@ -601,7 +601,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     }
 
 
-    private class SchemaSelectAction extends AnObjectAction<DBSchema> {
+    private static class SchemaSelectAction extends AnObjectAction<DBSchema> {
         private WeakReference<DBLanguagePsiFile> fileRef;
         private RunnableTask callback;
 

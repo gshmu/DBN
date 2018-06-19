@@ -139,8 +139,9 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         } else {
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
             return
-                this.cachedExecutable == null ||
                 executablePsiElement == null ||
+                this.cachedExecutable == null ||
+                !this.cachedExecutable.isValid() ||
                 !this.cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
         }
     }

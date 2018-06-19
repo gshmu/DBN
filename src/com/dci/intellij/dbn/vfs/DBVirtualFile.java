@@ -19,4 +19,9 @@ public interface DBVirtualFile extends /*VirtualFileWithId, */EnvironmentTypePro
 
     @NotNull
     ConnectionHandler getConnectionHandler();
+
+    void setCachedViewProvider(@Nullable DatabaseFileViewProvider viewProvider);
+
+    @Nullable
+    DatabaseFileViewProvider getCachedViewProvider();
 }

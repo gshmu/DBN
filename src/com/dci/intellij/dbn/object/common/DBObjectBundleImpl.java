@@ -180,7 +180,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             if (schemaObject.getConnectionHandler() == getConnectionHandler()) {
                 DBObjectListContainer childObjects = schemaObject.getChildObjects();
                 if (childObjects != null) {
-                    List<DBObjectList<DBObject>> objectLists = childObjects.getAllObjectLists();
+                    List<DBObjectList<DBObject>> objectLists = childObjects.getObjectLists();
                     for (DBObjectList objectList : objectLists) {
                         if (objectList.isLoaded()) {
                             objectList.refresh();

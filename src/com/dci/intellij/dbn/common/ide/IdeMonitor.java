@@ -15,7 +15,7 @@ public class IdeMonitor implements ApplicationComponent{
         return ApplicationManager.getApplication().getComponent(IdeMonitor.class);
     }
 
-    private class ProjectCloseRunnable implements Runnable {
+    private static class ProjectCloseRunnable implements Runnable {
         private Project project;
 
         public ProjectCloseRunnable(Project project) {
@@ -35,7 +35,7 @@ public class IdeMonitor implements ApplicationComponent{
         }
     }
 
-    private class ApplicationCloseRunnable implements Runnable {
+    private static class ApplicationCloseRunnable implements Runnable {
         @Override
         public void run() {
             new SimpleLaterInvocator() {

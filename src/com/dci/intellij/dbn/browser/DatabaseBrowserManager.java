@@ -349,8 +349,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         List<DBObjectType> objectTypes = new ArrayList<DBObjectType>();
                         DBObjectListContainer childObjects = schema.getChildObjects();
                         if (childObjects != null) {
-                            List<DBObjectList<DBObject>> allObjectLists = childObjects.getAllObjectLists();
-                            for (DBObjectList<DBObject> objectList : allObjectLists) {
+                            List<DBObjectList<DBObject>> objectLists = childObjects.getObjectLists();
+                            for (DBObjectList<DBObject> objectList : objectLists) {
                                 if (objectList.isLoaded() || objectList.isLoading()) {
                                     objectTypes.add(objectList.getObjectType());
                                 }

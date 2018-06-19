@@ -62,7 +62,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
     }
 
 
-    private class SelectConsoleAction extends AbstractConnectionAction{
+    private static class SelectConsoleAction extends AbstractConnectionAction{
         private DBConsoleVirtualFile consoleVirtualFile;
         private DBConsoleType consoleType;
 

@@ -192,19 +192,19 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
 
                 previewDocument = DocumentUtil.getDocument(selectStatementFile);
 
-                viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
-                viewer.setEmbeddedIntoDialogWrapper(true);
-                JScrollPane viewerScrollPane = viewer.getScrollPane();
+                this.viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
+                this.viewer.setEmbeddedIntoDialogWrapper(true);
+                JScrollPane viewerScrollPane = this.viewer.getScrollPane();
                 SyntaxHighlighter syntaxHighlighter = dataset.getLanguageDialect(SQLLanguage.INSTANCE).getSyntaxHighlighter();
-                EditorColorsScheme colorsScheme = viewer.getColorsScheme();
-                viewer.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
-                viewer.setBackgroundColor(GUIUtil.adjustColor(viewer.getBackgroundColor(), -0.01));
+                EditorColorsScheme colorsScheme = this.viewer.getColorsScheme();
+                this.viewer.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
+                this.viewer.setBackgroundColor(GUIUtil.adjustColor(this.viewer.getBackgroundColor(), -0.01));
                 viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
                 viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
                 //viewerScrollPane.setBorder(null);
-                viewerScrollPane.setViewportBorder(new LineBorder(CompatibilityUtil.getEditorBackgroundColor(viewer), 4, false));
+                viewerScrollPane.setViewportBorder(new LineBorder(CompatibilityUtil.getEditorBackgroundColor(this.viewer), 4, false));
 
-                EditorSettings settings = viewer.getSettings();
+                EditorSettings settings = this.viewer.getSettings();
                 settings.setFoldingOutlineShown(false);
                 settings.setLineMarkerAreaShown(false);
                 settings.setLineNumbersShown(false);
@@ -212,8 +212,8 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
                 settings.setDndEnabled(false);
                 settings.setAdditionalLinesCount(2);
                 settings.setRightMarginShown(false);
-                viewer.getComponent().setFocusable(false);
-                previewPanel.add(viewer.getComponent(), BorderLayout.CENTER);
+                this.viewer.getComponent().setFocusable(false);
+                previewPanel.add(this.viewer.getComponent(), BorderLayout.CENTER);
 
             } else {
                 DocumentUtil.setText(previewDocument, selectStatement);

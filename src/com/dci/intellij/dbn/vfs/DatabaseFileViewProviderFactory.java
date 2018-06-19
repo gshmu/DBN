@@ -24,7 +24,7 @@ public class DatabaseFileViewProviderFactory implements FileViewProviderFactory{
 
             DBVirtualFile virtualFile = (DBVirtualFile) file;
 
-            DatabaseFileViewProvider viewProvider = virtualFile.getUserData(DatabaseFileViewProvider.CACHED_VIEW_PROVIDER);
+            DatabaseFileViewProvider viewProvider = virtualFile.getCachedViewProvider();
             if (viewProvider == null) {
                 viewProvider = new DatabaseFileViewProvider(manager, file, eventSystemEnabled, language);
             }

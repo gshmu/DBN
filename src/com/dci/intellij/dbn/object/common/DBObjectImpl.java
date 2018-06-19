@@ -439,6 +439,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
                 if (objectLists != null) {
                     List<DBObject> objects = new ArrayList<DBObject>();
                     for (DBObjectList objectList : objectLists) {
+                        if (FailsafeUtil.softCheck(objectList) && !objectList.isInternal())
                         objects.addAll(objectList.getObjects());
                     }
                     return objects;
