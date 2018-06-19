@@ -86,7 +86,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         return null;
     }
 
-    public ParseVariants buildParseVariants() {
+    private ParseVariants buildParseVariants() {
         List<QualifiedIdentifierVariant> parseVariants = new ArrayList<QualifiedIdentifierVariant>();
         for (LeafElementType[] elementTypes : getElementType().getVariants()) {
 
@@ -129,7 +129,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         return new ParseVariants(parseVariants, getElementsCount());
     }
 
-    public LeafPsiElement lookupParentElementFor(LeafPsiElement element) {
+    private LeafPsiElement lookupParentElementFor(LeafPsiElement element) {
         int index = getIndexOf(element);
         if (index > 0) {
             return getLeafAtIndex(index - 1);
@@ -176,11 +176,11 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         return count;
     }
 
-    public class ParseVariants {
+    private static class ParseVariants {
         private List<QualifiedIdentifierVariant> elements;
         private int referenceElementCount;
 
-        public ParseVariants(List<QualifiedIdentifierVariant> elements, int referenceElementCount) {
+        ParseVariants(List<QualifiedIdentifierVariant> elements, int referenceElementCount) {
             this.elements = elements;
             this.referenceElementCount = referenceElementCount;
         }
@@ -189,7 +189,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
             return elements;
         }
 
-        public int getReferenceElementCount() {
+        int getReferenceElementCount() {
             return referenceElementCount;
         }
     }

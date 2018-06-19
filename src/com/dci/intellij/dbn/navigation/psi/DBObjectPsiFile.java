@@ -363,7 +363,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
     @NotNull
     public FileViewProvider getViewProvider() {
         DBVirtualFile virtualFile = (DBVirtualFile) getVirtualFile();
-        DatabaseFileViewProvider viewProvider = virtualFile.getUserData(DatabaseFileViewProvider.CACHED_VIEW_PROVIDER);
+        DatabaseFileViewProvider viewProvider = virtualFile.getCachedViewProvider();
         if (viewProvider == null) {
             viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(getProject()), getVirtualFile(), true);
         }

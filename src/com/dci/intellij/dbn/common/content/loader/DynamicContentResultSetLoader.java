@@ -35,7 +35,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
     public abstract ResultSet createResultSet(DynamicContent<T> dynamicContent, DBNConnection connection) throws SQLException;
     public abstract T createElement(DynamicContent<T> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException;
 
-    private class DebugInfo {                                                         
+    private static class DebugInfo {
         private String id = UUID.randomUUID().toString();
         private long startTimestamp = System.currentTimeMillis();
     }

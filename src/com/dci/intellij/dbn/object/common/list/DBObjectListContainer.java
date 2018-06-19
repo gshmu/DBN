@@ -24,14 +24,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.dispose.FailsafeUtil.softCheck;
+
 public class DBObjectListContainer extends DisposableBase implements Disposable, Compactable {
     private List<DBObjectList<DBObject>>  objectLists;
-    private List<DBObjectList<DBObject>>  internalObjectLists;
     private GenericDatabaseElement owner;
 
     public DBObjectListContainer(@NotNull GenericDatabaseElement owner) {
@@ -40,41 +40,22 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     public void compact() {
         CollectionUtil.compactElements(objectLists);
-        CollectionUtil.compactElements(internalObjectLists);
-    }
-
-    @NotNull
-    public List<DBObjectList<DBObject>> getAllObjectLists() {
-        List<DBObjectList<DBObject>> allObjectLists = new ArrayList<DBObjectList<DBObject>>();
-        if (objectLists != null)  {
-            allObjectLists.addAll(objectLists);
-        }
-        if (internalObjectLists != null)  {
-            allObjectLists.addAll(internalObjectLists);
-        }
-        Collections.sort(allObjectLists);
-        return allObjectLists;
     }
 
     @Nullable
-    public Collection<DBObjectList<DBObject>> getObjectLists() {
+    public List<DBObjectList<DBObject>> getObjectLists() {
         return objectLists;
     }
 
-    public void visitLists(DBObjectListVisitor visitor, boolean visitHidden) {
+    public void visitLists(DBObjectListVisitor visitor, boolean visitInternal) {
         try {
             if (objectLists != null) {
                 checkDisposed(visitor);
                 for (DBObjectList<DBObject> objectList : objectLists) {
-                    checkDisposed(visitor);
-                    visitor.visitObjectList(objectList);
-                }
-            }
-            if (visitHidden && internalObjectLists != null) {
-                checkDisposed(visitor);
-                for (DBObjectList<DBObject> objectList : internalObjectLists) {
-                    checkDisposed(visitor);
-                    visitor.visitObjectList(objectList);
+                    if (softCheck(objectList) && (visitInternal || !objectList.isInternal())) {
+                        checkDisposed(visitor);
+                        visitor.visitObjectList(objectList);
+                    }
                 }
             }
         } catch (ProcessCanceledException ignore) {}
@@ -101,7 +82,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     public DBObjectList getObjectList(DBObjectType objectType) {
         if (objectLists != null) {
             for (DBObjectList<DBObject> objectList : objectLists) {
-                if (objectList.getObjectType() == objectType) {
+                if (softCheck(objectList) && objectList.getObjectType() == objectType) {
                     return objectList;
                 }
             }
@@ -112,9 +93,9 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     @Nullable
     public DBObjectList getInternalObjectList(DBObjectType objectType) {
-        if (internalObjectLists != null) {
-            for (DBObjectList<DBObject> objectList : internalObjectLists) {
-                if (objectList.getObjectType() == objectType) {
+        if (objectLists != null) {
+            for (DBObjectList<DBObject> objectList : objectLists) {
+                if (softCheck(objectList) && objectList.getObjectType() == objectType && objectList.isInternal()) {
                     return objectList;
                 }
             }
@@ -180,28 +161,20 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     @Nullable
     public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, int overload, boolean lookupInternal) {
-        DBObject object = null;
         if (objectLists != null) {
-            object = findObject(objectLists, parentObjectType, name, overload);
-        }
-
-        if (object == null && internalObjectLists != null && lookupInternal) {
-            object = findObject(internalObjectLists, parentObjectType, name, overload);
-        }
-        return object;
-    }
-
-    @Nullable
-    private DBObject findObject(List<DBObjectList<DBObject>> objectLists, DBObjectType parentObjectType, String name, int overload) {
-        for (DBObjectList objectList : objectLists) {
-            DBObjectType objectType = objectList.getObjectType();
-            if (objectType.getParents().contains(parentObjectType)) {
-                DBObject object = objectList.getObject(name, overload);
-                if (object != null) {
-                    return object;
+            for (DBObjectList objectList : objectLists) {
+                if (softCheck(objectList) && (!objectList.isInternal() || lookupInternal)) {
+                    DBObjectType objectType = objectList.getObjectType();
+                    if (objectType.getParents().contains(parentObjectType)) {
+                        DBObject object = objectList.getObject(name, overload);
+                        if (object != null) {
+                            return object;
+                        }
+                    }
                 }
             }
         }
+
         return null;
     }
 
@@ -214,7 +187,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     public DBObject getObjectNoLoad(String name, int overload) {
         if (objectLists != null) {
             for (DBObjectList objectList : objectLists) {
-                if (objectList.isLoaded() && !objectList.isDirty()) {
+                if (softCheck(objectList) && objectList.isLoaded() && !objectList.isDirty()) {
                     DBObject object = objectList.getObject(name, overload);
                     if (object != null) {
                         if (owner instanceof DBObject) {
@@ -308,13 +281,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     public void addObjectList(DBObjectList objectList) {
         if (objectList != null) {
-            if (objectList.isInternal()) {
-                if (internalObjectLists == null) internalObjectLists = new ArrayList<DBObjectList<DBObject>>();
-                internalObjectLists.add(objectList);
-            } else {
-                if (objectLists == null) objectLists = new ArrayList<DBObjectList<DBObject>>();
-                objectLists.add(objectList);
-            }
+            if (objectLists == null) objectLists = new ArrayList<DBObjectList<DBObject>>();
+            objectLists.add(objectList);
         }
     }
 
@@ -325,25 +293,15 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
                 checkDisposed();
             }
         }
-        if (internalObjectLists != null)  {
-            for (DBObjectList objectList : internalObjectLists) {
-                objectList.reload();
-                checkDisposed();
-            }
-        }
     }
 
     public void refresh() {
         if (objectLists != null)  {
             for (DBObjectList objectList : objectLists) {
-                objectList.refresh();
-                checkDisposed();
-            }
-        }
-        if (internalObjectLists != null)  {
-            for (DBObjectList objectList : internalObjectLists) {
-                objectList.refresh();
-                checkDisposed();
+                if (softCheck(objectList)) {
+                    objectList.refresh();
+                    checkDisposed();
+                }
             }
         }
     }
@@ -351,17 +309,21 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     public void load() {
         if (objectLists != null)  {
             for (DBObjectList objectList : objectLists) {
-                objectList.load(false);
-                checkDisposed();
-            }
-        }
-        if (internalObjectLists != null)  {
-            for (DBObjectList objectList : internalObjectLists) {
-                if (!objectList.getObjectType().isOneOf(DBObjectType.ANY, DBObjectType.OUTGOING_DEPENDENCY, DBObjectType.INCOMING_DEPENDENCY)) {
-                    objectList.load(false);
+                if (softCheck(objectList)) {
+                    if (objectList.isInternal()) {
+                        DBObjectType objectType = objectList.getObjectType();
+                        if (!objectType.isOneOf(
+                                DBObjectType.ANY,
+                                DBObjectType.OUTGOING_DEPENDENCY,
+                                DBObjectType.INCOMING_DEPENDENCY)) {
+                            objectList.load(false);
+                        }
+                    } else {
+                        objectList.load(false);
+                    }
+                    checkDisposed();
                 }
-                checkDisposed();
-            }
+                }
         }
     }
 
@@ -378,7 +340,6 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
             super.dispose();
             owner = null;
             DisposerUtil.dispose(objectLists);
-            DisposerUtil.dispose(internalObjectLists);
         }
     }
 }

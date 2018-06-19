@@ -104,7 +104,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
         detailsPanel.repaint();
     }
 
-    private class ConnectionListCellRenderer extends ColoredListCellRenderer<ConnectionHandler> {
+    private static class ConnectionListCellRenderer extends ColoredListCellRenderer<ConnectionHandler> {
 
         @Override
         protected void customizeCellRenderer(@NotNull JList list, ConnectionHandler value, int index, boolean selected, boolean hasFocus) {

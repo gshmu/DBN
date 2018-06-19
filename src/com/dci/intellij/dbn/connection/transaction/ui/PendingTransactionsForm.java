@@ -109,7 +109,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
         detailsPanel.repaint();
     }
 
-    private class ListCellRenderer extends ColoredListCellRenderer {
+    private static class ListCellRenderer extends ColoredListCellRenderer {
 
         @Override
         protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
