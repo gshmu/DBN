@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DISPOSED;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
@@ -400,9 +402,14 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         return false;
     }
 
+    @Override
+    public boolean isDisposed() {
+        return is(DISPOSED);
+    }
+
     public void dispose() {
         if (!isDisposed()) {
-            super.dispose();
+            set(DISPOSED, true);
             if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
                 if (dependencyAdapter.isSubContent())
                     elements.clear(); else
@@ -413,5 +420,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             dependencyAdapter = VoidContentDependencyAdapter.INSTANCE;
             parent = null;
         }
+    }
+
+    @Override
+    public final void checkDisposed() {
+        if (isDisposed()) throw AlreadyDisposedException.INSTANCE;
     }
 }

@@ -2,20 +2,24 @@ package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFilePathWrapper;
 import com.intellij.openapi.vfs.ex.dummy.DummyFileIdGenerator;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable, VirtualFilePathWrapper {
@@ -188,6 +192,13 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
         DatabaseFileViewProvider cachedViewProvider = getCachedViewProvider();
         if (cachedViewProvider != null) {
             cachedViewProvider.markInvalidated();
+            List<PsiFile> cachedPsiFiles = cachedViewProvider.getCachedPsiFiles();
+            for (PsiFile cachedPsiFile: cachedPsiFiles) {
+                if (cachedPsiFile instanceof DBLanguagePsiFile) {
+                    DisposerUtil.dispose((DBLanguagePsiFile) cachedPsiFile);
+                }
+            }
+
             setCachedViewProvider(null);
         }
         putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
