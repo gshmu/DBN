@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.execution.common.ui.ExecutionOptionsForm;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +23,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,7 +49,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
     public MethodExecutionInputForm(DisposableProjectComponent parentComponent, final MethodExecutionInput executionInput, boolean showHeader, @NotNull DBDebuggerType debuggerType) {
         super(parentComponent);
         this.executionInput = executionInput;
-        DBMethod method = executionInput.getMethod();
+        DBObjectRef methodRef = executionInput.getMethodRef();
 
         final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
         if (debuggerType.isDebug()) {
@@ -67,7 +69,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         //objectPanel.add(new ObjectDetailsPanel(method).getComponent(), BorderLayout.NORTH);
 
         if (showHeader) {
-            DBNHeaderForm headerForm = new DBNHeaderForm(method, this);
+            DBNHeaderForm headerForm = new DBNHeaderForm(methodRef, this);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         }
         headerPanel.setVisible(showHeader);
@@ -76,7 +78,8 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         int[] metrics = new int[]{0, 0};
 
         //topSeparator.setVisible(false);
-        List<DBArgument> arguments = new ArrayList<DBArgument>(method.getArguments());
+        DBMethod method = executionInput.getMethod();
+        List<DBArgument> arguments = method == null ? Collections.<DBArgument>emptyList() : new ArrayList<DBArgument>(method.getArguments());
         noArgumentsLabel.setVisible(arguments.size() == 0);
         for (DBArgument argument: arguments) {
             if (argument.isInput()) {

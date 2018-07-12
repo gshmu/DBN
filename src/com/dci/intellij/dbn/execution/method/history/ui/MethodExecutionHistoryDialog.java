@@ -36,7 +36,10 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
             selectedExecutionInput = executionHistory.getLastSelection();
         }
 
-        if (selectedExecutionInput != null && !selectedExecutionInput.isObsolete() && (!debug || DatabaseFeature.DEBUGGING.isSupported(selectedExecutionInput))) {
+        if (selectedExecutionInput != null &&
+                !selectedExecutionInput.isObsolete() &&
+                !selectedExecutionInput.isInactive() &&
+                (!debug || DatabaseFeature.DEBUGGING.isSupported(selectedExecutionInput))) {
             showMethodExecutionPanel(selectedExecutionInput);
             this.selectedExecutionInput = selectedExecutionInput;
             getComponent().setSelectedInput(selectedExecutionInput);
