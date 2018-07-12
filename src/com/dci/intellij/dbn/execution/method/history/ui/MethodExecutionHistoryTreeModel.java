@@ -178,7 +178,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
 
         @Override
         public boolean isValid() {
-            return !executionInput.isObsolete();
+            return !executionInput.isObsolete() && !executionInput.isInactive();
         }
     }
 

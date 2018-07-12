@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -23,7 +24,7 @@ import java.util.StringTokenizer;
 
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 
-public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement<Element> {
+public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement<Element>, ConnectionProvider {
     protected DBObjectRef parent;
     protected DBObjectType objectType;
     protected String objectName;
@@ -392,6 +393,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @Nullable
     public ConnectionHandler lookupConnectionHandler() {
         return ConnectionCache.findConnectionHandler(getConnectionId());
+    }
+
+    @Nullable
+    @Override
+    public ConnectionHandler getConnectionHandler() {
+        return lookupConnectionHandler();
     }
 
     @Override

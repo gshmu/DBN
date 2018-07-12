@@ -87,7 +87,9 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
 
     public void showMethodExecutionPanel(MethodExecutionInput executionInput) {
         argumentsPanel.removeAll();
-        if (executionInput != null && !executionInput.isObsolete()) {
+        if (executionInput != null &&
+                !executionInput.isObsolete() &&
+                !executionInput.isInactive()) {
             MethodExecutionInputForm methodExecutionInputForm = methodExecutionForms.get(executionInput);
             if (methodExecutionInputForm == null) {
                 methodExecutionInputForm = new MethodExecutionInputForm(this, executionInput, true, DBDebuggerType.NONE);

@@ -16,7 +16,9 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
     public MethodExecutionHistoryGroupedTreeModel(List<MethodExecutionInput> executionInputs, boolean debug) {
         super(executionInputs);
         for (MethodExecutionInput executionInput : executionInputs) {
-            if (!executionInput.isObsolete() && (!debug || DatabaseFeature.DEBUGGING.isSupported(executionInput.getConnectionHandler()))) {
+            if (!executionInput.isObsolete() &&
+                    !executionInput.isInactive() &&
+                    (!debug || DatabaseFeature.DEBUGGING.isSupported(executionInput.getConnectionHandler()))) {
                 RootTreeNode rootNode = getRoot();
 
                 ConnectionTreeNode connectionNode = rootNode.getConnectionNode(executionInput);

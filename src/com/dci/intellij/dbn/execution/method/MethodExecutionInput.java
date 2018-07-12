@@ -92,7 +92,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     @Override
     public ConnectionHandler getConnectionHandler() {
         DBMethod method = getMethod();
-        return method == null ? null : method.getConnectionHandler();
+        return method == null ? methodRef == null ? null : methodRef.getConnectionHandler() : method.getConnectionHandler();
     }
 
     @Override
@@ -136,6 +136,11 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     public boolean isObsolete() {
         ConnectionHandler connectionHandler = methodRef.lookupConnectionHandler();
         return connectionHandler == null/* || getMethod() == null*/;
+    }
+
+    public boolean isInactive() {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        return connectionHandler != null && !connectionHandler.getSettings().isActive();
     }
 
     public void setInputValue(@NotNull DBArgument argument, DBTypeAttribute typeAttribute, String value) {
