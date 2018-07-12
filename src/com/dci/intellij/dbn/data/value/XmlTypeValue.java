@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.value;
 
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import oracle.jdbc.OracleCallableStatement;
@@ -31,10 +32,8 @@ public class XmlTypeValue extends LargeObjectValue{
     }
 
     public XmlTypeValue(ResultSet resultSet, int columnIndex) throws SQLException {
-        if (resultSet instanceof DBNResultSet) {
-            DBNResultSet dbnResultSet = (DBNResultSet) resultSet;
-            resultSet = dbnResultSet.getInner();
-        }
+        resultSet = DBNResultSet.getInner(resultSet);
+
         OracleResultSet oracleResultSet = (OracleResultSet) resultSet;
         OPAQUE opaque = oracleResultSet.getOPAQUE(columnIndex);
         if (opaque instanceof XMLType) {
@@ -61,16 +60,15 @@ public class XmlTypeValue extends LargeObjectValue{
     }
 
     public void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable String value) throws SQLException {
+        connection = DBNConnection.getInner(connection);
         xmlType = XMLType.createXML(connection, value);
         preparedStatement.setObject(parameterIndex, xmlType);
     }
 
     @Override
     public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
-        if (resultSet instanceof DBNResultSet) {
-            DBNResultSet dbnResultSet = (DBNResultSet) resultSet;
-            resultSet = dbnResultSet.getInner();
-        }
+        connection = DBNConnection.getInner(connection);
+        resultSet = DBNResultSet.getInner(resultSet);
 
         OracleResultSet oracleResultSet = (OracleResultSet) resultSet;
         xmlType = value == null ? null : XMLType.createXML(connection, value);

@@ -72,6 +72,14 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
         inner.close();
     }
 
+    public static ResultSet getInner(ResultSet resultSet) {
+        if (resultSet instanceof DBNResultSet) {
+            DBNResultSet dbnResultSet = (DBNResultSet) resultSet;
+            return dbnResultSet.getInner();
+        }
+        return resultSet;
+    }
+
     /********************************************************************
      *                     Wrapped functionality                        *
      ********************************************************************/

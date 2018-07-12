@@ -197,6 +197,14 @@ public class DBNConnection extends DBNConnectionBase {
         return (int) (idleTimeMillis / TimeUtil.ONE_MINUTE);
     }
 
+    public static Connection getInner(Connection connection) {
+        if (connection instanceof DBNConnection) {
+            DBNConnection dbnConnection = (DBNConnection) connection;
+            return dbnConnection.getInner();
+        }
+        return connection;
+    }
+
     /********************************************************************
      *                        Transaction                               *
      ********************************************************************/
