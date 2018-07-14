@@ -36,6 +36,7 @@ import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING_I
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
     protected static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));
+    protected static final List EMPTY_DISPOSED_CONTENT = Collections.unmodifiableList(new ArrayList(0));
     protected static final List EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(new ArrayList(0));
 
     private long changeTimestamp = 0;
@@ -411,13 +412,15 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         if (!isDisposed()) {
             set(DISPOSED, true);
             if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
-                if (dependencyAdapter.isSubContent())
-                    elements.clear(); else
+                if (!dependencyAdapter.isSubContent()) {
                     DisposerUtil.dispose(elements);
+                }
+                elements = EMPTY_DISPOSED_CONTENT;
             }
             CollectionUtil.clearMap(index);
             Disposer.dispose(dependencyAdapter);
             dependencyAdapter = VoidContentDependencyAdapter.INSTANCE;
+            loader = DynamicContentLoader.VOID_CONTENT_LOADER;
             parent = null;
         }
     }

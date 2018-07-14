@@ -438,7 +438,14 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            onContentReload();
+            // TODO memory cleanup
+            //markInvalidated();
+/*
+            FileElement treeElement = derefTreeElement();
+            if (treeElement != null) {
+                treeElement.detachFromFile();
+            }
+*/
         }
     }
     @Override
