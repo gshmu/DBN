@@ -15,9 +15,7 @@ import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -30,10 +28,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiManagerImpl;
-import com.intellij.psi.impl.file.impl.FileManagerImpl;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
 
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
@@ -220,9 +213,12 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         }
     }
 
+
     @Override
-    public void projectClosing(Project project) {
+    public void projectClosed(Project project) {
         if (project == getProject()) {
+/*
+            // TODO seems to be obsolete since file unique id
             PsiManagerImpl psiManager = (PsiManagerImpl) PsiManager.getInstance(project);
             FileManagerImpl fileManager = (FileManagerImpl) psiManager.getFileManager();
             ConcurrentMap<VirtualFile, FileViewProvider> fileViewProviderCache = fileManager.getVFileToViewProviderMap();
@@ -239,6 +235,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                     }
                 }
             }
+*/
 
             DatabaseFileSystem.getInstance().clearCachedFiles(project);
         }
