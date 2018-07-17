@@ -31,7 +31,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDi
     private SortingState sortingState;
 
 
-    public DatasetEditorSortingForm(DatasetEditorSortingDialog parentComponent, DatasetEditor datasetEditor) {
+    DatasetEditorSortingForm(DatasetEditorSortingDialog parentComponent, DatasetEditor datasetEditor) {
         super(parentComponent);
         DBDataset dataset = datasetEditor.getDataset();
         sortingState = datasetEditor.getEditorState().getSortingState();
@@ -41,9 +41,12 @@ public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDi
         sortingInstructionsPanel.setLayout(sortingInstructionsPanelLayout);
 
         for (SortingInstruction sortingInstruction : sortingState.getSortingInstructions()) {
-            DatasetSortingColumnForm sortingInstructionForm = new DatasetSortingColumnForm(this, sortingInstruction.clone());
-            sortingInstructionForms.add(sortingInstructionForm);
-            sortingInstructionsPanel.add(sortingInstructionForm.getComponent());
+            DBColumn column = sortingInstruction.getColumn(dataset);
+            if (column != null) {
+                DatasetSortingColumnForm sortingInstructionForm = new DatasetSortingColumnForm(this, sortingInstruction.clone());
+                sortingInstructionForms.add(sortingInstructionForm);
+                sortingInstructionsPanel.add(sortingInstructionForm.getComponent());
+            }
         }
         updateIndexes();
 
@@ -58,7 +61,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDi
 */
     }
 
-    public List<DatasetSortingColumnForm> getSortingInstructionForms() {
+    List<DatasetSortingColumnForm> getSortingInstructionForms() {
         return sortingInstructionForms;
     }
 
@@ -68,7 +71,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDi
     }
 
     private class ColumnSelector extends ValueSelector<DBColumn> {
-        public ColumnSelector() {
+        ColumnSelector() {
             super(PlatformIcons.ADD_ICON, "Add Sorting Column...", null, false, ValueSelectorOption.HIDE_DESCRIPTION);
             addListener(new ValueSelectorListener<DBColumn>() {
                 @Override
