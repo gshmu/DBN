@@ -167,7 +167,8 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
             DBObjectRelationList<DBConstraintColumnRelation> relations = childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
             if (relations != null) {
                 for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
-                    if (relation.getConstraint().equals(this) && relation.getPosition() == position)
+                    DBConstraint constraint = relation.getConstraint();
+                    if (constraint != null && constraint.equals(this) && relation.getPosition() == position)
                         return relation.getColumn();
                 }
             }
