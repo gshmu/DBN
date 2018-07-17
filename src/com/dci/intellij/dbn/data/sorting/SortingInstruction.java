@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.data.sorting;
 
+import com.dci.intellij.dbn.object.DBColumn;
+import com.dci.intellij.dbn.object.DBDataset;
+
 public class SortingInstruction {
     private int index;
     private String columnName;
@@ -44,6 +47,10 @@ public class SortingInstruction {
 
     public SortingInstruction clone() {
         return new SortingInstruction(columnName, direction);
+    }
+
+    public DBColumn getColumn(DBDataset dataset) {
+        return dataset.getColumn(columnName);
     }
 
     @Override

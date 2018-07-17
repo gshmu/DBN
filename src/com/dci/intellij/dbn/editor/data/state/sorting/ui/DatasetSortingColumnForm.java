@@ -29,11 +29,11 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
 
     private SortingInstruction sortingInstruction;
 
-    public DatasetSortingColumnForm(final DatasetEditorSortingForm parent, SortingInstruction sortingInstruction) {
+    DatasetSortingColumnForm(final DatasetEditorSortingForm parent, SortingInstruction sortingInstruction) {
         super(parent);
         this.sortingInstruction = sortingInstruction;
 
-        DBColumn column = parent.getDataset().getColumn(sortingInstruction.getColumnName());
+        DBColumn column = sortingInstruction.getColumn(parent.getDataset());
         ColumnSelector columnSelector = new ColumnSelector(column);
         columnPanel.add(columnSelector, BorderLayout.CENTER);
         dataTypeLabel.setText(column.getDataType().getQualifiedName());
@@ -47,7 +47,7 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
     }
 
     private class ColumnSelector extends ValueSelector<DBColumn>{
-        public ColumnSelector(DBColumn selectedColumn) {
+        ColumnSelector(DBColumn selectedColumn) {
             super(Icons.DBO_COLUMN_HIDDEN, "Select column...", selectedColumn, true, ValueSelectorOption.HIDE_DESCRIPTION);
             addListener(new ValueSelectorListener<DBColumn>() {
                 @Override
