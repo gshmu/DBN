@@ -76,9 +76,14 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(getProject());
         ToolWindow toolWindow = toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
         if (toolWindow == null) {
-            toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, true, ToolWindowAnchor.BOTTOM, getProject(), true);
-            toolWindow.setIcon(Icons.WINDOW_EXECUTION_CONSOLE);
-            toolWindow.setToHideOnEmptyContent(true);
+            synchronized (this) {
+                toolWindow = toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
+                if (toolWindow == null) {
+                    toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, true, ToolWindowAnchor.BOTTOM, getProject(), true);
+                    toolWindow.setIcon(Icons.WINDOW_EXECUTION_CONSOLE);
+                    toolWindow.setToHideOnEmptyContent(true);
+                }
+            }
         }
 
         if (toolWindow.getContentManager().getContents().length == 0) {

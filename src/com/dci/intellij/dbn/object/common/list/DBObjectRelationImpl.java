@@ -1,24 +1,24 @@
 package com.dci.intellij.dbn.object.common.list;
 
-import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
 public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObject> implements DBObjectRelation<S, T> {
 
     private DBObjectRelationType objectRelationType;
-    private boolean isDisposed = false;
-    private S sourceObject;
-    private T targetObject;
-    private DynamicContent ownerContent;
+    private DBObjectRef<S> sourceObject;
+    private DBObjectRef<T> targetObject;
 
     public DBObjectRelationImpl(DBObjectRelationType objectRelationType, S sourceObject, T targetObject) {
         this.objectRelationType = objectRelationType;
         assert sourceObject.getObjectType() == objectRelationType.getSourceType();
         assert targetObject.getObjectType() == objectRelationType.getTargetType();
-        this.sourceObject = sourceObject;
-        this.targetObject = targetObject;
+        this.sourceObject = DBObjectRef.from(sourceObject);
+        this.targetObject = DBObjectRef.from(targetObject);
     }
 
 
@@ -28,40 +28,22 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
     }
 
     public S getSourceObject() {
-        return sourceObject;
-    }
-
-    public void setSourceObject(S sourceObject) {
-        this.sourceObject = sourceObject;
+        return DBObjectRef.get(sourceObject);
     }
 
     public T getTargetObject() {
-        return targetObject;
-    }
-
-    public void setTargetObject(T targetObject) {
-        this.targetObject = targetObject;
+        return DBObjectRef.get(targetObject);
     }
 
     public String toString() {
-        return sourceObject.getQualifiedNameWithType() + " => " + targetObject.getQualifiedNameWithType();
+        String sourceObjectName = sourceObject.getQualifiedNameWithType();
+        String targetObjectName = targetObject.getQualifiedNameWithType();
+        return nvl(sourceObjectName, "UNKNOWN") + " => " + nvl(targetObjectName, "UNKNOWN");
     }
 
     /*********************************************************
     *               DynamicContentElement                   *
     *********************************************************/
-    public DynamicContent getOwnerContent() {
-        return ownerContent;
-    }
-
-    public void setOwnerContent(DynamicContent ownerContent) {
-        this.ownerContent = ownerContent;
-    }
-
-    public boolean isDisposed() {
-        return isDisposed;
-    }
-
     public String getName() {
         return null;
     }
@@ -76,10 +58,11 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
     }
 
     public void dispose() {
-        isDisposed = true;
-        sourceObject = null;
-        targetObject = null;
-        ownerContent = null;
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return getSourceObject() == null || getTargetObject() == null;
     }
 
     public void reload() {
