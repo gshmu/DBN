@@ -173,7 +173,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
         projectSettings.readConfiguration(element);
         getProject().putUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED, true);
     }

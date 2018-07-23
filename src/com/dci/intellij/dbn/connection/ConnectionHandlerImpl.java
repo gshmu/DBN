@@ -128,7 +128,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     @NotNull
     public String getConnectionName(@Nullable DBNConnection connection) {
-        if (connection == null) {
+        if (connection == null || sessionBundle == null) {
             return getName();
         } else {
             DatabaseSession session = sessionBundle.getSession(connection.getSessionId());
