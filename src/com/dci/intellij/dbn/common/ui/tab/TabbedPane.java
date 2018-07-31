@@ -62,7 +62,7 @@ public class TabbedPane extends JBEditorTabs implements com.dci.intellij.dbn.com
         ActionCallback actionCallback = super.removeTab(tabInfo);
         if (object instanceof Disposable) {
             final Disposable disposable = (Disposable) object;
-            DisposerUtil.dispose(disposable);
+            DisposerUtil.disposeInBackground(disposable);
             tabInfo.setObject(null);
         }
         return actionCallback;

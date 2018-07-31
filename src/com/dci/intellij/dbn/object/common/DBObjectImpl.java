@@ -77,7 +77,6 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
 
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
-    private boolean treeChildrenLoaded;
 
     protected String name;
     protected DBObjectRef objectRef;
@@ -589,11 +588,11 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     public void initTreeElement() {}
 
     public boolean isTreeStructureLoaded() {
-        return treeChildrenLoaded;
+        return properties.is(DBObjectProperty.TREE_LOADED);
     }
 
     public boolean canExpand() {
-        return !isLeaf() && treeChildrenLoaded && getChildAt(0).isTreeStructureLoaded();
+        return !isLeaf() && isTreeStructureLoaded() && getChildAt(0).isTreeStructureLoaded();
     }
 
     public Icon getIcon(int flags) {
@@ -706,7 +705,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         }
         visibleTreeChildren = newTreeChildren;
         CollectionUtil.compact(visibleTreeChildren);
-        treeChildrenLoaded = true;
+        set(DBObjectProperty.TREE_LOADED, true);
 
 
         Project project = FailsafeUtil.get(getProject());

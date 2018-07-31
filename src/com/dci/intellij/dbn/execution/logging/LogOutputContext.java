@@ -51,6 +51,17 @@ public class LogOutputContext {
         this.process = process;
     }
 
+    public boolean isProcessAlive() {
+        if (process != null) {
+            try {
+                process.exitValue();
+            } catch(IllegalThreadStateException e) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isHideEmptyLines() {
         return hideEmptyLines;
     }

@@ -39,16 +39,16 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.text.LineReader;
 import org.jdesktop.swingx.util.OS;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
@@ -146,10 +146,9 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
         final Project project = getProject();
         final AtomicReference<File> tempScriptFile = new AtomicReference<File>();
-        final AtomicReference<BufferedReader> logReader = new AtomicReference<BufferedReader>();
         final LogOutputContext outputContext = new LogOutputContext(connectionHandler, sourceFile, null);
         final ExecutionManager executionManager = ExecutionManager.getInstance(project);
-        int timeout = input.getExecutionTimeout();
+        final int timeout = input.getExecutionTimeout();
         executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Initializing script execution", input.isClearOutput()));
 
         try {
@@ -199,17 +198,21 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
                     outputContext.setHideEmptyLines(false);
                     outputContext.start();
-                    String line;
                     executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution started", false));
 
-                    BufferedReader consoleReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    logReader.set(consoleReader);
-                    while ((line = consoleReader.readLine()) != null) {
-                        if (outputContext.isActive()) {
-                            LogOutput stdOutput = LogOutput.createStdOutput(line);
-                            executionManager.writeLogOutput(outputContext, stdOutput);
-                        } else {
-                            break;
+                    try (InputStream inputStream = process.getInputStream()) {
+                        final LineReader lineReader = new LineReader(inputStream);
+                        while (outputContext.isProcessAlive()) {
+                            while (outputContext.isActive()) {
+                                byte[] bytes = lineReader.readLine();
+
+                                if (bytes != null) {
+                                    String line = new String(bytes);
+                                    LogOutput stdOutput = LogOutput.createStdOutput(line);
+                                    executionManager.writeLogOutput(outputContext, stdOutput);
+                                }
+                            }
+                            Thread.sleep(1000);
                         }
                     }
 
@@ -276,11 +279,10 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         } finally {
             context.set(EXECUTING, false);
             outputContext.finish();
-            BufferedReader consoleReader = logReader.get();
-            if (consoleReader != null) consoleReader.close();
             activeProcesses.remove(sourceFile);
             File temporaryScriptFile = tempScriptFile.get();
             if (temporaryScriptFile != null && temporaryScriptFile.exists()) {
+                executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput("Deleting temporary script file " + temporaryScriptFile));
                 FileUtil.delete(temporaryScriptFile);
             }
         }
