@@ -46,7 +46,10 @@ public enum DBObjectProperty implements Property {
     SESSION_USER,
 
     // trigger
-    FOR_EACH_ROW
+    FOR_EACH_ROW,
+
+    // other
+    TREE_LOADED // belongs to DBObjectStatus (here for optimization reasons)
     ;
 
     private final int index = PropertyHolderImpl.idx(this);
