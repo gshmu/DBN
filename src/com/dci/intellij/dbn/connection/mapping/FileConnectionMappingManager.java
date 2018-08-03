@@ -831,8 +831,6 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                 VirtualFile virtualFile = localFileSystem.findFileByPath(mapping.getFilePath());
                 if (virtualFile != null && virtualFile.isValid()) {
                     mappings.add(mapping);
-                } else {
-                    System.out.println();
                 }
             }
         }
