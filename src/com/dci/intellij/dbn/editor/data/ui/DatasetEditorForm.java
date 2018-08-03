@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
@@ -106,8 +107,10 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     public DatasetEditorTable beforeRebuild() throws SQLException {
         DatasetEditorTable oldEditorTable = getEditorTable();
+        DatasetEditor datasetEditor = getDatasetEditor();
         datasetEditorTable = new DatasetEditorTable(datasetEditor);
         Disposer.register(this, datasetEditorTable);
+
 
         DataGridSettings dataGridSettings = DataGridSettings.getInstance(getProject());
         DataGridTrackingColumnSettings trackingColumnSettings = dataGridSettings.getTrackingColumnSettings();
@@ -132,13 +135,12 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
             new ConditionalLaterInvocator(){
                 @Override
                 protected void execute() {
-                    if (!isDisposed()) {
-                        datasetTableScrollPane.setViewportView(datasetEditorTable);
-                        datasetEditorTable.initTableGutter();
-                        datasetEditorTable.updateBackground(false);
+                    DatasetEditorTable datasetEditorTable = getEditorTable();
+                    datasetTableScrollPane.setViewportView(datasetEditorTable);
+                    datasetEditorTable.initTableGutter();
+                    datasetEditorTable.updateBackground(false);
 
-                        Disposer.dispose(oldEditorTable);
-                    }
+                    DisposerUtil.disposeInBackground(oldEditorTable);
                 }
             }.start();
         }
