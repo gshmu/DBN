@@ -69,20 +69,19 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
         dynamicContent.checkDisposed();
         ConnectionHandler connectionHandler = dynamicContent.getConnectionHandler();
         LoaderCache loaderCache = new LoaderCache();
-        DBNConnection connection = null;
-        ResultSet resultSet = null;
         int count = 0;
         IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus> loading = connectionHandler.getConnectionStatus().getLoading();
         try {
             loading.set(true);
             dynamicContent.checkDisposed();
-            connection = connectionHandler.getPoolConnection(true);
+            DBNConnection connection = connectionHandler.getPoolConnection(true);
+            ResultSet resultSet = null;
+            List<T> list = null;
             try {
                 connection.set(ResourceStatus.ACTIVE, true);
                 dynamicContent.checkDisposed();
                 resultSet = createResultSet(dynamicContent, connection);
                 if (addDelay) Thread.sleep(500);
-                List<T> list = null;
                 while (resultSet != null && resultSet.next()) {
                     if (addDelay) Thread.sleep(10);
                     dynamicContent.checkDisposed();
@@ -114,12 +113,15 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
                         count++;
                     }
                 }
-                dynamicContent.checkDisposed();
-                dynamicContent.setElements(list);
-                postLoadContent(dynamicContent, debugInfo);
             } finally {
+                ConnectionUtil.close(resultSet);
                 connection.set(ResourceStatus.ACTIVE, false);
+                connectionHandler.freePoolConnection(connection);
             }
+            dynamicContent.checkDisposed();
+            dynamicContent.setElements(list);
+            postLoadContent(dynamicContent, debugInfo);
+
         } catch (Exception e) {
             if (e instanceof InterruptedException) throw (InterruptedException) e;
             if (e instanceof ProcessCanceledException) throw (ProcessCanceledException) e;
@@ -138,9 +140,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
             }
             throw new DynamicContentLoadException(e, modelException);
         } finally {
-            ConnectionUtil.close(resultSet);
             loading.set(false);
-            connectionHandler.freePoolConnection(connection);
         }
     }
 
