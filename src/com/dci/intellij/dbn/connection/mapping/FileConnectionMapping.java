@@ -8,34 +8,26 @@ import com.intellij.openapi.vfs.StandardFileSystems;
 import org.jdom.Element;
 
 public class FileConnectionMapping implements PersistentStateElement<Element> {
-    private String fileUrl = "";
+    private String filePath = "";
     private ConnectionId connectionId;
     private SessionId sessionId = SessionId.MAIN;
     private String schemaName = "";
 
     FileConnectionMapping(){}
 
-    FileConnectionMapping(String fileUrl, ConnectionId connectionId, SessionId sessionId, String schemaName) {
-        this.fileUrl = fileUrl;
+    FileConnectionMapping(String filePath, ConnectionId connectionId, SessionId sessionId, String schemaName) {
+        this.filePath = filePath;
         this.connectionId = connectionId;
         this.sessionId = sessionId;
         this.schemaName = schemaName;
     }
 
-    public String getFileUrl() {
-        return fileUrl;
-    }
-
     public String getFilePath() {
-        String filePath = fileUrl;
-        if (filePath.startsWith(StandardFileSystems.FILE_PROTOCOL_PREFIX)) {
-            filePath = filePath.substring(StandardFileSystems.FILE_PROTOCOL_PREFIX.length());
-        }
         return filePath;
     }
 
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public ConnectionId getConnectionId() {
@@ -69,28 +61,33 @@ public class FileConnectionMapping implements PersistentStateElement<Element> {
 
         FileConnectionMapping that = (FileConnectionMapping) o;
 
-        return getFileUrl().equals(that.getFileUrl());
+        return filePath.equals(that.filePath);
     }
 
     @Override
     public int hashCode() {
-        return getFileUrl().hashCode();
+        return filePath.hashCode();
     }
 
     /*********************************************
      *            PersistentStateElement         *
      *********************************************/
     public void readState(Element element) {
-        fileUrl = element.getAttributeValue("file-url");
+        filePath = element.getAttributeValue("file-url");
         // fixme remove this backward compatibility 
-        if (fileUrl == null) fileUrl = element.getAttributeValue("file-path");
+        if (filePath == null) filePath = element.getAttributeValue("file-path");
+
+        if (filePath.startsWith(StandardFileSystems.FILE_PROTOCOL_PREFIX)) {
+            filePath = filePath.substring(StandardFileSystems.FILE_PROTOCOL_PREFIX.length());
+        }
+
         connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
         sessionId = CommonUtil.nvl(SessionId.get(element.getAttributeValue("session-id")), sessionId);
         schemaName = element.getAttributeValue("current-schema");
     }
 
     public void writeState(Element element) {
-        element.setAttribute("file-url", fileUrl);
+        element.setAttribute("file-path", filePath);
         element.setAttribute("connection-id", connectionId == null ? "" : connectionId.id());
         element.setAttribute("session-id", sessionId == null ? "" : sessionId.id());
         element.setAttribute("current-schema", schemaName == null ? "" : schemaName);
