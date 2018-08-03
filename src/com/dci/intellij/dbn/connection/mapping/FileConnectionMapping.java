@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SessionId;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import org.jdom.Element;
 
 public class FileConnectionMapping implements PersistentStateElement<Element> {
@@ -23,6 +24,14 @@ public class FileConnectionMapping implements PersistentStateElement<Element> {
 
     public String getFileUrl() {
         return fileUrl;
+    }
+
+    public String getFilePath() {
+        String filePath = fileUrl;
+        if (filePath.startsWith(StandardFileSystems.FILE_PROTOCOL_PREFIX)) {
+            filePath = filePath.substring(StandardFileSystems.FILE_PROTOCOL_PREFIX.length());
+        }
+        return filePath;
     }
 
     public void setFileUrl(String fileUrl) {
@@ -51,6 +60,21 @@ public class FileConnectionMapping implements PersistentStateElement<Element> {
 
     public void setSchemaName(String schemaName) {
         this.schemaName = schemaName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FileConnectionMapping)) return false;
+
+        FileConnectionMapping that = (FileConnectionMapping) o;
+
+        return getFileUrl().equals(that.getFileUrl());
+    }
+
+    @Override
+    public int hashCode() {
+        return getFileUrl().hashCode();
     }
 
     /*********************************************

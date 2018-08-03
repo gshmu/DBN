@@ -57,6 +57,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
@@ -85,7 +86,7 @@ import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SESSION;
 public class FileConnectionMappingManager extends AbstractProjectComponent implements ProjectComponent, PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.FileConnectionMappingManager";
 
-    private Set<FileConnectionMapping> mappings = new THashSet<FileConnectionMapping>();
+        private Set<FileConnectionMapping> mappings = new THashSet<FileConnectionMapping>();
 
     private FileConnectionMappingManager(Project project) {
         super(project);
@@ -825,7 +826,13 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                 Element mappingElement = (Element) child;
                 FileConnectionMapping mapping = new FileConnectionMapping();
                 mapping.readState(mappingElement);
-                mappings.add(mapping);
+
+                VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(mapping.getFilePath());
+                if (virtualFile != null && virtualFile.isValid()) {
+                    mappings.add(mapping);
+                } else {
+                    System.out.println();
+                }
             }
         }
     }
