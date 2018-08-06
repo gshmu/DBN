@@ -118,7 +118,11 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
     }
 
     public void setDatabaseSchemaName(String currentSchemaName) {
-        this.databaseSchemaRef = new DBObjectRef<DBSchema>(getConnectionHandler().getId(), DBObjectType.SCHEMA, currentSchemaName);
+        if (StringUtil.isEmpty(currentSchemaName)) {
+            this.databaseSchemaRef = null;
+        } else {
+            this.databaseSchemaRef = new DBObjectRef<DBSchema>(getConnectionHandler().getId(), DBObjectType.SCHEMA, currentSchemaName);
+        }
     }
 
     public String getDatabaseSchemaName() {

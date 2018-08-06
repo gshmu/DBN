@@ -6,13 +6,16 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.console.ui.CreateRenameConsoleDialog;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
+import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.session.SessionManagerListener;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
@@ -163,8 +166,14 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                 Element consoleElement = new Element("console");
                 connectionElement.addContent(consoleElement);
 
+                DatabaseSession databaseSession = CommonUtil.nvl(
+                        console.getDatabaseSession(),
+                        connectionHandler.getSessionBundle().getMainSession());
+
                 consoleElement.setAttribute("name", console.getName());
                 consoleElement.setAttribute("type", console.getType().name());
+                consoleElement.setAttribute("schema", CommonUtil.nvl(console.getDatabaseSchemaName(), ""));
+                consoleElement.setAttribute("session", databaseSession.getName());
                 consoleElement.addContent(new CDATA(console.getContent().exportContent()));
             }
         }
@@ -182,12 +191,26 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                 DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
                 for (Element consoleElement : connectionElement.getChildren()) {
                     String consoleName = consoleElement.getAttributeValue("name");
+
+                    // schema
+                    String schema = consoleElement.getAttributeValue("schema");
+
+                    // session
+                    String session = consoleElement.getAttributeValue("session");
+                    DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
+                    DatabaseSession databaseSession = StringUtil.isEmpty(session) ?
+                            sessionBundle.getMainSession() :
+                            sessionBundle.getSession(session);
+
+
                     DBConsoleType consoleType = SettingsUtil.getEnumAttribute(consoleElement, "type", DBConsoleType.class);
 
                     String consoleText = SettingsUtil.readCdata(consoleElement);
 
                     DBConsoleVirtualFile consoleVirtualFile = consoleBundle.getConsole(consoleName, consoleType, true);
                     consoleVirtualFile.setText(consoleText);
+                    consoleVirtualFile.setDatabaseSchemaName(schema);
+                    consoleVirtualFile.setDatabaseSession(databaseSession);
                 }
             }
         }

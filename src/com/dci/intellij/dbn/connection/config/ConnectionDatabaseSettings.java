@@ -306,7 +306,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
                     databaseFiles.readConfiguration(filesElement);
                     databaseInfo.setFiles(databaseFiles);
                 } else {
-                    // TODO remove backward compatibility
+                    // TODO backward compatibility. Do cleanup
                     String file = getString(element, "file", null);
                     DatabaseFiles databaseFiles = new DatabaseFiles(file);
                     databaseInfo.setFiles(databaseFiles);
