@@ -2,32 +2,32 @@ package com.dci.intellij.dbn.connection.mapping;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SessionId;
-import com.intellij.openapi.vfs.StandardFileSystems;
 import org.jdom.Element;
 
 public class FileConnectionMapping implements PersistentStateElement<Element> {
-    private String filePath = "";
+    private String fileUrl = "";
     private ConnectionId connectionId;
     private SessionId sessionId = SessionId.MAIN;
     private String schemaName = "";
 
     FileConnectionMapping(){}
 
-    FileConnectionMapping(String filePath, ConnectionId connectionId, SessionId sessionId, String schemaName) {
-        this.filePath = filePath;
+    FileConnectionMapping(String fileUrl, ConnectionId connectionId, SessionId sessionId, String schemaName) {
+        this.fileUrl = fileUrl;
         this.connectionId = connectionId;
         this.sessionId = sessionId;
         this.schemaName = schemaName;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public String getFileUrl() {
+        return fileUrl;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
     }
 
     public ConnectionId getConnectionId() {
@@ -61,25 +61,26 @@ public class FileConnectionMapping implements PersistentStateElement<Element> {
 
         FileConnectionMapping that = (FileConnectionMapping) o;
 
-        return filePath.equals(that.filePath);
+        return fileUrl.equals(that.fileUrl);
     }
 
     @Override
     public int hashCode() {
-        return filePath.hashCode();
+        return fileUrl.hashCode();
     }
 
     /*********************************************
      *            PersistentStateElement         *
      *********************************************/
     public void readState(Element element) {
-        filePath = element.getAttributeValue("file-url");
-        // fixme remove this backward compatibility 
-        if (filePath == null) filePath = element.getAttributeValue("file-path");
+        fileUrl = element.getAttributeValue("file-url");
 
-        if (filePath.startsWith(StandardFileSystems.FILE_PROTOCOL_PREFIX)) {
-            filePath = filePath.substring(StandardFileSystems.FILE_PROTOCOL_PREFIX.length());
+        if (fileUrl == null) {
+            // TODO backward compatibility. Do cleanup
+            fileUrl = element.getAttributeValue("file-path");
         }
+
+        fileUrl = VirtualFileUtil.ensureFileUrl(fileUrl);
 
         connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
         sessionId = CommonUtil.nvl(SessionId.get(element.getAttributeValue("session-id")), sessionId);
@@ -87,7 +88,7 @@ public class FileConnectionMapping implements PersistentStateElement<Element> {
     }
 
     public void writeState(Element element) {
-        element.setAttribute("file-path", filePath);
+        element.setAttribute("file-url", fileUrl);
         element.setAttribute("connection-id", connectionId == null ? "" : connectionId.id());
         element.setAttribute("session-id", sessionId == null ? "" : sessionId.id());
         element.setAttribute("current-schema", schemaName == null ? "" : schemaName);

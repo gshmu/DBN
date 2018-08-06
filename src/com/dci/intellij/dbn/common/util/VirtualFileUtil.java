@@ -7,6 +7,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -93,5 +94,20 @@ public class VirtualFileUtil {
             }
         }
     }
+
+    public static String ensureFilePath(String fileUrlOrPath) {
+        if (fileUrlOrPath != null && fileUrlOrPath.startsWith(StandardFileSystems.FILE_PROTOCOL_PREFIX)) {
+            return fileUrlOrPath.substring(StandardFileSystems.FILE_PROTOCOL_PREFIX.length());
+        }
+        return fileUrlOrPath;
+    }
+
+    public static String ensureFileUrl(String fileUrlOrPath) {
+        if (fileUrlOrPath != null && !fileUrlOrPath.startsWith(StandardFileSystems.FILE_PROTOCOL_PREFIX)) {
+            return StandardFileSystems.FILE_PROTOCOL_PREFIX + fileUrlOrPath;
+        }
+        return fileUrlOrPath;
+    }
+
 }
 

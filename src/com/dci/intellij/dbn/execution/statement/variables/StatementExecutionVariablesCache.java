@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -69,7 +70,11 @@ public class StatementExecutionVariablesCache implements PersistentStateElement<
             List<Element> fileElements = variablesElement.getChildren();
 
             for (Element fileElement : fileElements) {
-                String fileUrl = fileElement.getAttributeValue("path");
+                String fileUrl = fileElement.getAttributeValue("file-url");
+                if ( StringUtil.isEmpty(fileUrl)) {
+                    // TODO backward compatibility. Do cleanup
+                    fileUrl = fileElement.getAttributeValue("path");
+                }
 
                 Set<StatementExecutionVariable> fileVariables = new THashSet<StatementExecutionVariable>();
                 this.fileVariablesMap.put(fileUrl, fileVariables);
@@ -91,7 +96,7 @@ public class StatementExecutionVariablesCache implements PersistentStateElement<
 
             if (FileUtil.isValidFileUrl(fileUrl, getProject())) {
                 Element fileElement = new Element("file");
-                fileElement.setAttribute("path", fileUrl);
+                fileElement.setAttribute("file-url", fileUrl);
                 Set<StatementExecutionVariable> executionVariables = fileVariablesMap.get(fileUrl);
                 for (StatementExecutionVariable executionVariable : executionVariables) {
                     Element variableElement = executionVariable.getState();
