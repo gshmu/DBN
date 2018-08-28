@@ -94,7 +94,11 @@ public class DocumentUtil {
                 new ReadActionRunner() {
                     @Override
                     protected Object run() {
-                        DaemonCodeAnalyzer.getInstance(psiFile.getProject()).restart(psiFile);
+                        if (psiFile.isValid()) {
+                            Project project = psiFile.getProject();
+                            DaemonCodeAnalyzer daemonCodeAnalyzer = DaemonCodeAnalyzer.getInstance(project);
+                            daemonCodeAnalyzer.restart(psiFile);
+                        }
                         return null;
                     }
                 }.start();
