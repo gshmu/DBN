@@ -87,11 +87,15 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         }
 
         if (toolWindow.getContentManager().getContents().length == 0) {
-            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-            ContentFactory contentFactory = new ContentFactoryImpl();
-            Content content = contentFactory.createContent(executionConsoleForm.getComponent(), null, true);
-            toolWindow.getContentManager().addContent(content);
-            toolWindow.setAvailable(true, null);
+            synchronized (this) {
+                if (toolWindow.getContentManager().getContents().length == 0) {
+                    ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                    ContentFactory contentFactory = new ContentFactoryImpl();
+                    Content content = contentFactory.createContent(executionConsoleForm.getComponent(), null, true);
+                    toolWindow.getContentManager().addContent(content);
+                    toolWindow.setAvailable(true, null);
+                }
+            }
         }
         return toolWindow;
     }
@@ -223,7 +227,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     @NotNull
-    public ExecutionConsoleForm getExecutionConsoleForm() {
+    private ExecutionConsoleForm getExecutionConsoleForm() {
         return executionConsoleForm.get();
     }
 
