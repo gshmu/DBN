@@ -1,10 +1,14 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.util.ui.JBUI;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.text.Document;
@@ -22,30 +26,31 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
+public class TextFieldWithPopup<T extends JComponent> extends JPanel implements DataEditorComponent {
     private JTextField textField;
     private JPanel buttonsPanel;
 
     private List<TextFieldPopupProvider> popupProviders = new ArrayList<TextFieldPopupProvider>();
     private UserValueHolder userValueHolder;
-    private Project project;
+    private ProjectRef projectRef;
+    private T parentComponent;
 
     public TextFieldWithPopup(Project project) {
-        super(new BorderLayout(2, 0));
-        this.project = project;
-        setMaximumSize(new Dimension(-1, 24));
-        setPreferredSize(new Dimension(-1, 24));
-        setMinimumSize(new Dimension(180, 24));
+        this(project, null);
+
+    }
+    public TextFieldWithPopup(Project project, @Nullable T parentComponent) {
+        super(new BorderLayout());
+        this.projectRef = ProjectRef.from(project);
+        this.parentComponent = parentComponent;
 
         textField = new JTextField();
-        textField.setMargin(new Insets(0, 1, 0, 1));
+        textField.setMargin(JBUI.insets(0, 1));
         add(textField, BorderLayout.CENTER);
 
-        buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
         add(buttonsPanel, BorderLayout.EAST);
 
-        textField.setPreferredSize(new Dimension(150, 24));
-        textField.setMaximumSize(new Dimension(-1, 24));
         textField.addKeyListener(keyListener);
         textField.addFocusListener(focusListener);
 
@@ -58,8 +63,14 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
         if (textField != null) textField.setFont(font);
     }
 
+    @NotNull
     public Project getProject() {
-        return project;
+        return projectRef.getnn();
+    }
+
+    @Nullable
+    public T getParentComponent() {
+        return parentComponent;
     }
 
     public void setEditable(boolean editable){
@@ -319,6 +330,7 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
         if (!disposed) {
             disposed = true;
             userValueHolder = null;
+            parentComponent = null;
         }
     }
 
