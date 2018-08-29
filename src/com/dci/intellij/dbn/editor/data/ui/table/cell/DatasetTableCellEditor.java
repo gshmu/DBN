@@ -16,11 +16,9 @@
  import com.dci.intellij.dbn.object.DBColumn;
  import com.intellij.ui.JBColor;
  import com.intellij.ui.SimpleTextAttributes;
- import com.intellij.util.ui.JBUI;
 
  import javax.swing.*;
  import javax.swing.border.Border;
- import javax.swing.border.CompoundBorder;
  import javax.swing.border.LineBorder;
  import javax.swing.text.Document;
  import java.awt.*;
@@ -33,8 +31,8 @@
  import java.awt.event.MouseMotionListener;
 
  public class DatasetTableCellEditor extends AbstractDatasetTableCellEditor implements KeyListener{
-    private static final Border ERROR_BORDER = new CompoundBorder(new LineBorder(JBColor.RED, 1), JBUI.Borders.empty(0, 2));
-    private static final Border POPUP_BORDER = new CompoundBorder(new LineBorder(JBColor.BLUE, 1), JBUI.Borders.empty(0, 2));
+    private static final Border ERROR_BORDER = new LineBorder(JBColor.RED, 1);
+    private static final Border POPUP_BORDER = new LineBorder(JBColor.BLUE, 1);
 
     public static final int HIGHLIGHT_TYPE_NONE = 0;
     public static final int HIGHLIGHT_TYPE_POPUP = 1;
@@ -89,10 +87,11 @@
     }
 
     public void highlight(int type) {
+        JComponent editorComponent = getEditorComponent();
         switch (type) {
-            case HIGHLIGHT_TYPE_NONE: getEditorComponent().setBorder(Borders.TEXT_FIELD_BORDER); break;
-            case HIGHLIGHT_TYPE_POPUP: getEditorComponent().setBorder(POPUP_BORDER); break;
-            case HIGHLIGHT_TYPE_ERROR: getEditorComponent().setBorder(ERROR_BORDER); break;
+            case HIGHLIGHT_TYPE_NONE:  editorComponent.setBorder(Borders.EMPTY_BORDER); break;
+            case HIGHLIGHT_TYPE_POPUP: editorComponent.setBorder(POPUP_BORDER); break;
+            case HIGHLIGHT_TYPE_ERROR: editorComponent.setBorder(ERROR_BORDER); break;
         }
     }
 

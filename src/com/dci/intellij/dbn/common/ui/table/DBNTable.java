@@ -58,7 +58,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         setFont(font);
         setBackground(UIUtil.getTextFieldBackground());
 
-        adjustRowHeight(2);
+        adjustRowHeight(1);
 
         final JTableHeader tableHeader = getTableHeader();
         if (!showHeader) {
@@ -101,7 +101,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     protected void adjustRowHeight() {
         Font font = getFont();
         FontRenderContext fontRenderContext = getFontMetrics(getFont()).getFontRenderContext();
-        LineMetrics lineMetrics = font.getLineMetrics("ABCÄÜÖÂÇĞIİÖŞĀČḎĒËĠḤŌŠṢṬŪŽ", fontRenderContext);
+        LineMetrics lineMetrics = font.getLineMetrics("ABCÄÜÖÂÇĞIİÖŞĀČḎĒËĠḤŌŠṢṬŪŽy", fontRenderContext);
         int fontHeight = Math.round(lineMetrics.getHeight());
         setRowHeight(fontHeight + (rowVerticalPadding * 2));
     }

@@ -54,7 +54,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
     @Override
     public Component prepareEditor(final TableCellEditor editor, int rowIndex, int columnIndex) {
         JTextField component = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
-        component.setBorder(Borders.TEXT_FIELD_BORDER);
+        component.setBorder(Borders.EMPTY_BORDER);
         component.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
