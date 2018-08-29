@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -58,9 +59,20 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
     }
 
     @Override
+    public void setBackground(Color color) {
+        super.setBackground(color);
+        if (textField != null) textField.setBackground(color);
+    }
+
+    @Override
     public void setFont(Font font) {
         super.setFont(font);
         if (textField != null) textField.setFont(font);
+    }
+
+    @Override
+    public void setBorder(Border border) {
+        super.setBorder(border);
     }
 
     @NotNull
