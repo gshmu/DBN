@@ -69,7 +69,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
             if (genericDataType.is(GenericDataType.DATE_TIME, GenericDataType.LITERAL, GenericDataType.ARRAY)) {
                 TextFieldWithPopup textFieldWithPopup = new TextFieldWithPopup(project);
 
-                textFieldWithPopup.setPreferredSize(new Dimension(200, -1));
+                textFieldWithPopup.setPreferredSize(new Dimension(300, -1));
                 JTextField valueTextField = textFieldWithPopup.getTextField();
                 valueTextField.getDocument().addDocumentListener(documentListener);
                 valueTextField.addKeyListener(keyAdapter);
