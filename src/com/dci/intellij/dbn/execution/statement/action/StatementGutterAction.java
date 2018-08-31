@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProc
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -25,39 +26,34 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.lang.ref.WeakReference;
 
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
 
 public class StatementGutterAction extends AnAction {
-    private final WeakReference<DBLanguagePsiFile> psiFile;
+    private final PsiFileRef<DBLanguagePsiFile> psiFileRef;
     private final int elementOffset;
 
 
     public StatementGutterAction(ExecutablePsiElement executablePsiElement) {
-        psiFile = new WeakReference<DBLanguagePsiFile>(executablePsiElement.getFile());
+        psiFileRef = new PsiFileRef<DBLanguagePsiFile>(executablePsiElement.getFile());
         elementOffset = executablePsiElement.getTextOffset();
     }
 
 
     @Nullable
-    private DBLanguagePsiFile getPsiFile() {
-        DBLanguagePsiFile languagePsiFile = psiFile.get();
-        if (languagePsiFile != null && !languagePsiFile.isValid()) {
-            languagePsiFile = null;
-        }
-        return languagePsiFile;
+    private DBLanguagePsiFile getPsiFileRef() {
+        return psiFileRef.get();
     }
 
     private VirtualFile getVirtualFile() {
-        DBLanguagePsiFile languagePsiFile = psiFile.get();
-        return languagePsiFile == null ? null : languagePsiFile.getVirtualFile();
+        DBLanguagePsiFile psiFile = getPsiFileRef();
+        return psiFile == null ? null : psiFile.getVirtualFile();
     }
 
     @Nullable
     private ExecutablePsiElement getExecutablePsiElement() {
-        DBLanguagePsiFile psiFile = getPsiFile();
+        DBLanguagePsiFile psiFile = getPsiFileRef();
         if (psiFile != null) {
             PsiElement elementAtOffset = psiFile.findElementAt(elementOffset);
             if (elementAtOffset != null && !(elementAtOffset instanceof BasePsiElement)) {
@@ -137,7 +133,7 @@ public class StatementGutterAction extends AnAction {
 
     @Nullable
     private StatementExecutionProcessor getExecutionProcessor(boolean create) {
-        DBLanguagePsiFile psiFile = getPsiFile();
+        DBLanguagePsiFile psiFile = getPsiFileRef();
         ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
         if (psiFile != null && executablePsiElement != null) {
             Project project = psiFile.getProject();

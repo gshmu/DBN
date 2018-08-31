@@ -29,6 +29,7 @@ import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
 import com.dci.intellij.dbn.connection.session.SessionManagerListener;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.language.editor.ui.DBLanguageFileEditorToolbarForm;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
@@ -499,13 +500,13 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
 
     private class ConnectionSelectAction extends AbstractConnectionAction {
-        private WeakReference<DBLanguagePsiFile> fileRef;
+        private PsiFileRef<DBLanguagePsiFile> fileRef;
         private SimpleTask callback;
         private boolean promptSchemaSelection = false;
 
         private ConnectionSelectAction(ConnectionHandler connectionHandler, DBLanguagePsiFile file, boolean promptSchemaSelection, SimpleTask callback) {
             super(connectionHandler.getName(), null, connectionHandler.getIcon(), connectionHandler);
-            this.fileRef = new WeakReference<DBLanguagePsiFile>(file);
+            this.fileRef = new PsiFileRef<DBLanguagePsiFile>(file);
             this.callback = callback;
             this.promptSchemaSelection = promptSchemaSelection;
         }
@@ -603,12 +604,12 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
 
     private static class SchemaSelectAction extends AnObjectAction<DBSchema> {
-        private WeakReference<DBLanguagePsiFile> fileRef;
+        private PsiFileRef<DBLanguagePsiFile> fileRef;
         private RunnableTask callback;
 
         private SchemaSelectAction(DBLanguagePsiFile file, DBSchema schema, RunnableTask callback) {
             super(schema);
-            this.fileRef = new WeakReference<DBLanguagePsiFile>(file);
+            this.fileRef = new PsiFileRef<DBLanguagePsiFile>(file);
             this.callback = callback;
         }
 
@@ -680,13 +681,13 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
 
     private class SessionSelectAction extends AnAction {
-        private WeakReference<DBLanguagePsiFile> fileRef;
+        private PsiFileRef<DBLanguagePsiFile> fileRef;
         private WeakReference<DatabaseSession> sessionRef;
         private RunnableTask callback;
 
         private SessionSelectAction(DBLanguagePsiFile file, DatabaseSession session, RunnableTask callback) {
             super(session.getName(), null, session.getIcon());
-            this.fileRef = new WeakReference<DBLanguagePsiFile>(file);
+            this.fileRef = new PsiFileRef<DBLanguagePsiFile>(file);
             this.sessionRef = new WeakReference<DatabaseSession>(session);
             this.callback = callback;
         }
@@ -714,12 +715,12 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     }
 
     private class SessionCreateAction extends DumbAwareAction {
-        private WeakReference<DBLanguagePsiFile> fileRef;
+        private PsiFileRef<DBLanguagePsiFile> fileRef;
         private ConnectionHandlerRef connectionHandlerRef;
 
         private SessionCreateAction(DBLanguagePsiFile file, ConnectionHandler connectionHandler) {
             super("New session...");
-            this.fileRef = new WeakReference<DBLanguagePsiFile>(file);
+            this.fileRef = new PsiFileRef<DBLanguagePsiFile>(file);
             this.connectionHandlerRef = connectionHandler.getRef();
         }
 

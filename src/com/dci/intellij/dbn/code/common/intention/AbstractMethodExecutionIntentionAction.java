@@ -9,15 +9,14 @@ import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
-
 public abstract class AbstractMethodExecutionIntentionAction extends GenericIntentionAction {
-    private WeakReference<DBMethod> lastChecked;
+    private DBObjectRef<DBMethod> lastChecked;
     public static final ObjectLookupAdapter METHOD_LOOKUP_ADAPTER = new ObjectLookupAdapter(null, IdentifierCategory.DEFINITION, DBObjectType.METHOD);
 
     @NotNull
@@ -43,7 +42,7 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
             if (underlyingObject != null) {
                 if (underlyingObject instanceof DBMethod) {
                     DBMethod method = (DBMethod) underlyingObject;
-                    lastChecked = new WeakReference<DBMethod>(method);
+                    lastChecked = method.getRef();
                     return method;
                 }
 
@@ -56,7 +55,7 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
                             DBObject object = identifierPsiElement.resolveUnderlyingObject();
                             if (object instanceof DBMethod) {
                                 DBMethod method = (DBMethod) object;
-                                lastChecked = new WeakReference<DBMethod>(method);
+                                lastChecked = method.getRef();
                                 return method;
                             }
 
