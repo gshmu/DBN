@@ -45,6 +45,8 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.PsiElementRef;
+import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
@@ -78,9 +80,9 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
 public class StatementExecutionBasicProcessor extends DisposableBase implements StatementExecutionProcessor {
-    protected DBLanguagePsiFile psiFile;
+    private PsiFileRef<DBLanguagePsiFile> psiFileRef;
+    private PsiElementRef<ExecutablePsiElement> cachedExecutableRef;
     private WeakReference<FileEditor> fileEditorRef;
-    private ExecutablePsiElement cachedExecutable;
     private EditorProviderId editorProviderId;
     private transient CancellableDatabaseCall<StatementExecutionResult> databaseCall;
 
@@ -106,9 +108,9 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     public StatementExecutionBasicProcessor(FileEditor fileEditor, ExecutablePsiElement psiElement, int index) {
         this.fileEditorRef = new WeakReference<FileEditor>(fileEditor);
-        this.psiFile = psiElement.getFile();
+        this.psiFileRef = new PsiFileRef<>(psiElement.getFile());
 
-        this.cachedExecutable = psiElement;
+        this.cachedExecutableRef = new PsiElementRef<>(psiElement);
         this.index = index;
         executionInput = new StatementExecutionInput(psiElement.getText(), psiElement.prepareStatementText(), this);
         initEditorProviderId(fileEditor);
@@ -116,7 +118,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     public StatementExecutionBasicProcessor(FileEditor fileEditor, DBLanguagePsiFile psiFile, String sqlStatement, int index) {
         this.fileEditorRef = new WeakReference<FileEditor>(fileEditor);
-        this.psiFile = psiFile;
+        this.psiFileRef = new PsiFileRef<>(psiFile);
         this.index = index;
         sqlStatement = sqlStatement.trim();
         executionInput = new StatementExecutionInput(sqlStatement, sqlStatement, this);
@@ -138,33 +140,34 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
         } else {
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+            ExecutablePsiElement cachedExecutable = getCachedExecutable();
             return
                 executablePsiElement == null ||
-                this.cachedExecutable == null ||
-                !this.cachedExecutable.isValid() ||
-                !this.cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
+                cachedExecutable == null ||
+                !cachedExecutable.isValid() ||
+                !cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
         }
     }
 
     @Override
     public void bind(ExecutablePsiElement executablePsiElement) {
-        this.cachedExecutable = executablePsiElement;
+        cachedExecutableRef = new PsiElementRef<>(executablePsiElement);
         executablePsiElement.setExecutionProcessor(this);
     }
 
     @Override
     public void unbind() {
-        cachedExecutable = null;
+        cachedExecutableRef = null;
     }
 
     @Override
     public boolean isBound() {
-        return cachedExecutable != null;
+        return getCachedExecutable() != null;
     }
 
     @NotNull
     public DBLanguagePsiFile getPsiFile() {
-        return FailsafeUtil.get(psiFile);
+        return FailsafeUtil.get(psiFileRef.get());
     }
 
     @Override
@@ -193,7 +196,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     @Nullable
     public ExecutablePsiElement getCachedExecutable() {
-        return cachedExecutable;
+        return cachedExecutableRef == null ? null : cachedExecutableRef.get();
     }
 
     public static boolean contains(PsiElement parent, BasePsiElement childElement, BasePsiElement.MatchType matchType) {
@@ -245,6 +248,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     public void initExecutionInput(boolean bulkExecution) {
         // overwrite the input if it was leniently bound
+        ExecutablePsiElement cachedExecutable = getCachedExecutable();
         if (cachedExecutable != null) {
             executionInput.setOriginalStatementText(cachedExecutable.getText());
             executionInput.setExecutableStatementText(cachedExecutable.prepareStatementText());
@@ -671,6 +675,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     public void navigateToEditor(NavigationInstruction instruction) {
         FileEditor fileEditor = getFileEditor();
+        ExecutablePsiElement cachedExecutable = getCachedExecutable();
         if (cachedExecutable != null) {
             if (fileEditor != null) {
                 cachedExecutable.navigateInEditor(fileEditor, instruction);
@@ -684,6 +689,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
      *                    Disposable                        *
      ********************************************************/
     private boolean isDataDefinitionStatement() {
+        ExecutablePsiElement cachedExecutable = getCachedExecutable();
         return cachedExecutable != null && cachedExecutable.is(ElementTypeAttribute.DATA_DEFINITION);
     }
 
@@ -727,10 +733,12 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Nullable
     private IdentifierPsiElement getSubjectPsiElement() {
+        ExecutablePsiElement cachedExecutable = getCachedExecutable();
         return cachedExecutable == null ? null : (IdentifierPsiElement) cachedExecutable.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
     }
 
     private BasePsiElement getCompilableBlockPsiElement() {
+        ExecutablePsiElement cachedExecutable = getCachedExecutable();
         return cachedExecutable == null ? null : cachedExecutable.findFirstPsiElement(ElementTypeAttribute.COMPILABLE_BLOCK);
     }
 
@@ -757,6 +765,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     public int getExecutableLineNumber() {
+        ExecutablePsiElement cachedExecutable = getCachedExecutable();
         if (cachedExecutable != null) {
             Document document = DocumentUtil.getDocument(cachedExecutable.getFile());
             if (document != null) {
@@ -774,7 +783,5 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     public void dispose() {
         super.dispose();
-        cachedExecutable = null;
-        psiFile = null;
     }
 }

@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.editor.session.SessionBrowserManager;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
@@ -46,7 +47,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
 
 
     private DBSessionStatementVirtualFile virtualFile;
-    private DBLanguagePsiFile psiFile;
+    private PsiFileRef<DBLanguagePsiFile> psiFileRef;
     private Document document;
     private EditorEx viewer;
     private SessionBrowser sessionBrowser;
@@ -128,7 +129,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     }
 
     public DBLanguagePsiFile getPsiFile() {
-        return psiFile;
+        return psiFileRef.get();
     }
 
     private void createStatementViewer() {
@@ -136,8 +137,8 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
         ConnectionHandler connectionHandler = getConnectionHandler();
         virtualFile = new DBSessionStatementVirtualFile(sessionBrowser, "");
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), virtualFile, true);
-        psiFile = (DBLanguagePsiFile) virtualFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
-
+        DBLanguagePsiFile psiFile = (DBLanguagePsiFile) virtualFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
+        psiFileRef = new PsiFileRef<>(psiFile);
         document = DocumentUtil.getDocument(psiFile);
 
 

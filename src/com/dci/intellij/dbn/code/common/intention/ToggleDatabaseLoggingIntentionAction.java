@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -14,10 +15,9 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.lang.ref.WeakReference;
 
 public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction implements LowPriorityAction {
-    private WeakReference<PsiFile> lastChecked;
+    private PsiFileRef lastChecked;
     @NotNull
     public String getText() {
         ConnectionHandler connectionHandler = getLastCheckedConnection();
@@ -63,7 +63,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
             return false;
         }
 
-        lastChecked = new WeakReference<PsiFile>(psiFile);
+        lastChecked = new PsiFileRef(psiFile);
         ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
         return supportsLogging(connectionHandler);
     }
