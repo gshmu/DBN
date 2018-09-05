@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.code.common.style.presets.CodeStyleDefaultPresets;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.PsiElementRef;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FormattingBlock implements Block {
-    private PsiElement psiElement;
+    private PsiElementRef psiElementRef;
     private CodeStyleSettings codeStyleSettings;
     private CodeStyleCustomSettings codeStyleCustomSettings;
     private static final List<Block> EMPTY_LIST = new ArrayList<Block>(0);
@@ -51,7 +52,7 @@ public class FormattingBlock implements Block {
             PsiElement psiElement,
             FormattingBlock parentBlock,
             int index) {
-        this.psiElement = psiElement;
+        this.psiElementRef = new PsiElementRef(psiElement);
         this.parentBlock = parentBlock;
         this.index = index;
         this.codeStyleSettings = codeStyleSettings;
@@ -59,6 +60,7 @@ public class FormattingBlock implements Block {
     }
 
     private FormattingAttributes getFormattingAttributes() {
+        PsiElement psiElement = getPsiElement();
         if (psiElement instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) psiElement;
             return basePsiElement.getFormattingAttributes();
@@ -85,19 +87,20 @@ public class FormattingBlock implements Block {
 
 
     private Object getAttribute(FormattingAttributes.Type type) {
+        PsiElement psiElement = getPsiElement();
         if (psiElement instanceof FormattingProviderPsiElement) {
-            FormattingProviderPsiElement psiElement = (FormattingProviderPsiElement) this.psiElement;
-            FormattingAttributes attributes = psiElement.getFormattingAttributes();
+            FormattingProviderPsiElement providerPsiElement = (FormattingProviderPsiElement) psiElement;
+            FormattingAttributes attributes = providerPsiElement.getFormattingAttributes();
             Object attribute = FormattingAttributes.getAttribute(attributes, type);
             if (attribute != null) {
                 return attribute;
             }
 
             if (type == FormattingAttributes.Type.SPACING_BEFORE || type == FormattingAttributes.Type.SPACING_AFTER) {
-                PsiElement parent = psiElement.getParent();
+                PsiElement parent = providerPsiElement.getParent();
                 PsiElement child = type.isLeft() ? parent.getFirstChild() : parent.getLastChild();
-                if (child != psiElement) {
-                    attributes = psiElement.getFormattingAttributesRecursive(type.isLeft());
+                if (child != providerPsiElement) {
+                    attributes = providerPsiElement.getFormattingAttributesRecursive(type.isLeft());
                     attribute = FormattingAttributes.getAttribute(attributes, type);
                     if (attribute != null) {
                         return attribute;
@@ -111,6 +114,7 @@ public class FormattingBlock implements Block {
 
     @Nullable
     public Indent getIndent() {
+        PsiElement psiElement = getPsiElement();
         if (psiElement instanceof PsiComment) {
             return null;
         }
@@ -144,6 +148,7 @@ public class FormattingBlock implements Block {
 
     @Nullable
     public Wrap getWrap() {
+        PsiElement psiElement = getPsiElement();
         if (psiElement instanceof PsiComment) {
             return null;
         }
@@ -193,8 +198,8 @@ public class FormattingBlock implements Block {
             return null;
         }
 
-        PsiElement leftPsiElement = leftBlock.psiElement;
-        PsiElement rightPsiElement = rightBlock.psiElement;
+        PsiElement leftPsiElement = leftBlock.getPsiElement();
+        PsiElement rightPsiElement = rightBlock.getPsiElement();
 
         if (leftPsiElement instanceof PsiComment || rightPsiElement instanceof PsiComment) {
             return null;
@@ -267,6 +272,7 @@ public class FormattingBlock implements Block {
 
     @Nullable
     private DBLanguage getLanguage() {
+        PsiElement psiElement = getPsiElement();
         if (psiElement instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile databasePsiFile = (DBLanguagePsiFile) psiElement;
             return databasePsiFile.getDBLanguage();
@@ -289,7 +295,7 @@ public class FormattingBlock implements Block {
 
     private static FormattingBlock getParentBlock(FormattingBlock block, ElementTypeAttribute typeAttribute) {
         if (block.parentBlock != null) {
-            PsiElement psiElement = block.parentBlock.psiElement;
+            PsiElement psiElement = block.parentBlock.getPsiElement();
             if (psiElement instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) psiElement;
                 if (basePsiElement.getElementType().is(typeAttribute)) {
@@ -312,28 +318,29 @@ public class FormattingBlock implements Block {
 
     @NotNull
     public TextRange getTextRange() {
-        return psiElement.getTextRange();
+        return getPsiElement().getTextRange();
     }
 
     @NotNull
     public List<Block> getSubBlocks() {
         if (childBlocks == null) {
-           synchronized (this) {
-               if (childBlocks == null) {
-                   PsiElement child = psiElement.getFirstChild();
-                   while (child != null) {
-                       if (!(child instanceof PsiWhiteSpace) /*&& !(child instanceof PsiErrorElement)*/ && child.getTextLength() > 0) {
-                           if (childBlocks == null) childBlocks = new ArrayList<Block>();
-                           CodeStyleCustomSettings codeStyleCustomSettings = getCodeStyleSettings(child);
-                           FormattingBlock childBlock = new FormattingBlock(codeStyleSettings, codeStyleCustomSettings, child, this, index);
-                           childBlocks.add(childBlock);
-                       }
-                       child = child.getNextSibling();
-                   }
+            synchronized (this) {
+                if (childBlocks == null) {
+                    PsiElement psiElement = getPsiElement();
+                    PsiElement child = psiElement.getFirstChild();
+                    while (child != null) {
+                        if (!(child instanceof PsiWhiteSpace) /*&& !(child instanceof PsiErrorElement)*/ && child.getTextLength() > 0) {
+                            if (childBlocks == null) childBlocks = new ArrayList<Block>();
+                            CodeStyleCustomSettings codeStyleCustomSettings = getCodeStyleSettings(child);
+                            FormattingBlock childBlock = new FormattingBlock(codeStyleSettings, codeStyleCustomSettings, child, this, index);
+                            childBlocks.add(childBlock);
+                        }
+                        child = child.getNextSibling();
+                    }
 
-                   if (childBlocks == null) childBlocks = EMPTY_LIST;
-               }
-           }
+                    if (childBlocks == null) childBlocks = EMPTY_LIST;
+                }
+            }
         }
 
         return childBlocks;
@@ -344,6 +351,7 @@ public class FormattingBlock implements Block {
         if (child instanceof ChameleonPsiElement) {
             ChameleonPsiElement element = (ChameleonPsiElement) child;
             DBLanguage language = (DBLanguage) PsiUtil.getLanguage(element);
+            PsiElement psiElement = getPsiElement();
             codeStyleCustomSettings = language.getCodeStyleSettings(psiElement.getProject());
         }
         return codeStyleCustomSettings;
@@ -366,6 +374,7 @@ public class FormattingBlock implements Block {
     }
 
     public boolean isIncomplete() {
+        PsiElement psiElement = getPsiElement();
         if (psiElement instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) psiElement;
             return basePsiElement.hasErrors();
@@ -383,6 +392,7 @@ public class FormattingBlock implements Block {
     }
 
     public boolean isLeaf() {
+        PsiElement psiElement = getPsiElement();
         return psiElement instanceof IdentifierPsiElement ||
                 psiElement instanceof TokenPsiElement ||
                 psiElement instanceof PsiWhiteSpace;
@@ -390,12 +400,13 @@ public class FormattingBlock implements Block {
 
 
     public String toString() {
-        return psiElement.toString();
+        return getPsiElement().toString();
     }
 
 
+    @NotNull
     public PsiElement getPsiElement() {
-        return psiElement;
+        return psiElementRef.getnn();
     }
 
     private Block getPreviousBlockInParent() {
