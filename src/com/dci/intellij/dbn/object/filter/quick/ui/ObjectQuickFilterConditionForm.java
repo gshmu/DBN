@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -91,19 +92,13 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
         return patternTextField;
     }
 
-    public ObjectQuickFilterCondition getCondition() {
-        condition.setOperator(operatorComboBox.getSelectedValue());
-        condition.setPattern(patternTextField.getText().trim());
-        return condition;
-    }
-
     public JComponent getComponent() {
         return mainPanel;
     }
 
-    public void dispose() {
-        super.dispose();
-        condition = null;
+    @NotNull
+    protected ObjectQuickFilterCondition getCondition() {
+        return FailsafeUtil.get(condition);
     }
 
     public void remove() {
@@ -111,10 +106,15 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
     }
 
     public boolean isActive() {
-        return condition.isActive();
+        return getCondition().isActive();
     }
 
     public void setActive(boolean active) {
-        condition.setActive(active);
+        getCondition().setActive(active);
+    }
+
+    public void dispose() {
+        super.dispose();
+        condition = null;
     }
 }
