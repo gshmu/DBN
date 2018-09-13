@@ -701,11 +701,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
-            DisposerUtil.dispose(objectLists);
-            DisposerUtil.dispose(objectRelationLists);
+            DisposerUtil.disposeInBackground(objectLists);
+            DisposerUtil.disposeInBackground(objectRelationLists);
             CollectionUtil.clearCollection(visibleTreeChildren);
             CollectionUtil.clearCollection(allPossibleTreeChildren);
-            cachedDataTypes.clear();
+            CollectionUtil.clearCollection(cachedDataTypes);
             treeParent = null;
             connectionHandler = null;
         }
