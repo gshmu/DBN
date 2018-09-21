@@ -18,6 +18,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private ConnectionDatabaseSettings databaseSettings;
     private ConnectionPropertiesSettings propertiesSettings;
     private ConnectionSshTunnelSettings sshTunnelSettings;
+    private ConnectionSslSettings sslSettings;
     private ConnectionDetailSettings detailSettings;
     private ConnectionFilterSettings filterSettings;
 
@@ -30,6 +31,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         databaseSettings = new ConnectionDatabaseSettings(this, databaseType, configType);
         propertiesSettings = new ConnectionPropertiesSettings(this);
         sshTunnelSettings = new ConnectionSshTunnelSettings(this);
+        sslSettings = new ConnectionSslSettings(this);
         detailSettings = new ConnectionDetailSettings(this);
         filterSettings = new ConnectionFilterSettings(this);
     }
@@ -50,6 +52,10 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         return sshTunnelSettings;
     }
 
+    public ConnectionSslSettings getSslSettings() {
+        return sslSettings;
+    }
+
     public ConnectionDetailSettings getDetailSettings() {
         return detailSettings;
     }
@@ -64,6 +70,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
                 databaseSettings,
                 propertiesSettings,
                 sshTunnelSettings,
+                sslSettings,
                 detailSettings,
                 filterSettings};
     }
