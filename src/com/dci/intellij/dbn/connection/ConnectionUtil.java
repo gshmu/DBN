@@ -8,12 +8,15 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelConnector;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
+import com.dci.intellij.dbn.connection.ssl.SslConnectionManager;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
@@ -167,6 +170,8 @@ public class ConnectionUtil {
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             try {
                 final Properties properties = new Properties();
+
+                // AUTHENTICATION
                 AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo();
                 if (!authenticationInfo.isProvided() && temporaryAuthenticationInfo != null) {
                     authenticationInfo = temporaryAuthenticationInfo;
@@ -179,6 +184,8 @@ public class ConnectionUtil {
                         properties.put("password", password);
                     }
                 }
+
+                // SESSION INFO
                 ConnectionType connectionType = sessionId.getConnectionType();
                 String appName = "Database Navigator - " + connectionType.getName();
                 properties.put("ApplicationName", appName);
@@ -188,24 +195,43 @@ public class ConnectionUtil {
                     properties.putAll(configProperties);
                 }
 
+                // DRIVER
                 Driver driver = resolveDriver(databaseSettings);
                 if (driver == null) {
                     throw new SQLException("Could not resolve driver class.");
                 }
 
+                // SSL
+                ConnectionSslSettings sslSettings = connectionSettings.getSslSettings();
+                if (sslSettings.isActive()) {
+                    SslConnectionManager connectionManager = SslConnectionManager.getInstance();
+                    connectionManager.ensureSslConnection(connectionSettings);
+                    DatabaseType databaseType = databaseSettings.getDatabaseType();
+                    if (databaseType == DatabaseType.MYSQL) {
+                        properties.setProperty("useSSL", "true");
+                        properties.setProperty("requireSSL", "true");
+                    } else if (databaseType == DatabaseType.POSTGRES) {
+                        properties.setProperty("ssl", "true");
+                    }
+                }
+
                 String connectionUrl = databaseSettings.getConnectionUrl();
 
-                SshTunnelManager sshTunnelManager = SshTunnelManager.getInstance();
-                SshTunnelConnector sshTunnelConnector = sshTunnelManager.ensureSshConnection(databaseSettings.getParent());
-                if (sshTunnelConnector != null) {
-                    String localHost = sshTunnelConnector.getLocalHost();
-                    String localPort = Integer.toString(sshTunnelConnector.getLocalPort());
-                    connectionUrl = databaseSettings.getConnectionUrl(localHost, localPort);
+                // SSH Tunnel
+                ConnectionSshTunnelSettings sshTunnelSettings = connectionSettings.getSshTunnelSettings();
+                if (sshTunnelSettings.isActive()) {
+                    SshTunnelManager sshTunnelManager = SshTunnelManager.getInstance();
+                    SshTunnelConnector sshTunnelConnector = sshTunnelManager.ensureSshConnection(connectionSettings);
+                    if (sshTunnelConnector != null) {
+                        String localHost = sshTunnelConnector.getLocalHost();
+                        String localPort = Integer.toString(sshTunnelConnector.getLocalPort());
+                        connectionUrl = databaseSettings.getConnectionUrl(localHost, localPort);
+                    }
                 }
 
                 Connection connection = driver.connect(connectionUrl, properties);
                 if (connection == null) {
-                    throw new SQLException("Driver refused to create connection for this configuration. No failure information provided.");
+                    throw new SQLException("Driver failed to create connection for this configuration. No failure information provided.");
                 }
                 ConnectionUtil.setAutoCommit(connection, autoCommit);
                 if (connectionStatus != null) {
