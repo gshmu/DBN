@@ -5,9 +5,9 @@ import com.dci.intellij.dbn.connection.action.AbstractConnectionToggleAction;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
-public class ToggleAutoCommitAction extends AbstractConnectionToggleAction {
+public class AutoCommitToggleAction extends AbstractConnectionToggleAction {
 
-    public ToggleAutoCommitAction(ConnectionHandler connectionHandler) {
+    public AutoCommitToggleAction(ConnectionHandler connectionHandler) {
         super("Auto-Commit", connectionHandler);
 
     }

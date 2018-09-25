@@ -9,9 +9,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import org.jetbrains.annotations.NotNull;
 
-public class ToggleDatabaseLoggingAction extends AbstractConnectionToggleAction {
+public class DatabaseLoggingToggleAction extends AbstractConnectionToggleAction {
 
-    public ToggleDatabaseLoggingAction(ConnectionHandler connectionHandler) {
+    public DatabaseLoggingToggleAction(ConnectionHandler connectionHandler) {
         super("Database Logging", connectionHandler);
     }
 
