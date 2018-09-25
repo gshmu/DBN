@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
@@ -57,14 +58,15 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 MessageUtil.showErrorDialog(getProject(), "Could not update cell value for " + getColumnInfo().getName() + ".", e);
                 return;
             }
-            final boolean isValueAdapter = userValue instanceof ValueAdapter || newUserValue instanceof ValueAdapter;
+            GenericDataType genericDataType = getColumnInfo().getDataType().getGenericDataType();
+            final boolean isValueAdapter = ValueAdapter.supports(genericDataType);
 
             final ConnectionHandler connectionHandler = getConnectionHandler();
             try {
                 clearError();
                 final int columnIndex = getColumnInfo().getResultSetColumnIndex();
                 if (isValueAdapter && userValue == null) {
-                    userValue = newUserValue.getClass().newInstance();
+                    userValue = ValueAdapter.create(genericDataType);
                 }
 
                 if (isValueAdapter) {
