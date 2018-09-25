@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionToggleAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
-public class ToggleAutoConnectAction extends AbstractConnectionToggleAction {
+public class AutoConnectToggleAction extends AbstractConnectionToggleAction {
 
-    public ToggleAutoConnectAction(ConnectionHandler connectionHandler) {
+    public AutoConnectToggleAction(ConnectionHandler connectionHandler) {
         super("Connect Automatically", connectionHandler);
 
     }
