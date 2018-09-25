@@ -267,11 +267,11 @@ public class DBDataType {
                 }
                 if (declaredType == null)  {
                     name = dataTypeName;
-                } else {
-                    DBNativeDataType nDataType = objectBundle.getNativeDataType(dataTypeName);
-                    if (nDataType != null && nDataType.getDataTypeDefinition().isPseudoNative()) {
-                        nativeDataType = nDataType;
-                    }
+                }
+
+                DBNativeDataType nDataType = objectBundle.getNativeDataType(dataTypeName);
+                if (nDataType != null && nDataType.getDataTypeDefinition().isPseudoNative()) {
+                    nativeDataType = nDataType;
                 }
 
             } else {
@@ -279,31 +279,40 @@ public class DBDataType {
                 if (nativeDataType == null) name = dataTypeName;
             }
 
-            synchronized (this) {
-                List<DBDataType> cachedDataTypes = objectBundle.getCachedDataTypes();
-                for (DBDataType dataType : cachedDataTypes) {
-                    if (CommonUtil.safeEqual(dataType.declaredType, declaredType) &&
-                            CommonUtil.safeEqual(dataType.nativeDataType, nativeDataType) &&
-                            CommonUtil.safeEqual(dataType.name, name) &&
-                            dataType.length == length &&
-                            dataType.precision == precision &&
-                            dataType.scale == scale &&
-                            dataType.set == set) {
-                        return dataType;
+            List<DBDataType> cachedDataTypes = objectBundle.getCachedDataTypes();
+            DBDataType dataType = find(cachedDataTypes, name, declaredType, nativeDataType);
+            if (dataType == null) {
+                synchronized (cachedDataTypes) {
+                    dataType = find(cachedDataTypes, name, declaredType, nativeDataType);
+                    if (dataType == null) {
+                        dataType = new DBDataType();
+                        dataType.nativeDataType = nativeDataType;
+                        dataType.declaredType = declaredType;
+                        dataType.name = name;
+                        dataType.length = length;
+                        dataType.precision = precision;
+                        dataType.scale = scale;
+                        dataType.set = set;
+                        cachedDataTypes.add(dataType);
                     }
                 }
-
-                DBDataType dataType = new DBDataType();
-                dataType.nativeDataType = nativeDataType;
-                dataType.declaredType = declaredType;
-                dataType.name = name;
-                dataType.length = length;
-                dataType.precision = precision;
-                dataType.scale = scale;
-                dataType.set = set;
-                cachedDataTypes.add(dataType);
-                return dataType;
             }
+            return dataType;
+        }
+
+        protected DBDataType find(List<DBDataType> cachedDataTypes, String name, DBType declaredType, DBNativeDataType nativeDataType) {
+            for (DBDataType dataType : cachedDataTypes) {
+                if (CommonUtil.safeEqual(dataType.declaredType, declaredType) &&
+                        CommonUtil.safeEqual(dataType.nativeDataType, nativeDataType) &&
+                        CommonUtil.safeEqual(dataType.name, name) &&
+                        dataType.length == length &&
+                        dataType.precision == precision &&
+                        dataType.scale == scale &&
+                        dataType.set == set) {
+                    return dataType;
+                }
+            }
+            return null;
         }
     }
 }

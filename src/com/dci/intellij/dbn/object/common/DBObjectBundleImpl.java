@@ -248,21 +248,26 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @NotNull
-    public synchronized List<DBNativeDataType> getNativeDataTypes(){
+    public List<DBNativeDataType> getNativeDataTypes(){
         if (nativeDataTypes == null) {
-            DatabaseInterfaceProvider interfaceProvider = getConnectionHandler().getInterfaceProvider();
-            List<DataTypeDefinition> dataTypeDefinitions = interfaceProvider.getNativeDataTypes().list();
-            nativeDataTypes = new ArrayList<DBNativeDataType>();
-            for (DataTypeDefinition dataTypeDefinition : dataTypeDefinitions) {
-                DBNativeDataType dataType = new DBNativeDataType(dataTypeDefinition);
-                nativeDataTypes.add(dataType);
-            }
-            Collections.sort(nativeDataTypes, new Comparator<DBNativeDataType>() {
-                @Override
-                public int compare(DBNativeDataType o1, DBNativeDataType o2) {
-                    return -o1.compareTo(o2);
+            synchronized (this) {
+                if (nativeDataTypes == null) {
+                    nativeDataTypes = new ArrayList<DBNativeDataType>();
+
+                    DatabaseInterfaceProvider interfaceProvider = getConnectionHandler().getInterfaceProvider();
+                    List<DataTypeDefinition> dataTypeDefinitions = interfaceProvider.getNativeDataTypes().list();
+                    for (DataTypeDefinition dataTypeDefinition : dataTypeDefinitions) {
+                        DBNativeDataType dataType = new DBNativeDataType(dataTypeDefinition);
+                        nativeDataTypes.add(dataType);
+                    }
+                    Collections.sort(nativeDataTypes, new Comparator<DBNativeDataType>() {
+                        @Override
+                        public int compare(DBNativeDataType o1, DBNativeDataType o2) {
+                            return -o1.compareTo(o2);
+                        }
+                    });
                 }
-            });
+            }
         }
         return nativeDataTypes;
     }
