@@ -104,7 +104,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 NotificationUtil.sendNotification(
                         project,
                         action.getNotificationType(),
-                        Constants.DBN_TITLE_PREFIX + action.getName(),
+                        Constants.DBN_TITLE_PREFIX + action.getGroup(),
                         action.getSuccessNotificationMessage(),
                         connectionName);
             }
@@ -112,7 +112,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             NotificationUtil.sendNotification(
                     project,
                     action.getFailureNotificationType(),
-                    Constants.DBN_TITLE_PREFIX + action.getName(),
+                    Constants.DBN_TITLE_PREFIX + action.getGroup(),
                     action.getFailureNotificationMessage(),
                     connectionName,
                     ex.getMessage());
