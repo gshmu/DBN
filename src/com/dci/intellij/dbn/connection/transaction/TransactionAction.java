@@ -11,6 +11,7 @@ import java.sql.SQLException;
 public enum TransactionAction implements Serializable {
     COMMIT(
             "Transaction",
+            "Commit",
             NotificationType.INFORMATION, "Connection \"{0}\" committed",
             NotificationType.ERROR, "Error committing connection \"{0}\". Details: {1}",
             false,
@@ -22,6 +23,7 @@ public enum TransactionAction implements Serializable {
 
     ROLLBACK(
             "Transaction",
+            "Rollback",
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
@@ -33,6 +35,7 @@ public enum TransactionAction implements Serializable {
 
     ROLLBACK_IDLE(
             "Transaction",
+            "Idle Rollback",
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
@@ -44,6 +47,7 @@ public enum TransactionAction implements Serializable {
 
     DISCONNECT(
             "Session",
+            "Disconnect",
             NotificationType.INFORMATION, "Disconnected from \"{0}\"",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
@@ -56,6 +60,7 @@ public enum TransactionAction implements Serializable {
 
     DISCONNECT_IDLE(
             "Session",
+            "Idle disconnect",
             NotificationType.INFORMATION, "Disconnected from \"{0}\" because it has exceeded the configured idle timeout.",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
@@ -67,6 +72,7 @@ public enum TransactionAction implements Serializable {
 
     KEEP_ALIVE(
             "Ping",
+            "Keep Alive",
             null, "",
             NotificationType.ERROR, "Error checking connectivity for \"{0}\". Details: {1}",
             false,
@@ -79,6 +85,7 @@ public enum TransactionAction implements Serializable {
 
     TURN_AUTO_COMMIT_ON(
             "Transaction",
+            "Enable Auto-Commit",
             NotificationType.WARNING,
             "Auto-Commit switched ON for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit ON for connection \"{0}\". Details: {1}",
@@ -91,6 +98,7 @@ public enum TransactionAction implements Serializable {
 
     TURN_AUTO_COMMIT_OFF(
             "Transaction",
+            "Disable Auto-Commit",
             NotificationType.INFORMATION, "Auto-Commit switched OFF for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit OFF for connection\"{0}\". Details: {1}",
             true,
@@ -101,6 +109,7 @@ public enum TransactionAction implements Serializable {
             });
 
 
+    private String group;
     private String name;
     private String successNotificationMessage;
     private String failureNotificationMessage;
@@ -109,7 +118,8 @@ public enum TransactionAction implements Serializable {
     private Executor executor;
     private boolean isStatusChange;
 
-    TransactionAction(String name, NotificationType notificationType, String successNotificationMessage, NotificationType failureNotificationType, String failureNotificationMessage, boolean isStatusChange, Executor executor) {
+    TransactionAction(String group, String name, NotificationType notificationType, String successNotificationMessage, NotificationType failureNotificationType, String failureNotificationMessage, boolean isStatusChange, Executor executor) {
+        this.group = group;
         this.name = name;
         this.failureNotificationMessage = failureNotificationMessage;
         this.successNotificationMessage = successNotificationMessage;
@@ -117,6 +127,10 @@ public enum TransactionAction implements Serializable {
         this.isStatusChange = isStatusChange;
         this.notificationType = notificationType;
         this.failureNotificationType = failureNotificationType;
+    }
+
+    public String getGroup() {
+        return group;
     }
 
     public String getName() {
