@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.navigation;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -22,13 +31,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByNameModel {
     private ProjectRef project;
@@ -124,7 +126,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
             boolean forceLoad = checkBoxState && objectsLookupSettings.getForceDatabaseLoad().value();
             FailsafeUtil.check(this);
             ObjectCollector collector = new ObjectCollector(name, forceLoad);
-            Disposer.register(this, collector);
+            Disposer.register(FailsafeUtil.get(this), collector);
             scanObjectLists(collector);
             return collector.getBucket() == null ? EMPTY_ARRAY : collector.getBucket().toArray();
         } catch (ProcessCanceledException e) {
