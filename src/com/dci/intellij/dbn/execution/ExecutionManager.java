@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.latent.DisposableLatent;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.util.DisposableLazyValue;
-import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
@@ -43,12 +43,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     public static final String COMPONENT_NAME = "DBNavigator.Project.ExecutionManager";
 
     public static final String TOOL_WINDOW_ID = "DB Execution Console";
-    private LazyValue<ExecutionConsoleForm> executionConsoleForm = new DisposableLazyValue<ExecutionConsoleForm>(this) {
-        @Override
-        protected ExecutionConsoleForm load() {
-            return new ExecutionConsoleForm(getProject());
-        }
-    };
+    private Latent<ExecutionConsoleForm> executionConsoleForm = DisposableLatent.create(this, () -> new ExecutionConsoleForm(getProject()));
 
     private ExecutionManager(Project project) {
         super(project);
@@ -250,7 +245,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     @Override
     public void projectClosing(Project project) {
-        if (executionConsoleForm.isLoaded()) {
+        if (executionConsoleForm.loaded()) {
             getExecutionConsoleForm().removeAllTabs();
         }
         super.projectClosing(project);
@@ -269,7 +264,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     @Nullable
     public ExecutionResult getSelectedExecutionResult() {
-        return executionConsoleForm.isLoaded() ? getExecutionConsoleForm().getSelectedExecutionResult() : null;
+        return executionConsoleForm.loaded() ? getExecutionConsoleForm().getSelectedExecutionResult() : null;
     }
 
     /*********************************************

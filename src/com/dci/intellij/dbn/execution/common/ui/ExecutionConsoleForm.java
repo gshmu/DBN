@@ -6,13 +6,13 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
+import com.dci.intellij.dbn.common.latent.DisposableLatent;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
-import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -64,12 +64,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     private JPanel mainPanel;
     //private Map<Component, ExecutionResult> executionResultsMap = new HashMap<Component, ExecutionResult>();
     private TabbedPane resultTabs;
-    private LazyValue<ExecutionMessagesPanel> executionMessagesPanel = new DisposableLazyValue<ExecutionMessagesPanel>(this) {
-        @Override
-        protected ExecutionMessagesPanel load() {
-            return new ExecutionMessagesPanel(ExecutionConsoleForm.this);
-        }
-    };
+    private Latent<ExecutionMessagesPanel> executionMessagesPanel = DisposableLatent.create(this, () -> new ExecutionMessagesPanel(ExecutionConsoleForm.this));
 
     private boolean canScrollToSource;
 
@@ -142,7 +137,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                     }
                 }
 
-                if (executionMessagesPanel.isLoaded()) {
+                if (executionMessagesPanel.loaded()) {
                     JComponent messagePanelComponent = getMessagesPanel().getComponent();
                     messagePanelComponent.revalidate();
                     messagePanelComponent.repaint();

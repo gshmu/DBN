@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.database.sqlite;
 
-import com.dci.intellij.dbn.common.util.LazyThreadLocal;
+import com.dci.intellij.dbn.common.latent.ThreadLocalLatent;
 import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.sql.Date;
@@ -13,21 +12,9 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
-    private static final LazyThreadLocal<SimpleDateFormat> DATE_FORMAT = new LazyThreadLocal<SimpleDateFormat>() {
-        @NotNull
-        @Override
-        protected SimpleDateFormat load() {
-            return new SimpleDateFormat("yyyy-MM-dd");
-        }
-    };
-    private static final LazyThreadLocal<SimpleDateFormat> TIMESTAMP_FORMAT = new LazyThreadLocal<SimpleDateFormat>() {
-        @NotNull
-        @Override
-        protected SimpleDateFormat load() {
-            return new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        }
-    };
+class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
+    private static final ThreadLocalLatent<SimpleDateFormat> DATE_FORMAT = ThreadLocalLatent.create(() -> new SimpleDateFormat("yyyy-MM-dd"));
+    private static final ThreadLocalLatent<SimpleDateFormat> TIMESTAMP_FORMAT = ThreadLocalLatent.create(() -> new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"));
 
     {
         createNumericDefinition("INT", Integer.class, Types.INTEGER);
@@ -94,11 +81,11 @@ public class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
 
     }
 
-    SimpleDateFormat getTimestampFormat() {
+    private SimpleDateFormat getTimestampFormat() {
         return TIMESTAMP_FORMAT.get();
     }
 
-    SimpleDateFormat getDateFormat() {
+    private SimpleDateFormat getDateFormat() {
         return DATE_FORMAT.get();
     }
 }

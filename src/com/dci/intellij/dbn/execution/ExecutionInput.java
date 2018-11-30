@@ -3,11 +3,10 @@ package com.dci.intellij.dbn.execution;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -31,12 +30,7 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
     protected ConnectionHandlerRef targetConnectionRef;
     protected DBObjectRef<DBSchema> targetSchemaRef;
 
-    private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
-        @Override
-        protected ExecutionContext load() {
-            return createExecutionContext();
-        }
-    };
+    private Latent<ExecutionContext> executionContext = Latent.create(this::createExecutionContext);
 
     @NotNull
     public final ExecutionContext getExecutionContext() {

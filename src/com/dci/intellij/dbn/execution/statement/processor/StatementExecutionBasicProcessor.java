@@ -4,11 +4,15 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
-import com.dci.intellij.dbn.common.util.*;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
@@ -71,28 +75,26 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     private EditorProviderId editorProviderId;
     private transient CancellableDatabaseCall<StatementExecutionResult> databaseCall;
 
-    private LazyValue<String> resultName = new SimpleLazyValue<String>() {
-        @Override
-        protected String load() {
-            String resultName = null;
-            ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-            if (executablePsiElement!= null) {
-                resultName = executablePsiElement.createSubjectList();
-            }
-            if (StringUtil.isEmptyOrSpaces(resultName)) {
-                resultName = "Result " + index;
-            }
-            return resultName;
-        }
-    };
-
-    protected int index;
-
     private StatementExecutionInput executionInput;
     private StatementExecutionResult executionResult;
+    protected int index;
+
+    private Latent<String> resultName = Latent.create(() -> {
+        String resultName = null;
+        ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+        if (executablePsiElement!= null) {
+            resultName = executablePsiElement.createSubjectList();
+        }
+        if (StringUtil.isEmptyOrSpaces(resultName)) {
+            resultName = "Result " + index;
+        }
+        return resultName;
+    });
+
+
 
     public StatementExecutionBasicProcessor(FileEditor fileEditor, ExecutablePsiElement psiElement, int index) {
-        this.fileEditorRef = new WeakReference<FileEditor>(fileEditor);
+        this.fileEditorRef = new WeakReference<>(fileEditor);
         this.psiFileRef = new PsiFileRef<>(psiElement.getFile());
 
         this.cachedExecutableRef = new PsiElementRef<>(psiElement);
@@ -101,8 +103,8 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         initEditorProviderId(fileEditor);
     }
 
-    public StatementExecutionBasicProcessor(FileEditor fileEditor, DBLanguagePsiFile psiFile, String sqlStatement, int index) {
-        this.fileEditorRef = new WeakReference<FileEditor>(fileEditor);
+    StatementExecutionBasicProcessor(FileEditor fileEditor, DBLanguagePsiFile psiFile, String sqlStatement, int index) {
+        this.fileEditorRef = new WeakReference<>(fileEditor);
         this.psiFileRef = new PsiFileRef<>(psiFile);
         this.index = index;
         sqlStatement = sqlStatement.trim();
@@ -345,7 +347,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         return statementText;
     }
 
-    private void initTimeout(ExecutionContext context, boolean debug) throws SQLException {
+    private void initTimeout(ExecutionContext context, boolean debug) {
         int timeout = debug ?
                 executionInput.getDebugExecutionTimeout() :
                 executionInput.getExecutionTimeout();
@@ -745,7 +747,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     public List<StatementExecutionProcessor> asList() {
-        List<StatementExecutionProcessor> list = new ArrayList<StatementExecutionProcessor>();
+        List<StatementExecutionProcessor> list = new ArrayList<>();
         list.add(this);
         return list;
     }

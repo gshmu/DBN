@@ -80,7 +80,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     @Nullable
     public DBObjectList getObjectList(DBObjectType objectType) {
-        if (objectLists != null) {
+        if (objectLists != null && !objectLists.isEmpty()) {
             for (DBObjectList<DBObject> objectList : objectLists) {
                 if (softCheck(objectList) && objectList.getObjectType() == objectType) {
                     return objectList;
