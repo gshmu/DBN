@@ -135,20 +135,17 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     protected void onApply() {}
 
     public void reset() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                try {
-                    if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
-                        IS_RESETTING.set(true);
-                        configurationEditorForm.resetFormChanges();
-                    }
-                } finally {
-                    modified = false;
-                    IS_RESETTING.set(false);
+        ConditionalLaterInvocator.invoke(() -> {
+            try {
+                if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
+                    IS_RESETTING.set(true);
+                    configurationEditorForm.resetFormChanges();
                 }
+            } finally {
+                modified = false;
+                IS_RESETTING.set(false);
             }
-        }.start();
+        });
     }
 
     public void disposeUIResources() {

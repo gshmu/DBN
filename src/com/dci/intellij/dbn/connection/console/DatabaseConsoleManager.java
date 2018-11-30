@@ -66,16 +66,13 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
 
 
     private void showCreateRenameConsoleDialog(final ConnectionHandler connectionHandler, final DBConsoleVirtualFile consoleVirtualFile, final DBConsoleType consoleType) {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                CreateRenameConsoleDialog createConsoleDialog = consoleVirtualFile == null ?
-                        new CreateRenameConsoleDialog(connectionHandler, consoleType) :
-                        new CreateRenameConsoleDialog(connectionHandler, consoleVirtualFile);
-                createConsoleDialog.setModal(true);
-                createConsoleDialog.show();
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(() -> {
+            CreateRenameConsoleDialog createConsoleDialog = consoleVirtualFile == null ?
+                    new CreateRenameConsoleDialog(connectionHandler, consoleType) :
+                    new CreateRenameConsoleDialog(connectionHandler, consoleVirtualFile);
+            createConsoleDialog.setModal(true);
+            createConsoleDialog.show();
+        });
     }
 
     public void createConsole(ConnectionHandler connectionHandler, String name, DBConsoleType type) {
@@ -181,7 +178,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         for (Element connectionElement : element.getChildren()) {
             ConnectionId connectionId = ConnectionId.get(connectionElement.getAttributeValue("id"));

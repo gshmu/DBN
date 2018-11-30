@@ -47,12 +47,7 @@ public class MessageDialog extends DialogBuilder {
             final String extendedMessage,
             final boolean enableIgnore) {
 
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                createDialog(project, icon, title, message, extendedMessage, enableIgnore);
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(() -> createDialog(project, icon, title, message, extendedMessage, enableIgnore));
 
         return false;
     }
@@ -64,13 +59,7 @@ public class MessageDialog extends DialogBuilder {
             final String message,
             final Component component) {
 
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                createDialog(project, icon, title, message, component);
-            }
-        }.start();
-
+        ConditionalLaterInvocator.invoke(() -> createDialog(project, icon, title, message, component));
         return false;
     }
 

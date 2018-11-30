@@ -151,19 +151,16 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     public void updateBackground(final boolean readonly) {
         final JBViewport viewport = UIUtil.getParentOfType(JBViewport.class, this);
         if (viewport != null) {
-            new ConditionalLaterInvocator() {
-                @Override
-                protected void execute() {
-                    DataGridTextAttributes attributes = cellRenderer.getAttributes();
-                    Color background = readonly ?
-                            attributes.getLoadingData(false).getBgColor() :
-                            attributes.getPlainData(false, false).getBgColor();
-                    viewport.setBackground(background);
+            ConditionalLaterInvocator.invoke(() -> {
+                DataGridTextAttributes attributes = cellRenderer.getAttributes();
+                Color background = readonly ?
+                        attributes.getLoadingData(false).getBgColor() :
+                        attributes.getPlainData(false, false).getBgColor();
+                viewport.setBackground(background);
 
-                    viewport.revalidate();
-                    viewport.repaint();
-                }
-            }.start();
+                viewport.revalidate();
+                viewport.repaint();
+            });
         }
     }
 
@@ -210,7 +207,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     }
 
     @Nullable
-    public DataModelCell getCellAtMouseLocation() {
+    protected DataModelCell getCellAtMouseLocation() {
         Point location = MouseInfo.getPointerInfo().getLocation();
         location.setLocation(location.getX() - getLocationOnScreen().getX(), location.getY() - getLocationOnScreen().getY());
         return getCellAtLocation(location);
@@ -220,7 +217,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         return getColumnModel().getColumn(columnIndex).getModelIndex();
     }
 
-    public DataModelCell getCellAtPosition(int rowIndex, int columnIndex) {
+    protected DataModelCell getCellAtPosition(int rowIndex, int columnIndex) {
         DataModelRow row = getModel().getRowAtIndex(rowIndex);
         int modelColumnIndex = getModelColumnIndex(columnIndex);
         return row.getCellAtIndex(modelColumnIndex);

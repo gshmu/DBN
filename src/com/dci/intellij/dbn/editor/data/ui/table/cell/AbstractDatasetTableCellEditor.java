@@ -19,13 +19,7 @@ import com.intellij.openapi.util.Disposer;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.event.*;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
@@ -38,21 +32,13 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
     private DatasetEditorTable table;
 
-    private DatasetEditorModelCellValueListener cellValueListener = new DatasetEditorModelCellValueListener() {
-        @Override
-        public void valueChanged(DatasetEditorModelCell cell) {
-            if (cell == AbstractDatasetTableCellEditor.this.cell) {
-                new ConditionalLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        setCellValueToEditor();
-                    }
-                }.start();
-            }
+    private DatasetEditorModelCellValueListener cellValueListener = cell -> {
+        if (cell == AbstractDatasetTableCellEditor.this.cell) {
+            ConditionalLaterInvocator.invoke(this::setCellValueToEditor);
         }
     };
 
-    public AbstractDatasetTableCellEditor(DatasetEditorTable table, DataEditorComponent editorComponent) {
+    AbstractDatasetTableCellEditor(DatasetEditorTable table, DataEditorComponent editorComponent) {
         this.table = table;
         this.editorComponent = editorComponent;
 
@@ -63,14 +49,11 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
         editorComponent.getTextField().addActionListener(new EditorDelegate());
         EventUtil.subscribe(project, this, DatasetEditorModelCellValueListener.TOPIC, cellValueListener);
 
-        table.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                Object newValue = evt.getNewValue();
-                if (newValue instanceof Font) {
-                    Font newFont = (Font) newValue;
-                    getEditorComponent().setFont(newFont);
-                }
+        table.addPropertyChangeListener(evt -> {
+            Object newValue = evt.getNewValue();
+            if (newValue instanceof Font) {
+                Font newFont = (Font) newValue;
+                getEditorComponent().setFont(newFont);
             }
         });
 

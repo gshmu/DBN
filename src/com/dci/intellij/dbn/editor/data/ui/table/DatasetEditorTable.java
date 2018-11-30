@@ -176,33 +176,20 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     public void clearSelection() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                DatasetEditorTable.super.clearSelection();
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(DatasetEditorTable.super::clearSelection);
     }
 
     @Override
     public void removeEditor() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                DatasetEditorTable.super.removeEditor();
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(DatasetEditorTable.super::removeEditor);
     }
 
     private void updateTableGutter() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                DBNTableGutter tableGutter = getTableGutter();
-                tableGutter.revalidate();
-                tableGutter.repaint();
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(() -> {
+            DBNTableGutter tableGutter = getTableGutter();
+            tableGutter.revalidate();
+            tableGutter.repaint();
+        });
     }
 
     public void setValueAt(Object value, int rowIndex, int columnIndex) {

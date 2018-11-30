@@ -145,22 +145,19 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                 daemon = false;
             }
 
-            new SimpleTimeoutTask(10, TimeUnit.SECONDS, daemon) {
-                @Override
-                public void run() {
-                    try {
-                        if (SettingsUtil.isDebugEnabled) LOGGER.info("Started " + getLogIdentifier());
-                        changeInner(value);
-                        set(ResourceStatusAdapter.this.value, value);
-                    } catch (Throwable e) {
-                        LOGGER.warn("Error " + getLogIdentifier() + ": " + e.getMessage());
-                        fail();
-                    } finally {
-                        set(changing, false);
-                        if (SettingsUtil.isDebugEnabled) LOGGER.info("Done " + getLogIdentifier());
-                    }
+            SimpleTimeoutTask.invoke(10, TimeUnit.SECONDS, daemon, () -> {
+                try {
+                    if (SettingsUtil.isDebugEnabled) LOGGER.info("Started " + getLogIdentifier());
+                    changeInner(value);
+                    set(ResourceStatusAdapter.this.value, value);
+                } catch (Throwable e) {
+                    LOGGER.warn("Error " + getLogIdentifier() + ": " + e.getMessage());
+                    fail();
+                } finally {
+                    set(changing, false);
+                    if (SettingsUtil.isDebugEnabled) LOGGER.info("Done " + getLogIdentifier());
                 }
-            }.start();
+            });
 
         });
     }

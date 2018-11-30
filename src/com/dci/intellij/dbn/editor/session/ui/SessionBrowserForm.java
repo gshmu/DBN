@@ -94,27 +94,20 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void showLoadingHint() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                loadingLabel.setVisible(true);
-                loadingIconPanel.setVisible(true);
-                loadTimestampLabel.setVisible(false);
-                refreshLoadTimestamp();
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(() -> {
+            loadingLabel.setVisible(true);
+            loadingIconPanel.setVisible(true);
+            loadTimestampLabel.setVisible(false);
+            refreshLoadTimestamp();
+        });
     }
 
     public void hideLoadingHint() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                loadingLabel.setVisible(false);
-                loadingIconPanel.setVisible(false);
-                refreshLoadTimestamp();
-
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(() -> {
+            loadingLabel.setVisible(false);
+            loadingIconPanel.setVisible(false);
+            refreshLoadTimestamp();
+        });
     }
 
     public void refreshLoadTimestamp() {

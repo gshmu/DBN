@@ -79,7 +79,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         public void actionPerformed(ActionEvent e) {
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();
-                List<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>(getComponent().getConnectionHandlers());
+                List<ConnectionHandler> connectionHandlers = new ArrayList<>(getComponent().getConnectionHandlers());
 
                 for (ConnectionHandler connectionHandler : connectionHandlers) {
                     List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
@@ -102,7 +102,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         return DatabaseTransactionManager.getInstance(getProject());
     }
 
-    TransactionListener transactionListener = new TransactionListener() {
+    private TransactionListener transactionListener = new TransactionListener() {
         @Override
         public void beforeAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action) {
 
@@ -112,15 +112,11 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         public void afterAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(connectionHandler.getProject());
             if (!connectionManager.hasUncommittedChanges()) {
-                new ConditionalLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        getCancelAction().putValue(Action.NAME, "Close");
-                        commitAllAction.setEnabled(false);
-                        rollbackAllAction.setEnabled(false);
-
-                    }
-                }.start();
+                ConditionalLaterInvocator.invoke(() -> {
+                    getCancelAction().putValue(Action.NAME, "Close");
+                    commitAllAction.setEnabled(false);
+                    rollbackAllAction.setEnabled(false);
+                });
             }
         }
     };

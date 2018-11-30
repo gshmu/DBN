@@ -3,11 +3,7 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.PerformInBackgroundOption;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,9 +59,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
             initProgressIndicator(progressIndicator, true);
 
             execute(progressIndicator);
-        } catch (ProcessCanceledException e) {
-            // no action
-        } catch (InterruptedException e) {
+        } catch (ProcessCanceledException | InterruptedException e) {
             // no action
         } catch (Exception e) {
             LOGGER.error("Error executing background operation.", e);
@@ -90,15 +84,12 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     }
 
     protected static void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate, @Nullable final String text) {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                if (progressIndicator.isRunning()) {
-                    progressIndicator.setIndeterminate(indeterminate);
-                    if (text != null) progressIndicator.setText(text);
-                }
+        ConditionalLaterInvocator.invoke(() -> {
+            if (progressIndicator.isRunning()) {
+                progressIndicator.setIndeterminate(indeterminate);
+                if (text != null) progressIndicator.setText(text);
             }
-        }.start();
+        });
     }
 
     public static boolean isProcessCancelled() {

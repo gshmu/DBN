@@ -107,21 +107,18 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     }
 
     public void updateVisibleComponents() {
-        new ConditionalLaterInvocator() {
-            protected void execute() {
-                StatementExecutionCursorResult executionResult = getExecutionResult();
-                ResultSetDataModel dataModel = executionResult.getTableModel();
-                String connectionName = executionResult.getConnectionHandler().getPresentableText();
-                SessionId sessionId = executionResult.getExecutionInput().getTargetSessionId();
-                String connectionType =
-                        sessionId == SessionId.MAIN ? " (main)" :
-                        sessionId == SessionId.POOL ? " (pool)" : " (session)";
-                int rowCount = dataModel.getRowCount();
-                String partialResultInfo = dataModel.isResultSetExhausted() ? "" : " (partial)";
-                statusLabel.setText(connectionName + connectionType + ": " + rowCount + " records" + partialResultInfo);
-            }
-        }.start();
-
+        ConditionalLaterInvocator.invoke(() -> {
+            StatementExecutionCursorResult executionResult = getExecutionResult();
+            ResultSetDataModel dataModel = executionResult.getTableModel();
+            String connectionName = executionResult.getConnectionHandler().getPresentableText();
+            SessionId sessionId = executionResult.getExecutionInput().getTargetSessionId();
+            String connectionType =
+                    sessionId == SessionId.MAIN ? " (main)" :
+                            sessionId == SessionId.POOL ? " (pool)" : " (session)";
+            int rowCount = dataModel.getRowCount();
+            String partialResultInfo = dataModel.isResultSetExhausted() ? "" : " (partial)";
+            statusLabel.setText(connectionName + connectionType + ": " + rowCount + " records" + partialResultInfo);
+        });
     }
 
     public void dispose() {

@@ -236,22 +236,19 @@ public class BasicDataModel<T extends DataModelRow> extends DisposableBase imple
     }
 
     private void notifyListeners(final ListDataEvent listDataEvent, final TableModelEvent event) {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                if (listModel.loaded()) {
-                    listModel.get().notifyListeners(listDataEvent);
-                }
-
-                for (TableModelListener tableModelListener: tableModelListeners) {
-                    tableModelListener.tableChanged(event);
-                }
-
-                for (DataModelListener tableModelListener: dataModelListeners) {
-                    tableModelListener.modelChanged();
-                }
+        ConditionalLaterInvocator.invoke(() -> {
+            if (listModel.loaded()) {
+                listModel.get().notifyListeners(listDataEvent);
             }
-        }.start();
+
+            for (TableModelListener tableModelListener: tableModelListeners) {
+                tableModelListener.tableChanged(event);
+            }
+
+            for (DataModelListener tableModelListener: dataModelListeners) {
+                tableModelListener.modelChanged();
+            }
+        });
     }
 
     /*********************************************************

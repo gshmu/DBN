@@ -16,11 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -167,28 +163,24 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
     }
 
     private void updateList() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                if (listModel.isFiltrable()) {
-                    int index = list.getSelectedIndex();
-                    listModel.notifyContentChanged();
-                    if (index > listModel.getSize() - 1) {
-                        scrollToIndex(listModel.getSize() - 1);
+        ConditionalLaterInvocator.invoke(() -> {
+            if (listModel.isFiltrable()) {
+                int index = list.getSelectedIndex();
+                listModel.notifyContentChanged();
+                if (index > listModel.getSize() - 1) {
+                    scrollToIndex(listModel.getSize() - 1);
+                }
+            } else {
+                String text = getTextField().getText();
+                for (int i=0; i<listModel.getElements().size(); i++ ) {
+                    String element = listModel.getElements().get(i);
+                    if (element.startsWith(text)) {
+                        scrollToIndex(i);
+                        break;
                     }
-                } else {
-                    String text = getTextField().getText();
-                    for (int i=0; i<listModel.getElements().size(); i++ ) {
-                        String element = listModel.getElements().get(i);
-                        if (element.startsWith(text)) {
-                            scrollToIndex(i);
-                            break;
-                        }
-                    }
-
                 }
             }
-        }.start();
+        });
     }
 
     private class DynamicFilter extends Filter<String> {
