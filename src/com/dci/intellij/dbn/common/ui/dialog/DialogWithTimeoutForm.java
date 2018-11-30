@@ -29,23 +29,20 @@ public class DialogWithTimeoutForm extends DBNFormImpl {
     }
 
     public void updateTimeLeft(final int secondsLeft) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                int minutes = 0;
-                int seconds = secondsLeft;
-                if (secondsLeft > 60) {
-                    minutes = TimeUtil.getMinutes(secondsLeft);
-                    seconds = secondsLeft - TimeUtil.getSeconds(minutes);
-                }
-
-                if (minutes == 0) {
-                    timeLeftLabel.setText(seconds + " seconds");
-                    timeLeftLabel.setForeground(JBColor.RED);
-                } else {
-                    timeLeftLabel.setText(minutes +":" + (seconds < 10 ? "0" :"") + seconds + " minutes");
-                }
+        SimpleLaterInvocator.invoke(() -> {
+            int minutes = 0;
+            int seconds = secondsLeft;
+            if (secondsLeft > 60) {
+                minutes = TimeUtil.getMinutes(secondsLeft);
+                seconds = secondsLeft - TimeUtil.getSeconds(minutes);
             }
-        }.start();
+
+            if (minutes == 0) {
+                timeLeftLabel.setText(seconds + " seconds");
+                timeLeftLabel.setForeground(JBColor.RED);
+            } else {
+                timeLeftLabel.setText(minutes +":" + (seconds < 10 ? "0" :"") + seconds + " minutes");
+            }
+        });
     }
 }

@@ -26,7 +26,7 @@ import java.util.Set;
 
 public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel> {
 
-    public CmdLineInterfacesTable(Project project, CmdLineInterfaceBundle environmentTypes) {
+    CmdLineInterfacesTable(Project project, CmdLineInterfaceBundle environmentTypes) {
         super(project, new CmdLineInterfacesTableModel(environmentTypes), true);
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         getSelectionModel().addListSelectionListener(selectionListener);
@@ -53,7 +53,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         columnModel.getColumn(1).setPreferredWidth(120);
     }
 
-    MouseListener mouseListener = new MouseAdapter() {
+    private MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
@@ -82,11 +82,9 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
     }
 
 
-    ListSelectionListener selectionListener = new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting()) {
-                startCellEditing();
-            }
+    private ListSelectionListener selectionListener = e -> {
+        if (!e.getValueIsAdjusting()) {
+            startCellEditing();
         }
     };
 
@@ -128,13 +126,11 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         final JTextField textField = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
         textField.setBorder(JBUI.Borders.emptyLeft(3));
 
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                textField.selectAll();
-                textField.grabFocus();
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> {
+            textField.selectAll();
+            textField.grabFocus();
+        });
+
         selectCell(rowIndex, columnIndex);
         return textField;
     }
@@ -166,7 +162,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         }
     }
 
-    public void moveRowUp() {
+    void moveRowUp() {
         int selectedRow = getSelectedRow();
         int selectedColumn = getSelectedColumn();
         stopCellEditing();
@@ -174,7 +170,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         selectCell(selectedRow -1, selectedColumn);
     }
 
-    public void moveRowDown() {
+    void moveRowDown() {
         int selectedRow = getSelectedRow();
         int selectedColumn = getSelectedColumn();
         stopCellEditing();
@@ -182,7 +178,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         selectCell(selectedRow + 1, selectedColumn);
     }
 
-    public void addInterface(CmdLineInterface value) {
+    void addInterface(CmdLineInterface value) {
         getModel().addInterface(value);
         revalidate();
         repaint();

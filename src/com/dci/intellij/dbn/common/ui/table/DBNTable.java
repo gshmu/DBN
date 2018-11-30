@@ -15,11 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -32,7 +28,7 @@ import java.util.TimerTask;
 public class DBNTable<T extends DBNTableModel> extends JTable implements Disposable{
     private static final int MAX_COLUMN_WIDTH = 300;
     private static final int MIN_COLUMN_WIDTH = 10;
-    public static final Color GRID_COLOR = new JBColor(new Color(0xE6E6E6), Color.DARK_GRAY);
+    private static final Color GRID_COLOR = new JBColor(new Color(0xE6E6E6), Color.DARK_GRAY);
     protected DBNTableGutter tableGutter;
     private ProjectRef projectRef;
     private double scrollDistance;
@@ -112,7 +108,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         return FailsafeUtil.get((T) super.getModel());
     }
 
-    private double calculateScrollDistance() {
+    private void calculateScrollDistance() {
         if (scrollPane != null) {
             JViewport viewport = scrollPane.getViewport();
             PointerInfo pointerInfo = MouseInfo.getPointerInfo();
@@ -137,7 +133,6 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
                 }
             }
         }
-        return scrollDistance;
     }
 
     @NotNull
@@ -145,13 +140,13 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         return projectRef.getnn();
     }
 
-    public Object getValueAtMouseLocation() {
+    protected Object getValueAtMouseLocation() {
         Point location = MouseInfo.getPointerInfo().getLocation();
         location.setLocation(location.getX() - getLocationOnScreen().getX(), location.getY() - getLocationOnScreen().getY());
         return getValueAtLocation(location);
     }
 
-    public Object getValueAtLocation(Point point) {
+    private Object getValueAtLocation(Point point) {
         int columnIndex = columnAtPoint(point);
         int rowIndex = rowAtPoint(point);
         return columnIndex > -1 && rowIndex > -1 ? getModel().getValueAt(rowIndex, columnIndex) : null;
@@ -255,15 +250,12 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     private class ScrollTask extends TimerTask {
         public void run() {
             if (scrollPane != null && scrollDistance != 0) {
-                new SimpleLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        JViewport viewport = scrollPane.getViewport();
-                        Point viewPosition = viewport.getViewPosition();
-                        viewport.setViewPosition(new Point((int) (viewPosition.x + scrollDistance), viewPosition.y));
-                        calculateScrollDistance();
-                    }
-                }.start();
+                SimpleLaterInvocator.invoke(() -> {
+                    JViewport viewport = scrollPane.getViewport();
+                    Point viewPosition = viewport.getViewPosition();
+                    viewport.setViewPosition(new Point((int) (viewPosition.x + scrollDistance), viewPosition.y));
+                    calculateScrollDistance();
+                });
             }
         }
     }

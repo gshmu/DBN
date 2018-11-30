@@ -14,15 +14,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
+import com.dci.intellij.dbn.connection.config.*;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
@@ -213,21 +205,18 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         return mainPanel;
     }
 
-    ConnectionPresentationChangeListener connectionPresentationChangeListener = new ConnectionPresentationChangeListener() {
+    private ConnectionPresentationChangeListener connectionPresentationChangeListener = new ConnectionPresentationChangeListener() {
         @Override
         public void presentationChanged(final String name, final Icon icon, final Color color, final ConnectionId connectionId, DatabaseType databaseType) {
-            new SimpleLaterInvocator() {
-                @Override
-                protected void execute() {
-                    ConnectionSettings configuration = getConfiguration();
-                    if (configuration != null && configuration.getConnectionId().equals(connectionId)) {
-                        if (name != null) headerForm.setTitle(name);
-                        if (icon != null) headerForm.setIcon(icon);
-                        if (color != null) headerForm.setBackground(color); else headerForm.setBackground(UIUtil.getPanelBackground());
-                        //if (databaseType != null) databaseIconLabel.setIcon(databaseType.getLargeIcon());
-                    }
+            SimpleLaterInvocator.invoke(() -> {
+                ConnectionSettings configuration = getConfiguration();
+                if (configuration.getConnectionId().equals(connectionId)) {
+                    if (name != null) headerForm.setTitle(name);
+                    if (icon != null) headerForm.setIcon(icon);
+                    if (color != null) headerForm.setBackground(color); else headerForm.setBackground(UIUtil.getPanelBackground());
+                    //if (databaseType != null) databaseIconLabel.setIcon(databaseType.getLargeIcon());
                 }
-            }.start();
+            });
         }
     };
 

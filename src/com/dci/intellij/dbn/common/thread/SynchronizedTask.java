@@ -38,5 +38,4 @@ public abstract class SynchronizedTask<T> extends SimpleTask<T> {
     }
 
     protected abstract String getSyncKey();
-
 }

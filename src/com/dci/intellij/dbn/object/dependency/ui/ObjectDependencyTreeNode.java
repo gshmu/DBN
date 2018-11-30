@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
@@ -24,19 +24,19 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
     private boolean isLoading = false;
     private static int loaderCount = 0;
 
-    public ObjectDependencyTreeNode(ObjectDependencyTreeNode parent, DBObject object) {
+    private ObjectDependencyTreeNode(ObjectDependencyTreeNode parent, DBObject object) {
         this.parent = parent;
+        this.objectRef = DBObjectRef.from(object);
+    }
+
+    ObjectDependencyTreeNode(ObjectDependencyTreeModel model, DBObject object) {
+        this.model = model;
         this.objectRef = DBObjectRef.from(object);
     }
 
     @Nullable
     DBObject getObject() {
         return DBObjectRef.get(objectRef);
-    }
-
-    public ObjectDependencyTreeNode(ObjectDependencyTreeModel model, DBObject object) {
-        this.model = model;
-        this.objectRef = DBObjectRef.from(object);
     }
 
     public ObjectDependencyTreeModel getModel() {
@@ -62,7 +62,7 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
                 dependencies = Collections.emptyList();
                 shouldLoad = false;
             } else {
-                dependencies = new ArrayList<ObjectDependencyTreeNode>();
+                dependencies = new ArrayList<>();
                 if (getTreePath().length < 2) {
                     ObjectDependencyTreeNode loadInProgressNode = new ObjectDependencyTreeNode(this, null);
                     dependencies.add(loadInProgressNode);
@@ -77,38 +77,35 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
             if (loaderCount < 10) {
                 shouldLoad = false;
                 loaderCount++;
-                new SimpleBackgroundTask("load dependencies") {
-                    @Override
-                    protected void execute() {
-                        try {
-                            DBObject object = getObject();
-                            if (object != null && object instanceof DBSchemaObject) {
-                                List<ObjectDependencyTreeNode> newDependencies = new ArrayList<ObjectDependencyTreeNode>();
-                                DBSchemaObject schemaObject = (DBSchemaObject) object;
-                                List<DBObject> dependentObjects = loadDependencies(schemaObject);
+                SimpleBackgroundInvocator.invoke(() -> {
+                    try {
+                        DBObject object = getObject();
+                        if (object instanceof DBSchemaObject) {
+                            List<ObjectDependencyTreeNode> newDependencies = new ArrayList<>();
+                            DBSchemaObject schemaObject = (DBSchemaObject) object;
+                            List<DBObject> dependentObjects = loadDependencies(schemaObject);
 
-                                if (dependentObjects != null) {
-                                    for (DBObject dependentObject : dependentObjects) {
+                            if (dependentObjects != null) {
+                                for (DBObject dependentObject : dependentObjects) {
                                         /*if (dependentObject instanceof DBSchemaObject) {
                                             loadDependencies((DBSchemaObject) dependentObject);
                                         }*/
-                                        ObjectDependencyTreeNode node = new ObjectDependencyTreeNode(ObjectDependencyTreeNode.this, dependentObject);
-                                        newDependencies.add(node);
-                                    }
+                                    ObjectDependencyTreeNode node = new ObjectDependencyTreeNode(ObjectDependencyTreeNode.this, dependentObject);
+                                    newDependencies.add(node);
                                 }
-
-                                List<ObjectDependencyTreeNode> oldDependencies = dependencies;
-                                dependencies = newDependencies;
-                                DisposerUtil.dispose(oldDependencies);
-
-                                getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                             }
-                        } finally {
-                            isLoading = false;
-                            loaderCount--;
+
+                            List<ObjectDependencyTreeNode> oldDependencies = dependencies;
+                            dependencies = newDependencies;
+                            DisposerUtil.dispose(oldDependencies);
+
+                            getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                         }
+                    } finally {
+                        isLoading = false;
+                        loaderCount--;
                     }
-                }.start();
+                });
             }
         }
         return dependencies;
@@ -126,7 +123,7 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
             dependencyType == ObjectDependencyType.OUTGOING ? schemaObject.getReferencingObjects() : null;
     }
 
-    boolean isRecursive(DBObject object) {
+    private boolean isRecursive(DBObject object) {
         if (object != null) {
             ObjectDependencyTreeNode parent = getParent();
             while (parent != null) {
@@ -140,7 +137,7 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
     }
 
     public ObjectDependencyTreeNode[] getTreePath() {
-        List<ObjectDependencyTreeNode> path = new ArrayList<ObjectDependencyTreeNode>();
+        List<ObjectDependencyTreeNode> path = new ArrayList<>();
         path.add(this);
         ObjectDependencyTreeNode parent = getParent();
         while (parent != null) {

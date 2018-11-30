@@ -74,7 +74,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
     }
 
     public class SelectMethodAction extends GroupPopupAction {
-        public SelectMethodAction()  {
+        SelectMethodAction()  {
             super("Select method", "Select method", Icons.DBO_METHOD);
         }
 
@@ -88,7 +88,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
     }
 
     public class OpenMethodBrowserAction extends AnAction {
-        public OpenMethodBrowserAction() {
+        OpenMethodBrowserAction() {
             super("Method Browser");
         }
 
@@ -113,22 +113,18 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
                                 new ObjectTreeModel(schema, settings.getVisibleObjectTypes(), settings.getMethod()) :
                                 new ObjectTreeModel(null, settings.getVisibleObjectTypes(), null);
 
-                        new SimpleLaterInvocator() {
-                            @Override
-                            protected void execute() {
-                                final MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
-                                browserDialog.show();
-                                if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                                    DBMethod method = browserDialog.getSelectedMethod();
-                                    MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                                    MethodExecutionInput methodExecutionInput = methodExecutionManager.getExecutionInput(method);
-                                    if (methodExecutionInput != null) {
-                                        setExecutionInput(methodExecutionInput, true);
-                                    }
+                        SimpleLaterInvocator.invoke(() -> {
+                            final MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
+                            browserDialog.show();
+                            if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                                DBMethod method = browserDialog.getSelectedMethod();
+                                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+                                MethodExecutionInput methodExecutionInput = methodExecutionManager.getExecutionInput(method);
+                                if (methodExecutionInput != null) {
+                                    setExecutionInput(methodExecutionInput, true);
                                 }
                             }
-                        }.start();
-
+                        });
                     }
                 };
                 backgroundTask.start();
@@ -136,7 +132,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         }
     }
     public class OpenMethodHistoryAction extends AnAction {
-        public OpenMethodHistoryAction() {
+        OpenMethodHistoryAction() {
             super("Execution History", null, Icons.METHOD_EXECUTION_HISTORY);
         }
 
@@ -170,15 +166,15 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         }
         configuration.setCompileDependencies(compileDependenciesCheckBox.isSelected());
 
-        int fromPort = 0;
-        int toPort = 0;
+        int fromPort;
+        int toPort;
         try {
             fromPort = Integer.parseInt(fromPortTextField.getText());
             toPort = Integer.parseInt(toPortTextField.getText());
         } catch (NumberFormatException e) {
             throw new ConfigurationException("TCP Port Range inputs must me numeric");
         }
-        configuration.setTcpPortRange(new Range<Integer>(fromPort, toPort));
+        configuration.setTcpPortRange(new Range<>(fromPort, toPort));
         //selectMethodAction.setConfiguration(configuration);
     }
 

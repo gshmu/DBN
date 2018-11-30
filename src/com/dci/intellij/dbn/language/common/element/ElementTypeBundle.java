@@ -1,21 +1,10 @@
 package com.dci.intellij.dbn.language.common.element;
 
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
-import com.dci.intellij.dbn.language.common.element.impl.BasicElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.BlockElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.ExecVariableElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.IterationElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.NamedElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.OneOfElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.SequenceElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.TokenElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.WrapperElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
+import com.dci.intellij.dbn.language.common.element.impl.*;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -108,15 +97,13 @@ public class ElementTypeBundle {
             } else {
             }
 
-            new SimpleBackgroundTask("cleanup builder") {
-                @Override
-                protected void execute() {
-                    for (ElementType allElementType : builder.allElementTypes) {
-                        allElementType.getLookupCache().cleanup();
-                    }
-                    builder = null;
+            SimpleBackgroundInvocator.invoke(() -> {
+                for (ElementType allElementType : builder.allElementTypes) {
+                    allElementType.getLookupCache().cleanup();
                 }
-            }.start();
+                builder = null;
+            });
+
             //warnAmbiguousBranches();
         } catch (Exception e) {
             e.printStackTrace();

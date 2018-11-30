@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
@@ -30,7 +31,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     private boolean grouped;
     private boolean debug;
 
-    public MethodExecutionHistoryTree(MethodExecutionHistoryDialog dialog, MethodExecutionHistory executionHistory, boolean grouped, boolean debug) {
+    MethodExecutionHistoryTree(MethodExecutionHistoryDialog dialog, MethodExecutionHistory executionHistory, boolean grouped, boolean debug) {
         super(grouped ?
                 new MethodExecutionHistoryGroupedTreeModel(executionHistory.getExecutionInputs(), debug) :
                 new MethodExecutionHistorySimpleTreeModel(executionHistory.getExecutionInputs(), debug));
@@ -50,7 +51,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         return dialog.getProject();
     }
 
-    public void showGrouped(boolean grouped) {
+    void showGrouped(boolean grouped) {
         List<MethodExecutionInput> executionInputs = executionHistory.getExecutionInputs();
         MethodExecutionHistoryTreeModel model = grouped ?
                 new MethodExecutionHistoryGroupedTreeModel(executionInputs, debug) :
@@ -61,19 +62,19 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         this.grouped = grouped;
     }
 
-    public void setSelectedInput(MethodExecutionInput executionInput) {
+    void setSelectedInput(MethodExecutionInput executionInput) {
         if (executionInput != null) {
             MethodExecutionHistoryTreeModel model = (MethodExecutionHistoryTreeModel) getModel();
             getSelectionModel().setSelectionPath(model.getTreePath(executionInput));
         }
     }
 
-    public boolean isGrouped() {
+    boolean isGrouped() {
         return grouped;
     }
 
     @Nullable
-    public MethodExecutionInput getSelectedExecutionInput() {
+    MethodExecutionInput getSelectedExecutionInput() {
         Object selection = getLastSelectedPathComponent();
         if (selection instanceof MethodExecutionHistoryTreeModel.MethodTreeNode) {
             MethodExecutionHistoryTreeModel.MethodTreeNode methodNode = (MethodExecutionHistoryTreeModel.MethodTreeNode) selection;
@@ -105,7 +106,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         }
     }
 
-    public void removeSelectedEntries() {
+    void removeSelectedEntries() {
         MethodExecutionHistoryTreeNode treeNode = (MethodExecutionHistoryTreeNode)
                 getSelectionPath().getLastPathComponent();
         MethodExecutionHistoryTreeNode parentTreeNode = (MethodExecutionHistoryTreeNode) treeNode.getParent();
@@ -134,19 +135,15 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
                             method.getArguments();
                         }
 
-                        new SimpleLaterInvocator() {
-                            @Override
-                            protected void execute() {
-                                if (dialog != null && !dialog.isDisposed()) {
-                                    dialog.showMethodExecutionPanel(executionInput);
-                                    dialog.setSelectedExecutionInput(executionInput);
-                                    dialog.updateMainButtons(executionInput);
-                                    if (method != null) {
-                                        executionHistory.setSelection(executionInput.getMethodRef());
-                                    }
-                                }
+                        SimpleLaterInvocator.invoke(() -> {
+                            FailsafeUtil.check(dialog);
+                            dialog.showMethodExecutionPanel(executionInput);
+                            dialog.setSelectedExecutionInput(executionInput);
+                            dialog.updateMainButtons(executionInput);
+                            if (method != null) {
+                                executionHistory.setSelection(executionInput.getMethodRef());
                             }
-                        }.start();
+                        });
                     }
                 }.start();
             }

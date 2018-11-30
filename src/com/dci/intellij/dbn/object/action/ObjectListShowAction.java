@@ -60,33 +60,30 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
                     final List<? extends DBObject> recentObjectList = getRecentObjectList();
                     final List<? extends DBObject> objects = getObjectList();
                     if (!isCancelled()) {
-                        new SimpleLaterInvocator() {
-                            @Override
-                            protected void execute() {
-                                if (objects.size() > 0) {
-                                    ObjectListActionGroup actionGroup = new ObjectListActionGroup(ObjectListShowAction.this, objects, recentObjectList);
-                                    JBPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                                            ObjectListShowAction.this.getTitle(),
-                                            actionGroup,
-                                            e.getDataContext(),
-                                            JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                                            true, null, 10);
+                        SimpleLaterInvocator.invoke(() -> {
+                            if (objects.size() > 0) {
+                                ObjectListActionGroup actionGroup = new ObjectListActionGroup(ObjectListShowAction.this, objects, recentObjectList);
+                                JBPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
+                                        ObjectListShowAction.this.getTitle(),
+                                        actionGroup,
+                                        e.getDataContext(),
+                                        JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                                        true, null, 10);
 
-                                    popup.getContent().setBackground(Colors.LIGHT_BLUE);
-                                    showPopup(popup);
-                                }
-                                else {
-                                    JLabel label = new JLabel(getEmptyListMessage(), Icons.EXEC_MESSAGES_INFO, SwingConstants.LEFT);
-                                    label.setBorder(JBUI.Borders.empty(3));
-                                    JPanel panel = new JPanel(new BorderLayout());
-                                    panel.add(label);
-                                    panel.setBackground(Colors.LIGHT_BLUE);
-                                    ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(panel, null);
-                                    JBPopup popup = popupBuilder.createPopup();
-                                    showPopup(popup);
-                                }
+                                popup.getContent().setBackground(Colors.LIGHT_BLUE);
+                                showPopup(popup);
                             }
-                        }.start();
+                            else {
+                                JLabel label = new JLabel(getEmptyListMessage(), Icons.EXEC_MESSAGES_INFO, SwingConstants.LEFT);
+                                label.setBorder(JBUI.Borders.empty(3));
+                                JPanel panel = new JPanel(new BorderLayout());
+                                panel.add(label);
+                                panel.setBackground(Colors.LIGHT_BLUE);
+                                ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(panel, null);
+                                JBPopup popup = popupBuilder.createPopup();
+                                showPopup(popup);
+                            }
+                        });
                     }
                 }
             }

@@ -17,11 +17,7 @@ import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.fileTypes.ExtensionFileNameMatcher;
-import com.intellij.openapi.fileTypes.FileNameMatcher;
-import com.intellij.openapi.fileTypes.FileTypeEvent;
-import com.intellij.openapi.fileTypes.FileTypeListener;
-import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.fileTypes.*;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -160,12 +156,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     }
 
     public void projectOpened() {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                registerExtensions(getExtensionSettings());
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> registerExtensions(getExtensionSettings()));
     }
 
     public void projectClosed() {
@@ -181,7 +172,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
 
     }
 }

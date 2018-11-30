@@ -4,12 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.RunnableTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
+import com.dci.intellij.dbn.common.thread.*;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -102,7 +97,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         });
     }
 
-    public void promptExecutionDialog(DBMethod method, @NotNull DBDebuggerType debuggerType, RunnableTask callback) {
+    private void promptExecutionDialog(DBMethod method, @NotNull DBDebuggerType debuggerType, RunnableTask callback) {
         MethodExecutionInput executionInput = getExecutionInput(method);
         promptExecutionDialog(executionInput, debuggerType, callback);
     }
@@ -123,17 +118,13 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                     } else {
                         // load the arguments in background
                         executionInput.getMethod().getArguments();
-                        new SimpleLaterInvocator() {
-                            @Override
-                            protected void execute() {
-                                MethodExecutionInputDialog executionDialog = new MethodExecutionInputDialog(executionInput, debuggerType);
-                                executionDialog.show();
-                                if (executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                                    callback.start();
-                                }
-
+                        SimpleLaterInvocator.invoke(() -> {
+                            MethodExecutionInputDialog executionDialog = new MethodExecutionInputDialog(executionInput, debuggerType);
+                            executionDialog.show();
+                            if (executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                                callback.start();
                             }
-                        }.start();
+                        });
                     }
                 } else {
                     String message =
@@ -157,20 +148,17 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 initMethodExecutionHistory();
 
-                new SimpleLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, selected, editable, debug);
-                        executionHistoryDialog.show();
-                        MethodExecutionInput selected = executionHistoryDialog.getSelectedExecutionInput();
-                        if (selected != null && callback != null) {
-                            if (executionHistoryDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                                callback.setData(selected);
-                                callback.start();
-                            }
+                SimpleLaterInvocator.invoke(() -> {
+                    MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, selected, editable, debug);
+                    executionHistoryDialog.show();
+                    MethodExecutionInput selected = executionHistoryDialog.getSelectedExecutionInput();
+                    if (selected != null && callback != null) {
+                        if (executionHistoryDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                            callback.setData(selected);
+                            callback.start();
                         }
                     }
-                }.start();
+                });
             }
         }.start();
     }
@@ -311,7 +299,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
         Element browserSettingsElement = element.getChild("method-browser");
         if (browserSettingsElement != null) {
             browserSettings.readConfiguration(browserSettingsElement);

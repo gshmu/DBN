@@ -25,11 +25,7 @@ import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginInstaller;
-import com.intellij.ide.plugins.PluginManagerMain;
-import com.intellij.ide.plugins.PluginNode;
-import com.intellij.ide.plugins.RepositoryHelper;
+import com.intellij.ide.plugins.*;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.extensions.PluginId;
@@ -113,11 +109,11 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                     final Project project = generalSettings.getProject();
                     new BackgroundTask(project, "Updating plugin", false) {
                         @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
                             try {
-                                final List<PluginNode> updateDescriptors = new ArrayList<PluginNode>();
+                                final List<PluginNode> updateDescriptors = new ArrayList<>();
                                 final List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadCachedPlugins();
-                                final List<PluginId> pluginIds = new ArrayList<PluginId>();
+                                final List<PluginId> pluginIds = new ArrayList<>();
                                 if (descriptors != null) {
                                     for (IdeaPluginDescriptor descriptor : descriptors) {
                                         pluginIds.add(descriptor.getPluginId());
@@ -131,21 +127,13 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                                     }
                                 }
 
-                                new SimpleLaterInvocator() {
-                                    @Override
-                                    protected void execute() {
-                                        try {
-                                            PluginManagerMain.downloadPlugins(updateDescriptors, pluginIds, new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    PluginManagerMain.notifyPluginsUpdated(project);
-                                                }
-                                            }, null);
-                                        } catch (IOException e1) {
-                                            NotificationUtil.sendErrorNotification(project, "Update Error", "Error updating DBN plugin: " + e1.getMessage());
-                                        }
+                                SimpleLaterInvocator.invoke(() -> {
+                                    try {
+                                        PluginManagerMain.downloadPlugins(updateDescriptors, pluginIds, () -> PluginManagerMain.notifyPluginsUpdated(project), null);
+                                    } catch (IOException e1) {
+                                        NotificationUtil.sendErrorNotification(project, "Update Error", "Error updating DBN plugin: " + e1.getMessage());
                                     }
-                                }.start();
+                                });
                             } catch (Exception ex) {
                                 NotificationUtil.sendErrorNotification(project, "Update Error", "Error updating DBN plugin: " + ex.getMessage());
                             }
@@ -181,7 +169,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         return mainPanel;
     }
 
-    public void focusConnectionSettings(@Nullable ConnectionId connectionId) {
+    void focusConnectionSettings(@Nullable ConnectionId connectionId) {
         ConnectionBundleSettings connectionSettings = getConfiguration().getConnectionSettings();
         ConnectionBundleSettingsForm settingsEditor = connectionSettings.getSettingsEditor();
         if (settingsEditor != null) {
@@ -190,7 +178,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         }
     }
 
-    public void focusSettingsEditor(ConfigId configId) {
+    void focusSettingsEditor(ConfigId configId) {
         Configuration configuration = getConfiguration().getConfiguration(configId);
         if (configuration != null) {
             ConfigurationEditorForm settingsEditor = configuration.getSettingsEditor();
@@ -198,7 +186,9 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                 JComponent component = settingsEditor.getComponent();
                 if (component != null) {
                     TabInfo tabInfo = getTabInfo(component);
-                    configurationTabs.select(tabInfo, true);
+                    if (tabInfo != null) {
+                        configurationTabs.select(tabInfo, true);
+                    }
                 }
             }
         }

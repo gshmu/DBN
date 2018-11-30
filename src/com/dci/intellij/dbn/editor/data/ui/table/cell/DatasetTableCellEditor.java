@@ -1,6 +1,6 @@
  package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
- import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+ import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
  import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
  import com.dci.intellij.dbn.common.ui.Borders;
  import com.dci.intellij.dbn.common.ui.MouseUtil;
@@ -22,13 +22,7 @@
  import javax.swing.border.LineBorder;
  import javax.swing.text.Document;
  import java.awt.*;
- import java.awt.event.KeyEvent;
- import java.awt.event.KeyListener;
- import java.awt.event.MouseAdapter;
- import java.awt.event.MouseEvent;
- import java.awt.event.MouseListener;
- import java.awt.event.MouseMotionAdapter;
- import java.awt.event.MouseMotionListener;
+ import java.awt.event.*;
 
  public class DatasetTableCellEditor extends AbstractDatasetTableCellEditor implements KeyListener{
     private static final Border ERROR_BORDER = new LineBorder(JBColor.RED, 1);
@@ -38,7 +32,7 @@
     public static final int HIGHLIGHT_TYPE_POPUP = 1;
     public static final int HIGHLIGHT_TYPE_ERROR = 2;
 
-    public DatasetTableCellEditor(DatasetEditorTable table) {
+    DatasetTableCellEditor(DatasetEditorTable table) {
         this(table, new BasicDataEditorComponent());
         SimpleTextAttributes selectionTextAttributes = table.getCellRenderer().getAttributes().getSelection();
 
@@ -99,35 +93,31 @@
         return getTextField().isEditable();
     }
 
-    protected void selectText(final JTextField textField) {
+    void selectText(final JTextField textField) {
 
         if (textField.isEditable()) {
             final String originalText = textField.getText();
-            new SimpleLaterInvocator() {
-                @Override
-                protected void execute() {
-                    if (!isDisposed()) {
-                        // select all only if the text didn't change
-                        if (settings.getGeneralSettings().getSelectContentOnCellEdit().value()) {
-                            if (originalText.equals(textField.getText())) {
-                                textField.grabFocus();
-                                textField.selectAll();
-                            }
-                        } else {
-                            textField.requestFocus();
-
-                            Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-                            Point textFieldLocation = textField.getLocationOnScreen();
-                            int x = (int) Math.max(mouseLocation.getX() - textFieldLocation.getX(), 0);
-                            int y = (int) Math.min(Math.max(mouseLocation.getY() - textFieldLocation.getY(), 0), 10);
-
-                            Point location = new Point(x, y);
-                            int position = textField.viewToModel(location);
-                            textField.setCaretPosition(position);
-                        }
+            SimpleLaterInvocator.invoke(() -> {
+                checkDisposed();
+                // select all only if the text didn't change
+                if (settings.getGeneralSettings().getSelectContentOnCellEdit().value()) {
+                    if (originalText.equals(textField.getText())) {
+                        textField.grabFocus();
+                        textField.selectAll();
                     }
+                } else {
+                    textField.requestFocus();
+
+                    Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+                    Point textFieldLocation = textField.getLocationOnScreen();
+                    int x = (int) Math.max(mouseLocation.getX() - textFieldLocation.getX(), 0);
+                    int y = (int) Math.min(Math.max(mouseLocation.getY() - textFieldLocation.getY(), 0), 10);
+
+                    Point location = new Point(x, y);
+                    int position = textField.viewToModel(location);
+                    textField.setCaretPosition(position);
                 }
-            }.start();
+            });
         }
     }
 
@@ -192,23 +182,18 @@
             final JTextField textField = getTextField();
             final DatasetEditorModelCell cell = getCell();
             if (e.isControlDown() && cell.isNavigable()) {
-                new SimpleBackgroundTask("load column details") {
-                    @Override
-                    protected void execute() {
-                        DBColumn column = cell.getColumnInfo().getColumn();
-                        final DBColumn foreignKeyColumn = column.getForeignKeyColumn();
-                        if (foreignKeyColumn != null && !e.isConsumed()) {
-                            new SimpleLaterInvocator() {
-                                @Override
-                                protected void execute() {
-                                    textField.setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
-                                    textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                                }
-                            }.start();
-                        }
 
+                SimpleBackgroundInvocator.invoke(() -> {
+                    DBColumn column = cell.getColumnInfo().getColumn();
+                    final DBColumn foreignKeyColumn = column.getForeignKeyColumn();
+                    if (foreignKeyColumn != null && !e.isConsumed()) {
+                        SimpleLaterInvocator.invoke(() -> {
+                            textField.setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
+                            textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        });
                     }
-                }.start();
+                });
+
             } else {
                 textField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
                 textField.setToolTipText(null);
