@@ -21,12 +21,12 @@ public abstract class StatementExecutionQueue extends DisposableBase{
     private final Queue<StatementExecutionProcessor> processors = new ConcurrentLinkedQueue<StatementExecutionProcessor>();
     private boolean executing = false;
 
-    public StatementExecutionQueue(ConnectionHandler connectionHandler) {
+    protected StatementExecutionQueue(ConnectionHandler connectionHandler) {
         super(connectionHandler);
         projectRef = ProjectRef.from(connectionHandler.getProject());
     }
 
-    public void queue(StatementExecutionProcessor processor) {
+    void queue(StatementExecutionProcessor processor) {
         if (!this.processors.contains(processor)) {
             processor.getExecutionContext().set(QUEUED, true);
             this.processors.add(processor);

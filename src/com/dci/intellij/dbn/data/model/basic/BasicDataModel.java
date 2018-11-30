@@ -4,23 +4,17 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.latent.DisposableLatent;
+import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.ThreadLocalLatent;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.FormatterProvider;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
-import com.dci.intellij.dbn.data.model.ColumnInfo;
-import com.dci.intellij.dbn.data.model.DataModel;
-import com.dci.intellij.dbn.data.model.DataModelCell;
-import com.dci.intellij.dbn.data.model.DataModelHeader;
-import com.dci.intellij.dbn.data.model.DataModelListener;
-import com.dci.intellij.dbn.data.model.DataModelRow;
-import com.dci.intellij.dbn.data.model.DataModelState;
+import com.dci.intellij.dbn.data.model.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
@@ -38,40 +32,27 @@ import java.util.Set;
 public class BasicDataModel<T extends DataModelRow> extends DisposableBase implements DataModel<T> {
     private DataModelHeader<? extends ColumnInfo> header;
     private DataModelState state;
-    private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
-    private Set<DataModelListener> dataModelListeners = new HashSet<DataModelListener>();
-    private List<T> rows = new ArrayList<T>();
+    private Set<TableModelListener> tableModelListeners = new HashSet<>();
+    private Set<DataModelListener> dataModelListeners = new HashSet<>();
+    private List<T> rows = new ArrayList<>();
     private Project project;
     private Filter<T> filter;
-    private FormatterProvider formatter;
+    private ThreadLocalLatent<Formatter> formatter;
     private boolean isEnvironmentReadonly;
 
     private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
         @Override
         public void settingsChanged() {
-            formatter = new FormatterProvider(project);
+            formatter = ThreadLocalLatent.create(() -> Formatter.getInstance(project).clone());
         }
     };
 
-    private LazyValue<BasicDataGutterModel> listModel = new DisposableLazyValue<BasicDataGutterModel>(this) {
-        @Override
-        protected BasicDataGutterModel load() {
-            return new BasicDataGutterModel(BasicDataModel.this);
-        }
-    };
-
-    private LazyValue<DataSearchResult> searchResult = new DisposableLazyValue<DataSearchResult>(this) {
-        @Override
-        protected DataSearchResult load() {
-            DataSearchResult dataSearchResult = new DataSearchResult();
-            Disposer.register(this, dataSearchResult);
-            return dataSearchResult;
-        }
-    };
+    private Latent<BasicDataGutterModel> listModel = DisposableLatent.create(this, () -> new BasicDataGutterModel(BasicDataModel.this));
+    private Latent<DataSearchResult> searchResult = DisposableLatent.create(this, DataSearchResult::new);
 
     public BasicDataModel(Project project) {
         this.project = project;
-        formatter = new FormatterProvider(project);
+        formatter = ThreadLocalLatent.create(() -> Formatter.getInstance(project).clone());
         EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
 
@@ -138,7 +119,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposableBase imple
             if (rows instanceof FiltrableList) {
                 filtrableList = (FiltrableListImpl<T>) rows;
             } else {
-                filtrableList = new FiltrableListImpl<T>(rows);
+                filtrableList = new FiltrableListImpl<>(rows);
                 this.rows = filtrableList;
             }
             filtrableList.setFilter(filter);
@@ -165,7 +146,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposableBase imple
 
     public void setRows(List<T> rows) {
         if (filter != null) {
-            this.rows = new FiltrableListImpl<T>(rows, filter);
+            this.rows = new FiltrableListImpl<>(rows, filter);
         } else {
             this.rows = rows;
         }
@@ -178,13 +159,13 @@ public class BasicDataModel<T extends DataModelRow> extends DisposableBase imple
         getState().setRowCount(getRowCount());
     }
 
-    public void addRowAtIndex(int index, T row) {
+    protected void addRowAtIndex(int index, T row) {
         getRows().add(index, row);
         updateRowIndexes(index);
         getState().setRowCount(getRowCount());
     }
 
-    public void removeRowAtIndex(int index) {
+    protected void removeRowAtIndex(int index) {
         DataModelRow row = getRows().remove(index);
         updateRowIndexes(index);
         getState().setRowCount(getRowCount());
@@ -230,25 +211,25 @@ public class BasicDataModel<T extends DataModelRow> extends DisposableBase imple
         notifyListeners(listDataEvent, tableModelEvent);
     }
 
-    public void notifyRowUpdated(int rowIndex) {
+    protected void notifyRowUpdated(int rowIndex) {
         TableModelEvent tableModelEvent = new TableModelEvent(this, rowIndex, rowIndex);
         ListDataEvent listDataEvent = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, rowIndex, rowIndex);
         notifyListeners(listDataEvent, tableModelEvent);
     }
 
-    public void notifyRowsDeleted(int fromRowIndex, int toRowIndex) {
+    protected void notifyRowsDeleted(int fromRowIndex, int toRowIndex) {
         TableModelEvent tableModelEvent = new TableModelEvent(this, fromRowIndex, toRowIndex, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE);
         ListDataEvent listDataEvent = new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, fromRowIndex, toRowIndex);
         notifyListeners(listDataEvent, tableModelEvent);
     }
 
-    public void notifyRowsUpdated(int fromRowIndex, int toRowIndex) {
+    protected void notifyRowsUpdated(int fromRowIndex, int toRowIndex) {
         TableModelEvent tableModelEvent = new TableModelEvent(this, fromRowIndex, toRowIndex, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE);
         ListDataEvent listDataEvent = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, fromRowIndex, toRowIndex);
         notifyListeners(listDataEvent, tableModelEvent);
     }
 
-    public void notifyRowsInserted(int fromRowIndex, int toRowIndex) {
+    protected void notifyRowsInserted(int fromRowIndex, int toRowIndex) {
         TableModelEvent tableModelEvent = new TableModelEvent(this, fromRowIndex, toRowIndex, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
         ListDataEvent listDataEvent = new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, fromRowIndex, toRowIndex);
         notifyListeners(listDataEvent, tableModelEvent);
@@ -258,7 +239,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposableBase imple
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
-                if (listModel.isLoaded()) {
+                if (listModel.loaded()) {
                     listModel.get().notifyListeners(listDataEvent);
                 }
 
@@ -329,7 +310,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposableBase imple
     
     @Override
     public boolean hasSearchResult() {
-        return searchResult.isLoaded() && !searchResult.get().isEmpty();
+        return searchResult.loaded() && !searchResult.get().isEmpty();
     }
 
     @Override

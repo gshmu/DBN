@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -18,12 +17,7 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
 
     private D[] languageDialects;
     private SharedTokenTypeBundle sharedTokenTypes;
-    private LazyValue<IFileElementType> fileElementType = new SimpleLazyValue<IFileElementType>() {
-        @Override
-        protected IFileElementType load() {
-            return createFileElementType(DBLanguage.this);
-        }
-    };
+    private Latent<IFileElementType> fileElementType = Latent.create(() -> createFileElementType(DBLanguage.this));
 
     protected DBLanguage(final @NonNls String id, final @NonNls String... mimeTypes){
         super(id, mimeTypes);

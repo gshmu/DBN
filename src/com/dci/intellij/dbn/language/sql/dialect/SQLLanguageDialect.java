@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.sql.dialect;
 
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
@@ -13,18 +12,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class SQLLanguageDialect extends DBLanguageDialect {
-    private LazyValue<ChameleonElementType> psqlChameleonElementType = new SimpleLazyValue<ChameleonElementType>() {
-        @Override
-        protected ChameleonElementType load() {
-            DBLanguageDialectIdentifier chameleonDialectIdentifier = getChameleonDialectIdentifier();
-            if (chameleonDialectIdentifier != null) {
-                DBLanguageDialect plsqlDialect = DBLanguageDialect.getLanguageDialect(chameleonDialectIdentifier);
-                return new ChameleonElementType(plsqlDialect, SQLLanguageDialect.this);
-            }
+    private Latent<ChameleonElementType> psqlChameleonElementType = Latent.create(() -> {
 
-            return null;
+        DBLanguageDialectIdentifier chameleonDialectIdentifier = getChameleonDialectIdentifier();
+        if (chameleonDialectIdentifier != null) {
+            DBLanguageDialect plsqlDialect = DBLanguageDialect.getLanguageDialect(chameleonDialectIdentifier);
+            return new ChameleonElementType(plsqlDialect, SQLLanguageDialect.this);
         }
-    };
+        return null;
+    });
 
     public SQLLanguageDialect(@NonNls @NotNull DBLanguageDialectIdentifier identifier) {
         super(identifier, SQLLanguage.INSTANCE);

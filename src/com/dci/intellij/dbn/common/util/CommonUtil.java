@@ -8,12 +8,7 @@ import org.jdom.input.DOMBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Properties;
@@ -76,7 +71,13 @@ public class CommonUtil {
     private static final Object NULL_OBJECT = new Object();
 
     public static <T> boolean safeEqual(@Nullable T value1, @Nullable T value2) {
-        return nvl(value1, "").equals(nvl(value2, ""));
+        if (value1 == null && value2 == null) {
+            return true;
+        }
+        if (value1 != null) {
+            return value1.equals(value2);
+        }
+        return false;
     }
 
     public static Document loadXmlFile(Class clazz, String name) {

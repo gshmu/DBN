@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.util.DisposableLazyValue;
-import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.latent.DisposableLatent;
+import com.dci.intellij.dbn.common.latent.Latent;
 
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
@@ -13,12 +13,7 @@ import java.util.Set;
 
 public abstract class DBNEditableTableModel extends DisposableBase implements DBNTableWithGutterModel {
     private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
-    private LazyValue<DBNTableGutterModel> listModel = new DisposableLazyValue<DBNTableGutterModel>(this) {
-        @Override
-        protected DBNTableGutterModel load() {
-            return new DBNTableGutterModel(DBNEditableTableModel.this);
-        }
-    };
+    private Latent<DBNTableGutterModel> listModel = DisposableLatent.create(this, () -> new DBNTableGutterModel<>(DBNEditableTableModel.this));
 
     public void addTableModelListener(TableModelListener listener) {
         tableModelListeners.add(listener);
@@ -43,7 +38,7 @@ public abstract class DBNEditableTableModel extends DisposableBase implements DB
             listener.tableChanged(modelEvent);
         }
 
-        if (listModel.isLoaded()) {
+        if (listModel.loaded()) {
             ListDataEvent listDataEvent = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, firstRowIndex, lastRowIndex);
             listModel.get().notifyListeners(listDataEvent);
         }

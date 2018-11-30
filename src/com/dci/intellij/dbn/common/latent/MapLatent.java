@@ -1,19 +1,19 @@
-package com.dci.intellij.dbn.common.util;
+package com.dci.intellij.dbn.common.latent;
 
 import gnu.trove.THashMap;
 
 import java.util.Map;
 
-public class LatentMap<K, V> {
+public class MapLatent<K, V> {
     private Loader<K, V> loader;
     private Map<K, V> map = new THashMap<>();
 
-    private LatentMap(Loader<K, V> loader) {
+    private MapLatent(Loader<K, V> loader) {
         this.loader = loader;
     }
 
-    public static <K, V> LatentMap<K, V> create(Loader<K, V> loader) {
-        return new LatentMap<K, V>(loader);
+    public static <K, V> MapLatent<K, V> create(Loader<K, V> loader) {
+        return new MapLatent<>(loader);
     }
 
     public V get(K key) {

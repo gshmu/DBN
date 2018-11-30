@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.jdwp.ManagedThreadCommand;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
@@ -18,28 +17,25 @@ import java.util.List;
 
 public class DBJdwpDebugExecutionStack extends XExecutionStack {
     private DBJdwpDebugSuspendContext suspendContext;
-    private List<DBJdwpDebugStackFrame> stackFrames = new ArrayList<DBJdwpDebugStackFrame>();
+    private List<DBJdwpDebugStackFrame> stackFrames = new ArrayList<>();
 
-    private LazyValue<DBJdwpDebugStackFrame> topStackFrame = new SimpleLazyValue<DBJdwpDebugStackFrame>() {
-        @Override
-        protected DBJdwpDebugStackFrame load() {
-            XExecutionStack underlyingStack = getUnderlyingStack();
-            XStackFrame topFrame = underlyingStack == null ? null : underlyingStack.getTopFrame();
-            return getFrame((JavaStackFrame) topFrame);
-        }
-    };
+    private Latent<DBJdwpDebugStackFrame> topStackFrame = Latent.create(() -> {
+        XExecutionStack underlyingStack = getUnderlyingStack();
+        XStackFrame topFrame = underlyingStack == null ? null : underlyingStack.getTopFrame();
+        return getFrame((JavaStackFrame) topFrame);
+    });
 
     @Nullable
     private XExecutionStack getUnderlyingStack() {
         return suspendContext.getUnderlyingContext().getActiveExecutionStack();
     }
 
-    public DBJdwpDebugExecutionStack(DBJdwpDebugSuspendContext suspendContext) {
+    DBJdwpDebugExecutionStack(DBJdwpDebugSuspendContext suspendContext) {
         super(suspendContext.getDebugProcess().getName(), suspendContext.getDebugProcess().getIcon());
         this.suspendContext = suspendContext;
     }
 
-    public DBJdwpDebugSuspendContext getSuspendContext() {
+    private DBJdwpDebugSuspendContext getSuspendContext() {
         return suspendContext;
     }
 
@@ -68,12 +64,12 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
         if (underlyingStack != null) {
             new ManagedThreadCommand(debugProcess) {
                 @Override
-                protected void action() throws Exception {
+                protected void action() {
                     XStackFrameContainer fakeContainer = new XStackFrameContainer() {
                         @Override
                         public void addStackFrames(@NotNull List<? extends XStackFrame> stackFrames, boolean last) {
                             if (stackFrames.size() > 0) {
-                                List<DBJdwpDebugStackFrame> frames = new ArrayList<DBJdwpDebugStackFrame>();
+                                List<DBJdwpDebugStackFrame> frames = new ArrayList<>();
                                 for (XStackFrame underlyingFrame : stackFrames) {
                                     DBJdwpDebugStackFrame frame = getFrame((JavaStackFrame) underlyingFrame);
                                     if (frame != null) {

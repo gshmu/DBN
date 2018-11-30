@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.RecursivitySafeLazyValue;
+import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RecursiveLatent;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -23,25 +23,22 @@ import java.util.StringTokenizer;
 
 public class IterationElementTypeImpl extends AbstractElementType implements IterationElementType {
 
-    protected ElementType iteratedElementType;
-    protected TokenElementType[] separatorTokens;
+    private ElementType iteratedElementType;
+    private TokenElementType[] separatorTokens;
     private int[] elementsCountVariants;
     private int minIterations;
-    private LazyValue<Boolean> followedBySeparator = new RecursivitySafeLazyValue<Boolean>(false) {
-        @Override
-        protected Boolean load() {
-            TokenElementType[] separatorTokens = getSeparatorTokens();
-            if (separatorTokens != null) {
-                Set<TokenType> nextPossibleTokens = getLookupCache().getNextPossibleTokens();
-                for (TokenElementType separatorToken : separatorTokens) {
-                    if (nextPossibleTokens.contains(separatorToken.getTokenType())) {
-                        return true;
-                    }
+    private Latent<Boolean> followedBySeparator = RecursiveLatent.create(() -> {
+        TokenElementType[] separatorTokens = getSeparatorTokens();
+        if (separatorTokens != null) {
+            Set<TokenType> nextPossibleTokens = getLookupCache().getNextPossibleTokens();
+            for (TokenElementType separatorToken : separatorTokens) {
+                if (nextPossibleTokens.contains(separatorToken.getTokenType())) {
+                    return true;
                 }
             }
-            return false;
         }
-    };
+        return false;
+    });
 
     public IterationElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);

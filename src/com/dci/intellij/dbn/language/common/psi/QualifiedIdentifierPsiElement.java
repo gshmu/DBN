@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.MutableLatent;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -15,7 +17,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class QualifiedIdentifierPsiElement extends SequencePsiElement {
-    private ParseVariants parseVariants;
+    private Latent<ParseVariants> parseVariants = MutableLatent.create(
+            this::getElementsCount,
+            this::buildParseVariants);
 
     public QualifiedIdentifierPsiElement(ASTNode astNode, ElementType elementType) {
         super(astNode, elementType);
@@ -26,14 +30,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
     }
 
     public List<QualifiedIdentifierVariant> getParseVariants() {
-        if (parseVariants == null || parseVariants.getReferenceElementCount() != getElementsCount()){
-            synchronized (this) {
-                if (parseVariants == null || parseVariants.getReferenceElementCount() != getElementsCount()){
-                    parseVariants = buildParseVariants();
-                }
-            }
-        }
-        return parseVariants.getElements();
+        return parseVariants.get().getElements();
     }
 
     public int getIndexOf(LeafPsiElement leafPsiElement) {
@@ -87,7 +84,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
     }
 
     private ParseVariants buildParseVariants() {
-        List<QualifiedIdentifierVariant> parseVariants = new ArrayList<QualifiedIdentifierVariant>();
+        List<QualifiedIdentifierVariant> parseVariants = new ArrayList<>();
         for (LeafElementType[] elementTypes : getElementType().getVariants()) {
 
             ParseResultType resultType = ParseResultType.FULL_MATCH;
@@ -126,7 +123,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
             }
         }
         Collections.sort(parseVariants);
-        return new ParseVariants(parseVariants, getElementsCount());
+        return new ParseVariants(parseVariants);
     }
 
     private LeafPsiElement lookupParentElementFor(LeafPsiElement element) {
@@ -147,10 +144,9 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
             if (parseVariant.getLeafs().length == getElementsCount()) {
                 int index = parseVariant.getIndexOf(leafElementType);
                 if (index > 0) {
-                    LeafPsiElement previousPsiElement = getLeafAtIndex(index-1);
+                    IdentifierPsiElement previousPsiElement = getLeafAtIndex(index-1);
                     if (previousPsiElement != null) {
-                        IdentifierPsiElement parentPsiElement = (IdentifierPsiElement) previousPsiElement;
-                        DBObject parentObject = parentPsiElement.resolveUnderlyingObject();
+                        DBObject parentObject = previousPsiElement.resolveUnderlyingObject();
                         if (parentObject != null) {
                             return parentObject;
                         }
@@ -161,7 +157,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         return null;
     }
 
-    public int getElementsCount() {
+    int getElementsCount() {
         int count = 0;
         PsiElement child = getFirstChild();
         while (child != null) {
@@ -178,19 +174,13 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
 
     private static class ParseVariants {
         private List<QualifiedIdentifierVariant> elements;
-        private int referenceElementCount;
 
-        ParseVariants(List<QualifiedIdentifierVariant> elements, int referenceElementCount) {
+        ParseVariants(List<QualifiedIdentifierVariant> elements) {
             this.elements = elements;
-            this.referenceElementCount = referenceElementCount;
         }
 
         public List<QualifiedIdentifierVariant> getElements() {
             return elements;
-        }
-
-        int getReferenceElementCount() {
-            return referenceElementCount;
         }
     }
 }

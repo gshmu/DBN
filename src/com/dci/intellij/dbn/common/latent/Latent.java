@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common.util;
+package com.dci.intellij.dbn.common.latent;
 
 public class Latent<T> {
     private T value;
@@ -17,16 +17,19 @@ public class Latent<T> {
         if (shouldLoad()) {
             synchronized (this) {
                 if (shouldLoad()) {
-                    initLoad();
-                    value = loader.load();
-                    loaded = true;
+                    try {
+                        loading();
+                        value = loader.load();
+                    } finally {
+                        loaded(value);
+                    }
                 }
             }
         }
         return value;
     }
 
-    protected void initLoad(){};
+    protected void loading(){};
 
     protected boolean shouldLoad() {
         return !loaded;
@@ -38,7 +41,16 @@ public class Latent<T> {
     }
 
     public final boolean loaded() {
-        return !shouldLoad();
+        return loaded;
+    }
+
+    public void loaded(T value) {
+        loaded = true;
+    }
+
+    public void reset() {
+        value = null;
+        loaded = false;
     }
 
 

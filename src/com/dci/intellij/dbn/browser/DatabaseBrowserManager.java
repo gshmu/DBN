@@ -13,12 +13,12 @@ import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.latent.DisposableLatent;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -34,11 +34,7 @@ import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
-import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
-import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -66,12 +62,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     private BooleanSetting autoscrollToEditor   = new BooleanSetting("autoscroll-to-editor", false);
     private BooleanSetting showObjectProperties = new BooleanSetting("show-object-properties", true);
     public static final ThreadLocal<Boolean> AUTOSCROLL_FROM_EDITOR = new ThreadLocal<Boolean>();
-    private LazyValue<BrowserToolWindowForm> toolWindowForm = new DisposableLazyValue<BrowserToolWindowForm>(this) {
-        @Override
-        protected BrowserToolWindowForm load() {
-            return new BrowserToolWindowForm(getProject());
-        }
-    };
+    private Latent<BrowserToolWindowForm> toolWindowForm = DisposableLatent.create(this, () -> new BrowserToolWindowForm(getProject()));
 
     private DatabaseBrowserManager(Project project) {
         super(project);
@@ -212,7 +203,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
      **********************************************************/
     private ObjectFilterChangeListener filterChangeListener = new ObjectFilterChangeListener() {
         public void typeFiltersChanged(ConnectionId connectionId) {
-            if (toolWindowForm.isLoaded()) {
+            if (toolWindowForm.loaded()) {
                 ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
                 if (connectionHandler == null) {
                     getToolWindowForm().getBrowserForm().rebuildTree();
@@ -225,7 +216,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         @Override
         public void nameFiltersChanged(ConnectionId connectionId, @NotNull DBObjectType... objectTypes) {
             ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
-            if (toolWindowForm.isLoaded() && connectionHandler != null && objectTypes.length > 0) {
+            if (toolWindowForm.loaded() && connectionHandler != null && objectTypes.length > 0) {
                 connectionHandler.getObjectBundle().refreshTreeChildren(objectTypes);
             }
         }

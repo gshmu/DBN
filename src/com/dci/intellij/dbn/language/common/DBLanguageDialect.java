@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.parser.TokenPairRangeMonitor;
@@ -18,29 +18,13 @@ import java.util.Set;
 
 public abstract class DBLanguageDialect extends Language implements DBFileElementTypeProvider {
     private DBLanguageDialectIdentifier identifier;
-    private LazyValue<DBLanguageSyntaxHighlighter> syntaxHighlighter = new SimpleLazyValue<DBLanguageSyntaxHighlighter>() {
-        @Override
-        protected DBLanguageSyntaxHighlighter load() {
-            return createSyntaxHighlighter();
-        }
-    };
 
-    private LazyValue<DBLanguageParserDefinition> parserDefinition = new SimpleLazyValue<DBLanguageParserDefinition>() {
-        @Override
-        protected DBLanguageParserDefinition load() {
-            return createParserDefinition();
-        }
-    };
-
-    private LazyValue<IFileElementType> fileElementType = new SimpleLazyValue<IFileElementType>() {
-        @Override
-        protected IFileElementType load() {
-            return createFileElementType();
-        }
-    };
+    private Latent<DBLanguageSyntaxHighlighter> syntaxHighlighter = Latent.create(this::createSyntaxHighlighter);
+    private Latent<DBLanguageParserDefinition> parserDefinition = Latent.create(this::createParserDefinition);
+    private Latent<IFileElementType> fileElementType = Latent.create(this::createFileElementType);
 
     private Set<ChameleonTokenType> chameleonTokens;
-    private static Map<DBLanguageDialectIdentifier, DBLanguageDialect> register = new EnumMap<DBLanguageDialectIdentifier, DBLanguageDialect>(DBLanguageDialectIdentifier.class);
+    private static Map<DBLanguageDialectIdentifier, DBLanguageDialect> register = new EnumMap<>(DBLanguageDialectIdentifier.class);
 
     public DBLanguageDialect(@NonNls @NotNull DBLanguageDialectIdentifier identifier, @NotNull DBLanguage baseLanguage) {
         super(baseLanguage, identifier.getValue());
@@ -70,7 +54,7 @@ public abstract class DBLanguageDialect extends Language implements DBFileElemen
 
     @NotNull
     public DBLanguage getBaseLanguage() {
-        return (DBLanguage) super.getBaseLanguage();
+        return FailsafeUtil.get((DBLanguage) super.getBaseLanguage());
     }
 
     public SharedTokenTypeBundle getSharedTokenTypes() {
@@ -101,7 +85,7 @@ public abstract class DBLanguageDialect extends Language implements DBFileElemen
     public TokenType getInjectedLanguageToken(DBLanguageDialectIdentifier dialectIdentifier) {
         if (chameleonTokens == null) {
             chameleonTokens = createChameleonTokenTypes();
-            if (chameleonTokens == null) chameleonTokens = new HashSet<ChameleonTokenType>();
+            if (chameleonTokens == null) chameleonTokens = new HashSet<>();
         }
         for (ChameleonTokenType chameleonToken : chameleonTokens) {
             if (chameleonToken.getInjectedLanguage().identifier == dialectIdentifier) {
@@ -112,7 +96,7 @@ public abstract class DBLanguageDialect extends Language implements DBFileElemen
     }
 
     public Map<TokenPairTemplate,TokenPairRangeMonitor> createTokenPairRangeMonitors(PsiBuilder builder){
-        Map<TokenPairTemplate,TokenPairRangeMonitor> tokenPairRangeMonitors = new EnumMap<TokenPairTemplate, TokenPairRangeMonitor>(TokenPairTemplate.class);
+        Map<TokenPairTemplate,TokenPairRangeMonitor> tokenPairRangeMonitors = new EnumMap<>(TokenPairTemplate.class);
         tokenPairRangeMonitors.put(TokenPairTemplate.PARENTHESES, new TokenPairRangeMonitor(builder, this, TokenPairTemplate.PARENTHESES));
         return tokenPairRangeMonitors;
     }
