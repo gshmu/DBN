@@ -30,21 +30,11 @@ public class DBExecutionPointHighlighter {
     }
 
     public void show(final @NotNull XSourcePosition position, final boolean useSelection) {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                doShow(position, useSelection);
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(() -> doShow(position, useSelection));
     }
 
     public void hide() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                doHide();
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(() -> doHide());
     }
 
     public void navigateTo() {
@@ -78,13 +68,16 @@ public class DBExecutionPointHighlighter {
     private Editor openEditor() {
         VirtualFile file = sourcePosition.getFile();
         Document document = DocumentUtil.getDocument(file);
-        int offset = sourcePosition.getOffset();
-        if (offset < 0 || offset >= document.getTextLength()) {
-            myOpenFileDescriptor = new OpenFileDescriptor(project, file, sourcePosition.getLine(), 0);
-        } else {
-            myOpenFileDescriptor = new OpenFileDescriptor(project, file, offset);
+        if (document != null) {
+            int offset = sourcePosition.getOffset();
+            if (offset < 0 || offset >= document.getTextLength()) {
+                myOpenFileDescriptor = new OpenFileDescriptor(project, file, sourcePosition.getLine(), 0);
+            } else {
+                myOpenFileDescriptor = new OpenFileDescriptor(project, file, offset);
+            }
+            return FileEditorManager.getInstance(project).openTextEditor(myOpenFileDescriptor, false);
         }
-        return FileEditorManager.getInstance(project).openTextEditor(myOpenFileDescriptor, false);
+        return null;
     }
 
     private void doHide() {

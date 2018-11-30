@@ -49,21 +49,17 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
 
 
     private void showCreateRenameSessionDialog(final ConnectionHandler connectionHandler, final DatabaseSession session, @Nullable final RunnableTask<DatabaseSession> callback) {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                CreateRenameSessionDialog dialog = session == null ?
-                        new CreateRenameSessionDialog(connectionHandler) :
-                        new CreateRenameSessionDialog(connectionHandler, session);
-                dialog.setModal(true);
-                dialog.show();
-                DatabaseSession session = dialog.getSession();
-                if (callback != null) {
-                    callback.setData(session);
-                    callback.start();
-                }
+        ConditionalLaterInvocator.invoke(() -> {
+            CreateRenameSessionDialog dialog = session == null ?
+                    new CreateRenameSessionDialog(connectionHandler) :
+                    new CreateRenameSessionDialog(connectionHandler, session);
+            dialog.setModal(true);
+            dialog.show();
+            if (callback != null) {
+                callback.setData(dialog.getSession());
+                callback.start();
             }
-        }.start();
+        });
     }
 
     public DatabaseSession createSession(ConnectionHandler connectionHandler, String name) {

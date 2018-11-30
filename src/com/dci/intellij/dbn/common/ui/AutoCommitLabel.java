@@ -5,9 +5,7 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
-import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
@@ -46,29 +44,26 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     }
 
     private void update() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                if (connectionHandler != null) {
-                    setVisible(true);
-                    boolean disconnected = !connectionHandler.isConnected();
-                    boolean autoCommit = connectionHandler.isAutoCommit();
-                    setText(disconnected ? "Not connected to database" : autoCommit ? "Auto-Commit ON" : "Auto-Commit OFF");
-                    setForeground(disconnected ?
-                            Colors.DISCONNECTED : autoCommit ?
-                            Colors.AUTO_COMMIT_ON :
-                            Colors.AUTO_COMMIT_OFF);
-                    setToolTipText(
-                            disconnected ? "The connection to database has been closed. No editing possible" :
-                                    autoCommit ?
-                                            "Auto-Commit is enabled for connection \"" + connectionHandler + "\". Data changes will be automatically committed to the database." :
-                                            "Auto-Commit is disabled for connection \"" + connectionHandler + "\". Data changes will need to be manually committed to the database.");
-                } else {
-                    setVisible(false);
-                }
+        ConditionalLaterInvocator.invoke(() -> {
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            if (connectionHandler != null) {
+                setVisible(true);
+                boolean disconnected = !connectionHandler.isConnected();
+                boolean autoCommit = connectionHandler.isAutoCommit();
+                setText(disconnected ? "Not connected to database" : autoCommit ? "Auto-Commit ON" : "Auto-Commit OFF");
+                setForeground(disconnected ?
+                        Colors.DISCONNECTED : autoCommit ?
+                        Colors.AUTO_COMMIT_ON :
+                        Colors.AUTO_COMMIT_OFF);
+                setToolTipText(
+                        disconnected ? "The connection to database has been closed. No editing possible" :
+                                autoCommit ?
+                                        "Auto-Commit is enabled for connection \"" + connectionHandler + "\". Data changes will be automatically committed to the database." :
+                                        "Auto-Commit is disabled for connection \"" + connectionHandler + "\". Data changes will need to be manually committed to the database.");
+            } else {
+                setVisible(false);
             }
-        }.start();
+        });
     }
 
     @Nullable
@@ -81,15 +76,11 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         }
     }
 
-    private ConnectionHandlerStatusListener connectionStatusListener = new ConnectionHandlerStatusListener() {
-        @Override
-        public void statusChanged(ConnectionId connectionId, ConnectionHandlerStatus status) {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler != null && connectionHandler.getId() == connectionId) {
-                update();
-            }
+    private ConnectionHandlerStatusListener connectionStatusListener = (connectionId, status) -> {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (connectionHandler != null && connectionHandler.getId() == connectionId) {
+            update();
         }
-
     };
     @Override
     public void dispose() {

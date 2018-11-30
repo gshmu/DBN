@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableSelectionRestorer;
@@ -80,32 +81,20 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     }
 
     public void clearSelection() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                SessionBrowserTable.super.clearSelection();
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(SessionBrowserTable.super::clearSelection);
     }
 
     @Override
     public void removeEditor() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                SessionBrowserTable.super.removeEditor();
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(SessionBrowserTable.super::removeEditor);
     }
 
     public void updateTableGutter() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                getTableGutter().revalidate();
-                getTableGutter().repaint();
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(() -> {
+            DBNTableGutter tableGutter = getTableGutter();
+            tableGutter.revalidate();
+            tableGutter.repaint();
+        });
     }
 
     @Override

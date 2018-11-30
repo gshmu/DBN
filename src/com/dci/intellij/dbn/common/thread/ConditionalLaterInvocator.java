@@ -4,6 +4,8 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 
 public abstract class ConditionalLaterInvocator<T> extends SynchronizedTask<T>{
+    protected ConditionalLaterInvocator() {}
+
     public final void start() {
         Application application = ApplicationManager.getApplication();
         if (application.isDispatchThread()) {
@@ -16,5 +18,18 @@ public abstract class ConditionalLaterInvocator<T> extends SynchronizedTask<T>{
     @Override
     protected String getSyncKey() {
         return null;
+    }
+
+    public static ConditionalLaterInvocator create(Runnable runnable) {
+        return new ConditionalLaterInvocator() {
+            @Override
+            protected void execute() {
+                runnable.run();
+            }
+        };
+    }
+
+    public static void invoke(Runnable runnable) {
+        ConditionalLaterInvocator.create(runnable).start();
     }
 }

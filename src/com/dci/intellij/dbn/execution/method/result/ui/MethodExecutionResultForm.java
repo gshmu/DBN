@@ -84,14 +84,11 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     }
 
     public void rebuild() {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                updateArgumentValueTree();
-                updateOutputTabs();
-                updateStatusBarLabels();
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(() -> {
+            updateArgumentValueTree();
+            updateOutputTabs();
+            updateStatusBarLabels();
+        });
     }
 
     private void updateArgumentValueTree() {
@@ -173,7 +170,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         outputTabs.repaint();
     }
 
-    public void selectArgumentOutputTab(DBArgument argument) {
+    void selectArgumentOutputTab(DBArgument argument) {
         for (TabInfo tabInfo : outputTabs.getTabs()) {
             Object object = tabInfo.getObject();
             if (object instanceof MethodExecutionCursorResultForm) {

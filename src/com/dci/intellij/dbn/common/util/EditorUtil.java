@@ -206,15 +206,12 @@ public class EditorUtil {
         editor.setViewer(readonly);
         final EditorColorsScheme scheme = editor.getColorsScheme();
         final Color defaultBackground = scheme.getDefaultBackground();
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                editor.setBackgroundColor(readonly ? GUIUtil.adjustColor(defaultBackground, -0.03) : defaultBackground);
-                scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
-                        GUIUtil.adjustColor(defaultBackground, -0.03) :
-                        EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(() -> {
+            editor.setBackgroundColor(readonly ? GUIUtil.adjustColor(defaultBackground, -0.03) : defaultBackground);
+            scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
+                    GUIUtil.adjustColor(defaultBackground, -0.03) :
+                    EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
+        });
 
     }
 

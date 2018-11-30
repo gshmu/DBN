@@ -14,7 +14,7 @@ public abstract class SimpleTimeoutTask implements Runnable{
     private TimeUnit timeoutUnit;
     private boolean daemon;
 
-    protected SimpleTimeoutTask(long timeout, TimeUnit timeoutUnit, boolean daemon) {
+    private SimpleTimeoutTask(long timeout, TimeUnit timeoutUnit, boolean daemon) {
         this.timeout = timeout;
         this.timeoutUnit = timeoutUnit;
         this.daemon = daemon;
@@ -29,5 +29,18 @@ public abstract class SimpleTimeoutTask implements Runnable{
         } catch (Exception e) {
             LOGGER.warn("Failed to execute timeout task", e);
         }
+    }
+
+    public static SimpleTimeoutTask create(long timeout, TimeUnit timeoutUnit, boolean daemon, Runnable runnable) {
+        return new SimpleTimeoutTask(timeout, timeoutUnit, daemon) {
+            @Override
+            public void run() {
+                runnable.run();
+            }
+        };
+    }
+
+    public static void invoke(long timeout, TimeUnit timeoutUnit, boolean daemon, Runnable runnable) {
+        SimpleTimeoutTask.create(timeout, timeoutUnit, daemon, runnable).start();
     }
 }

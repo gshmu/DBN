@@ -32,12 +32,12 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
     protected TextFieldWithPopup editorComponent;
     private boolean autoPopup;
     private boolean enabled = true;
-    private boolean buttonVisible = true;
+    private boolean buttonVisible;
     private JBPopup popup;
     private JLabel button;
-    private Set<AnAction> actions = new HashSet<AnAction>();
+    private Set<AnAction> actions = new HashSet<>();
 
-    protected TextFieldPopupProviderForm(TextFieldWithPopup editorComponent, boolean autoPopup, boolean buttonVisible) {
+    TextFieldPopupProviderForm(TextFieldWithPopup editorComponent, boolean autoPopup, boolean buttonVisible) {
         this.editorComponent = editorComponent;
         this.autoPopup = autoPopup;
         this.buttonVisible = buttonVisible;
@@ -115,7 +115,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         return button;
     }
 
-    public void registerAction(AnAction action) {
+    void registerAction(AnAction action) {
         actions.add(action);
     }
 
@@ -184,13 +184,10 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
 
     public void hidePopup() {
         if (isShowingPopup()) {
-            new ConditionalLaterInvocator() {
-                @Override
-                protected void execute() {
-                    popup.cancel();
-                    popup = null;
-                }
-            }.start();
+            ConditionalLaterInvocator.invoke(() -> {
+                popup.cancel();
+                popup = null;
+            });
         }
     }
 

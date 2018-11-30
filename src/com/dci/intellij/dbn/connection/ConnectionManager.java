@@ -307,14 +307,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     public static void showConnectionInfoDialog(final ConnectionHandler connectionHandler) {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connectionHandler);
-                infoDialog.setModal(true);
-                infoDialog.show();
-            }
-        }.start();
+        ConditionalLaterInvocator.invoke(() -> {
+            ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connectionHandler);
+            infoDialog.setModal(true);
+            infoDialog.show();
+        });
     }
 
     private static void showConnectionInfoDialog(final ConnectionInfo connectionInfo, final String connectionName, final EnvironmentType environmentType) {
@@ -449,32 +446,28 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     void disposeConnections(@NotNull final List<ConnectionHandler> connectionHandlers) {
         if (connectionHandlers.size() > 0) {
             final Project project = getProject();
-            new ConditionalLaterInvocator() {
-                @Override
-                protected void execute() {
-                    List<ConnectionId> connectionIds = new ArrayList<>();
-                    for (ConnectionHandler connectionHandler : connectionHandlers) {
-                        connectionIds.add(connectionHandler.getId());
-                    }
-
-                    ExecutionManager executionManager = ExecutionManager.getInstance(project);
-                    executionManager.closeExecutionResults(connectionIds);
-
-                    DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
-                    databaseFileManager.closeDatabaseFiles(connectionIds);
-
-                    MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                    methodExecutionManager.cleanupExecutionHistory(connectionIds);
-
-                    new BackgroundTask(project, "Cleaning up connections", true) {
-                        @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                            DisposerUtil.dispose(connectionHandlers);
-                        }
-                    }.start();
-
+            ConditionalLaterInvocator.invoke(() -> {
+                List<ConnectionId> connectionIds = new ArrayList<>();
+                for (ConnectionHandler connectionHandler : connectionHandlers) {
+                    connectionIds.add(connectionHandler.getId());
                 }
-            }.start();
+
+                ExecutionManager executionManager = ExecutionManager.getInstance(project);
+                executionManager.closeExecutionResults(connectionIds);
+
+                DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
+                databaseFileManager.closeDatabaseFiles(connectionIds);
+
+                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+                methodExecutionManager.cleanupExecutionHistory(connectionIds);
+
+                new BackgroundTask(project, "Cleaning up connections", true) {
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                        DisposerUtil.dispose(connectionHandlers);
+                    }
+                }.start();
+            });
         }
     }
 
