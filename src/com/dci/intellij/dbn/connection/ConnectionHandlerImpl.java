@@ -13,12 +13,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.DisposableLazyValue;
-import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -32,6 +27,9 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
+import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.DBConnectionPsiDirectory;
@@ -65,7 +63,13 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private DatabaseInterfaceProvider interfaceProvider;
     private DatabaseConsoleBundle consoleBundle;
     private DatabaseSessionBundle sessionBundle;
-    private DBSessionBrowserVirtualFile sessionBrowserFile;
+    private Latent<DBSessionBrowserVirtualFile> sessionBrowserFile = Latent.create(() -> {
+        FailsafeUtil.check(ConnectionHandlerImpl.this);
+        DBSessionBrowserVirtualFile sessionBrowserFile = new DBSessionBrowserVirtualFile(this);
+        Disposer.register(ConnectionHandlerImpl.this, sessionBrowserFile);
+        return sessionBrowserFile;
+    });
+
     private ConnectionInstructions instructions = new ConnectionInstructions();
 
     private boolean enabled;
@@ -73,6 +77,16 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private AuthenticationInfo temporaryAuthenticationInfo = new AuthenticationInfo();
     private ConnectionInfo connectionInfo;
     private Cache metaDataCache = new Cache(TimeUtil.ONE_MINUTE);
+
+    private LatentMap<SessionId, StatementExecutionQueue> executionQueues = LatentMap.create(key -> {
+        return new StatementExecutionQueue(ConnectionHandlerImpl.this) {
+            @Override
+            protected void execute(StatementExecutionProcessor processor) {
+                StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(getProject());
+                statementExecutionManager.process(processor);
+            }
+        };
+    });
 
     private DBConnectionPsiDirectory psiDirectory;
 
@@ -217,16 +231,12 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     @NotNull
     public DBSessionBrowserVirtualFile getSessionBrowserFile() {
-        if (sessionBrowserFile == null) {
-            synchronized (this) {
-                if (sessionBrowserFile == null) {
-                    FailsafeUtil.check(this);
-                    sessionBrowserFile = new DBSessionBrowserVirtualFile(this);
-                    Disposer.register(this, sessionBrowserFile);
-                }
-            }
-        }
-        return sessionBrowserFile;
+        return sessionBrowserFile.get();
+    }
+
+    @Override
+    public StatementExecutionQueue getExecutionQueue(SessionId sessionId) {
+        return executionQueues.get(sessionId);
     }
 
     @Override

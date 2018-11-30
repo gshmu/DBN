@@ -8,13 +8,9 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.SimpleLazyValue;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -28,12 +24,7 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
-import com.dci.intellij.dbn.execution.compiler.CompileType;
-import com.dci.intellij.dbn.execution.compiler.CompilerAction;
-import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
-import com.dci.intellij.dbn.execution.compiler.CompilerResult;
-import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
+import com.dci.intellij.dbn.execution.compiler.*;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -48,11 +39,7 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiElementRef;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.*;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -74,9 +61,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
 public class StatementExecutionBasicProcessor extends DisposableBase implements StatementExecutionProcessor {
@@ -433,8 +418,10 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
         context.set(CANCELLED, true);
         StatementExecutionManager executionManager = getExecutionManager();
-        SessionId sessionId = getExecutionInput().getTargetSessionId();
-        StatementExecutionQueue executionQueue = executionManager.getExecutionQueue(sessionId);
+        StatementExecutionInput executionInput = getExecutionInput();
+        SessionId sessionId = executionInput.getTargetSessionId();
+        ConnectionId connectionId = executionInput.getConnectionHandlerId();
+        StatementExecutionQueue executionQueue = executionManager.getExecutionQueue(connectionId, sessionId);
         executionQueue.cancelExecution(this);
         if (databaseCall != null) {
             databaseCall.cancelSilently();

@@ -13,10 +13,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionProvider;
-import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -35,11 +32,7 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionInputsDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement.MatchType;
-import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.PsiUtil;
-import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
+import com.dci.intellij.dbn.language.common.psi.*;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -64,18 +57,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 @State(
     name = StatementExecutionManager.COMPONENT_NAME,
@@ -99,23 +85,10 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
-    public StatementExecutionQueue getExecutionQueue(SessionId sessionId) {
-        StatementExecutionQueue executionQueue = executionQueues.get(sessionId);
-        if (executionQueue == null) {
-            synchronized (this) {
-                executionQueue = executionQueues.get(sessionId);
-                if (executionQueue == null) {
-                    executionQueue = new StatementExecutionQueue(StatementExecutionManager.this) {
-                        @Override
-                        protected void execute(StatementExecutionProcessor processor) {
-                            process(processor);
-                        }
-                    };
-                    executionQueues.put(sessionId, executionQueue);
-                }
-            }
-        }
-        return executionQueue;
+    public StatementExecutionQueue getExecutionQueue(ConnectionId connectionId, SessionId sessionId) {
+        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+        return connectionHandler.getExecutionQueue(sessionId);
     }
 
     public static StatementExecutionManager getInstance(@NotNull Project project) {
@@ -276,6 +249,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                 ExecutionContext context = executionProcessor.getExecutionContext();
                                 StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
                                 SessionId sessionId = executionInput.getTargetSessionId();
+                                ConnectionId connectionId = executionInput.getConnectionHandlerId();
                                 if (context.isNot(EXECUTING) && context.isNot(QUEUED)) {
                                     if (sessionId == SessionId.POOL) {
                                         new BackgroundTask(getProject(), "Executing statement", true, true) {
@@ -285,7 +259,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                             }
                                         }.start();
                                     } else {
-                                        StatementExecutionQueue executionQueue = getExecutionQueue(sessionId);
+                                        StatementExecutionQueue executionQueue = getExecutionQueue(connectionId, sessionId);
                                         if (!executionQueue.contains(executionProcessor)) {
                                             executionQueue.queue(executionProcessor);
                                         }
@@ -304,7 +278,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         }
     }
 
-    private void process(StatementExecutionProcessor executionProcessor) {
+    public void process(StatementExecutionProcessor executionProcessor) {
         try {
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
             DBSchema schema = executionInput.getTargetSchema();

@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -146,6 +147,9 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
 
     @Deprecated
     boolean hasUncommittedChanges();
+
+    @NotNull
+    StatementExecutionQueue getExecutionQueue(SessionId sessionId);
 
     @NotNull
     PsiDirectory getPsiDirectory();

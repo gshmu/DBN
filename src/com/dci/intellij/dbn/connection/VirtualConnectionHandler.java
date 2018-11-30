@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -27,11 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
     private ConnectionId id;
@@ -300,6 +297,13 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public ConnectionHandler clone() {return null;}
     @Override
     public boolean hasUncommittedChanges() {return false;}
+
+    @NotNull
+    @Override
+    public StatementExecutionQueue getExecutionQueue(SessionId sessionId) {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public void commit() throws SQLException {}
     @Override
