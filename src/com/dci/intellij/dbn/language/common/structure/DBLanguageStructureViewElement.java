@@ -50,7 +50,7 @@ public abstract class DBLanguageStructureViewElement<T> implements StructureView
 
             @Nullable
             public Icon getIcon(boolean open) {
-                return psiElement.isValid() ? psiElement.getIcon(open ? Iconable.ICON_FLAG_OPEN : Iconable.ICON_FLAG_CLOSED) : null;
+                return psiElement.isValid() ? psiElement.getIcon(Iconable.ICON_FLAG_VISIBILITY) : null;
             }
 
             @Nullable

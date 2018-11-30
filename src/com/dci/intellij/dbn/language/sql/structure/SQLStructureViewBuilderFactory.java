@@ -18,7 +18,12 @@ public class SQLStructureViewBuilderFactory implements PsiStructureViewFactory {
             @NotNull
             public StructureViewModel createStructureViewModel() {
                 try {
-                    return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new SQLStructureViewModel(null, psiFile);
+                    return psiFile == null ||
+                            !psiFile.isValid() ||
+                            psiFile.getProject().isDisposed() ||
+                            PsiEditorUtil.Service.getInstance() == null ?
+                                    EmptyStructureViewModel.INSTANCE :
+                                    new SQLStructureViewModel(null, psiFile);
                 } catch (Throwable e) {
                     // TODO dirty workaround (compatibility issue)
                     return EmptyStructureViewModel.INSTANCE;
@@ -29,7 +34,12 @@ public class SQLStructureViewBuilderFactory implements PsiStructureViewFactory {
             @Override
             public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
                 try {
-                    return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new SQLStructureViewModel(editor, psiFile);
+                    return psiFile == null ||
+                            !psiFile.isValid() ||
+                            psiFile.getProject().isDisposed() ||
+                            PsiEditorUtil.Service.getInstance() == null ?
+                                    EmptyStructureViewModel.INSTANCE :
+                                    new SQLStructureViewModel(editor, psiFile);
                 } catch (Throwable e) {
                     // TODO dirty workaround (compatibility issue)
                     return EmptyStructureViewModel.INSTANCE;
