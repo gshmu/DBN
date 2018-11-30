@@ -114,24 +114,21 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         }
     }
 
-    boolean shouldLoad(boolean force) {
+    private boolean shouldLoad(boolean force) {
         return !loading && !isPreventLoading(force);
     }
 
     private void replaceModel(final SessionBrowserModel newModel) {
         if (newModel != null) {
-            new SimpleLaterInvocator() {
-                @Override
-                protected void execute() {
-                    SessionBrowserTable editorTable = getEditorTable();
-                    SessionBrowserModel oldModel = editorTable.getModel();
-                    SessionBrowserState state = oldModel.getState();
-                    newModel.setState(state);
-                    editorTable.setModel(newModel);
-                    refreshTable();
-                    DisposerUtil.dispose(oldModel);
-                }
-            }.start();
+            SimpleLaterInvocator.invoke(() -> {
+                SessionBrowserTable editorTable = getEditorTable();
+                SessionBrowserModel oldModel = editorTable.getModel();
+                SessionBrowserState state = oldModel.getState();
+                newModel.setState(state);
+                editorTable.setModel(newModel);
+                refreshTable();
+                DisposerUtil.dispose(oldModel);
+            });
         }
     }
 
@@ -152,7 +149,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         editorTable.restoreSelection();
     }
 
-    public void refreshLoadTimestamp() {
+    void refreshLoadTimestamp() {
         if (editorForm != null) {
             editorForm.refreshLoadTimestamp();
         }
@@ -168,7 +165,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     public void interruptSession(Object sessionId, Object serialNumber, SessionInterruptionType type) {
         SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
-        Map<Object, Object> sessionIds = new HashMap<Object, Object>();
+        Map<Object, Object> sessionIds = new HashMap<>();
         sessionIds.put(sessionId, serialNumber);
         sessionBrowserManager.interruptSessions(this, sessionIds, type);
         loadSessions(true);
@@ -178,12 +175,14 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
         SessionBrowserTable editorTable = getEditorTable();
         int[] selectedRows = editorTable.getSelectedRows();
-        Map<Object, Object> sessionIds = new HashMap<Object, Object>();
+        Map<Object, Object> sessionIds = new HashMap<>();
         for (int selectedRow : selectedRows) {
             SessionBrowserModelRow row = editorTable.getModel().getRowAtIndex(selectedRow);
-            Object sessionId = row.getSessionId();
-            Object serialNumber = row.getSerialNumber();
-            sessionIds.put(sessionId, serialNumber);
+            if (row != null) {
+                Object sessionId = row.getSessionId();
+                Object serialNumber = row.getSerialNumber();
+                sessionIds.put(sessionId, serialNumber);
+            }
         }
 
         sessionBrowserManager.interruptSessions(this, sessionIds, type);
@@ -285,21 +284,18 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         if (this.loading != loading) {
             this.loading = loading;
 
-            new SimpleLaterInvocator() {
-                @Override
-                protected void execute() {
-                    if (editorForm != null) {
-                        if (SessionBrowser.this.loading)
-                            editorForm.showLoadingHint(); else
-                            editorForm.hideLoadingHint();
-                    }
-
-                    SessionBrowserTable editorTable = getEditorTable();
-                    editorTable.setLoading(SessionBrowser.this.loading);
-                    editorTable.revalidate();
-                    editorTable.repaint();
+            SimpleLaterInvocator.invoke(() -> {
+                if (editorForm != null) {
+                    if (SessionBrowser.this.loading)
+                        editorForm.showLoadingHint(); else
+                        editorForm.hideLoadingHint();
                 }
-            }.start();
+
+                SessionBrowserTable editorTable = getEditorTable();
+                editorTable.setLoading(SessionBrowser.this.loading);
+                editorTable.revalidate();
+                editorTable.repaint();
+            });
         }
 
     }
@@ -336,7 +332,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         }
     }
 
-    public String getModelError() {
+    String getModelError() {
         SessionBrowserModel tableModel = getTableModel();
         return tableModel == null ? null : tableModel.getLoadError();
     }
@@ -352,7 +348,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         if (editorTable.getSelectedRowCount() == 1) {
             int rowIndex = editorTable.getSelectedRow();
             SessionBrowserModelRow rowAtIndex = editorTable.getModel().getRowAtIndex(rowIndex);
-            return rowAtIndex.getSessionId();
+            return rowAtIndex == null ? null : rowAtIndex.getSessionId();
         }
         return null;
     }
@@ -382,21 +378,13 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     /*******************************************************
-     *                      Listeners                      *
-     *******************************************************/
-
-
-    /*******************************************************
      *                   Data Provider                     *
      *******************************************************/
-    public DataProvider dataProvider = new DataProvider() {
-        @Override
-        public Object getData(@NonNls String dataId) {
-            if (DBNDataKeys.SESSION_BROWSER.is(dataId)) {
-                return SessionBrowser.this;
-            }
-            return null;
+    public DataProvider dataProvider = dataId -> {
+        if (DBNDataKeys.SESSION_BROWSER.is(dataId)) {
+            return SessionBrowser.this;
         }
+        return null;
     };
 
     @Nullable

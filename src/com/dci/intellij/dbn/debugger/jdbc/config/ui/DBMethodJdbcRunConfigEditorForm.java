@@ -67,7 +67,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
     }
 
     public class SelectMethodAction extends GroupPopupAction {
-        public SelectMethodAction()  {
+        SelectMethodAction()  {
             super("Select method", "Select method", Icons.DBO_METHOD);
         }
 
@@ -81,7 +81,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
     }
 
     public class OpenMethodBrowserAction extends AnAction {
-        public OpenMethodBrowserAction() {
+        OpenMethodBrowserAction() {
             super("Method Browser");
         }
 
@@ -104,20 +104,17 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
 
                         final ObjectTreeModel objectTreeModel = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), settings.getMethod());
 
-                        new SimpleLaterInvocator() {
-                            @Override
-                            protected void execute() {
-                                final MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
-                                browserDialog.show();
-                                if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                                    DBMethod method = browserDialog.getSelectedMethod();
-                                    MethodExecutionInput methodExecutionInput = executionManager.getExecutionInput(method);
-                                    if (methodExecutionInput != null) {
-                                        setExecutionInput(methodExecutionInput, true);
-                                    }
+                        SimpleLaterInvocator.invoke(() -> {
+                            MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
+                            browserDialog.show();
+                            if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                                DBMethod method = browserDialog.getSelectedMethod();
+                                MethodExecutionInput methodExecutionInput = executionManager.getExecutionInput(method);
+                                if (methodExecutionInput != null) {
+                                    setExecutionInput(methodExecutionInput, true);
                                 }
                             }
-                        }.start();
+                        });
 
                     }
                 };
@@ -126,7 +123,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
         }
     }
     public class OpenMethodHistoryAction extends AnAction {
-        public OpenMethodHistoryAction() {
+        OpenMethodHistoryAction() {
             super("Execution History", null, Icons.METHOD_EXECUTION_HISTORY);
         }
 

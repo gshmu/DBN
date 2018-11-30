@@ -72,9 +72,9 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     private static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
 
-    private final Map<FileEditor, List<StatementExecutionProcessor>> fileExecutionProcessors = new HashMap<FileEditor, List<StatementExecutionProcessor>>();
+    private final Map<FileEditor, List<StatementExecutionProcessor>> fileExecutionProcessors = new HashMap<>();
+
     private final StatementExecutionVariablesCache variablesCache;
-    private Map<SessionId, StatementExecutionQueue> executionQueues = new HashMap<SessionId, StatementExecutionQueue>();
 
     private static final AtomicInteger RESULT_SEQUENCE = new AtomicInteger(0);
 
@@ -88,6 +88,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     public StatementExecutionQueue getExecutionQueue(ConnectionId connectionId, SessionId sessionId) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+        connectionHandler = FailsafeUtil.get(connectionHandler);
         return connectionHandler.getExecutionQueue(sessionId);
     }
 
@@ -327,15 +328,11 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     private void promptExecutionDialogs(@NotNull final List<StatementExecutionProcessor> processors, final DBDebuggerType debuggerType, @NotNull final RunnableTask callback) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                if (promptExecutionDialogs(processors, debuggerType)) {
-                    callback.start();
-                }
+        SimpleLaterInvocator.invoke(() -> {
+            if (promptExecutionDialogs(processors, debuggerType)) {
+                callback.start();
             }
-        }.start();
-
+        });
     }
 
     private boolean promptExecutionDialogs(@NotNull List<StatementExecutionProcessor> executionProcessors, DBDebuggerType debuggerType) {
@@ -403,18 +400,15 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     public void promptPendingTransactionDialog(final StatementExecutionProcessor executionProcessor) {
         final ExecutionContext context = executionProcessor.getExecutionContext();
         context.set(PROMPTED, true);
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                try {
-                    PendingTransactionDialog dialog = new PendingTransactionDialog(executionProcessor);
-                    dialog.show();
-                } finally {
-                    executionProcessor.postExecute();
-                    context.set(PROMPTED, false);
-                }
+        SimpleLaterInvocator.invoke(() -> {
+            try {
+                PendingTransactionDialog dialog = new PendingTransactionDialog(executionProcessor);
+                dialog.show();
+            } finally {
+                executionProcessor.postExecute();
+                context.set(PROMPTED, false);
             }
-        }.start();
+        });
     }
 
     @Nullable
@@ -436,7 +430,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     public List<StatementExecutionProcessor> getExecutionProcessorsFromOffset(FileEditor fileEditor, int offset) {
-        List<StatementExecutionProcessor> executionProcessors = new ArrayList<StatementExecutionProcessor>();
+        List<StatementExecutionProcessor> executionProcessors = new ArrayList<>();
         Editor editor = EditorUtil.getEditor(fileEditor);
 
         if (editor != null) {
@@ -513,9 +507,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     @Override
-    public void loadState(Element element) {
-        if (element != null) {
-            variablesCache.readState(element);
-        }
+    public void loadState(@NotNull Element element) {
+        variablesCache.readState(element);
     }
 }

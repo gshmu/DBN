@@ -23,38 +23,27 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
 
     private DatabaseLoaderManager(final Project project) {
         super(project);
-        EventUtil.subscribe(project, this, ConnectionLoadListener.TOPIC, new ConnectionLoadListener() {
-            @Override
-            public void contentsLoaded(final ConnectionHandler connectionHandler) {
-                new SimpleLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        if (!project.isDisposed()) {
-                            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-                            VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
-                            for (VirtualFile openFile : openFiles) {
-
-                                ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(openFile);
-                                if (activeConnection == connectionHandler) {
-                                    FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
-                                    for (FileEditor fileEditor : fileEditors) {
-                                        Editor editor = EditorUtil.getEditor(fileEditor);
-
-                                        if (editor != null) {
-                                            DocumentUtil.refreshEditorAnnotations(editor);
-                                        }
-
-                                    }
-
-                                }
-                            }
+        EventUtil.subscribe(project, this, ConnectionLoadListener.TOPIC, connectionHandler -> SimpleLaterInvocator.invoke(() -> {
+            FailsafeUtil.check(project);
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
+            VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
+            for (VirtualFile openFile : openFiles) {
+                ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(openFile);
+                if (activeConnection == connectionHandler) {
+                    FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
+                    for (FileEditor fileEditor : fileEditors) {
+                        Editor editor = EditorUtil.getEditor(fileEditor);
+                        if (editor != null) {
+                            FailsafeUtil.check(project);
+                            DocumentUtil.refreshEditorAnnotations(editor);
                         }
-                    }
-                }.start();
 
+                    }
+
+                }
             }
-        });
+        }));
     }
 
     public static DatabaseLoaderManager getInstance(@NotNull Project project) {

@@ -19,11 +19,11 @@ import java.awt.*;
 public class DataSearchResultController implements Disposable{
     private SearchableDataComponent searchableComponent;
 
-    public DataSearchResultController(SearchableDataComponent searchableComponent) {
+    DataSearchResultController(SearchableDataComponent searchableComponent) {
         this.searchableComponent = searchableComponent;
     }
 
-    public void moveCursor(DataSearchDirection direction) {
+    void moveCursor(DataSearchDirection direction) {
         BasicTable<? extends BasicDataModel> table = searchableComponent.getTable();
         DataModel dataModel = table.getModel();
         DataSearchResult searchResult = dataModel.getSearchResult();
@@ -36,7 +36,7 @@ public class DataSearchResultController implements Disposable{
         updateSelection(table, oldSelection, selection);
     }
 
-    public void selectFirst(int selectedRowIndex, int selectedColumnIndex) {
+    private void selectFirst(int selectedRowIndex, int selectedColumnIndex) {
         BasicTable<? extends BasicDataModel> table = searchableComponent.getTable();
         DataModel dataModel = table.getModel();
         DataSearchResult searchResult = dataModel.getSearchResult();
@@ -102,26 +102,21 @@ public class DataSearchResultController implements Disposable{
                 
                 searchResult.stopUpdating();
 
-                new SimpleLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        BasicTable table = searchableComponent.getTable();
-                        int selectedRowIndex = table.getSelectedRow();
-                        int selectedColumnIndex = table.getSelectedRow();
-                        if (selectedRowIndex < 0) selectedRowIndex = 0;
-                        if (selectedColumnIndex < 0) selectedColumnIndex = 0;
-                        searchableComponent.cancelEditActions();
+                SimpleLaterInvocator.invoke(() -> {
+                    BasicTable table = searchableComponent.getTable();
+                    int selectedRowIndex = table.getSelectedRow();
+                    int selectedColumnIndex = table.getSelectedRow();
+                    if (selectedRowIndex < 0) selectedRowIndex = 0;
+                    if (selectedColumnIndex < 0) selectedColumnIndex = 0;
+                    searchableComponent.cancelEditActions();
 
-                        table.clearSelection();
-                        table.revalidate();
-                        table.repaint();
+                    table.clearSelection();
+                    table.revalidate();
+                    table.repaint();
 
-                        selectFirst(selectedRowIndex, selectedColumnIndex);
-                        searchResult.notifyListeners();
-
-                    }
-                }.start();
-
+                    selectFirst(selectedRowIndex, selectedColumnIndex);
+                    searchResult.notifyListeners();
+                });
             }
         }.start();
 

@@ -81,12 +81,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
                         table,
                         exportInstructions,
                         connectionHandler,
-                        new SimpleLaterInvocator() {
-                            @Override
-                            protected void execute() {
-                                ExportDataDialog.super.doOKAction();
-                            }
-                        });
+                        SimpleLaterInvocator.create(() -> ExportDataDialog.super.doOKAction()));
             }
 
         };

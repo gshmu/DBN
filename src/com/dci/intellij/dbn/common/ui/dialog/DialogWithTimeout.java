@@ -40,12 +40,7 @@ public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>
                     secondsLeft = secondsLeft -1;
                     getComponent().updateTimeLeft(secondsLeft);
                     if (secondsLeft == 0) {
-                        new SimpleLaterInvocator() {
-                            @Override
-                            protected void execute() {
-                                doDefaultAction();
-                            }
-                        }.start();
+                        SimpleLaterInvocator.invoke(DialogWithTimeout.this::doDefaultAction);
 
                     }
                 }

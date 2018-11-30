@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     private ConnectionHandlerRef connectionHandlerRef;
     private PendingTransactionsTableModel tableModel;
 
-    public PendingTransactionsDetailForm(final ConnectionHandler connectionHandler, final TransactionAction additionalOperation, boolean showActions) {
+    PendingTransactionsDetailForm(final ConnectionHandler connectionHandler, final TransactionAction additionalOperation, boolean showActions) {
         this.connectionHandlerRef = connectionHandler.getRef();
         Project project = connectionHandler.getProject();
 
@@ -46,15 +45,14 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
 
         transactionActionsPanel.setVisible(showActions);
         if (showActions) {
-            final ActionListener actionListener = new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(connectionHandler.getProject());
-                    Object source = e.getSource();
-                    if (source == commitButton) {
-                        transactionManager.execute(connectionHandler, null, false, TransactionAction.COMMIT, additionalOperation);
-                    } else if (source == rollbackButton) {
-                        transactionManager.execute(connectionHandler, null, false, TransactionAction.ROLLBACK, additionalOperation);
-                    }
+            final ActionListener actionListener = e -> {
+                Project project1 = connectionHandler.getProject();
+                DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project1);
+                Object source = e.getSource();
+                if (source == commitButton) {
+                    transactionManager.execute(connectionHandler, null, false, TransactionAction.COMMIT, additionalOperation);
+                } else if (source == rollbackButton) {
+                    transactionManager.execute(connectionHandler, null, false, TransactionAction.ROLLBACK, additionalOperation);
                 }
             };
 
@@ -103,18 +101,14 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     };
 
     private void refreshForm(final ConnectionHandler connectionHandler) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                if (!isDisposed()) {
-                    PendingTransactionsTableModel oldTableModel = tableModel;
-                    tableModel = new PendingTransactionsTableModel(connectionHandler);
-                    changesTable.setModel(tableModel);
-                    commitButton.setEnabled(false);
-                    rollbackButton.setEnabled(false);
-                    DisposerUtil.dispose(oldTableModel);
-                }
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> {
+            checkDisposed();
+            PendingTransactionsTableModel oldTableModel = tableModel;
+            tableModel = new PendingTransactionsTableModel(connectionHandler);
+            changesTable.setModel(tableModel);
+            commitButton.setEnabled(false);
+            rollbackButton.setEnabled(false);
+            DisposerUtil.dispose(oldTableModel);
+        });
     }
 }

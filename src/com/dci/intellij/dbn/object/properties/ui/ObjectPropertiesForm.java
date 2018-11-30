@@ -77,23 +77,20 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
                     final ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
                     Disposer.register(ObjectPropertiesForm.this, tableModel);
 
-                    new SimpleLaterInvocator() {
-                        @Override
-                        protected void execute() {
-                            objectLabel.setText(object.getName());
-                            objectLabel.setIcon(object.getIcon());
-                            objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");
+                    SimpleLaterInvocator.invoke(() -> {
+                        objectLabel.setText(object.getName());
+                        objectLabel.setIcon(object.getIcon());
+                        objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");
 
 
-                            ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
-                            objectPropertiesTable.setModel(tableModel);
-                            ((DBNTable) objectPropertiesTable).accommodateColumnsSize();
+                        ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
+                        objectPropertiesTable.setModel(tableModel);
+                        ((DBNTable) objectPropertiesTable).accommodateColumnsSize();
 
-                            mainPanel.revalidate();
-                            mainPanel.repaint();
-                            Disposer.dispose(oldTableModel);
-                        }
-                    }.start();
+                        mainPanel.revalidate();
+                        mainPanel.repaint();
+                        Disposer.dispose(oldTableModel);
+                    });
                 }
             }.start();
         }

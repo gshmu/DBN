@@ -4,13 +4,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectionType;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
@@ -61,10 +55,12 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
     }
 
     private void updateListModel() {
+        checkDisposed();
         DefaultListModel<ConnectionHandler> model = new DefaultListModel<ConnectionHandler>();
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+            checkDisposed();
             connectionHandlers.add(connectionHandler);
             model.addElement(connectionHandler);
         }
@@ -146,14 +142,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
     };
 
     private void refreshForm() {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                if (!isDisposed()) {
-                    updateListModel();
-                }
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(this::updateListModel);
 
     }
 }

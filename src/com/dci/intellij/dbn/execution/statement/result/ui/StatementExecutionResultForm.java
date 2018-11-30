@@ -90,18 +90,16 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     }
 
     public void reloadTableModel() {
-        new SimpleLaterInvocator() {
-            protected void execute() {
-                StatementExecutionCursorResult executionResult = getExecutionResult();
-                JScrollBar horizontalScrollBar = resultScrollPane.getHorizontalScrollBar();
-                int horizontalScrolling = horizontalScrollBar.getValue();
-                resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
-                resultScrollPane.setViewportView(resultTable);
-                resultTable.initTableGutter();
-                resultTable.setName(StatementExecutionResultForm.this.executionResult.getName());
-                horizontalScrollBar.setValue(horizontalScrolling);
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> {
+            StatementExecutionCursorResult executionResult = getExecutionResult();
+            JScrollBar horizontalScrollBar = resultScrollPane.getHorizontalScrollBar();
+            int horizontalScrolling = horizontalScrollBar.getValue();
+            resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
+            resultScrollPane.setViewportView(resultTable);
+            resultTable.initTableGutter();
+            resultTable.setName(StatementExecutionResultForm.this.executionResult.getName());
+            horizontalScrollBar.setValue(horizontalScrolling);
+        });
     }
 
     public ResultSetTable getResultTable() {

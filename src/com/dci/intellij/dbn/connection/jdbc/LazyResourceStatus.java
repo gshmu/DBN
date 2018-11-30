@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 import com.dci.intellij.dbn.common.dispose.FailsafeWeakRef;
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ public abstract class LazyResourceStatus<T extends Property> {
         resource.set(status, initialValue);
         this.status = status;
         this.interval = interval;
-        this.resource = new FailsafeWeakRef<PropertyHolder<T>>(resource);
+        this.resource = new FailsafeWeakRef<>(resource);
     }
 
     public boolean check() {
@@ -44,12 +44,7 @@ public abstract class LazyResourceStatus<T extends Property> {
 
     private void checkControlled() {
         if (ApplicationManager.getApplication().isDispatchThread()) {
-            new SimpleBackgroundTask("check resource status") {
-                @Override
-                protected void execute() {
-                    checkControlled();
-                }
-            }.start();
+            SimpleBackgroundInvocator.invoke(this::checkControlled);
         } else {
             boolean oldValue = get();
             try {

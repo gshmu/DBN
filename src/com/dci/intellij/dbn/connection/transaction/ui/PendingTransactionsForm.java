@@ -18,8 +18,6 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,18 +33,16 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
 
     private Map<ConnectionHandler, PendingTransactionsDetailForm> uncommittedChangeForms = new HashMap<ConnectionHandler, PendingTransactionsDetailForm>();
 
-    public PendingTransactionsForm(PendingTransactionsDialog parentComponent) {
+    PendingTransactionsForm(PendingTransactionsDialog parentComponent) {
         super(parentComponent);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
-        connectionsList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                ConnectionHandler connectionHandler = (ConnectionHandler) connectionsList.getSelectedValue();
-                showChangesForm(connectionHandler);
-            }
+        connectionsList.addListSelectionListener(e -> {
+            ConnectionHandler connectionHandler = (ConnectionHandler) connectionsList.getSelectedValue();
+            showChangesForm(connectionHandler);
         });
+
         connectionsList.setCellRenderer(new ListCellRenderer());
         connectionsList.setSelectedIndex(0);
         updateListModel();
@@ -56,6 +52,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
     }
 
     private void updateListModel() {
+        checkDisposed();
         DefaultListModel model = new DefaultListModel();
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
@@ -71,7 +68,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
         }
     }
 
-    public boolean hasUncommittedChanges() {
+    boolean hasUncommittedChanges() {
         for (ConnectionHandler connectionHandler : connectionHandlers) {
             if (connectionHandler.hasUncommittedChanges()) {
                 return true;
@@ -142,14 +139,6 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
     };
 
     private void refreshForm() {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                if (!isDisposed()) {
-                    updateListModel();
-                }
-            }
-        }.start();
-
+        SimpleLaterInvocator.invoke(this::updateListModel);
     }
 }

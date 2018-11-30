@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.list.FiltrableList;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
@@ -12,12 +12,7 @@ import java.util.Map;
 public class DisposerUtil {
 
     public static void disposeInBackground(final Disposable disposable) {
-        new SimpleBackgroundTask("dispose element") {
-            @Override
-            protected void execute() {
-                dispose(disposable);
-            }
-        }.start();
+        SimpleBackgroundInvocator.invoke(() -> dispose(disposable));
     }
 
 
@@ -36,12 +31,7 @@ public class DisposerUtil {
     }
 
     public static void disposeInBackground(final Collection<? extends Disposable> collection) {
-        new SimpleBackgroundTask("dispose collection") {
-            @Override
-            protected void execute() {
-                dispose(collection);
-            }
-        }.start();
+        SimpleBackgroundInvocator.invoke(() -> dispose(collection));
     }
     
     public static void dispose(Collection<? extends Disposable> collection) {
@@ -80,11 +70,6 @@ public class DisposerUtil {
     }
 
     public static void disposeLater(final Disposable disposable) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                Disposer.dispose(disposable);
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> Disposer.dispose(disposable));
     }
 }

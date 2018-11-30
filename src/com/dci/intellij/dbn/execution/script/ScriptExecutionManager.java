@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -69,8 +69,8 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     public static final String COMPONENT_NAME = "DBNavigator.Project.ScriptExecutionManager";
 
     private static final SecureRandom TMP_FILE_RANDOMIZER = new SecureRandom();
-    private final Map<VirtualFile, Process> activeProcesses = new HashMap<VirtualFile, Process>();
-    private Map<DatabaseType, String> recentlyUsedInterfaces = new HashMap<DatabaseType, String>();
+    private final Map<VirtualFile, Process> activeProcesses = new HashMap<>();
+    private Map<DatabaseType, String> recentlyUsedInterfaces = new HashMap<>();
     private boolean clearOutputOption = true;
 
     private ScriptExecutionManager(Project project) {
@@ -112,7 +112,6 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
             inputDialog.show();
             if (inputDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                final ExecutionManager executionManager = ExecutionManager.getInstance(project);
                 final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
                 final DBSchema schema = executionInput.getSchema();
                 final CmdLineInterface cmdLineExecutable = executionInput.getCmdLineInterface();
@@ -125,7 +124,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
                 new BackgroundTask(project, "Executing database script", true, true) {
                     @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
                         try {
                             doExecuteScript(executionInput);
                         } catch (Exception e) {
@@ -145,7 +144,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         activeProcesses.put(sourceFile, null);
 
         final Project project = getProject();
-        final AtomicReference<File> tempScriptFile = new AtomicReference<File>();
+        final AtomicReference<File> tempScriptFile = new AtomicReference<>();
         final LogOutputContext outputContext = new LogOutputContext(connectionHandler, sourceFile, null);
         final ExecutionManager executionManager = ExecutionManager.getInstance(project);
         final int timeout = input.getExecutionTimeout();
@@ -226,46 +225,40 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 }
 
                 @Override
-                public void cancel() throws Exception {
+                public void cancel() {
                     outputContext.stop();
                 }
 
                 @Override
                 public void handleTimeout() throws SQLTimeoutException {
-                    new SimpleBackgroundTask("handling script execution timeout") {
-                        @Override
-                        protected void execute() {
-                            MessageUtil.showErrorDialog(project,
-                                    "Script execution timeout",
-                                    "The script execution has timed out",
-                                    new String[]{"Retry", "Cancel"}, 0,
-                                    new MessageCallback(0) {
-                                        @Override
-                                        protected void execute() {
-                                            executeScript(sourceFile);
-                                        }
-                                    });
-                        }
-                    }.start();
+                    SimpleBackgroundInvocator.invoke(() -> {
+                        MessageUtil.showErrorDialog(project,
+                                "Script execution timeout",
+                                "The script execution has timed out",
+                                new String[]{"Retry", "Cancel"}, 0,
+                                new MessageCallback(0) {
+                                    @Override
+                                    protected void execute() {
+                                        executeScript(sourceFile);
+                                    }
+                                });
+                    });
                 }
 
                 @Override
                 public void handleException(final Throwable e) throws SQLException {
-                    new SimpleBackgroundTask("handling script execution exception") {
-                        @Override
-                        protected void execute() {
-                            MessageUtil.showErrorDialog(project,
-                                    "Script execution error",
-                                    "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),
-                                    new String[]{"Retry", "Cancel"}, 0,
-                                    new MessageCallback(0) {
-                                        @Override
-                                        protected void execute() {
-                                            executeScript(sourceFile);
-                                        }
-                                    });
-                        }
-                    }.start();
+                    SimpleBackgroundInvocator.invoke(() -> {
+                        MessageUtil.showErrorDialog(project,
+                                "Script execution error",
+                                "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),
+                                new String[]{"Retry", "Cancel"}, 0,
+                                new MessageCallback(0) {
+                                    @Override
+                                    protected void execute() {
+                                        executeScript(sourceFile);
+                                    }
+                                });
+                    });
                 }
             }.start();
         } catch (Exception e) {

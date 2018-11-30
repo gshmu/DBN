@@ -9,11 +9,7 @@ import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -158,34 +154,30 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
                     return;
                 }
 
-                new SimpleLaterInvocator(){
-                    @Override
-                    protected void execute() {
-                        try {
-                            if (!isShowingPopup()) {
-                                popup = createPopup();
-                                if (popup != null) {
-                                    Disposer.register(TextFieldPopupProviderForm.this, popup);
+                SimpleLaterInvocator.invoke(() -> {
+                    try {
+                        if (!isShowingPopup()) {
+                            popup = createPopup();
+                            if (popup != null) {
+                                Disposer.register(TextFieldPopupProviderForm.this, popup);
 
-                                    JPanel panel = (JPanel) popup.getContent();
-                                    panel.setBorder(Borders.COMPONENT_LINE_BORDER);
+                                JPanel panel = (JPanel) popup.getContent();
+                                panel.setBorder(Borders.COMPONENT_LINE_BORDER);
 
-                                    editorComponent.clearSelection();
+                                editorComponent.clearSelection();
 
-                                    if (editorComponent.isShowing()) {
-                                        Point location = editorComponent.getLocationOnScreen();
-                                        location.setLocation(location.getX() + 4, location.getY() + editorComponent.getHeight() + 4);
-                                        popup.showInScreenCoordinates(editorComponent, location);
-                                        //cellEditor.highlight(TextCellEditor.HIGHLIGHT_TYPE_POPUP);
-                                    }
+                                if (editorComponent.isShowing()) {
+                                    Point location = editorComponent.getLocationOnScreen();
+                                    location.setLocation(location.getX() + 4, location.getY() + editorComponent.getHeight() + 4);
+                                    popup.showInScreenCoordinates(editorComponent, location);
+                                    //cellEditor.highlight(TextCellEditor.HIGHLIGHT_TYPE_POPUP);
                                 }
                             }
-                        } finally {
-                            isPreparingPopup = false;
                         }
+                    } finally {
+                        isPreparingPopup = false;
                     }
-                }.start();
-
+                });
             }
         }.start();
     }

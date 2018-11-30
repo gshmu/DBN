@@ -16,17 +16,18 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
 public abstract class GenerateStatementAction extends DumbAwareAction implements ConnectionProvider {
-    public GenerateStatementAction(String text) {
+    GenerateStatementAction(String text) {
         super(text);
     }
 
-    public final void actionPerformed(AnActionEvent e) {
+    public final void actionPerformed(@NotNull AnActionEvent e) {
         TaskInstructions taskInstructions = new TaskInstructions("Extracting select statement", TaskInstruction.CANCELLABLE);
         new ConnectionAction("generating the statement", this, taskInstructions) {
             @Override
@@ -43,15 +44,12 @@ public abstract class GenerateStatementAction extends DumbAwareAction implements
     }
 
     private void pasteStatement(final StatementGeneratorResult result, final Project project) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                Editor editor = EditorUtil.getSelectedEditor(project, SQLFileType.INSTANCE);
-                if (editor != null)
-                    pasteToEditor(editor, result); else
-                    pasteToClipboard(result, project);
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> {
+            Editor editor = EditorUtil.getSelectedEditor(project, SQLFileType.INSTANCE);
+            if (editor != null)
+                pasteToEditor(editor, result); else
+                pasteToClipboard(result, project);
+        });
     }
 
     private static void pasteToClipboard(StatementGeneratorResult result, Project project) {

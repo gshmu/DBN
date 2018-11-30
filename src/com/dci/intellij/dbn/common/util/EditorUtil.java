@@ -14,23 +14,14 @@ import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBDatasetVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.file.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.impl.EditorImpl;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorProvider;
-import com.intellij.openapi.fileEditor.FileEditorState;
-import com.intellij.openapi.fileEditor.TextEditor;
+import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager;
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
 import com.intellij.openapi.fileTypes.FileType;
@@ -237,20 +228,17 @@ public class EditorUtil {
                 protected Object run() {
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     final FileEditor[] allEditors = fileEditorManager.getAllEditors();
-                    new SimpleLaterInvocator() {
-                        @Override
-                        protected void execute() {
-                            for (FileEditor fileEditor : allEditors) {
-                                if (fileEditor instanceof SourceCodeEditor) {
-                                    SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                                    DBSourceCodeVirtualFile virtualFile = sourceCodeEditor.getVirtualFile();
-                                    if (virtualFile != null && virtualFile.equals(sourceCodeFile)) {
-                                        setEditorReadonly(sourceCodeEditor, readonly);
-                                    }
+                    SimpleLaterInvocator.invoke(() -> {
+                        for (FileEditor fileEditor : allEditors) {
+                            if (fileEditor instanceof SourceCodeEditor) {
+                                SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                                DBSourceCodeVirtualFile virtualFile = sourceCodeEditor.getVirtualFile();
+                                if (virtualFile.equals(sourceCodeFile)) {
+                                    setEditorReadonly(sourceCodeEditor, readonly);
                                 }
                             }
                         }
-                    }.start();
+                    });
                     return null;
                 }
             }.start();
@@ -295,7 +283,7 @@ public class EditorUtil {
     public static List<FileEditor> getScriptFileEditors(Project project, VirtualFile virtualFile) {
         assert virtualFile.isInLocalFileSystem();
 
-        List<FileEditor> scriptFileEditors = new ArrayList<FileEditor>();
+        List<FileEditor> scriptFileEditors = new ArrayList<>();
         FileEditorManager editorManager = FileEditorManager.getInstance(project);
         FileEditor[] fileEditors = editorManager.getAllEditors(virtualFile);
         for (FileEditor fileEditor : fileEditors) {
@@ -350,22 +338,19 @@ public class EditorUtil {
         return null;
     }
 
-    public static void focusEditor(@Nullable FileEditor fileEditor) {
+    private static void focusEditor(@Nullable FileEditor fileEditor) {
         if (fileEditor != null) {
             Editor editor = getEditor(fileEditor);
             focusEditor(editor);
         }
     }
     public static void focusEditor(@Nullable final Editor editor) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                if (editor != null) {
-                    Project project = editor.getProject();
-                    IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
-                }
+        SimpleLaterInvocator.invoke(() -> {
+            if (editor != null) {
+                Project project = editor.getProject();
+                IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
             }
-        }.start();
+        });
     }
 
     public static VirtualFile getSelectedFile(Project project) {

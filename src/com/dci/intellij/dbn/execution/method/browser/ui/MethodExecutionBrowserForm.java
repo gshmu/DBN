@@ -86,17 +86,17 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
         }
     }
 
-    public void addTreeSelectionListener(TreeSelectionListener selectionListener) {
+    void addTreeSelectionListener(TreeSelectionListener selectionListener) {
         methodsTree.addTreeSelectionListener(selectionListener);
     }
 
-    public DBMethod getSelectedMethod() {
+    DBMethod getSelectedMethod() {
         TreePath selectionPath = methodsTree.getSelectionPath();
         if (selectionPath != null) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
             Object userObject = node.getUserObject();
             if (userObject instanceof DBObjectRef) {
-                DBObjectRef objectRef = (DBObjectRef) userObject;
+                DBObjectRef<?> objectRef = (DBObjectRef) userObject;
                 DBObject object = DBObjectRef.get(objectRef);
                 if (object instanceof DBMethod) {
                     return (DBMethod) object;
@@ -106,21 +106,18 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
         return null;
     }
 
-    void updateTree() {
+    private void updateTree() {
         BackgroundTask backgroundTask = new BackgroundTask(getProject(), "Loading executable components", false) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 MethodBrowserSettings settings = getSettings();
                 final ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
-                new SimpleLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        methodsTree.setModel(model);
+                SimpleLaterInvocator.invoke(() -> {
+                    methodsTree.setModel(model);
 
-                        methodsTree.revalidate();
-                        methodsTree.repaint();
-                    }
-                }.start();
+                    methodsTree.revalidate();
+                    methodsTree.repaint();
+                });
 
             }
         };

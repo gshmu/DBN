@@ -32,11 +32,11 @@ public class DatasetEditorNotificationProvider extends EditorNotificationProvide
 
     }
 
-    DatasetLoadListener datasetLoadListener = new DatasetLoadListener() {
+    private DatasetLoadListener datasetLoadListener = new DatasetLoadListener() {
         @Override
         public void datasetLoaded(VirtualFile virtualFile) {
-            if (virtualFile != null && !project.isDisposed()) {
-                EditorNotifications notifications = EditorNotifications.getInstance(project);
+            if (virtualFile != null) {
+                EditorNotifications notifications = EditorNotifications.getInstance(getProject());
                 notifications.updateNotifications(virtualFile);
             }
         }
@@ -70,23 +70,22 @@ public class DatasetEditorNotificationProvider extends EditorNotificationProvide
     @Nullable
     @Override
     public DatasetEditorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
-        DatasetEditorNotificationPanel notificationPanel = null;
-        if (virtualFile instanceof DBEditableObjectVirtualFile) {
-            if (fileEditor instanceof DatasetEditor) {
-                DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
-                DBSchemaObject editableObject = editableObjectFile.getObject();
-                DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
+        if (virtualFile instanceof DBEditableObjectVirtualFile && fileEditor instanceof DatasetEditor) {
+            DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
+            DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
 
-                if (datasetEditor.isLoaded()) {
-                    String sourceLoadError = datasetEditor.getDataLoadError();
-                    if (StringUtil.isNotEmpty(sourceLoadError)) {
-                        notificationPanel = new DatasetEditorLoadErrorNotificationPanel(editableObject, sourceLoadError);
-                    } else if (editableObject instanceof DBTable && editableObjectFile.getEnvironmentType().isReadonlyData()) {
-                        notificationPanel = new DatasetEditorReadonlyNotificationPanel(editableObject);
-                    }
+            DBSchemaObject editableObject = editableObjectFile.getObject();
+            if (datasetEditor.isLoaded()) {
+                String sourceLoadError = datasetEditor.getDataLoadError();
+                if (StringUtil.isNotEmpty(sourceLoadError)) {
+                    return new DatasetEditorLoadErrorNotificationPanel(editableObject, sourceLoadError);
+
+                } else if (editableObject instanceof DBTable && editableObjectFile.getEnvironmentType().isReadonlyData()) {
+
+                    return new DatasetEditorReadonlyNotificationPanel(editableObject);
                 }
             }
         }
-        return notificationPanel;
+        return null;
     }
 }

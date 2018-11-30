@@ -3,11 +3,7 @@ package com.dci.intellij.dbn.browser.ui;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
-import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
-import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
-import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
+import com.dci.intellij.dbn.browser.model.*;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -43,13 +39,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 public class DatabaseBrowserTree extends DBNTree {
     private BrowserTreeNode targetSelection;
@@ -91,15 +81,12 @@ public class DatabaseBrowserTree extends DBNTree {
     }
 
     public void expandConnectionManagers() {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-                ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-                TreePath treePath = DatabaseBrowserUtils.createTreePath(connectionBundle);
-                setExpandedState(treePath, true);
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> {
+            ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+            ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+            TreePath treePath = DatabaseBrowserUtils.createTreePath(connectionBundle);
+            setExpandedState(treePath, true);
+        });
     }
 
     public void selectElement(BrowserTreeNode treeNode, boolean focus) {
@@ -159,12 +146,7 @@ public class DatabaseBrowserTree extends DBNTree {
     }
 
     private void selectPath(final TreePath treePath) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true);
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true));
     }
 
 
@@ -208,7 +190,7 @@ public class DatabaseBrowserTree extends DBNTree {
     }
 
 
-    public void selectPathSilently(TreePath treePath) {
+    private void selectPathSilently(TreePath treePath) {
         if (treePath != null) {
             listenersEnabled = false;
             selectionModel.setSelectionPath(treePath);
@@ -239,7 +221,7 @@ public class DatabaseBrowserTree extends DBNTree {
         collapse(root);
     }
 
-    public void collapse(BrowserTreeNode treeNode) {
+    private void collapse(BrowserTreeNode treeNode) {
         if (!treeNode.isLeaf() && treeNode.isTreeStructureLoaded()) {
             for (int i = 0; i < treeNode.getChildCount(); i++) {
                 BrowserTreeNode childTreeNode = treeNode.getChildAt(i);
@@ -263,15 +245,10 @@ public class DatabaseBrowserTree extends DBNTree {
                     event.consume();
                 } else if (deliberate) {
                     new BackgroundTask(getProject(), "Loading Object Reference", false, false) {
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
                             final DBObject navigationObject = object.getDefaultNavigationObject();
                             if (navigationObject != null) {
-                                new SimpleLaterInvocator(){
-                                    @Override
-                                    protected void execute() {
-                                        navigationObject.navigate(true);
-                                    }
-                                }.start();
+                                SimpleLaterInvocator.invoke(() -> navigationObject.navigate(true));
                             }
 
                         }
@@ -316,7 +293,7 @@ public class DatabaseBrowserTree extends DBNTree {
         public void valueChanged(TreeSelectionEvent e) {
             if (!isDisposed() && listenersEnabled) {
                 Object object = e.getPath().getLastPathComponent();
-                if (object != null && object instanceof BrowserTreeNode) {
+                if (object instanceof BrowserTreeNode) {
                     BrowserTreeNode treeNode = (BrowserTreeNode) object;
                     if (targetSelection == null || treeNode.equals(targetSelection)) {
                         navigationHistory.add(treeNode);
@@ -368,14 +345,11 @@ public class DatabaseBrowserTree extends DBNTree {
                             if (actionGroup != null && !progressIndicator.isCanceled()) {
                                 ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
                                 popupMenu = actionPopupMenu.getComponent();
-                                new SimpleLaterInvocator() {
-                                    @Override
-                                    protected void execute() {
-                                        if (isShowing()) {
-                                            popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
-                                        }
+                                SimpleLaterInvocator.invoke(() -> {
+                                    if (isShowing()) {
+                                        popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
                                     }
-                                }.start();
+                                });
                             } else {
                                 popupMenu = null;
                             }

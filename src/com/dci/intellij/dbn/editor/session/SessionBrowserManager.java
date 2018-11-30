@@ -42,12 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 @State(
     name = SessionBrowserManager.COMPONENT_NAME,
@@ -58,7 +53,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     public static final String COMPONENT_NAME = "DBNavigator.Project.SessionEditorManager";
 
     private Timer timestampUpdater;
-    private List<DBSessionBrowserVirtualFile> openFiles = new ArrayList<DBSessionBrowserVirtualFile>();
+    private List<DBSessionBrowserVirtualFile> openFiles = new ArrayList<>();
 
     private SessionBrowserManager(Project project) {
         super(project);
@@ -160,7 +155,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
         new BackgroundTask(getProject(), taskAction, false, true) {
             @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 Project project = connectionHandler.getProject();
                 DBNConnection connection = null;
                 try {
@@ -235,14 +230,11 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                                     }
                                 }
 
-                                new SimpleLaterInvocator() {
-                                    @Override
-                                    protected void execute() {
-                                        for (SessionBrowser sessionBrowser : sessionBrowsers) {
-                                            sessionBrowser.refreshLoadTimestamp();
-                                        }
+                                SimpleLaterInvocator.invoke(() -> {
+                                    for (SessionBrowser sessionBrowser : sessionBrowsers) {
+                                        sessionBrowser.refreshLoadTimestamp();
                                     }
-                                }.start();
+                                });
                             }
                         } catch (ProcessCanceledException ignore) {
 

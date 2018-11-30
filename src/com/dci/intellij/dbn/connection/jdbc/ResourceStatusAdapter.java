@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeWeakRef;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -137,34 +137,32 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
     private void changeControlled(final boolean value) {
-        new SimpleBackgroundTask("change resource status") {
-            @Override
-            protected void execute() {
-                boolean daemon = true;
-                T resource = getResource();
-                if (resource.getResourceType() == ResourceType.CONNECTION && ResourceStatusAdapter.this.value == ResourceStatus.CLOSED) {
-                    // non daemon threads for closing connections
-                    daemon = false;
-                }
-
-                new SimpleTimeoutTask(10, TimeUnit.SECONDS, daemon) {
-                    @Override
-                    public void run() {
-                        try {
-                            if (SettingsUtil.isDebugEnabled) LOGGER.info("Started " + getLogIdentifier());
-                            changeInner(value);
-                            set(ResourceStatusAdapter.this.value, value);
-                        } catch (Throwable e) {
-                            LOGGER.warn("Error " + getLogIdentifier() + ": " + e.getMessage());
-                            fail();
-                        } finally {
-                            set(changing, false);
-                            if (SettingsUtil.isDebugEnabled) LOGGER.info("Done " + getLogIdentifier());
-                        }
-                    }
-                }.start();
+        SimpleBackgroundInvocator.invoke(() -> {
+            boolean daemon = true;
+            T resource = getResource();
+            if (resource.getResourceType() == ResourceType.CONNECTION && ResourceStatusAdapter.this.value == ResourceStatus.CLOSED) {
+                // non daemon threads for closing connections
+                daemon = false;
             }
-        }.start();
+
+            new SimpleTimeoutTask(10, TimeUnit.SECONDS, daemon) {
+                @Override
+                public void run() {
+                    try {
+                        if (SettingsUtil.isDebugEnabled) LOGGER.info("Started " + getLogIdentifier());
+                        changeInner(value);
+                        set(ResourceStatusAdapter.this.value, value);
+                    } catch (Throwable e) {
+                        LOGGER.warn("Error " + getLogIdentifier() + ": " + e.getMessage());
+                        fail();
+                    } finally {
+                        set(changing, false);
+                        if (SettingsUtil.isDebugEnabled) LOGGER.info("Done " + getLogIdentifier());
+                    }
+                }
+            }.start();
+
+        });
     }
 
     @NotNull

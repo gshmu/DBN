@@ -39,31 +39,20 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         EventUtil.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
-    SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+    private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeLoading(DBSourceCodeVirtualFile sourceCodeFile) {
             DBSourceCodeVirtualFile virtualFile = sourceCodeEditor.getVirtualFile();
-            if (virtualFile != null && virtualFile.equals(sourceCodeFile)) {
-                new SimpleLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        loadingDataPanel.setVisible(true);
-                    }
-                }.start();
+            if (virtualFile.equals(sourceCodeFile)) {
+                SimpleLaterInvocator.invoke(() -> loadingDataPanel.setVisible(true));
             }
         }
 
         @Override
         public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
             DBSourceCodeVirtualFile virtualFile = sourceCodeEditor.getVirtualFile();
-            if (virtualFile != null && virtualFile.equals(sourceCodeFile)) {
-                new SimpleLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        loadingDataPanel.setVisible(false);
-                    }
-                }.start();
-
+            if (virtualFile.equals(sourceCodeFile)) {
+                SimpleLaterInvocator.invoke(() -> loadingDataPanel.setVisible(false));
             }
         }
     };

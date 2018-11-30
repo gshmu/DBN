@@ -36,17 +36,11 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 public class MessagesTree extends DBNTree implements Disposable {
     private Project project;
@@ -132,35 +126,32 @@ public class MessagesTree extends DBNTree implements Disposable {
         scrollToPath(treePath, true, false);
     }
 
-    public void selectExecutionMessage(StatementExecutionMessage messsage, boolean focus) {
-        TreePath treePath = getModel().getTreePath(messsage);
+    public void selectExecutionMessage(StatementExecutionMessage message, boolean focus) {
+        TreePath treePath = getModel().getTreePath(message);
         scrollToPath(treePath, true, focus);
     }
 
     private void scrollToPath(final TreePath treePath, final boolean select, final boolean focus) {
         if (treePath != null) {
-            new SimpleLaterInvocator() {
-                @Override
-                protected void execute() {
-                    scrollPathToVisible(treePath);
-                    TreeSelectionModel selectionModel = getSelectionModel();
-                    if (select) {
-                        try {
-                            ignoreSelectionEvent = true;
-                            selectionModel.setSelectionPath(treePath);
-                        } finally {
-                            ignoreSelectionEvent = false;
-                        }
-                    } else {
-                        selectionModel.clearSelection();
+            SimpleLaterInvocator.invoke(() -> {
+                scrollPathToVisible(treePath);
+                TreeSelectionModel selectionModel = getSelectionModel();
+                if (select) {
+                    try {
+                        ignoreSelectionEvent = true;
+                        selectionModel.setSelectionPath(treePath);
+                    } finally {
+                        ignoreSelectionEvent = false;
                     }
-                    if (focus) {
-                        requestFocus();
-                    } else {
-                        navigateToCode(treePath.getLastPathComponent(), NavigationInstruction.FOCUS);
-                    }
+                } else {
+                    selectionModel.clearSelection();
                 }
-            }.start();
+                if (focus) {
+                    requestFocus();
+                } else {
+                    navigateToCode(treePath.getLastPathComponent(), NavigationInstruction.FOCUS);
+                }
+            });
         }
     }
 
@@ -270,7 +261,7 @@ public class MessagesTree extends DBNTree implements Disposable {
         DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
         if (databaseFile != null && !databaseFile.isDisposed()) {
             DBContentVirtualFile contentFile = compilerMessage.getContentFile();
-            if (contentFile != null && contentFile instanceof DBSourceCodeVirtualFile) {
+            if (contentFile instanceof DBSourceCodeVirtualFile) {
                 CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
                 FileEditor objectFileEditor = compilerAction.getFileEditor();
                 EditorProviderId editorProviderId = compilerAction.getEditorProviderId();
@@ -284,7 +275,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                 }
                 objectFileEditor = EditorUtil.selectEditor(project, objectFileEditor, databaseFile, editorProviderId, instruction);
 
-                if (objectFileEditor != null && objectFileEditor instanceof SourceCodeEditor) {
+                if (objectFileEditor instanceof SourceCodeEditor) {
                     SourceCodeEditor codeEditor = (SourceCodeEditor) objectFileEditor;
                     Editor editor = EditorUtil.getEditor(codeEditor);
                     if (editor != null) {
@@ -338,14 +329,11 @@ public class MessagesTree extends DBNTree implements Disposable {
     /*********************************************************
      *                   TreeSelectionListener               *
      *********************************************************/
-    private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
-        @Override
-        public void valueChanged(TreeSelectionEvent event) {
-            if (event.isAddedPath() && !ignoreSelectionEvent) {
-                Object object = event.getPath().getLastPathComponent();
-                navigateToCode(object, NavigationInstruction.OPEN_SCROLL);
-                //grabFocus();
-            }
+    private TreeSelectionListener treeSelectionListener = event -> {
+        if (event.isAddedPath() && !ignoreSelectionEvent) {
+            Object object = event.getPath().getLastPathComponent();
+            navigateToCode(object, NavigationInstruction.OPEN_SCROLL);
+            //grabFocus();
         }
     };
 

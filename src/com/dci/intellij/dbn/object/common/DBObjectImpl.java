@@ -18,7 +18,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -44,7 +44,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
-import com.dci.intellij.dbn.object.common.operation.DBOperationType;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -72,7 +71,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
-    private static final List<DBObject> EMPTY_OBJECT_LIST = Collections.unmodifiableList(new ArrayList<DBObject>(0));
+    private static final List<DBObject> EMPTY_OBJECT_LIST = Collections.unmodifiableList(new ArrayList<>(0));
     public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<BrowserTreeNode>(0));
 
     private List<BrowserTreeNode> allPossibleTreeChildren;
@@ -95,10 +94,8 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
 
     protected DBObjectVirtualFile virtualFile;
 
-    private static final DBOperationExecutor NULL_OPERATION_EXECUTOR = new DBOperationExecutor() {
-        public void executeOperation(DBOperationType operationType) throws SQLException, DBOperationNotSupportedException {
-            throw new DBOperationNotSupportedException(operationType);
-        }
+    private static final DBOperationExecutor NULL_OPERATION_EXECUTOR = operationType -> {
+        throw new DBOperationNotSupportedException(operationType);
     };
 
     protected DBObjectImpl(@NotNull DBObject parentObject, ResultSet resultSet) throws SQLException {
@@ -659,15 +656,10 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         if (visibleTreeChildren == null) {
             synchronized (this) {
                 if (visibleTreeChildren == null) {
-                    visibleTreeChildren = new ArrayList<BrowserTreeNode>();
+                    visibleTreeChildren = new ArrayList<>();
                     visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
-                    new SimpleBackgroundTask("load database objects") {
-                        @Override
-                        protected void execute() {
-                            buildTreeChildren();
-                        }
-                    }.start();
+                    SimpleBackgroundInvocator.invoke(this::buildTreeChildren);
                 }
             }
         }
@@ -683,7 +675,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
         if (allPossibleTreeChildren.size() > 0) {
             if (!filter.acceptsAll(allPossibleTreeChildren)) {
-                newTreeChildren = new ArrayList<BrowserTreeNode>();
+                newTreeChildren = new ArrayList<>();
                 for (BrowserTreeNode treeNode : allPossibleTreeChildren) {
                     if (treeNode != null && filter.accepts(treeNode)) {
                         DBObjectList objectList = (DBObjectList) treeNode;
@@ -691,7 +683,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
                     }
                 }
             }
-            newTreeChildren = new ArrayList<BrowserTreeNode>(newTreeChildren);
+            newTreeChildren = new ArrayList<>(newTreeChildren);
 
             for (BrowserTreeNode treeNode : newTreeChildren) {
                 DBObjectList objectList = (DBObjectList) treeNode;
@@ -799,7 +791,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }
 
     public List<PresentableProperty> getPresentableProperties() {
-        List<PresentableProperty> properties = new ArrayList<PresentableProperty>();
+        List<PresentableProperty> properties = new ArrayList<>();
         DBObject parent = getParentObject();
         while (parent != null) {
             properties.add(new DBObjectPresentableProperty(parent));

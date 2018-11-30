@@ -96,82 +96,67 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResult(final CompilerResult compilerResult) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                showExecutionConsole();
-                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                executionConsoleForm.addResult(compilerResult);
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> {
+            showExecutionConsole();
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            executionConsoleForm.addResult(compilerResult);
+        });
     }
 
     public void addExecutionResults(final List<CompilerResult> compilerResults) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                showExecutionConsole();
-                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                executionConsoleForm.addResults(compilerResults);
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> {
+            showExecutionConsole();
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            executionConsoleForm.addResults(compilerResults);
+        });
     }
 
     public void addExplainPlanResult(final ExplainPlanResult explainPlanResult) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                showExecutionConsole();
-                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                executionConsoleForm.addResult(explainPlanResult);
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> {
+            showExecutionConsole();
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            executionConsoleForm.addResult(explainPlanResult);
+        });
     }
 
     public void writeLogOutput(@NotNull final LogOutputContext context, final LogOutput output) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                if (!context.isClosed()) {
-                    showExecutionConsole();
-                    ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                    executionConsoleForm.displayLogOutput(context, output);
-                }
+        SimpleLaterInvocator.invoke(() -> {
+            if (!context.isClosed()) {
+                showExecutionConsole();
+                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                executionConsoleForm.displayLogOutput(context, output);
             }
-        }.start();
+        });
     }
 
     public void addExecutionResult(@NotNull final StatementExecutionResult executionResult) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                showExecutionConsole();
-                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                if (executionResult.isLoggingActive()) {
-                    LogOutputContext context = new LogOutputContext(executionResult.getConnectionHandler());
-                    context.setHideEmptyLines(false);
-                    String loggingOutput = executionResult.getLoggingOutput();
+        SimpleLaterInvocator.invoke(() -> {
+            showExecutionConsole();
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            if (executionResult.isLoggingActive()) {
+                LogOutputContext context = new LogOutputContext(executionResult.getConnectionHandler());
+                context.setHideEmptyLines(false);
+                String loggingOutput = executionResult.getLoggingOutput();
 
-                    executionConsoleForm.displayLogOutput(
-                            context, LogOutput.createSysOutput(context,
-                                    executionResult.getExecutionContext().getExecutionTimestamp(),
-                                    " - Statement execution started", false));
+                executionConsoleForm.displayLogOutput(
+                        context, LogOutput.createSysOutput(context,
+                                executionResult.getExecutionContext().getExecutionTimestamp(),
+                                " - Statement execution started", false));
 
-                    if (StringUtil.isNotEmptyOrSpaces(loggingOutput)) {
-                        executionConsoleForm.displayLogOutput(context,
-                                LogOutput.createStdOutput(loggingOutput));
-                    }
-
+                if (StringUtil.isNotEmptyOrSpaces(loggingOutput)) {
                     executionConsoleForm.displayLogOutput(context,
-                            LogOutput.createSysOutput(context, " - Statement execution finished\n", false));
+                            LogOutput.createStdOutput(loggingOutput));
                 }
 
-                executionConsoleForm.addResult(executionResult);
-                if (!executionResult.isBulkExecution() && !executionResult.hasCompilerResult() && !focusOnExecution()) {
-                    executionResult.navigateToEditor(NavigationInstruction.FOCUS);
-                }
+                executionConsoleForm.displayLogOutput(context,
+                        LogOutput.createSysOutput(context, " - Statement execution finished\n", false));
             }
-        }.start();
+
+            executionConsoleForm.addResult(executionResult);
+            if (!executionResult.isBulkExecution() && !executionResult.hasCompilerResult() && !focusOnExecution()) {
+                executionResult.navigateToEditor(NavigationInstruction.FOCUS);
+            }
+        });
     }
 
     private boolean focusOnExecution() {
@@ -183,25 +168,19 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
 
     public void addExecutionResult(final MethodExecutionResult executionResult) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                showExecutionConsole();
-                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                executionConsoleForm.addResult(executionResult);
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> {
+            showExecutionConsole();
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            executionConsoleForm.addResult(executionResult);
+        });
     }
 
     public void selectExecutionResult(final StatementExecutionResult executionResult) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                executionConsoleForm.selectResult(executionResult);
-                showExecutionConsole();
-            }
-        }.start();
+        SimpleLaterInvocator.invoke(() -> {
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            executionConsoleForm.selectResult(executionResult);
+            showExecutionConsole();
+        });
 
     }
 

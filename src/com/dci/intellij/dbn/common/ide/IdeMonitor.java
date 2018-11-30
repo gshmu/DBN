@@ -24,13 +24,10 @@ public class IdeMonitor implements ApplicationComponent{
 
         @Override
         public void run() {
-            new SimpleLaterInvocator() {
-                @Override
-                protected void execute() {
-                    ProjectManager.getInstance().closeProject(project);
-                    WelcomeFrame.showIfNoProjectOpened();
-                }
-            }.start();
+            SimpleLaterInvocator.invoke(() -> {
+                ProjectManager.getInstance().closeProject(project);
+                WelcomeFrame.showIfNoProjectOpened();
+            });
 
         }
     }
@@ -38,14 +35,10 @@ public class IdeMonitor implements ApplicationComponent{
     private static class ApplicationCloseRunnable implements Runnable {
         @Override
         public void run() {
-            new SimpleLaterInvocator() {
-                @Override
-                protected void execute() {
-                    ApplicationEx application = (ApplicationEx) ApplicationManager.getApplication();
-                    application.exit(false, true);
-                }
-            }.start();
-
+            SimpleLaterInvocator.invoke(() -> {
+                ApplicationEx application = (ApplicationEx) ApplicationManager.getApplication();
+                application.exit(false, true);
+            });
         }
     }
 
