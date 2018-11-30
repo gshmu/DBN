@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.statement;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -20,9 +21,9 @@ public abstract class StatementExecutionQueue extends DisposableBase{
     private final Queue<StatementExecutionProcessor> processors = new ConcurrentLinkedQueue<StatementExecutionProcessor>();
     private boolean executing = false;
 
-    StatementExecutionQueue(StatementExecutionManager executionManager) {
-        super(executionManager);
-        projectRef = ProjectRef.from(executionManager.getProject());
+    public StatementExecutionQueue(ConnectionHandler connectionHandler) {
+        super(connectionHandler);
+        projectRef = ProjectRef.from(connectionHandler.getProject());
     }
 
     public void queue(StatementExecutionProcessor processor) {
