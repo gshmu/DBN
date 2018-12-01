@@ -23,7 +23,7 @@ public abstract class AbstractTask<T> extends Traceable implements RunnableTask<
         cancelled = true;
     }
 
-    protected boolean isCancelled() {
+    public boolean isCancelled() {
         return cancelled;
     }
 }

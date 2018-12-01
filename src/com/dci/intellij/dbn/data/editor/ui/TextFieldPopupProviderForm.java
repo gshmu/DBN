@@ -14,7 +14,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Disposer;
@@ -145,41 +144,38 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         if (isPreparingPopup) return;
 
         isPreparingPopup = true;
-        new BackgroundTask(getProject(), "Loading " + getDescription(), false, true) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                preparePopup();
-                if (progressIndicator.isCanceled()) {
-                    isPreparingPopup = false;
-                    return;
-                }
+        BackgroundTask.invoke(getProject(), "Loading " + getDescription(), false, true, (task, progress) -> {
+            preparePopup();
+            if (progress.isCanceled()) {
+                isPreparingPopup = false;
+                return;
+            }
 
-                SimpleLaterInvocator.invoke(() -> {
-                    try {
-                        if (!isShowingPopup()) {
-                            popup = createPopup();
-                            if (popup != null) {
-                                Disposer.register(TextFieldPopupProviderForm.this, popup);
+            SimpleLaterInvocator.invoke(() -> {
+                try {
+                    if (!isShowingPopup()) {
+                        popup = createPopup();
+                        if (popup != null) {
+                            Disposer.register(TextFieldPopupProviderForm.this, popup);
 
-                                JPanel panel = (JPanel) popup.getContent();
-                                panel.setBorder(Borders.COMPONENT_LINE_BORDER);
+                            JPanel panel = (JPanel) popup.getContent();
+                            panel.setBorder(Borders.COMPONENT_LINE_BORDER);
 
-                                editorComponent.clearSelection();
+                            editorComponent.clearSelection();
 
-                                if (editorComponent.isShowing()) {
-                                    Point location = editorComponent.getLocationOnScreen();
-                                    location.setLocation(location.getX() + 4, location.getY() + editorComponent.getHeight() + 4);
-                                    popup.showInScreenCoordinates(editorComponent, location);
-                                    //cellEditor.highlight(TextCellEditor.HIGHLIGHT_TYPE_POPUP);
-                                }
+                            if (editorComponent.isShowing()) {
+                                Point location = editorComponent.getLocationOnScreen();
+                                location.setLocation(location.getX() + 4, location.getY() + editorComponent.getHeight() + 4);
+                                popup.showInScreenCoordinates(editorComponent, location);
+                                //cellEditor.highlight(TextCellEditor.HIGHLIGHT_TYPE_POPUP);
                             }
                         }
-                    } finally {
-                        isPreparingPopup = false;
                     }
-                });
-            }
-        }.start();
+                } finally {
+                    isPreparingPopup = false;
+                }
+            });
+        });
     }
 
     public void hidePopup() {

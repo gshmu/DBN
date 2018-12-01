@@ -11,7 +11,7 @@ public class ReloadObjectsAction extends DumbAwareAction {
 
     private DBObjectList objectList;
 
-    public ReloadObjectsAction(DBObjectList objectList) {
+    ReloadObjectsAction(DBObjectList objectList) {
         super((objectList.isLoaded() ? "Reload " : "Load ") + objectList.getName());
         this.objectList = objectList;
     }
@@ -19,16 +19,13 @@ public class ReloadObjectsAction extends DumbAwareAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         TaskInstructions taskInstructions = new TaskInstructions("Reloading " + objectList.getObjectType().getListName());
         String listName = objectList.getName();
-        final boolean loaded = objectList.isLoaded();
-        String actionDescription = loaded ? "reloading the " + listName : "loading the " + listName;
-        new ConnectionAction(actionDescription, objectList, taskInstructions){
-            @Override
-            protected void execute() {
-                if (loaded)
-                    objectList.reload(); else
-                    objectList.load(true);
+        boolean loaded = objectList.isLoaded();
 
-            }
-        }.start();
+        String actionDescription = loaded ? "reloading the " + listName : "loading the " + listName;
+        ConnectionAction.invoke(actionDescription, objectList, taskInstructions, action -> {
+            if (loaded)
+                objectList.reload(); else
+                objectList.load(true);
+        });
     }
 }

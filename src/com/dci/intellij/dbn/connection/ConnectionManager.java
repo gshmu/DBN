@@ -122,15 +122,14 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
         @Override
         public void connectionChanged(ConnectionId connectionId) {
-            final ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
+            ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
             if (connectionHandler != null) {
-                new BackgroundTask(getProject(), "Refreshing database objects", true, true) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                        connectionHandler.getConnectionPool().closeConnections();
-                        connectionHandler.getObjectBundle().getObjectListContainer().reload();
-                    }
-                }.start();
+                Project project = getProject();
+                String taskTitle = "Refreshing database objects";
+                BackgroundTask.invoke(project, taskTitle, true, true, (task, progress) -> {
+                    connectionHandler.getConnectionPool().closeConnections();
+                    connectionHandler.getObjectBundle().getObjectListContainer().reload();
+                });
             }
         }
     };
@@ -461,12 +460,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
                 methodExecutionManager.cleanupExecutionHistory(connectionIds);
 
-                new BackgroundTask(project, "Cleaning up connections", true) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                        DisposerUtil.dispose(connectionHandlers);
-                    }
-                }.start();
+                String taskTitle = "Cleaning up connections";
+                BackgroundTask.invoke(project, taskTitle, true, false, (task, progress) -> DisposerUtil.dispose(connectionHandlers));
             });
         }
     }

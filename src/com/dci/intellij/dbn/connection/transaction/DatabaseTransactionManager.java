@@ -20,7 +20,6 @@ import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDetailD
 import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -68,12 +67,10 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                     executeActions(connectionHandler, connection, actionList);
                 } else {
                     String connectionName = connectionHandler.getConnectionName(connection);
-                    new BackgroundTask(project, "Performing \"" + actionList.get(0).getName() + "\" on connection " + connectionName, background) {
-                        @Override
-                        protected void execute(@NotNull ProgressIndicator indicator) {
-                            executeActions(connectionHandler, connection, actionList);
-                        }
-                    }.start();
+                    String taskTitle = "Performing \"" + actionList.get(0).getName() + "\" on connection " + connectionName;
+                    BackgroundTask.invoke(project, taskTitle, background, false, (task, progress) -> {
+                        executeActions(connectionHandler, connection, actionList);
+                    });
                 }
             }
         }

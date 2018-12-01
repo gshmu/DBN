@@ -33,7 +33,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
@@ -122,16 +121,13 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 }
                 clearOutputOption = executionInput.isClearOutput();
 
-                new BackgroundTask(project, "Executing database script", true, true) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                        try {
-                            doExecuteScript(executionInput);
-                        } catch (Exception e) {
-                            MessageUtil.showErrorDialog(getProject(), "Error", "Error executing SQL Script \"" + virtualFile.getPath() + "\". " + e.getMessage());
-                        }
+                BackgroundTask.invoke(project, "Executing database script", true, true, (task, progress) -> {
+                    try {
+                        doExecuteScript(executionInput);
+                    } catch (Exception e) {
+                        MessageUtil.showErrorDialog(getProject(), "Error", "Error executing SQL Script \"" + virtualFile.getPath() + "\". " + e.getMessage());
                     }
-                }.start();
+                });
             }
         }
     }

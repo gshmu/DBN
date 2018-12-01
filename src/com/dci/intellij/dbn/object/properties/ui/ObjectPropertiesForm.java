@@ -14,9 +14,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -71,28 +69,25 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
         if (!object.equals(this.object)) {
             this.object = object;
 
-            new BackgroundTask(object.getProject(), "Rendering object properties", true) {
-                @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                    final ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
-                    Disposer.register(ObjectPropertiesForm.this, tableModel);
+            BackgroundTask.invoke(object.getProject(), "Rendering object properties", true, false, (task, progress) -> {
+                final ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
+                Disposer.register(ObjectPropertiesForm.this, tableModel);
 
-                    SimpleLaterInvocator.invoke(() -> {
-                        objectLabel.setText(object.getName());
-                        objectLabel.setIcon(object.getIcon());
-                        objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");
+                SimpleLaterInvocator.invoke(() -> {
+                    objectLabel.setText(object.getName());
+                    objectLabel.setIcon(object.getIcon());
+                    objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");
 
 
-                        ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
-                        objectPropertiesTable.setModel(tableModel);
-                        ((DBNTable) objectPropertiesTable).accommodateColumnsSize();
+                    ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
+                    objectPropertiesTable.setModel(tableModel);
+                    ((DBNTable) objectPropertiesTable).accommodateColumnsSize();
 
-                        mainPanel.revalidate();
-                        mainPanel.repaint();
-                        Disposer.dispose(oldTableModel);
-                    });
-                }
-            }.start();
+                    mainPanel.revalidate();
+                    mainPanel.repaint();
+                    Disposer.dispose(oldTableModel);
+                });
+            });
         }
     }
 

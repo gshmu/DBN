@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,29 +44,26 @@ public abstract class StatementExecutionQueue extends DisposableBase{
             synchronized (this) {
                 if (!executing) {
                     executing = true;
-                    new BackgroundTask(getProject(), "Executing statements", true, true) {
-                        @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                            try {
-                                StatementExecutionProcessor processor = processors.poll();
-                                while (processor != null) {
-                                    try {
-                                        StatementExecutionQueue.this.execute(processor);
-                                    } catch (ProcessCanceledException ignore) {}
+                    BackgroundTask.invoke(getProject(), "Executing statements", true, true, (task, progress) -> {
+                        try {
+                            StatementExecutionProcessor processor = processors.poll();
+                            while (processor != null) {
+                                try {
+                                    StatementExecutionQueue.this.execute(processor);
+                                } catch (ProcessCanceledException ignore) {}
 
-                                    if (progressIndicator.isCanceled()) {
-                                        cancelExecution();
-                                    }
-                                    processor = processors.poll();
-                                }
-                            } finally {
-                                executing = false;
-                                if (progressIndicator.isCanceled()) {
+                                if (progress.isCanceled()) {
                                     cancelExecution();
                                 }
+                                processor = processors.poll();
+                            }
+                        } finally {
+                            executing = false;
+                            if (progress.isCanceled()) {
+                                cancelExecution();
                             }
                         }
-                    }.start();
+                    });
                 }
             }
         }

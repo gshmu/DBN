@@ -7,36 +7,34 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObjectRecursiveLoaderVisitor;
+import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class LoadAllObjectsAction extends AbstractConnectionAction {
-    public LoadAllObjectsAction(ConnectionHandler connectionHandler) {
+    LoadAllObjectsAction(ConnectionHandler connectionHandler) {
         super("Load All Objects", null, Icons.DATA_EDITOR_RELOAD_DATA, connectionHandler);
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         final ConnectionHandler connectionHandler = getConnectionHandler();
-        new BackgroundTask(project, "Loading data dictionary (" + connectionHandler.getName() + ")", true) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                try {
-                    DatabaseLoadMonitor.startBackgroundLoad();
-                    connectionHandler.getObjectBundle().getObjectListContainer().visitLists(DBObjectRecursiveLoaderVisitor.INSTANCE, false);
-                } finally {
-                    DatabaseLoadMonitor.endBackgroundLoad();
-                }
-
+        String taskTitle = "Loading data dictionary (" + connectionHandler.getName() + ")";
+        BackgroundTask.invoke(project, taskTitle, true, false, (task, progress) -> {
+            try {
+                DatabaseLoadMonitor.startBackgroundLoad();
+                DBObjectListContainer objectListContainer = connectionHandler.getObjectBundle().getObjectListContainer();
+                objectListContainer.visitLists(DBObjectRecursiveLoaderVisitor.INSTANCE, false);
+            } finally {
+                DatabaseLoadMonitor.endBackgroundLoad();
             }
-        }.start();
+        });
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setVisible(DatabaseNavigator.getInstance().isDeveloperModeEnabled());
         super.update(e);
     }

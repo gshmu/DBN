@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -22,17 +23,13 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     private TaskInstructions taskInstructions;
     private Integer executeOption;
 
-    public ConnectionAction(String description, ConnectionProvider connectionProvider) {
-        this(description, connectionProvider, (Integer) null);
-    }
-
-    public ConnectionAction(String description, ConnectionProvider connectionProvider, Integer executeOption) {
+    private ConnectionAction(String description, ConnectionProvider connectionProvider, Integer executeOption) {
         this.description = description;
         this.connectionProvider = connectionProvider;
         this.executeOption = executeOption;
     }
 
-    public ConnectionAction(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions) {
+    private ConnectionAction(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions) {
         this(description, connectionProvider, taskInstructions, null);
     }
 
@@ -48,15 +45,15 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     }
 
     protected boolean isManaged() {
-        return false;
+        return taskInstructions != null && taskInstructions.is(TaskInstruction.MANAGED);
     }
 
     @NotNull
-    protected Project getProject() {
+    public Project getProject() {
         return getConnectionHandler().getProject();
     }
 
-    protected boolean isCancelled() {
+    public boolean isCancelled() {
         if (super.isCancelled()) {
             return true;
         } else {
@@ -174,12 +171,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         if (taskInstructions == null) {
             execute();
         } else {
-            new BackgroundTask(getProject(), taskInstructions) {
-                @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    ConnectionAction.this.execute();
-                }
-            }.start();
+            BackgroundTask.invoke(getProject(), taskInstructions, (task, progress) -> ConnectionAction.this.execute());
         }
     }
 
@@ -190,4 +182,63 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     }
 
     protected abstract void execute();
+
+    public static void invoke(String description, ConnectionProvider connectionProvider, Integer executeOption, Runnable action) {
+        create(description, connectionProvider, executeOption, action).start();
+    }
+
+    public static ConnectionAction create(String description, ConnectionProvider connectionProvider, Integer executeOption, Runnable action) {
+        return new ConnectionAction(description, connectionProvider, executeOption) {
+            @Override
+            protected void execute() {
+                action.run(this);
+            }
+        };
+    }
+
+    public static void invoke(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions, Runnable runnable) {
+        create(description, connectionProvider, taskInstructions, runnable, null, null).start();
+    }
+
+    public static ConnectionAction create(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions, Runnable action) {
+        return create(description, connectionProvider, taskInstructions, action, null, null);
+    }
+
+    public static void invoke(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions, Runnable action, Runnable cancel, Callable<Boolean> canExecute) {
+        create(description, connectionProvider, taskInstructions, action, cancel, canExecute).start();
+    }
+
+    public static ConnectionAction create(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions, Runnable action, Runnable cancel, Callable<Boolean> canExecute) {
+        return new ConnectionAction(description, connectionProvider, taskInstructions) {
+            @Override
+            protected void execute() {
+                action.run(this);
+            }
+
+            @Override
+            protected void cancel() {
+                super.cancel();
+                if (cancel != null){
+                    cancel.run(this);
+                }
+            }
+
+            @Override
+            protected boolean canExecute() {
+                if (canExecute != null) {
+                    return canExecute.call(this);
+                } else {
+                    return super.canExecute();
+                }
+            }
+        };
+    }
+    @FunctionalInterface
+    public interface Runnable {
+        void run(ConnectionAction action);
+    }
+
+    public interface Callable<V> {
+        V call(ConnectionAction action);
+    }
 }

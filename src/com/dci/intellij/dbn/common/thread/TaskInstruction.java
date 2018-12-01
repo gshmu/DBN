@@ -6,7 +6,8 @@ import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public enum TaskInstruction implements Property {
     START_IN_BACKGROUND,
-    CANCELLABLE;
+    CANCELLABLE,
+    MANAGED;
 
     private final int index = PropertyHolderImpl.idx(this);
 

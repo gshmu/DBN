@@ -20,7 +20,6 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProc
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.progress.ProgressIndicator;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,38 +62,35 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     }
 
     public void reload() {
-        new BackgroundTask(getProject(), "Reloading data", true) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                initProgressIndicator(progressIndicator, true, "Reloading results for " + getExecutionProcessor().getStatementName());
-                ExecutionContext context = getExecutionProcessor().getExecutionContext(true);
-                context.setExecutionTimestamp(System.currentTimeMillis());
-                context.set(EXECUTING, true);
+        BackgroundTask.invoke(getProject(), "Reloading data", true, false, (task, progress) -> {
+            BackgroundTask.initProgressIndicator(progress, true, "Reloading results for " + getExecutionProcessor().getStatementName());
+            ExecutionContext context = getExecutionProcessor().getExecutionContext(true);
+            context.setExecutionTimestamp(System.currentTimeMillis());
+            context.set(EXECUTING, true);
 
+            try {
+                resultPanel.highlightLoading(true);
+                StatementExecutionInput executionInput = getExecutionInput();
                 try {
-                    resultPanel.highlightLoading(true);
-                    StatementExecutionInput executionInput = getExecutionInput();
-                    try {
-                        ConnectionHandler connectionHandler = getConnectionHandler();
-                        DBSchema currentSchema = getDatabaseSchema();
-                        DBNConnection connection = connectionHandler.getMainConnection(currentSchema);
-                        DBNStatement statement = connection.createStatement();
-                        statement.setQueryTimeout(executionInput.getExecutionTimeout());
-                        statement.execute(executionInput.getExecutableStatementText());
-                        DBNResultSet resultSet = statement.getResultSet();
-                        if (resultSet != null) {
-                            loadResultSet(resultSet);
-                        }
-                    } catch (final SQLException e) {
-                        MessageUtil.showErrorDialog(getProject(), "Could not perform reload operation.", e);
+                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    DBSchema currentSchema = getDatabaseSchema();
+                    DBNConnection connection = connectionHandler.getMainConnection(currentSchema);
+                    DBNStatement statement = connection.createStatement();
+                    statement.setQueryTimeout(executionInput.getExecutionTimeout());
+                    statement.execute(executionInput.getExecutableStatementText());
+                    DBNResultSet resultSet = statement.getResultSet();
+                    if (resultSet != null) {
+                        loadResultSet(resultSet);
                     }
-                } finally {
-                    calculateExecDuration();
-                    resultPanel.highlightLoading(false);
-                    context.reset();
+                } catch (final SQLException e) {
+                    MessageUtil.showErrorDialog(getProject(), "Could not perform reload operation.", e);
                 }
+            } finally {
+                calculateExecDuration();
+                resultPanel.highlightLoading(false);
+                context.reset();
             }
-        }.start();
+        });
     }
 
     public void loadResultSet(DBNResultSet resultSet) throws SQLException {
@@ -110,30 +106,26 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     }
 
     public void fetchNextRecords() {
-        new BackgroundTask(getProject(), "Loading data", true) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                initProgressIndicator(progressIndicator, true, "Loading next records for " + getExecutionProcessor().getStatementName());
-                resultPanel.highlightLoading(true);
-                try {
-                    if (hasResult() && !dataModel.isResultSetExhausted()) {
-                        int fetchBlockSize = getQueryExecutionSettings().getResultSetFetchBlockSize();
-                        dataModel.fetchNextRecords(fetchBlockSize, false);
-                        //tResult.accommodateColumnsSize();
-                        if (dataModel.isResultSetExhausted()) {
-                            dataModel.closeResultSet();
-                        }
-                        resultPanel.updateVisibleComponents();
+        BackgroundTask.invoke(getProject(), "Loading data", true, false, (task, progress) -> {
+            BackgroundTask.initProgressIndicator(progress, true, "Loading next records for " + getExecutionProcessor().getStatementName());
+            resultPanel.highlightLoading(true);
+            try {
+                if (hasResult() && !dataModel.isResultSetExhausted()) {
+                    int fetchBlockSize = getQueryExecutionSettings().getResultSetFetchBlockSize();
+                    dataModel.fetchNextRecords(fetchBlockSize, false);
+                    //tResult.accommodateColumnsSize();
+                    if (dataModel.isResultSetExhausted()) {
+                        dataModel.closeResultSet();
                     }
-
-                } catch (SQLException e) {
-                    MessageUtil.showErrorDialog(getProject(), "Could not perform operation.", e);
-                } finally {
-                    resultPanel.highlightLoading(false);
+                    resultPanel.updateVisibleComponents();
                 }
 
+            } catch (SQLException e) {
+                MessageUtil.showErrorDialog(getProject(), "Could not perform operation.", e);
+            } finally {
+                resultPanel.highlightLoading(false);
             }
-        }.start();
+        });
     }
 
     public ResultSetDataModel getTableModel() {

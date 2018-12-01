@@ -45,7 +45,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.impl.*;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -170,14 +169,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeSaved(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
-            new BackgroundTask(getProject(), "Reloading database object", true) {
-
-                @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                    DBObject object = sourceCodeFile.getObject();
-                    object.refresh();
-                }
-            }.start();
+            BackgroundTask.invoke(getProject(), "Reloading database object", true, false, (task, progress) -> {
+                DBObject object = sourceCodeFile.getObject();
+                object.refresh();
+            });
         }
     };
 
@@ -595,30 +590,26 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     public void refreshObjectsStatus(final @Nullable DBSchemaObject requester) {
         if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(getConnectionHandler())) {
-            new BackgroundTask(getProject(), "Updating objects status", true, true) {
-                @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                    try {
-                        List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();
+            BackgroundTask.invoke(getProject(), "Updating objects status", true, true, (task, progress) -> {
+                try {
+                    List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();
 
-                        int size = schemas.size();
-                        for (int i=0; i<size; i++) {
-                            if (!progressIndicator.isCanceled()) {
-                                DBSchema schema = schemas.get(i);
-                                if (size > 3) {
-                                    progressIndicator.setIndeterminate(false);
-                                    progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, size));
-                                }
-                                progressIndicator.setText("Updating object status in schema " + schema.getName() + "... ");
-                                schema.refreshObjectsStatus();
+                    int size = schemas.size();
+                    for (int i=0; i<size; i++) {
+                        if (!progress.isCanceled()) {
+                            DBSchema schema = schemas.get(i);
+                            if (size > 3) {
+                                progress.setIndeterminate(false);
+                                progress.setFraction(CommonUtil.getProgressPercentage(i, size));
                             }
+                            progress.setText("Updating object status in schema " + schema.getName() + "... ");
+                            schema.refreshObjectsStatus();
                         }
-                    } catch (SQLException e) {
-                        NotificationUtil.sendErrorNotification(getProject(), "Object Status Refresh", "Could not refresh object status. Cause: " + e.getMessage());
                     }
+                } catch (SQLException e) {
+                    NotificationUtil.sendErrorNotification(getProject(), "Object Status Refresh", "Could not refresh object status. Cause: " + e.getMessage());
                 }
-
-            }.start();
+            });
         }
     }
 

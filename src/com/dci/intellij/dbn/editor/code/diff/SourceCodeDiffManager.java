@@ -168,27 +168,25 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
 
     public void opedDatabaseDiffWindow(final DBSourceCodeVirtualFile sourceCodeFile) {
-        new ConnectionAction("comparing changes", sourceCodeFile, new TaskInstructions("Loading database source code", CANCELLABLE)) {
-            @Override
-            protected void execute() {
-                DBSchemaObject object = sourceCodeFile.getObject();
-                Project project = getProject();
-                try {
-                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                    SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, sourceCodeFile.getContentType());
-                    CharSequence referenceText = sourceCodeContent.getText();
+        TaskInstructions instructions = new TaskInstructions("Loading database source code", CANCELLABLE);
+        ConnectionAction.invoke("comparing changes", sourceCodeFile, instructions, (action) -> {
+            DBSchemaObject object = sourceCodeFile.getObject();
+            Project project = getProject();
+            try {
+                SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, sourceCodeFile.getContentType());
+                CharSequence referenceText = sourceCodeContent.getText();
 
-                    if (!isCancelled()) {
-                        openDiffWindow(sourceCodeFile, referenceText.toString(), "Database version", "Local version vs. database version");
-                    }
-
-                } catch (Exception e1) {
-                    MessageUtil.showErrorDialog(
-                            project, "Could not load sourcecode for " +
-                                    object.getQualifiedNameWithType() + " from database.", e1);
+                if (!action.isCancelled()) {
+                    openDiffWindow(sourceCodeFile, referenceText.toString(), "Database version", "Local version vs. database version");
                 }
+
+            } catch (Exception e1) {
+                MessageUtil.showErrorDialog(
+                        project, "Could not load sourcecode for " +
+                                object.getQualifiedNameWithType() + " from database.", e1);
             }
-        }.start();
+        });
     }
 
 

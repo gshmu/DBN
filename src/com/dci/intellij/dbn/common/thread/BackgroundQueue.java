@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -31,29 +29,26 @@ public abstract class BackgroundQueue<T extends Queueable> {
     private void execute() {
         if (!executing) {
             executing = true;
-            new BackgroundTask(project, title, true, true) {
-                @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                    try {
-                        T element = elements.poll();
-                        while (element != null) {
-                            try {
-                                BackgroundQueue.this.process(element);
-                            } catch (ProcessCanceledException ignore) {}
+            BackgroundTask.invoke(project, title, true, true, (task, progress) -> {
+                try {
+                    T element = elements.poll();
+                    while (element != null) {
+                        try {
+                            BackgroundQueue.this.process(element);
+                        } catch (ProcessCanceledException ignore) {}
 
-                            if (progressIndicator.isCanceled()) {
-                                cancel();
-                            }
-                            element = elements.poll();
-                        }
-                    } finally {
-                        executing = false;
-                        if (progressIndicator.isCanceled()) {
+                        if (progress.isCanceled()) {
                             cancel();
                         }
+                        element = elements.poll();
+                    }
+                } finally {
+                    executing = false;
+                    if (progress.isCanceled()) {
+                        cancel();
                     }
                 }
-            }.start();
+            });
         }
     }
 

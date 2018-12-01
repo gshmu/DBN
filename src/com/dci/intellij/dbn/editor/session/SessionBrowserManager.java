@@ -32,7 +32,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
@@ -68,16 +67,16 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     }
 
     public void openSessionBrowser(ConnectionHandler connectionHandler) {
-        new ConnectionAction("opening the session browser", connectionHandler) {
-            @Override
-            protected void execute() {
-                Project project = getProject();
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                DBSessionBrowserVirtualFile sessionBrowserFile = connectionHandler.getSessionBrowserFile();
-                fileEditorManager.openFile(sessionBrowserFile, true);
-            }
-        }.start();
+        ConnectionAction.invoke(
+                "opening the session browser",
+                connectionHandler,
+                (Integer) null,
+                action -> {
+                    Project project = getProject();
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                    DBSessionBrowserVirtualFile sessionBrowserFile = connectionHandler.getSessionBrowserFile();
+                    fileEditorManager.openFile(sessionBrowserFile, true);
+                });
     }
 
     public SessionBrowserModel loadSessions(DBSessionBrowserVirtualFile sessionBrowserFile) {
@@ -125,7 +124,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         return "";
     }
 
-    public void interruptSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, SessionInterruptionType type) {
+    public void interruptSessions(@NotNull SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, SessionInterruptionType type) {
         final ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
         if (DatabaseFeature.SESSION_INTERRUPTION_TIMING.isSupported(connectionHandler)) {
 
@@ -146,69 +145,66 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         }
     }
 
-    private void doInterruptSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, final SessionInterruptionType type, final SessionInterruptionOption option) {
-        final String killedAction = type == SessionInterruptionType.KILL ? "killed" : "disconnected";
-        final String killingAction = type == SessionInterruptionType.KILL? "killing" : "disconnecting";
-        final String taskAction = (type == SessionInterruptionType.KILL? "Killing" : "Disconnecting") + (sessionIds.size() == 1 ? " Session" : " Sessions");
+    private void doInterruptSessions(@NotNull SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, final SessionInterruptionType type, final SessionInterruptionOption option) {
+        String killedAction = type == SessionInterruptionType.KILL ? "killed" : "disconnected";
+        String killingAction = type == SessionInterruptionType.KILL? "killing" : "disconnecting";
+        String taskAction = (type == SessionInterruptionType.KILL? "Killing" : "Disconnecting") + (sessionIds.size() == 1 ? " Session" : " Sessions");
 
-        final ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
-        final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
-        new BackgroundTask(getProject(), taskAction, false, true) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                Project project = connectionHandler.getProject();
-                DBNConnection connection = null;
-                try {
-                    connection = connectionHandler.getPoolConnection(true);
-                    Map<Object, SQLException> errors = new HashMap<Object, SQLException>();
-                    final DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
+        BackgroundTask.invoke(getProject(), taskAction, false, true, (task, progress) -> {
+            ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
+            Project project = connectionHandler.getProject();
+            DBNConnection connection = null;
+            try {
+                connection = connectionHandler.getPoolConnection(true);
+                Map<Object, SQLException> errors = new HashMap<Object, SQLException>();
+                DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
+                final DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
 
-                    for (Object sessionId : sessionIds.keySet()) {
-                        Object serialNumber = sessionIds.get(sessionId);
-                        if (progressIndicator.isCanceled()) return;
-                        try {
-                            boolean immediate = option == SessionInterruptionOption.IMMEDIATE;
-                            boolean postTransaction = option == SessionInterruptionOption.POST_TRANSACTION;
-                            switch (type) {
-                                case DISCONNECT: metadataInterface.disconnectSession(sessionId, serialNumber, postTransaction, immediate, connection); break;
-                                case KILL: metadataInterface.killSession(sessionId, serialNumber, immediate, connection); break;
-                            }
-                        } catch (SQLException e) {
-                            errors.put(sessionId, e);
+                for (Object sessionId : sessionIds.keySet()) {
+                    Object serialNumber = sessionIds.get(sessionId);
+                    if (progress.isCanceled()) return;
+                    try {
+                        boolean immediate = option == SessionInterruptionOption.IMMEDIATE;
+                        boolean postTransaction = option == SessionInterruptionOption.POST_TRANSACTION;
+                        switch (type) {
+                            case DISCONNECT: metadataInterface.disconnectSession(sessionId, serialNumber, postTransaction, immediate, connection); break;
+                            case KILL: metadataInterface.killSession(sessionId, serialNumber, immediate, connection); break;
                         }
+                    } catch (SQLException e) {
+                        errors.put(sessionId, e);
                     }
-
-                    if (sessionIds.size() == 1) {
-                        Object sessionId = sessionIds.keySet().iterator().next();
-                        if (errors.size() == 0) {
-                            MessageUtil.showInfoDialog(project, "Info", "Session " + sessionId + " " + killedAction +".");
-                        } else {
-                            SQLException exception = errors.get(sessionId);
-                            MessageUtil.showErrorDialog(project, "Error " + killingAction + " session " + sessionId + "." , exception);
-                        }
-                    } else {
-                        if (errors.size() == 0) {
-                            MessageUtil.showInfoDialog(project, "Info", sessionIds.size() + " sessions " + killedAction + ".");
-                        } else {
-                            StringBuilder message = new StringBuilder("Error " + killingAction + " one or more of the selected sessions:");
-                            for (Object sessionId : sessionIds.keySet()) {
-                                SQLException exception = errors.get(sessionId);
-                                message.append("\n - session id ").append(sessionId).append(": ");
-                                if (exception == null) message.append(killedAction); else message.append(exception.getMessage().trim());
-
-                            }
-                            MessageUtil.showErrorDialog(project, message.toString());
-                        }
-
-                    }
-                } catch (SQLException e) {
-                    MessageUtil.showErrorDialog(project, "Error performing operation", e);
-                } finally {
-                    connectionHandler.freePoolConnection(connection);
-                    sessionBrowser.loadSessions(false);
                 }
+
+                if (sessionIds.size() == 1) {
+                    Object sessionId = sessionIds.keySet().iterator().next();
+                    if (errors.size() == 0) {
+                        MessageUtil.showInfoDialog(project, "Info", "Session " + sessionId + " " + killedAction +".");
+                    } else {
+                        SQLException exception = errors.get(sessionId);
+                        MessageUtil.showErrorDialog(project, "Error " + killingAction + " session " + sessionId + "." , exception);
+                    }
+                } else {
+                    if (errors.size() == 0) {
+                        MessageUtil.showInfoDialog(project, "Info", sessionIds.size() + " sessions " + killedAction + ".");
+                    } else {
+                        StringBuilder message = new StringBuilder("Error " + killingAction + " one or more of the selected sessions:");
+                        for (Object sessionId : sessionIds.keySet()) {
+                            SQLException exception = errors.get(sessionId);
+                            message.append("\n - session id ").append(sessionId).append(": ");
+                            if (exception == null) message.append(killedAction); else message.append(exception.getMessage().trim());
+
+                        }
+                        MessageUtil.showErrorDialog(project, message.toString());
+                    }
+
+                }
+            } catch (SQLException e) {
+                MessageUtil.showErrorDialog(project, "Error performing operation", e);
+            } finally {
+                connectionHandler.freePoolConnection(connection);
+                sessionBrowser.loadSessions(false);
             }
-        }.start();
+        });
     }
 
     private class UpdateTimestampTask extends TimerTask {

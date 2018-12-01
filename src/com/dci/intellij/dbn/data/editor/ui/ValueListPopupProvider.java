@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupStep;
@@ -90,29 +89,25 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
             if (isPreparingPopup) return;
 
             isPreparingPopup = true;
-            new BackgroundTask(editorComponent.getProject(), "Loading " + getDescription(), false, true) {
-                @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                    // load the values
-                    getValues();
-                    getSecondaryValues();
-                    if (progressIndicator.isCanceled()) {
-                        isPreparingPopup = false;
-                        return;
-                    }
-
-                    SimpleLaterInvocator.invoke(() -> {
-                        try {
-                            if (!isShowingPopup()) {
-                                doShowPopup();
-                            }
-                        } finally {
-                            isPreparingPopup = false;
-                        }
-                    });
-
+            BackgroundTask.invoke(editorComponent.getProject(), "Loading " + getDescription(), false, true, (task, progress) -> {
+                // load the values
+                getValues();
+                getSecondaryValues();
+                if (progress.isCanceled()) {
+                    isPreparingPopup = false;
+                    return;
                 }
-            }.start();
+
+                SimpleLaterInvocator.invoke(() -> {
+                    try {
+                        if (!isShowingPopup()) {
+                            doShowPopup();
+                        }
+                    } finally {
+                        isPreparingPopup = false;
+                    }
+                });
+            });
         } else {
             doShowPopup();
         }

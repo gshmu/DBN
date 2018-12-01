@@ -29,7 +29,6 @@ import com.intellij.ide.plugins.*;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.extensions.PluginId;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.HyperlinkAdapter;
@@ -104,41 +103,41 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
             label.addHyperlinkListener(new HyperlinkAdapter() {
                 @Override
                 protected void hyperlinkActivated(HyperlinkEvent e) {
+
                     if (dialog != null) dialog.doCancelAction();
 
-                    final Project project = generalSettings.getProject();
-                    new BackgroundTask(project, "Updating plugin", false) {
-                        @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                            try {
-                                final List<PluginNode> updateDescriptors = new ArrayList<>();
-                                final List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadCachedPlugins();
-                                final List<PluginId> pluginIds = new ArrayList<>();
-                                if (descriptors != null) {
-                                    for (IdeaPluginDescriptor descriptor : descriptors) {
-                                        pluginIds.add(descriptor.getPluginId());
-                                        if (descriptor.getPluginId().toString().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {
-                                            PluginNode pluginNode = new PluginNode(descriptor.getPluginId());
-                                            pluginNode.setName(descriptor.getName());
-                                            pluginNode.setSize("-1");
-                                            pluginNode.setRepositoryName(PluginInstaller.UNKNOWN_HOST_MARKER);
-                                            updateDescriptors.add(pluginNode);
-                                        }
+                    Project project = generalSettings.getProject();
+
+                    BackgroundTask.invoke(project, "Updating plugin", false, false, (task, progress) -> {
+                        try {
+                            List<PluginNode> updateDescriptors = new ArrayList<>();
+                            List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadCachedPlugins();
+                            List<PluginId> pluginIds = new ArrayList<>();
+                            if (descriptors != null) {
+                                for (IdeaPluginDescriptor descriptor : descriptors) {
+                                    pluginIds.add(descriptor.getPluginId());
+                                    if (descriptor.getPluginId().toString().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {
+                                        PluginNode pluginNode = new PluginNode(descriptor.getPluginId());
+                                        pluginNode.setName(descriptor.getName());
+                                        pluginNode.setSize("-1");
+                                        pluginNode.setRepositoryName(PluginInstaller.UNKNOWN_HOST_MARKER);
+                                        updateDescriptors.add(pluginNode);
                                     }
                                 }
-
-                                SimpleLaterInvocator.invoke(() -> {
-                                    try {
-                                        PluginManagerMain.downloadPlugins(updateDescriptors, pluginIds, () -> PluginManagerMain.notifyPluginsUpdated(project), null);
-                                    } catch (IOException e1) {
-                                        NotificationUtil.sendErrorNotification(project, "Update Error", "Error updating DBN plugin: " + e1.getMessage());
-                                    }
-                                });
-                            } catch (Exception ex) {
-                                NotificationUtil.sendErrorNotification(project, "Update Error", "Error updating DBN plugin: " + ex.getMessage());
                             }
+
+                            SimpleLaterInvocator.invoke(() -> {
+                                try {
+                                    PluginManagerMain.downloadPlugins(updateDescriptors, pluginIds, () -> PluginManagerMain.notifyPluginsUpdated(project), null);
+                                } catch (IOException e1) {
+                                    NotificationUtil.sendErrorNotification(project, "Update Error", "Error updating DBN plugin: " + e1.getMessage());
+                                }
+                            });
+                        } catch (Exception ex) {
+                            NotificationUtil.sendErrorNotification(project, "Update Error", "Error updating DBN plugin: " + ex.getMessage());
                         }
-                    }.start();
+
+                    });
                 }
             });
             pluginUpdateLinkPanel.add(label, BorderLayout.WEST);
