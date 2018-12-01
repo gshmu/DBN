@@ -35,7 +35,6 @@ import com.intellij.debugger.impl.DebuggerContextImpl;
 import com.intellij.debugger.impl.DebuggerContextListener;
 import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -287,28 +286,25 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         new ManagedThreadCommand(getDebuggerSession().getProcess()) {
             @Override
             protected void action() throws Exception {
-                new BackgroundTask(getProject(), "Running debugger target program", true, true) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        T executionInput = getExecutionInput();
-                        progressIndicator.setText("Executing " + (executionInput == null ? " target program" : executionInput.getExecutionContext().getTargetName()));
-                        console.system("Executing target program");
-                        if (is(SESSION_INITIALIZATION_THREW_EXCEPTION)) return;
-                        try {
-                            set(TARGET_EXECUTION_STARTED, true);
-                            executeTarget();
-                        } catch (SQLException e){
-                            set(TARGET_EXECUTION_THREW_EXCEPTION, true);
-                            if (isNot(DEBUGGER_STOPPING)) {
-                                String message = executionInput == null ? "Error executing target program" : "Error executing " + executionInput.getExecutionContext().getTargetName();
-                                console.error(message + ": " + e.getMessage());
-                            }
-                        } finally {
-                            set(TARGET_EXECUTION_TERMINATED, true);
-                            stop();
+                BackgroundTask.invoke(getProject(), "Running debugger target program", true, true, (task, progress) -> {
+                    T executionInput = getExecutionInput();
+                    progress.setText("Executing " + (executionInput == null ? " target program" : executionInput.getExecutionContext().getTargetName()));
+                    console.system("Executing target program");
+                    if (is(SESSION_INITIALIZATION_THREW_EXCEPTION)) return;
+                    try {
+                        set(TARGET_EXECUTION_STARTED, true);
+                        executeTarget();
+                    } catch (SQLException e){
+                        set(TARGET_EXECUTION_THREW_EXCEPTION, true);
+                        if (isNot(DEBUGGER_STOPPING)) {
+                            String message = executionInput == null ? "Error executing target program" : "Error executing " + executionInput.getExecutionContext().getTargetName();
+                            console.error(message + ": " + e.getMessage());
                         }
+                    } finally {
+                        set(TARGET_EXECUTION_TERMINATED, true);
+                        stop();
                     }
-                }.start();
+                });
             }
         }.schedule();
     }
@@ -328,37 +324,34 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     }
 
     private void stopDebugger() {
-        final Project project = getProject();
-        new BackgroundTask(project, "Stopping debugger", true) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                progressIndicator.setText("Stopping debug environment.");
-                T executionInput = getExecutionInput();
-                if (executionInput != null && isNot(TARGET_EXECUTION_TERMINATED)) {
-                    ExecutionContext context = executionInput.getExecutionContext();
-                    ConnectionUtil.cancel(context.getStatement());
-                }
-
-
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                try {
-                    DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                    debuggerInterface.disconnectJdwpSession(targetConnection);
-
-                } catch (final SQLException e) {
-                    console.error("Error stopping debugger: " + e.getMessage());
-                } finally {
-                    DBRunConfig<T> runProfile = getRunProfile();
-                    if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
-                        runProfile.setCanRun(false);
-                    }
-
-                    DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
-                    releaseTargetConnection();
-                    console.system("Debugger stopped");
-                }
+        Project project = getProject();
+        BackgroundTask.invoke(project, "Stopping debugger", true, false, (task, progress) -> {
+            progress.setText("Stopping debug environment.");
+            T executionInput = getExecutionInput();
+            if (executionInput != null && isNot(TARGET_EXECUTION_TERMINATED)) {
+                ExecutionContext context = executionInput.getExecutionContext();
+                ConnectionUtil.cancel(context.getStatement());
             }
-        }.start();
+
+
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            try {
+                DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                debuggerInterface.disconnectJdwpSession(targetConnection);
+
+            } catch (final SQLException e) {
+                console.error("Error stopping debugger: " + e.getMessage());
+            } finally {
+                DBRunConfig<T> runProfile = getRunProfile();
+                if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
+                    runProfile.setCanRun(false);
+                }
+
+                DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
+                releaseTargetConnection();
+                console.system("Debugger stopped");
+            }
+        });
     }
 
 

@@ -43,7 +43,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -150,7 +149,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             List<StatementExecutionProcessor> removeList = null;
             for (StatementExecutionProcessor executionProcessor : executionProcessors) {
                 if (executionProcessor.getCachedExecutable() == null) {
-                    if (removeList == null) removeList = new ArrayList<StatementExecutionProcessor>();
+                    if (removeList == null) removeList = new ArrayList<>();
                     removeList.add(executionProcessor);
                 }
             }
@@ -165,7 +164,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     private List<StatementExecutionProcessor> getExecutionProcessors(FileEditor textEditor) {
         List<StatementExecutionProcessor> executionProcessors = fileExecutionProcessors.get(textEditor);
         if (executionProcessors == null) {
-            executionProcessors = new CopyOnWriteArrayList<StatementExecutionProcessor>();
+            executionProcessors = new CopyOnWriteArrayList<>();
             fileExecutionProcessors.put(textEditor, executionProcessors);
         }
         return executionProcessors;
@@ -229,53 +228,40 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     private void executeStatements(final List<StatementExecutionProcessor> executionProcessors, final VirtualFile virtualFile) {
-        final int size = executionProcessors.size();
-        if (size > 0) {
-            final FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
-            ConnectionProvider connectionProvider = new ConnectionProvider() {
-                @Nullable
-                @Override
-                public ConnectionHandler getConnectionHandler() {
-                    return connectionMappingManager.getConnectionHandler(virtualFile);
-                }
-            };
-
-            ConnectionAction executionTask = new ConnectionAction("the statement execution", connectionProvider) {
-                @Override
-                protected void execute() {
-                    SimpleTask executionCallback = new SimpleTask() {
-                        @Override
-                        protected void execute() {
-                            for (final StatementExecutionProcessor executionProcessor : executionProcessors) {
-                                ExecutionContext context = executionProcessor.getExecutionContext();
-                                StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-                                SessionId sessionId = executionInput.getTargetSessionId();
-                                ConnectionId connectionId = executionInput.getConnectionHandlerId();
-                                if (context.isNot(EXECUTING) && context.isNot(QUEUED)) {
-                                    if (sessionId == SessionId.POOL) {
-                                        new BackgroundTask(getProject(), "Executing statement", true, true) {
-                                            @Override
-                                            protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                                                process(executionProcessor);
-                                            }
-                                        }.start();
-                                    } else {
-                                        StatementExecutionQueue executionQueue = getExecutionQueue(connectionId, sessionId);
-                                        if (!executionQueue.contains(executionProcessor)) {
-                                            executionQueue.queue(executionProcessor);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    };
-
-                    promptExecutionDialogs(executionProcessors, DBDebuggerType.NONE, executionCallback);
-                }
-            };
+        if (executionProcessors.size() > 0) {
+            Project project = getProject();
+            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
 
             DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
-            connectionMappingManager.selectConnectionAndSchema(file, executionTask);
+            connectionMappingManager.selectConnectionAndSchema(file,
+                    ConnectionAction.create(
+                            "the statement execution",
+                            () -> connectionMappingManager.getConnectionHandler(virtualFile),
+                            (Integer) null,
+                            action -> promptExecutionDialogs(
+                                    executionProcessors,
+                                    DBDebuggerType.NONE,
+                                    SimpleTask.create(task -> {
+                                        for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+                                            ExecutionContext context = executionProcessor.getExecutionContext();
+                                            StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
+                                            SessionId sessionId = executionInput.getTargetSessionId();
+                                            ConnectionId connectionId = executionInput.getConnectionHandlerId();
+                                            if (context.isNot(EXECUTING) && context.isNot(QUEUED)) {
+                                                if (sessionId == SessionId.POOL) {
+                                                    BackgroundTask.invoke(
+                                                            project,
+                                                            "Executing statement", true, true,
+                                                            (backgroundTask, progress) -> process(executionProcessor));
+                                                } else {
+                                                    StatementExecutionQueue executionQueue = getExecutionQueue(connectionId, sessionId);
+                                                    if (!executionQueue.contains(executionProcessor)) {
+                                                        executionQueue.queue(executionProcessor);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }))));
         }
     }
 
@@ -336,7 +322,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     private boolean promptExecutionDialogs(@NotNull List<StatementExecutionProcessor> executionProcessors, DBDebuggerType debuggerType) {
-        Map<String, StatementExecutionVariable> variableCache = new HashMap<String, StatementExecutionVariable>();
+        Map<String, StatementExecutionVariable> variableCache = new HashMap<>();
         boolean reuseVariables = false;
         boolean bulkExecution = executionProcessors.size() > 1;
 
@@ -345,7 +331,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
             executionProcessor.initExecutionInput(bulkExecution);
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-            Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
+            Set<ExecVariablePsiElement> bucket = new THashSet<>();
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
             if (executablePsiElement != null) {
                 executablePsiElement.collectExecVariablePsiElements(bucket);
@@ -429,7 +415,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         return null;
     }
 
-    public List<StatementExecutionProcessor> getExecutionProcessorsFromOffset(FileEditor fileEditor, int offset) {
+    private List<StatementExecutionProcessor> getExecutionProcessorsFromOffset(FileEditor fileEditor, int offset) {
         List<StatementExecutionProcessor> executionProcessors = new ArrayList<>();
         Editor editor = EditorUtil.getEditor(fileEditor);
 

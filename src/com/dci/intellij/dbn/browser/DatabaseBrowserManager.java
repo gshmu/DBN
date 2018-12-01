@@ -38,7 +38,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
@@ -377,22 +376,18 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         List<Element> schemaElements = connectionElement.getChildren();
                         for (final Element schemaElement : schemaElements) {
                             String schemaName = schemaElement.getAttributeValue("name");
-                            final DBSchema schema = objectBundle.getSchema(schemaName);
-
+                            DBSchema schema = objectBundle.getSchema(schemaName);
                             if (schema != null) {
-                                new BackgroundTask(project, "Loading data dictionary" + connectionString, true) {
-                                    @Override
-                                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                                        String objectTypesAttr = schemaElement.getAttributeValue("object-types");
-                                        List<DBObjectType> objectTypes = DBObjectType.fromCommaSeparated(objectTypesAttr);
-                                        for (DBObjectType objectType : objectTypes) {
-                                            DBObjectListContainer childObjects = schema.getChildObjects();
-                                            if (childObjects != null) {
-                                                childObjects.loadObjectList(objectType);
-                                            }
+                                BackgroundTask.invoke(project, "Loading data dictionary" + connectionString, true, true, (task, progress) -> {
+                                    String objectTypesAttr = schemaElement.getAttributeValue("object-types");
+                                    List<DBObjectType> objectTypes = DBObjectType.fromCommaSeparated(objectTypesAttr);
+                                    for (DBObjectType objectType : objectTypes) {
+                                        DBObjectListContainer childObjects = schema.getChildObjects();
+                                        if (childObjects != null && !progress.isCanceled()) {
+                                            childObjects.loadObjectList(objectType);
                                         }
                                     }
-                                }.start();
+                                });
                             }
                         }
                     }

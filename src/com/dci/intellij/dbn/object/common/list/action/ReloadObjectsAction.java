@@ -12,7 +12,7 @@ public class ReloadObjectsAction extends AnAction {
 
     private DBObjectList objectList;
 
-    public ReloadObjectsAction(DBObjectList objectList) {
+    ReloadObjectsAction(DBObjectList objectList) {
         super(objectList.isLoaded() ? "Reload" : "Load", null, Icons.ACTION_REFRESH);
         this.objectList = objectList;
     }
@@ -22,13 +22,10 @@ public class ReloadObjectsAction extends AnAction {
         String listName = objectList.getName();
         final boolean loaded = objectList.isLoaded();
         String actionDescription = loaded ? "reloading the " + listName : "loading the " + listName;
-        new ConnectionAction(actionDescription, objectList, taskInstructions) {
-            @Override
-            protected void execute() {
-                if (loaded)
-                    objectList.reload(); else
-                    objectList.load(true);
-            }
-        }.start();
+        ConnectionAction.invoke(actionDescription, objectList, taskInstructions, action -> {
+            if (loaded)
+                objectList.reload(); else
+                objectList.load(true);
+        });
     }
 }

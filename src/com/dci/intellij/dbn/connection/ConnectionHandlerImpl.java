@@ -45,7 +45,6 @@ import com.dci.intellij.dbn.object.common.DBObjectBundleImpl;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiDirectory;
@@ -609,16 +608,13 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
             connectionPool.closeConnections();
 
             final Project project = getProject();
-            new BackgroundTask(getProject(), "Trying to connect to " + getName(), false) {
-                @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                    ConnectionManager.testConnection(ConnectionHandlerImpl.this, false, false);
-                    //fixme check if the connection is pointing to a new database and reload if this is the case
-                    //objectBundle.checkForDatabaseChange();
+            BackgroundTask.invoke(getProject(), "Trying to connect to " + getName(), false, false, (task, progress) -> {
+                ConnectionManager.testConnection(ConnectionHandlerImpl.this, false, false);
+                //fixme check if the connection is pointing to a new database and reload if this is the case
+                //objectBundle.checkForDatabaseChange();
 
-                    EventUtil.notify(project, BrowserTreeEventListener.TOPIC).nodeChanged(getObjectBundle(), TreeEventType.NODES_CHANGED);
-                }
-            }.start();
+                EventUtil.notify(project, BrowserTreeEventListener.TOPIC).nodeChanged(getObjectBundle(), TreeEventType.NODES_CHANGED);
+            });
         }
     }
 }

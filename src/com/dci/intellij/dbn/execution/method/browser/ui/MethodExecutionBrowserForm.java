@@ -19,9 +19,7 @@ import com.dci.intellij.dbn.object.common.ui.ObjectTree;
 import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionListener;
@@ -37,7 +35,7 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
 
     private MethodBrowserSettings settings;
 
-    public MethodExecutionBrowserForm(MethodExecutionBrowserDialog parentComponent, ObjectTreeModel model, boolean debug) {
+    MethodExecutionBrowserForm(MethodExecutionBrowserDialog parentComponent, ObjectTreeModel model, boolean debug) {
         super(parentComponent);
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
                 new SelectConnectionComboBoxAction(this, debug),
@@ -107,21 +105,16 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
     }
 
     private void updateTree() {
-        BackgroundTask backgroundTask = new BackgroundTask(getProject(), "Loading executable components", false) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                MethodBrowserSettings settings = getSettings();
-                final ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
-                SimpleLaterInvocator.invoke(() -> {
-                    methodsTree.setModel(model);
+        BackgroundTask.invoke(getProject(), "Loading executable components", false, false, (task, progress) -> {
+            MethodBrowserSettings settings = getSettings();
+            final ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
+            SimpleLaterInvocator.invoke(() -> {
+                methodsTree.setModel(model);
 
-                    methodsTree.revalidate();
-                    methodsTree.repaint();
-                });
-
-            }
-        };
-        backgroundTask.start();
+                methodsTree.revalidate();
+                methodsTree.repaint();
+            });
+        });
     }
 
     public JPanel getComponent() {

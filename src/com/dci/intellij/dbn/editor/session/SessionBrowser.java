@@ -88,29 +88,26 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     public void loadSessions(final boolean force) {
         if (shouldLoad(force)) {
-            new ConnectionAction("loading the sessions", this, new TaskInstructions("Loading sessions", TaskInstruction.START_IN_BACKGROUND)) {
-                @Override
-                protected void execute() {
-                    if (shouldLoad(force)) {
-                        try {
-                            setLoading(true);
-                            SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
-                            SessionBrowserModel model = sessionBrowserManager.loadSessions(sessionBrowserFile);
-                            replaceModel(model);
-                        } finally {
-                            EventUtil.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
-                            setLoading(false);
+            TaskInstructions taskInstructions = new TaskInstructions("Loading sessions", TaskInstruction.START_IN_BACKGROUND);
+            ConnectionAction.invoke("loading the sessions", this, taskInstructions,
+                    action -> {
+                        if (shouldLoad(force)) {
+                            try {
+                                setLoading(true);
+                                SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
+                                SessionBrowserModel model = sessionBrowserManager.loadSessions(sessionBrowserFile);
+                                replaceModel(model);
+                            } finally {
+                                EventUtil.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
+                                setLoading(false);
+                            }
                         }
-                    }
-                }
-
-                @Override
-                protected void cancel() {
-                    super.cancel();
-                    setLoading(false);
-                    setRefreshInterval(0);
-                }
-            }.start();
+                    },
+                    cancel -> {
+                        setLoading(false);
+                        setRefreshInterval(0);
+                    },
+                    null);
         }
     }
 

@@ -27,4 +27,18 @@ public abstract class SimpleTask<T> extends AbstractTask<T>{
     }
 
     protected abstract void execute();
+
+    public static <T> SimpleTask<T> create(SimpleRunnable<T> runnable) {
+        return new SimpleTask<T>() {
+            @Override
+            protected void execute() {
+                runnable.run(this);
+            }
+        };
+    }
+
+    @FunctionalInterface
+    public interface SimpleRunnable<T> {
+        void run(SimpleTask<T> task);
+    }
 }

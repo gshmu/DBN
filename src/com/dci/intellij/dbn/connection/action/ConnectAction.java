@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.action;
 
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -15,17 +16,14 @@ public class ConnectAction extends AbstractConnectionAction {
     public void actionPerformed(AnActionEvent anActionEvent) {
         final ConnectionHandler connectionHandler = getConnectionHandler();
         connectionHandler.getInstructions().setAllowAutoConnect(true);
-        TaskInstructions taskInstructions = new TaskInstructions("Trying to connect to " + connectionHandler.getName());
-        new ConnectionAction("connecting to database", connectionHandler, taskInstructions) {
-            @Override
-            protected void execute() {
-                ConnectionManager.testConnection(connectionHandler, false, true);
-            }
+        TaskInstructions taskInstructions = new TaskInstructions(
+                "Trying to connect to " + connectionHandler.getName(),
+                TaskInstruction.MANAGED);
 
-            @Override
-            protected boolean isManaged() {
-                return true;
-            }
-        }.start();
+        ConnectionAction.invoke(
+                "connecting to database",
+                connectionHandler,
+                taskInstructions,
+                action -> ConnectionManager.testConnection(connectionHandler, false, true));
     }
 }

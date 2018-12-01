@@ -217,7 +217,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             }
 
             @NotNull
-            public StructureViewModel createStructureViewModel() {
+            StructureViewModel createStructureViewModel() {
                 // Structure does not change. so it can be cached.
                 if (structureViewModel == null) {
                     structureViewModel = new DatasetEditorStructureViewModel(DatasetEditor.this);
@@ -260,46 +260,43 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     public void loadData(final DatasetLoadInstructions instructions) {
         if (status.isNot(LOADING)) {
-            new ConnectionAction("loading table data", this) {
-                @Override
-                protected void execute() {
-                    setLoading(true);
-                    EventUtil.notify(project, DatasetLoadListener.TOPIC).datasetLoading(databaseFile);
-                    SimpleBackgroundInvocator.invoke(() -> {
-                        DatasetEditorForm editorForm = getEditorForm();
+            ConnectionAction.invoke("loading table data", this, (Integer) null, action -> {
+                setLoading(true);
+                EventUtil.notify(project, DatasetLoadListener.TOPIC).datasetLoading(databaseFile);
+                SimpleBackgroundInvocator.invoke(() -> {
+                    DatasetEditorForm editorForm = getEditorForm();
+                    try {
+                        editorForm.showLoadingHint();
+                        editorForm.getEditorTable().cancelEditing();
+                        DatasetEditorTable oldEditorTable = instructions.isRebuild() ? editorForm.beforeRebuild() : null;
                         try {
-                            editorForm.showLoadingHint();
-                            editorForm.getEditorTable().cancelEditing();
-                            DatasetEditorTable oldEditorTable = instructions.isRebuild() ? editorForm.beforeRebuild() : null;
-                            try {
-                                DatasetEditorModel tableModel = getTableModel();
-                                tableModel.load(instructions.isUseCurrentFilter(), instructions.isPreserveChanges());
-                                DatasetEditorTable editorTable = getEditorTable();
-                                editorTable.clearSelection();
-                            } finally {
-                                if (!isDisposed()) {
-                                    editorForm.afterRebuild(oldEditorTable);
-                                }
-                            }
-                            dataLoadError = null;
-                        } catch (ProcessCanceledException ignore) {
-
-                        } catch (SQLException e) {
-                            dataLoadError = e.getMessage();
-                            handleLoadError(e, instructions);
-                        } catch (Exception e) {
-                            if (e != AlreadyDisposedException.INSTANCE) {
-                                LOGGER.error("Error loading table data", e);
-                            }
+                            DatasetEditorModel tableModel = getTableModel();
+                            tableModel.load(instructions.isUseCurrentFilter(), instructions.isPreserveChanges());
+                            DatasetEditorTable editorTable = getEditorTable();
+                            editorTable.clearSelection();
                         } finally {
-                            status.set(LOADED, true);
-                            editorForm.hideLoadingHint();
-                            setLoading(false);
-                            EventUtil.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
+                            if (!isDisposed()) {
+                                editorForm.afterRebuild(oldEditorTable);
+                            }
                         }
-                    });
-                }
-            }.start();
+                        dataLoadError = null;
+                    } catch (ProcessCanceledException ignore) {
+
+                    } catch (SQLException e) {
+                        dataLoadError = e.getMessage();
+                        handleLoadError(e, instructions);
+                    } catch (Exception e) {
+                        if (e != AlreadyDisposedException.INSTANCE) {
+                            LOGGER.error("Error loading table data", e);
+                        }
+                    } finally {
+                        status.set(LOADED, true);
+                        editorForm.hideLoadingHint();
+                        setLoading(false);
+                        EventUtil.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
+                    }
+                });
+            });
         }
 
     }
@@ -504,27 +501,24 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     /*******************************************************
      *                      Listeners                      *
      *******************************************************/
-    private ConnectionHandlerStatusListener connectionStatusListener = new ConnectionHandlerStatusListener() {
-        @Override
-        public void statusChanged(ConnectionId connectionId, ConnectionHandlerStatus status) {
-            final ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler.getId().equals(connectionId) && status == ConnectionHandlerStatus.CONNECTED) {
-                final boolean connected = connectionHandler.isConnected(SessionId.MAIN);
-                boolean statusChanged = getStatus().set(CONNECTED, connected);
+    private ConnectionHandlerStatusListener connectionStatusListener = (connectionId, status) -> {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (connectionHandler.getId().equals(connectionId) && status == ConnectionHandlerStatus.CONNECTED) {
+            final boolean connected = connectionHandler.isConnected(SessionId.MAIN);
+            boolean statusChanged = getStatus().set(CONNECTED, connected);
 
-                if (statusChanged) {
-                    SimpleLaterInvocator.invoke(() -> {
-                        DatasetEditorTable editorTable = getEditorTable();
-                        editorTable.updateBackground(!connected);
-                        if (connected) {
-                            loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
-                        } else {
-                            editorTable.cancelEditing();
-                            editorTable.revalidate();
-                            editorTable.repaint();
-                        }
-                    });
-                }
+            if (statusChanged) {
+                SimpleLaterInvocator.invoke(() -> {
+                    DatasetEditorTable editorTable = getEditorTable();
+                    editorTable.updateBackground(!connected);
+                    if (connected) {
+                        loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
+                    } else {
+                        editorTable.cancelEditing();
+                        editorTable.revalidate();
+                        editorTable.repaint();
+                    }
+                });
             }
         }
     };
@@ -579,26 +573,19 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         }
     };
 
-    private DataGridSettingsChangeListener dataGridSettingsChangeListener = new DataGridSettingsChangeListener() {
-        @Override
-        public void trackingColumnsVisibilityChanged(boolean visible) {
-            loadData(COL_VISIBILITY_STATUS_CHANGE_LOAD_INSTRUCTIONS);
-        }
-    };
+    private DataGridSettingsChangeListener dataGridSettingsChangeListener =
+            visible -> loadData(COL_VISIBILITY_STATUS_CHANGE_LOAD_INSTRUCTIONS);
 
 
 
     /*******************************************************
      *                   Data Provider                     *
      *******************************************************/
-    public DataProvider dataProvider = new DataProvider() {
-        @Override
-        public Object getData(@NonNls String dataId) {
-            if (DBNDataKeys.DATASET_EDITOR.is(dataId)) {
-                return DatasetEditor.this;
-            }
-            return null;
+    public DataProvider dataProvider = dataId -> {
+        if (DBNDataKeys.DATASET_EDITOR.is(dataId)) {
+            return DatasetEditor.this;
         }
+        return null;
     };
 
     @Nullable
@@ -606,7 +593,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return dataProvider;
     }
 
-    public String getDataLoadError() {
+    String getDataLoadError() {
         return dataLoadError;
     }
 

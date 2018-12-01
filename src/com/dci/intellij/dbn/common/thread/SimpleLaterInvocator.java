@@ -23,7 +23,7 @@ public abstract class SimpleLaterInvocator extends SynchronizedTask{
         };
     }
 
-    public static void invoke(Runnable runnable) {
+    public static <T> void invoke(Runnable runnable) {
         SimpleLaterInvocator.create(runnable).start();
     }
 }

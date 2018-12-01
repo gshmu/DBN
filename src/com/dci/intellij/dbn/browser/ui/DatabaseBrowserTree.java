@@ -244,15 +244,12 @@ public class DatabaseBrowserTree extends DBNTree {
                     DatabaseFileSystem.getInstance().openEditor(object, deliberate);
                     event.consume();
                 } else if (deliberate) {
-                    new BackgroundTask(getProject(), "Loading Object Reference", false, false) {
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                            final DBObject navigationObject = object.getDefaultNavigationObject();
-                            if (navigationObject != null) {
-                                SimpleLaterInvocator.invoke(() -> navigationObject.navigate(true));
-                            }
-
+                    BackgroundTask.invoke(getProject(), "Loading Object Reference", false, false, (task, progress) -> {
+                        DBObject navigationObject = object.getDefaultNavigationObject();
+                        if (navigationObject != null) {
+                            SimpleLaterInvocator.invoke(() -> navigationObject.navigate(true));
                         }
-                    }.start();
+                    });
 
                 }
             } else if (lastPathEntity instanceof DBObjectBundle) {

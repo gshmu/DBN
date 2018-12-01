@@ -28,7 +28,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
@@ -94,41 +93,36 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            final Project project = ActionUtil.getProject(e);
-            if (project != null) {
-                BackgroundTask backgroundTask = new BackgroundTask(project, "Loading executable elements", false) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                        MethodBrowserSettings settings = MethodExecutionManager.getInstance(project).getBrowserSettings();
-                        MethodExecutionInput executionInput = getExecutionInput();
-                        DBMethod currentMethod = executionInput == null ? null : executionInput.getMethod();
-                        if (currentMethod != null) {
-                            settings.setConnectionHandler(currentMethod.getConnectionHandler());
-                            settings.setSchema(currentMethod.getSchema());
-                            settings.setMethod(currentMethod);
+            Project project = ActionUtil.ensureProject(e);
+            BackgroundTask.invoke(project, "Loading executable elements", false, false, (task, progress) -> {
+                MethodBrowserSettings settings = MethodExecutionManager.getInstance(project).getBrowserSettings();
+                MethodExecutionInput executionInput = getExecutionInput();
+                DBMethod currentMethod = executionInput == null ? null : executionInput.getMethod();
+                if (currentMethod != null) {
+                    settings.setConnectionHandler(currentMethod.getConnectionHandler());
+                    settings.setSchema(currentMethod.getSchema());
+                    settings.setMethod(currentMethod);
+                }
+
+                DBSchema schema = settings.getSchema();
+                final ObjectTreeModel objectTreeModel = DatabaseFeature.DEBUGGING.isSupported(schema) ?
+                        new ObjectTreeModel(schema, settings.getVisibleObjectTypes(), settings.getMethod()) :
+                        new ObjectTreeModel(null, settings.getVisibleObjectTypes(), null);
+
+                SimpleLaterInvocator.invoke(() -> {
+                    final MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
+                    browserDialog.show();
+                    if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                        DBMethod method = browserDialog.getSelectedMethod();
+                        MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+                        MethodExecutionInput methodExecutionInput = methodExecutionManager.getExecutionInput(method);
+                        if (methodExecutionInput != null) {
+                            setExecutionInput(methodExecutionInput, true);
                         }
-
-                        DBSchema schema = settings.getSchema();
-                        final ObjectTreeModel objectTreeModel = DatabaseFeature.DEBUGGING.isSupported(schema) ?
-                                new ObjectTreeModel(schema, settings.getVisibleObjectTypes(), settings.getMethod()) :
-                                new ObjectTreeModel(null, settings.getVisibleObjectTypes(), null);
-
-                        SimpleLaterInvocator.invoke(() -> {
-                            final MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
-                            browserDialog.show();
-                            if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                                DBMethod method = browserDialog.getSelectedMethod();
-                                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                                MethodExecutionInput methodExecutionInput = methodExecutionManager.getExecutionInput(method);
-                                if (methodExecutionInput != null) {
-                                    setExecutionInput(methodExecutionInput, true);
-                                }
-                            }
-                        });
                     }
-                };
-                backgroundTask.start();
-            }
+                });
+
+            });
         }
     }
     public class OpenMethodHistoryAction extends AnAction {
@@ -138,19 +132,14 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            Project project = ActionUtil.getProject(e);
-            if (project != null) {
-                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                methodExecutionManager.showExecutionHistoryDialog(getExecutionInput(), false, true, new SimpleTask<MethodExecutionInput>() {
-                    @Override
-                    protected void execute() {
-                        MethodExecutionInput executionInput = getData();
-                        if (executionInput != null) {
-                            setExecutionInput(executionInput, true);
-                        }
-                    }
-                });
-            }
+            Project project = ActionUtil.ensureProject(e);
+            MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+            methodExecutionManager.showExecutionHistoryDialog(getExecutionInput(), false, true, SimpleTask.create((task) -> {
+                MethodExecutionInput executionInput = task.getData();
+                if (executionInput != null) {
+                    setExecutionInput(executionInput, true);
+                }
+            }));
         }
     }
 

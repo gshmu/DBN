@@ -16,23 +16,13 @@ import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DISPOSED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING_IN_BACKGROUND;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
     protected static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));
@@ -199,18 +189,15 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                     set(LOADING_IN_BACKGROUND, true);
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     String connectionString = " (" + connectionHandler.getName() + ')';
-                    new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
-                        @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                            try {
-                                DatabaseLoadMonitor.startBackgroundLoad();
-                                load(force);
-                            } finally {
-                                DatabaseLoadMonitor.endBackgroundLoad();
-                                set(LOADING_IN_BACKGROUND, false);
-                            }
+                    BackgroundTask.invoke(getProject(), "Loading data dictionary" + connectionString, true, false, (task, progress) -> {
+                        try {
+                            DatabaseLoadMonitor.startBackgroundLoad();
+                            load(force);
+                        } finally {
+                            DatabaseLoadMonitor.endBackgroundLoad();
+                            set(LOADING_IN_BACKGROUND, false);
                         }
-                    }.start();
+                    });
                 }
             }
         }

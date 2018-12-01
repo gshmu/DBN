@@ -127,25 +127,22 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
             final MethodExecutionInput executionInput = getSelectedExecutionInput();
             if (executionInput != null) {
                 TaskInstructions taskInstructions = new TaskInstructions("Loading Method details");
-                new ConnectionAction("loading the execution history", executionInput, taskInstructions) {
-                    @Override
-                    protected void execute() {
-                        final DBMethod method = executionInput.getMethod();
-                        if (method != null) {
-                            method.getArguments();
-                        }
-
-                        SimpleLaterInvocator.invoke(() -> {
-                            FailsafeUtil.check(dialog);
-                            dialog.showMethodExecutionPanel(executionInput);
-                            dialog.setSelectedExecutionInput(executionInput);
-                            dialog.updateMainButtons(executionInput);
-                            if (method != null) {
-                                executionHistory.setSelection(executionInput.getMethodRef());
-                            }
-                        });
+                ConnectionAction.invoke("loading the execution history", executionInput, taskInstructions, action -> {
+                    DBMethod method = executionInput.getMethod();
+                    if (method != null) {
+                        method.getArguments();
                     }
-                }.start();
+
+                    SimpleLaterInvocator.invoke(() -> {
+                        FailsafeUtil.check(dialog);
+                        dialog.showMethodExecutionPanel(executionInput);
+                        dialog.setSelectedExecutionInput(executionInput);
+                        dialog.updateMainButtons(executionInput);
+                        if (method != null) {
+                            executionHistory.setSelection(executionInput.getMethodRef());
+                        }
+                    });
+                });
             }
         }
     };

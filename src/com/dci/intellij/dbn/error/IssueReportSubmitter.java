@@ -18,13 +18,8 @@ import com.intellij.idea.IdeaLogger;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationInfo;
-import com.intellij.openapi.diagnostic.Attachment;
-import com.intellij.openapi.diagnostic.ErrorReportSubmitter;
-import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.diagnostic.SubmittedReportInfo;
+import com.intellij.openapi.diagnostic.*;
 import com.intellij.openapi.extensions.PluginId;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NonNls;
@@ -33,11 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.FAILED;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.NEW_ISSUE;
@@ -155,38 +147,35 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         }
 
 
-        new BackgroundTask(project, "Submitting issue report", false, false) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                TicketResponse result = null;
-                try {
-                    result = submit(events, localPluginVersion, summary, description.toString());
-                } catch (Exception e) {
+        BackgroundTask.invoke(project, "Submitting issue report", false, false, (task, progress) -> {
+            TicketResponse result;
+            try {
+                result = submit(events, localPluginVersion, summary, description.toString());
+            } catch (Exception e) {
 
-                    NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
-                            "<html>Failed to send error report: "+ e.getMessage() + "</html>");
+                NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
+                        "<html>Failed to send error report: "+ e.getMessage() + "</html>");
 
-                    consumer.consume(new SubmittedReportInfo(null, null, FAILED));
-                    return;
-                }
-
-                String errorMessage = result.getErrorMessage();
-                if (StringUtil.isEmpty(errorMessage)) {
-                    LOGGER.info("Error report submitted, response: " + result);
-
-                    String ticketId = result.getTicketId();
-                    String ticketUrl = getTicketUrl(ticketId);
-                    NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
-                            "<html>Error report successfully sent. Ticket <a href='" + ticketUrl + "'>" + ticketId + "</a> created.</html>");
-
-                    consumer.consume(new SubmittedReportInfo(ticketUrl, ticketId, NEW_ISSUE));
-                } else {
-                    NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
-                            "<html>Failed to send error report: "+ errorMessage + "</html>");
-                    consumer.consume(new SubmittedReportInfo(null, null, FAILED));
-                }
+                consumer.consume(new SubmittedReportInfo(null, null, FAILED));
+                return;
             }
-        }.start();
+
+            String errorMessage = result.getErrorMessage();
+            if (StringUtil.isEmpty(errorMessage)) {
+                LOGGER.info("Error report submitted, response: " + result);
+
+                String ticketId = result.getTicketId();
+                String ticketUrl = getTicketUrl(ticketId);
+                NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
+                        "<html>Error report successfully sent. Ticket <a href='" + ticketUrl + "'>" + ticketId + "</a> created.</html>");
+
+                consumer.consume(new SubmittedReportInfo(ticketUrl, ticketId, NEW_ISSUE));
+            } else {
+                NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
+                        "<html>Failed to send error report: "+ errorMessage + "</html>");
+                consumer.consume(new SubmittedReportInfo(null, null, FAILED));
+            }
+        });
 
         return true;
     }

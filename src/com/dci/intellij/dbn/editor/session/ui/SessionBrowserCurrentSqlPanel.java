@@ -31,7 +31,6 @@ import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +53,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     private Object selectedSessionId;
 
 
-    public SessionBrowserCurrentSqlPanel(SessionBrowser sessionBrowser) {
+    SessionBrowserCurrentSqlPanel(SessionBrowser sessionBrowser) {
         this.sessionBrowser = sessionBrowser;
         createStatementViewer();
 
@@ -88,27 +87,26 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
             if (selectedRow != null) {
                 setPreviewText("-- Loading...");
                 selectedSessionId = selectedRow.getSessionId();
-                final Object sessionId = selectedSessionId;
-                final String schemaName = selectedRow.getSchema();
-                final Project project = sessionBrowser.getProject();
-                new BackgroundTask(project, "Loading session current SQL", true) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        ConnectionHandler connectionHandler = getConnectionHandler();
-                        DBSchema schema = null;
-                        if (StringUtil.isNotEmpty(schemaName)) {
-                            schema = connectionHandler.getObjectBundle().getSchema(schemaName);
-                        }
 
-                        checkCancelled(sessionId);
-                        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
-                        String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
+                Object sessionId = selectedSessionId;
+                String schemaName = selectedRow.getSchema();
+                Project project = sessionBrowser.getProject();
 
-                        checkCancelled(sessionId);
-                        setDatabaseSchema(schema);
-                        setPreviewText(sql.replace("\r\n", "\n"));
+                BackgroundTask.invoke(project, "Loading session current SQL", true, false, (task, progress) -> {
+                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    DBSchema schema = null;
+                    if (StringUtil.isNotEmpty(schemaName)) {
+                        schema = connectionHandler.getObjectBundle().getSchema(schemaName);
                     }
-                }.start();
+
+                    checkCancelled(sessionId);
+                    SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
+                    String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
+
+                    checkCancelled(sessionId);
+                    setDatabaseSchema(schema);
+                    setPreviewText(sql.replace("\r\n", "\n"));
+                });
             } else {
                 setPreviewText("");
             }
@@ -170,15 +168,15 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
 
 
     public class WrapUnwrapContentAction extends ToggleAction {
-        public WrapUnwrapContentAction() {
+        WrapUnwrapContentAction() {
             super("Wrap/Unwrap", "", Icons.ACTION_WRAP_TEXT);
         }
 
-        public boolean isSelected(AnActionEvent e) {
+        public boolean isSelected(@NotNull AnActionEvent e) {
             return viewer != null && viewer.getSettings().isUseSoftWraps();
         }
 
-        public void setSelected(AnActionEvent e, boolean state) {
+        public void setSelected(@NotNull AnActionEvent e, boolean state) {
             viewer.getSettings().setUseSoftWraps(state);
         }
 
@@ -192,12 +190,12 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     }
 
     public class RefreshAction extends AnAction {
-        public RefreshAction() {
+        RefreshAction() {
             super("Reload", "", Icons.ACTION_REFRESH);
         }
 
         @Override
-        public void actionPerformed(AnActionEvent anActionEvent) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             loadCurrentStatement();
         }
     }

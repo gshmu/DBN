@@ -60,17 +60,16 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
             DBLanguagePsiFile databasePsiFile = (DBLanguagePsiFile) psiFile;
 
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            connectionMappingManager.selectConnectionAndSchema(databasePsiFile, new ConnectionAction("", databasePsiFile) {
-                @Override
-                protected void execute() {
-                    StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-                    StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, true);
-                    if (executionProcessor != null) {
-                        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
-                        debuggerManager.startStatementDebugger(executionProcessor);
-                    }
-                }
-            });
+            connectionMappingManager.selectConnectionAndSchema(
+                    databasePsiFile,
+                    ConnectionAction.create("", databasePsiFile, (Integer)null, action -> {
+                        StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
+                        StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, true);
+                        if (executionProcessor != null) {
+                            DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
+                            debuggerManager.startStatementDebugger(executionProcessor);
+                        }
+                    }));
         }
     }
 

@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
@@ -48,12 +47,9 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
             final ConnectionHandler activeConnection = dbLanguagePsiFile.getConnectionHandler();
             if (activeConnection != null && !activeConnection.isDisposed() && !activeConnection.isVirtual()) {
                 activeConnection.getInstructions().setAllowAutoConnect(true);
-                new BackgroundTask(project, "Trying to connect to " + activeConnection.getName(), false) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                        ConnectionManager.testConnection(activeConnection, false, true);
-                    }
-                }.start();
+                BackgroundTask.invoke(project,
+                        "Trying to connect to " + activeConnection.getName(), false, false,
+                        (task, progress) -> ConnectionManager.testConnection(activeConnection, false, true));
             }
         }
     }

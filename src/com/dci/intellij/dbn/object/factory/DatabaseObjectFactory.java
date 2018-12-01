@@ -23,7 +23,6 @@ import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputDialog;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +69,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
 
     public boolean createObject(ObjectFactoryInput factoryInput) {
         Project project = getProject();
-        List<String> errors = new ArrayList<String>();
+        List<String> errors = new ArrayList<>();
         factoryInput.validate(errors);
         if (errors.size() > 0) {
             StringBuilder buffer = new StringBuilder("Could not create " + factoryInput.getObjectType().getName() + ". Please correct following errors: \n");
@@ -109,19 +108,13 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                 "Drop object",
                 "Are you sure you want to drop the " + object.getQualifiedNameWithType() + "?",
                 MessageUtil.OPTIONS_YES_NO, 0,
-                new ConnectionAction("dropping the object", object, 0) {
-                    @Override
-                    protected void execute() {
-                        DatabaseFileManager.getInstance(getProject()).closeFile(object);
+                ConnectionAction.create("dropping the object", object, 0, action -> {
+                    Project project = getProject();
+                    DatabaseFileManager.getInstance(project).closeFile(object);
 
-                        new BackgroundTask(getProject(), "Dropping " + object.getQualifiedNameWithType(), false, false) {
-                            @Override
-                            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                                doDropObject(object);
-                            }
-                        }.start();
-                    }
-                });
+                    String taskTitle = "Dropping " + object.getQualifiedNameWithType();
+                    BackgroundTask.invoke(project, taskTitle, false, false, (task, progress) -> doDropObject(object));
+                }));
 
     }
 
