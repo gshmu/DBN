@@ -59,7 +59,7 @@ public abstract class PsiLookupAdapter {
 
     @Nullable
     public final Set<BasePsiElement> collectInScope(@NotNull BasePsiElement scope, @Nullable Set<BasePsiElement> bucket) {
-        BasePsiElement collectScope = scope.isScopeBoundary() ? scope : scope.findEnclosingScopePsiElement();
+        BasePsiElement collectScope = scope.isScopeBoundary() ? scope : scope.getEnclosingScopePsiElement();
         if (collectScope != null) {
             return collectScope.collectPsiElements(this, bucket, 100);
         }
