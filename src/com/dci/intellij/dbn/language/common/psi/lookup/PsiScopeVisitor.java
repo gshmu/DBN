@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 
 public abstract class PsiScopeVisitor<T> {
     public final T visit(BasePsiElement element) {
-        BasePsiElement scope = element.findEnclosingScopePsiElement();
+        BasePsiElement scope = element.getEnclosingScopePsiElement();
         while (scope != null) {
             boolean breakTreeWalk = visitScope(scope);
             if (breakTreeWalk || scope.isScopeIsolation()) break;
@@ -14,7 +14,7 @@ public abstract class PsiScopeVisitor<T> {
             PsiElement parent = scope.getParent();
             if (parent instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) parent;
-                scope = basePsiElement.findEnclosingScopePsiElement();
+                scope = basePsiElement.getEnclosingScopePsiElement();
 
             } else {
                 scope = null;

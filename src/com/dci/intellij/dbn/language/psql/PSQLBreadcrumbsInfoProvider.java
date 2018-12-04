@@ -64,7 +64,7 @@ public class PSQLBreadcrumbsInfoProvider implements BreadcrumbsProvider {
         PsiElement parent = element.getParent();
         if (parent instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) parent;
-            return basePsiElement.findEnclosingScopePsiElement();
+            return basePsiElement.getEnclosingScopePsiElement();
         }
         return null;
     }

@@ -11,23 +11,13 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
-import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
-import com.dci.intellij.dbn.language.common.psi.lookup.ObjectDefinitionLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.VariableDefinitionLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.*;
 import com.dci.intellij.dbn.language.common.resolve.AliasObjectResolver;
 import com.dci.intellij.dbn.language.common.resolve.SurroundingVirtualObjectResolver;
 import com.dci.intellij.dbn.language.common.resolve.UnderlyingObjectResolver;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSynonym;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
-import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.DBVirtualObject;
+import com.dci.intellij.dbn.object.common.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.application.ApplicationManager;
@@ -312,7 +302,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
     private Object[] buildAliasRefVariants() {
         SequencePsiElement statement = (SequencePsiElement) findEnclosingPsiElement(ElementTypeAttribute.STATEMENT);
-        BasePsiElement sourceScope = findEnclosingScopePsiElement();
+        BasePsiElement sourceScope = getEnclosingScopePsiElement();
         DBObjectType objectType = getObjectType();
         PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
         Set<BasePsiElement> aliasDefinitions = lookupAdapter.collectInScope(statement, null);
@@ -478,7 +468,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             if (referencedElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;
                 if (identifierPsiElement.isReference() && identifierPsiElement.isReferenceable()) {
-                    return identifierPsiElement.findEnclosingScopePsiElement() == findEnclosingScopePsiElement();
+                    return identifierPsiElement.getEnclosingScopePsiElement() == getEnclosingScopePsiElement();
                 }
             }
             return true;
@@ -605,7 +595,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
     public List<BasePsiElement> findQualifiedUsages() {
         List<BasePsiElement> qualifiedUsages= new ArrayList<BasePsiElement>();
-        BasePsiElement scopePsiElement = findEnclosingScopePsiElement();
+        BasePsiElement scopePsiElement = getEnclosingScopePsiElement();
         if (scopePsiElement != null) {
             IdentifierLookupAdapter identifierLookupAdapter = new IdentifierLookupAdapter(this, null, null, null, getChars());
             Set<BasePsiElement> basePsiElements = identifierLookupAdapter.collectInElement(scopePsiElement, null);
