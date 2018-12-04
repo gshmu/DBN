@@ -219,12 +219,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     }
 
     private static DBEditableObjectVirtualFile createDatabaseFile(final DBSchemaObject object) {
-        return new ReadActionRunner<DBEditableObjectVirtualFile>() {
-            @Override
-            protected DBEditableObjectVirtualFile run() {
-                return new DBEditableObjectVirtualFile(object);
-            }
-        }.start();
+        return ReadActionRunner.invoke(false, () -> new DBEditableObjectVirtualFile(object));
     }
 
     @Nullable

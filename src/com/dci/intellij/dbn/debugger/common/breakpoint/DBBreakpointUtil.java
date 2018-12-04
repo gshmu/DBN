@@ -109,26 +109,23 @@ public class DBBreakpointUtil {
     }
 
     public static List<XLineBreakpoint<XBreakpointProperties>> getDatabaseBreakpoints(final ConnectionHandler connectionHandler) {
-        return new ReadActionRunner<List<XLineBreakpoint<XBreakpointProperties>>>() {
-            @Override
-            protected List<XLineBreakpoint<XBreakpointProperties>> run() {
-                DBBreakpointType databaseBreakpointType = (DBBreakpointType) XDebuggerUtil.getInstance().findBreakpointType(DBBreakpointType.class);
-                Project project = connectionHandler.getProject();
-                XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
-                Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints = (Collection<XLineBreakpoint<XBreakpointProperties>>) breakpointManager.getBreakpoints(databaseBreakpointType);
+        return ReadActionRunner.invoke(false, () -> {
+            DBBreakpointType databaseBreakpointType = XDebuggerUtil.getInstance().findBreakpointType(DBBreakpointType.class);
+            Project project = connectionHandler.getProject();
+            XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
+            Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints = (Collection<XLineBreakpoint<XBreakpointProperties>>) breakpointManager.getBreakpoints(databaseBreakpointType);
 
-                List<XLineBreakpoint<XBreakpointProperties>> connectionBreakpoints = new ArrayList<XLineBreakpoint<XBreakpointProperties>>();
-                for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
-                    XBreakpointProperties properties = breakpoint.getProperties();
-                    if (properties instanceof DBBreakpointProperties) {
-                        DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
-                        if (connectionHandler == breakpointProperties.getConnectionHandler()) {
-                            connectionBreakpoints.add(breakpoint);
-                        }
+            List<XLineBreakpoint<XBreakpointProperties>> connectionBreakpoints = new ArrayList<XLineBreakpoint<XBreakpointProperties>>();
+            for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
+                XBreakpointProperties properties = breakpoint.getProperties();
+                if (properties instanceof DBBreakpointProperties) {
+                    DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
+                    if (connectionHandler == breakpointProperties.getConnectionHandler()) {
+                        connectionBreakpoints.add(breakpoint);
                     }
                 }
-                return connectionBreakpoints;
             }
-        }.start();
+            return connectionBreakpoints;
+        });
     }
 }

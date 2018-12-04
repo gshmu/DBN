@@ -40,22 +40,20 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     private static boolean isRegisteringFileTypes = false;
 
     public static void registerExtensions(final DDLFileExtensionSettings settings) {
-        new WriteActionRunner() {
-            public void run() {
-                try {
-                    isRegisteringFileTypes = true;
-                    FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-                    List<DDLFileType> ddlFileTypeList = settings.getDDLFileTypes();
-                    for (DDLFileType ddlFileType : ddlFileTypeList) {
-                        for (String extension : ddlFileType.getExtensions()) {
-                            fileTypeManager.associateExtension(ddlFileType.getLanguageFileType(), extension);
-                        }
+        WriteActionRunner.invoke(() -> {
+            try {
+                isRegisteringFileTypes = true;
+                FileTypeManager fileTypeManager = FileTypeManager.getInstance();
+                List<DDLFileType> ddlFileTypeList = settings.getDDLFileTypes();
+                for (DDLFileType ddlFileType : ddlFileTypeList) {
+                    for (String extension : ddlFileType.getExtensions()) {
+                        fileTypeManager.associateExtension(ddlFileType.getLanguageFileType(), extension);
                     }
-                } finally {
-                    isRegisteringFileTypes = false;
                 }
+            } finally {
+                isRegisteringFileTypes = false;
             }
-        }.start();
+        });
     }
 
     public static DDLFileManager getInstance(@NotNull Project project) {

@@ -36,16 +36,11 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LATEST;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MERGED;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.OUTDATED;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.REFRESHING;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider, DocumentListener {
 
@@ -235,27 +230,24 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     private void updateFileContent(final SourceCodeContent newContent, final CharSequence newText) {
-        new WriteActionRunner() {
-            @Override
-            public void run() {
-                if (newContent != null) {
-                    localContent = newContent;
-                } else {
-                    localContent.setText(newText);
-                }
+        WriteActionRunner.invoke(() -> {
+            if (newContent != null) {
+                localContent = newContent;
+            } else {
+                localContent.setText(newText);
+            }
 
-                Document document = DocumentUtil.getDocument(DBSourceCodeVirtualFile.this);
-                if (document != null) {
-                    DocumentUtil.setText(document, localContent.getText());
-                    SourceCodeOffsets offsets = localContent.getOffsets();
-                    GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
-                    if (!guardedBlocks.isEmpty()) {
-                        DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
-                        DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
-                    }
+            Document document = DocumentUtil.getDocument(DBSourceCodeVirtualFile.this);
+            if (document != null) {
+                DocumentUtil.setText(document, localContent.getText());
+                SourceCodeOffsets offsets = localContent.getOffsets();
+                GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
+                if (!guardedBlocks.isEmpty()) {
+                    DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
+                    DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
                 }
             }
-        }.start();
+        });
     }
 
     private boolean isChangeTracingSupported() {
@@ -263,7 +255,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     @NotNull
-    public OutputStream getOutputStream(Object o, long l, long l1) throws IOException {
+    public OutputStream getOutputStream(Object o, long l, long l1) {
         return DevNullStreams.OUTPUT_STREAM;
     }
 
@@ -293,12 +285,12 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     @Override
-    public void beforeDocumentChange(DocumentEvent event) {
+    public void beforeDocumentChange(@NotNull DocumentEvent event) {
 
     }
 
     @Override
-    public void documentChanged(DocumentEvent event) {
+    public void documentChanged(@NotNull DocumentEvent event) {
         CharSequence newContent = event.getDocument().getCharsSequence();
         if (isNot(MODIFIED) && !StringUtil.equals(originalContent.getText(), newContent)) {
             set(MODIFIED, true);

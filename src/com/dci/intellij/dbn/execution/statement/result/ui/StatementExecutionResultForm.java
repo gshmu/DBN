@@ -48,14 +48,10 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
         actionsPanel.add(actionToolbar.getComponent());
 
-        recordViewInfo = new ReadActionRunner<RecordViewInfo>() {
-            @Override
-            protected RecordViewInfo run() {
-                return new RecordViewInfo(
-                                executionResult.getName(),
-                                executionResult.getIcon());
-            }
-        }.start();
+        recordViewInfo = ReadActionRunner.invoke(false, () ->
+                new RecordViewInfo(
+                    executionResult.getName(),
+                    executionResult.getIcon()));
 
         resultPanel.setBorder(IdeBorderFactory.createBorder());
         resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);

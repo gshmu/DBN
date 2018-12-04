@@ -5,11 +5,11 @@ import com.intellij.openapi.application.ApplicationManager;
 public abstract class WriteActionRunner {
     private RunnableTask callback;
 
-    public WriteActionRunner(RunnableTask callback) {
+    private WriteActionRunner(RunnableTask callback) {
         this.callback = callback;
     }
 
-    protected WriteActionRunner() {
+    private WriteActionRunner() {
     }
 
     public void start() {
@@ -27,5 +27,24 @@ public abstract class WriteActionRunner {
     }
 
     public abstract void run();
+
+
+    public static void invoke(Runnable runnable) {
+        new WriteActionRunner() {
+            @Override
+            public void run() {
+                runnable.run();
+            }
+        }.start();
+    }
+
+    public static void invoke(Runnable runnable, RunnableTask callback) {
+        new WriteActionRunner(callback) {
+            @Override
+            public void run() {
+                runnable.run();
+            }
+        }.start();
+    }
 
 }

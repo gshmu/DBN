@@ -37,28 +37,25 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
     @Override
     public List<DBMethod> getMethods() {
         if (executionInput != null) {
-            final ExecutablePsiElement executablePsiElement = executionInput.getExecutionProcessor().getCachedExecutable();
+            ExecutablePsiElement executablePsiElement = executionInput.getExecutionProcessor().getCachedExecutable();
             if (executablePsiElement != null) {
-                return new ReadActionRunner<List<DBMethod>>() {
-                    @Override
-                    protected List<DBMethod> run() {
-                        Set<DBObject> objects = executablePsiElement.collectObjectReferences(DBObjectType.METHOD);
-                        if (objects != null) {
-                            List<DBMethod> methods = new ArrayList<DBMethod>();
-                            for (DBObject object : objects) {
-                                if (object instanceof DBMethod && !methods.contains(object)) {
-                                    DBMethod method = (DBMethod) object;
-                                    DBSchema schema = method.getSchema();
-                                    if (schema != null && !schema.isSystemSchema() && !schema.isPublicSchema()) {
-                                        methods.add(method);
-                                    }
+                return ReadActionRunner.invoke(false, () -> {
+                    Set<DBObject> objects = executablePsiElement.collectObjectReferences(DBObjectType.METHOD);
+                    if (objects != null) {
+                        List<DBMethod> methods = new ArrayList<DBMethod>();
+                        for (DBObject object : objects) {
+                            if (object instanceof DBMethod && !methods.contains(object)) {
+                                DBMethod method = (DBMethod) object;
+                                DBSchema schema = method.getSchema();
+                                if (schema != null && !schema.isSystemSchema() && !schema.isPublicSchema()) {
+                                    methods.add(method);
                                 }
                             }
-                            return methods;
                         }
-                        return Collections.emptyList();
+                        return methods;
                     }
-                }.start();
+                    return Collections.emptyList();
+                });
             }
 
         }

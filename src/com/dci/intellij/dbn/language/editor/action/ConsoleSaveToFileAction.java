@@ -27,7 +27,7 @@ import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class ConsoleSaveToFileAction extends DumbAwareAction {
-    public ConsoleSaveToFileAction() {
+    ConsoleSaveToFileAction() {
         super("Save to file", "Save console to file", Icons.CODE_EDITOR_SAVE_TO_FILE);
     }
 
@@ -45,24 +45,22 @@ public class ConsoleSaveToFileAction extends DumbAwareAction {
             final Document document = DocumentUtil.getDocument(virtualFile);
             final VirtualFileWrapper virtualFileWrapper = fileSaverDialog.save(null, consoleVirtualFile.getName());
             if (document != null && virtualFileWrapper != null) {
-                new WriteActionRunner() {
-                    @Override
-                    public void run() {
-                        try {
-                            VirtualFile newVirtualFile = virtualFileWrapper.getVirtualFile(true);
-                            if (newVirtualFile != null) {
-                                newVirtualFile.setBinaryContent(document.getCharsSequence().toString().getBytes());
-                                FileConnectionMappingManager fileConnectionMappingManager = FileConnectionMappingManager.getInstance(project);
-                                fileConnectionMappingManager.setConnectionHandler(newVirtualFile, consoleVirtualFile.getConnectionHandler());
-                                fileConnectionMappingManager.setDatabaseSchema(newVirtualFile, consoleVirtualFile.getDatabaseSchema());
+                WriteActionRunner.invoke(() -> {
+                    try {
+                        VirtualFile newVirtualFile = virtualFileWrapper.getVirtualFile(true);
+                        if (newVirtualFile != null) {
+                            newVirtualFile.setBinaryContent(document.getCharsSequence().toString().getBytes());
+                            FileConnectionMappingManager fileConnectionMappingManager = FileConnectionMappingManager.getInstance(project);
+                            fileConnectionMappingManager.setConnectionHandler(newVirtualFile, consoleVirtualFile.getConnectionHandler());
+                            fileConnectionMappingManager.setDatabaseSchema(newVirtualFile, consoleVirtualFile.getDatabaseSchema());
 
-                                FileEditorManager.getInstance(project).openFile(newVirtualFile, true);
-                            }
-                        } catch (IOException e1) {
-                            MessageUtil.showErrorDialog(project, "Error saving to file", "Could not save console content to file \"" + virtualFileWrapper.getFile().getName() + "\"", e1);
+                            FileEditorManager.getInstance(project).openFile(newVirtualFile, true);
                         }
+                    } catch (IOException e1) {
+                        MessageUtil.showErrorDialog(project, "Error saving to file", "Could not save console content to file \"" + virtualFileWrapper.getFile().getName() + "\"", e1);
                     }
-                }.start();
+
+                });
             }
         }
     }
