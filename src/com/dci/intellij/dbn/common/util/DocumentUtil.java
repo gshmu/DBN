@@ -61,7 +61,7 @@ public class DocumentUtil {
             }
             if (reparse) {
                 EventUtil.notify(project, DocumentBulkUpdateListener.TOPIC).updateStarted(document);
-                ArrayList<VirtualFile> files = new ArrayList<VirtualFile>();
+                ArrayList<VirtualFile> files = new ArrayList<>();
                 files.add(file.getVirtualFile());
                 FileContentUtil.reparseFiles(project, files, true);
                 CodeFoldingManager codeFoldingManager = CodeFoldingManager.getInstance(project);
@@ -91,17 +91,14 @@ public class DocumentUtil {
             Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH_KEY);
             if (lastRefresh == null || TimeUtil.isOlderThan(lastRefresh, 1, TimeUnit.SECONDS)) {
                 psiFile.putUserData(LAST_ANNOTATION_REFRESH_KEY, System.currentTimeMillis());
-                new ReadActionRunner() {
-                    @Override
-                    protected Object run() {
-                        if (psiFile.isValid()) {
-                            Project project = psiFile.getProject();
-                            DaemonCodeAnalyzer daemonCodeAnalyzer = DaemonCodeAnalyzer.getInstance(project);
-                            daemonCodeAnalyzer.restart(psiFile);
-                        }
-                        return null;
+                ReadActionRunner.invoke(false, () -> {
+                    if (psiFile.isValid()) {
+                        Project project = psiFile.getProject();
+                        DaemonCodeAnalyzer daemonCodeAnalyzer = DaemonCodeAnalyzer.getInstance(project);
+                        daemonCodeAnalyzer.restart(psiFile);
                     }
-                }.start();
+                    return null;
+                });
             }
         }
     }
@@ -136,37 +133,31 @@ public class DocumentUtil {
 
     public static void createGuardedBlock(final Document document, final GuardedBlockType type, final int startOffset, final int endOffset, final String reason) {
         if (startOffset != endOffset) {
-            new WriteActionRunner() {
-                @Override
-                public void run() {
-                    int textLength = document.getTextLength();
-                    if (endOffset <= textLength) {
-                        RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
-                        rangeMarker.setGreedyToLeft(startOffset == 0);
-                        rangeMarker.setGreedyToRight(endOffset == textLength);
-                        rangeMarker.putUserData(GuardedBlockType.KEY, type);
-                        document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
-                    }
+            WriteActionRunner.invoke(() -> {
+                int textLength = document.getTextLength();
+                if (endOffset <= textLength) {
+                    RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
+                    rangeMarker.setGreedyToLeft(startOffset == 0);
+                    rangeMarker.setGreedyToRight(endOffset == textLength);
+                    rangeMarker.putUserData(GuardedBlockType.KEY, type);
+                    document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
                 }
-            }.start();
+            });
         }
     }
 
     public static void removeGuardedBlocks(final Document document, final GuardedBlockType type) {
         if (document instanceof DocumentEx) {
             final DocumentEx documentEx = (DocumentEx) document;
-            new WriteActionRunner() {
-                @Override
-                public void run() {
-                    List<RangeMarker> guardedBlocks = new ArrayList<RangeMarker>(documentEx.getGuardedBlocks());
-                    for (final RangeMarker block : guardedBlocks) {
-                        if (block.getUserData(GuardedBlockType.KEY) == type) {
-                            document.removeGuardedBlock(block);
-                        }
+            WriteActionRunner.invoke(() -> {
+                List<RangeMarker> guardedBlocks = new ArrayList<>(documentEx.getGuardedBlocks());
+                for (final RangeMarker block : guardedBlocks) {
+                    if (block.getUserData(GuardedBlockType.KEY) == type) {
+                        document.removeGuardedBlock(block);
                     }
-                    document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);
                 }
-            }.start();
+                document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);
+            });
         }
     }
 
@@ -177,12 +168,10 @@ public class DocumentUtil {
 
     @Nullable
     public static Document getDocument(final @NotNull VirtualFile virtualFile) {
-        return new ReadActionRunner<Document>() {
-            @Override
-            protected Document run() {
-                return FileDocumentManager.getInstance().getDocument(virtualFile);
-            }
-        }.start();
+        return ReadActionRunner.invoke(false, () -> {
+            FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+            return fileDocumentManager.getDocument(virtualFile);
+        });
     }
 
     @Nullable
@@ -205,30 +194,26 @@ public class DocumentUtil {
     }
 
     public static void setText(final @NotNull Document document, final CharSequence text) {
-        new WriteActionRunner() {
-            public void run() {
-                FileDocumentManager manager = FileDocumentManager.getInstance();
-                VirtualFile file = manager.getFile(document);
-                if (file != null && file.isValid()) {
-                    boolean isReadonly = !document.isWritable();
-                    try {
-                        document.setReadOnly(false);
-                        document.setText(text);
-                    } finally {
-                        document.setReadOnly(isReadonly);
-                    }
-
+        WriteActionRunner.invoke(() -> {
+            FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+            VirtualFile file = fileDocumentManager.getFile(document);
+            if (file != null && file.isValid()) {
+                boolean isReadonly = !document.isWritable();
+                try {
+                    document.setReadOnly(false);
+                    document.setText(text);
+                } finally {
+                    document.setReadOnly(isReadonly);
                 }
+
             }
-        }.start();
+        });
     }
 
     public static void saveDocument(final  @NotNull Document document) {
-        new WriteActionRunner() {
-            @Override
-            public void run() {
-                FileDocumentManager.getInstance().saveDocument(document);
-            }
-        }.start();
+        WriteActionRunner.invoke(() -> {
+            FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+            fileDocumentManager.saveDocument(document);
+        });
     }
 }

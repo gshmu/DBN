@@ -539,47 +539,44 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         if (isDdlStatement && DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
             final BasePsiElement compilablePsiElement = getCompilableBlockPsiElement();
             if (compilablePsiElement != null) {
-                hasCompilerErrors = new ReadActionRunner<Boolean>() {
-                    @Override
-                    protected Boolean run() {
-                        DBContentType contentType = getCompilableContentType();
-                        CompilerAction compilerAction = new CompilerAction(CompilerActionSource.DDL, contentType, getVirtualFile(), getFileEditor());
-                        compilerAction.setSourceStartOffset(compilablePsiElement.getTextOffset());
+                hasCompilerErrors = ReadActionRunner.invoke(false, () -> {
+                    DBContentType contentType = getCompilableContentType();
+                    CompilerAction compilerAction = new CompilerAction(CompilerActionSource.DDL, contentType, getVirtualFile(), getFileEditor());
+                    compilerAction.setSourceStartOffset(compilablePsiElement.getTextOffset());
 
-                        DBSchemaObject object = getAffectedObject();
-                        CompilerResult compilerResult = null;
-                        if (object == null) {
-                            DBSchema schema = getAffectedSchema();
-                            IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
-                            if (schema != null && subjectPsiElement != null) {
-                                DBObjectType objectType = subjectPsiElement.getObjectType();
-                                String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
-                                compilerResult = new CompilerResult(compilerAction, connectionHandler, schema, objectType, objectName);
-                            }
-                        } else {
-                            compilerResult = new CompilerResult(compilerAction, object);
+                    DBSchemaObject object = getAffectedObject();
+                    CompilerResult compilerResult = null;
+                    if (object == null) {
+                        DBSchema schema = getAffectedSchema();
+                        IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
+                        if (schema != null && subjectPsiElement != null) {
+                            DBObjectType objectType = subjectPsiElement.getObjectType();
+                            String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
+                            compilerResult = new CompilerResult(compilerAction, connectionHandler, schema, objectType, objectName);
                         }
-
-                        if (compilerResult != null) {
-                            if (object != null) {
-                                Project project = getProject();
-                                DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-                                if (object.is(COMPILABLE)) {
-                                    CompileType compileType = compilerManager.getCompileType(object, contentType);
-                                    if (compileType == CompileType.DEBUG) {
-                                        compilerManager.compileObject(object, compileType, compilerAction);
-                                    }
-                                    EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
-                                }
-                                object.refresh();
-                            }
-
-                            executionResult.setCompilerResult(compilerResult);
-                            return compilerResult.hasErrors();
-                        }
-                        return false;
+                    } else {
+                        compilerResult = new CompilerResult(compilerAction, object);
                     }
-                }.start();
+
+                    if (compilerResult != null) {
+                        if (object != null) {
+                            Project project = getProject();
+                            DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
+                            if (object.is(COMPILABLE)) {
+                                CompileType compileType = compilerManager.getCompileType(object, contentType);
+                                if (compileType == CompileType.DEBUG) {
+                                    compilerManager.compileObject(object, compileType, compilerAction);
+                                }
+                                EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
+                            }
+                            object.refresh();
+                        }
+
+                        executionResult.setCompilerResult(compilerResult);
+                        return compilerResult.hasErrors();
+                    }
+                    return false;
+                });
             }
         }
 

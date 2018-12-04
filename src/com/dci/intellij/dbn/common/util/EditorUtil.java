@@ -219,26 +219,23 @@ public class EditorUtil {
         final Project project = FailsafeUtil.get(contentFile.getProject());
 
         if (contentFile instanceof DBSourceCodeVirtualFile) {
-            final DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
-            new ReadActionRunner() {
-                @Override
-                protected Object run() {
-                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                    final FileEditor[] allEditors = fileEditorManager.getAllEditors();
-                    SimpleLaterInvocator.invoke(() -> {
-                        for (FileEditor fileEditor : allEditors) {
-                            if (fileEditor instanceof SourceCodeEditor) {
-                                SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                                DBSourceCodeVirtualFile virtualFile = sourceCodeEditor.getVirtualFile();
-                                if (virtualFile.equals(sourceCodeFile)) {
-                                    setEditorReadonly(sourceCodeEditor, readonly);
-                                }
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
+            ReadActionRunner.invoke(false, () -> {
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                FileEditor[] allEditors = fileEditorManager.getAllEditors();
+                SimpleLaterInvocator.invoke(() -> {
+                    for (FileEditor fileEditor : allEditors) {
+                        if (fileEditor instanceof SourceCodeEditor) {
+                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                            DBSourceCodeVirtualFile virtualFile = sourceCodeEditor.getVirtualFile();
+                            if (virtualFile.equals(sourceCodeFile)) {
+                                setEditorReadonly(sourceCodeEditor, readonly);
                             }
                         }
-                    });
-                    return null;
-                }
-            }.start();
+                    }
+                });
+                return null;
+            });
         } else if (contentFile instanceof DBDatasetVirtualFile) {
             DBDatasetVirtualFile datasetFile = (DBDatasetVirtualFile) contentFile;
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);

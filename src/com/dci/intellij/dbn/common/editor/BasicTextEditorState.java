@@ -4,11 +4,7 @@ import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
@@ -49,15 +45,12 @@ public class BasicTextEditorState implements FileEditorState {
         selectionEnd = Integer.parseInt(sourceElement.getAttributeValue("selection-end"));
         verticalScrollProportion = Float.parseFloat(sourceElement.getAttributeValue("vertical-scroll-proportion"));
 
-        final Element foldingElement = sourceElement.getChild("folding");
+        Element foldingElement = sourceElement.getChild("folding");
         if (foldingElement != null) {
-            new ReadActionRunner<CodeFoldingState>() {
-                @Override
-                protected CodeFoldingState run() {
-                    Document document = DocumentUtil.getDocument(virtualFile);
-                    return CodeFoldingManager.getInstance(project).readFoldingState(foldingElement, document);
-                }
-            }.start();
+            ReadActionRunner.invoke(false, () -> {
+                Document document = DocumentUtil.getDocument(virtualFile);
+                return CodeFoldingManager.getInstance(project).readFoldingState(foldingElement, document);
+            });
         }
 
     }
@@ -139,23 +132,20 @@ public class BasicTextEditorState implements FileEditorState {
         editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
 
         if (foldingState != null) {
-            new WriteActionRunner() {
-                @Override
-                public void run() {
-                    Project project = editor.getProject();
-                    if (project != null) {
-                        try {
-                            PsiDocumentManager.getInstance(project).commitDocument(document);
-                        } catch (ProcessCanceledException ignore) {
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        CodeFoldingManager.getInstance(project).
-                                restoreFoldingState(editor, getFoldingState());
+            WriteActionRunner.invoke(() -> {
+                Project project = editor.getProject();
+                if (project != null) {
+                    try {
+                        PsiDocumentManager.getInstance(project).commitDocument(document);
+                    } catch (ProcessCanceledException ignore) {
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+
+                    CodeFoldingManager.getInstance(project).
+                            restoreFoldingState(editor, getFoldingState());
                 }
-            }.start();
+            });
             //editor.getFoldingModel().runBatchFoldingOperation(runnable);
         }
     }

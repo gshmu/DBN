@@ -45,12 +45,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import org.jetbrains.annotations.NotNull;
@@ -224,11 +219,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         if (ApplicationManager.getApplication().isReadAccessAllowed()) {
             return super.getText();
         }
-        return new ReadActionRunner<String>() {
-            protected String run() {
-                return BasePsiElement.super.getText();
-            }
-        }.start();
+        return ReadActionRunner.invoke(false, BasePsiElement.super::getText);
     }
 
 

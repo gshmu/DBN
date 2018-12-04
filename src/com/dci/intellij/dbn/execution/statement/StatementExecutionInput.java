@@ -106,24 +106,27 @@ public class StatementExecutionInput extends LocalExecutionInput {
     @Nullable
     public ExecutablePsiElement getExecutablePsiElement() {
         if (executablePsiElement == null) {
-            final ConnectionHandler connectionHandler = getConnectionHandler();
-            final DBSchema currentSchema = getTargetSchema();
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            DBSchema currentSchema = getTargetSchema();
             if (connectionHandler != null) {
-                executablePsiElement = new ReadActionRunner<ExecutablePsiElement>() {
-                    @Override
-                    protected ExecutablePsiElement run() {
-                        DBLanguageDialect languageDialect = executionProcessor.getPsiFile().getLanguageDialect();
-                        DBLanguagePsiFile previewFile = DBLanguagePsiFile.createFromText(getProject(), "preview", languageDialect, originalStatementText, connectionHandler, currentSchema);
+                executablePsiElement = ReadActionRunner.invoke(false, () -> {
+                    DBLanguageDialect languageDialect = executionProcessor.getPsiFile().getLanguageDialect();
+                    DBLanguagePsiFile previewFile = DBLanguagePsiFile.createFromText(
+                            getProject(),
+                            "preview",
+                            languageDialect,
+                            originalStatementText,
+                            connectionHandler,
+                            currentSchema);
 
-                        PsiElement firstChild = previewFile.getFirstChild();
-                        if (firstChild instanceof ExecutableBundlePsiElement) {
-                            ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
-                            List<ExecutablePsiElement> executablePsiElements = rootPsiElement.getExecutablePsiElements();
-                            return executablePsiElements.isEmpty() ? null : executablePsiElements.get(0);
-                        }
-                        return null;
+                    PsiElement firstChild = previewFile.getFirstChild();
+                    if (firstChild instanceof ExecutableBundlePsiElement) {
+                        ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
+                        List<ExecutablePsiElement> executablePsiElements = rootPsiElement.getExecutablePsiElements();
+                        return executablePsiElements.isEmpty() ? null : executablePsiElements.get(0);
                     }
-                }.start();
+                    return null;
+                });
             }
         }
         return executablePsiElement;

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
+import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -15,13 +15,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiInvalidElementAccessException;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -301,12 +295,10 @@ public class PsiUtil {
     }
 
     public static PsiFile getPsiFile(@NotNull final Project project, final VirtualFile virtualFile) {
-        return new ConditionalReadActionRunner<PsiFile>() {
-            @Override
-            protected PsiFile run() {
-                return PsiManager.getInstance(project).findFile(virtualFile);
-            }
-        }.start();
+        return ReadActionRunner.invoke(true, () -> {
+            PsiManager psiManager = PsiManager.getInstance(project);
+            return psiManager.findFile(virtualFile);
+        });
     }
 
 
