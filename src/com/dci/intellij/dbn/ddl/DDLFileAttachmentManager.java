@@ -50,11 +50,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @State(
     name = DDLFileAttachmentManager.COMPONENT_NAME,
@@ -71,7 +67,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
-    SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+    private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
             if (!initialLoad && DatabaseFileSystem.isFileOpened(sourceCodeFile.getObject())) {

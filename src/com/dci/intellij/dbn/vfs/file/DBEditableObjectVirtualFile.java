@@ -44,7 +44,6 @@ import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObject> {
-    public ThreadLocal<Document> FAKE_DOCUMENT = new ThreadLocal<Document>();
     private static final List<DBContentVirtualFile> EMPTY_CONTENT_FILES = Collections.emptyList();
     private List<DBContentVirtualFile> contentFiles;
     private transient EditorProviderId selectedEditorProviderId;
@@ -239,10 +238,6 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                 DBContentType mainContentType = getMainContentType();
                 boolean isCode = mainContentType == DBContentType.CODE || mainContentType == DBContentType.CODE_BODY;
                 if (isCode) {
-                    if (FAKE_DOCUMENT.get() != null) {
-                        return (T) FAKE_DOCUMENT.get();
-                    }
-
                     DBContentVirtualFile mainContentFile = getMainContentFile();
                     if (mainContentFile != null) {
                         Document document = DocumentUtil.getDocument(mainContentFile);

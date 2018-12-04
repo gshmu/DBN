@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.debugger.jdwp.frame;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
+import com.dci.intellij.dbn.debugger.common.frame.DBDebugSourcePosition;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugStackFrame;
 import com.dci.intellij.dbn.debugger.jdwp.evaluation.DBJdwpDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
@@ -13,7 +14,6 @@ import com.intellij.debugger.engine.JavaStackFrame;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XCompositeNode;
-import com.intellij.xdebugger.impl.XSourcePositionImpl;
 import com.sun.jdi.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,7 +59,7 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
                 lineNumber += statementExecutionInput.getExecutableLineNumber();
             }
         }
-        return XSourcePositionImpl.create(getVirtualFile(), lineNumber);
+        return DBDebugSourcePosition.create(getVirtualFile(), lineNumber);
     }
 
     @Override

@@ -58,6 +58,10 @@ public class DBDebugUtil {
 
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
             databaseFileSystem.openEditor(databaseFile.getObject(), false);
+        } else if (virtualFile instanceof DBSourceCodeVirtualFile) {
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+            DBEditableObjectVirtualFile mainDatabaseFile = sourceCodeFile.getMainDatabaseFile();
+            openEditor(mainDatabaseFile);
         }
     }
 }
