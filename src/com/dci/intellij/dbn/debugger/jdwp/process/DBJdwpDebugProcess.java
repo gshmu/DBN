@@ -24,11 +24,13 @@ import com.dci.intellij.dbn.debugger.jdwp.DBJdwpBreakpointHandler;
 import com.dci.intellij.dbn.debugger.jdwp.ManagedThreadCommand;
 import com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugStackFrame;
 import com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugSuspendContext;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.debugger.DebuggerManager;
 import com.intellij.debugger.engine.*;
 import com.intellij.debugger.impl.DebuggerContextImpl;
@@ -376,11 +378,13 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     if (schema != null) {
                         DBProgram program = schema.getProgram(programName);
                         if (program != null) {
-                            return program.getVirtualFile();
+                            DBEditableObjectVirtualFile editableVirtualFile = program.getEditableVirtualFile();
+                            DBContentType contentType = "PackageBody".equals(programType) ? DBContentType.CODE_BODY : DBContentType.CODE_SPEC;
+                            return editableVirtualFile.getContentFile(contentType);
                         } else {
                             DBMethod method = schema.getMethod(programName, 0);
                             if (method != null) {
-                                return method.getVirtualFile();
+                                return method.getEditableVirtualFile().getContentFile(DBContentType.CODE);
                             }
                         }
                     }

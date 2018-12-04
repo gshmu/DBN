@@ -280,7 +280,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 "Not connected to database",
                 "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
                         "If you want to continue" + (actionDesc == null ? "" : " with " + actionDesc) + ", you need to connect.",
-                new String[]{"Connect", "Cancel"}, 0,
+                ConnectionAction.OPTIONS_CONNECT_CANCEL, 0,
                 callback);
     }
 

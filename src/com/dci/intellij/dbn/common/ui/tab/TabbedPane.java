@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.ui.tab;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.util.ActionCallback;
@@ -72,7 +73,7 @@ public class TabbedPane extends JBEditorTabs implements com.dci.intellij.dbn.com
 
     @Override
     public void dispose() {
-        super.dispose();
+        ConditionalLaterInvocator.invoke(super::dispose);
     }
 
     @Override
