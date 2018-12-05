@@ -32,18 +32,15 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        final ConnectionFilterSettings configuration = getConfiguration();
-        final boolean notifyFilterListeners = configuration.isHideEmptySchemas() != hideEmptySchemasCheckBox.isSelected();
+        ConnectionFilterSettings configuration = getConfiguration();
+        boolean notifyFilterListeners = configuration.isHideEmptySchemas() != hideEmptySchemasCheckBox.isSelected();
         applyFormChanges(configuration);
-        new SettingsChangeNotifier() {
-            @Override
-            public void notifyChanges() {
-                if (notifyFilterListeners) {
-                    ObjectFilterChangeListener listener = EventUtil.notify(getConfiguration().getProject(), ObjectFilterChangeListener.TOPIC);
-                    listener.nameFiltersChanged(configuration.getConnectionId(), DBObjectType.SCHEMA);
-                }
+        SettingsChangeNotifier.register(() -> {
+            if (notifyFilterListeners) {
+                ObjectFilterChangeListener listener = EventUtil.notify(getConfiguration().getProject(), ObjectFilterChangeListener.TOPIC);
+                listener.nameFiltersChanged(configuration.getConnectionId(), DBObjectType.SCHEMA);
             }
-        };
+        });
     }
 
     @Override

@@ -69,7 +69,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
         patternTextField.addKeyListener(ComboBoxSelectionKeyListener.create(operatorComboBox, false));
         patternTextField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(DocumentEvent e) {
+            protected void textChanged(@NotNull DocumentEvent e) {
                 condition.setPattern(patternTextField.getText().trim());
             }
         });

@@ -24,8 +24,7 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
     public ConnectionPropertiesSettingsForm(final ConnectionPropertiesSettings configuration) {
         super(configuration);
 
-        Map<String, String> properties = new HashMap<String, String>();
-        properties.putAll(configuration.getProperties());
+        Map<String, String> properties = new HashMap<>(configuration.getProperties());
 
         propertiesEditorForm = new PropertiesEditorForm(this, properties, true);
         propertiesPanel.add(propertiesEditorForm.getComponent(), BorderLayout.CENTER);
@@ -48,16 +47,13 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
 
         applyFormChanges(configuration);
 
-        new SettingsChangeNotifier() {
-            @Override
-            public void notifyChanges() {
-                if (settingsChanged) {
-                    Project project = configuration.getProject();
-                    ConnectionHandlerStatusListener listener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-                    listener.statusChanged(configuration.getConnectionId(), null);
-                }
+        SettingsChangeNotifier.register(() -> {
+            if (settingsChanged) {
+                Project project = configuration.getProject();
+                ConnectionHandlerStatusListener listener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
+                listener.statusChanged(configuration.getConnectionId(), null);
             }
-        };
+        });
     }
 
     @Override

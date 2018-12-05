@@ -1,9 +1,18 @@
 package com.dci.intellij.dbn.common.options;
 
 public abstract class SettingsChangeNotifier {
-    public SettingsChangeNotifier() {
+    private SettingsChangeNotifier() {
         Configuration.registerChangeNotifier(this);
     }
 
     public abstract void notifyChanges();
+
+    public static void register(Runnable runnable) {
+        new SettingsChangeNotifier() {
+            @Override
+            public void notifyChanges() {
+                runnable.run();
+            }
+        };
+    }
 }

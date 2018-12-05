@@ -2,22 +2,20 @@ package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
-import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.GraphicsConfig;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.openapi.util.Condition;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.RoundedLineBorder;
+import com.intellij.ui.components.JBTextField;
 import com.intellij.util.IconUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -31,19 +29,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.plaf.InsetsUIResource;
 import javax.swing.plaf.UIResource;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
+import java.awt.event.*;
 import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
@@ -85,10 +73,11 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         this.text = text;
         this.isComboBox = isComboBox;
 
-        setBorder(Borders.EMPTY_BORDER);
+        //setBorder(Borders.EMPTY_BORDER);
 
+        JBTextField textField = new JBTextField();
         if (isComboBox) {
-            defaultBorder = new ValueSelectorBorder(this);
+            defaultBorder = textField.getBorder();
             focusBorder = defaultBorder;
         } else {
             insideBorder = JBUI.Borders.empty(3, 5);
@@ -102,11 +91,13 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         label.addMouseListener(mouseListener);
 
+        setBorder(defaultBorder);
+
         innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBorder(defaultBorder);
         innerPanel.add(label, BorderLayout.WEST);
         innerPanel.addMouseListener(mouseListener);
         innerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        //setPreferredSize(new Dimension((int) getPreferredSize().getWidth(), (int) textField.getPreferredSize().getHeight()));
         add(innerPanel, BorderLayout.CENTER);
 
         if (isComboBox) {
@@ -122,20 +113,20 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             innerPanel.setBackground(UIUtil.getTextFieldBackground());
             innerPanel.add(new JLabel(Icons.COMMON_ARROW_DOWN), BorderLayout.EAST);
 
-            innerPanel.setFocusable(true);
-            innerPanel.addFocusListener(new FocusListener() {
+            setFocusable(true);
+            addFocusListener(new FocusListener() {
                 @Override
                 public void focusGained(FocusEvent e) {
                     isFocused = true;
-                    revalidate();
-                    repaint();
+                    ValueSelector.this.revalidate();
+                    ValueSelector.this.repaint();
                 }
 
                 @Override
                 public void focusLost(FocusEvent e) {
                     isFocused = false;
-                    revalidate();
-                    repaint();
+                    ValueSelector.this.revalidate();
+                    ValueSelector.this.repaint();
                 }
             });
 
@@ -155,14 +146,18 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
                 }
             });
-
         }
 
         adjustSize();
     }
 
+    @Override
+    public void setBorder(Border border) {
+        super.setBorder(border);
+    }
+
     public void setOptions(ValueSelectorOption ... options) {
-        this.options = new OptionBundle<ValueSelectorOption>(options);
+        this.options = new OptionBundle<>(options);
     }
 
     private void adjustSize() {
@@ -217,8 +212,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         innerPanel.setFocusable(isEnabled);
         label.setForeground(isEnabled ? UIUtil.getTextFieldForeground() : UIUtil.getLabelDisabledForeground());
     }
-
-    public void paintComponent(Graphics g) {
+   public void paintComponent(Graphics g) {
         super.paintComponent(g);
     }
     private MouseListener mouseListener = new MouseAdapter() {
@@ -237,7 +231,6 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         public void mouseExited(MouseEvent e) {
             if (!isShowingPopup && !isComboBox) {
                 innerPanel.setBorder(defaultBorder);
-                //innerPanel.setBorder(new EmptyBorder(21 - icon.getIconHeight(), 6, 21 - icon.getIconHeight(), 6));
                 innerPanel.setBackground(isComboBox ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
 
                 revalidate();
@@ -282,29 +275,24 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 false,
                 false,
                 false,
-                new Runnable() {
-                    @Override
-                    public void run() {
+                () -> {
+                    setBorder(defaultBorder);
+                    innerPanel.setBackground(isComboBox ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
+                    innerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-                        innerPanel.setBorder(defaultBorder);
-                        innerPanel.setBackground(isComboBox ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
-                        innerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-                        isShowingPopup = false;
-                        innerPanel.requestFocus();
-                        revalidate();
-                        repaint();
+                    isShowingPopup = false;
+                    requestFocus();
+                    revalidate();
+                    repaint();
+                },
+                10,
+                anAction -> {
+                    if (anAction instanceof ValueSelector.SelectValueAction) {
+                        SelectValueAction action = (SelectValueAction) anAction;
+                        return action.value.equals(selectedValue);
                     }
-                }, 10, new Condition<AnAction>() {
-                    @Override
-                    public boolean value(AnAction anAction) {
-                        if (anAction instanceof ValueSelector.SelectValueAction) {
-                            SelectValueAction action = (SelectValueAction) anAction;
-                            return action.value.equals(selectedValue);
-                        }
-                        return false;
-                    }
+                    return false;
                 });
         GUIUtil.showUnderneathOf(popup, this, 3, 200);
     }
@@ -326,13 +314,13 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             this.value = value;
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             selectValue(value);
             innerPanel.requestFocus();
         }
 
         @Override
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
             e.getPresentation().setVisible(isVisible(value));
             e.getPresentation().setText(getOptionDisplayName(value), false);
         }
@@ -343,20 +331,17 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             super(valueFactory.getActionName(), null, Icons.ACTION_ADD);
         }
 
-        public void actionPerformed(AnActionEvent e) {
-            valueFactory.create(new SimpleCallback<T>() {
-                @Override
-                public void start(@Nullable T inputValue) {
-                    if (inputValue != null) {
-                        addValue(inputValue);
-                        selectValue(inputValue);
-                    }
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            valueFactory.create(inputValue -> {
+                if (inputValue != null) {
+                    addValue(inputValue);
+                    selectValue(inputValue);
                 }
             });
         }
 
         @Override
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
             e.getPresentation().setVisible(valueFactory != null);
         }
     }
@@ -394,7 +379,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     }
 
     protected List<T> loadValues() {
-        return new ArrayList<T>();
+        return new ArrayList<>();
     }
 
     protected List<T> getAllPossibleValues() {

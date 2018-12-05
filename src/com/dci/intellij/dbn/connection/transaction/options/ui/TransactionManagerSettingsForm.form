@@ -21,7 +21,6 @@
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <labelFor value="c930d"/>
           <text value=" on &amp;Project Close"/>
         </properties>
       </component>
@@ -30,7 +29,6 @@
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <labelFor value="c08a"/>
           <text value=" on &amp;Disconnect"/>
         </properties>
       </component>
@@ -39,7 +37,6 @@
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <labelFor value="398a9"/>
           <text value=" on &amp;Auto-Commit Switch"/>
         </properties>
       </component>
@@ -56,7 +53,6 @@
           <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <labelFor value="fb48b"/>
           <text value=" on &amp;Commit"/>
         </properties>
       </component>
@@ -65,7 +61,6 @@
           <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <labelFor value="fb6c6"/>
           <text value=" on &amp;Rollback"/>
         </properties>
       </component>
@@ -96,41 +91,41 @@
         <border type="none"/>
         <children/>
       </grid>
-      <component id="c930d" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="uncommittedChangesOnProjectCloseComboBox">
-        <constraints>
-          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="c08a" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="uncommittedChangesOnDisconnectComboBox">
-        <constraints>
-          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="398a9" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="uncommittedChangesOnSwitchComboBox">
-        <constraints>
-          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="fb48b" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="multipleChangesOnCommitComboBox">
-        <constraints>
-          <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="fb6c6" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="multipleChangesOnRollbackComboBox">
-        <constraints>
-          <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-      </component>
       <vspacer id="1c48a">
         <constraints>
           <grid row="8" column="1" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
+      <component id="1494e" class="com.intellij.openapi.ui.ComboBox" binding="uncommittedChangesOnProjectCloseComboBox">
+        <constraints>
+          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="73720" class="com.intellij.openapi.ui.ComboBox" binding="uncommittedChangesOnDisconnectComboBox">
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="27815" class="com.intellij.openapi.ui.ComboBox" binding="uncommittedChangesOnSwitchComboBox">
+        <constraints>
+          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="eb492" class="com.intellij.openapi.ui.ComboBox" binding="multipleChangesOnCommitComboBox">
+        <constraints>
+          <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="c72ba" class="com.intellij.openapi.ui.ComboBox" binding="multipleChangesOnRollbackComboBox">
+        <constraints>
+          <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
     </children>
   </grid>
 </form>

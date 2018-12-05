@@ -1,10 +1,8 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -17,19 +15,23 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.JBScrollPane;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.TreeModel;
 import java.awt.*;
+
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
 public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDialog>{
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel contentPanel;
     private JPanel headerPanel;
-    private DBNComboBox<ObjectDependencyType> dependencyTypeComboBox;
+    private ComboBox<ObjectDependencyType> dependencyTypeComboBox;
     private JBScrollPane treeScrollPane;
 
 
@@ -60,13 +62,11 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
         ObjectDependencyType dependencyType = dependencyManager.getLastUserDependencyType();
 
 
-        dependencyTypeComboBox.setValues(ObjectDependencyType.values());
-        dependencyTypeComboBox.setSelectedValue(dependencyType);
-        dependencyTypeComboBox.addListener(new ValueSelectorListener<ObjectDependencyType>() {
-            @Override
-            public void selectionChanged(ObjectDependencyType oldValue, ObjectDependencyType newValue) {
-                dependencyTree.setDependencyType(newValue);
-            }
+        initComboBox(dependencyTypeComboBox, ObjectDependencyType.values());
+        setSelection(dependencyTypeComboBox, dependencyType);
+        dependencyTypeComboBox.addActionListener(e -> {
+            ObjectDependencyType selection = getSelection(dependencyTypeComboBox);
+            dependencyTree.setDependencyType(selection);
         });
 
         this.objectRef = DBObjectRef.from(schemaObject);
@@ -97,47 +97,47 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
 
     public class ExpandTreeAction extends DumbAwareAction {
 
-        public ExpandTreeAction() {
+        ExpandTreeAction() {
             super("Expand All", null, Icons.ACTION_EXPAND_ALL);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             TreeUtil.expandAll(dependencyTree);
         }
 
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setText("Expand All");
         }
     }
 
     public class PreviousSelectionAction extends DumbAwareAction {
-        public PreviousSelectionAction() {
+        PreviousSelectionAction() {
             super("Previous Selection", null, Icons.BROWSER_BACK);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             DBObject previous = dependencyTree.getSelectionHistory().previous();
             dependencyTree.setRootObject((DBSchemaObject) previous, false);
         }
 
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setEnabled(dependencyTree.getSelectionHistory().hasPrevious());
         }
     }
 
     public class NextSelectionAction extends DumbAwareAction {
-        public NextSelectionAction() {
+        NextSelectionAction() {
             super("Next Selection", null, Icons.BROWSER_NEXT);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             DBObject next = dependencyTree.getSelectionHistory().next();
             dependencyTree.setRootObject((DBSchemaObject) next, false);
         }
 
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setEnabled(dependencyTree.getSelectionHistory().hasNext());
         }
@@ -145,15 +145,15 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
 
     public class CollapseTreeAction extends DumbAwareAction {
 
-        public CollapseTreeAction() {
+        CollapseTreeAction() {
             super("Collapse All", null, Icons.ACTION_COLLAPSE_ALL);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             TreeUtil.collapseAll(dependencyTree);
         }
 
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setText("Collapse All");
         }

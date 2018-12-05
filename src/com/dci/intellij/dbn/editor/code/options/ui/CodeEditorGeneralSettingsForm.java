@@ -44,12 +44,7 @@ public class CodeEditorGeneralSettingsForm extends ConfigurationEditorForm<CodeE
         settings.setEnableReferenceSpellchecking(enableReferenceSpellchecking);
 
         if (spellcheckingSettingsChanged) {
-            new SettingsChangeNotifier() {
-                @Override
-                public void notifyChanges() {
-                    EventUtil.notify(getProject(), SpellcheckingSettingsListener.TOPIC).settingsChanged();
-                }
-            };
+            SettingsChangeNotifier.register(() -> EventUtil.notify(getProject(), SpellcheckingSettingsListener.TOPIC).settingsChanged());
         }
     }
 

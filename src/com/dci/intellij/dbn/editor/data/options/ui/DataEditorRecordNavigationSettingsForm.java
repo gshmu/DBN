@@ -1,24 +1,25 @@
 package com.dci.intellij.dbn.editor.data.options.ui;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.data.record.navigation.RecordNavigationTarget;
 import com.dci.intellij.dbn.editor.data.options.DataEditorRecordNavigationSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.ui.ComboBox;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorForm<DataEditorRecordNavigationSettings> {
     private JPanel mainPanel;
-    private DBNComboBox<RecordNavigationTarget> navigationTargetComboBox;
+    private ComboBox<RecordNavigationTarget> navigationTargetComboBox;
 
 
     public DataEditorRecordNavigationSettingsForm(DataEditorRecordNavigationSettings configuration) {
         super(configuration);
         updateBorderTitleForeground(mainPanel);
-        navigationTargetComboBox.setValues(
+        initComboBox(navigationTargetComboBox,
                 RecordNavigationTarget.EDITOR,
                 RecordNavigationTarget.VIEWER,
                 RecordNavigationTarget.ASK);
@@ -34,13 +35,13 @@ public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorF
     public void applyFormChanges() throws ConfigurationException {
         DataEditorRecordNavigationSettings configuration = getConfiguration();
 
-        RecordNavigationTarget navigationTarget = navigationTargetComboBox.getSelectedValue();
+        RecordNavigationTarget navigationTarget = getSelection(navigationTargetComboBox);
         configuration.setNavigationTarget(navigationTarget);
     }
 
     public void resetFormChanges() {
         DataEditorRecordNavigationSettings configuration = getConfiguration();
         RecordNavigationTarget navigationTarget = configuration.getNavigationTarget();
-        navigationTargetComboBox.setSelectedValue(navigationTarget);
+        setSelection(navigationTargetComboBox, navigationTarget);
     }
 }

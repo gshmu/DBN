@@ -124,9 +124,9 @@
               <text value="Join type"/>
             </properties>
           </component>
-          <component id="f37bd" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="joinTypeComboBox">
+          <component id="ff865" class="com.intellij.openapi.ui.ComboBox" binding="joinTypeComboBox">
             <constraints>
-              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>

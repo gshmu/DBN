@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.data.export.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -20,6 +19,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -27,11 +27,11 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.charset.Charset;
 
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
@@ -61,7 +61,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
     private JPanel formatPanel;
     private JPanel destinationPanel;
     private JPanel optionsPanel;
-    private DBNComboBox<CharsetOption> encodingComboBox;
+    private ComboBox<CharsetOption> encodingComboBox;
     private JLabel encodingLabel;
 
     private DataExportInstructions instructions;
@@ -78,8 +78,8 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
         updateBorderTitleForeground(destinationPanel);
         updateBorderTitleForeground(optionsPanel);
 
-        encodingComboBox.setValues(CharsetOption.ALL);
-        encodingComboBox.setSelectedValue(CharsetOption.get(instructions.getCharset()));
+        initComboBox(encodingComboBox, CharsetOption.ALL);
+        setSelection(encodingComboBox, CharsetOption.get(instructions.getCharset()));
 
         scopeGlobalRadioButton.addActionListener(actionListener);
         scopeSelectionRadioButton.addActionListener(actionListener);
@@ -128,7 +128,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
 
         Project project = connectionHandler.getProject();
         fileLocationTextField.addBrowseFolderListener(
-                "Select directory",
+                "Select Directory",
                 "Select destination directory for the exported file", project, DIRECTORY_FILE_DESCRIPTOR);
         
         enableDisableFields();
@@ -177,7 +177,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
 
         instructions.setFormat(getFormat());
 
-        CharsetOption charsetOption = encodingComboBox.getSelectedValue();
+        CharsetOption charsetOption = getSelection(encodingComboBox);
         Charset charset = charsetOption == null ? Charset.defaultCharset() : charsetOption.getCharset();
         instructions.setCharset(charset);
         return instructions;
@@ -239,11 +239,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
         callback.start();
     }
 
-    ActionListener actionListener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            enableDisableFields();
-        }
-    };
+    private ActionListener actionListener = e -> enableDisableFields();
 
     private void enableDisableFields() {
         DataExportProcessor processor = DataExportManager.getExportProcessor(getExportInstructions().getFormat());

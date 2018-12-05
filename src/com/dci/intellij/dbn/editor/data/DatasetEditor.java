@@ -151,7 +151,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return getEditorTable();
+        return getEditorTable().getTableGutter();
     }
 
     @NonNls
