@@ -11,7 +11,6 @@ import com.intellij.openapi.options.ConfigurationException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
@@ -45,16 +44,14 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
 
     @Override
     protected ActionListener createActionListener() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                getConfiguration().setModified(true);
-                if (e.getSource() == synchronizeDDLFilesCheckBox) {
-                    boolean synchronizeSelected = synchronizeDDLFilesCheckBox.isSelected();
-                    useQualifiedObjectNamesCheckBox.setEnabled(synchronizeSelected);
-                    makeScriptsRerunnableCheckBox.setEnabled(synchronizeSelected);
-                    hintPanel.setVisible(synchronizeSelected);
+        return e -> {
+            getConfiguration().setModified(true);
+            if (e.getSource() == synchronizeDDLFilesCheckBox) {
+                boolean synchronizeSelected = synchronizeDDLFilesCheckBox.isSelected();
+                useQualifiedObjectNamesCheckBox.setEnabled(synchronizeSelected);
+                makeScriptsRerunnableCheckBox.setEnabled(synchronizeSelected);
+                hintPanel.setVisible(synchronizeSelected);
 
-                }
             }
         };
     }
@@ -71,16 +68,13 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         settings.getUseQualifiedObjectNames().to(useQualifiedObjectNamesCheckBox);
         settings.getMakeScriptsRerunnable().to(makeScriptsRerunnableCheckBox);
 
-        new SettingsChangeNotifier(){
-            @Override
-            public void notifyChanges() {
-                if (settingChanged) {
-                    DDLFileSettingsChangeListener listener = EventUtil.notify(settings.getProject(), DDLFileSettingsChangeListener.TOPIC);
-                    listener.settingsChanged();
+        SettingsChangeNotifier.register(() -> {
+            if (settingChanged) {
+                DDLFileSettingsChangeListener listener = EventUtil.notify(settings.getProject(), DDLFileSettingsChangeListener.TOPIC);
+                listener.settingsChanged();
 
-                }
             }
-        };
+        });
     }
 
     public void resetFormChanges() {

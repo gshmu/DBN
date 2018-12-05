@@ -207,15 +207,11 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         regionalSettings.getCustomTimeFormat().to(customTimeFormatTextField);
         regionalSettings.getCustomNumberFormat().to(customNumberFormatTextField);
 
-        if (modified) {
-            new SettingsChangeNotifier() {
-                @Override
-                public void notifyChanges() {
-                    EventUtil.notify(regionalSettings.getProject(), RegionalSettingsListener.TOPIC).settingsChanged();
-                }
-            };
-        }
 
+        SettingsChangeNotifier.register(() -> {
+            if (modified) {
+                EventUtil.notify(regionalSettings.getProject(), RegionalSettingsListener.TOPIC).settingsChanged();
+            }});
     }
 
     public void resetFormChanges() {

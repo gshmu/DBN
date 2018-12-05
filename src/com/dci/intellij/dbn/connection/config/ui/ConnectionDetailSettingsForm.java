@@ -10,9 +10,7 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
@@ -20,21 +18,22 @@ import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings>{
     private JPanel mainPanel;
-    private DBNComboBox<CharsetOption> encodingComboBox;
-    private DBNComboBox<EnvironmentType> environmentTypesComboBox;
+    private ComboBox<CharsetOption> encodingComboBox;
+    private ComboBox<EnvironmentType> environmentTypesComboBox;
     private JPanel generalGroupPanel;
     private JTextField maxPoolSizeTextField;
     private JTextField idleTimeTextField;
@@ -54,21 +53,16 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
         updateBorderTitleForeground(generalGroupPanel);
 
-        encodingComboBox.setValues(CharsetOption.ALL);
+        initComboBox(encodingComboBox, CharsetOption.ALL);
 
-        List<EnvironmentType> environmentTypes = new ArrayList<EnvironmentType>(getEnvironmentTypes());
+        List<EnvironmentType> environmentTypes = new ArrayList<>(getEnvironmentTypes());
         environmentTypes.add(0, EnvironmentType.DEFAULT);
-        environmentTypesComboBox.setValues(environmentTypes);
+        initComboBox(environmentTypesComboBox, environmentTypes);
         resetFormChanges();
 
         registerComponent(mainPanel);
 
-        environmentTypesComboBox.addListener(new ValueSelectorListener<EnvironmentType>() {
-            @Override
-            public void selectionChanged(EnvironmentType oldValue, EnvironmentType newValue) {
-                notifyPresentationChanges();
-            }
-        });
+        environmentTypesComboBox.addActionListener(e -> notifyPresentationChanges());
 
         String autoConnectHintText = "NOTE: If \"Connect automatically\" is not selected, the system will not restore the workspace the next time you open the project (i.e. all open editors for this connection will not be reopened automatically).";
         DBNHintForm hintForm = new DBNHintForm(autoConnectHintText, MessageType.INFO, false);
@@ -85,31 +79,29 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     public void notifyPresentationChanges() {
         Project project = getConfiguration().getProject();
         ConnectionPresentationChangeListener listener = EventUtil.notify(project, ConnectionPresentationChangeListener.TOPIC);
-        EnvironmentType environmentType = environmentTypesComboBox.getSelectedValue();
+        EnvironmentType environmentType = getSelection(environmentTypesComboBox);
         Color color = environmentType == null ? null : environmentType.getColor();
         listener.presentationChanged(null, null, color, getConfiguration().getConnectionId(), null);
     }
 
     public EnvironmentType getSelectedEnvironmentType() {
-        return environmentTypesComboBox.getSelectedValue();
+        return getSelection(environmentTypesComboBox);
     }
 
     protected ActionListener createActionListener() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Object source = e.getSource();
-                if (source == autoConnectCheckBox || source == restoreWorkspaceCheckBox){
-                    boolean visibleHint = !autoConnectCheckBox.isSelected() && restoreWorkspaceCheckBox.isSelected();
-                    autoConnectHintPanel.setVisible(visibleHint);
-                }
-                if (source == restoreWorkspaceCheckBox) {
-                    restoreWorkspaceDeepCheckBox.setEnabled(restoreWorkspaceCheckBox.isSelected());
-                    if (!restoreWorkspaceCheckBox.isSelected()) {
-                        restoreWorkspaceDeepCheckBox.setSelected(false);
-                    }
-                }
-                getConfiguration().setModified(true);
+        return e -> {
+            Object source = e.getSource();
+            if (source == autoConnectCheckBox || source == restoreWorkspaceCheckBox){
+                boolean visibleHint = !autoConnectCheckBox.isSelected() && restoreWorkspaceCheckBox.isSelected();
+                autoConnectHintPanel.setVisible(visibleHint);
             }
+            if (source == restoreWorkspaceCheckBox) {
+                restoreWorkspaceDeepCheckBox.setEnabled(restoreWorkspaceCheckBox.isSelected());
+                if (!restoreWorkspaceCheckBox.isSelected()) {
+                    restoreWorkspaceDeepCheckBox.setSelected(false);
+                }
+            }
+            getConfiguration().setModified(true);
         };
     }
 
@@ -128,11 +120,11 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     public void applyFormChanges() throws ConfigurationException {
         final ConnectionDetailSettings configuration = getConfiguration();
 
-        EnvironmentType newEnvironmentType = CommonUtil.nvl(environmentTypesComboBox.getSelectedValue(), EnvironmentType.DEFAULT);
+        EnvironmentType newEnvironmentType = CommonUtil.nvl(getSelection(environmentTypesComboBox), EnvironmentType.DEFAULT);
         final EnvironmentTypeId newEnvironmentTypeId = newEnvironmentType.getId();
 
         Charset charset = configuration.getCharset();
-        Charset newCharset = encodingComboBox.getSelectedValue().getCharset();
+        Charset newCharset = getSelection(encodingComboBox).getCharset();
         final boolean settingsChanged = !charset.equals(newCharset);
 
         EnvironmentTypeId environmentTypeId = configuration.getEnvironmentType().getId();
@@ -142,27 +134,24 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         applyFormChanges(configuration);
 
 
-        new SettingsChangeNotifier() {
-            @Override
-            public void notifyChanges() {
-                Project project = configuration.getProject();
-                if (environmentChanged) {
-                    EnvironmentManagerListener listener = EventUtil.notify(project, EnvironmentManagerListener.TOPIC);
-                    listener.configurationChanged();
-                }
-
-                if (settingsChanged) {
-                    ConnectionHandlerStatusListener listener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-                    listener.statusChanged(configuration.getConnectionId(), null);
-                }
+        SettingsChangeNotifier.register(() -> {
+            Project project = configuration.getProject();
+            if (environmentChanged) {
+                EnvironmentManagerListener listener = EventUtil.notify(project, EnvironmentManagerListener.TOPIC);
+                listener.configurationChanged();
             }
-        };
+
+            if (settingsChanged) {
+                ConnectionHandlerStatusListener listener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
+                listener.statusChanged(configuration.getConnectionId(), null);
+            }
+        });
     }
 
     @Override
     public void applyFormChanges(ConnectionDetailSettings configuration) throws ConfigurationException {
-        CharsetOption charsetOption = encodingComboBox.getSelectedValue();
-        EnvironmentType environmentType = environmentTypesComboBox.getSelectedValue();
+        CharsetOption charsetOption = getSelection(encodingComboBox);
+        EnvironmentType environmentType = getSelection(environmentTypesComboBox);
 
         configuration.setEnvironmentTypeId(environmentType == null ? EnvironmentTypeId.DEFAULT : environmentType.getId());
         configuration.setCharset(charsetOption == null ? null : charsetOption.getCharset());
@@ -186,14 +175,14 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     @Override
     public void resetFormChanges() {
         ConnectionDetailSettings configuration = getConfiguration();
-        encodingComboBox.setSelectedValue(CharsetOption.get(configuration.getCharset()));
+        setSelection(encodingComboBox, CharsetOption.get(configuration.getCharset()));
         sessionManagementCheckBox.setSelected(configuration.isEnableSessionManagement());
         ddlFileBindingCheckBox.setSelected(configuration.isEnableDdlFileBinding());
         databaseLoggingCheckBox.setSelected(configuration.isEnableDatabaseLogging());
         autoConnectCheckBox.setSelected(configuration.isConnectAutomatically());
         restoreWorkspaceCheckBox.setSelected(configuration.isRestoreWorkspace());
         restoreWorkspaceDeepCheckBox.setSelected(configuration.isRestoreWorkspaceDeep());
-        environmentTypesComboBox.setSelectedValue(configuration.getEnvironmentType());
+        setSelection(environmentTypesComboBox, configuration.getEnvironmentType());
         idleTimeTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnect()));
         idleTimePoolTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnectPool()));
         passwordExpiryTextField.setText(Integer.toString(configuration.getPasswordExpiryTime()));
@@ -204,14 +193,14 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private EnvironmentConfigLocalListener presentationChangeListener = new EnvironmentConfigLocalListener() {
         @Override
         public void settingsChanged(EnvironmentTypeBundle environmentTypes) {
-            EnvironmentType selectedItem = environmentTypesComboBox.getSelectedValue();
+            EnvironmentType selectedItem = getSelection(environmentTypesComboBox);
             EnvironmentTypeId selectedId = selectedItem == null ? EnvironmentType.DEFAULT.getId() : selectedItem.getId();
             selectedItem = environmentTypes.getEnvironmentType(selectedId);
 
-            List<EnvironmentType> newEnvironmentTypes = new ArrayList<EnvironmentType>(environmentTypes.getEnvironmentTypes());
+            List<EnvironmentType> newEnvironmentTypes = new ArrayList<>(environmentTypes.getEnvironmentTypes());
             newEnvironmentTypes.add(0, EnvironmentType.DEFAULT);
-            environmentTypesComboBox.setValues(newEnvironmentTypes);
-            environmentTypesComboBox.setSelectedValue(selectedItem);
+            initComboBox(environmentTypesComboBox, newEnvironmentTypes);
+            setSelection(environmentTypesComboBox, selectedItem);
             notifyPresentationChanges();
         }
     };

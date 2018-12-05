@@ -14,8 +14,6 @@ import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
@@ -30,24 +28,22 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
         super(configuration);
         updateBorderTitleForeground(mainPanel);
 
-        visibleObjectsList = new CheckBoxList<ObjectTypeFilterSetting>(configuration.getSettings());
+        visibleObjectsList = new CheckBoxList<>(configuration.getSettings());
         visibleObjectsScrollPane.setViewportView(visibleObjectsList);
 
         boolean masterSettingsAvailable = configuration.getMasterSettings() != null;
         useMasterSettingsCheckBox.setVisible(masterSettingsAvailable);
         if (masterSettingsAvailable) {
             visibleObjectTypesLabel.setVisible(false);
-            useMasterSettingsCheckBox.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    boolean enabled = !useMasterSettingsCheckBox.isSelected();
-                    visibleObjectsList.setEnabled(enabled);
-                    Color background = enabled ? UIUtil.getListBackground() : UIUtil.getComboBoxDisabledBackground();
-                    visibleObjectsList.setBackground(background);
-                    visibleObjectsList.clearSelection();
-                    visibleObjectsScrollPane.setVisible(enabled);
-                    mainPanel.revalidate();
-                    mainPanel.repaint();
-                }
+            useMasterSettingsCheckBox.addActionListener(e -> {
+                boolean enabled = !useMasterSettingsCheckBox.isSelected();
+                visibleObjectsList.setEnabled(enabled);
+                Color background = enabled ? UIUtil.getListBackground() : UIUtil.getComboBoxDisabledBackground();
+                visibleObjectsList.setBackground(background);
+                visibleObjectsList.clearSelection();
+                visibleObjectsScrollPane.setVisible(enabled);
+                mainPanel.revalidate();
+                mainPanel.repaint();
             });
         } else {
             mainPanel.setBorder(null);
@@ -72,22 +68,19 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        final ObjectTypeFilterSettings objectFilterSettings = getConfiguration();
-        final boolean notifyFilterListeners = objectFilterSettings.isModified();
+        ObjectTypeFilterSettings objectFilterSettings = getConfiguration();
+        boolean notifyFilterListeners = objectFilterSettings.isModified();
         visibleObjectsList.applyChanges();
         objectFilterSettings.getUseMasterSettings().to(useMasterSettingsCheckBox);
 
-         new SettingsChangeNotifier() {
-            @Override
-            public void notifyChanges() {
-                if (notifyFilterListeners) {
-                    Project project = objectFilterSettings.getProject();
-                    ConnectionId connectionId = objectFilterSettings.getConnectionId();
-                    ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
-                    listener.typeFiltersChanged(connectionId);
-                }
-            }
-        };
+         SettingsChangeNotifier.register(() -> {
+             if (notifyFilterListeners) {
+                 Project project = objectFilterSettings.getProject();
+                 ConnectionId connectionId = objectFilterSettings.getConnectionId();
+                 ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
+                 listener.typeFiltersChanged(connectionId);
+             }
+         });
     }
 
     @Override

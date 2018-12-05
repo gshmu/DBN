@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingSettings;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -18,13 +18,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<CodeStyleFormattingSettings> {
     private JPanel mainPanel;
     private JPanel settingsPanel;
     private JCheckBox enableCheckBox;
-    private Map<CodeStyleFormattingOption, DBNComboBox<CodeStylePreset>> mappings = new HashMap<CodeStyleFormattingOption, DBNComboBox<CodeStylePreset>>();
+    private Map<CodeStyleFormattingOption, ComboBox<CodeStylePreset>> mappings = new HashMap<>();
 
     public CodeStyleFormattingSettingsForm(CodeStyleFormattingSettings settings) {
         super(settings);
@@ -41,7 +42,8 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
                             GridConstraints.SIZEPOLICY_FIXED,
                             GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
-            DBNComboBox<CodeStylePreset> comboBox = new DBNComboBox<CodeStylePreset>(option.getPresets());
+            ComboBox<CodeStylePreset> comboBox = new ComboBox<>();
+            initComboBox(comboBox, option.getPresets().toArray(new CodeStylePreset[0]));
             label.setLabelFor(comboBox);
 
             settingsPanel.add(comboBox,
@@ -77,7 +79,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     private void enableDisableOptions() {
         boolean selected = enableCheckBox.isSelected();
-        for (DBNComboBox<CodeStylePreset> optionComboBox : mappings.values()) {
+        for (ComboBox<CodeStylePreset> optionComboBox : mappings.values()) {
             optionComboBox.setEnabled(selected);
         }
     }
@@ -88,8 +90,8 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     public void applyFormChanges() throws ConfigurationException {
         for (CodeStyleFormattingOption option : mappings.keySet()) {
-            DBNComboBox<CodeStylePreset> comboBox = mappings.get(option);
-            option.setPreset(comboBox.getSelectedValue());
+            ComboBox<CodeStylePreset> comboBox = mappings.get(option);
+            option.setPreset(getSelection(comboBox));
         }
         getConfiguration().setEnabled(enableCheckBox.isSelected());
     }
@@ -97,8 +99,8 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     public void resetFormChanges() {
         for (CodeStyleFormattingOption option : mappings.keySet()) {
-            DBNComboBox<CodeStylePreset> comboBox = mappings.get(option);
-            comboBox.setSelectedValue(option.getPreset());
+            ComboBox<CodeStylePreset> comboBox = mappings.get(option);
+            setSelection(comboBox, option.getPreset());
         }
         enableCheckBox.setSelected(getConfiguration().isEnabled());
     }

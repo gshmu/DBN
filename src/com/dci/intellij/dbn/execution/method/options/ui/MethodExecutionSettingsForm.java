@@ -41,12 +41,7 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
         boolean timeoutSettingsChanged = settings.setExecutionTimeout(executionTimeout);
         timeoutSettingsChanged = settings.setDebugExecutionTimeout(debugExecutionTimeout) || timeoutSettingsChanged;
         if (timeoutSettingsChanged) {
-            new SettingsChangeNotifier() {
-                @Override
-                public void notifyChanges() {
-                    EventUtil.notify(getProject(), TimeoutSettingsListener.TOPIC).settingsChanged(ExecutionTarget.METHOD);
-                }
-            };
+            SettingsChangeNotifier.register(() -> EventUtil.notify(getProject(), TimeoutSettingsListener.TOPIC).settingsChanged(ExecutionTarget.METHOD));
         }
     }
 

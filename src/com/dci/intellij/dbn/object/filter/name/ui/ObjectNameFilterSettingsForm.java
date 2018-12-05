@@ -6,17 +6,8 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.filter.name.FilterCondition;
-import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
-import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
-import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
-import com.dci.intellij.dbn.object.filter.name.SimpleNameFilterCondition;
-import com.dci.intellij.dbn.object.filter.name.action.AddConditionAction;
-import com.dci.intellij.dbn.object.filter.name.action.CreateFilterAction;
-import com.dci.intellij.dbn.object.filter.name.action.MoveConditionDownAction;
-import com.dci.intellij.dbn.object.filter.name.action.MoveConditionUpAction;
-import com.dci.intellij.dbn.object.filter.name.action.RemoveConditionAction;
-import com.dci.intellij.dbn.object.filter.name.action.SwitchConditionJoinTypeAction;
+import com.dci.intellij.dbn.object.filter.name.*;
+import com.dci.intellij.dbn.object.filter.name.action.*;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.options.ConfigurationException;
@@ -128,9 +119,9 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
     }
 
     public void applyFormChanges() throws ConfigurationException {
-        final Set<DBObjectType> filterObjectTypes = new HashSet<DBObjectType>();
-        final ObjectNameFilterSettings filterSettings = getConfiguration();
-        final boolean notifyFilterListeners = filterSettings.isModified();
+        Set<DBObjectType> filterObjectTypes = new HashSet<>();
+        ObjectNameFilterSettings filterSettings = getConfiguration();
+        boolean notifyFilterListeners = filterSettings.isModified();
 
         // collect before after applying the changes
         filterObjectTypes.addAll(filterSettings.getFilteredObjectTypes());
@@ -142,17 +133,14 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
         // after applying the changes
         filterObjectTypes.addAll(filterSettings.getFilteredObjectTypes());
 
-        new SettingsChangeNotifier() {
-            @Override
-            public void notifyChanges() {
-                if (notifyFilterListeners) {
-                    Project project = filterSettings.getProject();
-                    ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
-                    DBObjectType[] refreshObjectTypes = filterObjectTypes.toArray(new DBObjectType[0]);
-                    listener.nameFiltersChanged(filterSettings.getConnectionId(), refreshObjectTypes);
-                }
+        SettingsChangeNotifier.register(() -> {
+            if (notifyFilterListeners) {
+                Project project = filterSettings.getProject();
+                ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
+                DBObjectType[] refreshObjectTypes = filterObjectTypes.toArray(new DBObjectType[0]);
+                listener.nameFiltersChanged(filterSettings.getConnectionId(), refreshObjectTypes);
             }
-        };
+        });
     }
 
     public void resetFormChanges() {}

@@ -1,51 +1,53 @@
 package com.dci.intellij.dbn.connection.transaction.options.ui;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.ui.ComboBox;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class TransactionManagerSettingsForm extends ConfigurationEditorForm<TransactionManagerSettings> {
     private JPanel mainPanel;
-    private DBNComboBox<TransactionOption> uncommittedChangesOnProjectCloseComboBox;
-    private DBNComboBox<TransactionOption> uncommittedChangesOnSwitchComboBox;
-    private DBNComboBox<TransactionOption> uncommittedChangesOnDisconnectComboBox;
-    private DBNComboBox<TransactionOption> multipleChangesOnCommitComboBox;
-    private DBNComboBox<TransactionOption> multipleChangesOnRollbackComboBox;
+    private ComboBox<TransactionOption> uncommittedChangesOnProjectCloseComboBox;
+    private ComboBox<TransactionOption> uncommittedChangesOnSwitchComboBox;
+    private ComboBox<TransactionOption> uncommittedChangesOnDisconnectComboBox;
+    private ComboBox<TransactionOption> multipleChangesOnCommitComboBox;
+    private ComboBox<TransactionOption> multipleChangesOnRollbackComboBox;
 
     public TransactionManagerSettingsForm(TransactionManagerSettings settings) {
         super(settings);
 
         updateBorderTitleForeground(mainPanel);
-        uncommittedChangesOnProjectCloseComboBox.setValues(
+        initComboBox(uncommittedChangesOnProjectCloseComboBox,
                 TransactionOption.ASK,
                 TransactionOption.COMMIT,
                 TransactionOption.ROLLBACK,
                 TransactionOption.REVIEW_CHANGES);
 
-        uncommittedChangesOnSwitchComboBox.setValues(
+
+        initComboBox(uncommittedChangesOnSwitchComboBox,
                 TransactionOption.ASK,
                 TransactionOption.COMMIT,
                 TransactionOption.ROLLBACK,
                 TransactionOption.REVIEW_CHANGES);
 
-        uncommittedChangesOnDisconnectComboBox.setValues(
+        initComboBox(uncommittedChangesOnDisconnectComboBox,
                 TransactionOption.ASK,
                 TransactionOption.COMMIT,
                 TransactionOption.ROLLBACK,
                 TransactionOption.REVIEW_CHANGES);
 
-        multipleChangesOnCommitComboBox.setValues(
+        initComboBox(multipleChangesOnCommitComboBox,
                 TransactionOption.ASK,
                 TransactionOption.COMMIT,
                 TransactionOption.REVIEW_CHANGES);
 
-        multipleChangesOnRollbackComboBox.setValues(
+        initComboBox(multipleChangesOnRollbackComboBox,
                 TransactionOption.ASK,
                 TransactionOption.ROLLBACK,
                 TransactionOption.REVIEW_CHANGES);
@@ -60,20 +62,20 @@ public class TransactionManagerSettingsForm extends ConfigurationEditorForm<Tran
 
     public void applyFormChanges() throws ConfigurationException {
         TransactionManagerSettings settings = getConfiguration();
-        settings.getCloseProject().set(uncommittedChangesOnProjectCloseComboBox.getSelectedValue());
-        settings.getToggleAutoCommit().set(uncommittedChangesOnSwitchComboBox.getSelectedValue());
-        settings.getDisconnect().set(uncommittedChangesOnDisconnectComboBox.getSelectedValue());
-        settings.getCommitMultipleChanges().set(multipleChangesOnCommitComboBox.getSelectedValue());
-        settings.getRollbackMultipleChanges().set(multipleChangesOnRollbackComboBox.getSelectedValue());
+        settings.getCloseProject().set(           getSelection(uncommittedChangesOnProjectCloseComboBox));
+        settings.getToggleAutoCommit().set(       getSelection(uncommittedChangesOnSwitchComboBox));
+        settings.getDisconnect().set(             getSelection(uncommittedChangesOnDisconnectComboBox));
+        settings.getCommitMultipleChanges().set(  getSelection(multipleChangesOnCommitComboBox));
+        settings.getRollbackMultipleChanges().set(getSelection(multipleChangesOnRollbackComboBox));
     }
 
     public void resetFormChanges() {
         TransactionManagerSettings settings = getConfiguration();
-        uncommittedChangesOnProjectCloseComboBox.setSelectedValue(settings.getCloseProject().get());
-        uncommittedChangesOnSwitchComboBox.setSelectedValue(settings.getToggleAutoCommit().get());
-        uncommittedChangesOnDisconnectComboBox.setSelectedValue(settings.getDisconnect().get());
-        multipleChangesOnCommitComboBox.setSelectedValue(settings.getCommitMultipleChanges().get());
-        multipleChangesOnRollbackComboBox.setSelectedValue(settings.getRollbackMultipleChanges().get());
+        setSelection(uncommittedChangesOnProjectCloseComboBox, settings.getCloseProject().get());
+        setSelection(uncommittedChangesOnSwitchComboBox,       settings.getToggleAutoCommit().get());
+        setSelection(uncommittedChangesOnDisconnectComboBox,   settings.getDisconnect().get());
+        setSelection(multipleChangesOnCommitComboBox,          settings.getCommitMultipleChanges().get());
+        setSelection(multipleChangesOnRollbackComboBox,        settings.getRollbackMultipleChanges().get());
 
     }
 }

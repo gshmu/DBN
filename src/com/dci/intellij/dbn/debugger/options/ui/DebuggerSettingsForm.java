@@ -1,25 +1,26 @@
 package com.dci.intellij.dbn.debugger.options.ui;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.debugger.options.DebuggerSettings;
 import com.dci.intellij.dbn.debugger.options.DebuggerTypeOption;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.ui.ComboBox;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DebuggerSettingsForm extends ConfigurationEditorForm<DebuggerSettings> {
     private JPanel mainPanel;
-    private DBNComboBox<DebuggerTypeOption> debuggerTypeComboBox;
+    private ComboBox<DebuggerTypeOption> debuggerTypeComboBox;
     private JCheckBox useGenericRunnersCheckBox;
     private JPanel genericRunnersHintPanel;
 
     public DebuggerSettingsForm(DebuggerSettings settings) {
         super(settings);
 
-        debuggerTypeComboBox.setValues(
+        initComboBox(debuggerTypeComboBox,
                 DebuggerTypeOption.JDWP,
                 DebuggerTypeOption.JDBC,
                 DebuggerTypeOption.ASK);
@@ -44,13 +45,13 @@ public class DebuggerSettingsForm extends ConfigurationEditorForm<DebuggerSettin
     public void applyFormChanges() throws ConfigurationException {
         DebuggerSettings settings = getConfiguration();
 
-        settings.getDebuggerType().set(debuggerTypeComboBox.getSelectedValue());
+        settings.getDebuggerType().set(getSelection(debuggerTypeComboBox));
         settings.setUseGenericRunners(useGenericRunnersCheckBox.isSelected());
     }
 
     public void resetFormChanges() {
         DebuggerSettings settings = getConfiguration();
-        debuggerTypeComboBox.setSelectedValue(settings.getDebuggerType().get());
+        setSelection(debuggerTypeComboBox, settings.getDebuggerType().get());
         useGenericRunnersCheckBox.setSelected(settings.isUseGenericRunners());
     }
 }

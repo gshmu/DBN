@@ -40,8 +40,8 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
 
     private ProjectRef projectRef;
-    private AbstractFiltrableList<ConnectionHandler> connectionHandlers = new FiltrableListImpl<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
-    private List<ConnectionHandler> virtualConnections = new ArrayList<ConnectionHandler>();
+    private AbstractFiltrableList<ConnectionHandler> connectionHandlers = new FiltrableListImpl<>(ACTIVE_CONNECTIONS_FILTER);
+    private List<ConnectionHandler> virtualConnections = new ArrayList<>();
 
     public ConnectionBundle(Project project) {
         this.projectRef = ProjectRef.from(project);
@@ -95,8 +95,8 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     }
 
     public void applySettings(ConnectionBundleSettings settings) {
-        AbstractFiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableListImpl<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
-        final List<ConnectionHandler> oldConnectionHandlers = new ArrayList<ConnectionHandler>(this.connectionHandlers.getFullList());
+        AbstractFiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableListImpl<>(ACTIVE_CONNECTIONS_FILTER);
+        final List<ConnectionHandler> oldConnectionHandlers = new ArrayList<>(this.connectionHandlers.getFullList());
         List<ConnectionSettings> connectionSettings = settings.getConnections();
         boolean listChanged = false;
         for (ConnectionSettings connectionSetting : connectionSettings) {
@@ -121,14 +121,11 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         final Project project = getProject();
         listChanged = listChanged || oldConnectionHandlers.size() > 0;
         if (listChanged) {
-            new SettingsChangeNotifier() {
-                @Override
-                public void notifyChanges() {
-                    EventUtil.notify(project, ConnectionSettingsListener.TOPIC).connectionsChanged();
-                    ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                    connectionManager.disposeConnections(oldConnectionHandlers);
-                }
-            };
+            SettingsChangeNotifier.register(() -> {
+                EventUtil.notify(project, ConnectionSettingsListener.TOPIC).connectionsChanged();
+                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                connectionManager.disposeConnections(oldConnectionHandlers);
+            });
         }
     }
 
@@ -172,7 +169,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     }
 
     public void setConnectionHandlers(List<ConnectionHandler> connectionHandlers) {
-        this.connectionHandlers = new FiltrableListImpl<ConnectionHandler>(connectionHandlers, ACTIVE_CONNECTIONS_FILTER);
+        this.connectionHandlers = new FiltrableListImpl<>(connectionHandlers, ACTIVE_CONNECTIONS_FILTER);
     }
 
     public boolean containsConnection(ConnectionHandler connectionHandler) {

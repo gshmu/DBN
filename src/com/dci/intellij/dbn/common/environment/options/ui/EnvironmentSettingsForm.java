@@ -11,8 +11,8 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -47,33 +47,13 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         visibilitySettings.getExecutionResultTabs().from(executionResultTabsCheckBox);
 
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(environmentTypesTable);
-        decorator.setAddAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                environmentTypesTable.insertRow();
-            }
-        });
-        decorator.setRemoveAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                environmentTypesTable.removeRow();
-            }
-        });
-        decorator.setMoveUpAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                environmentTypesTable.moveRowUp();
-            }
-        });
-        decorator.setMoveDownAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                environmentTypesTable.moveRowDown();
-            }
-        });
+        decorator.setAddAction(anActionButton -> environmentTypesTable.insertRow());
+        decorator.setRemoveAction(anActionButton -> environmentTypesTable.removeRow());
+        decorator.setMoveUpAction(anActionButton -> environmentTypesTable.moveRowUp());
+        decorator.setMoveDownAction(anActionButton -> environmentTypesTable.moveRowDown());
         decorator.addExtraAction(new AnActionButton("Revert Changes", Icons.ACTION_REVERT_CHANGES) {
             @Override
-            public void actionPerformed(AnActionEvent anActionEvent) {
+            public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
                 TableCellEditor cellEditor = environmentTypesTable.getCellEditor();
                 if (cellEditor != null) {
                     cellEditor.cancelCellEditing();
@@ -108,15 +88,12 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
             visibilitySettings.getDialogHeaders().to(dialogHeadersCheckBox)||
             visibilitySettings.getExecutionResultTabs().to(executionResultTabsCheckBox);
 
-        new SettingsChangeNotifier() {
-            @Override
-            public void notifyChanges() {
-                if (settingsChanged || visibilityChanged) {
-                    EnvironmentManagerListener listener = EventUtil.notify(getConfiguration().getProject(), EnvironmentManagerListener.TOPIC);
-                    listener.configurationChanged();
-                }
+        SettingsChangeNotifier.register(() -> {
+            if (settingsChanged || visibilityChanged) {
+                EnvironmentManagerListener listener = EventUtil.notify(getConfiguration().getProject(), EnvironmentManagerListener.TOPIC);
+                listener.configurationChanged();
             }
-        };
+        });
     }
 
     public void resetFormChanges() {

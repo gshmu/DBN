@@ -10,7 +10,6 @@ import com.intellij.openapi.options.ConfigurationException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
@@ -43,12 +42,10 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
 
     @Override
     protected ActionListener createActionListener() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                getConfiguration().setModified(true);
-                if (e.getSource() == visibleCheckBox) {
-                    editableCheckBox.setEnabled(visibleCheckBox.isSelected());
-                }
+        return e -> {
+            getConfiguration().setModified(true);
+            if (e.getSource() == visibleCheckBox) {
+                editableCheckBox.setEnabled(visibleCheckBox.isSelected());
             }
         };
     }
@@ -62,15 +59,12 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
 
         settings.setColumnNames(editableStringListForm.getStringValues());
 
-        new SettingsChangeNotifier() {
-            @Override
-            public void notifyChanges() {
-                if (visibilityChanged) {
-                    DataGridSettingsChangeListener listener = EventUtil.notify(settings.getProject(), DataGridSettingsChangeListener.TOPIC);
-                    listener.trackingColumnsVisibilityChanged(trackingColumnsVisible);
-                }
+        SettingsChangeNotifier.register(() -> {
+            if (visibilityChanged) {
+                DataGridSettingsChangeListener listener = EventUtil.notify(settings.getProject(), DataGridSettingsChangeListener.TOPIC);
+                listener.trackingColumnsVisibilityChanged(trackingColumnsVisible);
             }
-        };
+        });
     }
 
     public void resetFormChanges() {
