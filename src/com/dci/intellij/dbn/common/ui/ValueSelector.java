@@ -212,7 +212,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     public class SelectValueAction extends DumbAwareAction {
         private T value;
 
-        public SelectValueAction(T value) {
+        SelectValueAction(T value) {
             super(getOptionDisplayName(value), null, options.is(ValueSelectorOption.HIDE_ICON) ? null : value.getIcon());
             this.value = value;
         }
@@ -278,14 +278,6 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
     protected List<T> loadValues() {
         return new ArrayList<>();
-    }
-
-    protected List<T> getAllPossibleValues() {
-        return getValues();
-    }
-
-    public void setValues(T ... values) {
-        setValues(Arrays.asList(values));
     }
 
     public void setValues(List<T> values) {
