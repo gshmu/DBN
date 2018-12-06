@@ -1,13 +1,7 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
-import com.dci.intellij.dbn.common.ui.PresentableFactory;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
-import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.ui.*;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -26,15 +20,13 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDialog>{
     private JPanel headerPanel;
+    private JPanel mainPanel;
     private DBNComboBox<ConnectionHandler> connectionComboBox;
     private DBNComboBox<DBSchema> schemaComboBox;
-    private JPanel mainPanel;
     private DBNComboBox<CmdLineInterface> cmdLineExecutableComboBox;
     private JCheckBox clearOutputCheckBox;
     private JPanel hintPanel;
@@ -43,7 +35,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
     private DBNHeaderForm headerForm;
     private ExecutionTimeoutForm executionTimeoutForm;
 
-    public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull final ScriptExecutionInput executionInput) {
+    ScriptExecutionInputForm(@NotNull ScriptExecutionInputDialog parentComponent, @NotNull ScriptExecutionInput executionInput) {
         super(parentComponent);
 
         VirtualFile sourceFile = executionInput.getSourceFile();
@@ -66,11 +58,13 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
 
         final Project project = getProject();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        connectionComboBox.setOptions(ValueSelectorOption.HIDE_DESCRIPTION);
+        connectionComboBox.set(ValueSelectorOption.HIDE_DESCRIPTION, true);
         connectionComboBox.setEnabled(sourceFile.isInLocalFileSystem());
         connectionComboBox.setValues(connectionManager.getConnectionHandlers());
-        schemaComboBox.setOptions(ValueSelectorOption.HIDE_DESCRIPTION);
-        cmdLineExecutableComboBox.setOptions(ValueSelectorOption.HIDE_ICON);
+
+        schemaComboBox.set(ValueSelectorOption.HIDE_DESCRIPTION, true);
+
+        cmdLineExecutableComboBox.set(ValueSelectorOption.HIDE_ICON, true);
         cmdLineExecutableComboBox.setValueFactory(new PresentableFactory<CmdLineInterface>("New Cmd-Line Interface...") {
             @Override
             public void create(SimpleCallback<CmdLineInterface> callback) {
@@ -81,6 +75,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
                 }
             }
         });
+
         clearOutputCheckBox.setSelected(executionInput.isClearOutput());
         executionTimeoutForm = new ExecutionTimeoutForm(executionInput, DBDebuggerType.NONE) {
             @Override
@@ -91,34 +86,24 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         executionTimeoutPanel.add(executionTimeoutForm.getComponent());
 
         updateControls(executionInput);
-        clearOutputCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                executionInput.setClearOutput(clearOutputCheckBox.isSelected());
-            }
+        clearOutputCheckBox.addActionListener(e -> {
+            boolean selected = clearOutputCheckBox.isSelected();
+            executionInput.setClearOutput(selected);
         });
 
-        connectionComboBox.addListener(new ValueSelectorListener<ConnectionHandler>() {
-            @Override
-            public void selectionChanged(ConnectionHandler oldValue, ConnectionHandler newValue) {
-                executionInput.setTargetConnection(newValue);
-                updateControls(executionInput);
-            }
-        });
-        schemaComboBox.addListener(new ValueSelectorListener<DBSchema>() {
-            @Override
-            public void selectionChanged(DBSchema oldValue, DBSchema newValue) {
-                executionInput.setSchema(newValue);
-                updateButtons();
-            }
+        connectionComboBox.addListener((oldValue, newValue) -> {
+            executionInput.setTargetConnection(newValue);
+            updateControls(executionInput);
         });
 
-        cmdLineExecutableComboBox.addListener(new ValueSelectorListener<CmdLineInterface>() {
-            @Override
-            public void selectionChanged(CmdLineInterface oldValue, CmdLineInterface newValue) {
-                executionInput.setCmdLineInterface(newValue);
-                updateButtons();
-            }
+        schemaComboBox.addListener((oldValue, newValue) -> {
+            executionInput.setSchema(newValue);
+            updateButtons();
+        });
+
+        cmdLineExecutableComboBox.addListener((oldValue, newValue) -> {
+            executionInput.setCmdLineInterface(newValue);
+            updateButtons();
         });
     }
 

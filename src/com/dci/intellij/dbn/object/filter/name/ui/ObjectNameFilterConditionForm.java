@@ -14,16 +14,22 @@ import javax.swing.*;
 
 public class ObjectNameFilterConditionForm extends DBNFormImpl<ObjectNameFilterConditionDialog> {
     private JPanel mainPanel;
-    private JTextField textPatternTextField;
     private JLabel objectNameLabel;
-    private DBNComboBox<ConditionOperator> operatorComboBox;
     private JLabel wildcardsHintLabel;
+    private JTextField textPatternTextField;
+    private DBNComboBox<ConditionOperator> operatorComboBox;
     private DBNComboBox<ConditionJoinType> joinTypeComboBox;
 
     private SimpleNameFilterCondition condition;
     public enum Operation {CREATE, EDIT, JOIN}
 
-    public ObjectNameFilterConditionForm(ObjectNameFilterConditionDialog parentComponent, CompoundFilterCondition parentCondition, SimpleNameFilterCondition condition, DBObjectType objectType, Operation operation) {
+    ObjectNameFilterConditionForm(
+            ObjectNameFilterConditionDialog parentComponent,
+            CompoundFilterCondition parentCondition,
+            SimpleNameFilterCondition condition,
+            DBObjectType objectType,
+            Operation operation) {
+
         super(parentComponent);
         this.condition = condition == null ? new SimpleNameFilterCondition(ConditionOperator.EQUAL, "") : condition;
         joinTypeComboBox.setValues(ConditionJoinType.values());

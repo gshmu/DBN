@@ -35,7 +35,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     }
 
     @Override
-    protected PsiResolveStatus[] getProperties() {
+    protected PsiResolveStatus[] properties() {
         return PsiResolveStatus.values();
     }
 

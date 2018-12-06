@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -9,7 +9,6 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.ui.GraphicsConfig;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.ui.Gray;
@@ -25,27 +24,22 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.plaf.InsetsUIResource;
-import javax.swing.plaf.UIResource;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.Callable;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
-    private Set<ValueSelectorListener<T>> listeners = new HashSet<ValueSelectorListener<T>>();
-    private T selectedValue;
+    private Set<ValueSelectorListener<T>> listeners = new HashSet<>();
     private JLabel label;
     private JPanel innerPanel;
     private Icon icon;
     private String text;
-    private boolean isComboBox;
     private boolean isEnabled = true;
-    private boolean isFocused = false;
-    private boolean isShowingPopup = false;
     private OptionBundle<ValueSelectorOption> options;
+    private ListPopup popup;
 
     private Border focusBorder;
     private Border defaultBorder;
@@ -56,36 +50,30 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private PresentableFactory<T> valueFactory;
 
 
-    public ValueSelector(@Nullable String text, @Nullable T preselectedValue, boolean isComboBox, ValueSelectorOption ... options) {
-        this(null, text, null, preselectedValue, isComboBox, options);
+    public ValueSelector(@Nullable String text, @Nullable T preselectedValue, ValueSelectorOption... options) {
+        this(null, text, null, preselectedValue, options);
     }
 
-    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable T preselectedValue, boolean isComboBox, ValueSelectorOption ... options) {
-        this(icon, text, null, preselectedValue, isComboBox, options);
+    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable T preselectedValue, ValueSelectorOption... options) {
+        this(icon, text, null, preselectedValue, options);
     }
 
-    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable List<T> values, @Nullable T preselectedValue, boolean isComboBox, ValueSelectorOption ... options) {
+    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable List<T> values, @Nullable T preselectedValue, ValueSelectorOption... options) {
         super(new BorderLayout());
         setOptions(options);
         this.values = values;
         text = CommonUtil.nvl(text, "");
         this.icon = icon;
         this.text = text;
-        this.isComboBox = isComboBox;
 
         //setBorder(Borders.EMPTY_BORDER);
 
         JBTextField textField = new JBTextField();
-        if (isComboBox) {
-            defaultBorder = textField.getBorder();
-            focusBorder = defaultBorder;
-        } else {
-            insideBorder = JBUI.Borders.empty(3, 5);
-            insideBorderFocused = JBUI.Borders.empty(2, 4);
+        insideBorder = JBUI.Borders.empty(3, 5);
+        insideBorderFocused = JBUI.Borders.empty(2, 4);
 
-            defaultBorder = insideBorder;
-            focusBorder = new CompoundBorder(new RoundedLineBorder(new JBColor(Gray._190, Gray._55), 3), insideBorderFocused);
-        }
+        defaultBorder = insideBorder;
+        focusBorder = new CompoundBorder(new RoundedLineBorder(new JBColor(Gray._190, Gray._55), 3), insideBorderFocused);
 
         label = new JLabel(text, cropIcon(icon), SwingConstants.LEFT);
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -97,56 +85,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         innerPanel.add(label, BorderLayout.WEST);
         innerPanel.addMouseListener(mouseListener);
         innerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        //setPreferredSize(new Dimension((int) getPreferredSize().getWidth(), (int) textField.getPreferredSize().getHeight()));
         add(innerPanel, BorderLayout.CENTER);
-
-        if (isComboBox) {
-            selectedValue = preselectedValue;
-            if (selectedValue == null) {
-                label.setIcon(cropIcon(icon));
-                label.setText(text);
-            } else {
-                label.setIcon(cropIcon(selectedValue.getIcon()));
-                label.setText(getName(selectedValue));
-            }
-
-            innerPanel.setBackground(UIUtil.getTextFieldBackground());
-            innerPanel.add(new JLabel(Icons.COMMON_ARROW_DOWN), BorderLayout.EAST);
-
-            setFocusable(true);
-            addFocusListener(new FocusListener() {
-                @Override
-                public void focusGained(FocusEvent e) {
-                    isFocused = true;
-                    ValueSelector.this.revalidate();
-                    ValueSelector.this.repaint();
-                }
-
-                @Override
-                public void focusLost(FocusEvent e) {
-                    isFocused = false;
-                    ValueSelector.this.revalidate();
-                    ValueSelector.this.repaint();
-                }
-            });
-
-            innerPanel.addKeyListener(new KeyAdapter() {
-                @Override
-                public void keyPressed(KeyEvent e) {
-                    if (e.getKeyCode() == 38) {//UP
-                        selectPrevious();
-                        e.consume();
-                    } else if (e.getKeyCode() == 40) { // DOWN
-                        selectNext();
-                        e.consume();
-                    } else if (e.getKeyCode() == KeyEvent.VK_ENTER ) {
-                        showPopup();
-                        e.consume();
-                    }
-
-                }
-            });
-        }
 
         adjustSize();
     }
@@ -208,7 +147,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         label.setCursor(isEnabled ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR): Cursor.getDefaultCursor());
         innerPanel.setCursor(isEnabled ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
 
-        innerPanel.setBackground(isComboBox && isEnabled ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
+        innerPanel.setBackground(UIUtil.getPanelBackground());
         innerPanel.setFocusable(isEnabled);
         label.setForeground(isEnabled ? UIUtil.getTextFieldForeground() : UIUtil.getLabelDisabledForeground());
     }
@@ -218,7 +157,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseEntered(MouseEvent e) {
-            if (!isShowingPopup && !isComboBox) {
+            if (popup == null) {
                 innerPanel.setBorder(focusBorder);
                 innerPanel.setBackground(new JBColor(Gray._210, Gray._75));
 
@@ -229,9 +168,9 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
         @Override
         public void mouseExited(MouseEvent e) {
-            if (!isShowingPopup && !isComboBox) {
+            if (popup == null) {
                 innerPanel.setBorder(defaultBorder);
-                innerPanel.setBackground(isComboBox ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
+                innerPanel.setBackground(UIUtil.getPanelBackground());
 
                 revalidate();
                 repaint();
@@ -243,7 +182,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             if (getValues().size() == 0) {
                 selectValue(null);
             } else {
-                if (isEnabled && !isShowingPopup) {
+                if (isEnabled && popup == null) {
                     innerPanel.requestFocus();
                     showPopup();
                 }
@@ -257,7 +196,6 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     };
 
     private void showPopup() {
-        isShowingPopup = true;
         innerPanel.setCursor(Cursor.getDefaultCursor());
         label.setCursor(Cursor.getDefaultCursor());
         DefaultActionGroup actionGroup = new DefaultActionGroup();
@@ -268,7 +206,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             actionGroup.add(ActionUtil.SEPARATOR);
             actionGroup.add(new AddValueAction());
         }
-        ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
+        popup = JBPopupFactory.getInstance().createActionGroupPopup(
                 null,
                 actionGroup,
                 DataManager.getInstance().getDataContext(this),
@@ -276,22 +214,26 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 false,
                 false,
                 () -> {
-                    setBorder(defaultBorder);
-                    innerPanel.setBackground(isComboBox ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
+                    DisposerUtil.dispose(popup);
+                    popup = null;
+
+                    innerPanel.setBorder(defaultBorder);
+                    innerPanel.setBackground(UIUtil.getPanelBackground());
                     innerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-                    isShowingPopup = false;
-                    requestFocus();
+                    innerPanel.requestFocus();
                     revalidate();
                     repaint();
                 },
                 10,
                 anAction -> {
+/*
                     if (anAction instanceof ValueSelector.SelectValueAction) {
                         SelectValueAction action = (SelectValueAction) anAction;
                         return action.value.equals(selectedValue);
                     }
+*/
                     return false;
                 });
         GUIUtil.showUnderneathOf(popup, this, 3, 200);
@@ -362,11 +304,6 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         return true;
     }
 
-    @Nullable
-    public T getSelectedValue() {
-        return selectedValue;
-    }
-
     public void setSelectedValue(@Nullable T value) {
         selectValue(value);
     }
@@ -411,118 +348,20 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     }
 
     private void selectValue(T value) {
+/*
         T oldValue = selectedValue;
         if (value != null) {
             value = values.contains(value) ? value : values.isEmpty() ? null : values.get(0);
         }
         if (!CommonUtil.safeEqual(oldValue, value) || (values.isEmpty() && value == null)) {
-            if (isComboBox) {
-                selectedValue = value;
-                if (selectedValue == null) {
-                    label.setIcon(options.is(ValueSelectorOption.HIDE_ICON) ? null : cropIcon(icon));
-                    label.setText(text);
-                } else {
-                    label.setIcon(options.is(ValueSelectorOption.HIDE_ICON) ? null : cropIcon(selectedValue.getIcon()));
-                    label.setText(getName(selectedValue));
-                }
-            }
-
             for (ValueSelectorListener<T> listener : listeners) {
                 listener.selectionChanged(oldValue, value);
             }
         }
-    }
+*/
 
-    void selectNext() {
-        if (isComboBox && selectedValue != null) {
-            List<T> values = getValues();
-            int index = values.indexOf(selectedValue);
-            if (index < values.size() - 1) {
-                T nextValue = values.get(index + 1);
-                selectValue(nextValue);
-            }
-        }
-    }
-
-    void selectPrevious() {
-        if (isComboBox && selectedValue != null) {
-            List<T> values = getValues();
-            int index = values.indexOf(selectedValue);
-            if (index > 0) {
-                T previousValue = values.get(index - 1);
-                selectValue(previousValue);
-            }
-        }
-    }
-
-    private class ValueSelectorBorder implements Border, UIResource {
-        ValueSelector<T> valueSelector;
-
-        ValueSelectorBorder(ValueSelector<T> valueSelector) {
-            this.valueSelector = valueSelector;
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new InsetsUIResource(4, 6, 4, 6);
-        }
-
-        @Override
-        public boolean isBorderOpaque() {
-            return false;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g2, int x, int y, int width, int height) {
-            Graphics2D g = ((Graphics2D)g2);
-            final GraphicsConfig config = new GraphicsConfig(g);
-            g.translate(x, y);
-
-            if (UIUtil.isUnderDarcula() || CompatibilityUtil.isUnderIntelliJLaF()) {
-                if (isFocused || isShowingPopup) {
-                    GUIUtil.paintFocusRing(g, new Rectangle(2, 2, width - 4, height - 4));
-                } else {
-                    boolean editable = valueSelector.isEnabled;
-                    g.setColor(getBorderColor(c.isEnabled() && editable));
-                    g.drawRect(1, 1, width-2, height-2);
-                    g.setColor(UIUtil.getPanelBackground());
-                    g.drawRect(0, 0, width, height);
-
-                }
-            } else {
-                Border textFieldBorder = UIUtil.getTextFieldBorder();
-                if (textFieldBorder instanceof LineBorder) {
-                    LineBorder lineBorder = (LineBorder) textFieldBorder;
-                    g.setColor(lineBorder.getLineColor());
-                } else {
-                    g.setColor(UIUtil.getBorderColor());
-                }
-                g.drawRect(1, 1, width - 3, height - 3);
-                g.setColor(UIUtil.getPanelBackground());
-                g.drawRect(0, 0, width-1, height-1);
-            }
-            g.translate(-x, -y);
-            config.restore();
-
-        }
-
-        private Color getBorderColor(boolean enabled) {
-            if (UIUtil.isUnderDarcula()) {
-                return enabled ? Gray._100 : Gray._83;
-            }
-            return Gray._150;
-        }
-    }
-
-    public abstract class NewValueCallable implements Callable<T> {
-        private String actionName;
-
-        public NewValueCallable(String actionName) {
-            this.actionName = actionName;
-        }
-
-        public String getActionName() {
-            return actionName;
+        for (ValueSelectorListener<T> listener : listeners) {
+            listener.selectionChanged(null, value);
         }
     }
 }

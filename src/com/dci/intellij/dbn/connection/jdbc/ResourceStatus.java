@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.property.Property;
-import com.dci.intellij.dbn.common.property.PropertyGroup;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public enum ResourceStatus implements Property {
     // shared
@@ -30,20 +28,10 @@ public enum ResourceStatus implements Property {
     ROLLING_BACK,
     RESOLVING_TRANSACTION;
 
-    private final int index = PropertyHolderImpl.idx(this);
+    private final int index = Property.idx(this);
 
     @Override
     public int index() {
         return index;
-    }
-
-    @Override
-    public PropertyGroup group() {
-        return null;
-    }
-
-    @Override
-    public boolean implicit() {
-        return false;
     }
 }

@@ -6,14 +6,14 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     private int computed = 0;
 
     public PropertyHolderImpl() {
-        for (T property : getProperties()) {
+        for (T property : properties()) {
             if (property.implicit()) {
                 set(property);
             }
         }
     }
 
-    protected abstract T[] getProperties();
+    protected abstract T[] properties();
 
     @Override
     public boolean set(T property, boolean value) {
@@ -28,16 +28,11 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
         return (computed & idx) == idx;
     }
 
-    @Override
-    public boolean isNot(T status) {
-        return !is(status);
-    }
-
     private boolean set(T property) {
         if (isNot(property)) {
             PropertyGroup group = property.group();
             if (group != null) {
-                for (T prop : getProperties()) {
+                for (T prop : properties()) {
                     if (is(prop)) {
                         computed -= prop.index();
                         break;
@@ -45,7 +40,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
                 }
             }
 
-            computed = computed += property.index();
+            computed += property.index();
             return true;
         }
         return false;
@@ -58,7 +53,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
             PropertyGroup group = property.group();
             if (group != null) {
                 // set implicit property
-                for (T prop : getProperties()) {
+                for (T prop : properties()) {
                     if (prop.group() == group && prop.implicit() && prop != property && !is(prop)) {
                         computed += prop.index();
                         break;
@@ -72,27 +67,17 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
 
     public void reset() {
         computed = 0;
-        for (T property : getProperties()) {
+        for (T property : properties()) {
             if (property.implicit()) {
                 set(property);
             }
         }
     }
 
-    public static int idx(Enum property) {
-        //return INDEX.getPrime(property.ordinal());
-        double pow = Math.pow(2, property.ordinal());
-        if (pow > Integer.MAX_VALUE) {
-            System.out.println(pow);
-        }
-        return (int) pow;
-
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for (T property : getProperties()) {
+        for (T property : properties()) {
             if (is(property)) {
                 if (builder.length() > 0) {
                     builder.append(" / ");

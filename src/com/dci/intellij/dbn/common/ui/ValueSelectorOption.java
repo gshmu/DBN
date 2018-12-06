@@ -1,6 +1,16 @@
 package com.dci.intellij.dbn.common.ui;
 
-public enum ValueSelectorOption implements Option{
+import com.dci.intellij.dbn.common.property.Property;
+
+public enum ValueSelectorOption implements Option, Property {
     HIDE_ICON,
-    HIDE_DESCRIPTION
+    HIDE_DESCRIPTION;
+
+    private final int index = Property.idx(this);
+
+    @Override
+    public int index() {
+        return index;
+    }
+
 }

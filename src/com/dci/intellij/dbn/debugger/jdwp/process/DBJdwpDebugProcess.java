@@ -99,11 +99,6 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         return this.status.is(status);
     }
 
-    @Override
-    public boolean isNot(DBDebugProcessStatus status) {
-        return this.status.isNot(status);
-    }
-
     protected boolean shouldSuspend(XSuspendContext suspendContext) {
         if (is(TARGET_EXECUTION_TERMINATED)) {
             return false;

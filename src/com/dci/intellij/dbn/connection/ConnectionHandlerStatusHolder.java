@@ -18,7 +18,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
     private Throwable connectionException;
 
     @Override
-    protected ConnectionHandlerStatus[] getProperties() {
+    protected ConnectionHandlerStatus[] properties() {
         return ConnectionHandlerStatus.values();
     }
 

@@ -10,12 +10,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.SequenceElementType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
-import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
+import com.dci.intellij.dbn.language.common.element.*;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
@@ -245,11 +240,6 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     @Override
     public boolean set(ElementTypeAttribute attribute, boolean value) {
         throw new AbstractMethodError("Operation not allowed");
-    }
-
-    @Override
-    public boolean isNot(ElementTypeAttribute attribute) {
-        return !is(attribute);
     }
 
     public FormattingDefinition getFormatting() {

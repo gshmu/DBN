@@ -5,5 +5,7 @@ public interface PropertyHolder<T extends Property> {
 
     boolean is(T status);
 
-    boolean isNot(T status);
+    default boolean isNot(T status) {
+        return !is(status);
+    };
 }

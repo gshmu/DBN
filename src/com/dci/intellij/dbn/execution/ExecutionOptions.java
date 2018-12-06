@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 public class ExecutionOptions extends PropertyHolderImpl<ExecutionOption>{
 
     @Override
-    protected ExecutionOption[] getProperties() {
+    protected ExecutionOption[] properties() {
         return ExecutionOption.values();
     }
 

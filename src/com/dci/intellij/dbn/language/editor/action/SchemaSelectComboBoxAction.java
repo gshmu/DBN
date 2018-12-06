@@ -40,7 +40,7 @@ public class SchemaSelectComboBoxAction extends DBNComboBoxAction implements Dum
         return actionGroup;
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Project project = getProject(e);
         VirtualFile virtualFile = getVirtualFile(e);
         String text = NAME;

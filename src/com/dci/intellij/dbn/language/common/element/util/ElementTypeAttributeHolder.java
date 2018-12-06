@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 public class ElementTypeAttributeHolder extends PropertyHolderImpl<ElementTypeAttribute>{
 
     @Override
-    protected ElementTypeAttribute[] getProperties() {
+    protected ElementTypeAttribute[] properties() {
         return ElementTypeAttribute.values();
     }
 

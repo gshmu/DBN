@@ -69,11 +69,6 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
         throw new AbstractMethodError("Operation not allowed");
     }
 
-    @Override
-    public boolean isNot(ElementTypeAttribute status) {
-        return true;
-    }
-
     public boolean isLeaf() {
         return false;
     }

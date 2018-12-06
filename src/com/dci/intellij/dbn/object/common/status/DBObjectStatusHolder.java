@@ -106,7 +106,7 @@ public class DBObjectStatusHolder {
     private class Entry extends PropertyHolderImpl<DBObjectStatus>{
         private DBContentType contentType;
 
-        protected DBObjectStatus[] getProperties() {
+        protected DBObjectStatus[] properties() {
             return DBObjectStatus.values();
         }
 

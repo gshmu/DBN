@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public class VirtualFileStatusHolder extends PropertyHolderImpl<VirtualFileStatus> {
     @Override
-    protected VirtualFileStatus[] getProperties() {
+    protected VirtualFileStatus[] properties() {
         return VirtualFileStatus.values();
     }
 }

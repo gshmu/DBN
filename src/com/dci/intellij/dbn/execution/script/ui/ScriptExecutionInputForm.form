@@ -26,32 +26,16 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <labelFor value="b83"/>
           <text value="Target &amp;connection"/>
         </properties>
-      </component>
-      <component id="b83" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="connectionComboBox">
-        <constraints>
-          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
       </component>
       <component id="c9bee" class="javax.swing.JLabel">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <labelFor value="f366b"/>
           <text value="Target &amp;schema"/>
         </properties>
-      </component>
-      <component id="f366b" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="schemaComboBox">
-        <constraints>
-          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="200" height="-1"/>
-          </grid>
-        </constraints>
-        <properties/>
       </component>
       <hspacer id="202b2">
         <constraints>
@@ -65,15 +49,8 @@
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <labelFor value="e5ee0"/>
           <text value="Cmd-Line &amp;interface"/>
         </properties>
-      </component>
-      <component id="e5ee0" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="cmdLineExecutableComboBox" default-binding="true">
-        <constraints>
-          <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
       </component>
       <component id="a5f05" class="javax.swing.JCheckBox" binding="clearOutputCheckBox">
         <constraints>
@@ -99,6 +76,24 @@
         <border type="none"/>
         <children/>
       </grid>
+      <component id="436bb" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="schemaComboBox">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="987aa" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="connectionComboBox">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="c0f3a" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="cmdLineExecutableComboBox">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
     </children>
   </grid>
 </form>
