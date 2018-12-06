@@ -3,29 +3,29 @@ package com.dci.intellij.dbn.browser.model;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.containers.HashSet;
-import gnu.trove.THashSet;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public abstract class BrowserTreeModel extends DisposableBase implements TreeModel, Disposable {
-    private Set<TreeModelListener> treeModelListeners = new HashSet<TreeModelListener>();
-    private BrowserTreeNode root;
-    private final Set<LoadInProgressTreeNode> loadInProgressNodes = new THashSet<LoadInProgressTreeNode>();
 
-    protected BrowserTreeModel(BrowserTreeNode root) {
+    private Set<TreeModelListener> treeModelListeners = new HashSet<>();
+    private BrowserTreeNode root;
+
+    private LoadInProgressRegistry<LoadInProgressTreeNode> loadInProgressRegistry =
+            LoadInProgressRegistry.create(this,
+                    node -> BrowserTreeModel.this.notifyListeners(node, TreeEventType.NODES_CHANGED));
+
+    BrowserTreeModel(BrowserTreeNode root) {
         this.root = root;
         Project project = root.getProject();
         EventUtil.subscribe(project, this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
@@ -52,49 +52,6 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
 
     public abstract boolean contains(BrowserTreeNode node);
 
-    /****************************************************
-     *              LoadInProgress handling             *
-     ****************************************************/
-
-    private void registerLoadInProgressNode(LoadInProgressTreeNode node) {
-        synchronized (loadInProgressNodes) {
-            boolean startTimer = loadInProgressNodes.size() == 0;
-            loadInProgressNodes.add(node);
-            if (startTimer) {
-                Timer reloader = new Timer("DBN - Database Browser (load in progress reload timer)");
-                reloader.schedule(new LoadInProgressRefreshTask(), 0, 50);
-            }
-        }
-    }
-
-    private class LoadInProgressRefreshTask extends TimerTask {
-        int iterations = 0;
-        public void run() {
-            synchronized (loadInProgressNodes) {
-                Iterator<LoadInProgressTreeNode> loadInProgressNodesIterator = loadInProgressNodes.iterator();
-                while (loadInProgressNodesIterator.hasNext()) {
-                    LoadInProgressTreeNode loadInProgressTreeNode = loadInProgressNodesIterator.next();
-                    try {
-                        if (loadInProgressTreeNode.isDisposed()) {
-                            loadInProgressNodesIterator.remove();
-                        } else {
-                            notifyListeners(loadInProgressTreeNode, TreeEventType.NODES_CHANGED);
-                        }
-                    } catch (ProcessCanceledException e) {
-                        loadInProgressNodesIterator.remove();
-                    }
-                }
-
-                if (loadInProgressNodes.isEmpty()) {
-                    cancel();
-                }
-            }
-
-            iterations++;
-        }
-    }
-
-
 
     /***************************************
      *              TreeModel              *
@@ -106,7 +63,7 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
     public Object getChild(Object parent, int index) {
         BrowserTreeNode treeChild = ((BrowserTreeNode) parent).getChildAt(index);
         if (treeChild instanceof LoadInProgressTreeNode) {
-            registerLoadInProgressNode((LoadInProgressTreeNode) treeChild);
+            loadInProgressRegistry.register((LoadInProgressTreeNode) treeChild);
         }
         return treeChild;
     }
@@ -131,7 +88,6 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
         if (!isDisposed()) {
             super.dispose();
             treeModelListeners.clear();
-            loadInProgressNodes.clear();
             root = null;
         }
     }

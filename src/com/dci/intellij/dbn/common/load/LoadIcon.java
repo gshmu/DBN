@@ -10,13 +10,15 @@ import java.util.TimerTask;
 
 public class LoadIcon implements Icon{
     public static final Icon INSTANCE = new LoadIcon();
-    private static Icon[] icons = new Icon[12];
+    public static final int ROLL_INTERVAL = 80;
+    public static final int ROLL_ELEMENTS = 8;
+
+    private static Icon[] ICONS = new Icon[ROLL_ELEMENTS];
     static {
-        for (int i = 0; i <= 12 - 1; i++) {
-            icons[i] = IconLoader.getIcon("/process/step_" + (i + 1) + ".png");
+        for (int i = 0; i < ICONS.length; i++) {
+            ICONS[i] = IconLoader.getIcon("/process/step_" + (i + 1) + ".png");
         }
     }
-
 
     private static int iconIndex;
     private static long lastAccessTimestamp = System.currentTimeMillis();
@@ -25,7 +27,7 @@ public class LoadIcon implements Icon{
     private static class IconRollerTimerTask extends TimerTask {
         @Override
         public void run() {
-            if (iconIndex == icons.length - 1) {
+            if (iconIndex == ICONS.length - 1) {
                 iconIndex = 0;
             } else {
                 iconIndex++;
@@ -47,7 +49,7 @@ public class LoadIcon implements Icon{
             synchronized (IconRollerTimerTask.class) {
                 if (ICON_ROLLER == null) {
                     ICON_ROLLER = new Timer("DBN - Load in Progress (icon roller)");
-                    ICON_ROLLER.schedule(new IconRollerTimerTask(), 50, 50);
+                    ICON_ROLLER.schedule(new IconRollerTimerTask(), ROLL_INTERVAL, ROLL_INTERVAL);
                 }
             }
         }
@@ -56,7 +58,7 @@ public class LoadIcon implements Icon{
     private static Icon getIcon() {
         startRoller();
         lastAccessTimestamp = System.currentTimeMillis();
-        return icons[iconIndex];
+        return ICONS[iconIndex];
     }
 
     @Override
@@ -66,11 +68,11 @@ public class LoadIcon implements Icon{
 
     @Override
     public int getIconWidth() {
-        return getIcon().getIconWidth();
+        return ICONS[0].getIconWidth();
     }
 
     @Override
     public int getIconHeight() {
-        return getIcon().getIconHeight();
+        return ICONS[0].getIconHeight();
     }
 }
