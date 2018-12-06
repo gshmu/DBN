@@ -14,7 +14,6 @@ import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.RoundedLineBorder;
-import com.intellij.ui.components.JBTextField;
 import com.intellij.util.IconUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -35,16 +34,12 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private Set<ValueSelectorListener<T>> listeners = new HashSet<>();
     private JLabel label;
     private JPanel innerPanel;
-    private Icon icon;
-    private String text;
     private boolean isEnabled = true;
     private OptionBundle<ValueSelectorOption> options;
     private ListPopup popup;
 
-    private Border focusBorder;
-    private Border defaultBorder;
-    private Border insideBorder;
-    private Border insideBorderFocused;
+    private static Border focusBorder = new CompoundBorder(new RoundedLineBorder(new JBColor(Gray._190, Gray._55), 3, 1), JBUI.Borders.empty(2, 4));
+    private static Border defaultBorder = JBUI.Borders.empty(3, 5);
 
     private List<T> values;
     private PresentableFactory<T> valueFactory;
@@ -62,20 +57,8 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         super(new BorderLayout());
         setOptions(options);
         this.values = values;
-        text = CommonUtil.nvl(text, "");
-        this.icon = icon;
-        this.text = text;
 
-        //setBorder(Borders.EMPTY_BORDER);
-
-        JBTextField textField = new JBTextField();
-        insideBorder = JBUI.Borders.empty(3, 5);
-        insideBorderFocused = JBUI.Borders.empty(2, 4);
-
-        defaultBorder = insideBorder;
-        focusBorder = new CompoundBorder(new RoundedLineBorder(new JBColor(Gray._190, Gray._55), 3), insideBorderFocused);
-
-        label = new JLabel(text, cropIcon(icon), SwingConstants.LEFT);
+        label = new JLabel(CommonUtil.nvl(text, ""), cropIcon(icon), SwingConstants.LEFT);
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         label.addMouseListener(mouseListener);
 
@@ -87,7 +70,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         innerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         add(innerPanel, BorderLayout.CENTER);
 
-        adjustSize();
+        setMinimumSize(new Dimension(0, 30));
     }
 
     @Override
@@ -97,29 +80,6 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
     public void setOptions(ValueSelectorOption ... options) {
         this.options = new OptionBundle<>(options);
-    }
-
-    private void adjustSize() {
-        int minWidth = 0;
-        FontMetrics fontMetrics = label.getFontMetrics(label.getFont());
-        int height = fontMetrics.getHeight();
-        for (T presentable : getAllPossibleValues()) {
-            String name = CommonUtil.nvl(getName(presentable), "");
-            int width = fontMetrics.stringWidth(name);
-            if (presentable.getIcon() != null) {
-                width = width + 16;
-            }
-            minWidth = Math.max(minWidth, width);
-        }
-        int width = fontMetrics.stringWidth(text);
-        if (icon != null) {
-            width = width + 16;
-        }
-        minWidth = Math.max(minWidth, width);
-        label.setPreferredSize(new Dimension(minWidth + 10, height));
-        label.setMinimumSize(new Dimension(minWidth + 10, height));
-        innerPanel.setMaximumSize(new Dimension(-1, height + 2));
-        innerPanel.setPreferredSize(new Dimension((int) innerPanel.getPreferredSize().getWidth(), height + 2));
     }
 
     public void setValueFactory(PresentableFactory<T> valueFactory) {
@@ -151,6 +111,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         innerPanel.setFocusable(isEnabled);
         label.setForeground(isEnabled ? UIUtil.getTextFieldForeground() : UIUtil.getLabelDisabledForeground());
     }
+
    public void paintComponent(Graphics g) {
         super.paintComponent(g);
     }
@@ -329,17 +290,14 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
     public void setValues(List<T> values) {
         this.values = values;
-        adjustSize();
     }
 
     private void addValue(T value) {
         this.values.add(value);
-        adjustSize();
     }
 
     public void addValues(Collection<T> value) {
         this.values.addAll(value);
-        adjustSize();
     }
 
 
@@ -348,18 +306,6 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     }
 
     private void selectValue(T value) {
-/*
-        T oldValue = selectedValue;
-        if (value != null) {
-            value = values.contains(value) ? value : values.isEmpty() ? null : values.get(0);
-        }
-        if (!CommonUtil.safeEqual(oldValue, value) || (values.isEmpty() && value == null)) {
-            for (ValueSelectorListener<T> listener : listeners) {
-                listener.selectionChanged(oldValue, value);
-            }
-        }
-*/
-
         for (ValueSelectorListener<T> listener : listeners) {
             listener.selectionChanged(null, value);
         }
