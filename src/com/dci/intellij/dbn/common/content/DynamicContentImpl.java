@@ -57,7 +57,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
     @Override
-    protected DynamicContentStatus[] getProperties() {
+    protected DynamicContentStatus[] properties() {
         return DynamicContentStatus.values();
     }
 

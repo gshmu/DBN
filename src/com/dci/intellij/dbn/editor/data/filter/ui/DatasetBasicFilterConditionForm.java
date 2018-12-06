@@ -2,8 +2,7 @@ package com.dci.intellij.dbn.editor.data.filter.ui;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
-import com.dci.intellij.dbn.common.ui.ValueSelector;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
@@ -22,6 +21,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.SimpleTextAttributes;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -37,13 +37,10 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     private JPanel actionsPanel;
     private JPanel mainPanel;
     private JPanel valueFieldPanel;
-    private JPanel columnPanel;
-    private JPanel operatorPanel;
-
     private boolean active = true;
 
-    private ColumnSelector columnSelector;
-    private OperatorSelector operatorSelector;
+    private DBNComboBox<DBColumn> columnSelector;
+    private DBNComboBox<ConditionOperator> operatorSelector;
 
     private DatasetBasicFilterForm basicFilterForm;
     private TextFieldWithPopup editorComponent;
@@ -69,12 +66,29 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         }
         GenericDataType dataType = column == null ? null : column.getDataType().getGenericDataType();
 
+        columnSelector.set(ValueSelectorOption.HIDE_DESCRIPTION, true);
+        columnSelector.setValueLoader(this::loadColumns);
+        columnSelector.setSelectedValue(column);
+        columnSelector.addListener((oldValue, newValue) -> {
+            if (newValue != null) {
+                GenericDataType selectedDataType = newValue.getDataType().getGenericDataType();
+                editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, selectedDataType == GenericDataType.DATE_TIME);
+            }
+            if (basicFilterForm != null) {
+                basicFilterForm.updateNameAndPreview();
+            }
+            operatorSelector.reloadValues();
+        });
 
-        columnSelector = new ColumnSelector(column);
-        columnPanel.add(columnSelector, BorderLayout.CENTER);
 
-        operatorSelector = new OperatorSelector(condition.getOperator());
-        operatorPanel.add(operatorSelector, BorderLayout.CENTER);
+        operatorSelector.setValueLoader(this::loadOperators);
+        operatorSelector.setSelectedValue(condition.getOperator());
+        operatorSelector.addListener((oldValue, newValue) -> {
+            if (basicFilterForm != null) {
+                basicFilterForm.updateNameAndPreview();
+                updateValueTextField();
+            }
+        });
 
         editorComponent = new TextFieldWithPopup(dataset.getProject());
         editorComponent.createCalendarPopup(false);
@@ -102,63 +116,25 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
 
     }
 
-    private class ColumnSelector extends ValueSelector<DBColumn> {
-        public ColumnSelector(DBColumn selectedColumn) {
-            super(null, "", selectedColumn, true, ValueSelectorOption.HIDE_DESCRIPTION);
-            addListener(new ValueSelectorListener<DBColumn>() {
-                @Override
-                public void selectionChanged(DBColumn oldValue, DBColumn newValue) {
-                    if (newValue != null) {
-                        GenericDataType dataType = newValue.getDataType().getGenericDataType();
-                        editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, dataType == GenericDataType.DATE_TIME);
-                    }
-                    if (basicFilterForm != null) {
-                        basicFilterForm.updateNameAndPreview();
-                    }
-                    operatorSelector.resetValues();
-                }
-            });
+    @NotNull
+    List<ConditionOperator> loadOperators() {
+        DBColumn selectedColumn = getSelectedColumn();
+        if (selectedColumn != null) {
+            Class typeClass = selectedColumn.getDataType().getTypeClass();
+            return Arrays.asList(ConditionOperator.getConditionOperators(typeClass));
         }
-
-        @Override
-        public List<DBColumn> loadValues() {
-            DBDataset dataset = datasetRef.get();
-            if (dataset != null) {
-                List<DBColumn> columns = new ArrayList<DBColumn>(dataset.getColumns());
-                Collections.sort(columns);
-                return columns;
-            }
-            return new ArrayList<DBColumn>();
-        }
+        return Collections.emptyList();
     }
 
-    private class OperatorSelector extends ValueSelector<ConditionOperator> {
-        public OperatorSelector(ConditionOperator selectedOperator) {
-            super("", selectedOperator, true);
-            addListener(new ValueSelectorListener<ConditionOperator>() {
-                @Override
-                public void selectionChanged(ConditionOperator oldValue, ConditionOperator newValue) {
-                    if (basicFilterForm != null) {
-                        basicFilterForm.updateNameAndPreview();
-                        updateValueTextField();
-                    }
-                }
-            });
+    @NotNull
+    List<DBColumn> loadColumns() {
+        DBDataset dataset1 = datasetRef.get();
+        if (dataset1 != null) {
+            List<DBColumn> columns = new ArrayList<>(dataset1.getColumns());
+            Collections.sort(columns);
+            return columns;
         }
-
-        @Override
-        public List<ConditionOperator> loadValues() {
-            DBColumn column = getSelectedColumn();
-            if (column != null) {
-                return Arrays.asList(ConditionOperator.getConditionOperators(column.getDataType().getTypeClass()));
-            }
-            return new ArrayList<ConditionOperator>();
-        }
-
-        @Override
-        protected List<ConditionOperator> getAllPossibleValues() {
-            return Arrays.asList(ConditionOperator.getConditionOperators(null));
-        }
+        return Collections.emptyList();
     }
 
     public void focus() {

@@ -137,11 +137,6 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     }
 
     @Override
-    public boolean isNot(ElementTypeAttribute status) {
-        return true;
-    }
-
-    @Override
     public boolean set(ElementTypeAttribute status, boolean value) {
         throw new AbstractMethodError("Operation not allowed");
     }

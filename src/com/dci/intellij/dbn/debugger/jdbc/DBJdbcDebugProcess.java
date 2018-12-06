@@ -92,11 +92,6 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         return this.status.is(status);
     }
 
-    @Override
-    public boolean isNot(DBDebugProcessStatus status) {
-        return this.status.isNot(status);
-    }
-
     public DBNConnection getTargetConnection() {
         return targetConnection;
     }

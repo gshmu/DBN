@@ -11,7 +11,7 @@ public class DatasetLoadInstructions extends PropertyHolderImpl<DatasetLoadInstr
     }
 
     @Override
-    protected DatasetLoadInstruction[] getProperties() {
+    protected DatasetLoadInstruction[] properties() {
         return DatasetLoadInstruction.values();
     }
 

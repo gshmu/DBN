@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.object.common.property;
 
 import com.dci.intellij.dbn.common.property.Property;
-import com.dci.intellij.dbn.common.property.PropertyGroup;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public enum DBObjectProperty implements Property {
     // generic
@@ -52,19 +50,10 @@ public enum DBObjectProperty implements Property {
     TREE_LOADED // belongs to DBObjectStatus (here for optimization reasons)
     ;
 
-    private final int index = PropertyHolderImpl.idx(this);
+    private final int index = Property.idx(this);
 
     @Override
     public int index() {
         return index;
-    }
-    @Override
-    public PropertyGroup group() {
-        return null;
-    }
-
-    @Override
-    public boolean implicit() {
-        return false;
     }
 }

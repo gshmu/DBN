@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
 import com.dci.intellij.dbn.common.property.Property;
-import com.dci.intellij.dbn.common.property.PropertyGroup;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public enum ElementTypeAttribute implements Property{
     
@@ -41,21 +39,11 @@ public enum ElementTypeAttribute implements Property{
     private String name;
     private String description;
     private boolean specific;
-    private final int index = PropertyHolderImpl.idx(this);
+    private final int index = Property.idx(this);
 
     @Override
     public int index() {
         return index;
-    }
-
-    @Override
-    public PropertyGroup group() {
-        return null;
-    }
-
-    @Override
-    public boolean implicit() {
-        return false;
     }
 
     ElementTypeAttribute(String name, String description) {

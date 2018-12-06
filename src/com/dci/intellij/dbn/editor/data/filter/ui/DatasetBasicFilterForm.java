@@ -97,7 +97,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
 
     private class ColumnSelector extends ValueSelector<DBColumn> {
         ColumnSelector() {
-            super(PlatformIcons.ADD_ICON, "Add Condition", null, false, ValueSelectorOption.HIDE_DESCRIPTION);
+            super(PlatformIcons.ADD_ICON, "Add Condition", null, ValueSelectorOption.HIDE_DESCRIPTION);
             addListener((oldValue, newValue) -> addConditionPanel(newValue));
         }
 

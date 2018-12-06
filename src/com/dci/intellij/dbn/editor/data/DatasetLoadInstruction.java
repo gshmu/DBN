@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.editor.data;
 
 import com.dci.intellij.dbn.common.property.Property;
-import com.dci.intellij.dbn.common.property.PropertyGroup;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public enum DatasetLoadInstruction implements Property {
     USE_CURRENT_FILTER,
@@ -11,20 +9,10 @@ public enum DatasetLoadInstruction implements Property {
     REBUILD;
 
 
-    private final int index = PropertyHolderImpl.idx(this);
+    private final int index = Property.idx(this);
 
     @Override
     public int index() {
         return index;
-    }
-
-    @Override
-    public PropertyGroup group() {
-        return null;
-    }
-
-    @Override
-    public boolean implicit() {
-        return false;
     }
 }

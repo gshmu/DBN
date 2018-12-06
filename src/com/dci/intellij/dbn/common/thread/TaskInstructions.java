@@ -15,7 +15,7 @@ public class TaskInstructions extends PropertyHolderImpl<TaskInstruction> {
     }
 
     @Override
-    protected TaskInstruction[] getProperties() {
+    protected TaskInstruction[] properties() {
         return TaskInstruction.values();
     }
 

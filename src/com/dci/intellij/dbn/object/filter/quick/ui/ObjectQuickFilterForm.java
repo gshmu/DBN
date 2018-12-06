@@ -2,13 +2,7 @@ package com.dci.intellij.dbn.object.filter.quick.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
-import com.dci.intellij.dbn.common.ui.ValueSelector;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
-import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.ui.*;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -41,7 +35,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
     private DBObjectList objectList;
     private ObjectQuickFilter filter;
 
-    public ObjectQuickFilterForm(@NotNull ObjectQuickFilterDialog parent, DBObjectList objectList) {
+    ObjectQuickFilterForm(@NotNull ObjectQuickFilterDialog parent, DBObjectList objectList) {
         super(parent);
         this.objectList = objectList;
         conditionsPanel.setLayout(new BoxLayout(conditionsPanel, BoxLayout.Y_AXIS));
@@ -82,7 +76,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 
-    protected void updateJoinTypeComponents() {
+    void updateJoinTypeComponents() {
         for (ObjectQuickFilterConditionForm conditionForm : conditionForms) {
             conditionForm.updateJoinTypeComponent();
         }
@@ -101,7 +95,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
 
     }
 
-    public void removeConditionPanel(ObjectQuickFilterCondition condition) {
+    void removeConditionPanel(ObjectQuickFilterCondition condition) {
         filter.removeCondition(condition);
         for (ObjectQuickFilterConditionForm conditionForm : conditionForms) {
             if (conditionForm.getCondition() == condition) {
@@ -125,16 +119,13 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
             return super.getOptionDisplayName(value);
         }
 
-        public NewFilterSelector(final ObjectQuickFilter filter) {
-            super(PlatformIcons.ADD_ICON, "Add Name Condition", null, false, ValueSelectorOption.HIDE_DESCRIPTION);
-            addListener(new ValueSelectorListener<ConditionOperator>() {
-                @Override
-                public void selectionChanged(ConditionOperator oldValue, ConditionOperator newValue) {
-                    ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
-                    quickFilterManager.setLastUsedOperator(newValue);
-                    ObjectQuickFilterCondition condition = filter.addNewCondition(newValue);
-                    addConditionPanel(condition);
-                }
+        NewFilterSelector(final ObjectQuickFilter filter) {
+            super(PlatformIcons.ADD_ICON, "Add Name Condition", null, ValueSelectorOption.HIDE_DESCRIPTION);
+            addListener((oldValue, newValue) -> {
+                ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
+                quickFilterManager.setLastUsedOperator(newValue);
+                ObjectQuickFilterCondition condition = filter.addNewCondition(newValue);
+                addConditionPanel(condition);
             });
 
         }

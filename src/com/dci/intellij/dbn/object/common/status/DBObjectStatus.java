@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.object.common.status;
 
 import com.dci.intellij.dbn.common.property.Property;
-import com.dci.intellij.dbn.common.property.PropertyGroup;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public enum DBObjectStatus implements Property {
     PRESENT(false, true),
@@ -12,7 +10,7 @@ public enum DBObjectStatus implements Property {
     DEBUG(true, true),
     COMPILING(false, false);
 
-    private final int index = PropertyHolderImpl.idx(this);
+    private final int index = Property.idx(this);
     private final boolean propagable;
     private final boolean defaultValue;
 
@@ -33,16 +31,4 @@ public enum DBObjectStatus implements Property {
     public boolean getDefaultValue() {
         return defaultValue;
     }
-
-    @Override
-    public PropertyGroup group() {
-        return null;
-    }
-
-    @Override
-    public boolean implicit() {
-        return false;
-    }
-
-
 }

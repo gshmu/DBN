@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.common.ui;
 
+/**
+ * @deprecated  use {@link com.dci.intellij.dbn.common.property.PropertyHolder}
+ * @param <T>
+ */
 public class OptionBundle<T extends Option> {
     private T[] options;
 

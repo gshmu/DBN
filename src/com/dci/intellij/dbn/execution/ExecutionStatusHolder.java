@@ -2,9 +2,7 @@ package com.dci.intellij.dbn.execution;
 
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 public class ExecutionStatusHolder extends PropertyHolderImpl<ExecutionStatus> {
 
@@ -17,7 +15,7 @@ public class ExecutionStatusHolder extends PropertyHolderImpl<ExecutionStatus> {
     }
 
     @Override
-    protected ExecutionStatus[] getProperties() {
+    protected ExecutionStatus[] properties() {
         return ExecutionStatus.values();
     }
 }

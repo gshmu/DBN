@@ -26,11 +26,6 @@ public abstract class ExecutionContext implements PropertyHolder<ExecutionStatus
         return this.status.is(status);
     }
 
-    @Override
-    public boolean isNot(ExecutionStatus status) {
-        return this.status.isNot(status);
-    }
-
     public abstract @NotNull String getTargetName();
 
     public abstract @Nullable ConnectionHandler getTargetConnection();

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 class ResourceStatusHolder extends PropertyHolderImpl<ResourceStatus> {
     @Override
-    protected ResourceStatus[] getProperties() {
+    protected ResourceStatus[] properties() {
         return ResourceStatus.values();
     }
 }

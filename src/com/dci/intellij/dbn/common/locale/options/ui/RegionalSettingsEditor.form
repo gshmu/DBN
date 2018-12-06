@@ -93,7 +93,6 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <labelFor value="6c52"/>
           <text value="&amp;Locale:"/>
         </properties>
       </component>
@@ -107,7 +106,6 @@
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <labelFor value="7448"/>
           <text value="&amp;Number format"/>
         </properties>
       </component>
@@ -116,7 +114,6 @@
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <labelFor value="c91ad"/>
           <text value="&amp;Date format"/>
         </properties>
       </component>
@@ -201,24 +198,6 @@
           <text value="Use &amp;Preset Patterns"/>
         </properties>
       </component>
-      <component id="6c52" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="localeComboBox">
-        <constraints>
-          <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="7448" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="numberFormatComboBox">
-        <constraints>
-          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="c91ad" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="dateFormatComboBox">
-        <constraints>
-          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-      </component>
       <component id="1e88b" class="javax.swing.JLabel">
         <constraints>
           <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -234,6 +213,24 @@
           </grid>
         </constraints>
       </hspacer>
+      <component id="1029" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="localeComboBox">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="52e77" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="numberFormatComboBox">
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="5458b" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="dateFormatComboBox">
+        <constraints>
+          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
     </children>
   </grid>
   <buttonGroups>

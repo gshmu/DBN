@@ -3,12 +3,7 @@ package com.dci.intellij.dbn.execution.common.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.ValueSelector;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
-import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.ui.*;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
@@ -28,7 +23,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.HashSet;
@@ -146,7 +140,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
 
     private class SchemaSelector extends ValueSelector<DBSchema> {
         public SchemaSelector() {
-            super(Icons.DBO_SCHEMA, "Select Schema...", executionInput.getTargetSchema(), true, ValueSelectorOption.HIDE_DESCRIPTION);
+            super(Icons.DBO_SCHEMA, "Select Schema...", executionInput.getTargetSchema(), ValueSelectorOption.HIDE_DESCRIPTION);
             addListener(new ValueSelectorListener<DBSchema>() {
                 @Override
                 public void selectionChanged(DBSchema oldValue, DBSchema newValue) {
@@ -168,14 +162,11 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
     }
 
     private class SessionSelector extends ValueSelector<DatabaseSession> {
-        public SessionSelector() {
-            super(Icons.SESSION_CUSTOM, "Select Session...", getTargetSession(), true, ValueSelectorOption.HIDE_DESCRIPTION);
-            addListener(new ValueSelectorListener<DatabaseSession>() {
-                @Override
-                public void selectionChanged(DatabaseSession oldValue, DatabaseSession newValue) {
-                    executionInput.setTargetSessionId(newValue.getId());
-                    notifyChangeListeners();
-                }
+        SessionSelector() {
+            super(Icons.SESSION_CUSTOM, "Select Session...", getTargetSession(), ValueSelectorOption.HIDE_DESCRIPTION);
+            addListener((oldValue, newValue) -> {
+                executionInput.setTargetSessionId(newValue.getId());
+                notifyChangeListeners();
             });
         }
 
@@ -195,16 +186,12 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         return FailsafeUtil.get(connectionHandler);
     }
 
-    public DatabaseSession getTargetSession() {
+    private DatabaseSession getTargetSession() {
         SessionId sessionId = getExecutionInput().getTargetSessionId();
         return getConnectionHandler().getSessionBundle().getSession(sessionId);
     }
 
-    private ActionListener actionListener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            notifyChangeListeners();
-        }
-    };
+    private ActionListener actionListener = e -> notifyChangeListeners();
 
     private void notifyChangeListeners() {
         if (changeListeners != null) {

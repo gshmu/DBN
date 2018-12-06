@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public class DBDebugProcessStatusHolder extends PropertyHolderImpl<DBDebugProcessStatus>{
     @Override
-    protected DBDebugProcessStatus[] getProperties() {
+    protected DBDebugProcessStatus[] properties() {
         return DBDebugProcessStatus.values();
     }
 }

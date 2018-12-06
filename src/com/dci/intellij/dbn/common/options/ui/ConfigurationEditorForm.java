@@ -2,11 +2,8 @@ package com.dci.intellij.dbn.common.options.ui;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.ProjectSupplier;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -15,12 +12,10 @@ import com.intellij.ui.DocumentAdapter;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 public abstract class ConfigurationEditorForm<E extends Configuration> extends DBNFormImpl<ConfigurationEditorForm> {
@@ -69,19 +64,11 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
     }
 
     protected ItemListener createItemListener() {
-        return new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                getConfiguration().setModified(true);
-            }
-        };
+        return e -> getConfiguration().setModified(true);
     }
 
     protected TableModelListener createTableModelListener() {
-        return new TableModelListener() {
-            public void tableChanged(TableModelEvent e) {
-                getConfiguration().setModified(true);
-            }
-        };
+        return e -> getConfiguration().setModified(true);
     }
 
     protected void registerComponents(JComponent ... components) {
@@ -97,17 +84,6 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
                 AbstractButton abstractButton = (AbstractButton) component;
                 if (actionListener == null) actionListener = createActionListener();
                 abstractButton.addActionListener(actionListener);
-            }
-            else if (component instanceof DBNComboBox) {
-                DBNComboBox comboBox = (DBNComboBox) component;
-                comboBox.addListener(new ValueSelectorListener() {
-                    @Override
-                    public void selectionChanged(Object oldValue, Object newValue) {
-                        if (!CommonUtil.safeEqual(oldValue, newValue)) {
-                            getConfiguration().setModified(true);
-                        }
-                    }
-                });
             }
             else if (component instanceof CheckBoxList) {
                 CheckBoxList checkBoxList = (CheckBoxList) component;

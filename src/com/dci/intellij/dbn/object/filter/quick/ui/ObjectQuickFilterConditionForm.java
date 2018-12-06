@@ -24,10 +24,10 @@ import java.awt.*;
 
 public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilterForm> {
     private JPanel mainPanel;
-    private JTextField patternTextField;
-    private JLabel objectNameLabel;
-    private DBNComboBox<ConditionOperator> operatorComboBox;
     private JPanel actionsPanel;
+    private JLabel objectNameLabel;
+    private JTextField patternTextField;
+    private DBNComboBox<ConditionOperator> operatorComboBox;
     private DBNComboBox<ConditionJoinType> joinTypeComboBox;
 
     private ObjectQuickFilterCondition condition;
