@@ -14,16 +14,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.text.Document;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,9 +38,15 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
 
         textField = new JTextField();
         textField.setMargin(JBUI.insets(0, 1));
+
+        Dimension textFieldPreferredSize = textField.getPreferredSize();
+        Dimension maximumSize = new Dimension((int) textFieldPreferredSize.getWidth(), (int) textFieldPreferredSize.getHeight());
+
+        textField.setMaximumSize(maximumSize);
         add(textField, BorderLayout.CENTER);
 
         buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
+        buttonsPanel.setMaximumSize(maximumSize);
         add(buttonsPanel, BorderLayout.EAST);
 
         textField.addKeyListener(keyListener);
@@ -94,10 +91,12 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
     }
 
     public void customizeTextField(JTextField textField) {}
+
     public void customizeButton(JLabel button) {
         int width = (int) button.getPreferredSize().getWidth();
         int height = (int) textField.getPreferredSize().getHeight();
         button.setPreferredSize(new Dimension(width, height));
+        button.setMaximumSize(new Dimension(width, height));
     }
 
     public boolean isSelected() {
