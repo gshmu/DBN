@@ -6,9 +6,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
-import com.dci.intellij.dbn.connection.ConnectionId;
 import com.intellij.openapi.project.Project;
 
 public class SimpleBrowserTreeModel extends BrowserTreeModel {
@@ -26,13 +24,10 @@ public class SimpleBrowserTreeModel extends BrowserTreeModel {
         return true;
     }
 
-    private final ConnectionHandlerStatusListener connectionHandlerStatusListener = new ConnectionHandlerStatusListener() {
-        @Override
-        public void statusChanged(ConnectionId connectionId, ConnectionHandlerStatus status) {
-            ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
-            if (connectionHandler != null) {
-                notifyListeners(connectionHandler.getObjectBundle(), TreeEventType.NODES_CHANGED);
-            }
+    private final ConnectionHandlerStatusListener connectionHandlerStatusListener = (connectionId) -> {
+        ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
+        if (connectionHandler != null) {
+            notifyListeners(connectionHandler.getObjectBundle(), TreeEventType.NODES_CHANGED);
         }
     };
 

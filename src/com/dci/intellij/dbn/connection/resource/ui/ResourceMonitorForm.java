@@ -51,7 +51,10 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
 
         Project project = getProject();
         EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
-        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, connectionHandlerStatusListener);
+        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> {
+            connectionsList.revalidate();
+            connectionsList.repaint();
+        });
     }
 
     private void updateListModel() {
@@ -130,14 +133,6 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
         @Override
         public void afterAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             refreshForm();
-        }
-    };
-
-    private ConnectionHandlerStatusListener connectionHandlerStatusListener = new ConnectionHandlerStatusListener() {
-        @Override
-        public void statusChanged(ConnectionId connectionId, ConnectionHandlerStatus status) {
-            connectionsList.revalidate();
-            connectionsList.repaint();
         }
     };
 

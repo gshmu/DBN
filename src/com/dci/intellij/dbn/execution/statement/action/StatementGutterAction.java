@@ -162,9 +162,9 @@ public class StatementGutterAction extends AnAction {
             if (executionResult == null) {
                 ExecutionContext context = executionProcessor.getExecutionContext();
                 if (context.is(EXECUTING)) {
-                    return "Statement execution in progress. Cancel?";
+                    return "Statement execution is in progress. Cancel?";
                 } else  if (context.is(QUEUED)) {
-                    return "Statement execution queued. Cancel?";
+                    return "Statement execution is queued. Cancel?";
                 }
             }
             else {

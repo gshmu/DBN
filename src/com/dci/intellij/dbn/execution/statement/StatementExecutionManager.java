@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -267,17 +266,28 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     public void process(StatementExecutionProcessor executionProcessor) {
         try {
-            StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-            DBSchema schema = executionInput.getTargetSchema();
-            ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
-            DBNConnection connection = connectionHandler.getConnection(executionInput.getTargetSessionId(), schema);
-            executionProcessor.execute(connection, false);
-
+            DBNConnection connection = prepareConnection(executionProcessor);
+            if (connection != null) {
+                executionProcessor.execute(connection, false);
+            }
         } catch (SQLException e) {
-            NotificationUtil.sendErrorNotification(getProject(), "Error executing " + executionProcessor.getStatementName(), e.getMessage());
+            sendErrorNotification("Error executing " + executionProcessor.getStatementName(), e.getMessage());
         } finally {
             DocumentUtil.refreshEditorAnnotations(executionProcessor.getPsiFile());
         }
+    }
+
+    @Nullable
+    private DBNConnection prepareConnection(StatementExecutionProcessor executionProcessor) {
+        try {
+            StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
+            DBSchema schema = executionInput.getTargetSchema();
+            ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
+            return connectionHandler.getConnection(executionInput.getTargetSessionId(), schema);
+        } catch (SQLException e) {
+            sendErrorNotification("Error executing " + executionProcessor.getStatementName() + ". Failed to ensure connectivity.", e.getMessage());
+        }
+        return null;
     }
 
     public void executeStatementAtCursor(final FileEditor fileEditor) {

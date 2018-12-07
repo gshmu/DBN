@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.debugger.jdbc;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -59,7 +59,7 @@ import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.s
 import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 
-public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebugProcess implements DBDebugProcess {
+public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebugProcess implements DBDebugProcess, NotificationSupport {
     protected DBNConnection targetConnection;
     private DBNConnection debugConnection;
     private ConnectionHandlerRef connectionHandlerRef;
@@ -415,12 +415,11 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     private void suspendSession() {
         if (is(PROCESS_TERMINATING)) return;
-        Project project = getProject();
         XDebugSession session = getSession();
         if (isTerminated()) {
             int reasonCode = runtimeInfo.getReason();
             String message = "Session terminated with code :" + reasonCode + " (" + getDebuggerInterface().getRuntimeEventReason(reasonCode) + ")";
-            NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Debugger", message);
+            sendInfoNotification(Constants.DBN_TITLE_PREFIX + "Debugger", message);
 
             set(PROCESS_STOPPED_NORMALLY, true);
             session.stop();
@@ -435,7 +434,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                     if (runtimeInfo.isTerminated()) {
                         int reasonCode = runtimeInfo.getReason();
                         String message = "Session terminated with code :" + reasonCode + " (" + getDebuggerInterface().getRuntimeEventReason(reasonCode) + ")";
-                        NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Debugger", message);
+                        sendInfoNotification(Constants.DBN_TITLE_PREFIX + "Debugger", message);
                     }
                     if (!runtimeInfo.equals(topRuntimeInfo)) {
                         runtimeInfo = topRuntimeInfo;

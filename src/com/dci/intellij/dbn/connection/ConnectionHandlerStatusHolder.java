@@ -197,7 +197,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
             ConnectionHandler connectionHandler = connectionHandlerRef.get();
             Project project = connectionHandler.getProject();
             ConnectionHandlerStatusListener statusListener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-            statusListener.statusChanged(connectionHandler.getId(), status);
+            statusListener.statusChanged(connectionHandler.getId());
         }
     }
 }

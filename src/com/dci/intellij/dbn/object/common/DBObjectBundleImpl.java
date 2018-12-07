@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
@@ -59,7 +59,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 
-public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle {
+public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
     private ConnectionHandler connectionHandler;
     private BrowserTreeNode treeParent;
     private List<BrowserTreeNode> allPossibleTreeChildren;
@@ -607,7 +607,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                         }
                     }
                 } catch (SQLException e) {
-                    NotificationUtil.sendErrorNotification(getProject(), "Object Status Refresh", "Could not refresh object status. Cause: " + e.getMessage());
+                    sendErrorNotification("Object Status Refresh", "Could not refresh object status. Cause: " + e.getMessage());
                 }
             });
         }

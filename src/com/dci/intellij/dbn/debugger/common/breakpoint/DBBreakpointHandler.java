@@ -1,12 +1,14 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.intellij.openapi.project.Project;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
@@ -18,7 +20,7 @@ import java.util.List;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointDesc;
 import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.BREAKPOINT_SETTING_ALLOWED;
 
-public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>> {
+public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>> implements NotificationSupport {
     private XDebugSession session;
     private T debugProcess;
 
@@ -36,6 +38,10 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
         return debugProcess;
     }
 
+    @Override
+    public Project getProject() {
+        return session.getProject();
+    }
 
     protected boolean canSetBreakpoints() {
         return getDebugProcess().is(BREAKPOINT_SETTING_ALLOWED);

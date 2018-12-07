@@ -4,13 +4,11 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -98,16 +96,14 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
             action.execute(connectionHandler, connection);
             if (action.getNotificationType() != null) {
-                NotificationUtil.sendNotification(
-                        project,
+                sendNotification(
                         action.getNotificationType(),
                         Constants.DBN_TITLE_PREFIX + action.getGroup(),
                         action.getSuccessNotificationMessage(),
                         connectionName);
             }
         } catch (SQLException ex) {
-            NotificationUtil.sendNotification(
-                    project,
+            sendNotification(
                     action.getFailureNotificationType(),
                     Constants.DBN_TITLE_PREFIX + action.getGroup(),
                     action.getFailureNotificationMessage(),
@@ -121,7 +117,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
                 if (action.isStatusChange()) {
                     ConnectionHandlerStatusListener statusListener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-                    statusListener.statusChanged(connectionHandler.getId(), ConnectionHandlerStatus.BUSY);
+                    statusListener.statusChanged(connectionHandler.getId());
                 }
                 connectionHandler.getPendingActions().remove(action);
             }

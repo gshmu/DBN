@@ -83,15 +83,15 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private ConnectionInfo connectionInfo;
     private Cache metaDataCache = new Cache(TimeUtil.ONE_MINUTE);
 
-    private MapLatent<SessionId, StatementExecutionQueue> executionQueues = MapLatent.create(key -> {
-        return new StatementExecutionQueue(ConnectionHandlerImpl.this) {
-            @Override
-            protected void execute(StatementExecutionProcessor processor) {
-                StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(getProject());
-                statementExecutionManager.process(processor);
-            }
-        };
-    });
+    private MapLatent<SessionId, StatementExecutionQueue> executionQueues =
+            MapLatent.create(key ->
+                    new StatementExecutionQueue(ConnectionHandlerImpl.this) {
+                        @Override
+                        protected void execute(StatementExecutionProcessor processor) {
+                            StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(getProject());
+                            statementExecutionManager.process(processor);
+                        }
+                    });
 
     private DBConnectionPsiDirectory psiDirectory;
 

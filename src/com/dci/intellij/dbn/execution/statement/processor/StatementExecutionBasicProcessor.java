@@ -256,7 +256,6 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         try {
             ExecutionContext context = getExecutionContext();
             context.setExecutionTimestamp(System.currentTimeMillis());
-
             context.set(EXECUTING, true);
 
             resultName.reset();
@@ -378,12 +377,12 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Nullable
     private StatementExecutionResult executeStatement(final String statementText) throws SQLException {
-        final ExecutionContext context = getExecutionContext();
+        ExecutionContext context = getExecutionContext();
         assertNotCancelled();
 
-        final DBNConnection connection = context.getConnection();
         ConnectionHandler connectionHandler = getTargetConnection();
-        final DBNStatement statement = connection.createStatement();
+        DBNConnection connection = context.getConnection();
+        DBNStatement statement = connection.createStatement();
         context.setStatement(statement);
 
         int timeout = context.getTimeout();

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -21,15 +21,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class ConnectionPool extends DisposableBase implements Disposable {
+public class ConnectionPool extends DisposableBase implements NotificationSupport, Disposable {
 
     private static Logger LOGGER = LoggerFactory.createLogger();
     private int peakPoolSize = 0;
@@ -183,14 +179,13 @@ public class ConnectionPool extends DisposableBase implements Disposable {
                         ConnectionUtil.close(connection);
 
                         connection = ConnectionUtil.connect(connectionHandler, sessionId);
-                        NotificationUtil.sendInfoNotification(
-                                getProject(),
+                        sendInfoNotification(
                                 Constants.DBN_TITLE_PREFIX + "Session",
                                 "Connected to database \"{0}\"",
                                 connectionHandler.getConnectionName(connection));
                     } finally {
                         ConnectionHandlerStatusListener changeListener = EventUtil.notify(getProject(), ConnectionHandlerStatusListener.TOPIC);
-                        changeListener.statusChanged(connectionHandler.getId(), ConnectionHandlerStatus.CONNECTED);
+                        changeListener.statusChanged(connectionHandler.getId());
                     }
                 }
             }
@@ -217,7 +212,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
     }
 
     @NotNull
-    private Project getProject() {
+    public Project getProject() {
         return getConnectionHandler().getProject();
     }
 
@@ -293,8 +288,7 @@ public class ConnectionPool extends DisposableBase implements Disposable {
 
         if (poolConnections.size() == 0) {
             // Notify first pool connection
-            NotificationUtil.sendInfoNotification(
-                    getProject(),
+            sendInfoNotification(
                     Constants.DBN_TITLE_PREFIX + "Session",
                     "Connected to database \"{0}\"",
                     connectionHandler.getConnectionName(connection));
