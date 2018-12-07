@@ -76,7 +76,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         }
     }
 
-    private ConnectionHandlerStatusListener connectionStatusListener = (connectionId, status) -> {
+    private ConnectionHandlerStatusListener connectionStatusListener = (connectionId) -> {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler != null && connectionHandler.getId() == connectionId) {
             update();

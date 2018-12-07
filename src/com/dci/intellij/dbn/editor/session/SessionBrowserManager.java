@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.editor.session;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -116,7 +115,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                 return "";
             }
         } catch (SQLException e) {
-            NotificationUtil.sendWarningNotification(connectionHandler.getProject(), "Session Browser", "Could not load current session SQL. Cause: {0}", e.getMessage());
+            sendWarningNotification("Session Browser", "Could not load current session SQL. Cause: {0}", e.getMessage());
         } finally {
             ConnectionUtil.close(resultSet);
             connectionHandler.freePoolConnection(connection);

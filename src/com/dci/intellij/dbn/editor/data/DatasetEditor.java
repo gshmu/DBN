@@ -501,10 +501,10 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     /*******************************************************
      *                      Listeners                      *
      *******************************************************/
-    private ConnectionHandlerStatusListener connectionStatusListener = (connectionId, status) -> {
+    private ConnectionHandlerStatusListener connectionStatusListener = (connectionId) -> {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler.getId().equals(connectionId) && status == ConnectionHandlerStatus.CONNECTED) {
-            final boolean connected = connectionHandler.isConnected(SessionId.MAIN);
+        if (connectionHandler.getId().equals(connectionId)) {
+            boolean connected = connectionHandler.isConnected(SessionId.MAIN);
             boolean statusChanged = getStatus().set(CONNECTED, connected);
 
             if (statusChanged) {

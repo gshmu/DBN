@@ -21,10 +21,10 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        final StatementExecutionCursorResult executionResult = getExecutionResult(e);
+        StatementExecutionCursorResult executionResult = getExecutionResult(e);
         if (executionResult != null) {
-            final StatementExecutionCursorProcessor executionProcessor = executionResult.getExecutionProcessor();
-            final Project project = executionResult.getProject();
+            StatementExecutionCursorProcessor executionProcessor = executionResult.getExecutionProcessor();
+            Project project = executionResult.getProject();
             StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
             String taskTitle = "Executing " + executionResult.getExecutionProcessor().getStatementName();
             statementExecutionManager.promptExecutionDialog(

@@ -5,18 +5,10 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.data.export.processor.CSVDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.CustomDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.DataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.ExcelDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.ExcelXDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.HTMLDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.SQLDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.XMLDataExportProcessor;
+import com.dci.intellij.dbn.data.export.processor.*;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -71,7 +63,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
             DataExportInstructions instructions,
             ConnectionHandler connectionHandler,
             final SimpleTask successCallback) {
-        final Project project = getProject();
+        Project project = getProject();
         boolean isSelection = instructions.getScope() == DataExportInstructions.Scope.SELECTION;
         DataExportModel exportModel = new SortableTableExportModel(isSelection, table);
         try {
@@ -81,7 +73,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                 DataExportInstructions.Destination destination = instructions.getDestination();
                 if (destination == DataExportInstructions.Destination.CLIPBOARD) {
                     successCallback.start();
-                    NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Data Export", "Data content exported to clipboard.");
+                    sendInfoNotification(Constants.DBN_TITLE_PREFIX + "Data Export", "Data content exported to clipboard.");
                 } else if (destination == DataExportInstructions.Destination.FILE) {
                     final File file = instructions.getFile();
                     if (Desktop.isDesktopSupported()) {
@@ -112,7 +104,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                                     }
                                 });
                     } else {
-                        NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Data Export", "Content exported to file " + file.getPath());
+                        sendInfoNotification(Constants.DBN_TITLE_PREFIX + "Data Export", "Content exported to file " + file.getPath());
                     }
                 }
             }

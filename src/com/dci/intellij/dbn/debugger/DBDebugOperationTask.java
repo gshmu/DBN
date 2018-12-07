@@ -1,19 +1,20 @@
 package com.dci.intellij.dbn.debugger;
 
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.AbstractTask;
 import com.dci.intellij.dbn.common.thread.ThreadFactory;
 import com.intellij.openapi.project.Project;
 
 import java.util.concurrent.ExecutorService;
 
-public abstract class DBDebugOperationTask<T> extends AbstractTask<T> {
-    private Project project;
+public abstract class DBDebugOperationTask<T> extends AbstractTask<T> implements NotificationSupport {
+    private ProjectRef projectRef;
     private String operationDescription;
 
 
     public DBDebugOperationTask(Project project, String operationDescription) {
-        this.project = project;
+        this.projectRef = ProjectRef.from(project);
         this.operationDescription = operationDescription;
     }
 
@@ -43,7 +44,12 @@ public abstract class DBDebugOperationTask<T> extends AbstractTask<T> {
         }
     }
 
+    @Override
+    public Project getProject() {
+        return projectRef.getnn();
+    }
+
     private void handleException(Exception e) {
-        NotificationUtil.sendErrorNotification(project, "Debugger", "Error performing debug operation (" + operationDescription + ").", e.getMessage());
+        sendErrorNotification("Debugger", "Error performing debug operation (" + operationDescription + ").", e.getMessage());
     }
 }

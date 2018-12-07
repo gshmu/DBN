@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 public abstract class StatementExecutionQueue extends DisposableBase{
 
@@ -26,8 +27,10 @@ public abstract class StatementExecutionQueue extends DisposableBase{
     }
 
     void queue(StatementExecutionProcessor processor) {
+        ExecutionContext executionContext = processor.getExecutionContext();
+        executionContext.set(CANCELLED, false);
         if (!this.processors.contains(processor)) {
-            processor.getExecutionContext().set(QUEUED, true);
+            executionContext.set(QUEUED, true);
             this.processors.add(processor);
             execute();
         }
@@ -43,14 +46,21 @@ public abstract class StatementExecutionQueue extends DisposableBase{
         if (!executing) {
             synchronized (this) {
                 if (!executing) {
-                    executing = true;
                     BackgroundTask.invoke(getProject(), "Executing statements", true, true, (task, progress) -> {
                         try {
+                            executing = true;
                             StatementExecutionProcessor processor = processors.poll();
                             while (processor != null) {
+                                ExecutionContext executionContext = processor.getExecutionContext();
                                 try {
+                                    executionContext.set(QUEUED, false);
+                                    executionContext.set(EXECUTING, true);
                                     StatementExecutionQueue.this.execute(processor);
-                                } catch (ProcessCanceledException ignore) {}
+                                } catch (ProcessCanceledException ignore) {
+
+                                } finally {
+                                    executionContext.reset();
+                                }
 
                                 if (progress.isCanceled()) {
                                     cancelExecution();

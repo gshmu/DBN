@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdbc;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -35,11 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointDesc;
-import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointId;
-import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getDatabaseObject;
-import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getVirtualFile;
-import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.setBreakpointId;
+import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.*;
 
 public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProcess> {
     protected BreakpointInfo defaultBreakpointInfo;
@@ -108,14 +103,13 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
 
             VirtualFile virtualFile = getVirtualFile(breakpoint);
             if (virtualFile != null) {
-                Project project = getSession().getProject();
                 String breakpointDesc = getBreakpointDesc(breakpoint);
                 try {
                     removeBreakpoint(temporary, breakpointId);
                     console.system("Breakpoint removed: " + breakpointDesc);
                 } catch (SQLException e) {
                     console.error("Error removing breakpoint: " + breakpointDesc + ". " + e.getMessage());
-                    NotificationUtil.sendErrorNotification(project, "Error.", e.getMessage());
+                    sendErrorNotification("Error.", e.getMessage());
                 } finally {
                     setBreakpointId(breakpoint, null);
                 }
