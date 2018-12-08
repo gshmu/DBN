@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
-import com.dci.intellij.dbn.data.model.ColumnInfo;
-import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.data.type.DBNativeDataType;
-import com.dci.intellij.dbn.data.value.ValueAdapter;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +8,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
+import com.dci.intellij.dbn.data.model.ColumnInfo;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.type.DBNativeDataType;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.intellij.openapi.progress.ProcessCanceledException;
 
 public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     private Connection connection;
@@ -50,13 +51,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     public synchronized void updateRow() throws SQLException {
         if (!isInsertMode())  {
             if (isUseSavePoints()) {
-                new ConnectionSavepointCall(connection) {
-                    @Override
-                    public Object execute() throws SQLException {
-                        executeUpdate();
-                        return null;
-                    }
-                }.start();
+                ConnectionSavepointCall.invoke(connection, this::executeUpdate);
             } else {
                 executeUpdate();
             }
@@ -89,14 +84,10 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     public synchronized void insertRow() throws SQLException {
         if (isInsertMode())  {
             if (isUseSavePoints()) {
-                new ConnectionSavepointCall(connection) {
-                    @Override
-                    public Object execute() throws SQLException {
-                        executeInsert();
-                        setInsertMode(false);
-                        return null;
-                    }
-                }.start();
+                ConnectionSavepointCall.invoke(connection, () -> {
+                    executeInsert();
+                    setInsertMode(false);
+                });
             } else {
                 executeInsert();
                 setInsertMode(false);
@@ -108,13 +99,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     public synchronized void deleteRow() throws SQLException {
         if (!isInsertMode())  {
             if (isUseSavePoints()) {
-                new ConnectionSavepointCall(connection) {
-                    @Override
-                    public Object execute() throws SQLException {
-                        executeDelete();
-                        return null;
-                    }
-                }.start();
+                ConnectionSavepointCall.invoke(connection, this::executeDelete);
             } else {
                 executeDelete();
             }
