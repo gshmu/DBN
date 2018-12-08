@@ -9,6 +9,7 @@ public class DisposableLatent<T extends Disposable, P extends Disposable> extend
 
     private DisposableLatent(P parent, Loader<T> loader) {
         super(loader);
+        FailsafeUtil.check(parent);
         this.parent = parent;
     }
 

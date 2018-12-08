@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.execution.statement;
 
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -8,20 +15,14 @@ import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
-
-public abstract class StatementExecutionQueue extends DisposableBase{
+public final class StatementExecutionQueue extends DisposableBase{
 
     private ProjectRef projectRef;
     private final Queue<StatementExecutionProcessor> processors = new ConcurrentLinkedQueue<StatementExecutionProcessor>();
     private boolean executing = false;
 
-    protected StatementExecutionQueue(ConnectionHandler connectionHandler) {
+    public StatementExecutionQueue(ConnectionHandler connectionHandler) {
         super(connectionHandler);
         projectRef = ProjectRef.from(connectionHandler.getProject());
     }
@@ -46,21 +47,19 @@ public abstract class StatementExecutionQueue extends DisposableBase{
         if (!executing) {
             synchronized (this) {
                 if (!executing) {
-                    BackgroundTask.invoke(getProject(), "Executing statements", true, true, (task, progress) -> {
+                    executing = true;
+                    Project project = getProject();
+                    BackgroundTask.invoke(project, "Executing statements", true, true, (task, progress) -> {
                         try {
-                            executing = true;
                             StatementExecutionProcessor processor = processors.poll();
                             while (processor != null) {
-                                ExecutionContext executionContext = processor.getExecutionContext();
+                                ExecutionContext context = processor.getExecutionContext();
                                 try {
-                                    executionContext.set(QUEUED, false);
-                                    executionContext.set(EXECUTING, true);
-                                    StatementExecutionQueue.this.execute(processor);
-                                } catch (ProcessCanceledException ignore) {
-
-                                } finally {
-                                    executionContext.reset();
-                                }
+                                    context.set(QUEUED, false);
+                                    context.set(EXECUTING, true);
+                                    StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
+                                    statementExecutionManager.process(processor);
+                                } catch (ProcessCanceledException ignore) {}
 
                                 if (progress.isCanceled()) {
                                     cancelExecution();
@@ -79,9 +78,7 @@ public abstract class StatementExecutionQueue extends DisposableBase{
         }
     }
 
-    protected abstract void execute(StatementExecutionProcessor processor);
-
-    public void cancelExecution() {
+    private void cancelExecution() {
         // cleanup queue for untouched processors
         StatementExecutionProcessor processor = processors.poll();
         while(processor != null) {

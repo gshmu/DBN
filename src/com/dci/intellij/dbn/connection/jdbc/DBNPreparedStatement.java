@@ -4,20 +4,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.ParameterMetaData;
-import java.sql.PreparedStatement;
-import java.sql.Ref;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLXML;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 
 public class DBNPreparedStatement<T extends PreparedStatement> extends DBNStatement<T> implements PreparedStatement{
@@ -28,32 +15,17 @@ public class DBNPreparedStatement<T extends PreparedStatement> extends DBNStatem
 
     @Override
     public DBNResultSet executeQuery() throws SQLException {
-        return new ManagedExecutor<DBNResultSet>() {
-            @Override
-            protected DBNResultSet execute() throws SQLException {
-                return wrap(inner.executeQuery());
-            }
-        }.call();
+        return managed(() -> wrap(inner.executeQuery()));
     }
 
     @Override
     public int executeUpdate() throws SQLException {
-        return new ManagedExecutor<Integer>() {
-            @Override
-            protected Integer execute() throws SQLException {
-                return inner.executeUpdate();
-            }
-        }.call();
+        return managed(() -> inner.executeUpdate());
     }
 
     @Override
     public boolean execute() throws SQLException {
-        return new ManagedExecutor<Boolean>() {
-            @Override
-            protected Boolean execute() throws SQLException {
-                return inner.execute();
-            }
-        }.call();
+        return managed(() -> inner.execute());
     }
 
     /********************************************************************

@@ -1,28 +1,20 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.connection.ConnectionCache;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionType;
-import com.dci.intellij.dbn.connection.SessionId;
-import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.Nullable;
+import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
+import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.RESERVED;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
-import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.RESERVED;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public class DBNConnection extends DBNConnectionBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -33,6 +25,7 @@ public class DBNConnection extends DBNConnectionBase {
     private long lastAccess = System.currentTimeMillis();
     private Set<DBNStatement> statements = new HashSet<DBNStatement>();
     private PendingTransactionBundle dataChanges;
+    private String currentSchema;
 
     private IncrementalResourceStatusAdapter<DBNConnection> active =
             new IncrementalResourceStatusAdapter<DBNConnection>(ResourceStatus.ACTIVE, this) {
@@ -240,6 +233,14 @@ public class DBNConnection extends DBNConnectionBase {
 
         super.close();
         resetDataChanges();
+    }
+
+    public String getCurrentSchema() {
+        return currentSchema;
+    }
+
+    public void setCurrentSchema(String currentSchema) {
+        this.currentSchema = currentSchema;
     }
 
     /********************************************************************

@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.execution.statement;
 
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -49,17 +61,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.SQLException;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 @State(
     name = StatementExecutionManager.COMPONENT_NAME,
@@ -266,7 +267,16 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     public void process(StatementExecutionProcessor executionProcessor) {
         try {
-            DBNConnection connection = prepareConnection(executionProcessor);
+            DBNConnection connection = null;
+            try {
+                StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
+                DBSchema schema = executionInput.getTargetSchema();
+                ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
+                connection = connectionHandler.getConnection(executionInput.getTargetSessionId(), schema);
+            } catch (SQLException e) {
+                sendErrorNotification("Error executing " + executionProcessor.getStatementName() + ". Failed to ensure connectivity.", e.getMessage());
+            }
+
             if (connection != null) {
                 executionProcessor.execute(connection, false);
             }
@@ -275,19 +285,6 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         } finally {
             DocumentUtil.refreshEditorAnnotations(executionProcessor.getPsiFile());
         }
-    }
-
-    @Nullable
-    private DBNConnection prepareConnection(StatementExecutionProcessor executionProcessor) {
-        try {
-            StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-            DBSchema schema = executionInput.getTargetSchema();
-            ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
-            return connectionHandler.getConnection(executionInput.getTargetSessionId(), schema);
-        } catch (SQLException e) {
-            sendErrorNotification("Error executing " + executionProcessor.getStatementName() + ". Failed to ensure connectivity.", e.getMessage());
-        }
-        return null;
     }
 
     public void executeStatementAtCursor(final FileEditor fileEditor) {
@@ -323,7 +320,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     }
 
-    private void promptExecutionDialogs(@NotNull final List<StatementExecutionProcessor> processors, final DBDebuggerType debuggerType, @NotNull final RunnableTask callback) {
+    private void promptExecutionDialogs(@NotNull List<StatementExecutionProcessor> processors, DBDebuggerType debuggerType, @NotNull RunnableTask callback) {
         SimpleLaterInvocator.invoke(() -> {
             if (promptExecutionDialogs(processors, debuggerType)) {
                 callback.start();
