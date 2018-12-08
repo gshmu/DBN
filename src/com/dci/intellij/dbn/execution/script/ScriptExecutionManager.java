@@ -233,12 +233,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                 "Script execution timeout",
                                 "The script execution has timed out",
                                 new String[]{"Retry", "Cancel"}, 0,
-                                new MessageCallback(0) {
-                                    @Override
-                                    protected void execute() {
-                                        executeScript(sourceFile);
-                                    }
-                                });
+                                MessageCallback.create(0, () -> executeScript(sourceFile)));
                     });
                 }
 
@@ -249,12 +244,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                 "Script execution error",
                                 "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),
                                 new String[]{"Retry", "Cancel"}, 0,
-                                new MessageCallback(0) {
-                                    @Override
-                                    protected void execute() {
-                                        executeScript(sourceFile);
-                                    }
-                                });
+                                MessageCallback.create(0, () -> executeScript(sourceFile)));
                     });
                 }
             }.start();

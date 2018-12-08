@@ -18,39 +18,25 @@ public class DatasetEditorReadonlyNotificationPanel extends DatasetEditorNotific
 
         if (isReadonly(schemaObject)) {
             setText("Readonly data - This editor is readonly to prevent accidental data changes in \"" + environmentName + "\" environments (check environment settings)");
-            createActionLabel("Edit Mode", new Runnable() {
-                @Override
-                public void run() {
-                    MessageUtil.showQuestionDialog(project,
-                            "Enable edit-mode",
-                            "Are you sure you want to enable editing for " + schemaObject.getQualifiedNameWithType(),
-                            new String[]{"Yes", "Cancel"}, 0,
-                            new MessageCallback(0) {
-                                @Override
-                                protected void execute() {
-                                    EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-                                    environmentManager.enableEditing(schemaObject, DBContentType.DATA);
-                                }
-                            });
-                }
-            });
+            createActionLabel("Edit Mode", () -> MessageUtil.showQuestionDialog(project,
+                    "Enable edit-mode",
+                    "Are you sure you want to enable editing for " + schemaObject.getQualifiedNameWithType(),
+                    new String[]{"Yes", "Cancel"}, 0,
+                    MessageCallback.create(0, () -> {
+                        EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+                        environmentManager.enableEditing(schemaObject, DBContentType.DATA);
+                    })));
         } else {
             setText("Active edit-mode! (the environment \"" + environmentName + "\" is configured with readonly data to prevent accidental changes)");
-            createActionLabel("Cancel Editing", new Runnable() {
-                @Override
-                public void run() {
-                    EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-                    environmentManager.disableEditing(schemaObject, DBContentType.DATA);
-                }
+            createActionLabel("Cancel Editing", () -> {
+                EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+                environmentManager.disableEditing(schemaObject, DBContentType.DATA);
             });
         }
 
-        createActionLabel("Settings", new Runnable() {
-            @Override
-            public void run() {
-                ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-                settingsManager.openProjectSettings(ConfigId.GENERAL);
-            }
+        createActionLabel("Settings", () -> {
+            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+            settingsManager.openProjectSettings(ConfigId.GENERAL);
         });
     }
 

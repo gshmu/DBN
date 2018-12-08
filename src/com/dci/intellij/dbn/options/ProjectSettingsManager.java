@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.options;
 
+import java.util.List;
+
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
@@ -30,11 +36,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 @State(
     name = ProjectSettingsManager.COMPONENT_NAME,
@@ -196,22 +197,19 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
                 project, "Default project settings",
                 "This will overwrite your default settings with the ones from the current project (including database connections configuration). \nAre you sure you want to continue?",
                 new String[]{"Yes", "No"}, 0,
-                new MessageCallback(0) {
-                    @Override
-                    protected void execute() {
-                        try {
-                            Element element = new Element("state");
-                            getProjectSettings().writeConfiguration(element);
+                MessageCallback.create(0, () -> {
+                    try {
+                        Element element = new Element("state");
+                        getProjectSettings().writeConfiguration(element);
 
-                            ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
-                            ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
-                            defaultProjectSettings.readConfiguration(element);
-                            MessageUtil.showInfoDialog(project, "Project settings", "Project settings exported as default");
-                        } finally {
-                            ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
-                        }
+                        ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
+                        ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
+                        defaultProjectSettings.readConfiguration(element);
+                        MessageUtil.showInfoDialog(project, "Project settings", "Project settings exported as default");
+                    } finally {
+                        ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
                     }
-                });
+                }));
     }
 
     public void importDefaultSettings(final boolean isNewProject) {
@@ -220,33 +218,31 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
         if (settingsLoaded == null || !settingsLoaded || !isNewProject) {
             String message = isNewProject ?
                     "Do you want to import the default project settings into project \"" + project.getName() + "\"?":
-                    "Your current settings will be overwritten with the default project settings, including database connections configuration. \nAre you sure you want to import the default project settings into project \"" + project.getName() + "\"?";
+                    "Your current settings will be overwritten with the default project settings, " +
+                    "including database connections configuration.\n" +
+                    "Are you sure you want to import the default project settings into project \"" + project.getName() + "\"?";
             MessageUtil.showQuestionDialog(
                     project, "Default project settings",
                     message,
                     new String[]{"Yes", "No"}, 0,
-                    new MessageCallback(0) {
-                        @Override
-                        protected void execute() {
-                            try {
-                                Element element = new Element("state");
-                                ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
-                                defaultProjectSettings.writeConfiguration(element);
+                    MessageCallback.create(0, () -> {
+                        try {
+                            Element element = new Element("state");
+                            ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
+                            defaultProjectSettings.writeConfiguration(element);
 
-                                ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
-                                getProjectSettings().readConfiguration(element);
+                            ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
+                            getProjectSettings().readConfiguration(element);
 
-                                EventUtil.notify(project, ConnectionSettingsListener.TOPIC).connectionsChanged();
+                            EventUtil.notify(project, ConnectionSettingsListener.TOPIC).connectionsChanged();
 
-                                if (!isNewProject) {
-                                    MessageUtil.showInfoDialog(project, "Project settings", "Default project settings loaded to project \"" + project.getName() + "\".");
-                                }
-                            } finally {
-                                ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
+                            if (!isNewProject) {
+                                MessageUtil.showInfoDialog(project, "Project settings", "Default project settings loaded to project \"" + project.getName() + "\".");
                             }
-
+                        } finally {
+                            ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
                         }
-                    });
+                    }));
         }
     }
 

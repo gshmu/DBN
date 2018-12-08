@@ -9,11 +9,20 @@ public abstract class MessageCallback extends SimpleTask<Integer> {
         setData(0);
     }
 
-    public MessageCallback(Integer executeOption) {
+    private MessageCallback(Integer executeOption) {
         this.executeOption = executeOption;
     }
 
     protected boolean canExecute() {
         return executeOption == null || executeOption.equals(getData());
+    }
+
+    public static MessageCallback create(Integer executeOption, Runnable runnable) {
+        return new MessageCallback(executeOption) {
+            @Override
+            protected void execute() {
+                runnable.run();
+            }
+        };
     }
 }

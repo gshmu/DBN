@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.connection.mapping;
 
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.*;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
@@ -49,16 +60,6 @@ import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.IncorrectOperationException;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.*;
 
 @State(
     name = FileConnectionMappingManager.COMPONENT_NAME,
@@ -389,12 +390,8 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                 MessageUtil.showWarningDialog(project,
                         "No valid connection", message,
                         new String[]{"Select Connection", "Cancel"}, 0,
-                        new MessageCallback(0) {
-                            @Override
-                            protected void execute() {
-                                promptConnectionSelector(file, false, true, true, callback);
-                            }
-                        });
+                        MessageCallback.create(0, () ->
+                                promptConnectionSelector(file, false, true, true, callback)));
 
             } else if (file.getDatabaseSchema() == null) {
                 String message =

@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.execution.logging.action;
 
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -8,9 +12,6 @@ import com.dci.intellij.dbn.execution.logging.LogOutputContext;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 
 public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction {
     public DatabaseLogOutputKillAction() {
@@ -29,12 +30,7 @@ public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction
                         "Kill process",
                         "This will interrupt the script execution process. \nAre you sure you want to continue?",
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        new MessageCallback(0) {
-                            @Override
-                            protected void execute() {
-                                context.stop();
-                            }
-                        });
+                        MessageCallback.create(0, () -> context.stop()));
             } else {
                 context.stop();
             }

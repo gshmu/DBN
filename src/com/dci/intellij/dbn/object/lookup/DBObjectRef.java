@@ -1,28 +1,25 @@
 package com.dci.intellij.dbn.object.lookup;
 
-import com.dci.intellij.dbn.common.Reference;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.state.PersistentStateElement;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionCache;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectionProvider;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.Reference;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.intellij.openapi.project.Project;
 
 public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement<Element>, ConnectionProvider {
     protected DBObjectRef parent;
@@ -84,10 +81,10 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return null;
     }
 
-    public static DBObjectRef from(Element element) {
+    public static <T extends DBObject> DBObjectRef<T> from(Element element) {
         String objectRefDefinition = element.getAttributeValue("object-ref");
         if (StringUtil.isNotEmpty(objectRefDefinition)) {
-            DBObjectRef objectRef = new DBObjectRef();
+            DBObjectRef<T> objectRef = new DBObjectRef<>();
             objectRef.readState(element);
             return objectRef;
         }

@@ -13,49 +13,36 @@ import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.project.Project;
 
 public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotificationPanel{
-    public SourceCodeReadonlyNotificationPanel(final DBSchemaObject schemaObject, final SourceCodeEditor sourceCodeEditor) {
+    public SourceCodeReadonlyNotificationPanel(DBSchemaObject schemaObject, SourceCodeEditor sourceCodeEditor) {
         super(isReadonly(sourceCodeEditor) ? MessageType.INFO : MessageType.WARNING);
-        final DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
+        DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
         String environmentName = sourceCodeFile.getEnvironmentType().getName();
 
-        final Project project = schemaObject.getProject();
-        final DBContentType contentType = sourceCodeEditor.getContentType();
+        Project project = schemaObject.getProject();
+        DBContentType contentType = sourceCodeEditor.getContentType();
 
         if (isReadonly(sourceCodeEditor)) {
             setText("Readonly code - This editor is readonly to prevent accidental code changes in \"" + environmentName + "\" environments (check environment settings)");
-            createActionLabel("Edit Mode", new Runnable() {
-                @Override
-                public void run() {
+            createActionLabel("Edit Mode", () ->
                     MessageUtil.showQuestionDialog(project,
                             "Enable edit-mode",
                             "Are you sure you want to enable editing for " + schemaObject.getQualifiedNameWithType(),
                             new String[]{"Yes", "Cancel"}, 0,
-                            new MessageCallback(0) {
-                                @Override
-                                protected void execute() {
-                                    EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-                                    environmentManager.enableEditing(schemaObject, contentType);
-                                }
-                            });
-                }
-            });
+                            MessageCallback.create(0, () -> {
+                                EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+                                environmentManager.enableEditing(schemaObject, contentType);
+                            })));
         } else {
             setText("Active edit-mode! (the environment \"" + environmentName + "\" is configured with readonly code to prevent accidental changes)");
-            createActionLabel("Cancel Editing", new Runnable() {
-                @Override
-                public void run() {
-                    EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-                    environmentManager.disableEditing(schemaObject, contentType);
-                }
+            createActionLabel("Cancel Editing", () -> {
+                EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+                environmentManager.disableEditing(schemaObject, contentType);
             });
         }
 
-        createActionLabel("Settings", new Runnable() {
-            @Override
-            public void run() {
-                ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-                settingsManager.openProjectSettings(ConfigId.GENERAL);
-            }
+        createActionLabel("Settings", () -> {
+            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+            settingsManager.openProjectSettings(ConfigId.GENERAL);
         });
     }
 
