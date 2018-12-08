@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.common.ui;
 
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
+import java.util.*;
+
+import javax.swing.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.latent.Loader;
@@ -17,16 +29,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.List;
-import java.util.*;
 
 public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements PropertyHolder<ValueSelectorOption> {
     private Set<ValueSelectorListener<T>> listeners = new HashSet<ValueSelectorListener<T>>();
@@ -43,26 +45,10 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
 
     private final MouseListener mouseListener = new MouseAdapter() {
         @Override
-        public void mouseClicked(MouseEvent e) {
-        }
-
-        @Override
         public void mousePressed(MouseEvent e) {
             if (DBNComboBox.this.isEnabled()) {
                 showPopup();
             }
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
         }
     };
 

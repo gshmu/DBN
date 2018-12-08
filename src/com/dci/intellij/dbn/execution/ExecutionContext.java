@@ -1,29 +1,27 @@
 package com.dci.intellij.dbn.execution;
 
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.property.PropertyHolder;
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.object.DBSchema;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public abstract class ExecutionContext implements PropertyHolder<ExecutionStatus> {
+public abstract class ExecutionContext extends PropertyHolderImpl<ExecutionStatus> implements PropertyHolder<ExecutionStatus> {
     private transient int timeout;
     private transient boolean logging = false;
     private transient long executionTimestamp;
     private transient DBNConnection connection;
     private transient DBNStatement statement;
-    private ExecutionStatusHolder status = new ExecutionStatusHolder();
 
     @Override
-    public boolean set(ExecutionStatus status, boolean value) {
-        return this.status.set(status, value);
-    }
-
-    @Override
-    public boolean is(ExecutionStatus status) {
-        return this.status.is(status);
+    protected ExecutionStatus[] properties() {
+        return ExecutionStatus.values();
     }
 
     public abstract @NotNull String getTargetName();
@@ -72,8 +70,12 @@ public abstract class ExecutionContext implements PropertyHolder<ExecutionStatus
         this.statement = statement;
     }
 
+    public boolean canExecute() {
+        return isNot(QUEUED) && isNot(EXECUTING) && isNot(CANCELLED);
+    }
+
     public void reset() {
-        status.reset();
+        super.reset();
         timeout = 0;
         logging = false;
         executionTimestamp = 0;

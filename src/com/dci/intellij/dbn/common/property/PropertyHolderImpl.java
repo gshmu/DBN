@@ -23,7 +23,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     }
 
     @Override
-    public boolean is(T property) {
+    public final boolean is(T property) {
         int idx = property.index();
         return (computed & idx) == idx;
     }
