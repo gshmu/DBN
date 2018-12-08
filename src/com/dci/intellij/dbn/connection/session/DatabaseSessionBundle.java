@@ -1,20 +1,19 @@
 package com.dci.intellij.dbn.connection.session;
 
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.Disposable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     private ConnectionHandlerRef connectionHandlerRef;
@@ -29,22 +28,33 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
         super(connectionHandler);
         this.connectionHandlerRef = connectionHandler.getRef();
 
-        mainSession = new DatabaseSession(SessionId.MAIN, "Main", connectionHandler);
+        mainSession = new DatabaseSession(SessionId.MAIN, "Main", ConnectionType.MAIN, connectionHandler);
         sessions.add(mainSession);
 
         if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
-            debugSession = new DatabaseSession(SessionId.DEBUG, "Debug", connectionHandler);
-            debuggerSession = new DatabaseSession(SessionId.DEBUGGER, "Debugger", connectionHandler);
+            debugSession = new DatabaseSession(SessionId.DEBUG, "Debug", ConnectionType.DEBUG, connectionHandler);
+            debuggerSession = new DatabaseSession(SessionId.DEBUGGER, "Debugger", ConnectionType.DEBUGGER, connectionHandler);
             sessions.add(debugSession);
             sessions.add(debuggerSession);
         }
 
-        poolSession = new DatabaseSession(SessionId.POOL, "Pool", connectionHandler);
+        poolSession = new DatabaseSession(SessionId.POOL, "Pool", ConnectionType.POOL, connectionHandler);
         sessions.add(poolSession);
     }
 
-    public List<DatabaseSession> getSessions() {
-        return sessions;
+    public List<DatabaseSession> getSessions(ConnectionType ... connectionTypes) {
+        if (connectionTypes == null) {
+            return sessions;
+        } else {
+            List<DatabaseSession> sessions = new ArrayList<>();
+            for (DatabaseSession session : this.sessions) {
+                if (session.getConnectionType().isOneOf(connectionTypes)) {
+                    sessions.add(session);
+                }
+            }
+
+            return sessions;
+        }
     }
 
     public Set<String> getSessionNames() {
@@ -97,13 +107,13 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     }
 
     void addSession(SessionId id, String name) {
-        sessions.add(new DatabaseSession(id, name, getConnectionHandler()));
+        sessions.add(new DatabaseSession(id, name, ConnectionType.SESSION, getConnectionHandler()));
         Collections.sort(sessions);
     }
 
     DatabaseSession createSession(String name) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DatabaseSession session = new DatabaseSession(null, name, connectionHandler);
+        DatabaseSession session = new DatabaseSession(null, name, ConnectionType.SESSION, connectionHandler);
         sessions.add(session);
         Collections.sort(sessions);
         return session;

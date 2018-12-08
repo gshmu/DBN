@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.connection;
 
+import java.lang.ref.WeakReference;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
@@ -16,14 +25,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class ConnectionPool extends DisposableBase implements NotificationSupport, Disposable {
 
@@ -128,26 +129,26 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
     @NotNull
     public List<DBNConnection> getConnections(ConnectionType... connectionTypes) {
         ArrayList<DBNConnection> connections = new ArrayList<DBNConnection>();
-        if (isOneOf(ConnectionType.MAIN, connectionTypes) && mainConnection != null) {
+        if (ConnectionType.MAIN.isOneOf(connectionTypes) && mainConnection != null) {
             connections.add(mainConnection);
         }
 
-        if (isOneOf(ConnectionType.DEBUG, connectionTypes) && debugConnection != null) {
+        if (ConnectionType.DEBUG.isOneOf(connectionTypes) && debugConnection != null) {
             connections.add(debugConnection);
         }
 
-        if (isOneOf(ConnectionType.DEBUGGER, connectionTypes) && debuggerConnection != null) {
+        if (ConnectionType.DEBUGGER.isOneOf(connectionTypes) && debuggerConnection != null) {
             connections.add(debuggerConnection);
         }
 
-        if (isOneOf(ConnectionType.TEST, connectionTypes) && testConnection != null) {
+        if (ConnectionType.TEST.isOneOf(connectionTypes) && testConnection != null) {
             connections.add(testConnection);
         }
 
-        if (isOneOf(ConnectionType.POOL, connectionTypes)) {
+        if (ConnectionType.POOL.isOneOf(connectionTypes)) {
             connections.addAll(poolConnections);
         }
-        if (isOneOf(ConnectionType.SESSION, connectionTypes)) {
+        if (ConnectionType.SESSION.isOneOf(connectionTypes)) {
             for (DBNConnection connection : sessionConnections.values()) {
                 if (connection != null) {
                     connections.add(connection);
@@ -155,16 +156,6 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
             }
         }
         return connections;
-    }
-
-    private static boolean isOneOf(ConnectionType connectionType, ConnectionType... connectionTypes) {
-        if (connectionTypes == null || connectionTypes.length == 0) return true;
-        for (ConnectionType type : connectionTypes) {
-            if (connectionType == type) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @NotNull

@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
+import com.dci.intellij.dbn.common.util.EnumerationUtil;
+
 public enum ConnectionType {
     TEST("Test"),
     MAIN("Main"),
@@ -17,5 +19,9 @@ public enum ConnectionType {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isOneOf(ConnectionType... connectionTypes){
+        return EnumerationUtil.isOneOf(this, connectionTypes);
     }
 }

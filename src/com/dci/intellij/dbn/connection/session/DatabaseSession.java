@@ -1,25 +1,29 @@
 package com.dci.intellij.dbn.connection.session;
 
+import javax.swing.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 public class DatabaseSession extends DisposableBase implements Comparable<DatabaseSession>, Presentable {
     private ConnectionHandlerRef connectionHandlerRef;
+    private ConnectionType connectionType;
     private final SessionId id;
     private String name;
 
-    public DatabaseSession(SessionId id, String name, ConnectionHandler connectionHandler) {
+    public DatabaseSession(SessionId id, String name, ConnectionType connectionType, ConnectionHandler connectionHandler) {
         this.id = id == null ? SessionId.create() : id;
         this.name = name;
+        this.connectionType = connectionType;
         this.connectionHandlerRef = connectionHandler.getRef();
     }
 
@@ -31,6 +35,10 @@ public class DatabaseSession extends DisposableBase implements Comparable<Databa
     @NotNull
     public String getName() {
         return name;
+    }
+
+    public ConnectionType getConnectionType() {
+        return connectionType;
     }
 
     @Nullable
