@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.connection.console;
 
+import java.util.List;
+
+import org.jdom.CDATA;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -29,13 +37,6 @@ import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.util.EventDispatcher;
-import org.jdom.CDATA;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 @State(
     name = DatabaseConsoleManager.COMPONENT_NAME,
@@ -105,16 +106,13 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                 "You will loose the information contained in this console.\n" +
                         "Are you sure you want to delete the console?",
                 MessageUtil.OPTIONS_YES_NO, 0,
-                new MessageCallback(0) {
-                    @Override
-                    protected void execute() {
-                        FileEditorManager.getInstance(project).closeFile(consoleFile);
-                        ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
-                        String fileName = consoleFile.getName();
-                        connectionHandler.getConsoleBundle().removeConsole(fileName);
-                        eventDispatcher.getMulticaster().fileDeleted(new VirtualFileEvent(this, consoleFile, fileName, null));
-                    }
-                });
+                MessageCallback.create(0, () -> {
+                    FileEditorManager.getInstance(project).closeFile(consoleFile);
+                    ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
+                    String fileName = consoleFile.getName();
+                    connectionHandler.getConsoleBundle().removeConsole(fileName);
+                    eventDispatcher.getMulticaster().fileDeleted(new VirtualFileEvent(this, consoleFile, fileName, null));
+                }));
     }
 
 

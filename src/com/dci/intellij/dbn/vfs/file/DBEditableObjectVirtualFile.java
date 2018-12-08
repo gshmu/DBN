@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.vfs.file;
 
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -32,16 +43,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObject> {
     private static final List<DBContentVirtualFile> EMPTY_CONTENT_FILES = Collections.emptyList();
@@ -113,12 +114,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                                 project, "No DDL file found",
                                 "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
                                 "(You can disable this check in \"DDL File\" options)", MessageUtil.OPTIONS_YES_NO, 0,
-                                new MessageCallback(0) {
-                                    @Override
-                                    protected void execute() {
-                                        fileAttachmentManager.createDDLFile(object);
-                                    }
-                                });
+                                MessageCallback.create(0, () -> fileAttachmentManager.createDDLFile(object)));
                     }
                 }
             }
@@ -131,7 +127,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         if (contentFiles == null) {
             synchronized (this) {
                 if (contentFiles == null) {
-                    contentFiles = new ArrayList<DBContentVirtualFile>();
+                    contentFiles = new ArrayList<>();
                     DBContentType objectContentType = getObject().getContentType();
                     if (objectContentType.isBundle()) {
                         DBContentType[] contentTypes = objectContentType.getSubContentTypes();
@@ -164,7 +160,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
     public List<DBSourceCodeVirtualFile> getSourceCodeFiles() {
-        List<DBSourceCodeVirtualFile> sourceCodeFiles = new ArrayList<DBSourceCodeVirtualFile>();
+        List<DBSourceCodeVirtualFile> sourceCodeFiles = new ArrayList<>();
         List<DBContentVirtualFile> contentFiles = getContentFiles();
         for (DBContentVirtualFile contentFile : contentFiles) {
             if (contentFile instanceof DBSourceCodeVirtualFile) {

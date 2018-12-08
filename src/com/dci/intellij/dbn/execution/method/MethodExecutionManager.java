@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.execution.method;
 
+import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Set;
+
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -27,17 +39,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
-
-import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 @State(
     name = MethodExecutionManager.COMPONENT_NAME,
@@ -207,12 +208,8 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                                 "Method execution error",
                                 "Error executing " + method.getQualifiedNameWithType() + ".\n" + e.getMessage().trim(),
                                 new String[]{"Try Again", "Cancel"}, 0,
-                                new MessageCallback(0) {
-                                    @Override
-                                    protected void execute() {
-                                        startMethodExecution(executionInput, DBDebuggerType.NONE);
-                                    }
-                                });
+                                MessageCallback.create(0, () ->
+                                        startMethodExecution(executionInput, DBDebuggerType.NONE)));
                     }
                 }
             });

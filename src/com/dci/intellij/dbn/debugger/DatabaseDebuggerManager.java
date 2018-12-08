@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.debugger;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -55,15 +65,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
 
 @State(
     name = DatabaseDebuggerManager.COMPONENT_NAME,
@@ -82,7 +83,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                     "This is used when debugging is invoked on a given SQL statement. " +
                     "No specific statement information can be specified here.";
 
-    private Set<ConnectionHandler> activeDebugSessions = new THashSet<ConnectionHandler>();
+    private Set<ConnectionHandler> activeDebugSessions = new THashSet<>();
 
     private DatabaseDebuggerManager(Project project) {
         super(project);
@@ -327,7 +328,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
 
 
-    public void startDebugger(final DebuggerStarter debuggerStarter) {
+    private void startDebugger(final DebuggerStarter debuggerStarter) {
         DebuggerTypeOption debuggerTypeOption = getDebuggerSettings().getDebuggerType().resolve();
         DBDebuggerType debuggerType = debuggerTypeOption.getDebuggerType();
         if (debuggerType != null) {
@@ -343,13 +344,10 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                                 applicationInfo.getFullVersion() + "\".\n" +
                                 "Do you want to use classic debugger over JDBC instead?",
                         new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
-                        new MessageCallback(0) {
-                            @Override
-                            protected void execute() {
-                                debuggerStarter.setDebuggerType(DBDebuggerType.JDBC);
-                                debuggerStarter.start();
-                            }
-                        });
+                        MessageCallback.create(0, () -> {
+                            debuggerStarter.setDebuggerType(DBDebuggerType.JDBC);
+                            debuggerStarter.start();
+                        }));
             }
 
         }

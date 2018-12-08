@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.connection;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.apache.commons.lang.StringUtils;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
@@ -43,17 +55,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.apache.commons.lang.StringUtils;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @State(
     name = ConnectionManager.COMPONENT_NAME,
@@ -196,12 +197,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             if (databaseSettings.isDatabaseInitialized()) {
                 promptTemporaryAuthenticationDialog(databaseSettings, connectCallback);
             } else {
-                promptDatabaseInitDialog(databaseSettings, new MessageCallback(0) {
-                    @Override
-                    protected void execute() {
-                        promptTemporaryAuthenticationDialog(databaseSettings, connectCallback);
-                    }
-                });
+                promptDatabaseInitDialog(databaseSettings,
+                        MessageCallback.create(0,() ->
+                                promptTemporaryAuthenticationDialog(databaseSettings, connectCallback)));
             }
 
 

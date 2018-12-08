@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.editor.code;
 
+import static com.dci.intellij.dbn.common.thread.TaskInstruction.START_IN_BACKGROUND;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -57,18 +70,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.text.DateFormatUtil;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstruction.START_IN_BACKGROUND;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
 @State(
     name = SourceCodeManager.COMPONENT_NAME,
@@ -108,12 +109,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                             "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor.\n" +
                                     "Do you want to discard the changes and reload the updated database version?",
                             new String[]{"Reload", "Keep changes"}, 0,
-                            new MessageCallback(0) {
-                                @Override
-                                protected void execute() {
-                                    reloadAndUpdateEditors(databaseFile, false);
-                                }
-                            });
+                            MessageCallback.create(0, () ->
+                                    reloadAndUpdateEditors(databaseFile, false)));
                 } else {
                     reloadAndUpdateEditors(databaseFile, true);
                 }

@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.data.export.ui;
 
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
+
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.nio.charset.Charset;
+
+import javax.swing.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -22,17 +35,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.nio.charset.Charset;
-
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
     private static final FileChooserDescriptor DIRECTORY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, true, false, false, false, false);
@@ -68,7 +70,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
     private ConnectionHandlerRef connectionHandlerRef;
     private DBObjectRef sourceObjectRef;
 
-    public ExportDataForm(ExportDataDialog parentComponent, DataExportInstructions instructions, boolean hasSelection, @NotNull ConnectionHandler connectionHandler, @Nullable DBObject sourceObject) {
+    ExportDataForm(ExportDataDialog parentComponent, DataExportInstructions instructions, boolean hasSelection, @NotNull ConnectionHandler connectionHandler, @Nullable DBObject sourceObject) {
         super(parentComponent);
         this.connectionHandlerRef = connectionHandler.getRef();
         this.sourceObjectRef = DBObjectRef.from(sourceObject);
@@ -158,7 +160,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
         return mainPanel;
     }
 
-    public DataExportInstructions getExportInstructions() {
+    DataExportInstructions getExportInstructions() {
         instructions.setScope(scopeSelectionRadioButton.isSelected() ?
                 DataExportInstructions.Scope.SELECTION  :
                 DataExportInstructions.Scope.GLOBAL);
@@ -194,7 +196,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
             formatCustomRadioButton.isSelected() ? DataExportFormat.CUSTOM : null;
     }
 
-    public void validateEntries(final RunnableTask callback) {
+    void validateEntries(RunnableTask callback) {
         boolean validValueSeparator = valueSeparatorTextField.getText().trim().length() > 0;
         boolean validFileName = fileNameTextField.getText().trim().length() > 0;
         boolean validFileLocation = fileLocationTextField.getText().trim().length() > 0;
@@ -226,12 +228,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
                 MessageUtil.showQuestionDialog(project, "File exists",
                         "File " + file.getPath() + " already exists. Overwrite?",
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        new MessageCallback(0) {
-                            @Override
-                            protected void execute() {
-                                callback.start();
-                            }
-                        });
+                        MessageCallback.create(0, () -> callback.start()));
                 return;
             }
         }
