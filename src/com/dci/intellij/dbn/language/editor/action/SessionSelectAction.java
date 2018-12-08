@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import static com.dci.intellij.dbn.common.util.ActionUtil.*;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
@@ -9,11 +13,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-
-import static com.dci.intellij.dbn.common.util.ActionUtil.getEditor;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class SessionSelectAction extends DumbAwareAction {
     private DatabaseSession session;
@@ -29,7 +28,7 @@ public class SessionSelectAction extends DumbAwareAction {
     }
 
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = getProject(e);
         Editor editor = getEditor(e);
         if (project != null && editor != null) {
@@ -38,7 +37,7 @@ public class SessionSelectAction extends DumbAwareAction {
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
         boolean enabled = false;
         Project project = getProject(e);
