@@ -1,7 +1,17 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
+
+import java.util.List;
+
+import javax.swing.*;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
@@ -13,13 +23,6 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.util.List;
-
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class SessionSelectComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "Session";
@@ -39,13 +42,11 @@ public class SessionSelectComboBoxAction extends DBNComboBoxAction implements Du
                 } else {
                     actionGroup.add(new SessionSelectAction(sessionBundle.getMainSession()));
                     actionGroup.add(new SessionSelectAction(sessionBundle.getPoolSession()));
-                    List<DatabaseSession> sessions = sessionBundle.getSessions();
+                    List<DatabaseSession> sessions = sessionBundle.getSessions(ConnectionType.SESSION);
                     if (sessions.size() > 0) {
                         //actionGroup.addSeparator();
                         for (DatabaseSession session : sessions){
-                            if (session.isCustom()) {
-                                actionGroup.add(new SessionSelectAction(session));
-                            }
+                            actionGroup.add(new SessionSelectAction(session));
                         }
                     }
                     actionGroup.addSeparator();

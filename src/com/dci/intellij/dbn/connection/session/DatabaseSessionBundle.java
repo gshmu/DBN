@@ -43,7 +43,7 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     }
 
     public List<DatabaseSession> getSessions(ConnectionType ... connectionTypes) {
-        if (connectionTypes == null) {
+        if (connectionTypes == null || connectionTypes.length == 0) {
             return sessions;
         } else {
             List<DatabaseSession> sessions = new ArrayList<>();
