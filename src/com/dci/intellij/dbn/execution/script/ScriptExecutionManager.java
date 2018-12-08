@@ -1,5 +1,26 @@
 package com.dci.intellij.dbn.execution.script;
 
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.SecureRandom;
+import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.jdesktop.swingx.util.OS;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -39,26 +60,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.text.LineReader;
-import org.jdesktop.swingx.util.OS;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.SecureRandom;
-import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 @State(
     name = ScriptExecutionManager.COMPONENT_NAME,
@@ -379,7 +380,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     }
 
     @Override
-    public void loadState(final Element element) {
+    public void loadState(@NotNull final Element element) {
         recentlyUsedInterfaces.clear();
         clearOutputOption = SettingsUtil.getBooleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = element.getChild("recently-used-interfaces");
