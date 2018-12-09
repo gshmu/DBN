@@ -160,7 +160,8 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
     public boolean isInjectedContext() {
-        return getFile().isInjectedContext();
+        DBLanguagePsiFile file = getFile();
+        return file != null && file.isInjectedContext();
     }
 
     public String getReferenceQualifiedName() {

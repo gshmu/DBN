@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.object.filter.quick.ui.ObjectQuickFilterConditionForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.NotNull;
 
 public class EnableDisableQuickFilterConditionAction extends DumbAwareAction {
     private ObjectQuickFilterConditionForm conditionForm;
@@ -12,7 +13,7 @@ public class EnableDisableQuickFilterConditionAction extends DumbAwareAction {
         this.conditionForm = conditionForm;
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setIcon(
                 conditionForm.isActive() ?
                         Icons.COMMON_FILTER_ACTIVE :
@@ -23,7 +24,7 @@ public class EnableDisableQuickFilterConditionAction extends DumbAwareAction {
                         "Activate Condition");
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         conditionForm.setActive(!conditionForm.isActive());
     }
 }
