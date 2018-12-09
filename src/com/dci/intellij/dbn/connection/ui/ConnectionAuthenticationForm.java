@@ -14,8 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenticationDialog>{
     private JPanel mainPanel;
@@ -77,29 +75,23 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
 
         passwordField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(DocumentEvent e) {
+            protected void textChanged(@NotNull DocumentEvent e) {
                 String password = new String(passwordField.getPassword());
                 authenticationInfo.setPassword(password);
                 parentComponent.updateConnectButton();
             }
         });
 
-        osAuthenticationCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                authenticationInfo.setOsAuthentication(osAuthenticationCheckBox.isSelected());
-                updateAuthenticationFields();
-                parentComponent.updateConnectButton();
-            }
+        osAuthenticationCheckBox.addActionListener(e -> {
+            authenticationInfo.setOsAuthentication(osAuthenticationCheckBox.isSelected());
+            updateAuthenticationFields();
+            parentComponent.updateConnectButton();
         });
 
-        emptyPasswordCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                authenticationInfo.setEmptyPassword(emptyPasswordCheckBox.isSelected());
-                updateAuthenticationFields();
-                parentComponent.updateConnectButton();
-            }
+        emptyPasswordCheckBox.addActionListener(e -> {
+            authenticationInfo.setEmptyPassword(emptyPasswordCheckBox.isSelected());
+            updateAuthenticationFields();
+            parentComponent.updateConnectButton();
         });
     }
 

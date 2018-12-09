@@ -11,8 +11,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper implements DisposableProjectComponent{
     private C component;
@@ -65,12 +63,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     }
 
     public void registerRememberSelectionCheckBox(final JCheckBox rememberSelectionCheckBox) {
-        rememberSelectionCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                rememberSelection = rememberSelectionCheckBox.isSelected();
-            }
-        });
+        rememberSelectionCheckBox.addActionListener(e -> rememberSelection = rememberSelectionCheckBox.isSelected());
     }
 
     @Override

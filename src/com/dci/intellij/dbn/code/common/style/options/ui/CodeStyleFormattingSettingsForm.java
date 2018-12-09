@@ -12,20 +12,20 @@ import com.intellij.uiDesigner.core.Spacer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<CodeStyleFormattingSettings> {
     private JPanel mainPanel;
     private JPanel settingsPanel;
     private JCheckBox enableCheckBox;
-    private Map<CodeStyleFormattingOption, ComboBox<CodeStylePreset>> mappings = new HashMap<>();
+    private Map<CodeStyleFormattingOption, JComboBox<CodeStylePreset>> mappings = new HashMap<>();
 
     public CodeStyleFormattingSettingsForm(CodeStyleFormattingSettings settings) {
         super(settings);
@@ -42,7 +42,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
                             GridConstraints.SIZEPOLICY_FIXED,
                             GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
-            ComboBox<CodeStylePreset> comboBox = new ComboBox<>();
+            JComboBox<CodeStylePreset> comboBox = new ComboBox<>();
             initComboBox(comboBox, option.getPresets().toArray(new CodeStylePreset[0]));
             label.setLabelFor(comboBox);
 
@@ -66,12 +66,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
                         GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
 
         registerComponent(mainPanel);
-        enableCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                enableDisableOptions();
-            }
-        });
+        enableCheckBox.addActionListener(e -> enableDisableOptions());
 
         //Shortcut[] basicShortcuts = KeyUtil.getShortcuts("ReformatCode");
         //useOnReformatCheckBox.setText("Use on reformat code (" + KeymapUtil.getShortcutsText(basicShortcuts) + ")");
@@ -79,7 +74,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     private void enableDisableOptions() {
         boolean selected = enableCheckBox.isSelected();
-        for (ComboBox<CodeStylePreset> optionComboBox : mappings.values()) {
+        for (JComboBox<CodeStylePreset> optionComboBox : mappings.values()) {
             optionComboBox.setEnabled(selected);
         }
     }
@@ -90,7 +85,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     public void applyFormChanges() throws ConfigurationException {
         for (CodeStyleFormattingOption option : mappings.keySet()) {
-            ComboBox<CodeStylePreset> comboBox = mappings.get(option);
+            JComboBox<CodeStylePreset> comboBox = mappings.get(option);
             option.setPreset(getSelection(comboBox));
         }
         getConfiguration().setEnabled(enableCheckBox.isSelected());
@@ -99,7 +94,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     public void resetFormChanges() {
         for (CodeStyleFormattingOption option : mappings.keySet()) {
-            ComboBox<CodeStylePreset> comboBox = mappings.get(option);
+            JComboBox<CodeStylePreset> comboBox = mappings.get(option);
             setSelection(comboBox, option.getPreset());
         }
         enableCheckBox.setSelected(getConfiguration().isEnabled());

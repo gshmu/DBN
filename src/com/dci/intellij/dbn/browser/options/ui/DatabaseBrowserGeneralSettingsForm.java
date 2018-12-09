@@ -10,18 +10,19 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBox;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<DatabaseBrowserGeneralSettings> {
     private JPanel mainPanel;
     private JTextField navigationHistorySizeTextField;
     private JCheckBox showObjectDetailsCheckBox;
-    private ComboBox<BrowserDisplayMode> browserTypeComboBox;
+    private JComboBox<BrowserDisplayMode> browserTypeComboBox;
 
 
     public DatabaseBrowserGeneralSettingsForm(DatabaseBrowserGeneralSettings configuration) {

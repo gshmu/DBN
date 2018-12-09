@@ -4,20 +4,21 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.ui.ComboBox;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class TransactionManagerSettingsForm extends ConfigurationEditorForm<TransactionManagerSettings> {
     private JPanel mainPanel;
-    private ComboBox<TransactionOption> uncommittedChangesOnProjectCloseComboBox;
-    private ComboBox<TransactionOption> uncommittedChangesOnSwitchComboBox;
-    private ComboBox<TransactionOption> uncommittedChangesOnDisconnectComboBox;
-    private ComboBox<TransactionOption> multipleChangesOnCommitComboBox;
-    private ComboBox<TransactionOption> multipleChangesOnRollbackComboBox;
+    private JComboBox<TransactionOption> uncommittedChangesOnProjectCloseComboBox;
+    private JComboBox<TransactionOption> uncommittedChangesOnSwitchComboBox;
+    private JComboBox<TransactionOption> uncommittedChangesOnDisconnectComboBox;
+    private JComboBox<TransactionOption> multipleChangesOnCommitComboBox;
+    private JComboBox<TransactionOption> multipleChangesOnRollbackComboBox;
 
     public TransactionManagerSettingsForm(TransactionManagerSettings settings) {
         super(settings);

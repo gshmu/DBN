@@ -13,7 +13,6 @@ import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -23,17 +22,14 @@ public class CloseOnESCAction extends DataSearchHeaderAction implements DumbAwar
     public CloseOnESCAction(final DataSearchComponent searchComponent, JComponent component) {
         super(searchComponent);
 
-        ArrayList<Shortcut> shortcuts = new ArrayList<Shortcut>();
+        ArrayList<Shortcut> shortcuts = new ArrayList<>();
         if (KeyUtil.isEmacsKeymap()) {
             shortcuts.add(new KeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK), null));
-            ActionListener actionListener = new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    DataContext dataContext = DataManager.getInstance().getDataContext(searchComponent);
-                    ActionManager actionManager = ActionManager.getInstance();
-                    AnActionEvent actionEvent = new AnActionEvent(null, dataContext, "", getTemplatePresentation(), actionManager, 2);
-                    CloseOnESCAction.this.actionPerformed(actionEvent);
-                }
+            ActionListener actionListener = e -> {
+                DataContext dataContext = DataManager.getInstance().getDataContext(searchComponent);
+                ActionManager actionManager = ActionManager.getInstance();
+                AnActionEvent actionEvent = new AnActionEvent(null, dataContext, "", getTemplatePresentation(), actionManager, 2);
+                CloseOnESCAction.this.actionPerformed(actionEvent);
             };
             component.registerKeyboardAction(
                     actionListener,

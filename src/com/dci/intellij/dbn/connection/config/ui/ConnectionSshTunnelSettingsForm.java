@@ -6,15 +6,15 @@ import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
 import com.dci.intellij.dbn.connection.ssh.SshAuthType;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<ConnectionSshTunnelSettings>{
@@ -25,7 +25,7 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
     private JPasswordField passwordField;
     private JTextField portTextField;
     private JCheckBox activeCheckBox;
-    private ComboBox<SshAuthType> authTypeComboBox;
+    private JComboBox<SshAuthType> authTypeComboBox;
     private JPasswordField keyPassphraseField;
     private TextFieldWithBrowseButton keyFileField;
     private JLabel passwordLabel;
@@ -58,14 +58,12 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
 
     @Override
     protected ActionListener createActionListener() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                getConfiguration().setModified(true);
-                Object source = e.getSource();
+        return e -> {
+            getConfiguration().setModified(true);
+            Object source = e.getSource();
 
-                if (source == activeCheckBox) {
-                    enableDisableFields();
-                }
+            if (source == activeCheckBox) {
+                enableDisableFields();
             }
         };
     }

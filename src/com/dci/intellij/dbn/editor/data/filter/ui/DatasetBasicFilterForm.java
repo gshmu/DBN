@@ -27,7 +27,6 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformIcons;
@@ -44,7 +43,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
 public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasicFilter> {
     private JPanel conditionsPanel;
@@ -55,7 +56,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     private JPanel previewPanel;
     private JPanel addConditionsPanel;
     private JPanel filterNamePanel;
-    private ComboBox<ConditionJoinType> joinTypeComboBox;
+    private JComboBox<ConditionJoinType> joinTypeComboBox;
 
     private DBObjectRef<DBDataset> datasetRef;
     private List<DatasetBasicFilterConditionForm> conditionForms = new ArrayList<>();

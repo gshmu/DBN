@@ -15,7 +15,6 @@ import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -42,17 +41,15 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
 
 
     protected ActionListener createActionListener() {
-         return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                getConfiguration().setModified(true);
-                sortingItemsList.setEnabled(enableCheckBox.isSelected());
-                sortingItemsList.setBackground(
-                        enableCheckBox.isSelected() ?
-                                UIUtil.getTextFieldBackground() :
-                                UIUtil.getComboBoxDisabledBackground());
-                sortingItemsList.clearSelection();
-            }
-        };
+         return e -> {
+             getConfiguration().setModified(true);
+             sortingItemsList.setEnabled(enableCheckBox.isSelected());
+             sortingItemsList.setBackground(
+                     enableCheckBox.isSelected() ?
+                             UIUtil.getTextFieldBackground() :
+                             UIUtil.getComboBoxDisabledBackground());
+             sortingItemsList.clearSelection();
+         };
     }
 
     public JPanel getComponent() {

@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm<GeneralProjectSettings> {
@@ -34,12 +33,10 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
     }
 
     protected ActionListener createActionListener() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                getConfiguration().setModified(true);
-                debugInfoLabel.setVisible(enableDebugCheckBox.isSelected());
-                developerInfoLabel.setVisible(enableDeveloperCheckBox.isSelected());
-            }
+        return e -> {
+            getConfiguration().setModified(true);
+            debugInfoLabel.setVisible(enableDebugCheckBox.isSelected());
+            developerInfoLabel.setVisible(enableDeveloperCheckBox.isSelected());
         };
     }
 

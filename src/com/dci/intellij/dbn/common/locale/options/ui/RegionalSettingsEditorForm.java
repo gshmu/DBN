@@ -23,9 +23,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Date;
 import java.util.Locale;
@@ -73,12 +71,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
                 DBDateFormat.LONG,
                 DBDateFormat.FULL);
 
-        ValueSelectorListener previewListener = new ValueSelectorListener() {
-            @Override
-            public void selectionChanged(Object oldValue, Object newValue) {
-                updatePreview();
-            }
-        };
+        ValueSelectorListener previewListener = (oldValue, newValue) -> updatePreview();
 
         resetFormChanges();
         updatePreview();
@@ -98,20 +91,16 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
 
     @Override
     protected ItemListener createItemListener() {
-        return new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                getConfiguration().setModified(true);
-                updatePreview();
-            }
+        return e -> {
+            getConfiguration().setModified(true);
+            updatePreview();
         };
     }
 
     protected ActionListener createActionListener() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                getConfiguration().setModified(true);
-                updatePreview();
-            }
+        return e -> {
+            getConfiguration().setModified(true);
+            updatePreview();
         };
     }
 
@@ -119,7 +108,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
     protected DocumentListener createDocumentListener() {
         return new DocumentAdapter() {
             @Override
-            protected void textChanged(DocumentEvent e) {
+            protected void textChanged(@NotNull DocumentEvent e) {
                 getConfiguration().setModified(true);
                 updatePreview();
             }

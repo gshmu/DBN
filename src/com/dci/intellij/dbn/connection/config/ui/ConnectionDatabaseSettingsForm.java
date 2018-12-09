@@ -15,12 +15,15 @@ import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
-import com.dci.intellij.dbn.connection.config.*;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.config.file.ui.DatabaseFileSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 
@@ -29,18 +32,20 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getElements;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
 public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<ConnectionDatabaseSettings> {
     private JPanel mainPanel;
     private JTextField nameTextField;
     private JTextField descriptionTextField;
     private JTextField hostTextField;
-    private ComboBox<DatabaseType> databaseTypeComboBox;
-    private ComboBox<DatabaseUrlType> urlTypeComboBox;
+    private JComboBox<DatabaseType> databaseTypeComboBox;
+    private JComboBox<DatabaseUrlType> urlTypeComboBox;
     private JTextField portTextField;
     private JTextField databaseTextField;
     private JPanel driverLibraryPanel;
@@ -210,21 +215,19 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
 
     protected ActionListener createActionListener() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Object source = e.getSource();
-                ConnectionDatabaseSettings configuration = getConfiguration();
-                configuration.setModified(true);
-                if (source == nameTextField) {
-                    ConnectionBundleSettings connectionBundleSettings = configuration.getParent().getParent();
-                    ConnectionBundleSettingsForm settingsEditor = connectionBundleSettings.getSettingsEditor();
+        return e -> {
+            Object source = e.getSource();
+            ConnectionDatabaseSettings configuration = getConfiguration();
+            configuration.setModified(true);
+            if (source == nameTextField) {
+                ConnectionBundleSettings connectionBundleSettings = configuration.getParent().getParent();
+                ConnectionBundleSettingsForm settingsEditor = connectionBundleSettings.getSettingsEditor();
 
-                    if (settingsEditor != null) {
-                        JList connectionList = settingsEditor.getList();
-                        connectionList.revalidate();
-                        connectionList.repaint();
-                        notifyPresentationChanges();
-                    }
+                if (settingsEditor != null) {
+                    JList connectionList = settingsEditor.getList();
+                    connectionList.revalidate();
+                    connectionList.repaint();
+                    notifyPresentationChanges();
                 }
             }
         };
@@ -239,9 +242,9 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     }
 
     public void applyFormChanges(final ConnectionDatabaseSettings configuration){
-        ComboBox<DriverSource> driverSourceComboBox = driverSettingsForm.getDriverSourceComboBox();
+        JComboBox<DriverSource> driverSourceComboBox = driverSettingsForm.getDriverSourceComboBox();
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
-        ComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
+        JComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
 
         DatabaseType databaseType = CommonUtil.nvl(getSelection(databaseTypeComboBox), configuration.getDatabaseType());
         DriverOption driverOption = ComboBoxUtil.getSelection(driverComboBox);
@@ -273,7 +276,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         final ConnectionDatabaseSettings configuration = getConfiguration();
 
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
-        ComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
+        JComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
 
         DatabaseType selectedDatabaseType = CommonUtil.nvl(getSelection(databaseTypeComboBox), configuration.getDatabaseType());
         DriverOption selectedDriver = ComboBoxUtil.getSelection(driverComboBox);
@@ -315,9 +318,9 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
 
     public void resetFormChanges() {
-        ComboBox<DriverSource> driverSourceComboBox = driverSettingsForm.getDriverSourceComboBox();
+        JComboBox<DriverSource> driverSourceComboBox = driverSettingsForm.getDriverSourceComboBox();
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
-        ComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
+        JComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
 
         ConnectionDatabaseSettings configuration = getConfiguration();
 

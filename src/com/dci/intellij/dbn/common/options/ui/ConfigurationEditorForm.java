@@ -14,7 +14,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 
@@ -56,11 +55,7 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
     }
 
     protected ActionListener createActionListener() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                getConfiguration().setModified(true);
-            }
-        };
+        return e -> getConfiguration().setModified(true);
     }
 
     protected ItemListener createItemListener() {

@@ -4,18 +4,19 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.ui.ComboBox;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CodeEditorConfirmationSettingsForm extends ConfigurationEditorForm<CodeEditorConfirmationSettings> {
     private JPanel mainPanel;
     private JCheckBox confirmSaveCheckBox;
     private JCheckBox confirmRevertCheckBox;
-    private ComboBox<CodeEditorChangesOption> disconnectSessionComboBox;
+    private JComboBox<CodeEditorChangesOption> disconnectSessionComboBox;
 
     public CodeEditorConfirmationSettingsForm(CodeEditorConfirmationSettings settings) {
         super(settings);

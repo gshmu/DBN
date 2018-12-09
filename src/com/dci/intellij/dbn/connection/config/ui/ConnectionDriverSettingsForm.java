@@ -7,30 +7,29 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
 
 public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm>{
     private TextFieldWithBrowseButton driverLibraryTextField;
-    private ComboBox<DriverOption> driverComboBox;
     private JPanel mainPanel;
-    private JLabel driverErrorLabel;
-    private ComboBox<DriverSource> driverSourceComboBox;
     private JPanel driverSetupPanel;
+    private JComboBox<DriverSource> driverSourceComboBox;
+    private JComboBox<DriverOption> driverComboBox;
+    private JLabel driverErrorLabel;
     private JLabel driverLabel;
     private JLabel driverLibraryLabel;
 
@@ -40,17 +39,14 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         super(parentComponent);
 
         initComboBox(driverSourceComboBox, DriverSource.BUILTIN, DriverSource.EXTERNAL);
-        driverSourceComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                DriverSource selection = getSelection(driverSourceComboBox);
+        driverSourceComboBox.addActionListener(e -> {
+            DriverSource selection = getSelection(driverSourceComboBox);
 
-                boolean isExternalLibrary = selection == DriverSource.EXTERNAL;
-                driverLibraryTextField.setEnabled(isExternalLibrary);
-                driverComboBox.setEnabled(isExternalLibrary);
-                updateDriverFields();
-                //driverSetupPanel.setVisible(isExternalLibrary);
-            }
+            boolean isExternalLibrary = selection == DriverSource.EXTERNAL;
+            driverLibraryTextField.setEnabled(isExternalLibrary);
+            driverComboBox.setEnabled(isExternalLibrary);
+            updateDriverFields();
+            //driverSetupPanel.setVisible(isExternalLibrary);
         });
 
         driverLibraryTextField.addBrowseFolderListener(
@@ -136,7 +132,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         return driverLibraryTextField;
     }
 
-    public ComboBox<DriverOption> getDriverComboBox() {
+    public JComboBox<DriverOption> getDriverComboBox() {
         return driverComboBox;
     }
 
@@ -149,7 +145,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         return mainPanel;
     }
 
-    public ComboBox<DriverSource> getDriverSourceComboBox() {
+    public JComboBox<DriverSource> getDriverSourceComboBox() {
         return driverSourceComboBox;
     }
 }

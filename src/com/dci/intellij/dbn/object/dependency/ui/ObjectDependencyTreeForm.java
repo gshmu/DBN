@@ -15,7 +15,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
@@ -24,14 +23,16 @@ import javax.swing.*;
 import javax.swing.tree.TreeModel;
 import java.awt.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
 public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDialog>{
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel contentPanel;
     private JPanel headerPanel;
-    private ComboBox<ObjectDependencyType> dependencyTypeComboBox;
+    private JComboBox<ObjectDependencyType> dependencyTypeComboBox;
     private JBScrollPane treeScrollPane;
 
 

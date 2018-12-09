@@ -39,8 +39,6 @@ import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
@@ -230,16 +228,13 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
         tailPanel.add(closeLabel, BorderLayout.EAST);
 
         CompatibilityUtil.setSmallerFont(searchField);
-        searchField.registerKeyboardAction(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                if (StringUtil.isEmptyOrSpaces(searchField.getText())) {
-                    close();
-                } else {
-                    // TODO
-                    //requestFocus(myEditor.getContentComponent());
-                    addTextToRecent(DataSearchComponent.this.searchField);
-                }
+        searchField.registerKeyboardAction(e -> {
+            if (StringUtil.isEmptyOrSpaces(searchField.getText())) {
+                close();
+            } else {
+                // TODO
+                //requestFocus(myEditor.getContentComponent());
+                addTextToRecent(DataSearchComponent.this.searchField);
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, SystemInfo.isMac ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK),
                 JComponent.WHEN_FOCUSED);
