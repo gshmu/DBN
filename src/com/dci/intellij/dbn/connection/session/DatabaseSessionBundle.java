@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.connection.session;
 
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -14,6 +8,15 @@ import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.Disposable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     private ConnectionHandlerRef connectionHandlerRef;

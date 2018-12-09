@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
-
-import java.util.List;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -23,6 +14,13 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.util.List;
+
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class SessionSelectComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "Session";

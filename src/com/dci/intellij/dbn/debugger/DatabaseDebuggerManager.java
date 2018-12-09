@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.debugger;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -25,7 +15,15 @@ import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
-import com.dci.intellij.dbn.debugger.common.config.*;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigFactory;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner;
@@ -47,7 +45,11 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
-import com.intellij.execution.*;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.Executor;
+import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.RunnerRegistry;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -65,6 +67,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 @State(
     name = DatabaseDebuggerManager.COMPONENT_NAME,

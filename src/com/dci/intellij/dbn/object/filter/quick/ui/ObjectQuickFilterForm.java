@@ -2,7 +2,12 @@ package com.dci.intellij.dbn.object.filter.quick.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.ui.*;
+import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.ValueSelector;
+import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;

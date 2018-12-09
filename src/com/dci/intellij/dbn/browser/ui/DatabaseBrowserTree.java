@@ -3,7 +3,11 @@ package com.dci.intellij.dbn.browser.ui;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
-import com.dci.intellij.dbn.browser.model.*;
+import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
+import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
+import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
+import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -39,7 +43,13 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class DatabaseBrowserTree extends DBNTree {
     private BrowserTreeNode targetSelection;

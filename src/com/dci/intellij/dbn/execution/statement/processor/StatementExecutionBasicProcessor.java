@@ -28,7 +28,12 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.execution.compiler.*;
+import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
+import com.dci.intellij.dbn.execution.compiler.CompileType;
+import com.dci.intellij.dbn.execution.compiler.CompilerAction;
+import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
+import com.dci.intellij.dbn.execution.compiler.CompilerResult;
+import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -43,7 +48,11 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiElementRef;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.psi.*;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
+import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -65,7 +74,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
 public class StatementExecutionBasicProcessor extends DisposableBase implements StatementExecutionProcessor {

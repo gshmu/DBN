@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.navigation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -31,6 +22,13 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByNameModel {
     private ProjectRef project;

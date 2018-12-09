@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.connection.session;
 
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.ui.Presentable;
@@ -13,6 +8,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class DatabaseSession extends DisposableBase implements Comparable<DatabaseSession>, Presentable {
     private ConnectionHandlerRef connectionHandlerRef;

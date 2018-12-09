@@ -5,7 +5,11 @@ import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
 import com.dci.intellij.dbn.debugger.common.evaluation.DBDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
-import com.intellij.xdebugger.frame.*;
+import com.intellij.xdebugger.frame.XCompositeNode;
+import com.intellij.xdebugger.frame.XNamedValue;
+import com.intellij.xdebugger.frame.XValueChildrenList;
+import com.intellij.xdebugger.frame.XValueNode;
+import com.intellij.xdebugger.frame.XValuePlace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

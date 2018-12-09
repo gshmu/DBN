@@ -28,7 +28,11 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
     private ConnectionId id;

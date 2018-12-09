@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
+import com.dci.intellij.dbn.data.model.ColumnInfo;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.type.DBNativeDataType;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,16 +17,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
-import com.dci.intellij.dbn.data.model.ColumnInfo;
-import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.data.type.DBNativeDataType;
-import com.dci.intellij.dbn.data.value.ValueAdapter;
-import com.intellij.openapi.progress.ProcessCanceledException;
 
 public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     private Connection connection;
