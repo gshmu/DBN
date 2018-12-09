@@ -33,5 +33,6 @@ public interface DBNDataKeys {
     Key<DatabaseSession> DATABASE_SESSION = Key.create("DBNavigator.DatabaseSession");
     Key<DBObjectRef<DBSchema>> DATABASE_SCHEMA = Key.create("DBNavigator.DatabaseSchema");
     Key<ProjectRef> PROJECT_REF = Key.create("DBNavigator.ProjectRef");
+    Key<String> CONSOLE_TEXT = Key.create("DBNavigator.ConsoleText");
 
 }
