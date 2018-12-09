@@ -33,6 +33,7 @@
                 - Support for latest IDE versions<br>
                 - Discontinued support for IntelliJ 13.x and related products<br>
                 - Small bug fixes and performance improvements<br>
+                - <span style='color:red; font-weight: bold'>JRE 8.x or higher required</span><br>
             </ul>
             <li><b>3.0.8222</b>
             <ul>
