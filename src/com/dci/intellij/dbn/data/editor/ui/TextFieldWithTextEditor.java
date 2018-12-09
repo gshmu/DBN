@@ -17,7 +17,6 @@ import com.intellij.util.ui.UIUtil;
 import javax.swing.*;
 import javax.swing.text.Document;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -147,11 +146,7 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
     /********************************************************
      *                    ActionListener                    *
      ********************************************************/
-    private ActionListener actionListener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            openEditor();
-        }
-    };
+    private ActionListener actionListener = e -> openEditor();
 
     private MouseListener mouseListener = new MouseAdapter() {
         @Override

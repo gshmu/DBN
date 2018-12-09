@@ -6,20 +6,21 @@ import com.dci.intellij.dbn.execution.compiler.CompileDependenciesOption;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.ui.ComboBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettings> {
     private JPanel mainPanel;
-    private ComboBox<CompileType> compileTypeComboBox;
-    private ComboBox<CompileDependenciesOption> compileDependenciesComboBox;
-    private ComboBox<ShowControlOption> showControlsComboBox;
+    private JComboBox<CompileType> compileTypeComboBox;
+    private JComboBox<CompileDependenciesOption> compileDependenciesComboBox;
+    private JComboBox<ShowControlOption> showControlsComboBox;
 
 
     public CompilerSettingsForm(CompilerSettings settings) {

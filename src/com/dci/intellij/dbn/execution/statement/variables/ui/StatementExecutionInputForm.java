@@ -35,8 +35,6 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +51,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     private JLabel debuggerTypeLabel;
 
     private StatementExecutionProcessor executionProcessor;
-    private List<StatementExecutionVariableValueForm> variableValueForms = new ArrayList<StatementExecutionVariableValueForm>();
+    private List<StatementExecutionVariableValueForm> variableValueForms = new ArrayList<>();
     private ExecutionOptionsForm executionOptionsForm;
     private Document previewDocument;
     private EditorEx viewer;
@@ -89,7 +87,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
 
         StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
         if (executionVariables != null) {
-            List<StatementExecutionVariable> variables = new ArrayList<StatementExecutionVariable>(executionVariables.getVariables());
+            List<StatementExecutionVariable> variables = new ArrayList<>(executionVariables.getVariables());
             Collections.sort(variables, StatementExecutionVariablesBundle.OFFSET_COMPARATOR);
 
 
@@ -98,7 +96,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
                 variableValueForms.add(variableValueForm);
                 variablesPanel.add(variableValueForm.getComponent());
                 variableValueForm.addDocumentListener(new DocumentAdapter() {
-                    protected void textChanged(DocumentEvent e) {
+                    protected void textChanged(@NotNull DocumentEvent e) {
                         updatePreview();
                     }
                 });
@@ -125,12 +123,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         final JCheckBox reuseVariablesCheckBox = executionOptionsForm.getReuseVariablesCheckBox();
         if (isBulkExecution && executionVariables != null) {
             reuseVariablesCheckBox.setVisible(true);
-            reuseVariablesCheckBox.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    getParentComponent().setReuseVariables(reuseVariablesCheckBox.isSelected());
-                }
-            });
+            reuseVariablesCheckBox.addActionListener(e -> getParentComponent().setReuseVariables(reuseVariablesCheckBox.isSelected()));
         } else {
             reuseVariablesCheckBox.setVisible(false);
         }

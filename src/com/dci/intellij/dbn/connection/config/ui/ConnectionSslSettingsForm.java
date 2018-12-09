@@ -7,7 +7,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
@@ -46,14 +45,12 @@ public class ConnectionSslSettingsForm extends ConfigurationEditorForm<Connectio
 
     @Override
     protected ActionListener createActionListener() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                getConfiguration().setModified(true);
-                Object source = e.getSource();
+        return e -> {
+            getConfiguration().setModified(true);
+            Object source = e.getSource();
 
-                if (source == activeCheckBox) {
-                    enableDisableFields();
-                }
+            if (source == activeCheckBox) {
+                enableDisableFields();
             }
         };
     }

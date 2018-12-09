@@ -9,10 +9,9 @@ import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -29,23 +28,20 @@ public class ShowHistoryAction extends DataSearchHeaderAction implements DumbAwa
         getTemplatePresentation().setDescription("Search history");
         getTemplatePresentation().setText("Search History");
 
-        ArrayList<Shortcut> shortcuts = new ArrayList<Shortcut>();
+        ArrayList<Shortcut> shortcuts = new ArrayList<>();
         ContainerUtil.addAll(shortcuts, ActionManager.getInstance().getAction("IncrementalSearch").getShortcutSet().getShortcuts());
         shortcuts.add(new KeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK), null));
 
         registerCustomShortcutSet(new CustomShortcutSet(shortcuts.toArray(new Shortcut[0])), searchField);
-        searchField.registerKeyboardAction(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (searchField.getText().isEmpty()) {
-                    getSearchComponent().showHistory(false, searchField);
-                }
+        searchField.registerKeyboardAction(actionEvent -> {
+            if (searchField.getText().isEmpty()) {
+                getSearchComponent().showHistory(false, searchField);
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), JComponent.WHEN_FOCUSED);
     }
 
     @Override
-    public void actionPerformed(final AnActionEvent e) {
+    public void actionPerformed(@NotNull final AnActionEvent e) {
         getSearchComponent().showHistory(e.getInputEvent() instanceof MouseEvent, searchField);
     }
 

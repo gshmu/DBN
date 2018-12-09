@@ -4,16 +4,17 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.debugger.options.DebuggerSettings;
 import com.dci.intellij.dbn.debugger.options.DebuggerTypeOption;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.ui.ComboBox;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DebuggerSettingsForm extends ConfigurationEditorForm<DebuggerSettings> {
     private JPanel mainPanel;
-    private ComboBox<DebuggerTypeOption> debuggerTypeComboBox;
+    private JComboBox<DebuggerTypeOption> debuggerTypeComboBox;
     private JCheckBox useGenericRunnersCheckBox;
     private JPanel genericRunnersHintPanel;
 

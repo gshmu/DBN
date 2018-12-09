@@ -4,22 +4,21 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCase;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.ui.ComboBox;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyleCaseSettings> {
     private JPanel mainPanel;
-    private ComboBox<CodeStyleCase> keywordCaseComboBox;
-    private ComboBox<CodeStyleCase> functionCaseComboBox;
-    private ComboBox<CodeStyleCase> parameterCaseComboBox;
-    private ComboBox<CodeStyleCase> datatypeCaseComboBox;
-    private ComboBox<CodeStyleCase> objectCaseComboBox;
+    private JComboBox<CodeStyleCase> keywordCaseComboBox;
+    private JComboBox<CodeStyleCase> functionCaseComboBox;
+    private JComboBox<CodeStyleCase> parameterCaseComboBox;
+    private JComboBox<CodeStyleCase> datatypeCaseComboBox;
+    private JComboBox<CodeStyleCase> objectCaseComboBox;
     private JCheckBox enableCheckBox;
 
     public static final CodeStyleCase[] OBJECT_STYLE_CASES = new CodeStyleCase[]{
@@ -46,12 +45,7 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
         enableDisableOptions();
 
         registerComponent(mainPanel);
-        enableCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                enableDisableOptions();
-            }
-        });
+        enableCheckBox.addActionListener(e -> enableDisableOptions());
 
 
 

@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBox;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,13 +26,15 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings>{
     private JPanel mainPanel;
-    private ComboBox<CharsetOption> encodingComboBox;
-    private ComboBox<EnvironmentType> environmentTypesComboBox;
+    private JComboBox<CharsetOption> encodingComboBox;
+    private JComboBox<EnvironmentType> environmentTypesComboBox;
     private JPanel generalGroupPanel;
     private JTextField maxPoolSizeTextField;
     private JTextField idleTimeTextField;

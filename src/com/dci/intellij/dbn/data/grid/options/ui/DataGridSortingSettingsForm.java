@@ -5,18 +5,19 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.data.grid.options.DataGridSortingSettings;
 import com.dci.intellij.dbn.data.grid.options.NullSortingOption;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.ui.ComboBox;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGridSortingSettings> {
     private JPanel mainPanel;
     private JCheckBox enableZoomingCheckBox;
     private JTextField maxSortingColumnsTextField;
-    private ComboBox<NullSortingOption> nullsPositionComboBox;
+    private JComboBox<NullSortingOption> nullsPositionComboBox;
 
     public DataGridSortingSettingsForm(DataGridSortingSettings settings) {
         super(settings);

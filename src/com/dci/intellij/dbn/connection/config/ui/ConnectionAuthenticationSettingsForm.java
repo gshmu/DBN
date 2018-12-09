@@ -7,7 +7,6 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm> {
@@ -20,12 +19,7 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<Connection
     private String cachedUser = "";
     private String cachedPassword = "";
 
-    private final ActionListener actionListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            updateAuthenticationFields();
-        }
-    };
+    private final ActionListener actionListener = e -> updateAuthenticationFields();
 
     public ConnectionAuthenticationSettingsForm(@NotNull ConnectionDatabaseSettingsForm parentComponent) {
         super(parentComponent);
