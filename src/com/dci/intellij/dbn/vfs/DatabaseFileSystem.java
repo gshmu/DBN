@@ -241,7 +241,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         }
     }
 
-    private static DBEditableObjectVirtualFile createDatabaseFile(final DBSchemaObject object) {
+    private static DBEditableObjectVirtualFile createDatabaseFile(DBSchemaObject object) {
         return ReadActionRunner.invoke(false, () -> new DBEditableObjectVirtualFile(object));
     }
 
@@ -420,11 +420,11 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     /*********************************************************
      *              FileEditorManagerListener                *
      *********************************************************/
-    public void openEditor(final DBObject object, boolean focusEditor) {
+    public void openEditor(DBObject object, boolean focusEditor) {
         openEditor(object, null, false, focusEditor);
     }
 
-    public void openEditor(final DBObject object, @Nullable EditorProviderId editorProviderId, boolean focusEditor) {
+    public void openEditor(DBObject object, @Nullable EditorProviderId editorProviderId, boolean focusEditor) {
         openEditor(object, editorProviderId, false, focusEditor);
     }
 
@@ -451,8 +451,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         });
     }
 
-    private void openSchemaObject(final DBSchemaObject object, final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
-        final DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(object);
+    private void openSchemaObject(DBSchemaObject object, EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
+        DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(object);
         databaseFile.setSelectedEditorProviderId(editorProviderId);
         if (!BackgroundTask.isProcessCancelled()) {
             SimpleLaterInvocator.invoke(() -> {
@@ -469,10 +469,10 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         }
     }
 
-    private void openChildObject(final DBObject object, final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
-        final DBSchemaObject schemaObject = (DBSchemaObject) object.getParentObject();
-        final Project project = schemaObject.getProject();
-        final DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(schemaObject);
+    private void openChildObject(DBObject object, EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
+        DBSchemaObject schemaObject = (DBSchemaObject) object.getParentObject();
+        Project project = schemaObject.getProject();
+        DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(schemaObject);
         SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
         sourceCodeManager.ensureSourcesLoaded(schemaObject);
         if (!BackgroundTask.isProcessCancelled()) {

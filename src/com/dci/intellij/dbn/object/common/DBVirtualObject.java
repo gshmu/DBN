@@ -202,7 +202,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
             objectList = childObjects.createObjectList(objectType, this, DynamicContentLoader.VOID_CONTENT_LOADER, DynamicContentStatus.CONCURRENT);
         }
 
-        if (objectList.size() == 0) {
+        if (objectList != null && objectList.size() == 0) {
             VirtualObjectLookupAdapter lookupAdapter = new VirtualObjectLookupAdapter(this.objectType, objectType);
             Set<BasePsiElement> children = getUnderlyingPsiElement().collectPsiElements(lookupAdapter, null, 100);
             if (children != null) {

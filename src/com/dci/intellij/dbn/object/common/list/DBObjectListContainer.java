@@ -204,7 +204,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     }
 
-     public <T extends DBObject> DBObjectList<T>  createObjectList(
+    @Nullable
+    public <T extends DBObject> DBObjectList<T>  createObjectList(
              @NotNull DBObjectType objectType,
              @NotNull BrowserTreeNode treeParent,
              DynamicContentLoader loader,
@@ -215,6 +216,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
         return null;
     }
 
+    @Nullable
     public <T extends DBObject> DBObjectList<T>  createObjectList(
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
@@ -228,6 +230,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
         return null;
     }
 
+    @Nullable
     public <T extends DBObject> DBObjectList<T> createSubcontentObjectList(
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
@@ -248,6 +251,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
         return null;
     }
 
+    @Nullable
     public <T extends DBObject> DBObjectList<T> createSubcontentObjectList(
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
