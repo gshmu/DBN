@@ -27,8 +27,11 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.*;
+import java.util.Set;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private Set<ValueSelectorListener<T>> listeners = new HashSet<>();

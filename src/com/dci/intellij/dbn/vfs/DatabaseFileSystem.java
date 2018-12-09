@@ -1,9 +1,18 @@
 package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.common.thread.*;
+import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionAction;
+import com.dci.intellij.dbn.connection.ConnectionCache;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -20,7 +29,15 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.file.*;
+import com.dci.intellij.dbn.vfs.file.DBConnectionVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBDatasetFilterVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBObjectListVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBSessionStatementVirtualFile;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -40,7 +57,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.CONSOLES;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.DATASET_FILTERS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECTS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECT_CONTENTS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_BROWSERS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_STATEMENTS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.values;
 
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */ApplicationComponent {
     public static final String PS = "/";

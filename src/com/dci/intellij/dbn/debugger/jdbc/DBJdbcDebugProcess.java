@@ -17,7 +17,11 @@ import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerSessionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
-import com.dci.intellij.dbn.debugger.*;
+import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
+import com.dci.intellij.dbn.debugger.DBDebugOperationTask;
+import com.dci.intellij.dbn.debugger.DBDebugTabLayouter;
+import com.dci.intellij.dbn.debugger.DBDebugUtil;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
@@ -56,7 +60,14 @@ import java.util.Set;
 
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointId;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.setBreakpointId;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.BREAKPOINT_SETTING_ALLOWED;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.PROCESS_STOPPED_NORMALLY;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.PROCESS_TERMINATED;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.PROCESS_TERMINATING;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.SESSION_INITIALIZATION_THREW_EXCEPTION;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_STARTED;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_TERMINATED;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_THREW_EXCEPTION;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 
 public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebugProcess implements DBDebugProcess, NotificationSupport {

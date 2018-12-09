@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -32,6 +23,13 @@ import com.intellij.ui.DumbAwareActionButton;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBScrollPane;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ResourceMonitorDetailForm extends DBNFormImpl {
     private JTable sessionsTable;

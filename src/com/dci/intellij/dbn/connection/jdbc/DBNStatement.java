@@ -1,6 +1,10 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.util.CustomCallable;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.intellij.openapi.diagnostic.Logger;
 
 import java.lang.ref.WeakReference;
 import java.sql.ResultSet;
@@ -8,11 +12,7 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.util.CustomCallable;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
-import com.intellij.openapi.diagnostic.Logger;
+import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 
 public class DBNStatement<T extends Statement> extends DBNResource<T> implements Statement, Closeable, Cancellable {
     private static final Logger LOGGER = LoggerFactory.createLogger();
