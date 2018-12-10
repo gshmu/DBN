@@ -24,4 +24,8 @@ public enum ConnectionType {
     public boolean isOneOf(ConnectionType... connectionTypes){
         return EnumerationUtil.isOneOf(this, connectionTypes);
     }
+
+    public boolean matches(ConnectionType... connectionTypes){
+        return connectionTypes == null || connectionTypes.length == 0 || isOneOf(connectionTypes);
+    }
 }
