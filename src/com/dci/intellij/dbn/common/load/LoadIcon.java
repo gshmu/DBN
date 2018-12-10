@@ -1,17 +1,20 @@
 package com.dci.intellij.dbn.common.load;
 
-import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.intellij.openapi.util.IconLoader;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.*;
+
+import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.intellij.openapi.util.IconLoader;
+import com.intellij.ui.AnimatedIcon;
+
 public class LoadIcon implements Icon{
-    public static final Icon INSTANCE = new LoadIcon();
-    public static final int ROLL_INTERVAL = 80;
-    public static final int ROLL_ELEMENTS = 8;
+
+    public static final Icon INSTANCE = new AnimatedIcon.Default();
+    public static final int ROLL_INTERVAL = AnimatedIcon.Default.DELAY;
+    public static final int ROLL_ELEMENTS = 12;
 
     private static Icon[] ICONS = new Icon[ROLL_ELEMENTS];
     static {

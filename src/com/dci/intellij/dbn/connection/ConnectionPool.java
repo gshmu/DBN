@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.connection;
 
+import java.lang.ref.WeakReference;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
@@ -16,18 +25,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class ConnectionPool extends DisposableBase implements NotificationSupport, Disposable {
 
@@ -131,27 +128,27 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
 
     @NotNull
     public List<DBNConnection> getConnections(ConnectionType... connectionTypes) {
-        ArrayList<DBNConnection> connections = new ArrayList<DBNConnection>();
-        if (ConnectionType.MAIN.isOneOf(connectionTypes) && mainConnection != null) {
+        ArrayList<DBNConnection> connections = new ArrayList<>();
+        if (ConnectionType.MAIN.matches(connectionTypes) && mainConnection != null) {
             connections.add(mainConnection);
         }
 
-        if (ConnectionType.DEBUG.isOneOf(connectionTypes) && debugConnection != null) {
+        if (ConnectionType.DEBUG.matches(connectionTypes) && debugConnection != null) {
             connections.add(debugConnection);
         }
 
-        if (ConnectionType.DEBUGGER.isOneOf(connectionTypes) && debuggerConnection != null) {
+        if (ConnectionType.DEBUGGER.matches(connectionTypes) && debuggerConnection != null) {
             connections.add(debuggerConnection);
         }
 
-        if (ConnectionType.TEST.isOneOf(connectionTypes) && testConnection != null) {
+        if (ConnectionType.TEST.matches(connectionTypes) && testConnection != null) {
             connections.add(testConnection);
         }
 
-        if (ConnectionType.POOL.isOneOf(connectionTypes)) {
+        if (ConnectionType.POOL.matches(connectionTypes)) {
             connections.addAll(poolConnections);
         }
-        if (ConnectionType.SESSION.isOneOf(connectionTypes)) {
+        if (ConnectionType.SESSION.matches(connectionTypes)) {
             for (DBNConnection connection : sessionConnections.values()) {
                 if (connection != null) {
                     connections.add(connection);
@@ -375,7 +372,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
     }
 
     private static class ConnectionPoolCleanTask extends TimerTask {
-        List<WeakReference<ConnectionPool>> connectionPools = new CopyOnWriteArrayList<WeakReference<ConnectionPool>>();
+        List<WeakReference<ConnectionPool>> connectionPools = new CopyOnWriteArrayList<>();
 
         public void run() {
             for (WeakReference<ConnectionPool> connectionPoolRef : connectionPools) {
@@ -414,7 +411,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         }
 
         void registerConnectionPool(ConnectionPool connectionPool) {
-            connectionPools.add(new WeakReference<ConnectionPool>(connectionPool));
+            connectionPools.add(new WeakReference<>(connectionPool));
         }
     }
 
