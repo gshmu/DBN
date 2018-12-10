@@ -1,5 +1,21 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
@@ -28,18 +44,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow> implements ListSelectionListener {
     private boolean isInserting;
@@ -192,7 +196,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     private void snapshotChanges() {
         for (DatasetEditorModelRow row : getRows()) {
-            if (row.isDeleted() || row.isModified() || row.isNew()) {
+            if (row.is(DELETED) || row.is(MODIFIED) || row.is(INSERTED)) {
                 changedRows.add(row);
             }
         }
@@ -214,7 +218,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     private DatasetEditorModelRow lookupChangedRow(DatasetEditorModelRow row, boolean remove) {
         for (DatasetEditorModelRow changedRow : changedRows) {
-            if (!changedRow.isDeleted() && changedRow.matches(row, false)) {
+            if (changedRow.isNot(DELETED) && changedRow.matches(row, false)) {
                 if (remove) changedRows.remove(changedRow);
                 return changedRow;
             }
@@ -328,10 +332,10 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         editorTable.fireEditingCancel();
         for (int index : rowIndexes) {
             DatasetEditorModelRow row = getRowAtIndex(index);
-            if (row != null && !row.isDeleted()) {
+            if (row != null && row.isNot(DELETED)) {
                 int rsRowIndex = row.getResultSetRowIndex();
                 row.delete();
-                if (row.isDeleted()) {
+                if (row.is(DELETED)) {
                     shiftResultSetRowIndex(rsRowIndex, -1);
                     notifyRowUpdated(index);
                 }
@@ -352,7 +356,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             editorTable.stopCellEditing();
             resultSetAdapter.startInsertRow();
             DatasetEditorModelRow newRow = createRow(getRowCount()+1);
-            newRow.setInsert(true);
+            newRow.set(INSERTING, true);
             addRowAtIndex(rowIndex, newRow);
             notifyRowsInserted(rowIndex, rowIndex);
 
@@ -376,7 +380,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             resultSetAdapter.startInsertRow();
             DatasetEditorModelRow oldRow = getRowAtIndex(rowIndex);
             DatasetEditorModelRow newRow = createRow(getRowCount() + 1);
-            newRow.setInsert(true);
+            newRow.set(INSERTING, true);
             newRow.updateDataFromRow(oldRow);
             addRowAtIndex(insertIndex, newRow);
             notifyRowsInserted(insertIndex, insertIndex);
@@ -400,8 +404,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             try {
                 editorTable.stopCellEditing();
                 resultSetAdapter.insertRow();
-                row.setInsert(false);
-                row.setNew(true);
+                row.set(INSERTED, true);
                 isModified = true;
                 isInserting = false;
                 if (rebuild) load(true, true);
@@ -450,7 +453,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     @Nullable
     public DatasetEditorModelRow getInsertRow() {
         for (DatasetEditorModelRow row : getRows()) {
-            if (row.isInsert()) {
+            if (row.is(INSERTING)) {
                 return row;
             }
         }
@@ -495,7 +498,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         if (!isReadonly() && !isEnvironmentReadonly() && !editorState.isReadonly() && getConnectionHandler().isConnected()) {
             if (!editorTable.isLoading() && editorTable.getSelectedColumnCount() <= 1 && editorTable.getSelectedRowCount() <= 1) {
                 DatasetEditorModelRow row = getRowAtIndex(rowIndex);
-                return row != null && !(isInserting && !row.isInsert()) && !row.isDeleted();
+                return row != null && !(isInserting && row.isNot(INSERTING)) && row.isNot(DELETED);
             }
         }
         return false;

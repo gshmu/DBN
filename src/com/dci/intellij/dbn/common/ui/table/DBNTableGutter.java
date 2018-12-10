@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import javax.swing.*;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList implements Disposable, EditorColorsListener {
     private boolean disposed;
@@ -62,10 +62,5 @@ public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList
     public void dispose() {
         disposed = true;
         table = null;
-    }
-
-    @Override
-    public void checkDisposed() {
-        if (disposed) throw AlreadyDisposedException.INSTANCE;
     }
 }

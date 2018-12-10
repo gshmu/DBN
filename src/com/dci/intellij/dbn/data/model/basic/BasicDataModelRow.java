@@ -1,17 +1,19 @@
 package com.dci.intellij.dbn.data.model.basic;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.data.model.DataModelCell;
-import com.dci.intellij.dbn.data.model.DataModelRow;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class BasicDataModelRow<T extends DataModelCell> extends DisposableBase implements DataModelRow<T> {
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.data.model.DataModelCell;
+import com.dci.intellij.dbn.data.model.DataModelRow;
+import com.dci.intellij.dbn.editor.data.model.RecordStatus;
+import com.intellij.openapi.project.Project;
+
+public class BasicDataModelRow<T extends DataModelCell> extends PropertyHolderImpl<RecordStatus> implements DataModelRow<T> {
     protected BasicDataModel model;
     protected List<T> cells;
     private int index;
@@ -19,6 +21,11 @@ public class BasicDataModelRow<T extends DataModelCell> extends DisposableBase i
     public BasicDataModelRow(BasicDataModel model) {
         cells = new ArrayList<T>(model.getColumnCount());
         this.model = model;
+    }
+
+    @Override
+    protected RecordStatus[] properties() {
+        return RecordStatus.values();
     }
 
     protected void addCell(T cell) {
@@ -84,9 +91,15 @@ public class BasicDataModelRow<T extends DataModelCell> extends DisposableBase i
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+
+    @Override
+    public boolean isDisposed() {
+        return is(RecordStatus.DISPOSED);
+    }
+
     public void dispose() {
         if (!isDisposed()) {
-            super.dispose();
+            set(RecordStatus.DISPOSED, true);
             DisposerUtil.dispose(cells);
             cells = null;
             model = null;

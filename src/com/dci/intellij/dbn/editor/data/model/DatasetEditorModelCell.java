@@ -1,6 +1,17 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.TableCellEditor;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -22,13 +33,6 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.TableCellEditor;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class DatasetEditorModelCell extends ResultSetDataModelCell implements ChangeListener {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -108,15 +112,16 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 }
             }
 
-            if (!row.isInsert() && !connectionHandler.isAutoCommit()) {
+            if (row.isNot(INSERTING) && !connectionHandler.isAutoCommit()) {
                 isModified = true;
-                row.setModified(true);
+                row.set(RecordStatus.MODIFIED, true);
+                row.getModel().setModified(true);
             }
         }
     }
 
     protected DBDataset getDataset() {
-        return getRow().getModel().getDataset();
+        return getEditorModel().getDataset();
     }
 
     private boolean userValueChanged(Object newUserValue) {
@@ -150,9 +155,10 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
             getRow().notifyError(error, true, true);
             setUserValue(userValue);
             ConnectionHandler connectionHandler = getConnectionHandler();
-            if (!row.isInsert() && !connectionHandler.isAutoCommit()) {
+            if (row.isNot(INSERTING) && !connectionHandler.isAutoCommit()) {
                 isModified = true;
-                row.setModified(true);
+                row.set(MODIFIED, true);
+                row.getModel().setModified(true);
                 getConnection().updateLastAccess();
             }
         }
@@ -162,18 +168,23 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         if (CommonUtil.safeEqual(getUserValue(), remoteCell.getUserValue())){
             return true;
         }
-        if (lenient && (getRow().isNew() || getRow().isModified()) && getUserValue() == null && remoteCell.getUserValue() != null) {
+        if (lenient && (getRow().is(INSERTED) || getRow().is(MODIFIED)) && getUserValue() == null && remoteCell.getUserValue() != null) {
             return true;
         }
         return false;
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return getRow().getModel().getConnectionHandler();
+        return getEditorModel().getConnectionHandler();
     }
 
     private DatasetEditorTable getEditorTable() {
-        return getRow().getModel().getEditorTable();
+        return getEditorModel().getEditorTable();
+    }
+
+    @NotNull
+    private DatasetEditorModel getEditorModel() {
+        return getRow().getModel();
     }
 
     public void edit() {
@@ -188,15 +199,17 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         int index = getEditorTable().convertColumnIndexToView(getIndex());
         if (index > 0) {
             DatasetEditorTable table = getEditorTable();
-            table.editCellAt(getRow().getIndex(), index -1);
+            DatasetEditorModelRow row = getRow();
+            table.editCellAt(row.getIndex(), index -1);
         }
     }
 
     public void editNext(){
         int index = getEditorTable().convertColumnIndexToView(getIndex());
-        if (index < getRow().getCells().size()-1) {
+        DatasetEditorModelRow row = getRow();
+        if (index < row.getCells().size()-1) {
             DatasetEditorTable table = getEditorTable();
-            table.editCellAt(getRow().getIndex(), index + 1);
+            table.editCellAt(row.getIndex(), index + 1);
         }
     }
 
@@ -240,7 +253,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     private void notifyCellUpdated() {
-        getRow().getModel().notifyCellUpdated(getRow().getIndex(), getIndex());
+        getEditorModel().notifyCellUpdated(getRow().getIndex(), getIndex());
     }
 
     private void scrollToVisible() {

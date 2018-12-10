@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-
 import javax.swing.*;
 
 public class BasicDataEditorComponent extends JTextField implements DataEditorComponent{
@@ -44,10 +42,5 @@ public class BasicDataEditorComponent extends JTextField implements DataEditorCo
             disposed = true;
             userValueHolder = null;
         }
-    }
-
-    @Override
-    public void checkDisposed() {
-        if (disposed) throw AlreadyDisposedException.INSTANCE;
     }
 }

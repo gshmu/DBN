@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
+
+import java.awt.*;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
@@ -9,10 +17,6 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.ui.SimpleTextAttributes;
-
-import javax.swing.*;
-import javax.swing.border.Border;
-import java.awt.*;
 
 public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
 
@@ -28,8 +32,8 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
             boolean isLoading = datasetEditorTable.isLoading();
             boolean isInserting = datasetEditorTable.isInserting();
 
-            boolean isDeletedRow = row.isDeleted();
-            boolean isInsertRow = row.isInsert();
+            boolean isDeletedRow = row.is(DELETED);
+            boolean isInsertRow = row.is(INSERTING);
             boolean isCaretRow = !isInsertRow && table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
             boolean isModified = cell.isModified();
             boolean isTrackingColumn = columnInfo.isTrackingColumn();

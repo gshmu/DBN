@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.execution;
 
+import java.util.List;
+
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
@@ -28,12 +35,6 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentFactoryImpl;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 @State(
     name = ExecutionManager.COMPONENT_NAME,
@@ -223,7 +224,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
 
     @Override
-    public void projectClosing(Project project) {
+    public void projectClosing(@NotNull Project project) {
         if (executionConsoleForm.loaded()) {
             getExecutionConsoleForm().removeAllTabs();
         }
@@ -256,6 +257,6 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
     }
 }
