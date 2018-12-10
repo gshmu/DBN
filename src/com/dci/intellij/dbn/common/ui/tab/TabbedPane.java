@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.common.ui.tab;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import javax.swing.*;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.intellij.openapi.Disposable;
@@ -9,9 +12,6 @@ import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 public class TabbedPane extends JBEditorTabs implements com.dci.intellij.dbn.common.dispose.Disposable{
     public TabbedPane(@NotNull Disposable disposable) {
@@ -74,10 +74,5 @@ public class TabbedPane extends JBEditorTabs implements com.dci.intellij.dbn.com
     @Override
     public void dispose() {
         ConditionalLaterInvocator.invoke(super::dispose);
-    }
-
-    @Override
-    public void checkDisposed() {
-        if (isDisposed()) throw AlreadyDisposedException.INSTANCE;
     }
 }

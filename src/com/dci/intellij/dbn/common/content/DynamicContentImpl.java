@@ -1,10 +1,16 @@
 package com.dci.intellij.dbn.common.content;
 
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
+
+import java.util.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -17,21 +23,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DISPOSED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING_IN_BACKGROUND;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
     protected static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));
@@ -419,10 +410,5 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             loader = DynamicContentLoader.VOID_CONTENT_LOADER;
             parent = null;
         }
-    }
-
-    @Override
-    public final void checkDisposed() {
-        if (isDisposed()) throw AlreadyDisposedException.INSTANCE;
     }
 }

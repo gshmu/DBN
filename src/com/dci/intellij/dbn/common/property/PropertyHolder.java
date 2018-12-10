@@ -5,7 +5,18 @@ public interface PropertyHolder<T extends Property> {
 
     boolean is(T status);
 
+
+
     default boolean isNot(T status) {
         return !is(status);
     };
+
+    static <T extends Property> PropertyHolder<T> create(Class<T> type) {
+        return new PropertyHolderImpl<T>() {
+            @Override
+            protected T[] properties() {
+                return type.getEnumConstants();
+            }
+        };
+    }
 }

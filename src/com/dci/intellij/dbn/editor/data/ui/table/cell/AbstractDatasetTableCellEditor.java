@@ -1,6 +1,14 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.Serializable;
+import java.text.ParseException;
+import java.util.EventObject;
+
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -15,18 +23,6 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-
-import javax.swing.*;
-import javax.swing.table.TableCellEditor;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.io.Serializable;
-import java.text.ParseException;
-import java.util.EventObject;
 
 public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, Disposable {
     private DataEditorComponent editorComponent;
@@ -196,10 +192,4 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
             cell = null;
         }
     }
-
-    @Override
-    public void checkDisposed() {
-        if (disposed) throw AlreadyDisposedException.INSTANCE;
-    }
-
 }

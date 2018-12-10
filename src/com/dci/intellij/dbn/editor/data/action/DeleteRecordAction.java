@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.editor.data.action;
 
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -16,14 +20,14 @@ public class DeleteRecordAction extends AbstractDataEditorAction {
         super("Delete records", Icons.DATA_EDITOR_DELETE_RECORD);
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor != null) {
             datasetEditor.deleteRecords();
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Delete Records");
         DatasetEditor datasetEditor = getDatasetEditor(e);
@@ -43,7 +47,7 @@ public class DeleteRecordAction extends AbstractDataEditorAction {
                     for (int selectedRow : editorTable.getSelectedRows()) {
                         if (selectedRow < editorTable.getModel().getRowCount()) {
                             DatasetEditorModelRow row = editorTable.getModel().getRowAtIndex(selectedRow);
-                            if (!row.isDeleted()) {
+                            if (row != null && row.isNot(DELETED)) {
                                 presentation.setEnabled(true);
                                 return;
                             }

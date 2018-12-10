@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.common;
 
+import java.util.Map;
+
+import javax.swing.*;
+
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.RowIcon;
 import gnu.trove.THashMap;
-
-import javax.swing.*;
-import java.util.Map;
 
 public class Icons {
     private static final Map<String, Icon> REGISTERED_ICONS = new THashMap<String, Icon>();
@@ -157,7 +158,7 @@ public class Icons {
 
     public static final Icon DATA_EDITOR_ROW_DEFAULT = load("/img/DefaultRow.png");
     public static final Icon DATA_EDITOR_ROW_INSERT = load("/img/InsertRow.png");
-    public static final Icon DATA_EDITOR_ROW_NEW = load("/img/NewRow.png");
+    public static final Icon DATA_EDITOR_ROW_INSERTED = load("/img/NewRow.png");
     public static final Icon DATA_EDITOR_ROW_MODIFIED = load("/img/ModifiedRow.png");
     public static final Icon DATA_EDITOR_ROW_DELETED = load("/img/DeletedRow.png");
 

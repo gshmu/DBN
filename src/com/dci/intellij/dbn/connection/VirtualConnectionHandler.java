@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.connection;
 
+import java.sql.SQLException;
+import java.util.*;
+
+import javax.swing.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
@@ -23,16 +31,6 @@ import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
     private ConnectionId id;
@@ -314,8 +312,4 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public void rollback() throws SQLException {}
     @Override
     public void dispose() {}
-    @Override
-    public void checkDisposed() {
-
-    }
 }

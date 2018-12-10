@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.intellij.openapi.application.ApplicationAdapter;
@@ -9,7 +10,6 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractProjectComponent extends ApplicationAdapter implements ProjectComponent, ProjectManagerListener, Disposable, NotificationSupport {
     private ProjectRef projectRef;
@@ -39,22 +39,22 @@ public abstract class AbstractProjectComponent extends ApplicationAdapter implem
      *            ProjectManagerListener           *
      ***********************************************/
     @Override
-    public void projectOpened(Project project) {
+    public void projectOpened(@NotNull Project project) {
 
     }
 
     @Override
-    public boolean canCloseProject(Project project) {
+    public boolean canCloseProject(@NotNull Project project) {
         return true;
     }
 
     @Override
-    public void projectClosed(Project project) {
+    public void projectClosed(@NotNull Project project) {
 
     }
 
     @Override
-    public void projectClosing(Project project) {
+    public void projectClosing(@NotNull Project project) {
 
     }
 
@@ -71,11 +71,6 @@ public abstract class AbstractProjectComponent extends ApplicationAdapter implem
     @Override
     public void dispose() {
         disposed = true;
-    }
-
-    @Override
-    public void checkDisposed() {
-        if (disposed) throw AlreadyDisposedException.INSTANCE;
     }
 
     public void disposeComponent() {

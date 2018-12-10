@@ -15,6 +15,10 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
 
     protected abstract T[] properties();
 
+    public void set(PropertyHolderImpl<T> source) {
+        this.computed = source.computed;
+    }
+
     @Override
     public boolean set(T property, boolean value) {
         return value ?

@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.vfs;
 
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
+
+import java.util.*;
+
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -28,18 +36,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 @State(
     name = DatabaseFileManager.COMPONENT_NAME,
@@ -215,7 +211,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
 
     @Override
-    public void projectClosed(Project project) {
+    public void projectClosed(@NotNull Project project) {
         if (project == getProject()) {
 /*
             // TODO seems to be obsolete since file unique id

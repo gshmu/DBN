@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
+
+import java.awt.*;
+
+import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableColors;
@@ -11,10 +18,6 @@ import com.intellij.openapi.editor.colors.EditorFontType;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import java.awt.*;
 
 public class DatasetEditorTableGutterRenderer extends JPanel implements ListCellRenderer {
     private JLabel textLabel;
@@ -52,11 +55,11 @@ public class DatasetEditorTableGutterRenderer extends JPanel implements ListCell
         DatasetEditorTable table = (DatasetEditorTable) tableGutter.getTable();
         if (row != null) {
             Icon icon =
-                    row.isNew() ? Icons.DATA_EDITOR_ROW_NEW :
-                            row.isInsert() ? Icons.DATA_EDITOR_ROW_INSERT :
-                                    row.isDeleted() ? Icons.DATA_EDITOR_ROW_DELETED :
-                                            row.isModified() ? Icons.DATA_EDITOR_ROW_MODIFIED :
-                                                    table.getModel().isModified() ? Icons.DATA_EDITOR_ROW_DEFAULT : null;
+                    row.is(INSERTING) ? Icons.DATA_EDITOR_ROW_INSERT :
+                    row.is(INSERTED) ? Icons.DATA_EDITOR_ROW_INSERTED :
+                    row.is(DELETED) ? Icons.DATA_EDITOR_ROW_DELETED :
+                    row.is(MODIFIED) ? Icons.DATA_EDITOR_ROW_MODIFIED :
+                    table.getModel().isModified() ? Icons.DATA_EDITOR_ROW_DEFAULT : null;
 
             textLabel.setText(Integer.toString(row.getIndex() + 1));
             if (imageLabel.getIcon() != icon) {

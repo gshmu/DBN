@@ -21,9 +21,4 @@ public abstract class DisposableBase implements Disposable{
     public void dispose() {
         disposed = true;
     }
-
-    @Override
-    public final void checkDisposed() {
-        if (disposed) throw AlreadyDisposedException.INSTANCE;
-    }
 }
