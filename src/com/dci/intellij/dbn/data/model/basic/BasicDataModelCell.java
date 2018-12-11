@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.data.model.basic;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
@@ -15,6 +13,7 @@ import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.model.RecordStatus;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> implements DataModelCell {
     protected BasicDataModelRow row;
@@ -120,7 +119,7 @@ public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> impleme
     }
 
     public String toString() {
-        return userValue == null ? null : userValue.toString();
+        return (userValue == null ? null : userValue.toString()) + " - " + super.toString();
     }
 
     @NotNull
