@@ -81,12 +81,12 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     }
 
     public void clearSelection() {
-        ConditionalLaterInvocator.invoke(SessionBrowserTable.super::clearSelection);
+        ConditionalLaterInvocator.invoke(() -> SessionBrowserTable.super.clearSelection());
     }
 
     @Override
     public void removeEditor() {
-        ConditionalLaterInvocator.invoke(SessionBrowserTable.super::removeEditor);
+        ConditionalLaterInvocator.invoke(() -> SessionBrowserTable.super.removeEditor());
     }
 
     public void updateTableGutter() {

@@ -1,17 +1,6 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.TableCellEditor;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -33,13 +22,21 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.TableCellEditor;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
 public class DatasetEditorModelCell extends ResultSetDataModelCell implements ChangeListener {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private Object originalUserValue;
     private DatasetEditorError error;
-    private boolean isModified;
 
     public DatasetEditorModelCell(DatasetEditorModelRow row, ResultSet resultSet, DatasetEditorColumnInfo columnInfo) throws SQLException {
         super(row, resultSet, columnInfo);
@@ -63,12 +60,12 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 return;
             }
             GenericDataType genericDataType = getColumnInfo().getDataType().getGenericDataType();
-            final boolean isValueAdapter = ValueAdapter.supports(genericDataType);
+            boolean isValueAdapter = ValueAdapter.supports(genericDataType);
 
-            final ConnectionHandler connectionHandler = getConnectionHandler();
+            ConnectionHandler connectionHandler = getConnectionHandler();
             try {
                 clearError();
-                final int columnIndex = getColumnInfo().getResultSetColumnIndex();
+                int columnIndex = getColumnInfo().getResultSetColumnIndex();
                 if (isValueAdapter && userValue == null) {
                     userValue = ValueAdapter.create(genericDataType);
                 }
@@ -113,7 +110,8 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
             }
 
             if (row.isNot(INSERTING) && !connectionHandler.isAutoCommit()) {
-                isModified = true;
+                reset();
+                set(MODIFIED, true);
 
                 row.reset();
                 row.set(RecordStatus.MODIFIED, true);
@@ -158,7 +156,8 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
             setUserValue(userValue);
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (row.isNot(INSERTING) && !connectionHandler.isAutoCommit()) {
-                isModified = true;
+                reset();
+                set(MODIFIED, true);
 
                 row.reset();
                 row.set(MODIFIED, true);
@@ -230,19 +229,15 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
 
     void setOriginalUserValue(Object value) {
         if (originalUserValue == null) {
-            isModified = value != null;
+            set(MODIFIED, value != null);
         } else {
-            isModified = !originalUserValue.equals(value);
+            set(MODIFIED, !originalUserValue.equals(value));
         }
         this.originalUserValue = value;
     }
 
     public Object getOriginalUserValue() {
         return originalUserValue;
-    }
-
-    public boolean isModified() {
-        return isModified;
     }
 
     public boolean isEditing() {
@@ -287,7 +282,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         return error != null;
     }
 
-    boolean notifyError(DatasetEditorError error, final boolean showPopup) {
+    boolean notifyError(DatasetEditorError error, boolean showPopup) {
         error.setNotified(true);
         if(!CommonUtil.safeEqual(this.error, error)) {
             clearError();
@@ -346,9 +341,9 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     public void revertChanges() {
-        if (isModified) {
+        if (is(MODIFIED)) {
             updateUserValue(originalUserValue, false);
-            this.isModified = false;
+            set(MODIFIED, false);
         }
     }
 }

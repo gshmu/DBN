@@ -7,12 +7,7 @@ import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
-import com.dci.intellij.dbn.editor.data.filter.ConditionJoinType;
-import com.dci.intellij.dbn.editor.data.filter.ConditionOperator;
-import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilter;
-import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
-import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
-import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
+import com.dci.intellij.dbn.editor.data.filter.*;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBColumn;
@@ -30,6 +25,8 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
+
 public class DatasetEditorTableActionGroup extends DefaultActionGroup {
     private ColumnInfo columnInfo;
     private Object columnValue;
@@ -46,7 +43,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         HideColumnAction hideColumnAction = new HideColumnAction();
         add(hideColumnAction);
         addSeparator();
-        if (cell != null && cell.isModified() && !cell.isLobValue()) {
+        if (cell != null && cell.is(MODIFIED) && !cell.isLobValue()) {
             RevertChangesAction revertChangesAction = new RevertChangesAction(cell);
             add(revertChangesAction);
         }
