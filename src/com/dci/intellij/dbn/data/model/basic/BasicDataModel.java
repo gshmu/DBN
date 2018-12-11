@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.data.model.basic;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -11,16 +10,12 @@ import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
-import com.dci.intellij.dbn.data.model.ColumnInfo;
-import com.dci.intellij.dbn.data.model.DataModel;
-import com.dci.intellij.dbn.data.model.DataModelCell;
-import com.dci.intellij.dbn.data.model.DataModelHeader;
-import com.dci.intellij.dbn.data.model.DataModelListener;
-import com.dci.intellij.dbn.data.model.DataModelRow;
-import com.dci.intellij.dbn.data.model.DataModelState;
+import com.dci.intellij.dbn.data.model.*;
+import com.dci.intellij.dbn.editor.data.model.RecordStatus;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BasicDataModel<T extends DataModelRow> extends DisposableBase implements DataModel<T> {
+public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<RecordStatus> implements DataModel<T> {
     private DataModelHeader<? extends ColumnInfo> header;
     private DataModelState state;
     private Set<TableModelListener> tableModelListeners = new HashSet<>();
@@ -60,6 +55,11 @@ public class BasicDataModel<T extends DataModelRow> extends DisposableBase imple
         this.project = project;
         formatter = ThreadLocalLatent.create(() -> Formatter.getInstance(project).clone());
         EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
+    }
+
+    @Override
+    protected RecordStatus[] properties() {
+        return RecordStatus.values();
     }
 
     public boolean isEnvironmentReadonly() {
@@ -326,7 +326,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposableBase imple
      ********************************************************/
     public void dispose() {
         if (!isDisposed()) {
-            super.dispose();
+            set(RecordStatus.DISPOSED, true);
             DisposerUtil.dispose(rows);
             tableModelListeners.clear();
             dataModelListeners.clear();
@@ -335,5 +335,10 @@ public class BasicDataModel<T extends DataModelRow> extends DisposableBase imple
             rows = null;
             project = null;
         }
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return is(RecordStatus.DISPOSED);
     }
 }

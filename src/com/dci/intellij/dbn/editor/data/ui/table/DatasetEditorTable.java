@@ -55,6 +55,7 @@ import java.sql.SQLException;
 import java.util.EventObject;
 
 import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
 public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
@@ -123,7 +124,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     public boolean isInserting() {
-        return getModel().isInserting();
+        return getModel().is(INSERTING);
     }
 
     public void hideColumn(int columnIndex) {
@@ -416,7 +417,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         super.valueChanged(e);
         DatasetEditorModel model = getModel();
 
-        if (model.isInserting() && !e.getValueIsAdjusting()) {
+        if (model.is(INSERTING) && !e.getValueIsAdjusting()) {
             int insertRowIndex = getModel().getInsertRowIndex();
             if (insertRowIndex != -1 && (insertRowIndex == e.getFirstIndex() || insertRowIndex == e.getLastIndex()) && getSelectedRow() != insertRowIndex) {
                 try {

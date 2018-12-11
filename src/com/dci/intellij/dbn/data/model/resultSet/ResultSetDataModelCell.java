@@ -8,11 +8,13 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
+
 public class ResultSetDataModelCell extends SortableDataModelCell {
     public ResultSetDataModelCell(ResultSetDataModelRow row, ResultSet resultSet, ResultSetColumnInfo columnInfo) throws SQLException {
         super(row, null, columnInfo.getColumnIndex());
         DBDataType dataType = columnInfo.getDataType();
-        if (!getRow().getModel().isInserting()) {
+        if (!getRow().getModel().is(INSERTING)) {
             Object userValue = dataType.getValueFromResultSet(resultSet, columnInfo.getResultSetColumnIndex());
             setUserValue(userValue);
         }

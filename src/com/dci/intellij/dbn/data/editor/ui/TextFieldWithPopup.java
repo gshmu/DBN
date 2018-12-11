@@ -1,29 +1,27 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.text.Document;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.JBUI;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.text.Document;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TextFieldWithPopup<T extends JComponent> extends JPanel implements DataEditorComponent {
     private JTextField textField;
     private JPanel buttonsPanel;
 
-    private List<TextFieldPopupProvider> popupProviders = new ArrayList<TextFieldPopupProvider>();
+    private List<TextFieldPopupProvider> popupProviders = new ArrayList<>();
     private UserValueHolder userValueHolder;
     private ProjectRef projectRef;
     private T parentComponent;
@@ -229,7 +227,7 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
         return null;
     }
 
-    public TextFieldPopupProvider getDefaultPopupProvider() {
+    private TextFieldPopupProvider getDefaultPopupProvider() {
         return popupProviders.get(0);
     }
 
@@ -306,7 +304,7 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
     private class ButtonMouseListener extends MouseAdapter {
         TextFieldPopupProvider popupProvider;
 
-        public ButtonMouseListener(TextFieldPopupProvider popupProvider) {
+        ButtonMouseListener(TextFieldPopupProvider popupProvider) {
             this.popupProvider = popupProvider;
         }
 
@@ -319,7 +317,7 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
                 popupProvider.showPopup();
             }
         }
-    };
+    }
 
     public UserValueHolder getUserValueHolder() {
         return userValueHolder;
