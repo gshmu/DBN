@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -13,20 +12,16 @@ import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
-import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
-import com.dci.intellij.dbn.editor.data.ui.DatasetEditorErrorForm;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.table.TableCellEditor;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -49,23 +44,31 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     public void updateUserValue(Object newUserValue, boolean bulk) {
+        getConnection().updateLastAccess();
+
         boolean valueChanged = userValueChanged(newUserValue);
         if (hasError() || valueChanged) {
+            DatasetEditorColumnInfo columnInfo = getColumnInfo();
+            GenericDataType genericDataType = columnInfo.getDataType().getGenericDataType();
+            boolean isValueAdapter = ValueAdapter.supports(genericDataType);
+
+            if (!isValueAdapter && valueChanged) {
+                setUserValue(newUserValue);
+            }
+
             DatasetEditorModelRow row = getRow();
             ResultSetAdapter resultSetAdapter = getModel().getResultSetAdapter();
             try {
                 resultSetAdapter.scroll(row.getResultSetRowIndex());
             } catch (Exception e) {
-                MessageUtil.showErrorDialog(getProject(), "Could not update cell value for " + getColumnInfo().getName() + ".", e);
+                MessageUtil.showErrorDialog(getProject(), "Could not update cell value for " + columnInfo.getName() + ".", e);
                 return;
             }
-            GenericDataType genericDataType = getColumnInfo().getDataType().getGenericDataType();
-            boolean isValueAdapter = ValueAdapter.supports(genericDataType);
 
             ConnectionHandler connectionHandler = getConnectionHandler();
             try {
                 clearError();
-                int columnIndex = getColumnInfo().getResultSetColumnIndex();
+                int columnIndex = columnInfo.getResultSetColumnIndex();
                 if (isValueAdapter && userValue == null) {
                     userValue = ValueAdapter.create(genericDataType);
                 }
@@ -78,25 +81,26 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                     }
                     resultSetAdapter.setValue(columnIndex, valueAdapter, newUserValue);
                 } else {
-                    DBDataType dataType = getColumnInfo().getDataType();
+                    DBDataType dataType = columnInfo.getDataType();
                     resultSetAdapter.setValue(columnIndex, dataType, newUserValue);
                 }
 
 
                 resultSetAdapter.updateRow();
             } catch (Exception e) {
+                //try { Thread.sleep(6000); } catch (InterruptedException e1) { e1.printStackTrace(); }
+
                 DatasetEditorError error = new DatasetEditorError(connectionHandler, e);
 
                 // error may affect other cells in the row (e.g. foreign key constraint for multiple primary key)
-                if (e instanceof SQLException) getRow().notifyError(error, false, !bulk);
+                if (e instanceof SQLException) {
+                    row.notifyError(error, false, !bulk);
+                }
 
                 // if error was not notified yet on row level, notify it on cell isolation level
                 if (!error.isNotified()) notifyError(error, !bulk);
             } finally {
                 if (valueChanged) {
-                    if (!isValueAdapter) {
-                        setUserValue(newUserValue);
-                    }
                     DBNConnection connection = getModel().getConnection();
                     connection.notifyDataChanges(getDataset().getVirtualFile());
                     EventUtil.notify(getProject(), DatasetEditorModelCellValueListener.TOPIC).valueChanged(this);
@@ -105,7 +109,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                     resultSetAdapter.refreshRow();
                 } catch (SQLException e) {
                     DatasetEditorError error = new DatasetEditorError(connectionHandler, e);
-                    getRow().notifyError(error, false, !bulk);
+                    row.notifyError(error, false, !bulk);
                 }
             }
 
@@ -149,6 +153,8 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     public void updateUserValue(Object userValue, String errorMessage) {
+        getConnection().updateLastAccess();
+
         if (!CommonUtil.safeEqual(userValue, getUserValue()) || hasError()) {
             DatasetEditorModelRow row = getRow();
             DatasetEditorError error = new DatasetEditorError(errorMessage, getColumnInfo().getColumn());
@@ -162,7 +168,6 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 row.reset();
                 row.set(MODIFIED, true);
                 row.getModel().set(MODIFIED, true);
-                getConnection().updateLastAccess();
             }
         }
     }
@@ -288,38 +293,25 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
             clearError();
             this.error = error;
             notifyCellUpdated();
-            if (showPopup) scrollToVisible();
+            if (showPopup) {
+                scrollToVisible();
+            }
+
+            DatasetEditorTable table = getEditorTable();
             if (isEditing()) {
-                DatasetEditorTable table = getEditorTable();
-                TableCellEditor tableCellEditor = table.getCellEditor();
-                if (tableCellEditor instanceof DatasetTableCellEditor) {
-                    DatasetTableCellEditor cellEditor = (DatasetTableCellEditor) tableCellEditor;
+                DatasetTableCellEditor cellEditor = table.getCellEditor();
+                if (cellEditor != null) {
                     cellEditor.highlight(DatasetTableCellEditor.HIGHLIGHT_TYPE_ERROR);
                 }
             }
             error.addChangeListener(this);
-            if (showPopup) showErrorPopup();
+            if (showPopup) {
+                checkDisposed();
+                table.showErrorPopup(this);
+            }
             return true;
         }
         return false;
-    }
-
-    void showErrorPopup() {
-        SimpleLaterInvocator.invoke(() -> {
-            if (!isDisposed()) {
-                DatasetEditorModelRow row = getRow();
-                DatasetEditorModel model = row.getModel();
-                DatasetEditorTable editorTable = model.getEditorTable();
-                if (!editorTable.isShowing()) {
-                    DBDataset dataset = getDataset();
-                    DatabaseFileSystem.getInstance().openEditor(dataset, EditorProviderId.DATA, true);
-                }
-                if (error != null) {
-                    DatasetEditorErrorForm errorForm = new DatasetEditorErrorForm(DatasetEditorModelCell.this);
-                    errorForm.show();
-                }
-            }
-        });
     }
 
     private void clearError() {

@@ -51,7 +51,6 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     private DBObjectRef<DBDataset> datasetRef;
 
     private CancellableDatabaseCall loaderCall;
-    private boolean isDirty;
     private ResultSetAdapter resultSetAdapter;
 
     private List<DatasetEditorModelRow> changedRows = new ArrayList<>();
@@ -72,7 +71,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     }
 
     public void load(final boolean useCurrentFilter, final boolean keepChanges) throws SQLException {
-        isDirty = false;
+        set(DIRTY, false);
         checkDisposed();
         closeResultSet();
         int timeout = getSettings().getGeneralSettings().getFetchTimeout().value();
@@ -105,7 +104,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 DBNStatement statement = statementRef.get();
                 ConnectionUtil.cancel(statement);
                 loaderCall = null;
-                isDirty = true;
+                set(DIRTY, true);
             }
         };
         loaderCall.start();
@@ -178,7 +177,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     }
 
     public boolean isDirty() {
-        return isDirty;
+        return is(DIRTY);
     }
 
     public void cancelDataLoad() {
@@ -485,16 +484,16 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         DatasetEditorTable editorTable = getEditorTable();
         DatasetEditorState editorState = getState();
-        if (isReadonly()) {
-            return false;
-
-        } else if (isEnvironmentReadonly()) {
+        if (isReadonly() || isEnvironmentReadonly() || isDirty()) {
             return false;
 
         } else if (editorState.isReadonly()) {
             return false;
 
         } else if (editorTable.isLoading()) {
+            return false;
+
+        } else if (!editorTable.isEditingEnabled()) {
             return false;
 
         } else if (editorTable.getSelectedColumnCount() > 1 || editorTable.getSelectedRowCount() > 1) {

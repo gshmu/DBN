@@ -84,6 +84,11 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
     public void setEditable(boolean editable){
         textField.setEditable(editable);
     }
+
+    @Override
+    public boolean isEditable() {
+        return textField.isEditable();
+    }
                                                                                   
     public void setUserValueHolder(UserValueHolder userValueHolder) {
         this.userValueHolder = userValueHolder;

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
@@ -65,7 +66,9 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
     }
 
     public void stateChanged(ChangeEvent e) {
-        if (popup.isVisible()) popup.cancel();
+        ConditionalLaterInvocator.invoke(() -> {
+            if (popup.isVisible()) popup.cancel();
+        });
     }
 
     public void dispose() {

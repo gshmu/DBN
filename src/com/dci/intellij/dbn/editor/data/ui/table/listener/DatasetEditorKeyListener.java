@@ -42,17 +42,19 @@ public class DatasetEditorKeyListener extends KeyAdapter {
                 }
             } else if (!table.isEditing()){
                 if (keyChar == 127) {
-                    for (int rowIndex : table.getSelectedRows()) {
-                        for (int columnIndex : table.getSelectedColumns()) {
-                            DatasetEditorModelCell cell = model.getCellAt(rowIndex, columnIndex);
-                            DBDataType dataType = cell.getColumnInfo().getDataType();
-                            if (dataType.isNative() && !dataType.getNativeDataType().isLargeObject()) {
-                                cell.updateUserValue(null, true);
+                    int[] selectedRows = table.getSelectedRows();
+                    int[] selectedColumns = table.getSelectedColumns();
+                    table.performUpdate(() -> {
+                        for (int rowIndex : selectedRows) {
+                            for (int columnIndex : selectedColumns) {
+                                DatasetEditorModelCell cell = model.getCellAt(rowIndex, columnIndex);
+                                DBDataType dataType = cell.getColumnInfo().getDataType();
+                                if (dataType.isNative() && !dataType.getNativeDataType().isLargeObject()) {
+                                    cell.updateUserValue(null, true);
+                                }
                             }
                         }
-                    }
-                    table.revalidate();
-                    table.repaint();
+                    });
                 }
             }
         }

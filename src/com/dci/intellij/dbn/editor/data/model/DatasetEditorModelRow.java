@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -16,11 +9,18 @@ import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelRow;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
+import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorModelCell> implements PropertyHolder<RecordStatus>{
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -118,6 +118,8 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
     }
 
     public void notifyError(DatasetEditorError error, boolean startEditing, boolean showPopup) {
+        checkDisposed();
+
         DBObject messageObject = error.getMessageObject();
         if (messageObject != null) {
             if (messageObject instanceof DBColumn) {
@@ -135,7 +137,8 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
                     if (firstCell == null) firstCell = cell;
                 }
                 if (isErrorNew && showPopup) {
-                    firstCell.showErrorPopup();
+                    DatasetEditorTable table = getModel().getEditorTable();
+                    table.showErrorPopup(firstCell);
                     error.setNotified(true);
                 }
             }

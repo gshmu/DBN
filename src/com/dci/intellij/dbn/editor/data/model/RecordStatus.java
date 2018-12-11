@@ -11,6 +11,7 @@ public enum RecordStatus implements Property {
     DELETED,
     MODIFIED,
 
+    DIRTY,
     DISPOSED,
     ;
 

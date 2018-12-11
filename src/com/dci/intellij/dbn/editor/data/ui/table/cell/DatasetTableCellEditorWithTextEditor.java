@@ -13,6 +13,7 @@ import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.RoundedLineBorder;
 import com.intellij.util.ui.JBUI;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -49,6 +50,7 @@ public class DatasetTableCellEditorWithTextEditor extends DatasetTableCellEditor
         };
     }
 
+    @NotNull
     public TextFieldWithTextEditor getEditorComponent() {
         return (TextFieldWithTextEditor) super.getEditorComponent();
     }
