@@ -356,6 +356,8 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             editorTable.stopCellEditing();
             resultSetAdapter.startInsertRow();
             DatasetEditorModelRow newRow = createRow(getRowCount()+1);
+
+            newRow.reset();
             newRow.set(INSERTING, true);
             addRowAtIndex(rowIndex, newRow);
             notifyRowsInserted(rowIndex, rowIndex);
@@ -380,6 +382,8 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             resultSetAdapter.startInsertRow();
             DatasetEditorModelRow oldRow = getRowAtIndex(rowIndex);
             DatasetEditorModelRow newRow = createRow(getRowCount() + 1);
+
+            newRow.reset();
             newRow.set(INSERTING, true);
             newRow.updateDataFromRow(oldRow);
             addRowAtIndex(insertIndex, newRow);
@@ -404,6 +408,8 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             try {
                 editorTable.stopCellEditing();
                 resultSetAdapter.insertRow();
+
+                row.reset();
                 row.set(INSERTED, true);
                 isModified = true;
                 isInserting = false;

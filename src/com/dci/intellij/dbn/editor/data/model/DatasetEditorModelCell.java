@@ -114,6 +114,8 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
 
             if (row.isNot(INSERTING) && !connectionHandler.isAutoCommit()) {
                 isModified = true;
+
+                row.reset();
                 row.set(RecordStatus.MODIFIED, true);
                 row.getModel().setModified(true);
             }
@@ -157,6 +159,8 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (row.isNot(INSERTING) && !connectionHandler.isAutoCommit()) {
                 isModified = true;
+
+                row.reset();
                 row.set(MODIFIED, true);
                 row.getModel().setModified(true);
                 getConnection().updateLastAccess();
