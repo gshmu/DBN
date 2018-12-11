@@ -72,6 +72,8 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
             ResultSetAdapter resultSetAdapter = getModel().getResultSetAdapter();
             resultSetAdapter.scroll(getResultSetRowIndex());
             resultSetAdapter.deleteRow();
+
+            reset();
             set(RecordStatus.DELETED, true);
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(getProject(), "Could not delete row at index " + getIndex() + '.', e);

@@ -1,7 +1,10 @@
 package com.dci.intellij.dbn.data.model.basic;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -9,21 +12,25 @@ import com.dci.intellij.dbn.data.model.DataModelState;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
+import com.dci.intellij.dbn.editor.data.model.RecordStatus;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
-public class BasicDataModelCell implements DataModelCell {
+public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> implements DataModelCell {
     protected BasicDataModelRow row;
     protected Object userValue;
     private String formattedUserValue;
     protected int index;
-    private boolean isDisposed;
 
     public BasicDataModelCell(Object userValue, BasicDataModelRow row, int index) {
         this.userValue = userValue;
         this.row = row;
         this.index = index;
+    }
+
+    @Override
+    protected RecordStatus[] properties() {
+        return RecordStatus.values();
     }
 
     public Project getProject() {
@@ -116,7 +123,12 @@ public class BasicDataModelCell implements DataModelCell {
         return userValue == null ? null : userValue.toString();
     }
 
-/*
+    @NotNull
+    public Formatter getFormatter() {
+        return getModel().getFormatter();
+    }
+
+    /*
     public boolean equals(Object obj) {
         DataModelCell remoteCell = (DataModelCell) obj;
         return CommonUtil.safeEqual(getUserValue(), remoteCell.getUserValue());
@@ -125,7 +137,7 @@ public class BasicDataModelCell implements DataModelCell {
 
     @Override
     public boolean equals(Object obj) {
-        if (!isDisposed && obj instanceof BasicDataModelCell) {
+        if (!isDisposed() && obj instanceof BasicDataModelCell) {
             BasicDataModelCell cell = (BasicDataModelCell) obj;
             return cell.index == index &&
                     cell.getRow().getIndex() == getRow().getIndex() &&
@@ -141,20 +153,16 @@ public class BasicDataModelCell implements DataModelCell {
     }
 
     public void dispose() {
-        if (!isDisposed) {
-            isDisposed = true;
+        if (!isDisposed()) {
+            set(RecordStatus.DISPOSED, true);
             row = null;
             userValue = null;
             formattedUserValue = null;
         }
     }
 
-    @NotNull
-    public Formatter getFormatter() {
-        return getModel().getFormatter();
-    }
 
     public boolean isDisposed() {
-        return isDisposed;
+        return is(RecordStatus.DISPOSED);
     }
 }

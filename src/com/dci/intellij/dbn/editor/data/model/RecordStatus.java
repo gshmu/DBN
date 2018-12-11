@@ -2,20 +2,17 @@ package com.dci.intellij.dbn.editor.data.model;
 
 
 import com.dci.intellij.dbn.common.property.Property;
-import com.dci.intellij.dbn.common.property.PropertyGroup;
 
 public enum RecordStatus implements Property {
     INSERTING,
+    UPDATING,
+
     INSERTED,
     DELETED,
     MODIFIED,
+
     DISPOSED,
     ;
-
-    public enum Group implements PropertyGroup{
-        DISTINCT
-    }
-
 
     private final int index = Property.idx(this);
 
@@ -23,11 +20,4 @@ public enum RecordStatus implements Property {
     public int index() {
         return index;
     }
-
-    @Override
-    public PropertyGroup group() {
-        return Group.DISTINCT;
-    }
-
-
 }
