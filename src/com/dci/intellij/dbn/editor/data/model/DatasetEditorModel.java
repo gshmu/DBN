@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
@@ -484,13 +485,40 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         DatasetEditorTable editorTable = getEditorTable();
         DatasetEditorState editorState = getState();
-        if (!isReadonly() && !isEnvironmentReadonly() && !editorState.isReadonly() && getConnectionHandler().isConnected()) {
-            if (!editorTable.isLoading() && editorTable.getSelectedColumnCount() <= 1 && editorTable.getSelectedRowCount() <= 1) {
-                DatasetEditorModelRow row = getRowAtIndex(rowIndex);
-                return row != null && !(is(INSERTING) && row.isNot(INSERTING)) && row.isNot(DELETED);
-            }
+        if (isReadonly()) {
+            return false;
+
+        } else if (isEnvironmentReadonly()) {
+            return false;
+
+        } else if (editorState.isReadonly()) {
+            return false;
+
+        } else if (editorTable.isLoading()) {
+            return false;
+
+        } else if (editorTable.getSelectedColumnCount() > 1 || editorTable.getSelectedRowCount() > 1) {
+            return false;
+
+        } else if (!getConnectionHandler().isConnected(SessionId.MAIN)) {
+            return false;
         }
-        return false;
+
+        DatasetEditorModelRow row = getRowAtIndex(rowIndex);
+        if (row == null) {
+            return false;
+
+        } else if (row.is(DELETED)) {
+            return false;
+
+        } else if (row.is(UPDATING)) {
+            return false;
+
+        } else if (is(INSERTING)) {
+            return row.is(INSERTING);
+        }
+
+        return true;
     }
 
     /*********************************************************
