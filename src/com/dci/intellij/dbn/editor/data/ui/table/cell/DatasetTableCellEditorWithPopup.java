@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorPopupSettings;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -21,6 +22,7 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
         super(table, new CustomTextFieldWithPopup(table));
     }
 
+    @NotNull
     public TextFieldWithPopup getEditorComponent() {
         return (TextFieldWithPopup) super.getEditorComponent();
     }

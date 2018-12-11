@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.model;
 
+import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
-import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 
 public interface DataModelCell extends Disposable, UserValueHolder {

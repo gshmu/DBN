@@ -32,7 +32,6 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.sql.SQLException;
@@ -220,10 +219,9 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     @Override
     public String getSelectedText() {
-        TableCellEditor cellEditor = getEditorTable().getCellEditor();
-        if (cellEditor instanceof DatasetTableCellEditor) {
-            DatasetTableCellEditor tableCellEditor = (DatasetTableCellEditor) cellEditor;
-            return tableCellEditor.getTextField().getSelectedText();
+        DatasetTableCellEditor cellEditor = getEditorTable().getCellEditor();
+        if (cellEditor != null) {
+            return cellEditor.getTextField().getSelectedText();
         }
         return null;
     }

@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
-import javax.swing.text.Document;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -18,6 +12,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.*;
+import javax.swing.text.Document;
+import java.awt.*;
+import java.awt.event.*;
 
 public class TextFieldWithTextEditor extends JPanel implements DataEditorComponent, TextEditorAdapter {
     private JTextField textField;
@@ -71,8 +70,18 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
         if (textField != null) textField.setFont(font);
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        textField.setEditable(enabled);
+    }
+
     public void setEditable(boolean editable){
         textField.setEditable(editable);
+    }
+
+    @Override
+    public boolean isEditable() {
+        return textField.isEditable();
     }
 
     public void setUserValueHolder(UserValueHolder userValueHolder) {
@@ -114,11 +123,6 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
 
     public JLabel getButton() {
         return button;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        textField.setEditable(enabled);
     }
 
     public void openEditor() {

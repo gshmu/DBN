@@ -22,13 +22,7 @@
  import javax.swing.border.LineBorder;
  import javax.swing.text.Document;
  import java.awt.*;
- import java.awt.event.KeyEvent;
- import java.awt.event.KeyListener;
- import java.awt.event.MouseAdapter;
- import java.awt.event.MouseEvent;
- import java.awt.event.MouseListener;
- import java.awt.event.MouseMotionAdapter;
- import java.awt.event.MouseMotionListener;
+ import java.awt.event.*;
 
  public class DatasetTableCellEditor extends AbstractDatasetTableCellEditor implements KeyListener{
     private static final Border ERROR_BORDER = new LineBorder(JBColor.RED, 1);
@@ -87,7 +81,7 @@
     }
 
     public void highlight(int type) {
-        JComponent editorComponent = getEditorComponent();
+        DataEditorComponent editorComponent = getEditorComponent();
         switch (type) {
             case HIGHLIGHT_TYPE_NONE:  editorComponent.setBorder(Borders.EMPTY_BORDER); break;
             case HIGHLIGHT_TYPE_POPUP: editorComponent.setBorder(POPUP_BORDER); break;
@@ -102,7 +96,7 @@
     void selectText(final JTextField textField) {
 
         if (textField.isEditable()) {
-            final String originalText = textField.getText();
+            String originalText = textField.getText();
             SimpleLaterInvocator.invoke(() -> {
                 checkDisposed();
                 // select all only if the text didn't change

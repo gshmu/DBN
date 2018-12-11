@@ -1,15 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.Serializable;
-import java.text.ParseException;
-import java.util.EventObject;
-
-import javax.swing.*;
-import javax.swing.table.TableCellEditor;
-
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -23,6 +15,15 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.Serializable;
+import java.text.ParseException;
+import java.util.EventObject;
 
 public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, Disposable {
     private DataEditorComponent editorComponent;
@@ -66,8 +67,9 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
 
 
-    public JComponent getEditorComponent() {
-        return (JComponent) editorComponent;
+    @NotNull
+    public DataEditorComponent getEditorComponent() {
+        return FailsafeUtil.get(editorComponent);
     }
 
     public void setCell(DatasetEditorModelCell cell) {
@@ -79,7 +81,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
     }
 
     public JTextField getTextField() {
-        return editorComponent.getTextField();
+        return getEditorComponent().getTextField();
     }
 
     public boolean isCellEditable(EventObject event) {
@@ -106,10 +108,12 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,  int column) {
         cell = (DatasetEditorModelCell) value;
         setCellValueToEditor();
-        return (Component) editorComponent;
+        return (Component) getEditorComponent();
     }
 
     private void setCellValueToEditor() {
+        DataEditorComponent editorComponent = getEditorComponent();
+
         if (cell != null) {
             Object userValue = cell.getUserValue();
             if (userValue instanceof String) {
@@ -128,7 +132,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
         DBDataType dataType = cell.getColumnInfo().getDataType();
         Class clazz = dataType.getTypeClass();
         try {
-            String textValue = editorComponent.getText();
+            String textValue = getEditorComponent().getText();
             
             
             boolean trim = true;
@@ -149,12 +153,20 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
                 return null;
             }
         } catch (ParseException e) {
-            throw new IllegalArgumentException("Can not convert " + editorComponent.getText() + " to " + dataType.getName());
+            throw new IllegalArgumentException("Can not convert " + getEditorComponent().getText() + " to " + dataType.getName());
         }
     }
 
     public Object getCellEditorValueLenient() {
-        return editorComponent.getText().trim();
+        return getEditorComponent().getText().trim();
+    }
+
+    public boolean isEnabled() {
+        return getEditorComponent().isEnabled();
+    }
+
+    public void setEnabled(boolean enabled) {
+        getEditorComponent().setEnabled(enabled);
     }
 
     /********************************************************

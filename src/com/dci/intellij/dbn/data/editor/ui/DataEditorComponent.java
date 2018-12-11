@@ -8,6 +8,7 @@ import com.intellij.util.ui.JBUI;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
+import java.awt.*;
 
 public interface DataEditorComponent extends Disposable{
     Border BUTTON_OUTSIDE_BORDER = JBUI.Borders.empty(1);
@@ -19,7 +20,11 @@ public interface DataEditorComponent extends Disposable{
 
     void setEditable(boolean editable);
 
+    boolean isEditable();
+
     void setEnabled(boolean enabled);
+
+    boolean isEnabled();
 
     UserValueHolder getUserValueHolder();
 
@@ -28,4 +33,8 @@ public interface DataEditorComponent extends Disposable{
     String getText();
 
     void setText(String text);
+
+    void setFont(Font font);
+
+    void setBorder(Border border);
 }
