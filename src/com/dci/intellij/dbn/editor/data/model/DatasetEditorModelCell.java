@@ -115,7 +115,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
 
                 row.reset();
                 row.set(RecordStatus.MODIFIED, true);
-                row.getModel().setModified(true);
+                row.getModel().set(MODIFIED, true);
             }
         }
     }
@@ -161,7 +161,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
 
                 row.reset();
                 row.set(MODIFIED, true);
-                row.getModel().setModified(true);
+                row.getModel().set(MODIFIED, true);
                 getConnection().updateLastAccess();
             }
         }

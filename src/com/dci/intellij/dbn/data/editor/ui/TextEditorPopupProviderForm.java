@@ -38,7 +38,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JScrollPane textEditorScrollPane;
     private boolean changed;
 
-    public TextEditorPopupProviderForm(TextFieldWithPopup textField, boolean autoPopup) {
+    TextEditorPopupProviderForm(TextFieldWithPopup textField, boolean autoPopup) {
         super(textField, autoPopup, true);
         editorTextArea.setBorder(JBUI.Borders.empty(4));
         editorTextArea.addKeyListener(this);
@@ -141,7 +141,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     }
 
     private class DocumentListener extends DocumentAdapter {
-        protected void textChanged(DocumentEvent documentEvent) {
+        protected void textChanged(@NotNull DocumentEvent documentEvent) {
             changed = true;
         }
     }
@@ -180,12 +180,12 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
             //registerAction(this);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             hidePopup();
         }
 
         @Override
-        public void update(AnActionEvent anActionEvent) {
+        public void update(@NotNull AnActionEvent e) {
             getTemplatePresentation().setEnabled(changed);
         }
     }
@@ -197,10 +197,11 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
             //registerAction(this);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             JTextField textField = getTextField();
-            getEditorComponent().getUserValueHolder().updateUserValue(null, false);
-            getEditorComponent().setEditable(true);
+            TextFieldWithPopup editorComponent = getEditorComponent();
+            editorComponent.getUserValueHolder().updateUserValue(null, false);
+            editorComponent.setEditable(true);
             textField.setText("");
             hidePopup();
         }

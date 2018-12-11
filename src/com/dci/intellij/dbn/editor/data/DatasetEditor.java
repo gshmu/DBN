@@ -1,18 +1,5 @@
 package com.dci.intellij.dbn.editor.data;
 
-import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.*;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
-
-import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
-import java.util.List;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
@@ -61,6 +48,19 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
+import java.util.List;
+
+import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.*;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
 public class DatasetEditor extends UserDataHolderBase implements FileEditor, FileConnectionMappingProvider, Disposable, ConnectionProvider, DataProviderSupplier {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -178,7 +178,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public boolean isModified() {
-        return getTableModel().isModified();
+        return getTableModel().is(MODIFIED);
     }
 
     public boolean isValid() {
@@ -440,7 +440,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public boolean isInserting() {
-        return getTableModel().isInserting();
+        return getTableModel().is(INSERTING);
     }
 
     public boolean isLoading() {

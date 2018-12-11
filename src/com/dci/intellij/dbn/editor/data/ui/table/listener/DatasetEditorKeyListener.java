@@ -10,6 +10,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
+
 public class DatasetEditorKeyListener extends KeyAdapter {
     private DatasetEditorTable table;
 
@@ -21,7 +23,7 @@ public class DatasetEditorKeyListener extends KeyAdapter {
         DatasetEditorModel model = table.getModel();
         if (!e.isConsumed()) {
             int keyChar = e.getKeyChar();
-            if (model.isInserting()) {
+            if (model.is(INSERTING)) {
                 switch (keyChar) {
                     case 27:  // escape
                         model.cancelInsert(true);
@@ -30,7 +32,7 @@ public class DatasetEditorKeyListener extends KeyAdapter {
                         int index = model.getInsertRowIndex();
                         try {
                             model.postInsertRecord(false, true, false);
-                            if (!model.isInserting()) {
+                            if (model.isNot(INSERTING)) {
                                 model.insertRecord(index + 1);
                             }
                         } catch (SQLException e1) {

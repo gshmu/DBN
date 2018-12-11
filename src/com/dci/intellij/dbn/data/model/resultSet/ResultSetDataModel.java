@@ -76,7 +76,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         int count = 0;
 
         final List<T> oldRows = getRows();
-        List<T> newRows = reset ? new ArrayList<T>(oldRows.size()) : new ArrayList<T>(oldRows);
+        List<T> newRows = reset ? new ArrayList<>(oldRows.size()) : new ArrayList<>(oldRows);
 
         if (resultSet == null || ConnectionUtil.isClosed(resultSet)) {
             resultSetExhausted = true;
@@ -169,9 +169,6 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         super.dispose();
         closeResultSet();
         resultSet = null;
-        connectionHandler = null;    }
-
-    public boolean isInserting() {
-        return false;
+        connectionHandler = null;
     }
 }
