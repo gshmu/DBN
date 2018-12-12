@@ -46,13 +46,7 @@ import java.util.Set;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEBUGABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.EMPTY_SCHEMA;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.PUBLIC_SCHEMA;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SYSTEM_SCHEMA;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.USER_SCHEMA;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     private DBObjectList<DBTable> tables;

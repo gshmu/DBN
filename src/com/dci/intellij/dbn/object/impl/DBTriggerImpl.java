@@ -27,14 +27,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEBUGABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.EDITABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.FOR_EACH_ROW;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.REFERENCEABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
     private TriggerType triggerType;

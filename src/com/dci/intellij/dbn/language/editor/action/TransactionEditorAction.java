@@ -19,9 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
+import static com.dci.intellij.dbn.common.util.ActionUtil.*;
 
 public abstract class TransactionEditorAction extends DumbAwareAction {
     protected TransactionEditorAction(String text, String description, Icon icon) {

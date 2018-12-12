@@ -1,20 +1,5 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.swing.*;
-import javax.swing.event.EventListenerList;
-import javax.swing.table.*;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -25,6 +10,23 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DBNTable<T extends DBNTableModel> extends JTable implements Disposable{
     private static final int MAX_COLUMN_WIDTH = 300;

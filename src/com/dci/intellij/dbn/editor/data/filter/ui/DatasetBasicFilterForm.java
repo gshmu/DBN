@@ -43,9 +43,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
 public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasicFilter> {
     private JPanel conditionsPanel;

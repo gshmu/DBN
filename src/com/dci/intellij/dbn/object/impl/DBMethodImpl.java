@@ -28,10 +28,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEBUGABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DETERMINISTIC;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMethod {
     protected DBObjectList<DBArgument> arguments;

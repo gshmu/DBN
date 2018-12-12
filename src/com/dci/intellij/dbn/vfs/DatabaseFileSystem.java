@@ -57,13 +57,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.CONSOLES;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.DATASET_FILTERS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECT_CONTENTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_BROWSERS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_STATEMENTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.values;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
 
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */ApplicationComponent {
     public static final String PS = "/";

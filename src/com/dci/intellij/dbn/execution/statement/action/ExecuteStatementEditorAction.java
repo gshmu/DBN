@@ -16,9 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.getEditor;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
+import static com.dci.intellij.dbn.common.util.ActionUtil.*;
 
 public class ExecuteStatementEditorAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {

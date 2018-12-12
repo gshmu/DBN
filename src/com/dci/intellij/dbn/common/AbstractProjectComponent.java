@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.common;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.intellij.openapi.application.ApplicationAdapter;
@@ -10,6 +8,7 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractProjectComponent extends ApplicationAdapter implements ProjectComponent, ProjectManagerListener, Disposable, NotificationSupport {
     private ProjectRef projectRef;
