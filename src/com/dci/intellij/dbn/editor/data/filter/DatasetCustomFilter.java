@@ -49,7 +49,6 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
         buffer.append(" where ");
         buffer.append(condition);
         DatasetFilterUtil.addOrderByClause(dataset, buffer, sortingState);
-        DatasetFilterUtil.addForUpdateClause(dataset, buffer);
         return buffer.toString();
     }
 
