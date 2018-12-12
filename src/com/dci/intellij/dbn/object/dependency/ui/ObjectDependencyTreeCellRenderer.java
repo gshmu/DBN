@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import com.dci.intellij.dbn.common.load.LoadIcon;
+import com.dci.intellij.dbn.common.load.LoadInProgressIcon;
 import com.dci.intellij.dbn.common.ui.MergedIcon;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -60,7 +60,7 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
 
                 TreeUtil.applySpeedSearchHighlighting(tree, this, true, selected);
             } else {
-                setIcon(LoadIcon.INSTANCE);
+                setIcon(LoadInProgressIcon.INSTANCE);
                 append("Loading...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
             }
         } catch (ProcessCanceledException ignore) {}

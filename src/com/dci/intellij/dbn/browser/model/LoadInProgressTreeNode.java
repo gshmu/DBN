@@ -1,17 +1,10 @@
 package com.dci.intellij.dbn.browser.model;
 
-import java.util.ArrayList;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.load.LoadIcon;
+import com.dci.intellij.dbn.common.load.LoadInProgressIcon;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -20,6 +13,11 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
 
 public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements BrowserTreeNode {
     private BrowserTreeNode parent;
@@ -87,7 +85,7 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     }
 
     public Icon getIcon(int flags) {
-        return LoadIcon.INSTANCE;
+        return LoadInProgressIcon.INSTANCE;
     }
     public String getPresentableText() {
         return "Loading...";
