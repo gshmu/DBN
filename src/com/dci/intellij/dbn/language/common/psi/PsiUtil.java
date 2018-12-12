@@ -302,8 +302,12 @@ public class PsiUtil {
 
     public static PsiFile getPsiFile(@NotNull final Project project, final VirtualFile virtualFile) {
         return ReadActionRunner.invoke(true, () -> {
-            PsiManager psiManager = PsiManager.getInstance(project);
-            return psiManager.findFile(virtualFile);
+            if (virtualFile.isValid()) {
+                PsiManager psiManager = PsiManager.getInstance(project);
+                return psiManager.findFile(virtualFile);
+            } else {
+                return null;
+            }
         });
     }
 
