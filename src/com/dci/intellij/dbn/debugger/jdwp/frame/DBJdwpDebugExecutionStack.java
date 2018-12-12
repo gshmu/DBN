@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.debugger.jdwp.ManagedThreadCommand;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.JavaStackFrame;
+import com.intellij.debugger.impl.PrioritizedTask;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
@@ -62,43 +63,40 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
         DebugProcessImpl debugProcess = getSuspendContext().getDebugProcess().getDebuggerSession().getProcess();
         final XExecutionStack underlyingStack = getUnderlyingStack();
         if (underlyingStack != null) {
-            new ManagedThreadCommand(debugProcess) {
-                @Override
-                protected void action() {
-                    XStackFrameContainer fakeContainer = new XStackFrameContainer() {
-                        @Override
-                        public void addStackFrames(@NotNull List<? extends XStackFrame> stackFrames, boolean last) {
-                            if (stackFrames.size() > 0) {
-                                List<DBJdwpDebugStackFrame> frames = new ArrayList<>();
-                                for (XStackFrame underlyingFrame : stackFrames) {
-                                    DBJdwpDebugStackFrame frame = getFrame((JavaStackFrame) underlyingFrame);
-                                    if (frame != null) {
-                                        XSourcePosition sourcePosition = frame.getSourcePosition();
-                                        //VirtualFile virtualFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
-                                        //DBSchemaObject object = DBDebugUtil.getObject(sourcePosition);
-                                        frames.add(frame);
-                                        last = last || DBDebugUtil.getObject(sourcePosition) == null;
-                                    }
-                                }
-                                if (frames.size() > 0) {
-                                    container.addStackFrames(frames, last) ;
+            ManagedThreadCommand.schedule(debugProcess, PrioritizedTask.Priority.LOW, () -> {
+                XStackFrameContainer fakeContainer = new XStackFrameContainer() {
+                    @Override
+                    public void addStackFrames(@NotNull List<? extends XStackFrame> stackFrames, boolean last) {
+                        if (stackFrames.size() > 0) {
+                            List<DBJdwpDebugStackFrame> frames = new ArrayList<>();
+                            for (XStackFrame underlyingFrame : stackFrames) {
+                                DBJdwpDebugStackFrame frame = getFrame((JavaStackFrame) underlyingFrame);
+                                if (frame != null) {
+                                    XSourcePosition sourcePosition = frame.getSourcePosition();
+                                    //VirtualFile virtualFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
+                                    //DBSchemaObject object = DBDebugUtil.getObject(sourcePosition);
+                                    frames.add(frame);
+                                    last = last || DBDebugUtil.getObject(sourcePosition) == null;
                                 }
                             }
+                            if (frames.size() > 0) {
+                                container.addStackFrames(frames, last) ;
+                            }
                         }
+                    }
 
-                        @Override
-                        public boolean isObsolete() {
-                            return container.isObsolete();
-                        }
+                    @Override
+                    public boolean isObsolete() {
+                        return container.isObsolete();
+                    }
 
-                        @Override
-                        public void errorOccurred(@NotNull String errorMessage) {
+                    @Override
+                    public void errorOccurred(@NotNull String errorMessage) {
 
-                        }
-                    };
-                    underlyingStack.computeStackFrames(firstFrameIndex, fakeContainer);
-                }
-            }.schedule();
+                    }
+                };
+                underlyingStack.computeStackFrames(firstFrameIndex, fakeContainer);
+            });
         }
     }
 }
