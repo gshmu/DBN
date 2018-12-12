@@ -24,9 +24,9 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
     }
 
     public void actionPerformed(@NotNull final AnActionEvent e) {
-        final Project project = ActionUtil.getProject(e);
-        final SourceCodeEditor fileEditor = getFileEditor(e);
-        if (project != null && fileEditor != null) {
+        Project project = ActionUtil.ensureProject(e);
+        SourceCodeEditor fileEditor = getFileEditor(e);
+        if (fileEditor != null) {
             CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
             ConfirmationOptionHandler optionHandler = confirmationSettings.getSaveChanges();
             boolean canContinue = optionHandler.resolve(fileEditor.getObject().getQualifiedNameWithType());

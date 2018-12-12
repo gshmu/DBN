@@ -32,13 +32,13 @@ public abstract class SimpleTask<T> extends AbstractTask<T>{
         return new SimpleTask<T>() {
             @Override
             protected void execute() {
-                runnable.run(this);
+                runnable.run(getData());
             }
         };
     }
 
     @FunctionalInterface
     public interface SimpleRunnable<T> {
-        void run(SimpleTask<T> task);
+        void run(T data);
     }
 }

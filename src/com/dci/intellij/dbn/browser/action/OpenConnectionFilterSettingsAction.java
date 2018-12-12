@@ -12,31 +12,26 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class OpenConnectionFilterSettingsAction extends DumbAwareAction {
-    public OpenConnectionFilterSettingsAction() {
+    OpenConnectionFilterSettingsAction() {
         super("Object Filter Settings...", null, Icons.DATASET_FILTER);
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-            ConnectionHandler activeConnection = browserManager.getActiveConnection();
-            if (activeConnection != null) {
-                ConnectionFilterSettingsDialog filterSettingsDialog = new ConnectionFilterSettingsDialog(activeConnection);
-                filterSettingsDialog.show();
-            }
+        Project project = ActionUtil.ensureProject(e);
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        ConnectionHandler activeConnection = browserManager.getActiveConnection();
+        if (activeConnection != null) {
+            ConnectionFilterSettingsDialog filterSettingsDialog = new ConnectionFilterSettingsDialog(activeConnection);
+            filterSettingsDialog.show();
         }
     }
 
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Object Filter Settings...");
-        Project project = ActionUtil.getProject(e);
-        ConnectionHandler activeConnection = null;
-        if (project != null) {
-            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-            activeConnection = browserManager.getActiveConnection();
-        }
+        Project project = ActionUtil.ensureProject(e);
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        ConnectionHandler activeConnection = browserManager.getActiveConnection();
         presentation.setEnabled(activeConnection != null);
     }
 }

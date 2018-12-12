@@ -40,57 +40,55 @@ public class SQLConsoleAction extends DumbAwareAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         //FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.popup.file");
-        final Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-            ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+        Project project = ActionUtil.ensureProject(e);
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
 
 
-            ConnectionHandler singleConnectionHandler = null;
-            DefaultActionGroup actionGroup = new DefaultActionGroup();
-            if (connectionBundle.getConnectionHandlers().size() > 0) {
-                actionGroup.addSeparator();
-                for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                    SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler);
-                    actionGroup.add(connectionAction);
-                    singleConnectionHandler = connectionHandler;
-                }
+        ConnectionHandler singleConnectionHandler = null;
+        DefaultActionGroup actionGroup = new DefaultActionGroup();
+        if (connectionBundle.getConnectionHandlers().size() > 0) {
+            actionGroup.addSeparator();
+            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+                SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler);
+                actionGroup.add(connectionAction);
+                singleConnectionHandler = connectionHandler;
             }
+        }
 
-            if (actionGroup.getChildrenCount() > 1) {
-                ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
-                        "Select Console Connection",
-                        actionGroup,
-                        e.getDataContext(),
-                        //JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                        false,
-                        true,
-                        true,
-                        null,
-                        actionGroup.getChildrenCount(),
-                        action -> {
+        if (actionGroup.getChildrenCount() > 1) {
+            ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
+                    "Select Console Connection",
+                    actionGroup,
+                    e.getDataContext(),
+                    //JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                    false,
+                    true,
+                    true,
+                    null,
+                    actionGroup.getChildrenCount(),
+                    action -> {
 /*
-                            SelectConsoleAction selectConnectionAction = (SelectConsoleAction) action;
-                            return latestSelection == selectConnectionAction.connectionHandler;
+                        SelectConsoleAction selectConnectionAction = (SelectConsoleAction) action;
+                        return latestSelection == selectConnectionAction.connectionHandler;
 */
-                            return true;
-                        });
+                        return true;
+                    });
 
-                popupBuilder.showCenteredInCurrentWindow(project);
+            popupBuilder.showCenteredInCurrentWindow(project);
+        } else {
+            if (singleConnectionHandler != null) {
+                openSQLConsole(singleConnectionHandler);
             } else {
-                if (singleConnectionHandler != null) {
-                    openSQLConsole(singleConnectionHandler);
-                } else {
-                    MessageUtil.showInfoDialog(
-                            project, "No connections available.", "No database connections found. Please setup a connection first",
-                            new String[]{"Setup Connection", "Cancel"}, 0,
-                            MessageCallback.create(0, () -> {
-                                ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-                                settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
-                            }));
-                }
-
+                MessageUtil.showInfoDialog(
+                        project, "No connections available.", "No database connections found. Please setup a connection first",
+                        new String[]{"Setup Connection", "Cancel"}, 0,
+                        MessageCallback.create(0, option -> {
+                            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+                            settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
+                        }));
             }
+
         }
 
     }

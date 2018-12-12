@@ -20,9 +20,9 @@ import static com.dci.intellij.dbn.common.util.ActionUtil.*;
 
 public class ExecuteStatementEditorAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = getProject(e);
+        Project project = ensureProject(e);
         Editor editor = getEditor(e);
-        if (project != null && editor != null) {
+        if (editor != null) {
             FileEditor fileEditor = EditorUtil.getFileEditor(editor);
             if (fileEditor != null) {
                 StatementExecutionManager.getInstance(project).executeStatementAtCursor(fileEditor);

@@ -343,28 +343,25 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                                         "Database error message: " + e.getMessage());
                         String[] options = {"Edit filter", "Remove filter", "Ignore filter", "Cancel"};
 
-                        MessageUtil.showErrorDialog(project, "Error", message, options, 0, new MessageCallback() {
-                            @Override
-                            protected void execute() {
-                                int option = getData();
-                                DatasetLoadInstructions instructions = instr.clone();
-                                instructions.setDeliberateAction(true);
+                        MessageUtil.showErrorDialog(project, "Error", message, options, 0,
+                                MessageCallback.create(null, option -> {
+                                    DatasetLoadInstructions instructions = instr.clone();
+                                    instructions.setDeliberateAction(true);
 
-                                if (option == 0) {
-                                    filterManager.openFiltersDialog(dataset, false, false, DatasetFilterType.NONE);
-                                    instructions.setUseCurrentFilter(true);
-                                    loadData(instructions);
-                                } else if (option == 1) {
-                                    filterManager.setActiveFilter(dataset, null);
-                                    instructions.setUseCurrentFilter(true);
-                                    loadData(instructions);
-                                } else if (option == 2) {
-                                    filter.setError(e.getMessage());
-                                    instructions.setUseCurrentFilter(false);
-                                    loadData(instructions);
-                                }
-                            }
-                        });
+                                    if (option == 0) {
+                                        filterManager.openFiltersDialog(dataset, false, false, DatasetFilterType.NONE);
+                                        instructions.setUseCurrentFilter(true);
+                                        loadData(instructions);
+                                    } else if (option == 1) {
+                                        filterManager.setActiveFilter(dataset, null);
+                                        instructions.setUseCurrentFilter(true);
+                                        loadData(instructions);
+                                    } else if (option == 2) {
+                                        filter.setError(e.getMessage());
+                                        instructions.setUseCurrentFilter(false);
+                                        loadData(instructions);
+                                    }
+                                }));
                     }
                 } else {
                     String message =

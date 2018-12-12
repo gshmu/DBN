@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
 
 public class DatabaseLogOutputRerunAction extends AbstractDatabaseLogOutputAction {
     public DatabaseLogOutputRerunAction() {
@@ -19,9 +19,9 @@ public class DatabaseLogOutputRerunAction extends AbstractDatabaseLogOutputActio
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        final Project project = getProject(e);
-        final DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
-        if (project != null && loggingResult != null && !loggingResult.isDisposed()) {
+        Project project = ensureProject(e);
+        DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
+        if (loggingResult != null && !loggingResult.isDisposed()) {
             LogOutputContext context = loggingResult.getContext();
             VirtualFile sourceFile = context.getSourceFile();
             if (sourceFile != null) {

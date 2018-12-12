@@ -196,7 +196,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
                 project, "Default project settings",
                 "This will overwrite your default settings with the ones from the current project (including database connections configuration). \nAre you sure you want to continue?",
                 new String[]{"Yes", "No"}, 0,
-                MessageCallback.create(0, () -> {
+                MessageCallback.create(0, option -> {
                     try {
                         Element element = new Element("state");
                         getProjectSettings().writeConfiguration(element);
@@ -224,7 +224,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
                     project, "Default project settings",
                     message,
                     new String[]{"Yes", "No"}, 0,
-                    MessageCallback.create(0, () -> {
+                    MessageCallback.create(0, option -> {
                         try {
                             Element element = new Element("state");
                             ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();

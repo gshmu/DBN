@@ -50,7 +50,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -226,13 +225,13 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 }
 
                 @Override
-                public void handleTimeout() throws SQLTimeoutException {
+                public void handleTimeout() {
                     SimpleBackgroundInvocator.invoke(() -> {
                         MessageUtil.showErrorDialog(project,
                                 "Script execution timeout",
                                 "The script execution has timed out",
                                 new String[]{"Retry", "Cancel"}, 0,
-                                MessageCallback.create(0, () -> executeScript(sourceFile)));
+                                MessageCallback.create(0, option -> executeScript(sourceFile)));
                     });
                 }
 
@@ -243,7 +242,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                 "Script execution error",
                                 "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),
                                 new String[]{"Retry", "Cancel"}, 0,
-                                MessageCallback.create(0, () -> executeScript(sourceFile)));
+                                MessageCallback.create(0, option -> executeScript(sourceFile)));
                     });
                 }
             }.start();

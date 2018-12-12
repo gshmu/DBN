@@ -12,11 +12,9 @@ import org.jetbrains.annotations.NotNull;
 public class ConnectionSettingsAction extends DumbAwareAction {
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-            settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
-        }
+        Project project = ActionUtil.ensureProject(e);
+        ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+        settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
     }
 
     public void update(@NotNull AnActionEvent e) {

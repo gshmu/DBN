@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class ConsoleDeleteAction extends DumbAwareAction {
@@ -19,9 +19,9 @@ public class ConsoleDeleteAction extends DumbAwareAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = getProject(e);
+        Project project = ensureProject(e);
         VirtualFile virtualFile = getVirtualFile(e);
-        if (project != null && virtualFile instanceof DBConsoleVirtualFile) {
+        if (virtualFile instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
             DatabaseConsoleManager.getInstance(project).deleteConsole(consoleVirtualFile);
         }

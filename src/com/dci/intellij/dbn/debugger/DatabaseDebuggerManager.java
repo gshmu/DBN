@@ -355,7 +355,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                                 applicationInfo.getFullVersion() + "\".\n" +
                                 "Do you want to use classic debugger over JDBC instead?",
                         new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
-                        MessageCallback.create(0, () -> {
+                        MessageCallback.create(0, option -> {
                             debuggerStarter.setDebuggerType(DBDebuggerType.JDBC);
                             debuggerStarter.start();
                         }));

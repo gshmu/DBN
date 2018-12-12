@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -20,20 +21,18 @@ public class MoveConditionDownAction extends ObjectNameFilterAction{
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Object selection = getSelection();
         if (selection instanceof FilterCondition) {
-            Project project = ActionUtil.getProject(e);
-            if (project != null) {
-                FilterCondition condition = (FilterCondition) selection;
-                ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
-                filterManager.moveFilterConditionDown(condition, settingsForm);
-            }
+            Project project = ActionUtil.ensureProject(e);
+            FilterCondition condition = (FilterCondition) selection;
+            ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
+            filterManager.moveFilterConditionDown(condition, settingsForm);
         }
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Object selection = getSelection();
         Presentation presentation = e.getPresentation();
         if (selection instanceof FilterCondition) {

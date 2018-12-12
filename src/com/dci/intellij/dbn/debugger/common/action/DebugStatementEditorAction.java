@@ -25,14 +25,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getEditor;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 
 public class DebugStatementEditorAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = getProject(e);
+        Project project = ensureProject(e);
         Editor editor = getEditor(e);
-        if (project != null && editor != null) {
+        if (editor != null) {
             VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
             ExecutablePsiElement executablePsiElement = null;
             if (virtualFile instanceof DBConsoleVirtualFile) {
@@ -68,11 +68,11 @@ public class DebugStatementEditorAction extends AnAction {
         Presentation presentation = e.getPresentation();
         presentation.setIcon(Icons.STMT_EXECUTION_DEBUG);
         presentation.setText("Debug Statement");
-        Project project = getProject(e);
+        Project project = ensureProject(e);
         Editor editor = getEditor(e);
         boolean enabled = false;
         boolean visible = false;
-        if (project != null && editor != null) {
+        if (editor != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
             if (virtualFile != null) {

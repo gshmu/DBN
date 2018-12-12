@@ -28,9 +28,9 @@ public class SessionSelectAction extends DumbAwareAction {
 
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = getProject(e);
+        Project project = ensureProject(e);
         Editor editor = getEditor(e);
-        if (project != null && editor != null) {
+        if (editor != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             connectionMappingManager.setDatabaseSession(editor, session);
         }

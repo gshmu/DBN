@@ -18,12 +18,9 @@ public class OpenSessionBrowserAction extends DumbAwareAction {
     }
 
     private static ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-            return browserManager.getActiveConnection();
-        }
-        return null;
+        Project project = ActionUtil.ensureProject(e);
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        return browserManager.getActiveConnection();
     }
 
     public void update(@NotNull AnActionEvent e) {
@@ -40,10 +37,10 @@ public class OpenSessionBrowserAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.ensureProject(e);
         ConnectionHandler connectionHandler = getConnectionHandler(e);
-        if (project != null && connectionHandler != null) {
+        if (connectionHandler != null) {
             SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
             sessionBrowserManager.openSessionBrowser(connectionHandler);
         }

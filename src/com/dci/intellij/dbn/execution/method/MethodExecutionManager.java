@@ -84,21 +84,13 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     }
 
     public void startMethodExecution(final @NotNull MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
-        promptExecutionDialog(executionInput, debuggerType, new SimpleTask() {
-            @Override
-            protected void execute() {
-                MethodExecutionManager.this.execute(executionInput);
-            }
-        });
+        promptExecutionDialog(executionInput, debuggerType,
+                SimpleTask.create(data -> MethodExecutionManager.this.execute(executionInput)));
     }
 
     public void startMethodExecution(final @NotNull DBMethod method, @NotNull DBDebuggerType debuggerType) {
-        promptExecutionDialog(method, debuggerType, new SimpleTask() {
-            @Override
-            protected void execute() {
-                MethodExecutionManager.this.execute(method);
-            }
-        });
+        promptExecutionDialog(method, debuggerType,
+                SimpleTask.create(data -> MethodExecutionManager.this.execute(method)));
     }
 
     private void promptExecutionDialog(DBMethod method, @NotNull DBDebuggerType debuggerType, RunnableTask callback) {
@@ -212,7 +204,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                                 "Method execution error",
                                 "Error executing " + method.getQualifiedNameWithType() + ".\n" + e.getMessage().trim(),
                                 new String[]{"Try Again", "Cancel"}, 0,
-                                MessageCallback.create(0, () ->
+                                MessageCallback.create(0, option ->
                                         startMethodExecution(executionInput, DBDebuggerType.NONE)));
                     }
                 }

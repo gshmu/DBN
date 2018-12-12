@@ -8,32 +8,29 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class NavigateBackAction extends DumbAwareAction {
     public NavigateBackAction() {
         super("Back", null, Icons.BROWSER_BACK);
     }
 
-    public void actionPerformed(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-            DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
-            if (activeBrowserTree != null) {
-                activeBrowserTree.navigateBack();
-            }
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.ensureProject(e);
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
+        if (activeBrowserTree != null) {
+            activeBrowserTree.navigateBack();
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Back");
 
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-            DatabaseBrowserTree activeTree = browserManager.getActiveBrowserTree();
-            presentation.setEnabled(activeTree != null && activeTree.getNavigationHistory().hasPrevious());
-        }
+        Project project = ActionUtil.ensureProject(e);
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        DatabaseBrowserTree activeTree = browserManager.getActiveBrowserTree();
+        presentation.setEnabled(activeTree != null && activeTree.getNavigationHistory().hasPrevious());
     }
 }

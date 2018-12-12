@@ -10,7 +10,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
 
 public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction {
     public DatabaseLogOutputKillAction() {
@@ -19,9 +19,9 @@ public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        final Project project = getProject(e);
-        final DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
-        if (project != null && loggingResult != null && !loggingResult.isDisposed()) {
+        Project project = ensureProject(e);
+        DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
+        if (loggingResult != null && !loggingResult.isDisposed()) {
             final LogOutputContext context = loggingResult.getContext();
             if (context.isActive()) {
                 MessageUtil.showQuestionDialog(
@@ -29,7 +29,7 @@ public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction
                         "Kill process",
                         "This will interrupt the script execution process. \nAre you sure you want to continue?",
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        MessageCallback.create(0, () -> context.stop()));
+                        MessageCallback.create(0, option -> context.stop()));
             } else {
                 context.stop();
             }

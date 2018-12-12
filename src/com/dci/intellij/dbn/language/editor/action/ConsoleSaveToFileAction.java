@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class ConsoleSaveToFileAction extends DumbAwareAction {
@@ -32,9 +32,9 @@ public class ConsoleSaveToFileAction extends DumbAwareAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        final Project project = getProject(e);
+        Project project = ensureProject(e);
         VirtualFile virtualFile = getVirtualFile(e);
-        if (project != null && virtualFile instanceof DBConsoleVirtualFile) {
+        if (virtualFile instanceof DBConsoleVirtualFile) {
             final DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
 
             FileSaverDescriptor fileSaverDescriptor = new FileSaverDescriptor(

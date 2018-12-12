@@ -28,12 +28,9 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
     }
 
     private static ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-            return browserManager.getActiveConnection();
-        }
-        return null;
+        Project project = ActionUtil.ensureProject(e);
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        return browserManager.getActiveConnection();
     }
 
     public void update(@NotNull AnActionEvent e) {
@@ -46,7 +43,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
     @Override
     protected AnAction[] getActions(AnActionEvent e) {
         ConnectionHandler connectionHandler = getConnectionHandler(e);
-        List<AnAction> actions = new ArrayList<AnAction>();
+        List<AnAction> actions = new ArrayList<>();
         if (connectionHandler != null) {
             Collection<DBConsoleVirtualFile> consoles = connectionHandler.getConsoleBundle().getConsoles();
             for (DBConsoleVirtualFile console : consoles) {
@@ -66,12 +63,12 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
         private DBConsoleVirtualFile consoleVirtualFile;
         private DBConsoleType consoleType;
 
-        public SelectConsoleAction(ConnectionHandler connectionHandler, @NotNull DBConsoleType consoleType) {
+        SelectConsoleAction(ConnectionHandler connectionHandler, @NotNull DBConsoleType consoleType) {
             super("New " + consoleType.getName() + "...", connectionHandler);
             this.consoleType = consoleType;
         }
 
-        public SelectConsoleAction(DBConsoleVirtualFile consoleVirtualFile) {
+        SelectConsoleAction(DBConsoleVirtualFile consoleVirtualFile) {
             super(consoleVirtualFile.getName(), null, consoleVirtualFile.getIcon(), consoleVirtualFile.getConnectionHandler());
             this.consoleVirtualFile = consoleVirtualFile;
         }

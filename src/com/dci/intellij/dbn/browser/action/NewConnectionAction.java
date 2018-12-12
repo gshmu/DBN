@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.config.action.ConnectionSettingsAction;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -14,7 +15,7 @@ import javax.swing.*;
 public class NewConnectionAction extends ConnectionSettingsAction {
     private DatabaseType databaseType;
 
-    public NewConnectionAction(@Nullable DatabaseType databaseType) {
+    NewConnectionAction(@Nullable DatabaseType databaseType) {
         super(getName(databaseType), getIcon(databaseType));
         this.databaseType = databaseType;
     }
@@ -27,17 +28,16 @@ public class NewConnectionAction extends ConnectionSettingsAction {
         return databaseType == null ? "Custom..." : databaseType.getDisplayName();
     }
 
-    public void actionPerformed(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-            DatabaseType databaseType = this.databaseType;
-            ConnectionConfigType configType = ConnectionConfigType.BASIC;
-            if (databaseType == null) {
-                configType = ConnectionConfigType.CUSTOM;
-                databaseType = DatabaseType.UNKNOWN;
-            }
-            settingsManager.createConnection(databaseType, configType);
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.ensureProject(e);
+        ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+
+        DatabaseType databaseType = this.databaseType;
+        ConnectionConfigType configType = ConnectionConfigType.BASIC;
+        if (databaseType == null) {
+            configType = ConnectionConfigType.CUSTOM;
+            databaseType = DatabaseType.UNKNOWN;
         }
+        settingsManager.createConnection(databaseType, configType);
     }
 }

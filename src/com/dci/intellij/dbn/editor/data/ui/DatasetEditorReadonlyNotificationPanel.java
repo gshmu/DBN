@@ -22,7 +22,7 @@ public class DatasetEditorReadonlyNotificationPanel extends DatasetEditorNotific
                     "Enable edit-mode",
                     "Are you sure you want to enable editing for " + schemaObject.getQualifiedNameWithType(),
                     new String[]{"Yes", "Cancel"}, 0,
-                    MessageCallback.create(0, () -> {
+                    MessageCallback.create(0, option -> {
                         EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
                         environmentManager.enableEditing(schemaObject, DBContentType.DATA);
                     })));

@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.dci.intellij.dbn.common.util.ActionUtil.*;
 
 public class SchemaSelectAction extends AnObjectAction<DBSchema> {
-    public SchemaSelectAction(DBSchema schema) {
+    SchemaSelectAction(DBSchema schema) {
         super(schema);
     }
 
@@ -29,10 +29,10 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
     }
 
 
-    public void actionPerformed(AnActionEvent e) {
-        Project project = getProject(e);
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = ensureProject(e);
         Editor editor = getEditor(e);
-        if (project != null && editor != null) {
+        if (editor != null) {
             DBSchema schema = getSchema();
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             connectionMappingManager.setDatabaseSchema(editor, schema);

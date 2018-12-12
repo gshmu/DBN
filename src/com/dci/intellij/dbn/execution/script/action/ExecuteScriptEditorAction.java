@@ -20,9 +20,9 @@ import static com.dci.intellij.dbn.common.util.ActionUtil.*;
 
 public class ExecuteScriptEditorAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = getProject(e);
+        Project project = ensureProject(e);
         Editor editor = getEditor(e);
-        if (project != null && editor != null) {
+        if (editor != null) {
             FileDocumentManager.getInstance().saveDocument(editor.getDocument());
             ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
             VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);

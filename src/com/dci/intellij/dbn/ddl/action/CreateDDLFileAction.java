@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class CreateDDLFileAction extends AnAction {
     private DBSchemaObject object;
@@ -15,12 +16,10 @@ public class CreateDDLFileAction extends AnAction {
         this.object = object;
     }
 
-    public void actionPerformed(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-            fileAttachmentManager.createDDLFile(object);
-        }
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.ensureProject(e);
+        DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
+        fileAttachmentManager.createDDLFile(object);
     }
 
 }

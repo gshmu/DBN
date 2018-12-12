@@ -13,9 +13,10 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements DumbAware {
@@ -24,16 +25,16 @@ public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements D
         super("Enable / Disable Database Logging", null, Icons.EXEC_LOG_OUTPUT_CONSOLE);
     }
 
-    public boolean isSelected(AnActionEvent e) {
+    public boolean isSelected(@NotNull AnActionEvent e) {
         ConnectionHandler activeConnection = getConnectionHandler(e);
         return activeConnection != null && activeConnection.isLoggingEnabled();
     }
 
     @Nullable
     private static ConnectionHandler getConnectionHandler(AnActionEvent e) {
-        Project project = getProject(e);
+        Project project = ensureProject(e);
         VirtualFile virtualFile = getVirtualFile(e);
-        if (project != null && virtualFile != null) {
+        if (virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
             if (activeConnection != null && !activeConnection.isVirtual() && !activeConnection.isDisposed()) {
@@ -44,12 +45,12 @@ public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements D
         return null;
     }
 
-    public void setSelected(AnActionEvent e, boolean selected) {
+    public void setSelected(@NotNull AnActionEvent e, boolean selected) {
         ConnectionHandler activeConnection = getConnectionHandler(e);
         if (activeConnection != null) activeConnection.setLoggingEnabled(selected);
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
         ConnectionHandler activeConnection = getConnectionHandler(e);
         Presentation presentation = e.getPresentation();

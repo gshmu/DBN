@@ -25,9 +25,9 @@ public class RevertChangesAction extends AbstractSourceCodeEditorAction {
     }
 
     public void actionPerformed(@NotNull final AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
+        Project project = ActionUtil.ensureProject(e);
         SourceCodeEditor fileEditor = getFileEditor(e);
-        if (project != null && fileEditor != null) {
+        if (fileEditor != null) {
             CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
             ConfirmationOptionHandler optionHandler = confirmationSettings.getRevertChanges();
             boolean canContinue = optionHandler.resolve(fileEditor.getObject().getQualifiedNameWithType());

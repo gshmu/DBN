@@ -116,7 +116,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                             "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor.\n" +
                                     "Do you want to discard the changes and reload the updated database version?",
                             new String[]{"Reload", "Keep changes"}, 0,
-                            MessageCallback.create(0, () ->
+                            MessageCallback.create(0, option ->
                                     reloadAndUpdateEditors(databaseFile, false)));
                 } else {
                     reloadAndUpdateEditors(databaseFile, true);

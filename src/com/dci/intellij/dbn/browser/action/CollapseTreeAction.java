@@ -8,24 +8,23 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class CollapseTreeAction extends DumbAwareAction {
     public CollapseTreeAction() {
         super("Collapse all", null, Icons.ACTION_COLLAPSE_ALL);
     }
 
-    public void actionPerformed(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-            DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
-            if (activeBrowserTree != null) {
-                activeBrowserTree.collapseAll();
-            }
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.ensureProject(e);
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
+        if (activeBrowserTree != null) {
+            activeBrowserTree.collapseAll();
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Collapse All");
     }

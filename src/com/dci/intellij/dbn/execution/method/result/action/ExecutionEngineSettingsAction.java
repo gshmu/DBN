@@ -17,15 +17,13 @@ public class ExecutionEngineSettingsAction extends DumbAwareAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-            settingsManager.openProjectSettings(ConfigId.EXECUTION_ENGINE);
-        }
+        Project project = ActionUtil.ensureProject(e);
+        ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+        settingsManager.openProjectSettings(ConfigId.EXECUTION_ENGINE);
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setText("Settings");
     }
 }

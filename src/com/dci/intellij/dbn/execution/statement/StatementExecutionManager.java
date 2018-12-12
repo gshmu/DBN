@@ -253,7 +253,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                             action -> promptExecutionDialogs(
                                     executionProcessors,
                                     DBDebuggerType.NONE,
-                                    SimpleTask.create(task -> {
+                                    SimpleTask.create(data -> {
                                         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
                                             ExecutionContext context = executionProcessor.getExecutionContext();
                                             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
@@ -310,18 +310,14 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         getProject(),
                         "Multiple statement execution",
                         "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
-                        OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, new MessageCallback() {
-                            @Override
-                            protected void execute() {
-                                int option = getData();
-                                if (option == 0 || option == 1) {
-                                    int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();
-                                    List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(fileEditor, offset);
-                                    final VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
-                                    executeStatements(executionProcessors, virtualFile);
-                                }
+                        OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, MessageCallback.create(null, option -> {
+                            if (option == 0 || option == 1) {
+                                int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();
+                                List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(fileEditor, offset);
+                                final VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
+                                executeStatements(executionProcessors, virtualFile);
                             }
-                        });
+                        }));
             }
         }
 

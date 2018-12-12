@@ -15,11 +15,9 @@ public class ExplainPlanResultSettingsAction extends AbstractExplainPlanResultAc
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-            settingsManager.openProjectSettings(ConfigId.EXECUTION_ENGINE);
-        }
+        Project project = ActionUtil.ensureProject(e);
+        ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+        settingsManager.openProjectSettings(ConfigId.EXECUTION_ENGINE);
     }
 
     @Override

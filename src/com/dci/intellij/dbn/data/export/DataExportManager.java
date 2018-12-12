@@ -92,24 +92,21 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                                 "Export info",
                                 "Content exported to file " + file.getPath(),
                                 new String[]{"OK", "Open File"}, 0,
-                                new MessageCallback() {
-                                    @Override
-                                    protected void execute() {
-                                        successCallback.start();
-                                        if (getData() == 1) {
-                                            try {
-                                                Desktop.getDesktop().open(file);
-                                            } catch (IOException e) {
-                                                MessageUtil.showErrorDialog(
-                                                        project,
-                                                        "Open file",
-                                                        "Could not open file " + file.getPath() + ".\n" +
-                                                        "The file type is most probably not associated with any program."
-                                                );
-                                            }
+                                MessageCallback.create(null, option -> {
+                                    successCallback.start();
+                                    if (option == 1) {
+                                        try {
+                                            Desktop.getDesktop().open(file);
+                                        } catch (IOException e) {
+                                            MessageUtil.showErrorDialog(
+                                                    project,
+                                                    "Open file",
+                                                    "Could not open file " + file.getPath() + ".\n" +
+                                                            "The file type is most probably not associated with any program."
+                                            );
                                         }
                                     }
-                                });
+                                }));
                     } else {
                         sendInfoNotification(Constants.DBN_TITLE_PREFIX + "Data Export", "Content exported to file " + file.getPath());
                     }
