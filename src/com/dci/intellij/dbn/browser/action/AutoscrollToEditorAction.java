@@ -16,15 +16,20 @@ public class AutoscrollToEditorAction extends ToggleAction implements DumbAware{
 
 
     public boolean isSelected(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
-        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-        return browserManager.getAutoscrollToEditor().value();
+        Project project = ActionUtil.getProject(e);
+        if (project != null) {
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+            return browserManager.getAutoscrollToEditor().value();
+        }
+        return false;
     }
 
     public void setSelected(@NotNull AnActionEvent e, boolean state) {
-        Project project = ActionUtil.ensureProject(e);
-        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-        browserManager.getAutoscrollToEditor().setValue(state);
+        Project project = ActionUtil.getProject(e);
+        if (project != null) {
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+            browserManager.getAutoscrollToEditor().setValue(state);
+        }
     }
 
     @Override

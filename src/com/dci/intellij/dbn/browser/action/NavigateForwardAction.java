@@ -28,9 +28,11 @@ public class NavigateForwardAction extends DumbAwareAction {
         Presentation presentation = e.getPresentation();
         presentation.setText("Forward");
 
-        Project project = ActionUtil.ensureProject(e);
-        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-        DatabaseBrowserTree activeTree = browserManager.getActiveBrowserTree();
-        presentation.setEnabled(activeTree != null && activeTree.getNavigationHistory().hasNext());
+        Project project = ActionUtil.getProject(e);
+        if (project != null) {
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+            DatabaseBrowserTree activeTree = browserManager.getActiveBrowserTree();
+            presentation.setEnabled(activeTree != null && activeTree.getNavigationHistory().hasNext());
+        }
     }
 }

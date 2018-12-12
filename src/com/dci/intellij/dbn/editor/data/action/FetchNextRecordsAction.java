@@ -28,19 +28,20 @@ public class FetchNextRecordsAction extends AbstractDataEditorAction {
         presentation.setText("Fetch Next Records");
 
         DatasetEditor datasetEditor = getDatasetEditor(e);
-        Project project = ActionUtil.ensureProject(e);
-        DataEditorSettings settings = DataEditorSettings.getInstance(project);
-        presentation.setText("Fetch Next " + settings.getGeneralSettings().getFetchBlockSize().value() + " Records");
+        Project project = ActionUtil.getProject(e);
+        if (project != null) {
+            DataEditorSettings settings = DataEditorSettings.getInstance(project);
+            presentation.setText("Fetch Next " + settings.getGeneralSettings().getFetchBlockSize().value() + " Records");
 
-        boolean enabled =
-                datasetEditor != null &&
-                datasetEditor.isLoaded() &&
-                datasetEditor.getConnectionHandler().isConnected() &&
-                !datasetEditor.isInserting() &&
-                !datasetEditor.isLoading() &&        
-                !datasetEditor.isDirty() &&
-                !datasetEditor.getEditorTable().getModel().isResultSetExhausted();
-        presentation.setEnabled(enabled);
-
+            boolean enabled =
+                    datasetEditor != null &&
+                            datasetEditor.isLoaded() &&
+                            datasetEditor.getConnectionHandler().isConnected() &&
+                            !datasetEditor.isInserting() &&
+                            !datasetEditor.isLoading() &&
+                            !datasetEditor.isDirty() &&
+                            !datasetEditor.getEditorTable().getModel().isResultSetExhausted();
+            presentation.setEnabled(enabled);
+        }
     }
 }

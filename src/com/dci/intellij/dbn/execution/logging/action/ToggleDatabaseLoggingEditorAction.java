@@ -16,7 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements DumbAware {
@@ -32,9 +32,9 @@ public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements D
 
     @Nullable
     private static ConnectionHandler getConnectionHandler(AnActionEvent e) {
-        Project project = ensureProject(e);
+        Project project = getProject(e);
         VirtualFile virtualFile = getVirtualFile(e);
-        if (virtualFile != null) {
+        if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
             if (activeConnection != null && !activeConnection.isVirtual() && !activeConnection.isDisposed()) {

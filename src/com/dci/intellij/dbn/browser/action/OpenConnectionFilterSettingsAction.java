@@ -29,9 +29,11 @@ public class OpenConnectionFilterSettingsAction extends DumbAwareAction {
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Object Filter Settings...");
-        Project project = ActionUtil.ensureProject(e);
-        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-        ConnectionHandler activeConnection = browserManager.getActiveConnection();
-        presentation.setEnabled(activeConnection != null);
+        Project project = ActionUtil.getProject(e);
+        if (project != null) {
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+            ConnectionHandler activeConnection = browserManager.getActiveConnection();
+            presentation.setEnabled(activeConnection != null);
+        }
     }
 }
