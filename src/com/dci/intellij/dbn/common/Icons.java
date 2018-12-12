@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.common;
 
-import java.util.Map;
-
-import javax.swing.*;
-
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.RowIcon;
 import gnu.trove.THashMap;
+
+import javax.swing.*;
+import java.util.Map;
 
 public class Icons {
     private static final Map<String, Icon> REGISTERED_ICONS = new THashMap<String, Icon>();

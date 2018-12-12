@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.editor.data.action;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -13,6 +9,9 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
 
 public class DeleteRecordAction extends AbstractDataEditorAction {
 

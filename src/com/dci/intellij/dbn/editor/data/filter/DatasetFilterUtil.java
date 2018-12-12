@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import java.util.List;
-
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
@@ -10,6 +8,8 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBTable;
+
+import java.util.List;
 
 public class DatasetFilterUtil {
 
