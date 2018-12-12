@@ -84,7 +84,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         return getConnectionHandler().getSessionBundle().getPoolSession();
     }
 
-    public synchronized boolean isLoaded() {
+    public boolean isLoaded() {
         return localContent.isLoaded();
     }
 
@@ -102,59 +102,49 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     public void refreshContentState() {
-        new SynchronizedTask() {
-            @Override
-            protected String getSyncKey() {
-                return "REFRESH_STATE:" + getUrl();
-            }
+        SynchronizedTask.invoke(
+                () -> "REFRESH_STATE:" + getUrl(),
+                (data) -> {
+                    if (isNot(REFRESHING) && isLoaded()) {
+                        try {
+                            set(REFRESHING, true);
+                            DBSchemaObject object = getObject();
 
-            @Override
-            protected boolean canExecute() {
-                return isNot(REFRESHING) && isLoaded();
-            }
+                            if (is(LATEST) || is(MERGED)) {
+                                boolean checkSources = true;
 
-            @Override
-            protected void execute() {
-                try {
-                    set(REFRESHING, true);
-                    DBSchemaObject object = getObject();
+                                ChangeTimestamp latestTimestamp = new ChangeTimestamp();
+                                if (isChangeTracingSupported()) {
+                                    latestTimestamp = object.loadChangeTimestamp(contentType);
+                                    checkSources = databaseTimestamp.isOlderThan(latestTimestamp);
+                                    databaseTimestamp = latestTimestamp;
+                                }
 
-                    if (is(LATEST) || is(MERGED)) {
-                        boolean checkSources = true;
+                                databaseTimestamp = latestTimestamp;
 
-                        ChangeTimestamp latestTimestamp = new ChangeTimestamp();
-                        if (isChangeTracingSupported()) {
-                            latestTimestamp = object.loadChangeTimestamp(contentType);
-                            checkSources = databaseTimestamp.isOlderThan(latestTimestamp);
-                            databaseTimestamp = latestTimestamp;
-                        }
+                                if (checkSources) {
+                                    Project project = object.getProject();
+                                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                                    SourceCodeContent latestContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
 
-                        databaseTimestamp = latestTimestamp;
+                                    if (is(LATEST) && !latestContent.matches(originalContent, true)) {
+                                        set(OUTDATED, true);
+                                        databaseContent = latestContent;
+                                    }
 
-                        if (checkSources) {
-                            Project project = object.getProject();
-                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                            SourceCodeContent latestContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
-
-                            if (is(LATEST) && !latestContent.matches(originalContent, true)) {
-                                set(OUTDATED, true);
-                                databaseContent = latestContent;
+                                    if (is(MERGED) && !latestContent.matches(databaseContent, true)) {
+                                        set(OUTDATED, true);
+                                        databaseContent = latestContent;
+                                    }
+                                }
                             }
 
-                            if (is(MERGED) && !latestContent.matches(databaseContent, true)) {
-                                set(OUTDATED, true);
-                                databaseContent = latestContent;
-                            }
+                        } catch (SQLException e) {
+                            LOGGER.warn("Error refreshing source content state", e);
+                        } finally {
+                            set(REFRESHING, false);
                         }
-                    }
-
-                } catch (SQLException e) {
-                    LOGGER.warn("Error refreshing source content state", e);
-                } finally {
-                    set(REFRESHING, false);
-                }
-            }
-        }.start();
+                    }});
     }
 
     public boolean isChangedInDatabase(boolean reload) {

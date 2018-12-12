@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.latent.Loader;
 import com.intellij.openapi.progress.ProcessCanceledException;
 
 public abstract class SynchronizedTask<T> extends SimpleTask<T> {
@@ -38,4 +39,18 @@ public abstract class SynchronizedTask<T> extends SimpleTask<T> {
     }
 
     protected abstract String getSyncKey();
+
+    public static <T> void invoke(Loader<String> syncKey, SimpleRunnable<T> runnable) {
+        new SynchronizedTask<T>() {
+            @Override
+            protected void execute() {
+                runnable.run(getData());
+            }
+
+            @Override
+            protected String getSyncKey() {
+                return syncKey.load();
+            }
+        }.start();
+    }
 }

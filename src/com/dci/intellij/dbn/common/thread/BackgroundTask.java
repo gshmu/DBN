@@ -106,7 +106,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         return new BackgroundTask<T>(project, instructions) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                runnable.run(this, progressIndicator);
+                runnable.run(getData(), progressIndicator);
             }
         };
     }
@@ -114,7 +114,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         return new BackgroundTask<T>(project, title, startInBackground, cancellable) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                runnable.run(this, progressIndicator);
+                runnable.run(getData(), progressIndicator);
             }
         };
     }
@@ -129,6 +129,6 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
 
     @FunctionalInterface
     public interface BackgroundRunnable<T> {
-        void run(BackgroundTask<T> task, ProgressIndicator progress) throws InterruptedException;
+        void run(T data, ProgressIndicator progress) throws InterruptedException;
     }
 }

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.thread;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 
-public abstract class ConditionalLaterInvocator<T> extends SynchronizedTask<T>{
+public abstract class ConditionalLaterInvocator<T> extends SimpleTask<T>{
     protected ConditionalLaterInvocator() {}
 
     public final void start() {
@@ -13,11 +13,6 @@ public abstract class ConditionalLaterInvocator<T> extends SynchronizedTask<T>{
         } else {
             application.invokeLater(this/*, ModalityState.NON_MODAL*/);
         }
-    }
-
-    @Override
-    protected String getSyncKey() {
-        return null;
     }
 
     public static ConditionalLaterInvocator create(Runnable runnable) {

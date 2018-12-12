@@ -179,35 +179,29 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     private void loadSourceFromDatabase(@NotNull final DBSourceCodeVirtualFile sourceCodeFile, final boolean force) {
-        new SynchronizedTask() {
-            @Override
-            protected void execute() {
-                boolean initialLoad = !sourceCodeFile.isLoaded();
-                if (sourceCodeFile.isNot(LOADING) && (initialLoad || force)) {
-                    sourceCodeFile.set(LOADING, true);
-                    EditorUtil.setEditorsReadonly(sourceCodeFile, true);
-                    Project project = getProject();
-                    DBSchemaObject object = sourceCodeFile.getObject();
+        SynchronizedTask.invoke(
+                () -> "LOAD_SOURCE:" + sourceCodeFile.getUrl(),
+                data -> {
+                    boolean initialLoad = !sourceCodeFile.isLoaded();
+                    if (sourceCodeFile.isNot(LOADING) && (initialLoad || force)) {
+                        sourceCodeFile.set(LOADING, true);
+                        EditorUtil.setEditorsReadonly(sourceCodeFile, true);
+                        Project project = getProject();
+                        DBSchemaObject object = sourceCodeFile.getObject();
 
-                    EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoading(sourceCodeFile);
-                    try {
-                        sourceCodeFile.loadSourceFromDatabase();
-                    } catch (SQLException e) {
-                        sourceCodeFile.setSourceLoadError(e.getMessage());
-                        sourceCodeFile.set(MODIFIED, false);
-                        sendErrorNotification("Source Load Error", "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database. Cause: " + e.getMessage());
-                    } finally {
-                        sourceCodeFile.set(LOADING, false);
-                        EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoaded(sourceCodeFile, initialLoad);
+                        EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoading(sourceCodeFile);
+                        try {
+                            sourceCodeFile.loadSourceFromDatabase();
+                        } catch (SQLException e) {
+                            sourceCodeFile.setSourceLoadError(e.getMessage());
+                            sourceCodeFile.set(MODIFIED, false);
+                            sendErrorNotification("Source Load Error", "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database. Cause: " + e.getMessage());
+                        } finally {
+                            sourceCodeFile.set(LOADING, false);
+                            EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoaded(sourceCodeFile, initialLoad);
+                        }
                     }
-                }
-            }
-
-            @Override
-            protected String getSyncKey() {
-                return "LOAD_SOURCE:" + sourceCodeFile.getUrl();
-            }
-        }.start();
+                });
     }
 
     private void saveSourceToDatabase(@NotNull final DBSourceCodeVirtualFile sourceCodeFile, @Nullable final SourceCodeEditor fileEditor, @Nullable final Runnable successCallback) {
@@ -240,8 +234,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                         "\nYou must merge the changes before saving.";
 
                         MessageUtil.showWarningDialog(project, "Version conflict", message, new String[]{"Merge Changes", "Cancel"}, 0,
-                                BackgroundTask.create(project, "Loading database source code", false, false, (task, progress) -> {
-                                    if (task.getData() == 0) {
+                                BackgroundTask.create(project, "Loading database source code", false, false, (option, progress) -> {
+                                    if (option == 0) {
                                         try {
                                             SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
                                             String databaseContent = sourceCodeContent.getText().toString();

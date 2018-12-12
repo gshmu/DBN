@@ -32,11 +32,9 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -333,35 +331,32 @@ public class DatabaseBrowserTree extends DBNTree {
                     final BrowserTreeNode lastPathEntity = (BrowserTreeNode) path.getLastPathComponent();
                     if (lastPathEntity.isDisposed()) return;
 
-                    new ModalTask(lastPathEntity.getProject(), "Loading object information", true) {
-                        @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                            ActionGroup actionGroup = null;
-                            if (lastPathEntity instanceof DBObjectList) {
-                                DBObjectList objectList = (DBObjectList) lastPathEntity;
-                                actionGroup = new ObjectListActionGroup(objectList);
-                            } else if (lastPathEntity instanceof DBObject) {
-                                DBObject object = (DBObject) lastPathEntity;
-                                actionGroup = new ObjectActionGroup(object);
-                            } else if (lastPathEntity instanceof DBObjectBundle) {
-                                DBObjectBundle objectsBundle = (DBObjectBundle) lastPathEntity;
-                                ConnectionHandler connectionHandler = objectsBundle.getConnectionHandler();
-                                actionGroup = new ConnectionActionGroup(connectionHandler);
-                            }
-
-                            if (actionGroup != null && !progressIndicator.isCanceled()) {
-                                ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
-                                popupMenu = actionPopupMenu.getComponent();
-                                SimpleLaterInvocator.invoke(() -> {
-                                    if (isShowing()) {
-                                        popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
-                                    }
-                                });
-                            } else {
-                                popupMenu = null;
-                            }
+                    ModalTask.invoke(lastPathEntity.getProject(), "Loading object information", true, (data, progress) -> {
+                        ActionGroup actionGroup = null;
+                        if (lastPathEntity instanceof DBObjectList) {
+                            DBObjectList objectList = (DBObjectList) lastPathEntity;
+                            actionGroup = new ObjectListActionGroup(objectList);
+                        } else if (lastPathEntity instanceof DBObject) {
+                            DBObject object = (DBObject) lastPathEntity;
+                            actionGroup = new ObjectActionGroup(object);
+                        } else if (lastPathEntity instanceof DBObjectBundle) {
+                            DBObjectBundle objectsBundle = (DBObjectBundle) lastPathEntity;
+                            ConnectionHandler connectionHandler = objectsBundle.getConnectionHandler();
+                            actionGroup = new ConnectionActionGroup(connectionHandler);
                         }
-                    }.start();
+
+                        if (actionGroup != null && !progress.isCanceled()) {
+                            ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
+                            popupMenu = actionPopupMenu.getComponent();
+                            SimpleLaterInvocator.invoke(() -> {
+                                if (isShowing()) {
+                                    popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
+                                }
+                            });
+                        } else {
+                            popupMenu = null;
+                        }
+                    });
                 }
             }
         }

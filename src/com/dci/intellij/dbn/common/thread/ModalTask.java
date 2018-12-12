@@ -10,12 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>{
     private T data;
 
-    public ModalTask(Project project, String title, boolean canBeCancelled) {
-        super(project, title, canBeCancelled);
-    }
-
-    public ModalTask(Project project, String title) {
-        super(project, title, false);
+    private ModalTask(Project project, String title, boolean cancellable) {
+        super(project, title, cancellable);
     }
 
     @Override
@@ -44,15 +40,39 @@ public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>
             progressIndicator.pushState();
             progressIndicator.setIndeterminate(true);
             execute(progressIndicator);
+        } catch (InterruptedException ignore){
         } catch (ProcessCanceledException ignore){
         } finally {
             progressIndicator.popState();
         }
     }
 
-    protected abstract void execute(@NotNull ProgressIndicator progressIndicator);
+    protected abstract void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException;
 
     public void start() {
         TaskUtil.startTask(this, getProject());
+    }
+
+    public static void invoke(
+            @NotNull Project project,
+            String title,
+            boolean cancellable,
+            ModalRunnable runnable) {
+        create(project, title, cancellable, runnable).start();
+    }
+
+    @NotNull
+    public static <T> ModalTask<T> create(@NotNull Project project, String title, boolean cancellable, ModalRunnable<T> runnable) {
+        return new ModalTask<T>(project, title, cancellable) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                runnable.run(getData(), progressIndicator);
+            }
+        };
+    }
+
+    @FunctionalInterface
+    public interface ModalRunnable<T> {
+        void run(T data, ProgressIndicator progress) throws InterruptedException;
     }
 }

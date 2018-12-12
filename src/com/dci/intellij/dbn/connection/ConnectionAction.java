@@ -173,11 +173,19 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
 
     protected abstract void execute();
 
-    public static void invoke(String description, ConnectionProvider connectionProvider, Integer executeOption, Runnable action) {
+    public static void invoke(
+            String description,
+            ConnectionProvider connectionProvider,
+            Integer executeOption,
+            Runnable action) {
         create(description, connectionProvider, executeOption, action).start();
     }
 
-    public static ConnectionAction create(String description, ConnectionProvider connectionProvider, Integer executeOption, Runnable action) {
+    public static ConnectionAction create(
+            String description,
+            ConnectionProvider connectionProvider,
+            Integer executeOption,
+            Runnable action) {
         return new ConnectionAction(description, connectionProvider, executeOption) {
             @Override
             protected void execute() {
@@ -186,19 +194,41 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         };
     }
 
-    public static void invoke(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions, Runnable runnable) {
+    public static void invoke(
+            String description,
+            ConnectionProvider connectionProvider,
+            TaskInstructions taskInstructions,
+            Runnable runnable) {
         create(description, connectionProvider, taskInstructions, runnable, null, null).start();
     }
 
-    public static ConnectionAction create(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions, Runnable action) {
+    public static ConnectionAction create(
+            String description,
+            ConnectionProvider connectionProvider,
+            TaskInstructions taskInstructions,
+            Runnable action) {
         return create(description, connectionProvider, taskInstructions, action, null, null);
     }
 
-    public static void invoke(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions, Runnable action, Runnable cancel, Callable<Boolean> canExecute) {
+    public static void invoke(
+            String description,
+            ConnectionProvider connectionProvider,
+            TaskInstructions taskInstructions,
+            Runnable action,
+            Runnable cancel,
+            Callable<Boolean> canExecute) {
+
         create(description, connectionProvider, taskInstructions, action, cancel, canExecute).start();
     }
 
-    public static ConnectionAction create(String description, ConnectionProvider connectionProvider, TaskInstructions taskInstructions, Runnable action, Runnable cancel, Callable<Boolean> canExecute) {
+    public static ConnectionAction create(
+            String description,
+            ConnectionProvider connectionProvider,
+            TaskInstructions taskInstructions,
+            Runnable action,
+            Runnable cancel,
+            Callable<Boolean> canExecute) {
+
         return new ConnectionAction(description, connectionProvider, taskInstructions) {
             @Override
             protected void execute() {
