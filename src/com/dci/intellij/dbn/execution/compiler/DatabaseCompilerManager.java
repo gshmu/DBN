@@ -137,8 +137,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                 action -> {
                     String taskTitle = "Compiling " + object.getObjectType().getName();
                     promptCompileTypeSelection(compileType, object,
-                            BackgroundTask.create(project, taskTitle, true, false, (task, progress) -> {
-                                CompileType selectedCompileType = task.getData();
+                            BackgroundTask.create(project, taskTitle, true, false, (selectedCompileType, progress) -> {
                                 doCompileObject(object, selectedCompileType, compilerAction);
                                 ConnectionHandler connectionHandler = object.getConnectionHandler();
                                 EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
@@ -223,8 +222,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                     String taskTitle = "Compiling invalid objects";
 
                     promptCompileTypeSelection(compileType, null,
-                            BackgroundTask.create(project, taskTitle, false, true, (task, progress) -> {
-                                CompileType selectedCompileType = task.getData();
+                            BackgroundTask.create(project, taskTitle, false, true, (selectedCompileType, progress) -> {
                                 doCompileInvalidObjects(schema.getPackages(), "packages", progress, selectedCompileType);
                                 doCompileInvalidObjects(schema.getFunctions(), "functions", progress, selectedCompileType);
                                 doCompileInvalidObjects(schema.getProcedures(), "procedures", progress, selectedCompileType);

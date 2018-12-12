@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.export.ui;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -11,7 +12,6 @@ import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.progress.ProgressIndicator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +37,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
         this.table = table;
         this.connectionHandlerRef = connectionHandler.getRef();
         this.sourceObjectRef = DBObjectRef.from(sourceObject);
+        DisposerUtil.register(this, table);
         init();
     }
 
@@ -70,27 +71,22 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     }
 
     protected void doOKAction() {
-        ModalTask callback = new ModalTask(getProject(), "Creating export file", true) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
-                DataExportInstructions exportInstructions = getComponent().getExportInstructions();
-                exportManager.setExportInstructions(exportInstructions);
-                exportManager.exportSortableTableContent(
-                        table,
-                        exportInstructions,
-                        connectionHandler,
-                        SimpleLaterInvocator.create(() -> ExportDataDialog.super.doOKAction()));
-            }
-
-        };
-        getComponent().validateEntries(callback);
+        getComponent().validateEntries(
+                ModalTask.create(getProject(), "Creating export file", true, (data, progress) -> {
+                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
+                    DataExportInstructions exportInstructions = getComponent().getExportInstructions();
+                    exportManager.setExportInstructions(exportInstructions);
+                    exportManager.exportSortableTableContent(
+                            table,
+                            exportInstructions,
+                            connectionHandler,
+                            SimpleLaterInvocator.create(() -> ExportDataDialog.super.doOKAction()));
+                }));
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        table = null;
     }
 }
