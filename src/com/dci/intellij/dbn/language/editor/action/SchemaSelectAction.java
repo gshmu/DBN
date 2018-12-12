@@ -47,7 +47,7 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
             VirtualFile virtualFile = getVirtualFile(e);
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
                 enabled = false;//objectFile.getObject().getSchema() == schema;
-            } else {
+            } else if (virtualFile != null){
                 PsiFile currentFile = PsiUtil.getPsiFile(project, virtualFile);
                 enabled = currentFile instanceof DBLanguagePsiFile;
             }
