@@ -25,6 +25,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -275,22 +276,25 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
 
         public boolean isSelected(@NotNull AnActionEvent e) {
             DatasetEditorManager dataEditorManager = getDataEditorManager(e);
-            return dataEditorManager.isValuePreviewTextWrapping();
+            return dataEditorManager != null && dataEditorManager.isValuePreviewTextWrapping();
         }
 
         public void setSelected(@NotNull AnActionEvent e, boolean state) {
             DatasetEditorManager editorManager = getDataEditorManager(e);
-            editorManager.setValuePreviewTextWrapping(state);
-            valueTextArea.setLineWrap(state);
+            if (editorManager != null) {
+                editorManager.setValuePreviewTextWrapping(state);
+                valueTextArea.setLineWrap(state);
+            }
         }
 
         @Override
         public void update(@NotNull AnActionEvent e) {
             super.update(e);
             DatasetEditorManager dataEditorManager = getDataEditorManager(e);
-            boolean isWrapped = dataEditorManager.isValuePreviewTextWrapping();
-            e.getPresentation().setText(isWrapped ? "Unwrap Content" : "Wrap Content");
-
+            if (dataEditorManager != null) {
+                boolean isWrapped = dataEditorManager.isValuePreviewTextWrapping();
+                e.getPresentation().setText(isWrapped ? "Unwrap Content" : "Wrap Content");
+            }
         }
     }
 
@@ -306,8 +310,10 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
 
         public void setSelected(@NotNull AnActionEvent e, boolean state) {
             DatasetEditorManager editorManager = getDataEditorManager(e);
-            editorManager.setValuePreviewPinned(state);
-            isPinned = state;
+            if (editorManager != null) {
+                editorManager.setValuePreviewPinned(state);
+                isPinned = state;
+            }
         }
 
         @Override
@@ -350,9 +356,10 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
         }
     }
 
+    @Nullable
     private static DatasetEditorManager getDataEditorManager(AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
-        return DatasetEditorManager.getInstance(project);
+        Project project = ActionUtil.getProject(e);
+        return project == null ? null : DatasetEditorManager.getInstance(project);
     }
 
 }

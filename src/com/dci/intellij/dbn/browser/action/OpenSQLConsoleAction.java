@@ -28,9 +28,12 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
     }
 
     private static ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
-        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-        return browserManager.getActiveConnection();
+        Project project = ActionUtil.getProject(e);
+        if (project != null) {
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+            return browserManager.getActiveConnection();
+        }
+        return null;
     }
 
     public void update(@NotNull AnActionEvent e) {

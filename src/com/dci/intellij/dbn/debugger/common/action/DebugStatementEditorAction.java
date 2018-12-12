@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getEditor;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
 
 public class DebugStatementEditorAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -68,11 +69,11 @@ public class DebugStatementEditorAction extends AnAction {
         Presentation presentation = e.getPresentation();
         presentation.setIcon(Icons.STMT_EXECUTION_DEBUG);
         presentation.setText("Debug Statement");
-        Project project = ensureProject(e);
+        Project project = getProject(e);
         Editor editor = getEditor(e);
         boolean enabled = false;
         boolean visible = false;
-        if (editor != null) {
+        if (project != null && editor != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
             if (virtualFile != null) {

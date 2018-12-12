@@ -28,9 +28,11 @@ public class NavigateBackAction extends DumbAwareAction {
         Presentation presentation = e.getPresentation();
         presentation.setText("Back");
 
-        Project project = ActionUtil.ensureProject(e);
-        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-        DatabaseBrowserTree activeTree = browserManager.getActiveBrowserTree();
-        presentation.setEnabled(activeTree != null && activeTree.getNavigationHistory().hasPrevious());
+        Project project = ActionUtil.getProject(e);
+        if (project != null) {
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+            DatabaseBrowserTree activeTree = browserManager.getActiveBrowserTree();
+            presentation.setEnabled(activeTree != null && activeTree.getNavigationHistory().hasPrevious());
+        }
     }
 }

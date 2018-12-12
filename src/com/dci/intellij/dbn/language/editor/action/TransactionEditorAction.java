@@ -19,7 +19,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.*;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public abstract class TransactionEditorAction extends DumbAwareAction {
     TransactionEditorAction(String text, String description, Icon icon) {
@@ -46,8 +47,12 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
                         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
                         DBSchemaObject object = databaseFile.getObject();
                         if (object instanceof DBTable) {
-                            Project project = ensureProject(e);
-                            visible = !EnvironmentManager.getInstance(project).isReadonly(object, DBContentType.DATA);
+                            Project project = getProject(e);
+                            if (project != null) {
+                                EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+                                visible = !environmentManager.isReadonly(object, DBContentType.DATA);
+                            }
+
                         }
                     }
                 }

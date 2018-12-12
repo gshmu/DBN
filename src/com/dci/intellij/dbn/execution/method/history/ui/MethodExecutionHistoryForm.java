@@ -162,9 +162,11 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         public void setSelected(@NotNull AnActionEvent e, boolean state) {
             getTemplatePresentation().setText(state ? "Ungroup" : "Group by Program");
             getTree().showGrouped(state);
-            Project project = ActionUtil.ensureProject(e);
-            MethodExecutionManager.getInstance(project).getExecutionHistory().setGroupEntries(state);
-
+            Project project = ActionUtil.getProject(e);
+            if (project != null) {
+                MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
+                executionManager.getExecutionHistory().setGroupEntries(state);
+            }
         }
     }
 }
