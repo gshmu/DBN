@@ -21,7 +21,7 @@ public class EditMethodAction extends MethodExecutionResultAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         MethodExecutionResult executionResult = getExecutionResult(e);
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(executionResult != null);

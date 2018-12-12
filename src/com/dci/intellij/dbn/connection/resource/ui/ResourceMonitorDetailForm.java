@@ -96,7 +96,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
                         "Commit Session",
                         "Are you sure you want to commit the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        MessageCallback.create(0, () -> {
+                        MessageCallback.create(0, option -> {
                             DBNConnection connection = getSelectedConnection();
                             if (connection != null) {
                                 DatabaseTransactionManager transactionManager = getTransactionManager();
@@ -128,7 +128,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
                         "Rollback Session",
                         "Are you sure you want to rollback the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        MessageCallback.create(0, () -> {
+                        MessageCallback.create(0, option -> {
                             DBNConnection connection = getSelectedConnection();
                             if (connection != null) {
                                 DatabaseTransactionManager transactionManager = getTransactionManager();
@@ -161,7 +161,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
                         "Disconnect Session",
                         "Are you sure you want to disconnect the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        MessageCallback.create(0, () -> {
+                        MessageCallback.create(0, option -> {
                             DBNConnection connection = getSelectedConnection();
                             if (connection != null) {
                                 DatabaseTransactionManager transactionManager = getTransactionManager();
@@ -192,7 +192,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
                 MessageUtil.showQuestionDialog(getProject(),
                         "Delete Session",
                         "Are you sure you want to delete the session \"" + session.getName() + "\" for connection\"" + getConnectionHandler().getName() + "\"" ,
-                        MessageUtil.OPTIONS_YES_NO, 0, MessageCallback.create(0, () -> {
+                        MessageUtil.OPTIONS_YES_NO, 0, MessageCallback.create(0, option -> {
                             DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(getProject());
                             sessionManager.deleteSession(session);
                         }));

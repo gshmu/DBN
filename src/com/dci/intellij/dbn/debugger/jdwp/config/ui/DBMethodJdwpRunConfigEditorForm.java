@@ -134,12 +134,12 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         public void actionPerformed(@NotNull AnActionEvent e) {
             Project project = ActionUtil.ensureProject(e);
             MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-            methodExecutionManager.showExecutionHistoryDialog(getExecutionInput(), false, true, SimpleTask.create((task) -> {
-                MethodExecutionInput executionInput = task.getData();
-                if (executionInput != null) {
-                    setExecutionInput(executionInput, true);
-                }
-            }));
+            methodExecutionManager.showExecutionHistoryDialog(getExecutionInput(), false, true,
+                    SimpleTask.create((executionInput) -> {
+                        if (executionInput != null) {
+                            setExecutionInput(executionInput, true);
+                        }
+                    }));
         }
     }
 

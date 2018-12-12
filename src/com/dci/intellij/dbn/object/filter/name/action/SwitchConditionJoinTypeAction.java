@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class SwitchConditionJoinTypeAction extends ObjectNameFilterAction{
 
@@ -16,21 +17,18 @@ public class SwitchConditionJoinTypeAction extends ObjectNameFilterAction{
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.ensureProject(e);
         Object selection = getSelection();
-        ObjectNameFilterManager filterManager = null;
-        if (project != null) {
-            filterManager = ObjectNameFilterManager.getInstance(project);
-            if (selection instanceof CompoundFilterCondition) {
-                CompoundFilterCondition condition = (CompoundFilterCondition) selection;
-                filterManager.switchConditionJoinType(condition, settingsForm);
-            }
+        ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
+        if (selection instanceof CompoundFilterCondition) {
+            CompoundFilterCondition condition = (CompoundFilterCondition) selection;
+            filterManager.switchConditionJoinType(condition, settingsForm);
         }
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Object selection = getSelection();
         if (selection instanceof CompoundFilterCondition) {

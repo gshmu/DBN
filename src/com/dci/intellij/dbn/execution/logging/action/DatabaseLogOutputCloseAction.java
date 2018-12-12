@@ -9,7 +9,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
 
 public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputAction {
     public DatabaseLogOutputCloseAction() {
@@ -18,16 +18,16 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputActio
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        final Project project = getProject(e);
-        final DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
-        if (project != null && loggingResult != null && !loggingResult.isDisposed()) {
+        Project project = ensureProject(e);
+        DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
+        if (loggingResult != null && !loggingResult.isDisposed()) {
             if (loggingResult.getContext().isActive()) {
                 MessageUtil.showQuestionDialog(
                         project,
                         "Process active",
                         "The process is still active. Closing the log output will interrupt the process. \nAre you sure you want to close the console?",
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        MessageCallback.create(0, () -> closeConsole(loggingResult, project)));
+                        MessageCallback.create(0, option -> closeConsole(loggingResult, project)));
             } else {
                 closeConsole(loggingResult, project);
             }

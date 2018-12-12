@@ -201,7 +201,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 promptTemporaryAuthenticationDialog(databaseSettings, connectCallback);
             } else {
                 promptDatabaseInitDialog(databaseSettings,
-                        MessageCallback.create(0,() ->
+                        MessageCallback.create(0, option ->
                                 promptTemporaryAuthenticationDialog(databaseSettings, connectCallback)));
             }
 

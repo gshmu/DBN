@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -110,24 +109,21 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         final ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.promptDatabaseInitDialog(
                 connectionHandler,
-                new MessageCallback() {
-                    @Override
-                    protected void execute() {
-                        if (getData() == 0) {
-                            ConnectionInstructions instructions = connectionHandler.getInstructions();
-                            instructions.setAllowAutoInit(true);
-                            instructions.setAllowAutoConnect(true);
-                            if (connectionHandler.isAuthenticationProvided()) {
-                                executeAction();
-                            } else {
-                                promptAuthenticationDialog();
-                            }
+                MessageCallback.create(null, option -> {
+                    if (option == 0) {
+                        ConnectionInstructions instructions = connectionHandler.getInstructions();
+                        instructions.setAllowAutoInit(true);
+                        instructions.setAllowAutoConnect(true);
+                        if (connectionHandler.isAuthenticationProvided()) {
+                            executeAction();
                         } else {
-                            ConnectionAction.this.cancel();
-                            cancel();
+                            promptAuthenticationDialog();
                         }
+                    } else {
+                        ConnectionAction.this.cancel();
+                        cancel();
                     }
-                });
+                }));
     }
 
     private void promptAuthenticationDialog() {
@@ -135,36 +131,30 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         ConnectionManager.promptAuthenticationDialog(
                 connectionHandler,
                 connectionHandler.getAuthenticationInfo().clone(),
-                new SimpleTask<AuthenticationInfo>() {
-                    @Override
-                    protected void execute() {
-                        AuthenticationInfo authenticationInfo = getData();
-                        if (authenticationInfo != null) {
-                            executeAction();
-                        } else {
-                            ConnectionAction.this.cancel();
-                            cancel();
-                        }
+                SimpleTask.create(authenticationInfo -> {
+                    if (authenticationInfo != null) {
+                        executeAction();
+                    } else {
+                        ConnectionAction.this.cancel();
+                        cancel();
                     }
-                });
+                }));
     }
 
     private void promptConnectDialog() {
-        final ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.promptConnectDialog(
-                connectionHandler, description,
-                new MessageCallback() {
-                    @Override
-                    protected void execute() {
-                        if (getData() == 0) {
-                            connectionHandler.getInstructions().setAllowAutoConnect(true);
-                            executeAction();
-                        } else {
-                            ConnectionAction.this.cancel();
-                            cancel();
-                        }
+                connectionHandler,
+                description,
+                MessageCallback.create(null, option -> {
+                    if (option == 0) {
+                        connectionHandler.getInstructions().setAllowAutoConnect(true);
+                        executeAction();
+                    } else {
+                        ConnectionAction.this.cancel();
+                        cancel();
                     }
-                });
+                }));
     }
 
     private void executeAction() {

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
 
 public class EnableDisableAction extends DumbAwareAction {
     private DBSchemaObject object;
@@ -23,7 +23,7 @@ public class EnableDisableAction extends DumbAwareAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = getProject(e);
+        Project project = ensureProject(e);
         boolean enabled = object.getStatus().is(DBObjectStatus.ENABLED);
         try {
             DBOperationType operationType = enabled ? DBOperationType.DISABLE : DBOperationType.ENABLE;

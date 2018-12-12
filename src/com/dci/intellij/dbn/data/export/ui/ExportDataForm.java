@@ -225,7 +225,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
                 MessageUtil.showQuestionDialog(project, "File exists",
                         "File " + file.getPath() + " already exists. Overwrite?",
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        MessageCallback.create(0, () -> callback.start()));
+                        MessageCallback.create(0, option -> callback.start()));
                 return;
             }
         }

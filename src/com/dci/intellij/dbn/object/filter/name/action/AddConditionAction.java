@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class AddConditionAction extends ObjectNameFilterAction{
 
@@ -17,23 +18,21 @@ public class AddConditionAction extends ObjectNameFilterAction{
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            Object selection = getSelection();
-            ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
-            if (selection instanceof CompoundFilterCondition) {
-                CompoundFilterCondition condition = (CompoundFilterCondition) selection;
-                filterManager.createFilterCondition(condition, settingsForm);
-            } else if (selection instanceof SimpleNameFilterCondition) {
-                SimpleNameFilterCondition condition = (SimpleNameFilterCondition) selection;
-                filterManager.joinFilterCondition(condition, settingsForm);
-            }
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.ensureProject(e);
+        Object selection = getSelection();
+        ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
+        if (selection instanceof CompoundFilterCondition) {
+            CompoundFilterCondition condition = (CompoundFilterCondition) selection;
+            filterManager.createFilterCondition(condition, settingsForm);
+        } else if (selection instanceof SimpleNameFilterCondition) {
+            SimpleNameFilterCondition condition = (SimpleNameFilterCondition) selection;
+            filterManager.joinFilterCondition(condition, settingsForm);
         }
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Object selection = getSelection();
         if (selection instanceof CompoundFilterCondition) {

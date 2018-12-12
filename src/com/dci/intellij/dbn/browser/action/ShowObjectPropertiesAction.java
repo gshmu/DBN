@@ -15,18 +15,17 @@ public class ShowObjectPropertiesAction extends ToggleAction implements DumbAwar
     }
 
     @Override
-    public boolean isSelected(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        return project != null &&
-                DatabaseBrowserManager.getInstance(project).getShowObjectProperties().value();
+    public boolean isSelected(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.ensureProject(e);
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        return browserManager.getShowObjectProperties().value();
     }
 
     @Override
-    public void setSelected(AnActionEvent e, boolean state) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DatabaseBrowserManager.getInstance(project).showObjectProperties(state);
-        }
+    public void setSelected(@NotNull AnActionEvent e, boolean state) {
+        Project project = ActionUtil.ensureProject(e);
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        browserManager.showObjectProperties(state);
     }
 
     @Override

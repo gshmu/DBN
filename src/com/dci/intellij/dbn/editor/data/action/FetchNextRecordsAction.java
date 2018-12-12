@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class FetchNextRecordsAction extends AbstractDataEditorAction {
 
@@ -14,7 +15,7 @@ public class FetchNextRecordsAction extends AbstractDataEditorAction {
         super("Fetch next records", Icons.DATA_EDITOR_FETCH_NEXT_RECORDS);
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor != null) {
             DataEditorSettings settings = DataEditorSettings.getInstance(datasetEditor.getProject());
@@ -22,16 +23,15 @@ public class FetchNextRecordsAction extends AbstractDataEditorAction {
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Fetch Next Records");
 
         DatasetEditor datasetEditor = getDatasetEditor(e);
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DataEditorSettings settings = DataEditorSettings.getInstance(project);
-            presentation.setText("Fetch Next " + settings.getGeneralSettings().getFetchBlockSize().value() + " Records");
-        }
+        Project project = ActionUtil.ensureProject(e);
+        DataEditorSettings settings = DataEditorSettings.getInstance(project);
+        presentation.setText("Fetch Next " + settings.getGeneralSettings().getFetchBlockSize().value() + " Records");
+
         boolean enabled =
                 datasetEditor != null &&
                 datasetEditor.isLoaded() &&

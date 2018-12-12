@@ -15,9 +15,9 @@ public class CloseExecutionResultAction extends MethodExecutionResultAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
+        Project project = ActionUtil.ensureProject(e);
         MethodExecutionResult executionResult = getExecutionResult(e);
-        if (project != null && executionResult != null) {
+        if (executionResult != null) {
             ExecutionManager.getInstance(project).removeResultTab(executionResult);
         }
     }

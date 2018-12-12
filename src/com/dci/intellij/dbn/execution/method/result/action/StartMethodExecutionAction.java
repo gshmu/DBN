@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
@@ -16,19 +17,17 @@ public class StartMethodExecutionAction extends MethodExecutionResultAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            MethodExecutionResult executionResult = getExecutionResult(e);
-            if (executionResult != null) {
-                MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-                executionManager.execute(executionResult.getExecutionInput());
-            }
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.ensureProject(e);
+        MethodExecutionResult executionResult = getExecutionResult(e);
+        if (executionResult != null) {
+            MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
+            executionManager.execute(executionResult.getExecutionInput());
         }
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         MethodExecutionResult executionResult = getExecutionResult(e);
         Presentation presentation = e.getPresentation();
         presentation.setText("Execute Again");

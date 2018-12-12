@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class HideObjectPropertiesAction extends AnAction{
     public HideObjectPropertiesAction() {
@@ -13,10 +14,9 @@ public class HideObjectPropertiesAction extends AnAction{
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DatabaseBrowserManager.getInstance(project).showObjectProperties(false);
-        }
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.ensureProject(e);
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        browserManager.showObjectProperties(false);
     }
 }

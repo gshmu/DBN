@@ -22,19 +22,17 @@ public class OpenSettingsAction extends DumbAwareAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+        Project project = ActionUtil.ensureProject(e);
+        ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
 
-            if (configId == ConfigId.CONNECTIONS) {
-                DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-                ConnectionHandler activeConnection = browserManager.getActiveConnection();
-                ConnectionId connectionId = activeConnection == null ? null : activeConnection.getId();
-                settingsManager.openConnectionSettings(connectionId);
-            }
-             else {
-                settingsManager.openProjectSettings(configId);
-            }
+        if (configId == ConfigId.CONNECTIONS) {
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+            ConnectionHandler activeConnection = browserManager.getActiveConnection();
+            ConnectionId connectionId = activeConnection == null ? null : activeConnection.getId();
+            settingsManager.openConnectionSettings(connectionId);
+        }
+         else {
+            settingsManager.openProjectSettings(configId);
         }
     }
 

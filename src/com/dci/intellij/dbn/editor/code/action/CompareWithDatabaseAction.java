@@ -15,10 +15,10 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
+        Project project = ActionUtil.ensureProject(e);
         DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
 
-        if (project != null && sourcecodeFile != null) {
+        if (sourcecodeFile != null) {
             SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
             diffManager.opedDatabaseDiffWindow(sourcecodeFile);
         }

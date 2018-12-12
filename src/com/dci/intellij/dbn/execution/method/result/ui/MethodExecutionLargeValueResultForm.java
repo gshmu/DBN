@@ -42,7 +42,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
     private EditorEx editor;
     private TextContentType contentType;
 
-    public MethodExecutionLargeValueResultForm(MethodExecutionResultForm parent, MethodExecutionResult executionResult, DBArgument argument) {
+    MethodExecutionLargeValueResultForm(MethodExecutionResultForm parent, MethodExecutionResult executionResult, DBArgument argument) {
         super(parent);
         argumentRef = DBObjectRef.from(argument);
 
@@ -101,7 +101,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
 
     public class ContentTypeComboBoxAction extends DBNComboBoxAction {
 
-        public ContentTypeComboBoxAction() {
+        ContentTypeComboBoxAction() {
             Presentation presentation = getTemplatePresentation();
             presentation.setText(contentType.getName());
             presentation.setIcon(contentType.getIcon());
@@ -123,7 +123,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
         }
 
         @Override
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setText(contentType.getName());
             presentation.setIcon(contentType.getIcon());
@@ -133,7 +133,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
     public class ContentTypeSelectAction extends AnAction {
         private TextContentType contentType;
 
-        public ContentTypeSelectAction(TextContentType contentType) {
+        ContentTypeSelectAction(TextContentType contentType) {
             super(contentType.getName(), null, contentType.getIcon());
             this.contentType = contentType;
         }
@@ -144,7 +144,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            Project project = ActionUtil.getProject(e);
+            Project project = ActionUtil.ensureProject(e);
             SyntaxHighlighter syntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(contentType.getFileType(), project, null);
             EditorColorsScheme colorsScheme = editor.getColorsScheme();
             editor.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));

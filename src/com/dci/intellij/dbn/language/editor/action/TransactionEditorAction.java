@@ -22,7 +22,7 @@ import javax.swing.*;
 import static com.dci.intellij.dbn.common.util.ActionUtil.*;
 
 public abstract class TransactionEditorAction extends DumbAwareAction {
-    protected TransactionEditorAction(String text, String description, Icon icon) {
+    TransactionEditorAction(String text, String description, Icon icon) {
         super(text, description, icon);
     }
 

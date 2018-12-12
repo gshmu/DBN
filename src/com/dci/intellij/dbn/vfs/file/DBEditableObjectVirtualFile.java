@@ -113,7 +113,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                                 project, "No DDL file found",
                                 "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
                                 "(You can disable this check in \"DDL File\" options)", MessageUtil.OPTIONS_YES_NO, 0,
-                                MessageCallback.create(0, () -> fileAttachmentManager.createDDLFile(object)));
+                                MessageCallback.create(0, option -> fileAttachmentManager.createDDLFile(object)));
                     }
                 }
             }

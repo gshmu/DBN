@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class DetachDDLFileAction extends AnAction {
     private DBSchemaObject object;
@@ -15,19 +16,17 @@ public class DetachDDLFileAction extends AnAction {
         this.object = object;
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = object.getProject();
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
         fileAttachmentManager.detachDDLFiles(object);
     }
 
-    public void update(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-            boolean hasAttachedDDLFiles = fileAttachmentManager.hasAttachedDDLFiles(object);
-            Presentation presentation = e.getPresentation();
-            presentation.setEnabled(hasAttachedDDLFiles);
-        }
+    public void update(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.ensureProject(e);
+        DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
+        boolean hasAttachedDDLFiles = fileAttachmentManager.hasAttachedDDLFiles(object);
+        Presentation presentation = e.getPresentation();
+        presentation.setEnabled(hasAttachedDDLFiles);
     }
 }

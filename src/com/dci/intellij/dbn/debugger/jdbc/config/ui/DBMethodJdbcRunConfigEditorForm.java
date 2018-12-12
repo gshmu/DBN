@@ -124,19 +124,14 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            Project project = ActionUtil.getProject(e);
-            if (project != null) {
-                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                methodExecutionManager.showExecutionHistoryDialog(getExecutionInput(), false, true, new SimpleTask<MethodExecutionInput>() {
-                    @Override
-                    protected void execute() {
-                        MethodExecutionInput executionInput = getData();
+            Project project = ActionUtil.ensureProject(e);
+            MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+            methodExecutionManager.showExecutionHistoryDialog(getExecutionInput(), false, true,
+                    SimpleTask.create(executionInput -> {
                         if (executionInput != null) {
                             setExecutionInput(executionInput, true);
                         }
-                    }
-                });
-            }
+                    }));
         }
     }
 

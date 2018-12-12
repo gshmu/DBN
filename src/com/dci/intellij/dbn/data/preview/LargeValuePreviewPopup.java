@@ -24,7 +24,6 @@ import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
-import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -228,12 +227,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
         });
 */
 
-        popupBuilder.setCancelCallback(new Computable<Boolean>() {
-            @Override
-            public Boolean compute() {
-                return !isPinned;
-            }
-        });
+        popupBuilder.setCancelCallback(() -> !isPinned);
 
         if (isLargeTextLayout) {
             infoLabel.setText(contentInfoText);
@@ -274,17 +268,17 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
      */
     public class WrapUnwrapContentAction extends ToggleAction {
 
-        public WrapUnwrapContentAction() {
+        WrapUnwrapContentAction() {
             super("Wrap/Unwrap", "", Icons.ACTION_WRAP_TEXT);
         }
 
 
-        public boolean isSelected(AnActionEvent e) {
+        public boolean isSelected(@NotNull AnActionEvent e) {
             DatasetEditorManager dataEditorManager = getDataEditorManager(e);
-            return dataEditorManager != null && dataEditorManager.isValuePreviewTextWrapping();
+            return dataEditorManager.isValuePreviewTextWrapping();
         }
 
-        public void setSelected(AnActionEvent e, boolean state) {
+        public void setSelected(@NotNull AnActionEvent e, boolean state) {
             DatasetEditorManager editorManager = getDataEditorManager(e);
             editorManager.setValuePreviewTextWrapping(state);
             valueTextArea.setLineWrap(state);
@@ -294,7 +288,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
         public void update(@NotNull AnActionEvent e) {
             super.update(e);
             DatasetEditorManager dataEditorManager = getDataEditorManager(e);
-            boolean isWrapped = dataEditorManager != null && dataEditorManager.isValuePreviewTextWrapping();
+            boolean isWrapped = dataEditorManager.isValuePreviewTextWrapping();
             e.getPresentation().setText(isWrapped ? "Unwrap Content" : "Wrap Content");
 
         }
@@ -306,11 +300,11 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
             super("Pin/Unpin", "", Icons.ACTION_PIN);
         }
 
-        public boolean isSelected(AnActionEvent e) {
+        public boolean isSelected(@NotNull AnActionEvent e) {
             return isPinned;
         }
 
-        public void setSelected(AnActionEvent e, boolean state) {
+        public void setSelected(@NotNull AnActionEvent e, boolean state) {
             DatasetEditorManager editorManager = getDataEditorManager(e);
             editorManager.setValuePreviewPinned(state);
             isPinned = state;
@@ -329,12 +323,12 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
             super("Load / Reload content", null, Icons.ACTION_RERUN);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             loadContent(false);
         }
 
         @Override
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setEnabled(loadContentVisible);
             presentation.setText(loadContentCaption);
@@ -346,19 +340,19 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
             super("Close", null, Icons.ACTION_CLOSE);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             isPinned = false;
             popup.cancel();
         }
 
         @Override
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
         }
     }
 
     private static DatasetEditorManager getDataEditorManager(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        return project == null ? null : DatasetEditorManager.getInstance(project);
+        Project project = ActionUtil.ensureProject(e);
+        return DatasetEditorManager.getInstance(project);
     }
 
 }

@@ -7,11 +7,12 @@ import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public abstract class MethodExecutionResultAction extends DumbAwareAction {
-    protected MethodExecutionResultAction(String text, Icon icon) {
+    MethodExecutionResultAction(String text, Icon icon) {
         super(text, null, icon);
     }
 
@@ -32,7 +33,7 @@ public abstract class MethodExecutionResultAction extends DumbAwareAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         MethodExecutionResult executionResult = getExecutionResult(e);
         e.getPresentation().setEnabled(executionResult != null);
     }

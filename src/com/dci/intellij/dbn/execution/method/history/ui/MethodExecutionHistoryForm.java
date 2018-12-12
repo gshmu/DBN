@@ -24,7 +24,6 @@ import com.intellij.ui.JBSplitter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.HashMap;
@@ -43,7 +42,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
 
     private Map<MethodExecutionInput, MethodExecutionInputForm> methodExecutionForms;
 
-    public MethodExecutionHistoryForm(MethodExecutionHistoryDialog parentComponent, MethodExecutionHistory executionHistory, boolean debug) {
+    MethodExecutionHistoryForm(MethodExecutionHistoryDialog parentComponent, MethodExecutionHistory executionHistory, boolean debug) {
         super(parentComponent);
         this.executionHistory = executionHistory;
         this.debug = debug;
@@ -53,7 +52,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
                 ActionUtil.SEPARATOR,
                 new OpenSettingsAction());
         actionsPanel.add(actionToolbar.getComponent());
-        methodExecutionForms = new HashMap<MethodExecutionInput, MethodExecutionInputForm>();
+        methodExecutionForms = new HashMap<>();
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(contentPanel);
         JBSplitter splitter = (JBSplitter) contentPanel.getComponent(0);
@@ -64,7 +63,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         return mainPanel;
     }
 
-    public List<MethodExecutionInput> getExecutionInputs() {
+    List<MethodExecutionInput> getExecutionInputs() {
         MethodExecutionHistoryTreeModel model = (MethodExecutionHistoryTreeModel) executionInputsTree.getModel();
         return model.getExecutionInputs();
     }
@@ -85,7 +84,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         executionHistory = null;
     }
 
-    public void showMethodExecutionPanel(MethodExecutionInput executionInput) {
+    void showMethodExecutionPanel(MethodExecutionInput executionInput) {
         argumentsPanel.removeAll();
         if (executionInput != null &&
                 !executionInput.isObsolete() &&
@@ -104,36 +103,32 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
 
     private ChangeListener getChangeListener() {
         if (changeListener == null) {
-            changeListener = new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    getParentComponent().setSaveButtonEnabled(true);
-                }
-            };
+            changeListener = e -> getParentComponent().setSaveButtonEnabled(true);
         }
         return changeListener;
     }
 
-    public void updateMethodExecutionInputs() {
+    void updateMethodExecutionInputs() {
         for (MethodExecutionInputForm methodExecutionComponent : methodExecutionForms.values()) {
             methodExecutionComponent.updateExecutionInput();
         }
     }
 
-    public void setSelectedInput(MethodExecutionInput selectedExecutionInput) {
+    void setSelectedInput(MethodExecutionInput selectedExecutionInput) {
         getTree().setSelectedInput(selectedExecutionInput);
     }
 
     public class DeleteHistoryEntryAction extends DumbAwareAction {
-        public DeleteHistoryEntryAction() {
+        DeleteHistoryEntryAction() {
             super("Delete", null, Icons.ACTION_REMOVE);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             getTree().removeSelectedEntries();
         }
 
         @Override
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
             e.getPresentation().setEnabled(!getTree().isSelectionEmpty());
             e.getPresentation().setVisible(getParentComponent().isEditable());
         }
@@ -141,11 +136,9 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
 
     public static class OpenSettingsAction extends DumbAwareAction {
         public void actionPerformed(@NotNull AnActionEvent e) {
-            Project project = ActionUtil.getProject(e);
-            if (project != null) {
-                ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-                settingsManager.openProjectSettings(ConfigId.EXECUTION_ENGINE);
-            }
+            Project project = ActionUtil.ensureProject(e);
+            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+            settingsManager.openProjectSettings(ConfigId.EXECUTION_ENGINE);
         }
 
         public void update(@NotNull AnActionEvent e) {
@@ -156,23 +149,21 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     }
 
     public class ShowGroupedTreeAction extends ToggleAction {
-        public ShowGroupedTreeAction() {
+        ShowGroupedTreeAction() {
             super("Group by Program", "Show grouped by program", Icons.ACTION_GROUP);
         }
 
         @Override
-        public boolean isSelected(AnActionEvent e) {
+        public boolean isSelected(@NotNull AnActionEvent e) {
             return getTree().isGrouped();
         }
 
         @Override
-        public void setSelected(AnActionEvent e, boolean state) {
+        public void setSelected(@NotNull AnActionEvent e, boolean state) {
             getTemplatePresentation().setText(state ? "Ungroup" : "Group by Program");
             getTree().showGrouped(state);
-            Project project = ActionUtil.getProject(e);
-            if (project != null) {
-                MethodExecutionManager.getInstance(project).getExecutionHistory().setGroupEntries(state);
-            }
+            Project project = ActionUtil.ensureProject(e);
+            MethodExecutionManager.getInstance(project).getExecutionHistory().setGroupEntries(state);
 
         }
     }

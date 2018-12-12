@@ -29,7 +29,7 @@ public class ConnectionSelectComboBoxAction extends DBNComboBoxAction implements
         return new ConnectionSelectActionGroup(project);
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         String text = NAME;
         Icon icon = null;

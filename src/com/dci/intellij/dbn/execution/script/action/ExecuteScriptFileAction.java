@@ -11,14 +11,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
+import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class ExecuteScriptFileAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = getProject(e);
+        Project project = ensureProject(e);
         VirtualFile virtualFile = getVirtualFile(e);
-        if (project != null && isAvailableFor(virtualFile)) {
+        if (isAvailableFor(virtualFile)) {
             ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
             scriptExecutionManager.executeScript(virtualFile);
         }

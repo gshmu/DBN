@@ -27,7 +27,7 @@ public class SettingsGroupAction extends ActionGroup {
     @NotNull
     @Override
     public AnAction[] getChildren(AnActionEvent e) {
-        List<AnAction> actions = new ArrayList<AnAction>();
+        List<AnAction> actions = new ArrayList<>();
         for (ConfigId configId : configIds) {
             actions.add(new SettingsAction(configId));
         }
@@ -35,7 +35,7 @@ public class SettingsGroupAction extends ActionGroup {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
         //e.getPresentation().setIcon(Icons.ACTION_SETTINGS);
     }
@@ -43,25 +43,23 @@ public class SettingsGroupAction extends ActionGroup {
     public class SettingsAction extends DumbAwareAction {
         private ConfigId configId;
 
-        public SettingsAction(ConfigId configId) {
+        SettingsAction(ConfigId configId) {
             super(configId.getName() + "...");
             this.configId = configId;
         }
 
         public void actionPerformed(@NotNull AnActionEvent e) {
-            Project project = ActionUtil.getProject(e);
-            if (project != null) {
-                ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+            Project project = ActionUtil.ensureProject(e);
+            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
 
-                if (configId == ConfigId.CONNECTIONS) {
-                    DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-                    ConnectionHandler activeConnection = browserManager.getActiveConnection();
-                    ConnectionId connectionId = activeConnection == null ? null : activeConnection.getId();
-                    settingsManager.openConnectionSettings(connectionId);
-                }
-                else {
-                    settingsManager.openProjectSettings(configId);
-                }
+            if (configId == ConfigId.CONNECTIONS) {
+                DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+                ConnectionHandler activeConnection = browserManager.getActiveConnection();
+                ConnectionId connectionId = activeConnection == null ? null : activeConnection.getId();
+                settingsManager.openConnectionSettings(connectionId);
+            }
+            else {
+                settingsManager.openProjectSettings(configId);
             }
         }
 

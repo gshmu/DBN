@@ -18,7 +18,7 @@ public class ImportDataAction extends AbstractDataEditorAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
+        Project project = ActionUtil.ensureProject(e);
         MessageUtil.showInfoDialog(project, "Not implemented", "Data import is not implemented yet.");
     }
 

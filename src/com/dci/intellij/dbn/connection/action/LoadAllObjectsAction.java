@@ -19,8 +19,8 @@ public class LoadAllObjectsAction extends AbstractConnectionAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        final ConnectionHandler connectionHandler = getConnectionHandler();
+        Project project = ActionUtil.ensureProject(e);
+        ConnectionHandler connectionHandler = getConnectionHandler();
         String taskTitle = "Loading data dictionary (" + connectionHandler.getName() + ")";
         BackgroundTask.invoke(project, taskTitle, true, false, (task, progress) -> {
             try {
@@ -35,7 +35,8 @@ public class LoadAllObjectsAction extends AbstractConnectionAction {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-        e.getPresentation().setVisible(DatabaseNavigator.getInstance().isDeveloperModeEnabled());
+        DatabaseNavigator databaseNavigator = DatabaseNavigator.getInstance();
+        e.getPresentation().setVisible(databaseNavigator.isDeveloperModeEnabled());
         super.update(e);
     }
 }

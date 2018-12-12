@@ -23,52 +23,50 @@ public class SessionBrowserAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         //FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.popup.file");
-        final Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-            ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+        Project project = ActionUtil.ensureProject(e);
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
 
-            ConnectionHandler singleConnectionHandler = null;
-            DefaultActionGroup actionGroup = new DefaultActionGroup();
-            if (connectionBundle.getConnectionHandlers().size() > 0) {
-                actionGroup.addSeparator();
-                for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                    SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler);
-                    actionGroup.add(connectionAction);
-                    singleConnectionHandler = connectionHandler;
-                }
+        ConnectionHandler singleConnectionHandler = null;
+        DefaultActionGroup actionGroup = new DefaultActionGroup();
+        if (connectionBundle.getConnectionHandlers().size() > 0) {
+            actionGroup.addSeparator();
+            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+                SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler);
+                actionGroup.add(connectionAction);
+                singleConnectionHandler = connectionHandler;
             }
+        }
 
-            if (actionGroup.getChildrenCount() > 1) {
-                ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
-                        "Select Session Browser Connection",
-                        actionGroup,
-                        e.getDataContext(),
-                        //JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                        false,
-                        true,
-                        true,
-                        null,
-                        actionGroup.getChildrenCount(), null);
+        if (actionGroup.getChildrenCount() > 1) {
+            ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
+                    "Select Session Browser Connection",
+                    actionGroup,
+                    e.getDataContext(),
+                    //JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                    false,
+                    true,
+                    true,
+                    null,
+                    actionGroup.getChildrenCount(), null);
 
-                popupBuilder.showCenteredInCurrentWindow(project);
+            popupBuilder.showCenteredInCurrentWindow(project);
+        } else {
+            if (singleConnectionHandler != null) {
+                openSessionBrowser(singleConnectionHandler);
             } else {
-                if (singleConnectionHandler != null) {
-                    openSessionBrowser(singleConnectionHandler);
-                } else {
-                    MessageUtil.showInfoDialog(project, "No connections available.", "No database connections found. Please setup a connection first");
-                }
-
+                MessageUtil.showInfoDialog(project, "No connections available.", "No database connections found. Please setup a connection first");
             }
+
         }
 
     }
 
     private class SelectConnectionAction extends AbstractConnectionAction{
 
-        public SelectConnectionAction(ConnectionHandler connectionHandler) {
+        SelectConnectionAction(ConnectionHandler connectionHandler) {
             super(connectionHandler.getName(), connectionHandler.getIcon(), connectionHandler);
         }
 

@@ -320,7 +320,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             MessageUtil.showInfoDialog(getProject(),
                     "No DDL files found",
                     message.toString(), options, 0,
-                    MessageCallback.create(1, () -> createDDLFile(object)));
+                    MessageCallback.create(1, option -> createDDLFile(object)));
         } else {
             int exitCode = showFileAttachDialog(object, virtualFiles, false);
             if (exitCode != DialogWrapper.CANCEL_EXIT_CODE) {

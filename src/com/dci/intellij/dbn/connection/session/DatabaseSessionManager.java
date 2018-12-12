@@ -88,7 +88,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
                     "Delete Session",
                     "Are you sure you want to delete the session \"" + session.getName() + "\" for connection\"" + session.getConnectionHandler().getName() + "\"" ,
                     MessageUtil.OPTIONS_YES_NO, 0,
-                    MessageCallback.create(0, () -> deleteSession(session)));
+                    MessageCallback.create(0, option -> deleteSession(session)));
         } else {
             deleteSession(session);
         }

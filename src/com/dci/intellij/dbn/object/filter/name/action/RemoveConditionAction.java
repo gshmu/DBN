@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class RemoveConditionAction extends ObjectNameFilterAction{
 
@@ -17,22 +18,19 @@ public class RemoveConditionAction extends ObjectNameFilterAction{
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Object selection = getSelection();
         if (selection instanceof FilterCondition) {
             FilterCondition filterCondition = (FilterCondition) selection;
 
-            Project project = ActionUtil.getProject(e);
-            ObjectNameFilterManager filterManager = null;
-            if (project != null) {
-                filterManager = ObjectNameFilterManager.getInstance(project);
-                filterManager.removeFilterCondition(filterCondition, settingsForm);
-            }
+            Project project = ActionUtil.ensureProject(e);
+            ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
+            filterManager.removeFilterCondition(filterCondition, settingsForm);
         }
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Object selection = getSelection();
         if (selection instanceof ObjectNameFilter) {

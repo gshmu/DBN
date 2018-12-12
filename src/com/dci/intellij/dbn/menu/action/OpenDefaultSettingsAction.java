@@ -7,18 +7,19 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class OpenDefaultSettingsAction extends DumbAwareAction {
 
-    public void actionPerformed(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null && !project.isDisposed()) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.ensureProject(e);
+        if (!project.isDisposed()) {
             ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
             settingsManager.openDefaultProjectSettings();
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);
         presentation.setEnabled(project != null);
