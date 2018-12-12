@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.data.value;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
@@ -44,16 +43,12 @@ public class BlobValue extends LargeObjectValue {
     }
 
     public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
-        value = CommonUtil.nvl(value, "");
-        if (blob == null) {
-            resultSet.updateBlob(columnIndex, new ByteArrayInputStream(new byte[0]));
-            blob = resultSet.getBlob(columnIndex);
+        if (StringUtil.isEmpty(value)) {
+            blob = null;
         } else {
-            if (blob.length() > value.length()) {
-                blob.truncate(value.length());
-            }
+            blob = connection.createBlob();
+            blob.setBytes(1, value.getBytes());
         }
-        blob.setBytes(1, value.getBytes());
         resultSet.updateBlob(columnIndex, blob);
     }
 

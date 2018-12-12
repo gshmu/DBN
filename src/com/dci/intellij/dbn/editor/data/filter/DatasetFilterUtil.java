@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.object.DBTable;
 
 import java.util.List;
 
@@ -31,13 +30,6 @@ public class DatasetFilterUtil {
                     instructionAdded = true;
                 }
             }
-        }
-    }
-
-    public static void addForUpdateClause(DBDataset dataset, StringBuilder buffer) {
-        if (dataset instanceof DBTable && dataset.hasLobColumns() && false) {
-            DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(dataset);
-            buffer.append(compatibilityInterface.getForUpdateClause());
         }
     }
 

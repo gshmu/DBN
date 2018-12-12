@@ -34,7 +34,6 @@ public class DatasetEmptyFilter implements DatasetFilter{
         StringBuilder buffer = new StringBuilder();
         DatasetFilterUtil.createSimpleSelectStatement(dataset, buffer);
         DatasetFilterUtil.addOrderByClause(dataset, buffer, sortingState);
-        DatasetFilterUtil.addForUpdateClause(dataset, buffer);
         return buffer.toString();
     }
 

@@ -119,7 +119,6 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
         }
 
         DatasetFilterUtil.addOrderByClause(dataset, buffer, sortingState);
-        DatasetFilterUtil.addForUpdateClause(dataset, buffer);
         return buffer.toString();
     }
 
