@@ -4,7 +4,9 @@ import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.AbstractTask;
 import com.dci.intellij.dbn.common.thread.ThreadFactory;
+import com.dci.intellij.dbn.common.util.CustomRunnable;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ExecutorService;
 
@@ -13,7 +15,7 @@ public abstract class DBDebugOperationTask<T> extends AbstractTask<T> implements
     private String operationDescription;
 
 
-    public DBDebugOperationTask(Project project, String operationDescription) {
+    private DBDebugOperationTask(Project project, String operationDescription) {
         this.projectRef = ProjectRef.from(project);
         this.operationDescription = operationDescription;
     }
@@ -52,4 +54,15 @@ public abstract class DBDebugOperationTask<T> extends AbstractTask<T> implements
     private void handleException(Exception e) {
         sendErrorNotification("Debugger", "Error performing debug operation (" + operationDescription + ").", e.getMessage());
     }
+
+    public static <T> void invoke(@NotNull Project project, String title, CustomRunnable<Exception> runnable) {
+        new DBDebugOperationTask<T>(project, title) {
+            @Override
+            public void execute() throws Exception {
+                runnable.run();
+            }
+        }.start();
+    }
+
+
 }

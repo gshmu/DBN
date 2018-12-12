@@ -19,6 +19,7 @@ import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl;
 import com.intellij.debugger.engine.requests.RequestManagerImpl;
+import com.intellij.debugger.impl.PrioritizedTask;
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
 import com.intellij.debugger.jdi.VirtualMachineProxyImpl;
 import com.intellij.debugger.requests.ClassPrepareRequestor;
@@ -140,33 +141,30 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
     }
 
     public void registerBreakpoints(final List<XLineBreakpoint<XBreakpointProperties>> breakpoints, final List<? extends DBObject> objects) {
-        new ManagedThreadCommand(getJdiDebugProcess()) {
-            @Override
-            protected void action() throws Exception {
-                for (DBObject object : objects) {
-                    if (object instanceof DBSchemaObject) {
-                        DBSchemaObject schemaObject = (DBSchemaObject) object;
-                        DBContentType contentType = schemaObject.getContentType();
-                        if (contentType == DBContentType.CODE) {
-                            prepareObjectClasses(schemaObject, DBContentType.CODE);
-                        } else if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
-                            prepareObjectClasses(schemaObject, DBContentType.CODE_SPEC);
-                            prepareObjectClasses(schemaObject, DBContentType.CODE_BODY);
-                        }
-                    }
-                }
-
-                for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
-                    XBreakpointProperties properties = breakpoint.getProperties();
-                    if (properties instanceof DBBreakpointProperties) {
-                        DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
-                        if (breakpointProperties.getConnectionHandler() == getConnectionHandler()) {
-                            prepareObjectClasses(breakpoint);
-                        }
+        ManagedThreadCommand.invoke(getJdiDebugProcess(), PrioritizedTask.Priority.LOW, () -> {
+            for (DBObject object : objects) {
+                if (object instanceof DBSchemaObject) {
+                    DBSchemaObject schemaObject = (DBSchemaObject) object;
+                    DBContentType contentType = schemaObject.getContentType();
+                    if (contentType == DBContentType.CODE) {
+                        prepareObjectClasses(schemaObject, DBContentType.CODE);
+                    } else if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
+                        prepareObjectClasses(schemaObject, DBContentType.CODE_SPEC);
+                        prepareObjectClasses(schemaObject, DBContentType.CODE_BODY);
                     }
                 }
             }
-        }.invoke();
+
+            for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
+                XBreakpointProperties properties = breakpoint.getProperties();
+                if (properties instanceof DBBreakpointProperties) {
+                    DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
+                    if (breakpointProperties.getConnectionHandler() == getConnectionHandler()) {
+                        prepareObjectClasses(breakpoint);
+                    }
+                }
+            }
+        });
     }
 
     private void prepareObjectClasses(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
@@ -204,22 +202,19 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
 
     @Override
     protected void unregisterDatabaseBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
-        new ManagedThreadCommand(getJdiDebugProcess()) {
-            @Override
-            protected void action() throws Exception {
-                RequestManagerImpl requestsManager = getRequestsManager();
-                LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
-                if (temporary) {
-                    final Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
-                    for (EventRequest request : requests) {
-                        request.disable();
-                    }
-
-                } else {
-                    requestsManager.deleteRequest(lineBreakpoint);
+        ManagedThreadCommand.invoke(getJdiDebugProcess(), PrioritizedTask.Priority.LOW, () -> {
+            RequestManagerImpl requestsManager = getRequestsManager();
+            LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
+            if (temporary) {
+                final Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
+                for (EventRequest request : requests) {
+                    request.disable();
                 }
+
+            } else {
+                requestsManager.deleteRequest(lineBreakpoint);
             }
-        }.invoke();
+        });
     }
 
     @Nullable

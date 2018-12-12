@@ -333,66 +333,56 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     @Override
     public void startStepOver() {
-        new DBDebugOperationTask(getProject(), "step over") {
-            public void execute() throws Exception {
-                DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                runtimeInfo = debuggerInterface.stepOver(debugConnection);
-                suspendSession();
-            }
-        }.start();
+        DBDebugOperationTask.invoke(getProject(), "step over", () -> {
+            DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+            runtimeInfo = debuggerInterface.stepOver(debugConnection);
+            suspendSession();
+        });
     }
 
     @Override
     public void startStepInto() {
-        new DBDebugOperationTask(getProject(), "step into") {
-            public void execute() throws SQLException {
-                DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                runtimeInfo = debuggerInterface.stepInto(debugConnection);
-                suspendSession();
-            }
-        }.start();
+        DBDebugOperationTask.invoke(getProject(), "step into", () -> {
+            DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+            runtimeInfo = debuggerInterface.stepInto(debugConnection);
+            suspendSession();
+        });
     }
 
     @Override
     public void startStepOut() {
-        new DBDebugOperationTask(getProject(), "step out") {
-            public void execute() throws SQLException {
-                DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                runtimeInfo = debuggerInterface.stepOut(debugConnection);
-                suspendSession();
-            }
-        }.start();
+        DBDebugOperationTask.invoke(getProject(), "step out", () -> {
+            DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+            runtimeInfo = debuggerInterface.stepOut(debugConnection);
+            suspendSession();
+        });
     }
 
     @Override
     public void resume() {
-        new DBDebugOperationTask(getProject(), "resume execution") {
-            public void execute() throws SQLException {
-                DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                runtimeInfo = debuggerInterface.resumeExecution(debugConnection);
-                suspendSession();
-            }
-        }.start();
+        DBDebugOperationTask.invoke(getProject(), "resume execution", () -> {
+            DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+            runtimeInfo = debuggerInterface.resumeExecution(debugConnection);
+            suspendSession();
+        });
     }
 
     @Override
     public void runToPosition(@NotNull final XSourcePosition position) {
-        new DBDebugOperationTask(getProject(), "run to position") {
-            public void execute() throws SQLException {
-                DBSchemaObject object = DBDebugUtil.getObject(position);
-                if (object != null) {
-                    DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                    runtimeInfo = debuggerInterface.runToPosition(
-                            object.getSchema().getName(),
-                            object.getName(),
-                            object.getObjectType().getName().toUpperCase(),
-                            position.getLine(),
-                            debugConnection);
-                }
-
-                suspendSession();
+        DBDebugOperationTask.invoke(getProject(), "run to position", () -> {
+            DBSchemaObject object = DBDebugUtil.getObject(position);
+            if (object != null) {
+                DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                runtimeInfo = debuggerInterface.runToPosition(
+                        object.getSchema().getName(),
+                        object.getName(),
+                        object.getObjectType().getName().toUpperCase(),
+                        position.getLine(),
+                        debugConnection);
             }
-        }.start();
+
+            suspendSession();
+        });
     }
 
     @NotNull
@@ -404,13 +394,11 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     @Override
     public void startPausing() {
         // NOT SUPPORTED!!!
-        new DBDebugOperationTask(getProject(), "run to position") {
-            public void execute() throws SQLException {
-                DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
-                suspendSession();
-            }
-        }.start();
+        DBDebugOperationTask.invoke(getProject(), "run to position", () -> {
+            DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+            runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
+            suspendSession();
+        });
     }
 
     private void showErrorDialog(SQLException e) {
