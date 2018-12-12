@@ -22,7 +22,7 @@ public abstract class LoadInProgressRegistry<T extends Disposable> extends Dispo
         nodes.add(node);
         if (startTimer) {
             Timer reloader = new Timer("DBN - Object Browser (load in progress reload timer)");
-            reloader.schedule(new RefreshTask(), 0, LoadIcon.ROLL_INTERVAL);
+            reloader.schedule(new RefreshTask(), 0, LoadInProgressIcon.ROLL_INTERVAL);
         }
     }
 

@@ -1,23 +1,32 @@
 package com.dci.intellij.dbn.common.load;
 
+import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.intellij.openapi.util.IconLoader;
+
+import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Field;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.*;
+public class LoadInProgressIcon implements Icon{
+    public static final Icon INSTANCE = new LoadInProgressIcon();
 
-import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.intellij.openapi.util.IconLoader;
-import com.intellij.ui.AnimatedIcon;
+    public static int ROLL_INTERVAL = 50;
+    private static int ROLL_ELEMENTS = 12;
 
-public class LoadIcon implements Icon{
-
-    public static final Icon INSTANCE = new AnimatedIcon.Default();
-    public static final int ROLL_INTERVAL = AnimatedIcon.Default.DELAY;
-    public static final int ROLL_ELEMENTS = 12;
-
-    private static Icon[] ICONS = new Icon[ROLL_ELEMENTS];
+    private static Icon[] ICONS;
     static {
+        try {
+            // TODO workaround for spinner change from 12 to 8 (go standard api if possible)
+            Field field = Class.forName("com.intellij.icons.AllIcons$Process").getDeclaredField("Step_9");
+            if (field.getAnnotation(Deprecated.class) != null) {
+                ROLL_INTERVAL = 80;
+                ROLL_ELEMENTS = 8;
+            }
+        } catch (Throwable ignored) {}
+
+        ICONS = new Icon[ROLL_ELEMENTS];
         for (int i = 0; i < ICONS.length; i++) {
             ICONS[i] = IconLoader.getIcon("/process/step_" + (i + 1) + ".png");
         }

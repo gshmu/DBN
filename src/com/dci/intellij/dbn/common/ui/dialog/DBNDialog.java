@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -11,6 +7,9 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper implements DisposableProjectComponent{
     private C component;
@@ -51,6 +50,11 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
             return focusComponent == null ? super.getPreferredFocusedComponent() : focusComponent;
         }
         return null;
+    }
+
+    @Override
+    protected void doHelpAction() {
+        super.doHelpAction();
     }
 
     @NotNull
