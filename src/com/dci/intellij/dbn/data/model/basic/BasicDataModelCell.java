@@ -119,7 +119,8 @@ public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> impleme
     }
 
     public String toString() {
-        return (userValue == null ? null : userValue.toString()) + " - " + super.toString();
+        // IMPORTANT return user value for copy to clipboard support
+        return getFormattedUserValue();
     }
 
     @NotNull

@@ -128,14 +128,14 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
     public void openProjectSettings(ConfigId configId) {
         Project project = getProject();
         ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
-        settingsDialog.focusSettings(configId);
+        settingsDialog.selectSettings(configId);
         settingsDialog.show();
     }
 
     public void openConnectionSettings(@Nullable ConnectionId connectionId) {
         Project project = getProject();
         ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
-        settingsDialog.focusConnectionSettings(connectionId);
+        settingsDialog.selectConnectionSettings(connectionId);
         settingsDialog.show();
     }
 
@@ -145,7 +145,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
         ConnectionBundleSettingsForm settingsEditor = settingsDialog.getProjectSettings().getConnectionSettings().getSettingsEditor();
         if (settingsEditor != null) {
             ConnectionId connectionId = settingsEditor.createNewConnection(databaseType, configType);
-            settingsDialog.focusConnectionSettings(connectionId);
+            settingsDialog.selectConnectionSettings(connectionId);
             settingsDialog.show();
         }
     }
@@ -156,7 +156,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
         ConnectionBundleSettingsForm settingsEditor = settingsDialog.getProjectSettings().getConnectionSettings().getSettingsEditor();
         if (settingsEditor != null) {
             settingsEditor.importTnsNames(tnsNames);
-            settingsDialog.focusConnectionSettings(null);
+            settingsDialog.selectConnectionSettings(null);
             settingsDialog.show();
         }
     }

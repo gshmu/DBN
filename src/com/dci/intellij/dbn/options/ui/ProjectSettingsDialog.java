@@ -129,17 +129,17 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
         }
     }
 
-    public void focusConnectionSettings(@Nullable ConnectionId connectionId) {
+    public void selectConnectionSettings(@Nullable ConnectionId connectionId) {
         ProjectSettingsEditorForm settingsEditor = projectSettings.getSettingsEditor();
         if (settingsEditor != null) {
-            settingsEditor.focusConnectionSettings(connectionId);
+            settingsEditor.selectConnectionSettings(connectionId);
         }
     }
 
-    public void focusSettings(ConfigId configId) {
+    public void selectSettings(ConfigId configId) {
         ProjectSettingsEditorForm globalSettingsEditor = projectSettings.getSettingsEditor();
         if (globalSettingsEditor != null) {
-            globalSettingsEditor.focusSettingsEditor(configId);
+            globalSettingsEditor.selectSettingsEditor(configId);
         }
     }
 }
