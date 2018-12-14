@@ -171,16 +171,16 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         return mainPanel;
     }
 
-    void focusConnectionSettings(@Nullable ConnectionId connectionId) {
+    void selectConnectionSettings(@Nullable ConnectionId connectionId) {
         ConnectionBundleSettings connectionSettings = getConfiguration().getConnectionSettings();
         ConnectionBundleSettingsForm settingsEditor = connectionSettings.getSettingsEditor();
         if (settingsEditor != null) {
             settingsEditor.selectConnection(connectionId);
-            focusSettingsEditor(ConfigId.CONNECTIONS);
+            selectSettingsEditor(ConfigId.CONNECTIONS);
         }
     }
 
-    void focusSettingsEditor(ConfigId configId) {
+    void selectSettingsEditor(ConfigId configId) {
         Configuration configuration = getConfiguration().getConfiguration(configId);
         if (configuration != null) {
             ConfigurationEditorForm settingsEditor = configuration.getSettingsEditor();
