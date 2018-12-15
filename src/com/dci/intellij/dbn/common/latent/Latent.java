@@ -4,6 +4,7 @@ public class Latent<T> {
     private T value;
     private Loader<T> loader;
     private boolean loaded;
+    protected boolean loading;
 
     Latent(Loader<T> loader) {
         this.loader = loader;
@@ -18,10 +19,12 @@ public class Latent<T> {
             synchronized (this) {
                 if (shouldLoad()) {
                     try {
+                        loading = true;
                         loading();
                         value = loader.load();
-                    } finally {
                         loaded(value);
+                    } finally {
+                        loading = false;
                     }
                 }
             }

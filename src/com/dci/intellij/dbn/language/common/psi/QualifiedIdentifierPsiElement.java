@@ -18,8 +18,8 @@ import java.util.List;
 
 public class QualifiedIdentifierPsiElement extends SequencePsiElement {
     private Latent<ParseVariants> parseVariants = MutableLatent.create(
-            this::getElementsCount,
-            this::buildParseVariants);
+            () -> this.getElementsCount(),
+            () -> this.buildParseVariants());
 
     public QualifiedIdentifierPsiElement(ASTNode astNode, ElementType elementType) {
         super(astNode, elementType);

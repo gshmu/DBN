@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.project.Project;
@@ -52,8 +53,9 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                 "Extracting explain plan for " + executable.getSpecificElementType().getDescription(),
                 TaskInstruction.CANCELLABLE);
 
+        DBLanguagePsiFile psiFile = executable.getFile();
         FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-        connectionMappingManager.selectConnectionAndSchema(executable.getFile(),
+        connectionMappingManager.selectConnectionAndSchema(psiFile,
                 ConnectionAction.create("generating the explain plan", executable.getFile(), taskInstructions, action -> {
                     ConnectionHandler connectionHandler = action.getConnectionHandler();
                     DBSchema currentSchema = executable.getFile().getDatabaseSchema();
