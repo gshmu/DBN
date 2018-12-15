@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.code.common.style.presets.clause;
 
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
@@ -33,9 +34,10 @@ public class ClauseChopDownIfLongStatementPreset extends ClauseAbstractPreset {
     private NamedPsiElement getEnclosingStatementElement(BasePsiElement psiElement) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
         if (parentPsiElement != null) {
+            DBLanguagePsiFile psiFile = parentPsiElement.getFile();
             NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.findEnclosingPsiElement(ElementTypeAttribute.STATEMENT);
             if (namedPsiElement == null) {
-                PsiElement childPsiElement = parentPsiElement.getFile().getFirstChild();
+                PsiElement childPsiElement = psiFile.getFirstChild();
                 while (childPsiElement != null) {
                     if (childPsiElement instanceof NamedPsiElement) {
                         return (NamedPsiElement) childPsiElement;

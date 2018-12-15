@@ -45,7 +45,7 @@ public class DBLCodeStyleManager extends AbstractProjectComponent implements Per
         return FailsafeUtil.getComponent(project, DBLCodeStyleManager.class);
     }
 
-    public void formatCase(PsiFile file) {
+    public void formatCase(@NotNull PsiFile file) {
         Document document = DocumentUtil.getDocument(file);
         if (document != null && document.isWritable()) {
             Editor[] editors = EditorFactory.getInstance().getEditors(document);

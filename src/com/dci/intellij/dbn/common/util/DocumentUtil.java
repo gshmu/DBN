@@ -103,7 +103,7 @@ public class DocumentUtil {
         }
     }
 
-    public static Document getDocument(PsiFile file) {
+    public static Document getDocument(@NotNull PsiFile file) {
         return PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
     }
 
