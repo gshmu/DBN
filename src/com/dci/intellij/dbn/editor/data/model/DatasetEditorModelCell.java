@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -261,8 +262,10 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     private void scrollToVisible() {
-        DatasetEditorTable table = getEditorTable();
-        table.scrollRectToVisible(table.getCellRect(getRow().getIndex(), getIndex(), true));
+        ConditionalLaterInvocator.invoke(() -> {
+            DatasetEditorTable table = getEditorTable();
+            table.scrollRectToVisible(table.getCellRect(getRow().getIndex(), getIndex(), true));
+        });
     }
 
     public boolean isResultSetUpdatable() {
