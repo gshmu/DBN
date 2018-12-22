@@ -24,7 +24,7 @@ public class ReloadDataAction extends AbstractDataEditorAction {
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Reload");
         DatasetEditor datasetEditor = getDatasetEditor(e);

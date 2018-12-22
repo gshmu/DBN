@@ -280,13 +280,15 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
 
     @Override
     public void dispose() {
-        super.dispose();
-        EditorFactory.getInstance().releaseEditor(viewer);
-        viewer = null;
-        previewDocument = null;
-        for (DatasetBasicFilterConditionForm conditionForm : conditionForms) {
-            conditionForm.dispose();
+        if (!isDisposed()) {
+            super.dispose();
+            EditorFactory.getInstance().releaseEditor(viewer);
+            viewer = null;
+            previewDocument = null;
+            for (DatasetBasicFilterConditionForm conditionForm : conditionForms) {
+                conditionForm.dispose();
+            }
+            conditionForms.clear();
         }
-        conditionForms.clear();
     }
 }

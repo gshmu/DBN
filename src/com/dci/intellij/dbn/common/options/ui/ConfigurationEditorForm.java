@@ -110,7 +110,10 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
     public void focus() {}
 
     public void dispose() {
-        super.dispose();
-        configuration = null;
+        if (!isDisposed()) {
+            super.dispose();
+            configuration.disposeUIResources();
+            configuration = null;
+        }
     }
 }

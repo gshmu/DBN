@@ -63,8 +63,10 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
 
     @Override
     public void dispose() {
-        super.dispose();
-        parentComponent = null;
+        if (!isDisposed()) {
+            super.dispose();
+            parentComponent = null;
+        }
     }
 
 
