@@ -26,7 +26,7 @@ public class CloseOnESCAction extends DataSearchHeaderAction implements DumbAwar
         if (KeyUtil.isEmacsKeymap()) {
             shortcuts.add(new KeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK), null));
             ActionListener actionListener = e -> {
-                DataContext dataContext = DataManager.getInstance().getDataContext(searchComponent);
+                DataContext dataContext = DataManager.getInstance().getDataContext(searchComponent.getComponent());
                 ActionManager actionManager = ActionManager.getInstance();
                 AnActionEvent actionEvent = new AnActionEvent(null, dataContext, "", getTemplatePresentation(), actionManager, 2);
                 CloseOnESCAction.this.actionPerformed(actionEvent);

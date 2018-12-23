@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.find;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.find.action.CloseOnESCAction;
 import com.dci.intellij.dbn.data.find.action.NextOccurrenceAction;
@@ -31,9 +32,10 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.LightColors;
 import com.intellij.ui.components.JBList;
-import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
@@ -48,32 +50,26 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.regex.Pattern;
 
-public class DataSearchComponent extends JPanel implements Disposable, SelectionListener, DataSearchResultListener, DataModelListener {
+public class DataSearchComponent extends DBNFormImpl implements Disposable, SelectionListener, DataSearchResultListener, DataModelListener {
     private static final int MATCHES_LIMIT = 10000;
-    private final Color BACKGROUND;
-    private final Color GRADIENT_C1;
-    private final Color GRADIENT_C2;
 
-    private static final Color BORDER_COLOR = new Color(0x87, 0x87, 0x87);
-    public static final Color COMPLETION_BACKGROUND_COLOR = new Color(235, 244, 254);
-    private static final Color FOCUS_CATCHER_COLOR = new Color(0x9999ff);
-
-    private JComponent toolbarComponent;
-    private JLabel matchInfoLabel;
+    private JPanel mainPanel;
+    private JPanel actionsPanel;
     private JTextField searchField;
-    private ActionToolbar actionsToolbar;
-    private SearchableDataComponent searchableComponent;
+    private JLabel matchesLabel;
+    private JLabel closeLabel;
 
-    private boolean myListeningSelection = false;
     private DataFindModel findModel;
     private DataSearchResultController searchResultController;
+    private boolean myListeningSelection = false;
+    private ActionToolbar actionsToolbar;
+    private SearchableDataComponent searchableComponent;
 
     public JTextField getSearchField() {
         return searchField;
     }
 
     public DataSearchComponent(final SearchableDataComponent searchableComponent) {
-        super(new BorderLayout(0, 0));
         this.searchableComponent = searchableComponent;
         BasicTable<? extends BasicDataModel> table = searchableComponent.getTable();
         DataModel dataModel = table.getModel();
@@ -88,25 +84,25 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
         searchResultController.updateResult(findModel);
 
         Disposer.register(this, searchResultController);
-
-
-        GRADIENT_C1 = getBackground();
-        GRADIENT_C2 = new Color(Math.max(0, GRADIENT_C1.getRed() - 0x18), Math.max(0, GRADIENT_C1.getGreen() - 0x18), Math.max(0, GRADIENT_C1.getBlue() - 0x18));
-        BACKGROUND = UIUtil.getTextFieldBackground();
-
         configureLeadPanel();
 
-        findModel.addObserver(new DataFindModel.FindModelObserver() {
+        findModel.addObserver(findModel -> {
+            String stringToFind = findModel.getStringToFind();
+            if (!wholeWordsApplicable(stringToFind)) {
+                findModel.setWholeWordsOnly(false);
+            }
+            updateUIWithFindModel();
+            updateResults(true);
+            FindManager findManager = getFindManager();
+            syncFindModels(findManager.getFindInFileModel(), DataSearchComponent.this.findModel);
+        });
+
+        closeLabel.setText(" ");
+        closeLabel.setIcon(IconLoader.getIcon("/actions/cross.png"));
+        closeLabel.addMouseListener(new MouseAdapter() {
             @Override
-            public void findModelChanged(FindModel findModel) {
-                String stringToFind = findModel.getStringToFind();
-                if (!wholeWordsApplicable(stringToFind)) {
-                    findModel.setWholeWordsOnly(false);
-                }
-                updateUIWithFindModel();
-                updateResults(true);
-                FindManager findManager = getFindManager();
-                syncFindModels(findManager.getFindInFileModel(), DataSearchComponent.this.findModel);
+            public void mousePressed(final MouseEvent e) {
+                close();
             }
         });
 
@@ -128,6 +124,17 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
     }
 
     @Override
+    public JComponent getComponent() {
+        return mainPanel;
+    }
+
+    @Nullable
+    @Override
+    public JComponent getPreferredFocusedComponent() {
+        return searchField;
+    }
+
+    @Override
     public void modelChanged() {
         searchResultController.updateResult(findModel);
     }
@@ -142,17 +149,17 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
                 if (count > 0) {
                     setRegularBackground();
                     if (count > 1) {
-                        matchInfoLabel.setText(count + " matches");
+                        matchesLabel.setText(count + " matches");
                     } else {
-                        matchInfoLabel.setText("1 match");
+                        matchesLabel.setText("1 match");
                     }
                 } else {
                     setNotFoundBackground();
-                    matchInfoLabel.setText("No matches");
+                    matchesLabel.setText("No matches");
                 }
             } else {
                 setRegularBackground();
-                matchInfoLabel.setText("More than " + searchResult.getMatchesLimit() + " matches");
+                matchesLabel.setText("More than " + searchResult.getMatchesLimit() + " matches");
                 boldMatchInfo();
             }
         }
@@ -178,9 +185,7 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
     }
 
     private void configureLeadPanel() {
-        JPanel myLeadPanel = createLeadPane();
-        add(myLeadPanel, BorderLayout.WEST);
-        searchField = createTextField(myLeadPanel);
+        initTextField();
         setupSearchFieldListener();
 
         DefaultActionGroup myActionsGroup = new DefaultActionGroup("search bar", false);
@@ -196,19 +201,9 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
         myActionsGroup.addAction(new ToggleWholeWordsOnlyAction(this));
 
         actionsToolbar.setLayoutPolicy(ActionToolbar.AUTO_LAYOUT_POLICY);
-        toolbarComponent = actionsToolbar.getComponent();
-        toolbarComponent.setBorder(null);
-        toolbarComponent.setOpaque(false);
+        actionsPanel.add(actionsToolbar.getComponent(), BorderLayout.CENTER);
 
-        myLeadPanel.add(toolbarComponent);
-
-        JPanel tailPanel = new NonOpaquePanel(new BorderLayout(5, 0));
-        JPanel tailContainer = new NonOpaquePanel(new BorderLayout(5, 0));
-        tailContainer.add(tailPanel, BorderLayout.EAST);
-        add(tailContainer, BorderLayout.CENTER);
-
-        matchInfoLabel = new JLabel();
-        setSmallerFontAndOpaque(matchInfoLabel);
+        setSmallerFontAndOpaque(matchesLabel);
 
 
         JLabel closeLabel = new JLabel(" ", IconLoader.getIcon("/actions/cross.png"), SwingConstants.RIGHT);
@@ -220,14 +215,8 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
         });
 
         closeLabel.setToolTipText("Close search bar (Escape)");
-
-        JPanel labelsPanel = new NonOpaquePanel(new FlowLayout());
-
-        labelsPanel.add(matchInfoLabel);
-        tailPanel.add(labelsPanel, BorderLayout.CENTER);
-        tailPanel.add(closeLabel, BorderLayout.EAST);
-
         CompatibilityUtil.setSmallerFont(searchField);
+
         searchField.registerKeyboardAction(e -> {
             if (StringUtil.isEmptyOrSpaces(searchField.getText())) {
                 close();
@@ -247,8 +236,6 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
                 setInitialText(initialText);
             }
         });
-
-        CompatibilityUtil.setSmallerFontForChildren(toolbarComponent);
     }
 
     private void setupSearchFieldListener() {
@@ -311,7 +298,6 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
         }
 
         setTrackingSelection(!findModel.isGlobal());
-        CompatibilityUtil.setSmallerFontForChildren(toolbarComponent);
     }
 
     private static boolean wholeWordsApplicable(String stringToFind) {
@@ -336,57 +322,34 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
         myListeningSelection = b;
     }
 
-    private static JPanel createLeadPane() {
-        return new NonOpaquePanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-    }
-
-    public void showHistory(final boolean byClickingToolbarButton, JTextField textField) {
+    public void showHistory(boolean byClickingToolbarButton, JTextField textField) {
         FeatureUsageTracker.getInstance().triggerFeatureUsed("find.recent.search");
         FindSettings settings = FindSettings.getInstance();
         String[] recent = textField == searchField ? settings.getRecentFindStrings() : settings.getRecentReplaceStrings();
-        JBList list = new JBList((Object[]) ArrayUtil.reverseArray(recent));
-        CompatibilityUtil.showSearchCompletionPopup(byClickingToolbarButton, toolbarComponent, list, "Recent Searches", textField);
+        JBList<String> list = new JBList<>((String[]) ArrayUtil.reverseArray(recent));
+        CompatibilityUtil.showSearchCompletionPopup(byClickingToolbarButton, actionsPanel, list, "Recent Searches", textField);
     }
 
-    private void paintBorderOfTextField(Graphics g) {
-        if (!(UIUtil.isUnderAquaLookAndFeel() || CompatibilityUtil.isUnderGTKLookAndFeel() || UIUtil.isUnderNimbusLookAndFeel()) &&
-                isFocusOwner()) {
-            final Rectangle bounds = getBounds();
-            g.setColor(FOCUS_CATCHER_COLOR);
-            g.drawRect(0, 0, bounds.width - 1, bounds.height - 1);
-        }
-    }
-
-    private JTextField createTextField(JPanel leadPanel) {
-        final JTextField editorTextField = new JTextField("") {
-            @Override
-            protected void paintBorder(final Graphics g) {
-                super.paintBorder(g);
-                paintBorderOfTextField(g);
-            }
-        };
-        editorTextField.setColumns(25);
+    private void initTextField() {
+        //searchField.setColumns(25);
         if (CompatibilityUtil.isUnderGTKLookAndFeel()) {
-            editorTextField.setOpaque(false);
+            searchField.setOpaque(false);
         }
-        leadPanel.add(editorTextField);
-        editorTextField.putClientProperty("AuxEditorComponent", Boolean.TRUE);
-
-        editorTextField.addFocusListener(new FocusListener() {
+        searchField.putClientProperty("AuxEditorComponent", Boolean.TRUE);
+        searchField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(final FocusEvent e) {
-                editorTextField.revalidate();
-                editorTextField.repaint();
+                searchField.revalidate();
+                searchField.repaint();
             }
 
             @Override
             public void focusLost(final FocusEvent e) {
-                editorTextField.revalidate();
-                editorTextField.repaint();
+                searchField.revalidate();
+                searchField.repaint();
             }
         });
-        new CloseOnESCAction(this, editorTextField);
-        return editorTextField;
+        new CloseOnESCAction(this, searchField);
     }
 
 
@@ -423,7 +386,7 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
     }
 
     @Override
-    public void selectionChanged(SelectionEvent e) {
+    public void selectionChanged(@NotNull SelectionEvent e) {
         updateResults(true);
     }
 
@@ -436,7 +399,6 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
         component.setOpaque(false);
     }
 
-    @Override
     public void requestFocus() {
         searchField.setSelectionStart(0);
         searchField.setSelectionEnd(searchField.getText().length());
@@ -448,9 +410,7 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
         searchableComponent.hideSearchHeader();
     }
 
-    @Override
     public void removeNotify() {
-        super.removeNotify();
 /*
         // TODO
         myLivePreview.cleanUp();
@@ -461,14 +421,15 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
     }
 
     private void updateResults(final boolean allowedToChangedEditorSelection) {
-        matchInfoLabel.setFont(matchInfoLabel.getFont().deriveFont(Font.PLAIN));
-        final String text = searchField.getText();
+        matchesLabel.setFont(matchesLabel.getFont().deriveFont(Font.PLAIN));
+        String text = searchField.getText();
         if (text.length() == 0) {
             nothingToSearchFor();
             searchableComponent.cancelEditActions();
-            searchableComponent.getTable().clearSelection();
-            searchableComponent.getTable().revalidate();
-            searchableComponent.getTable().repaint();
+            BasicTable table = searchableComponent.getTable();
+            table.clearSelection();
+            table.revalidate();
+            table.repaint();
         } else {
 
             if (findModel.isRegularExpressions()) {
@@ -476,7 +437,7 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
                     Pattern.compile(text);
                 } catch (Exception e) {
                     setNotFoundBackground();
-                    matchInfoLabel.setText("Incorrect regular expression");
+                    matchesLabel.setText("Incorrect regular expression");
                     boldMatchInfo();
                     getSearchResult().clear();
                     return;
@@ -508,19 +469,20 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
 
     private void updateUIWithEmptyResults() {
         setRegularBackground();
-        matchInfoLabel.setText("");
+        matchesLabel.setText("");
     }
 
     private void boldMatchInfo() {
-        matchInfoLabel.setFont(matchInfoLabel.getFont().deriveFont(Font.BOLD));
+        matchesLabel.setFont(matchesLabel.getFont().deriveFont(Font.BOLD));
     }
 
-    private void setRegularBackground() {
-        searchField.setBackground(BACKGROUND);
-    }
 
     private void setNotFoundBackground() {
         searchField.setBackground(LightColors.RED);
+    }
+
+    private void setRegularBackground() {
+        searchField.setBackground(UIUtil.getTextFieldBackground());
     }
 
     public String getTextInField() {
@@ -541,32 +503,8 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
     }
 
     @Override
-    public Insets getInsets() {
-        Insets insets = super.getInsets();
-        if (CompatibilityUtil.isUnderGTKLookAndFeel() || UIUtil.isUnderNimbusLookAndFeel()) {
-            insets.top += 1;
-            insets.bottom += 2;
-        }
-        return insets;
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        final Graphics2D g2d = (Graphics2D) g;
-
-        if (!CompatibilityUtil.isUnderGTKLookAndFeel()) {
-            g2d.setPaint(new GradientPaint(0, 0, GRADIENT_C1, 0, getHeight(), GRADIENT_C2));
-            g2d.fillRect(1, 1, getWidth(), getHeight() - 1);
-            g2d.setPaint(null);
-        }
-
-        g.setColor(BORDER_COLOR);
-        g.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
-    }
-
-    @Override
     public void dispose() {
+        super.dispose();
         searchableComponent = null;
         findModel = null;
     }

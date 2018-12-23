@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.InputEvent;
@@ -20,24 +21,26 @@ public class PrevOccurrenceAction extends DataSearchHeaderAction implements Dumb
     public PrevOccurrenceAction(DataSearchComponent searchComponent, JComponent component, boolean isSearchComponent) {
         super(searchComponent);
 
-        copyFrom(ActionManager.getInstance().getAction(IdeActions.ACTION_PREVIOUS_OCCURENCE));
-        Set<Shortcut> shortcuts = new HashSet<Shortcut>();
-        ContainerUtil.addAll(shortcuts, ActionManager.getInstance().getAction(IdeActions.ACTION_FIND_PREVIOUS).getShortcutSet().getShortcuts());
+        ActionManager actionManager = ActionManager.getInstance();
+        copyFrom(actionManager.getAction(IdeActions.ACTION_PREVIOUS_OCCURENCE));
+        Set<Shortcut> shortcuts = new HashSet<>();
+        ContainerUtil.addAll(shortcuts, actionManager.getAction(IdeActions.ACTION_FIND_PREVIOUS).getShortcutSet().getShortcuts());
 
         if (isSearchComponent) {
-            ContainerUtil.addAll(shortcuts, ActionManager.getInstance().getAction(IdeActions.ACTION_EDITOR_MOVE_CARET_UP).getShortcutSet().getShortcuts());
+            ContainerUtil.addAll(shortcuts, actionManager.getAction(IdeActions.ACTION_EDITOR_MOVE_CARET_UP).getShortcutSet().getShortcuts());
             shortcuts.add(new KeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK), null));
         }
         registerShortcutsToComponent(shortcuts, this, component);
     }
 
     @Override
-    public void actionPerformed(final AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         getSearchComponent().searchBackward();
     }
 
     @Override
-    public void update(final AnActionEvent e) {
-        e.getPresentation().setEnabled(getSearchComponent().hasMatches());
+    public void update(@NotNull AnActionEvent e) {
+        boolean hasMatches = getSearchComponent().hasMatches();
+        e.getPresentation().setEnabled(hasMatches);
     }
 }

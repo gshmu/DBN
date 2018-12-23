@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.execution.statement.result.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.latent.DisposableLatent;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -33,13 +35,19 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     private JPanel actionsPanel;
     private JPanel statusPanel;
     private JScrollPane resultScrollPane;
-    private ResultSetTable resultTable;
+    private ResultSetTable<ResultSetDataModel> resultTable;
     private JLabel statusLabel;
     private JPanel searchPanel;
     private JPanel resultPanel;
     private StatementExecutionCursorResult executionResult;
     private RecordViewInfo recordViewInfo;
-    private DataSearchComponent dataSearchComponent;
+
+    private Latent<DataSearchComponent> dataSearchComponent = DisposableLatent.create(this, () -> {
+        DataSearchComponent dataSearchComponent = new DataSearchComponent(StatementExecutionResultForm.this);
+        searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
+        ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), executionResult);
+        return dataSearchComponent;
+    });
 
     public StatementExecutionResultForm(final StatementExecutionCursorResult executionResult) {
         this.executionResult = executionResult;
@@ -54,7 +62,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
                     executionResult.getIcon()));
 
         resultPanel.setBorder(IdeBorderFactory.createBorder());
-        resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
+        resultTable = new ResultSetTable<ResultSetDataModel>(executionResult.getTableModel(), true, recordViewInfo);
         resultTable.setName(executionResult.getName());
 
         resultScrollPane.setViewportView(resultTable);
@@ -90,7 +98,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
             StatementExecutionCursorResult executionResult = getExecutionResult();
             JScrollBar horizontalScrollBar = resultScrollPane.getHorizontalScrollBar();
             int horizontalScrolling = horizontalScrollBar.getValue();
-            resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
+            resultTable = new ResultSetTable<ResultSetDataModel>(executionResult.getTableModel(), true, recordViewInfo);
             resultScrollPane.setViewportView(resultTable);
             resultTable.initTableGutter();
             resultTable.setName(StatementExecutionResultForm.this.executionResult.getName());
@@ -145,15 +153,8 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     public void showSearchHeader() {
         resultTable.clearSelection();
 
-        if (dataSearchComponent == null) {
-            dataSearchComponent = new DataSearchComponent(this);
-            ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), executionResult);
-            searchPanel.add(dataSearchComponent, BorderLayout.CENTER);
-
-            Disposer.register(this, dataSearchComponent);
-        } else {
-            dataSearchComponent.initializeFindModel();
-        }
+        DataSearchComponent dataSearchComponent = getSearchComponent();
+        dataSearchComponent.initializeFindModel();
         if (searchPanel.isVisible()) {
             dataSearchComponent.getSearchField().selectAll();
         } else {
@@ -163,8 +164,12 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
     }
 
+    private DataSearchComponent getSearchComponent() {
+        return dataSearchComponent.get();
+    }
+
     public void hideSearchHeader() {
-        dataSearchComponent.resetFindModel();
+        getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);
 
         resultTable.revalidate();

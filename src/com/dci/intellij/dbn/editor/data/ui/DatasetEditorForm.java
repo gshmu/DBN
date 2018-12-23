@@ -54,7 +54,8 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     private Latent<DataSearchComponent> dataSearchComponent = DisposableLatent.create(this, () -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(DatasetEditorForm.this);
-        searchPanel.add(dataSearchComponent, BorderLayout.CENTER);
+        searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
+        ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), getDatasetEditor());
         return dataSearchComponent;
     });
 
@@ -191,7 +192,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         editorTable.cancelEditing();
         editorTable.clearSelection();
 
-        DataSearchComponent dataSearchComponent = this.dataSearchComponent.get();
+        DataSearchComponent dataSearchComponent = getSearchComponent();
         dataSearchComponent.initializeFindModel();
 
         if (searchPanel.isVisible()) {
@@ -203,8 +204,12 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     }
 
+    private DataSearchComponent getSearchComponent() {
+        return dataSearchComponent.get();
+    }
+
     public void hideSearchHeader() {
-        dataSearchComponent.get().resetFindModel();
+        getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);
         DatasetEditorTable editorTable = getEditorTable();
         editorTable.revalidate();
