@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.latent.DisposableLatent;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
@@ -33,10 +35,17 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
 
     private DBObjectRef<DBArgument> argumentRef;
     private ResultSetTable resultTable;
-    private DataSearchComponent dataSearchComponent;
     private MethodExecutionResult executionResult;
 
-    public MethodExecutionCursorResultForm(MethodExecutionResultForm parentComponent, MethodExecutionResult executionResult, DBArgument argument) {
+    private Latent<DataSearchComponent> dataSearchComponent = DisposableLatent.create(this, () -> {
+        DataSearchComponent dataSearchComponent = new DataSearchComponent(MethodExecutionCursorResultForm.this);
+        searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
+        ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), executionResult);
+        return dataSearchComponent;
+    });
+
+
+    MethodExecutionCursorResultForm(MethodExecutionResultForm parentComponent, MethodExecutionResult executionResult, DBArgument argument) {
         super(parentComponent);
         this.executionResult = executionResult;
         this.argumentRef = DBObjectRef.from(argument);
@@ -89,26 +98,24 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
     public void showSearchHeader() {
         resultTable.clearSelection();
 
-        if (dataSearchComponent == null) {
-            dataSearchComponent = new DataSearchComponent(this);
-            ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), executionResult);
-            searchPanel.add(dataSearchComponent, BorderLayout.CENTER);
-
-            Disposer.register(this, dataSearchComponent);
-        } else {
-            dataSearchComponent.initializeFindModel();
-        }
+        DataSearchComponent dataSearchComponent = getSearchComponent();
+        dataSearchComponent.initializeFindModel();
+        JTextField searchField = dataSearchComponent.getSearchField();
         if (searchPanel.isVisible()) {
-            dataSearchComponent.getSearchField().selectAll();
+            searchField.selectAll();
         } else {
             searchPanel.setVisible(true);
         }
-        dataSearchComponent.getSearchField().requestFocus();
+        searchField.requestFocus();
 
     }
 
+    private DataSearchComponent getSearchComponent() {
+        return dataSearchComponent.get();
+    }
+
     public void hideSearchHeader() {
-        dataSearchComponent.resetFindModel();
+        getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);
 
         resultTable.revalidate();

@@ -19,12 +19,13 @@ public class NextOccurrenceAction extends DataSearchHeaderAction implements Dumb
     public NextOccurrenceAction(DataSearchComponent searchComponent, JComponent component, boolean isSearchComponent) {
         super(searchComponent);
 
-        copyFrom(ActionManager.getInstance().getAction(IdeActions.ACTION_NEXT_OCCURENCE));
+        ActionManager actionManager = ActionManager.getInstance();
+        copyFrom(actionManager.getAction(IdeActions.ACTION_NEXT_OCCURENCE));
         Set<Shortcut> shortcuts = new HashSet<Shortcut>();
-        ContainerUtil.addAll(shortcuts, ActionManager.getInstance().getAction(IdeActions.ACTION_FIND_NEXT).getShortcutSet().getShortcuts());
+        ContainerUtil.addAll(shortcuts, actionManager.getAction(IdeActions.ACTION_FIND_NEXT).getShortcutSet().getShortcuts());
 
         if (isSearchComponent) {
-            ContainerUtil.addAll(shortcuts, ActionManager.getInstance().getAction(IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN).getShortcutSet().getShortcuts());
+            ContainerUtil.addAll(shortcuts, actionManager.getAction(IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN).getShortcutSet().getShortcuts());
             shortcuts.add(new KeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), null));
         }
         registerShortcutsToComponent(shortcuts, this, component);

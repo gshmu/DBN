@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.editor.session.ui;
 
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.latent.DisposableLatent;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -40,7 +42,13 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     private JPanel detailsPanel;
     private JPanel editorPanel;
     private SessionBrowserTable editorTable;
-    private DataSearchComponent dataSearchComponent;
+
+    private Latent<DataSearchComponent> dataSearchComponent = DisposableLatent.create(this, () -> {
+        DataSearchComponent dataSearchComponent = new DataSearchComponent(SessionBrowserForm.this);
+        searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
+        ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), getSessionBrowser());
+        return dataSearchComponent;
+    });
 
     private SessionBrowser sessionBrowser;
     private SessionBrowserDetailsForm detailsForm;
@@ -161,25 +169,24 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     public void showSearchHeader() {
         getEditorTable().clearSelection();
 
-        if (dataSearchComponent == null) {
-            dataSearchComponent = new DataSearchComponent(this);
-            searchPanel.add(dataSearchComponent, BorderLayout.CENTER);
-
-            Disposer.register(this, dataSearchComponent);
-        } else {
-            dataSearchComponent.initializeFindModel();
-        }
+        DataSearchComponent dataSearchComponent = getSearchComponent();
+        dataSearchComponent.initializeFindModel();
+        JTextField searchField = dataSearchComponent.getSearchField();
         if (searchPanel.isVisible()) {
-            dataSearchComponent.getSearchField().selectAll();
+            searchField.selectAll();
         } else {
             searchPanel.setVisible(true);    
         }
-        dataSearchComponent.getSearchField().requestFocus();
+        searchField.requestFocus();
 
     }
 
+    private DataSearchComponent getSearchComponent() {
+        return dataSearchComponent.get();
+    }
+
     public void hideSearchHeader() {
-        dataSearchComponent.resetFindModel();
+        getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);
         SessionBrowserTable editorTable = getEditorTable();
         editorTable.revalidate();
