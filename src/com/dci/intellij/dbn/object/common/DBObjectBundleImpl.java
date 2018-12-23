@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
@@ -97,7 +98,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private DBObjectList<DBObjectPrivilege> objectPrivileges;
     private DBObjectList<DBCharset> charsets;
 
-    private List<DBNativeDataType> nativeDataTypes;
+    private Latent<List<DBNativeDataType>> nativeDataTypes = Latent.create(() -> computeNativeDataTypes());
     private List<DBDataType> cachedDataTypes = new CopyOnWriteArrayList<>();
 
     private DBObjectListContainer objectLists;
@@ -241,21 +242,19 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @NotNull
     public List<DBNativeDataType> getNativeDataTypes(){
-        if (nativeDataTypes == null) {
-            synchronized (this) {
-                if (nativeDataTypes == null) {
-                    nativeDataTypes = new ArrayList<>();
+        return nativeDataTypes.get();
+    }
 
-                    DatabaseInterfaceProvider interfaceProvider = getConnectionHandler().getInterfaceProvider();
-                    List<DataTypeDefinition> dataTypeDefinitions = interfaceProvider.getNativeDataTypes().list();
-                    for (DataTypeDefinition dataTypeDefinition : dataTypeDefinitions) {
-                        DBNativeDataType dataType = new DBNativeDataType(dataTypeDefinition);
-                        nativeDataTypes.add(dataType);
-                    }
-                    nativeDataTypes.sort((o1, o2) -> -o1.compareTo(o2));
-                }
-            }
+    private List<DBNativeDataType> computeNativeDataTypes() {
+        List<DBNativeDataType> nativeDataTypes = new ArrayList<>();
+
+        DatabaseInterfaceProvider interfaceProvider = getConnectionHandler().getInterfaceProvider();
+        List<DataTypeDefinition> dataTypeDefinitions = interfaceProvider.getNativeDataTypes().list();
+        for (DataTypeDefinition dataTypeDefinition : dataTypeDefinitions) {
+            DBNativeDataType dataType = new DBNativeDataType(dataTypeDefinition);
+            nativeDataTypes.add(dataType);
         }
+        nativeDataTypes.sort((o1, o2) -> -o1.compareTo(o2));
         return nativeDataTypes;
     }
 

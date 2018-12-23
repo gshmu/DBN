@@ -187,20 +187,22 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
     @Override
     public void dispose() {
-        disposed = true;
-        DatabaseFileViewProvider cachedViewProvider = getCachedViewProvider();
-        if (cachedViewProvider != null) {
-            cachedViewProvider.markInvalidated();
-            List<PsiFile> cachedPsiFiles = cachedViewProvider.getCachedPsiFiles();
-            for (PsiFile cachedPsiFile: cachedPsiFiles) {
-                if (cachedPsiFile instanceof DBLanguagePsiFile) {
-                    DisposerUtil.dispose((DBLanguagePsiFile) cachedPsiFile);
+        if (!disposed) {
+            disposed = true;
+            DatabaseFileViewProvider cachedViewProvider = getCachedViewProvider();
+            if (cachedViewProvider != null) {
+                cachedViewProvider.markInvalidated();
+                List<PsiFile> cachedPsiFiles = cachedViewProvider.getCachedPsiFiles();
+                for (PsiFile cachedPsiFile: cachedPsiFiles) {
+                    if (cachedPsiFile instanceof DBLanguagePsiFile) {
+                        DisposerUtil.dispose((DBLanguagePsiFile) cachedPsiFile);
+                    }
                 }
-            }
 
-            setCachedViewProvider(null);
+                setCachedViewProvider(null);
+            }
+            putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
         }
-        putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
     }
 
     @Override

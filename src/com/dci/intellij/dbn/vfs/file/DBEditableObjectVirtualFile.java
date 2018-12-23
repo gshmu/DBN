@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -45,7 +45,7 @@ import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObject> {
     private static final List<DBContentVirtualFile> EMPTY_CONTENT_FILES = Collections.emptyList();
-    private List<DBContentVirtualFile> contentFiles;
+    private Latent<List<DBContentVirtualFile>> contentFiles = Latent.create(() -> computeContentFiles());
     private transient EditorProviderId selectedEditorProviderId;
     private SessionId databaseSessionId;
 
@@ -123,32 +123,30 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
     public List<DBContentVirtualFile> getContentFiles() {
-        if (contentFiles == null) {
-            synchronized (this) {
-                if (contentFiles == null) {
-                    contentFiles = new ArrayList<>();
-                    DBContentType objectContentType = getObject().getContentType();
-                    if (objectContentType.isBundle()) {
-                        DBContentType[] contentTypes = objectContentType.getSubContentTypes();
-                        for (DBContentType contentType : contentTypes) {
-                            DBContentVirtualFile virtualFile =
-                                    contentType.isCode() ? new DBSourceCodeVirtualFile(this, contentType) :
-                                            contentType.isData() ? new DBDatasetVirtualFile(this, contentType) : null;
-                            if (virtualFile != null) {
-                                contentFiles.add(virtualFile);
-                                Disposer.register(this, virtualFile);
-                            }
-                        }
-                    } else {
-                        DBContentVirtualFile virtualFile =
-                                objectContentType.isCode() ? new DBSourceCodeVirtualFile(this, objectContentType) :
-                                        objectContentType.isData() ? new DBDatasetVirtualFile(this, objectContentType) : null;
-                        if (virtualFile != null) {
-                            contentFiles.add(virtualFile);
-                            Disposer.register(this, virtualFile);
-                        }
-                    }
+        return contentFiles.get();
+    }
+
+    private List<DBContentVirtualFile> computeContentFiles() {
+        List<DBContentVirtualFile> contentFiles = new ArrayList<>();
+        DBContentType objectContentType = getObject().getContentType();
+        if (objectContentType.isBundle()) {
+            DBContentType[] contentTypes = objectContentType.getSubContentTypes();
+            for (DBContentType contentType : contentTypes) {
+                DBContentVirtualFile virtualFile =
+                        contentType.isCode() ? new DBSourceCodeVirtualFile(this, contentType) :
+                                contentType.isData() ? new DBDatasetVirtualFile(this, contentType) : null;
+                if (virtualFile != null) {
+                    contentFiles.add(virtualFile);
+                    Disposer.register(this, virtualFile);
                 }
+            }
+        } else {
+            DBContentVirtualFile virtualFile =
+                    objectContentType.isCode() ? new DBSourceCodeVirtualFile(this, objectContentType) :
+                            objectContentType.isData() ? new DBDatasetVirtualFile(this, objectContentType) : null;
+            if (virtualFile != null) {
+                contentFiles.add(virtualFile);
+                Disposer.register(this, virtualFile);
             }
         }
         return contentFiles;
@@ -267,8 +265,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Override
     public void dispose() {
         super.dispose();
-        CollectionUtil.clearCollection(contentFiles);
-        contentFiles = EMPTY_CONTENT_FILES;
+        contentFiles.set(EMPTY_CONTENT_FILES);
     }
 
 

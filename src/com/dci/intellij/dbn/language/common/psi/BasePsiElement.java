@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MutableLatent;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -707,15 +708,12 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     public DBObject resolveUnderlyingObject() {
         if (isVirtualObject()) {
-            if (getCachedUnderlyingObject() == null) {
-                synchronized (this) {
-                    if (getCachedUnderlyingObject() == null) {
+            Synchronized.run(this,
+                    () -> getCachedUnderlyingObject() == null,
+                    () -> {
                         DBObjectType virtualObjectType = getElementType().getVirtualObjectType();
                         underlyingObject = new DBVirtualObject(virtualObjectType, this);
-                    }
-                }
-            }
-
+                    });
         }
         return underlyingObject;
     }

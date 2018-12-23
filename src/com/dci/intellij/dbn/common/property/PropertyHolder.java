@@ -19,4 +19,19 @@ public interface PropertyHolder<T extends Property> {
             }
         };
     }
+
+    default void sync(T property, Runnable runnable) {
+        if(isNot(property)) {
+            synchronized (this) {
+                if (isNot(property)) {
+                    try {
+                        set(property, true);
+                        runnable.run();
+                    } finally {
+                        set(property, false);
+                    }
+                }
+            }
+        }
+    }
 }

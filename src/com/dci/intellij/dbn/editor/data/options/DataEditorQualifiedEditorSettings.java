@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.options;
 
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -13,7 +14,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataEditorQualifiedEditorSettings extends Configuration<DataEditorQualifiedEditorSettingsForm> {
-    private List<TextContentType> contentTypes;
+    private Latent<List<TextContentType>> contentTypes = Latent.create(() -> {
+        List<TextContentType> contentTypes = new ArrayList<>();
+        createContentType("Text", "PLAIN_TEXT", contentTypes);
+        createContentType("Properties", "Properties", contentTypes);
+        createContentType("XML", "XML", contentTypes);
+        createContentType("DTD", "DTD", contentTypes);
+        createContentType("HTML", "HTML", contentTypes);
+        createContentType("XHTML", "XHTML", contentTypes);
+        createContentType("CSS", "CSS", contentTypes);
+        createContentType("Java", "JAVA", contentTypes);
+        createContentType("SQL", "DBN-SQL", contentTypes);
+        createContentType("PL/SQL", "DBN-PSQL", contentTypes);
+        createContentType("JPA QL", "JPA QL", contentTypes);
+        createContentType("JavaScript", "JavaScript", contentTypes);
+        createContentType("PHP", "PHP", contentTypes);
+        createContentType("JSP", "JSP", contentTypes);
+        createContentType("JSPx", "JSPX", contentTypes);
+        createContentType("Perl", "Perl", contentTypes);
+        createContentType("Groovy", "Groovy", contentTypes);
+        createContentType("FTL", "FTL", contentTypes);
+        createContentType("TML", "TML", contentTypes);
+        createContentType("GSP", "GSP", contentTypes);
+        createContentType("ASP", "ASP", contentTypes);
+        createContentType("VTL", "VTL", contentTypes);
+        createContentType("AIDL", "AIDL", contentTypes);
+        createContentType("YAML", "YAML", contentTypes);
+        createContentType("Flex", "SWF", contentTypes);
+        createContentType("C#", "C#", contentTypes);
+        createContentType("C++", "C++", contentTypes);
+        createContentType("Bash", "Bash", contentTypes);
+        createContentType("Manifest", "Manifest", contentTypes);
+        return contentTypes;
+    });
     private int textLengthThreshold = 300;
 
     public String getDisplayName() {
@@ -24,43 +57,11 @@ public class DataEditorQualifiedEditorSettings extends Configuration<DataEditorQ
         return "dataEditor";
     }
 
-    public synchronized List<TextContentType> getContentTypes() {
-        if (contentTypes == null) {
-            contentTypes = new ArrayList<TextContentType>();
-            createContentType("Text", "PLAIN_TEXT");
-            createContentType("Properties", "Properties");
-            createContentType("XML", "XML");
-            createContentType("DTD", "DTD");
-            createContentType("HTML", "HTML");
-            createContentType("XHTML", "XHTML");
-            createContentType("CSS", "CSS");
-            createContentType("Java", "JAVA");
-            createContentType("SQL", "DBN-SQL");
-            createContentType("PL/SQL", "DBN-PSQL");
-            createContentType("JPA QL", "JPA QL");
-            createContentType("JavaScript", "JavaScript");
-            createContentType("PHP", "PHP");
-            createContentType("JSP", "JSP");
-            createContentType("JSPx", "JSPX");
-            createContentType("Perl", "Perl");
-            createContentType("Groovy", "Groovy");
-            createContentType("FTL", "FTL");
-            createContentType("TML", "TML");
-            createContentType("GSP", "GSP");
-            createContentType("ASP", "ASP");
-            createContentType("VTL", "VTL");
-            createContentType("AIDL", "AIDL");
-            createContentType("YAML", "YAML");
-            createContentType("Flex", "SWF");
-            createContentType("C#", "C#");
-            createContentType("C++", "C++");
-            createContentType("Bash", "Bash");
-            createContentType("Manifest", "Manifest");
-        }
-        return contentTypes;
+    public List<TextContentType> getContentTypes() {
+        return contentTypes.get();
     }
 
-    private void createContentType(String name, String fileTypeName) {
+    private void createContentType(String name, String fileTypeName, List<TextContentType> contentTypes) {
         TextContentType contentType = TextContentType.create(name, fileTypeName);
         if (contentType != null) {
             contentTypes.add(contentType);

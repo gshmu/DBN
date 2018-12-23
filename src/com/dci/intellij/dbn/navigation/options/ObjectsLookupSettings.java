@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.navigation.options;
 
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.ui.list.Selectable;
@@ -17,7 +18,8 @@ import java.util.List;
 import java.util.Set;
 
 public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSettingsForm> {
-    private List<ObjectTypeEntry> lookupObjectTypes;
+    private Latent<List<ObjectTypeEntry>> lookupObjectTypes = Latent.create(() -> createLookupObjectTypes());
+
     private Set<DBObjectType> fastLookupObjectTypes;
     private BooleanSetting forceDatabaseLoad = new BooleanSetting("force-database-load", false);
     private BooleanSetting promptConnectionSelection = new BooleanSetting("prompt-connection-selection", true);
@@ -74,41 +76,40 @@ public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSet
     }
 
     public List<ObjectTypeEntry> getLookupObjectTypes() {
-        if (lookupObjectTypes == null) {
-            synchronized (this) {
-                if (lookupObjectTypes == null) {
-                    lookupObjectTypes = new ArrayList<ObjectTypeEntry>();
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.SCHEMA, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.USER, false));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.ROLE, false));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.PRIVILEGE, false));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.CHARSET, false));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.TABLE, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.VIEW, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.MATERIALIZED_VIEW, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.NESTED_TABLE, false));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.COLUMN, false));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.INDEX, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.CONSTRAINT, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.DATASET_TRIGGER, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.DATABASE_TRIGGER, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.SYNONYM, false));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.SEQUENCE, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.PROCEDURE, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.FUNCTION, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.PACKAGE, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.TYPE, true));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.TYPE_ATTRIBUTE, false));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.ARGUMENT, false));
+        return lookupObjectTypes.get();
+    }
 
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.DIMENSION, false));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.CLUSTER, false));
-                    lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.DBLINK, true));
-                }
-            }
-        }
+    private List<ObjectTypeEntry> createLookupObjectTypes() {
+        List<ObjectTypeEntry> lookupObjectTypes = new ArrayList<ObjectTypeEntry>();
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.SCHEMA, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.USER, false));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.ROLE, false));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.PRIVILEGE, false));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.CHARSET, false));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.TABLE, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.VIEW, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.MATERIALIZED_VIEW, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.NESTED_TABLE, false));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.COLUMN, false));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.INDEX, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.CONSTRAINT, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.DATASET_TRIGGER, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.DATABASE_TRIGGER, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.SYNONYM, false));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.SEQUENCE, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.PROCEDURE, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.FUNCTION, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.PACKAGE, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.TYPE, true));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.TYPE_ATTRIBUTE, false));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.ARGUMENT, false));
+
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.DIMENSION, false));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.CLUSTER, false));
+        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.DBLINK, true));
         return lookupObjectTypes;
     }
+
 
     /****************************************************
      *                   Configuration                  *

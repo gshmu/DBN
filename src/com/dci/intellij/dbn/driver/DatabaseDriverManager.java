@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.driver;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -95,49 +96,50 @@ public class DatabaseDriverManager implements ApplicationComponent {
 
 
     public List<Driver> loadDrivers(String libraryName) {
-        if (!driversCache.containsKey(libraryName)) {
-            synchronized (this) {
-                if (!driversCache.containsKey(libraryName) && new File(libraryName).isFile()) {
-                    String taskDescription = ProgressMonitor.getTaskDescription();
-                    ProgressMonitor.setTaskDescription("Loading jdbc drivers from " + libraryName);
-                    try {
-                        List<Driver> drivers = new ArrayList<Driver>();
-                        URL[] urls = new URL[]{new File(libraryName).toURI().toURL()};
-                        URLClassLoader classLoader = URLClassLoader.newInstance(urls, getClass().getClassLoader());
+        File libraryFile = new File(libraryName);
 
-                        JarFile jarFile = new JarFile(libraryName);
-                        Enumeration<JarEntry> entries = jarFile.entries();
-                        while (entries.hasMoreElements()) {
-                            JarEntry entry = entries.nextElement();
-                            String name = entry.getName();
-                            if (name.endsWith(".class")) {
+        if (libraryFile.isFile()) {
+            Synchronized.run(this,
+                    () -> !driversCache.containsKey(libraryName),
+                    () -> {
+                        String taskDescription = ProgressMonitor.getTaskDescription();
+                        ProgressMonitor.setTaskDescription("Loading jdbc drivers from " + libraryName);
+                        try {
+                            List<Driver> drivers = new ArrayList<Driver>();
+                            URL[] urls = new URL[]{libraryFile.toURI().toURL()};
+                            URLClassLoader classLoader = URLClassLoader.newInstance(urls, getClass().getClassLoader());
 
-                                int index = name.lastIndexOf('.');
-                                String className = name.substring(0, index);
-                                className = className.replace('/', '.').replace('\\', '.');
+                            JarFile jarFile = new JarFile(libraryName);
+                            Enumeration<JarEntry> entries = jarFile.entries();
+                            while (entries.hasMoreElements()) {
+                                JarEntry entry = entries.nextElement();
+                                String name = entry.getName();
+                                if (name.endsWith(".class")) {
 
-                                try {
-                                    if (className.contains("Driver") || className.contains("JDBC")) {
-                                        Class<?> clazz = classLoader.loadClass(className);
-                                        if (Driver.class.isAssignableFrom(clazz)) {
-                                            Driver driver = (Driver) clazz.newInstance();
-                                            drivers.add(driver);
+                                    int index = name.lastIndexOf('.');
+                                    String className = name.substring(0, index);
+                                    className = className.replace('/', '.').replace('\\', '.');
+
+                                    try {
+                                        if (className.contains("Driver") || className.contains("JDBC")) {
+                                            Class<?> clazz = classLoader.loadClass(className);
+                                            if (Driver.class.isAssignableFrom(clazz)) {
+                                                Driver driver = (Driver) clazz.newInstance();
+                                                drivers.add(driver);
+                                            }
                                         }
+                                    } catch (Throwable throwable) {
+                                        // ignore
                                     }
                                 }
-                                catch(Throwable throwable) {
-                                    // ignore
-                                }
                             }
+                            driversCache.put(libraryName, drivers);
+                        } catch (Exception e) {
+                            LOGGER.warn("Error loading drivers from library " + libraryName, e);
+                        } finally {
+                            ProgressMonitor.setTaskDescription(taskDescription);
                         }
-                        driversCache.put(libraryName, drivers);
-                    } catch(Exception e) {
-                        LOGGER.warn("Error loading drivers from library " + libraryName, e);
-                    } finally {
-                        ProgressMonitor.setTaskDescription(taskDescription);
-                    }
-                }
-            }
+                    });
         }
         return driversCache.get(libraryName);
     }

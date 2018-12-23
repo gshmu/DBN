@@ -11,27 +11,28 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DataSearchResult implements Disposable {
     private Set<DataSearchResultListener> listeners = new HashSet<DataSearchResultListener>();
-    private List<DataSearchResultMatch> matches = new ArrayList<DataSearchResultMatch>();
+    private List<DataSearchResultMatch> matches = new CopyOnWriteArrayList<>();
     private DataSearchResultMatch selectedMatch;
     private int matchesLimit;
     private long updateTimestamp = 0;
     private boolean isUpdating;
 
-    public synchronized void clear() {
+    public void clear() {
         selectedMatch = null;
         List<DataSearchResultMatch> oldMatches = matches;
-        matches = new ArrayList<DataSearchResultMatch>();
+        matches = new ArrayList<>();
         DisposerUtil.dispose(oldMatches);
     }
 
-    public synchronized int size() {
+    public int size() {
         return matches.size();
     }
 
-    public synchronized boolean isEmpty() {
+    public boolean isEmpty() {
         return matches.isEmpty();
     }
 
@@ -71,12 +72,12 @@ public class DataSearchResult implements Disposable {
         return isUpdating;
     }
 
-    public synchronized void addMatch(DataModelCell cell, int startOffset, int endOffset) {
+    public void addMatch(DataModelCell cell, int startOffset, int endOffset) {
         DataSearchResultMatch match = new DataSearchResultMatch(cell, startOffset, endOffset);
         matches.add(match);
     }
 
-    public synchronized Iterator<DataSearchResultMatch> getMatches(final DataModelCell cell) {
+    public Iterator<DataSearchResultMatch> getMatches(final DataModelCell cell) {
         final DataSearchResultMatch first = matches.isEmpty() ? null : findMatch(null, cell);
         if (first != null) {
             return new Iterator<DataSearchResultMatch>() {
@@ -103,7 +104,7 @@ public class DataSearchResult implements Disposable {
         }
     }
 
-    private synchronized DataSearchResultMatch findMatch(DataSearchResultMatch previous, DataModelCell cell) {
+    private DataSearchResultMatch findMatch(DataSearchResultMatch previous, DataModelCell cell) {
         int index = previous == null ? 0 : matches.indexOf(previous) + 1;
         for (int i = index; i< matches.size(); i++) {
             DataSearchResultMatch match = matches.get(i);
@@ -156,7 +157,7 @@ public class DataSearchResult implements Disposable {
         return selectedMatch;
     }
 
-    private synchronized DataSearchResultMatch getNext(int fromRowIndex, int fromColumnIndex, DataSearchResultScrollPolicy scrollPolicy) {
+    private DataSearchResultMatch getNext(int fromRowIndex, int fromColumnIndex, DataSearchResultScrollPolicy scrollPolicy) {
         if (matches.size() > 0) {
             for (DataSearchResultMatch match : matches) {
                 int rowIndex = match.getCell().getRow().getIndex();
@@ -187,7 +188,7 @@ public class DataSearchResult implements Disposable {
         return null;
     }
     
-    private synchronized DataSearchResultMatch getPrevious(int fromRowIndex, int fromColumnIndex, DataSearchResultScrollPolicy scrollPolicy) {
+    private DataSearchResultMatch getPrevious(int fromRowIndex, int fromColumnIndex, DataSearchResultScrollPolicy scrollPolicy) {
         if (matches.size() > 0) {
             for (DataSearchResultMatch match : ReversedList.get(matches)) {
                 int rowIndex = match.getCell().getRow().getIndex();

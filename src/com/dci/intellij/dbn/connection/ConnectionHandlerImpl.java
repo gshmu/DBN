@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -230,14 +231,12 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     @NotNull
     public PsiDirectory getPsiDirectory() {
-        if (psiDirectory == null) {
-            synchronized (this) {
-                if (psiDirectory == null) {
+        Synchronized.run(this,
+                () -> psiDirectory == null,
+                () -> {
                     FailsafeUtil.check(this);
                     psiDirectory = new DBConnectionPsiDirectory(this);
-                }
-            }
-        }
+                });
         return psiDirectory;
     }
 
@@ -474,17 +473,16 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     public DatabaseInterfaceProvider getInterfaceProvider() {
-        if (!isValidInterfaceProvider()) {
-            synchronized (this) {
-                if (!isValidInterfaceProvider()) {
+        Synchronized.run(this,
+                () -> !isValidInterfaceProvider(),
+                () -> {
                     try {
                         interfaceProvider = DatabaseInterfaceProviderFactory.getInterfaceProvider(this);
                     } catch (SQLException e) {
                         System.out.println();
                     }
-                }
-            }
-        }
+                });
+
         if (interfaceProvider != null) {
             interfaceProvider.setProject(getProject());
             interfaceProvider.setMetaDataCache(metaDataCache);
