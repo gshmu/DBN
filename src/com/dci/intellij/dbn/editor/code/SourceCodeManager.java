@@ -76,7 +76,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.thread.TaskInstruction.START_IN_BACKGROUND;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LOADING;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 @State(
     name = SourceCodeManager.COMPONENT_NAME,
@@ -401,17 +403,15 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     public void navigateToObject(DBSchemaObject parentObject, BasePsiElement basePsiElement) {
         DBEditableObjectVirtualFile editableObjectFile = parentObject.getEditableVirtualFile();
         DBLanguagePsiFile psiFile = basePsiElement.getFile();
-        if (psiFile != null) {
-            VirtualFile elementVirtualFile = psiFile.getVirtualFile();
-            if (elementVirtualFile instanceof DBSourceCodeVirtualFile) {
-                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) elementVirtualFile;
-                BasicTextEditor textEditor = EditorUtil.getTextEditor(sourceCodeFile);
-                if (textEditor != null) {
-                    Project project = getProject();
-                    EditorProviderId editorProviderId = textEditor.getEditorProviderId();
-                    FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, editableObjectFile, editorProviderId, NavigationInstruction.OPEN);
-                    basePsiElement.navigateInEditor(fileEditor, NavigationInstruction.FOCUS_SCROLL);
-                }
+        VirtualFile elementVirtualFile = psiFile.getVirtualFile();
+        if (elementVirtualFile instanceof DBSourceCodeVirtualFile) {
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) elementVirtualFile;
+            BasicTextEditor textEditor = EditorUtil.getTextEditor(sourceCodeFile);
+            if (textEditor != null) {
+                Project project = getProject();
+                EditorProviderId editorProviderId = textEditor.getEditorProviderId();
+                FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, editableObjectFile, editorProviderId, NavigationInstruction.OPEN);
+                basePsiElement.navigateInEditor(fileEditor, NavigationInstruction.FOCUS_SCROLL);
             }
         }
     }

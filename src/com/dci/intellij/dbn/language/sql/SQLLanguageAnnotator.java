@@ -135,12 +135,10 @@ public class SQLLanguageAnnotator implements Annotator {
 
         if (executablePsiElement.isValid() && !executablePsiElement.isNestedExecutable()) {
             DBLanguagePsiFile psiFile = executablePsiElement.getFile();
-            if (psiFile != null) {
-                VirtualFile virtualFile = psiFile.getVirtualFile();
-                if (!DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
-                    Annotation annotation = holder.createInfoAnnotation(executablePsiElement, null);
-                    annotation.setGutterIconRenderer(new StatementGutterRenderer(executablePsiElement));
-                }
+            VirtualFile virtualFile = psiFile.getVirtualFile();
+            if (!DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
+                Annotation annotation = holder.createInfoAnnotation(executablePsiElement, null);
+                annotation.setGutterIconRenderer(new StatementGutterRenderer(executablePsiElement));
             }
         }
     }

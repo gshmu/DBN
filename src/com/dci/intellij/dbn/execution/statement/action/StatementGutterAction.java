@@ -36,7 +36,7 @@ public class StatementGutterAction extends AnAction {
 
 
     public StatementGutterAction(ExecutablePsiElement executablePsiElement) {
-        psiFileRef = new PsiFileRef<DBLanguagePsiFile>(executablePsiElement.getFile());
+        psiFileRef = new PsiFileRef<>(executablePsiElement.getFile());
         elementOffset = executablePsiElement.getTextOffset();
     }
 
