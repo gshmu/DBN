@@ -136,7 +136,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     @Nullable

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Computable;
 
 public abstract class ReadActionRunner<T> {
@@ -15,22 +14,11 @@ public abstract class ReadActionRunner<T> {
         Application application = ApplicationManager.getApplication();
         if (conditional) {
             if (application.isReadAccessAllowed()) {
-                try {
-                    return run();
-                } catch (ProcessCanceledException e) {
-                    return null;
-                }
+                return run();
             }
         }
 
-        Computable<T> readAction = () -> {
-            try {
-                return ReadActionRunner.this.run();
-            } catch (ProcessCanceledException e) {
-                return null;
-            }
-
-        };
+        Computable<T> readAction = () -> ReadActionRunner.this.run();
         return application.runReadAction(readAction);
     }
 

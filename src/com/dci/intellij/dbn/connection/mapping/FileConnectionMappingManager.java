@@ -698,7 +698,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             if (file != null) {
                 Project project = getProject();
                 DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
-                ConnectionHandler connectionHandler = connectionHandlerRef.get();
+                ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
                 sessionManager.showCreateSessionDialog(
                         connectionHandler,
                         SimpleTask.create(session -> {

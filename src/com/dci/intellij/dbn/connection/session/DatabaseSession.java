@@ -94,7 +94,7 @@ public class DatabaseSession extends DisposableBase implements Comparable<Databa
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     @Override

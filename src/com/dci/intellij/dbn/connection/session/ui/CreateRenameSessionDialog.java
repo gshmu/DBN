@@ -31,7 +31,7 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
     @NotNull
     @Override
     protected CreateRenameSessionForm createComponent() {
-        ConnectionHandler connectionHandler = connectionHandlerRef.get();
+        ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
         return new CreateRenameSessionForm(this, connectionHandler, session);
     }
 

@@ -211,7 +211,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     };
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     @Override

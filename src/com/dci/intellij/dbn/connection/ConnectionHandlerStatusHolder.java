@@ -111,7 +111,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     private boolean canConnect() {
@@ -194,7 +194,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
 
         @Override
         public final void statusChanged(ConnectionHandlerStatus status) {
-            ConnectionHandler connectionHandler = connectionHandlerRef.get();
+            ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
             Project project = connectionHandler.getProject();
             ConnectionHandlerStatusListener statusListener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
             statusListener.statusChanged(connectionHandler.getId());

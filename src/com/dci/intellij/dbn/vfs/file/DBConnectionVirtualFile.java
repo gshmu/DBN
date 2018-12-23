@@ -29,7 +29,7 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     @Override

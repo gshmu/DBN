@@ -37,7 +37,7 @@ public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactio
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     @NotNull

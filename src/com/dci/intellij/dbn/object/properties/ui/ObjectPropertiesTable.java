@@ -20,7 +20,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class ObjectPropertiesTable extends DBNTable {
-    public ObjectPropertiesTable(Project project, DBNTableModel tableModel) {
+    ObjectPropertiesTable(Project project, DBNTableModel tableModel) {
         super(project, tableModel, false);
         setDefaultRenderer(String.class, cellRenderer);
         setDefaultRenderer(PresentableProperty.class, cellRenderer);
@@ -86,7 +86,7 @@ public class ObjectPropertiesTable extends DBNTable {
         return false;
     }
 
-    TableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
+    private TableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             PresentableProperty property = (PresentableProperty) value;

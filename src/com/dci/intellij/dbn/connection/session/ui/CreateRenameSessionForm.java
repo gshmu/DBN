@@ -87,7 +87,7 @@ public class CreateRenameSessionForm extends DBNFormImpl<CreateRenameSessionDial
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     public DatabaseSession getSession() {

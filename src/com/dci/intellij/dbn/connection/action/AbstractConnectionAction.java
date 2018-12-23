@@ -24,6 +24,6 @@ public abstract class AbstractConnectionAction extends DumbAwareAction {
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 }
