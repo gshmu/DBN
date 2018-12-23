@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingOption;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStyleDefaultPresets;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiElementRef;
@@ -323,9 +324,9 @@ public class FormattingBlock implements Block {
 
     @NotNull
     public List<Block> getSubBlocks() {
-        if (childBlocks == null) {
-            synchronized (this) {
-                if (childBlocks == null) {
+        Synchronized.run(this,
+                () -> childBlocks == null,
+                () -> {
                     PsiElement psiElement = getPsiElement();
                     PsiElement child = psiElement.getFirstChild();
                     while (child != null) {
@@ -339,10 +340,7 @@ public class FormattingBlock implements Block {
                     }
 
                     if (childBlocks == null) childBlocks = EMPTY_LIST;
-                }
-            }
-        }
-
+                });
         return childBlocks;
     }
 

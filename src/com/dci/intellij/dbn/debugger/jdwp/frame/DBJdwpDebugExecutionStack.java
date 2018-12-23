@@ -15,10 +15,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DBJdwpDebugExecutionStack extends XExecutionStack {
     private DBJdwpDebugSuspendContext suspendContext;
-    private List<DBJdwpDebugStackFrame> stackFrames = new ArrayList<>();
+    private List<DBJdwpDebugStackFrame> stackFrames = new CopyOnWriteArrayList<>();
 
     private Latent<DBJdwpDebugStackFrame> topStackFrame = Latent.create(() -> {
         XExecutionStack underlyingStack = getUnderlyingStack();
@@ -45,7 +46,7 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
         return topStackFrame.get();
     }
 
-    private synchronized DBJdwpDebugStackFrame getFrame(JavaStackFrame underlyingFrame) {
+    private DBJdwpDebugStackFrame getFrame(JavaStackFrame underlyingFrame) {
         for (DBJdwpDebugStackFrame stackFrame : stackFrames) {
             if (stackFrame.getUnderlyingFrame().equals(underlyingFrame)) {
                 return stackFrame;

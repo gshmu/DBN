@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class DBLanguage<D extends DBLanguageDialect> extends Language implements DBFileElementTypeProvider {
 
-    private D[] languageDialects;
+    private Latent<D[]> languageDialects = Latent.create(() -> createLanguageDialects());
     private SharedTokenTypeBundle sharedTokenTypes;
     private Latent<IFileElementType> fileElementType = Latent.create(() -> createFileElementType(DBLanguage.this));
 
@@ -48,14 +48,7 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
 
     @NotNull
     public D[] getAvailableLanguageDialects() {
-        if (languageDialects == null) {
-            synchronized (this) {
-                if (languageDialects == null) {
-                    languageDialects = createLanguageDialects();
-                }
-            }
-        }
-        return languageDialects;
+        return languageDialects.get();
     }
 
     public D getLanguageDialect(DBLanguageDialectIdentifier id) {

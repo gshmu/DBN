@@ -34,7 +34,7 @@ public abstract class PseudoConstant<T extends PseudoConstant> implements Consta
             synchronized (REGISTRY) {
                 registry = REGISTRY.get(clazz);
                 if (registry == null) {
-                    registry = new THashMap<String, PseudoConstant>();
+                    registry = new THashMap<>();
                     REGISTRY.put(clazz, registry);
                 }
             }

@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -64,9 +65,10 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
 
 
     public final boolean get() {
-        if (canCheck()) {
-            synchronized (this) {
-                if (canCheck()) {
+        Synchronized.run(
+                this,
+                () -> canCheck(),
+                () -> {
                     try {
                         set(checking, true);
                         if (checkInterval == 0) {
@@ -84,9 +86,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                     } finally {
                         set(checking, false);
                     }
-                }
-            }
-        }
+                });
 
         return value();
     }

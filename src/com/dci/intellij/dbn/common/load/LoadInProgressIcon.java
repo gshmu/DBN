@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.load;
 
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.util.IconLoader;
 
@@ -57,14 +58,12 @@ public class LoadInProgressIcon implements Icon{
     };
 
     private static void startRoller() {
-        if (ICON_ROLLER == null) {
-            synchronized (IconRollerTimerTask.class) {
-                if (ICON_ROLLER == null) {
+        Synchronized.run(IconRollerTimerTask.class,
+                () -> ICON_ROLLER == null,
+                () -> {
                     ICON_ROLLER = new Timer("DBN - Load in Progress (icon roller)");
                     ICON_ROLLER.schedule(new IconRollerTimerTask(), ROLL_INTERVAL, ROLL_INTERVAL);
-                }
-            }
-        }
+                });
     }
 
     private static Icon getIcon() {

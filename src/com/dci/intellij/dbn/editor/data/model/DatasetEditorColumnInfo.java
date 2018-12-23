@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.RefreshableValue;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
@@ -71,9 +72,9 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     }
 
     public List<String> getPossibleValues() {
-        if (possibleValues == null) {
-            synchronized (this) {
-                if (possibleValues == null) {
+        Synchronized.run(this,
+                () -> possibleValues == null,
+                () -> {
                     possibleValues = EMPTY_LIST;
                     List<String> values = null;
                     DBColumn column = getColumn();
@@ -93,8 +94,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
                         possibleValues = values;
                     }
                 }
-            }
-        }
+            );
         return possibleValues;
     }
 

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.console;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
@@ -26,14 +27,9 @@ public class DatabaseConsoleBundle extends DisposableBase {
     }
 
     public List<DBConsoleVirtualFile> getConsoles() {
-        if (consoles.size() == 0) {
-            synchronized (this) {
-                if (consoles.size() == 0) {
-                    createConsole(getConnectionHandler().getName(), DBConsoleType.STANDARD);
-                }
-            }
-
-        }
+        Synchronized.run(this,
+                () -> consoles.isEmpty(),
+                () -> createConsole(getConnectionHandler().getName(), DBConsoleType.STANDARD));
         return consoles;
     }
 

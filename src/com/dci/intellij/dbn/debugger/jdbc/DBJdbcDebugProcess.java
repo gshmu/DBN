@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -278,15 +279,17 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     @Override
-    public synchronized void stop() {
-        if (isNot(PROCESS_TERMINATED) && isNot(PROCESS_TERMINATING)) {
-            set(PROCESS_TERMINATING, true);
-            console.system("Stopping debugger...");
-            T executionInput = getExecutionInput();
-            ExecutionContext executionContext = executionInput.getExecutionContext();
-            executionContext.set(CANCELLED, isNot(PROCESS_STOPPED_NORMALLY));
-            stopDebugger();
-        }
+    public void stop() {
+        Synchronized.run(this,
+                () -> isNot(PROCESS_TERMINATED) && isNot(PROCESS_TERMINATING),
+                () -> {
+                    set(PROCESS_TERMINATING, true);
+                    console.system("Stopping debugger...");
+                    T executionInput = getExecutionInput();
+                    ExecutionContext executionContext = executionInput.getExecutionContext();
+                    executionContext.set(CANCELLED, isNot(PROCESS_STOPPED_NORMALLY));
+                    stopDebugger();
+                });
     }
 
     private void stopDebugger() {

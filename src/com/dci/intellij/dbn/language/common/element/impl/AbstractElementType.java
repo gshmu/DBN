@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.code.common.style.formatting.IndentDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.SpacingDefinition;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -48,8 +49,8 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     private Icon icon;
     private Branch branch;
     private FormattingDefinition formatting;
-    private ElementTypeLookupCache lookupCache;
-    private ElementTypeParser parser;
+    private Latent<ElementTypeLookupCache> lookupCache = Latent.create(() -> createLookupCache());
+    private Latent<ElementTypeParser> parser = Latent.create(() -> createParser());
     private ElementTypeBundle bundle;
     private ElementType parent;
     private DBObjectType virtualObjectType;
@@ -215,26 +216,11 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     }
 
     public ElementTypeLookupCache getLookupCache() {
-        if (lookupCache == null) {
-            synchronized (this) {
-                if (lookupCache == null) {
-                    lookupCache = createLookupCache();
-                }
-            }
-        }
-        return lookupCache;
+        return lookupCache.get();
     }
 
-    public  @NotNull ElementTypeParser getParser() {
-        if (parser == null) {
-            synchronized (this) {
-                if (parser == null) {
-                    parser = createParser();
-                }
-            }
-        }
-
-        return parser;
+    public @NotNull ElementTypeParser getParser() {
+        return parser.get();
     }
 
 
