@@ -67,7 +67,7 @@ public class DBNHeaderForm extends DBNFormImpl{
         ConnectionId id = connectionHandler.getId();
         Project project = connectionHandler.getProject();
 
-        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> {
+        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, (connectionId, sessionId) -> {
             if (connectionId == id) {
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                 ConnectionHandler connHandler = connectionManager.getConnectionHandler(connectionId);

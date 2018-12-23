@@ -142,7 +142,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
             if (settingsChanged) {
                 ConnectionHandlerStatusListener listener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-                listener.statusChanged(configuration.getConnectionId());
+                listener.statusChanged(configuration.getConnectionId(), null);
             }
         });
     }

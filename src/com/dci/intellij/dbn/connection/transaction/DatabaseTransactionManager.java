@@ -117,7 +117,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
                 if (action.isStatusChange()) {
                     ConnectionHandlerStatusListener statusListener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-                    statusListener.statusChanged(connectionHandler.getId());
+                    statusListener.statusChanged(connectionHandler.getId(), null);
                 }
                 connectionHandler.getPendingActions().remove(action);
             }
