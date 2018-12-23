@@ -56,7 +56,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
 
         Project project = getProject();
         EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
-        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> {
+        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, (connectionId, sessionId) -> {
             connectionsList.revalidate();
             connectionsList.repaint();
         });
