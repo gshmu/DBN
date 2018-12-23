@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.psi;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MutableLatent;
@@ -162,7 +163,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     public boolean isInjectedContext() {
         DBLanguagePsiFile file = getFile();
-        return file != null && file.isInjectedContext();
+        return file.isInjectedContext();
     }
 
     public String getReferenceQualifiedName() {
@@ -175,24 +176,25 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return elementType;
     }
 
+    @NotNull
     public DBLanguagePsiFile getFile() {
         PsiElement parent = getParent();
         while (parent != null && !(parent instanceof DBLanguagePsiFile)) {
             parent = parent.getParent();
         }
-        return (DBLanguagePsiFile) parent;
+        return FailsafeUtil.get((DBLanguagePsiFile) parent);
     }
 
     @Nullable
     public ConnectionHandler getConnectionHandler() {
         DBLanguagePsiFile file = getFile();
-        return file == null ? null : file.getConnectionHandler();
+        return file.getConnectionHandler();
     }
 
     @Nullable
     public DBSchema getDatabaseSchema() {
         DBLanguagePsiFile file = getFile();
-        return file == null ? null : file.getDatabaseSchema();
+        return file.getDatabaseSchema();
     }
 
     public String toString() {
