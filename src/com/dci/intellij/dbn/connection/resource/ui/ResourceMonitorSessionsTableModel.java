@@ -23,7 +23,7 @@ public class ResourceMonitorSessionsTableModel extends DisposableBase implements
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     public Project getProject() {

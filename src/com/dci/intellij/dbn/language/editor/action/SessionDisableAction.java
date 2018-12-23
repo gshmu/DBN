@@ -25,7 +25,7 @@ public class SessionDisableAction extends DumbAwareAction {
         Project project = ActionUtil.ensureProject(e);
         Editor editor = ActionUtil.getEditor(e);
         if (editor != null) {
-            ConnectionHandler connectionHandler = connectionHandlerRef.get();
+            ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
             MessageUtil.showQuestionDialog(
                     project,
                     "Disable session support",

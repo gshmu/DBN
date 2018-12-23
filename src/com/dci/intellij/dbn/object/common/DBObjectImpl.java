@@ -314,7 +314,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return ConnectionHandlerRef.get(connectionHandlerRef);
+        return ConnectionHandlerRef.getnn(connectionHandlerRef);
     }
 
     @NotNull

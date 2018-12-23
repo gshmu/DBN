@@ -22,7 +22,7 @@ public class ResourceMonitorTransactionsTableModel extends DisposableBase implem
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     public Project getProject() {

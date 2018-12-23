@@ -65,7 +65,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     @NotNull

@@ -14,7 +14,7 @@ public class ConnectionPresentableProperty extends PresentableProperty{
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     public String getName() {

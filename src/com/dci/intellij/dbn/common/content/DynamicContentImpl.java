@@ -250,31 +250,43 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
      */
     public abstract void notifyChangeListeners();
 
-    public synchronized void setElements(List<T> elements) {
-        final List<T> oldElements = this.elements;
-        try {
-            if (isDisposed() || elements == null || elements.size() == 0) {
-                elements = EMPTY_CONTENT;
-                index = null;
-            } else {
-                sortElements(elements);
+    public void setElements(List<T> elements) {
+        if (!is(CHANGING)) {
+           synchronized (this) {
+               if (!is(CHANGING)) {
+                   try{
+                       set(CHANGING, true);
+                       replaceElements(elements);
+                   }finally {
+                       set(CHANGING, false);
+                   }
+               }
+           }
+        }
+    }
+
+    private void replaceElements(List<T> elements) {
+        List<T> oldElements = this.elements;
+        if (isDisposed() || elements == null || elements.size() == 0) {
+            elements = EMPTY_CONTENT;
+            index = null;
+        } else {
+            sortElements(elements);
+        }
+        this.elements = new AbstractFiltrableList<T>(elements) {
+            @Nullable
+            @Override
+            public Filter<T> getFilter() {
+                return DynamicContentImpl.this.getFilter();
             }
-            this.elements = new AbstractFiltrableList<T>(elements) {
-                @Nullable
-                @Override
-                public Filter<T> getFilter() {
-                    return DynamicContentImpl.this.getFilter();
-                }
-            };
-            updateIndex();
-            compact();
-            if (oldElements.size() != 0 || elements.size() != 0 ){
-                notifyChangeListeners();
-            }
-        } finally {
-            if (!dependencyAdapter.isSubContent() && oldElements.size() > 0 ) {
-                DisposerUtil.disposeInBackground(oldElements);
-            }
+        };
+        updateIndex();
+        compact();
+        if (oldElements.size() != 0 || elements.size() != 0 ){
+            notifyChangeListeners();
+        }
+        if (!dependencyAdapter.isSubContent() && oldElements.size() > 0 ) {
+            DisposerUtil.disposeInBackground(oldElements);
         }
     }
 

@@ -145,8 +145,12 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         //options.setUsePoolConnection(usePoolConnectionCheckBox.isSelected());
         options.set(ExecutionOption.COMMIT_AFTER_EXECUTION, commitCheckBox.isSelected());
         options.set(ExecutionOption.ENABLE_LOGGING, enableLoggingCheckBox.isSelected());
-        //DBSchema schema = (DBSchema) schemaList.getSelectedValue();
-        //executionInput.setExecutionSchema(schema);
+
+        DBSchema schema = targetSchemaComboBox.getSelectedValue();
+        executionInput.setTargetSchema(schema);
+
+        DatabaseSession targetSession = targetSessionComboBox.getSelectedValue();
+        executionInput.setTargetSession(targetSession);
     }
 
     @Deprecated

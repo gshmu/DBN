@@ -140,7 +140,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
         return false;
     }
 
-    public void registerBreakpoints(final List<XLineBreakpoint<XBreakpointProperties>> breakpoints, final List<? extends DBObject> objects) {
+    public void registerBreakpoints(@NotNull List<XLineBreakpoint<XBreakpointProperties>> breakpoints, final List<? extends DBObject> objects) {
         ManagedThreadCommand.invoke(getJdiDebugProcess(), PrioritizedTask.Priority.LOW, () -> {
             for (DBObject object : objects) {
                 if (object instanceof DBSchemaObject) {

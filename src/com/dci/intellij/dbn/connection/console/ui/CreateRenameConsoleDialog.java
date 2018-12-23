@@ -34,7 +34,7 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
     @NotNull
     @Override
     protected CreateRenameConsoleForm createComponent() {
-        ConnectionHandler connectionHandler = connectionHandlerRef.get();
+        ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
         return console == null ?
                 new CreateRenameConsoleForm(this, connectionHandler, null, consoleType) :
                 new CreateRenameConsoleForm(this, connectionHandler, console, console.getType());

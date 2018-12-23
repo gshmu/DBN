@@ -39,7 +39,7 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     @Override

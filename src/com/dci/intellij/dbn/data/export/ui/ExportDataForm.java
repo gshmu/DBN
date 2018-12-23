@@ -150,7 +150,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     public JPanel getComponent() {

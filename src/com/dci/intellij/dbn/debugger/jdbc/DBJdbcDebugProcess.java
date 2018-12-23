@@ -105,7 +105,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     @NotNull
@@ -260,7 +260,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
      * breakpoints need to be unregistered before closing the database session, otherwise they remain resident.
      */
     private void unregisterBreakpoints() {
-        final Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
+        Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
         Set<Integer> unregisteredBreakpointIds = new HashSet<>();
         DBBreakpointHandler breakpointHandler = getBreakpointHandler();
         for (XLineBreakpoint breakpoint : breakpoints) {

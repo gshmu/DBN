@@ -42,7 +42,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     @Override

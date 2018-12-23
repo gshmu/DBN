@@ -24,24 +24,34 @@ public class ConnectionHandlerRef{
     }
 
     @NotNull
-    public ConnectionHandler get() {
-        ConnectionHandler connectionHandler = reference == null ? null : reference.get();
-        if ((connectionHandler == null || connectionHandler.isDisposed()) && connectionId != null) {
-            connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
-            reference = new WeakReference<ConnectionHandler>(connectionHandler);
-        }
-
+    public ConnectionHandler getnn() {
+        ConnectionHandler connectionHandler = get();
         return FailsafeUtil.get(connectionHandler);
     }
 
     @Nullable
-    public static ConnectionHandlerRef from(ConnectionHandler connectionHandler) {
+    public ConnectionHandler get() {
+        ConnectionHandler connectionHandler = reference == null ? null : reference.get();
+        if ((connectionHandler == null || connectionHandler.isDisposed()) && connectionId != null) {
+            connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
+            reference = new WeakReference<>(connectionHandler);
+        }
+        return connectionHandler;
+    }
+
+    @Nullable
+    public static ConnectionHandlerRef from(@Nullable ConnectionHandler connectionHandler) {
         return connectionHandler == null ? null : connectionHandler.getRef();
     }
 
     @Nullable
-    public static ConnectionHandler get(ConnectionHandlerRef connectionHandlerRef) {
+    public static ConnectionHandler get(@Nullable ConnectionHandlerRef connectionHandlerRef) {
         return connectionHandlerRef == null ? null :connectionHandlerRef.get();
+    }
+
+    @NotNull
+    public static ConnectionHandler getnn(@NotNull ConnectionHandlerRef connectionHandlerRef) {
+        return FailsafeUtil.get(connectionHandlerRef).getnn();
     }
 
     public boolean isValid() {

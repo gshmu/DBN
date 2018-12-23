@@ -66,7 +66,7 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     public DatabaseSession getDebugSession() {

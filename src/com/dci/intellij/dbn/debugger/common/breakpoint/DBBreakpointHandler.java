@@ -75,7 +75,7 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
 
     protected abstract void unregisterDatabaseBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, boolean temporary);
 
-    public void registerBreakpoints(List<XLineBreakpoint<XBreakpointProperties>> breakpoints, List<? extends DBObject> objects) {
+    public void registerBreakpoints(@NotNull List<XLineBreakpoint<XBreakpointProperties>> breakpoints, List<? extends DBObject> objects) {
         for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
             registerBreakpoint(breakpoint);
         }

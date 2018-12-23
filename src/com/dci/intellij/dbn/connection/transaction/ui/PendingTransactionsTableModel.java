@@ -25,7 +25,7 @@ public class PendingTransactionsTableModel extends DisposableBase implements DBN
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return connectionHandlerRef.getnn();
     }
 
     public Project getProject() {
