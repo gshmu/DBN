@@ -61,7 +61,7 @@ public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenti
     @NotNull
     @Override
     protected ConnectionAuthenticationForm createComponent() {
-        ConnectionHandler connectionHandler = ConnectionHandlerRef.getnn(connectionHandlerRef);
+        ConnectionHandler connectionHandler = ConnectionHandlerRef.get(connectionHandlerRef);
         return new ConnectionAuthenticationForm(this, connectionHandler);
     }
 
