@@ -125,9 +125,11 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
     }
 
     public void dispose() {
-        EditorFactory.getInstance().releaseEditor(editor);
-        editor = null;
-        document = null;
-        super.dispose();
+        if (!isDisposed()) {
+            super.dispose();
+            EditorFactory.getInstance().releaseEditor(editor);
+            editor = null;
+            document = null;
+        }
     }
 }
