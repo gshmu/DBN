@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
@@ -48,21 +47,15 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResu
     }
 
     private RawIndexInfo getIndexInfo(final String tableName) throws SQLException {
-        return new CacheAdapter<RawIndexInfo, SQLException>(getCache()) {
-            @Override
-            protected RawIndexInfo load() throws SQLException {
-                return new RawIndexInfo(loadIndexInfo(tableName));
-            }
-        }.get(ownerName + "." + tableName + ".INDEX_INFO");
+        return getCache().get(
+                ownerName + "." + tableName + ".INDEX_INFO",
+                () -> new RawIndexInfo(loadIndexInfo(tableName)));
     }
 
     private RawIndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
-        return new CacheAdapter<RawIndexDetailInfo, SQLException>(getCache()) {
-            @Override
-            protected RawIndexDetailInfo load() throws SQLException {
-                return new RawIndexDetailInfo(loadIndexDetailInfo(indexName));
-            }
-        }.get(ownerName + "." + indexName + ".INDEX_DETAIL_INFO");
+        return getCache().get(
+                ownerName + "." + indexName + ".INDEX_DETAIL_INFO",
+                () -> new RawIndexDetailInfo(loadIndexDetailInfo(indexName)));
     }
 
 

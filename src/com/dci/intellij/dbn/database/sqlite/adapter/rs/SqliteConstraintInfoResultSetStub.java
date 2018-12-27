@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import com.dci.intellij.dbn.common.cache.Cache;
-import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
@@ -15,7 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.*;
+import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawForeignKeyInfo;
+import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexDetailInfo;
+import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexInfo;
+import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawTableInfo;
 
 public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetElement<T>> extends SqliteDatasetInfoResultSetStub<T> {
 
@@ -125,49 +127,32 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
         }
 
         private RawForeignKeyInfo getForeignKeyInfo(final String datasetName) throws SQLException {
-            return new CacheAdapter<RawForeignKeyInfo, SQLException>(cache) {
-                @Override
-                protected RawForeignKeyInfo load() throws SQLException {
-                    return new RawForeignKeyInfo(loadForeignKeyInfo(datasetName));
-                }
-            }.get(ownerName + "." + datasetName + ".FOREIGN_KEY_INFO");
+            return cache.get(
+                    ownerName + "." + datasetName + ".FOREIGN_KEY_INFO",
+                    () -> new RawForeignKeyInfo(loadForeignKeyInfo(datasetName)));
         }
 
         private RawTableInfo getTableInfo(final String datasetName) throws SQLException {
-            return new CacheAdapter<RawTableInfo, SQLException>(cache) {
-                @Override
-                protected RawTableInfo load() throws SQLException {
-                    return new RawTableInfo(loadTableInfo(datasetName));
-                }
-            }.get(ownerName + "." + datasetName + ".TABLE_INFO");
+            return cache.get(
+                    ownerName + "." + datasetName + ".TABLE_INFO",
+                    () -> new RawTableInfo(loadTableInfo(datasetName)));
         }
 
         private RawIndexInfo getIndexInfo(final String tableName) throws SQLException {
-            return new CacheAdapter<RawIndexInfo, SQLException>(cache) {
-                @Override
-                protected RawIndexInfo load() throws SQLException {
-                    return new RawIndexInfo(loadIndexInfo(tableName));
-                }
-            }.get(ownerName + "." + tableName + ".INDEX_INFO");
+            return cache.get(
+                    ownerName + "." + tableName + ".INDEX_INFO",
+                    () -> new RawIndexInfo(loadIndexInfo(tableName)));
         }
 
         private RawIndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
-            return new CacheAdapter<RawIndexDetailInfo, SQLException>(cache) {
-                @Override
-                protected RawIndexDetailInfo load() throws SQLException {
-                    return new RawIndexDetailInfo(loadIndexDetailInfo(indexName));
-                }
-            }.get(ownerName + "." + indexName + ".INDEX_DETAIL_INFO");
+            return cache.get(
+                    ownerName + "." + indexName + ".INDEX_DETAIL_INFO",
+                    () -> new RawIndexDetailInfo(loadIndexDetailInfo(indexName)));
         }
 
         @NotNull
         List<ConstraintColumnInfo> getConstraintColumns(Map<String, List<ConstraintColumnInfo>> constraints, String indexId) {
-            List<ConstraintColumnInfo> foreignKeyColumns = constraints.get(indexId);
-            if (foreignKeyColumns == null) {
-                foreignKeyColumns = new ArrayList<ConstraintColumnInfo>();
-                constraints.put(indexId, foreignKeyColumns);
-            }
-            return foreignKeyColumns;
+            return constraints.computeIfAbsent(indexId, k -> new ArrayList<>());
         }
 
         public abstract ResultSet loadTableInfo(String datasetName) throws SQLException;
