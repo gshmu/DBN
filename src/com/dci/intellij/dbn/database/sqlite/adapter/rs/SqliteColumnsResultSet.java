@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 
@@ -64,21 +63,15 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
     }
 
     private RawForeignKeyInfo getForeignKeyInfo(final String datasetName) throws SQLException {
-        return new CacheAdapter<RawForeignKeyInfo, SQLException>(getCache()) {
-            @Override
-            protected RawForeignKeyInfo load() throws SQLException {
-                return new RawForeignKeyInfo(loadForeignKeyInfo(datasetName));
-            }
-        }.get(ownerName + "." + datasetName + ".FOREIGN_KEY_INFO");
+        return getCache().get(
+                ownerName + "." + datasetName + ".FOREIGN_KEY_INFO",
+                () -> new RawForeignKeyInfo(loadForeignKeyInfo(datasetName)));
     }
 
     private RawTableInfo getTableInfo(final String datasetName) throws SQLException {
-        return new CacheAdapter<RawTableInfo, SQLException>(getCache()) {
-            @Override
-            protected RawTableInfo load() throws SQLException {
-                return new RawTableInfo(loadTableInfo(datasetName));
-            }
-        }.get(ownerName + "." + datasetName + ".TABLE_INFO");
+        return getCache().get(
+                ownerName + "." + datasetName + ".TABLE_INFO",
+                () -> new RawTableInfo(loadTableInfo(datasetName)));
     }
 
     protected abstract ResultSet loadTableInfo(String datasetName) throws SQLException;

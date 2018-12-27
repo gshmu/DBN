@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.util.ProjectSupplier;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -48,7 +49,7 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
 
     protected DocumentListener createDocumentListener() {
         return new DocumentAdapter() {
-            protected void textChanged(DocumentEvent e) {
+            protected void textChanged(@NotNull DocumentEvent e) {
                 getConfiguration().setModified(true);
             }
         };

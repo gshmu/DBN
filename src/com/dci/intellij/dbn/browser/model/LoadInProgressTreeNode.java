@@ -21,23 +21,9 @@ import java.util.ArrayList;
 
 public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements BrowserTreeNode {
     private BrowserTreeNode parent;
-    private List list;
 
     public LoadInProgressTreeNode(@NotNull BrowserTreeNode parent) {
         this.parent = parent;
-    }
-
-    public List asList() {
-        if (list == null) {
-            synchronized (this) {
-                if (list == null) {
-                    list = new List();
-                    list.add(this);
-                }
-            }
-        }
-
-        return list;
     }
 
     public boolean isTreeStructureLoaded() {

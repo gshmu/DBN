@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.common.cache.CacheAdapter;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.TableNames;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteResultSetAdapter;
@@ -26,12 +25,9 @@ public abstract class SqliteDatasetNamesResultSet extends SqliteResultSetAdapter
     }
 
     private TableNames getTableNames() throws SQLException {
-        return new CacheAdapter<TableNames, SQLException>(getCache()) {
-            @Override
-            protected TableNames load() throws SQLException {
-                return new TableNames(loadTableNames());
-            }
-        }.get(ownerName + "." + "DATASET_NAMES");
+        return getCache().get(
+                ownerName + "." + "DATASET_NAMES",
+                () -> new TableNames(loadTableNames()));
     }
 
     protected abstract ResultSet loadTableNames() throws SQLException;
