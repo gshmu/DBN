@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
 public abstract class IncrementalResourceStatusAdapter<T extends Resource> extends IncrementalStatusAdapter<T, ResourceStatus>{
-    public IncrementalResourceStatusAdapter(ResourceStatus status, T resource) {
-        super(status, resource);
+    private IncrementalResourceStatusAdapter(T resource, ResourceStatus status) {
+        super(resource, status);
     }
 
     @Override
@@ -14,5 +14,17 @@ public abstract class IncrementalResourceStatusAdapter<T extends Resource> exten
 
     protected abstract boolean setInner(ResourceStatus status, boolean value);
 
+    public static <T extends Resource> IncrementalResourceStatusAdapter<T> create(T resource, ResourceStatus status, Setter setter){
+        return new IncrementalResourceStatusAdapter<T>(resource, status) {
+            @Override
+            protected boolean setInner(ResourceStatus status, boolean value) {
+                return setter.set(status, value);
+            }
+        };
+    }
 
+    @FunctionalInterface
+    public interface Setter {
+        boolean set(ResourceStatus status, boolean value);
+    }
 }

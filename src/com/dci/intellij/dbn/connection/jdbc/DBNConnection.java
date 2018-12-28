@@ -36,20 +36,16 @@ public class DBNConnection extends DBNConnectionBase {
     private String currentSchema;
 
     private IncrementalResourceStatusAdapter<DBNConnection> active =
-            new IncrementalResourceStatusAdapter<DBNConnection>(ResourceStatus.ACTIVE, this) {
-                @Override
-                protected boolean setInner(ResourceStatus status, boolean value) {
-                    return DBNConnection.super.set(status, value);
-                }
-            };
+            IncrementalResourceStatusAdapter.create(
+                    DBNConnection.this,
+                    ResourceStatus.ACTIVE,
+                    (status, value) -> DBNConnection.super.set(status, value));
 
     private IncrementalResourceStatusAdapter<DBNConnection> reserved =
-            new IncrementalResourceStatusAdapter<DBNConnection>(ResourceStatus.RESERVED, this) {
-                @Override
-                protected boolean setInner(ResourceStatus status, boolean value) {
-                    return DBNConnection.super.set(status, value);
-                }
-            };
+            IncrementalResourceStatusAdapter.create(
+                    DBNConnection.this,
+                    ResourceStatus.RESERVED,
+                    (status, value) -> DBNConnection.super.set(status, value));
 
     private ResourceStatusAdapter<DBNConnection> invalid =
             new ResourceStatusAdapter<DBNConnection>(this,

@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class LazyResourceStatus<T extends Property> {
+public abstract class LatentResourceStatus<T extends Property> {
     private long interval;
     private long lastCheck;
     private boolean checking;
@@ -16,7 +16,7 @@ public abstract class LazyResourceStatus<T extends Property> {
     private T status;
     private FailsafeWeakRef<PropertyHolder<T>> resource;
 
-    protected LazyResourceStatus(PropertyHolder<T> resource, T status, boolean initialValue, long interval){
+    protected LatentResourceStatus(PropertyHolder<T> resource, T status, boolean initialValue, long interval){
         resource.set(status, initialValue);
         this.status = status;
         this.interval = interval;

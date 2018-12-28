@@ -35,7 +35,6 @@ import java.sql.Savepoint;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 public class ConnectionUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -161,7 +160,7 @@ public class ConnectionUtil {
         private SQLException exception;
 
         ConnectTimeoutCall() {
-            super(30, TimeUnit.SECONDS, null, true);
+            super(30, null, true);
         }
 
         @Override

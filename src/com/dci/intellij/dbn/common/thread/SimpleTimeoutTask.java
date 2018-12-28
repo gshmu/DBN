@@ -10,20 +10,18 @@ import java.util.concurrent.TimeoutException;
 public abstract class SimpleTimeoutTask implements Runnable{
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private long timeout;
-    private TimeUnit timeoutUnit;
+    private long timeoutSeconds;
     private boolean daemon;
 
-    private SimpleTimeoutTask(long timeout, TimeUnit timeoutUnit, boolean daemon) {
-        this.timeout = timeout;
-        this.timeoutUnit = timeoutUnit;
+    private SimpleTimeoutTask(long timeoutSeconds, boolean daemon) {
+        this.timeoutSeconds = timeoutSeconds;
         this.daemon = daemon;
     }
 
     public final void start() {
         Future future = ThreadFactory.timeoutExecutor(daemon).submit(this);
         try {
-            future.get(timeout, timeoutUnit);
+            future.get(timeoutSeconds, TimeUnit.SECONDS);
         } catch (TimeoutException | InterruptedException e) {
             future.cancel(true);
         } catch (Exception e) {
@@ -31,8 +29,8 @@ public abstract class SimpleTimeoutTask implements Runnable{
         }
     }
 
-    public static SimpleTimeoutTask create(long timeout, TimeUnit timeoutUnit, boolean daemon, Runnable runnable) {
-        return new SimpleTimeoutTask(timeout, timeoutUnit, daemon) {
+    public static SimpleTimeoutTask create(long timeoutSeconds, boolean daemon, Runnable runnable) {
+        return new SimpleTimeoutTask(timeoutSeconds, daemon) {
             @Override
             public void run() {
                 runnable.run();
@@ -40,7 +38,7 @@ public abstract class SimpleTimeoutTask implements Runnable{
         };
     }
 
-    public static void invoke(long timeout, TimeUnit timeoutUnit, boolean daemon, Runnable runnable) {
-        SimpleTimeoutTask.create(timeout, timeoutUnit, daemon, runnable).start();
+    public static void invoke(long timeoutSeconds, boolean daemon, Runnable runnable) {
+        SimpleTimeoutTask.create(timeoutSeconds, daemon, runnable).start();
     }
 }
