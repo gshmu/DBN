@@ -12,7 +12,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
 
 public abstract class ResourceStatusAdapter<T extends Resource> {
     protected static final Logger LOGGER = LoggerFactory.createLogger();
@@ -104,14 +103,12 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
     public final void change(boolean value) {
-        if (canChange(value)) {
-            synchronized (this) {
-                if (canChange(value)) {
+        Synchronized.run(this,
+                () -> canChange(value),
+                () -> {
                     set(changing, true);
                     changeControlled(value);
-                }
-            }
-        }
+                });
     }
 
     private boolean canCheck() {
@@ -128,12 +125,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
     private boolean checkControlled() {
-        return new SimpleTimeoutCall<Boolean>(5, TimeUnit.SECONDS, is(value), true) {
-            @Override
-            public Boolean call() throws Exception {
-                return checkInner();
-            }
-        }.start();
+        return SimpleTimeoutCall.invoke(5, is(value), true, () -> checkInner());
     }
 
     private void changeControlled(final boolean value) {
@@ -145,7 +137,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                 daemon = false;
             }
 
-            SimpleTimeoutTask.invoke(10, TimeUnit.SECONDS, daemon, () -> {
+            SimpleTimeoutTask.invoke(10, daemon, () -> {
                 try {
                     if (SettingsUtil.isDebugEnabled) LOGGER.info("Started " + getLogIdentifier());
                     changeInner(value);

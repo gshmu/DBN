@@ -20,7 +20,11 @@ import com.intellij.openapi.project.DumbAware;
 
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.EDITABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.REFERENCEABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 
 public class ObjectActionGroup extends DefaultActionGroup implements DumbAware {
 
@@ -84,10 +88,11 @@ public class ObjectActionGroup extends DefaultActionGroup implements DumbAware {
             if (object.isNot(REFERENCEABLE)) addSeparator();
             //add(new DbsGoToActionGroup(linkLists));
             for (DBObjectNavigationList navigationList : navigationLists) {
+                DBObject parentObject = object.getParentObject();
                 if (navigationList.isLazy()) {
-                    add(new ObjectLazyNavigationListAction(object.getParentObject(), navigationList));
+                    add(new ObjectLazyNavigationListAction(parentObject, navigationList));
                 } else {
-                    add(new ObjectNavigationListActionGroup(object.getParentObject(), navigationList, false));
+                    add(new ObjectNavigationListActionGroup(parentObject, navigationList, false));
                 }
             }
         }

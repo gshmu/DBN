@@ -10,7 +10,7 @@ public abstract class IncrementalStatusAdapter<T, P extends Property> {
     private final FailsafeWeakRef<T> resource;
     private AtomicInteger count = new AtomicInteger();
 
-    public IncrementalStatusAdapter(P status, T resource) {
+    public IncrementalStatusAdapter(T resource, P status) {
         this.status = status;
         this.resource = new FailsafeWeakRef<T>(resource);
     }
