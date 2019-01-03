@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
@@ -77,7 +77,7 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
             if (loaderCount < 10) {
                 shouldLoad = false;
                 loaderCount++;
-                SimpleBackgroundInvocator.invoke(() -> {
+                SimpleBackgroundTask.invoke(() -> {
                     try {
                         DBObject object = getObject();
                         if (object instanceof DBSchemaObject) {

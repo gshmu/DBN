@@ -18,7 +18,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -654,7 +654,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
                     visibleTreeChildren = new ArrayList<>();
                     visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
-                    SimpleBackgroundInvocator.invoke(this::buildTreeChildren);
+                    SimpleBackgroundTask.invoke(this::buildTreeChildren);
                 }
             }
         }

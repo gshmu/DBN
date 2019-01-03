@@ -20,10 +20,4 @@ public class ThreadLocalLatent<T> {
         }
         return value;
     }
-
-
-    @FunctionalInterface
-    public interface Loader<T> {
-        T load();
-    }
 }

@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -279,7 +279,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             ConnectionAction.invoke("loading table data", this, (Integer) null, action -> {
                 setLoading(true);
                 EventUtil.notify(project, DatasetLoadListener.TOPIC).datasetLoading(databaseFile);
-                SimpleBackgroundInvocator.invoke(() -> {
+                SimpleBackgroundTask.invoke(() -> {
                     DatasetEditorForm editorForm = getEditorForm();
                     try {
                         editorForm.showLoadingHint();

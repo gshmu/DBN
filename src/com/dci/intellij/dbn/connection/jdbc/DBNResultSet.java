@@ -49,7 +49,7 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
     }
 
     @Override
-    public void close() {
+    public void close() throws SQLException {
         try {
             super.close();
         } finally {

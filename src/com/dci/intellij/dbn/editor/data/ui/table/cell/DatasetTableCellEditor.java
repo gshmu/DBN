@@ -1,6 +1,6 @@
  package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
- import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
+ import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
  import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
  import com.dci.intellij.dbn.common.ui.Borders;
  import com.dci.intellij.dbn.common.ui.MouseUtil;
@@ -189,7 +189,7 @@
             final DatasetEditorModelCell cell = getCell();
             if (e.isControlDown() && cell.isNavigable()) {
 
-                SimpleBackgroundInvocator.invoke(() -> {
+                SimpleBackgroundTask.invoke(() -> {
                     DBColumn column = cell.getColumnInfo().getColumn();
                     final DBColumn foreignKeyColumn = column.getForeignKeyColumn();
                     if (foreignKeyColumn != null && !e.isConsumed()) {

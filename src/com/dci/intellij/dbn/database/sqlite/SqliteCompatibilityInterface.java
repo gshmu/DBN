@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.database.sqlite;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.DatabaseAttachmentHandler;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -12,7 +11,6 @@ import com.dci.intellij.dbn.editor.session.SessionStatus;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -78,22 +76,18 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
 
     @Override
     public DatabaseAttachmentHandler getDatabaseAttachmentHandler() {
-        return new DatabaseAttachmentHandler() {
-            @Override
-            public void attachDatabase(Connection connection, String filePath, String schemaName) throws SQLException {
-                boolean autoCommit = connection.getAutoCommit();
-                ConnectionUtil.setAutoCommit(connection, false);
-                connection.setAutoCommit(false);
+        return (connection, filePath, schemaName) -> {
+            boolean autoCommit = connection.getAutoCommit();
+            connection.setAutoCommit(false);
+            try {
+                connection.rollback();
+                Statement statement = connection.createStatement();
                 try {
-                    connection.rollback();
-                    Statement statement = connection.createStatement();
-                    try {
-                        statement.execute("end transaction");
-                    } catch (SQLException ignore) {}
-                    statement.executeUpdate("attach database '" + filePath + "' as \"" + schemaName + "\"");
-                } finally {
-                    ConnectionUtil.setAutoCommit(connection, autoCommit);
-                }
+                    statement.execute("end transaction");
+                } catch (SQLException ignore) {}
+                statement.executeUpdate("attach database '" + filePath + "' as \"" + schemaName + "\"");
+            } finally {
+                connection.setAutoCommit(autoCommit);
             }
         };
     }

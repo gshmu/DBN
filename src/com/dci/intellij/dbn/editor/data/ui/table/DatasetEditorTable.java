@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data.ui.table;
 
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.thread.ModalTask;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
@@ -59,8 +59,12 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.EventObject;
 
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.DELIBERATE_ACTION;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.PRESERVE_CHANGES;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.USE_CURRENT_FILTER;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
 
 public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     private static final DatasetLoadInstructions SORT_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, DELIBERATE_ACTION);
@@ -179,7 +183,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     public void performUpdate(Runnable runnable) {
-        SimpleBackgroundInvocator.invoke(() -> {
+        SimpleBackgroundTask.invoke(() -> {
             DatasetEditorModel model = getModel();
             try {
                 model.set(UPDATING, true);

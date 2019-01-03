@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -9,9 +11,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,10 +19,10 @@ import java.util.List;
 import java.util.Set;
 
 public class ReadonlyResultSetAdapter extends ResultSetAdapter {
-    private Connection connection;
+    private DBNConnection connection;
     private Row currentRow;
 
-    public ReadonlyResultSetAdapter(DatasetEditorModel model, ResultSet resultSet) throws SQLException {
+    public ReadonlyResultSetAdapter(DatasetEditorModel model, DBNResultSet resultSet) throws SQLException {
         super(model);
         this.connection = resultSet.getStatement().getConnection();
     }
