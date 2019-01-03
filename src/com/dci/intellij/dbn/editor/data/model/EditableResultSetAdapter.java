@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
@@ -7,13 +8,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class EditableResultSetAdapter extends ResultSetAdapter {
-    private ResultSet resultSet;
+    private DBNResultSet resultSet;
 
-    public EditableResultSetAdapter(DatasetEditorModel model, ResultSet resultSet) {
+    public EditableResultSetAdapter(DatasetEditorModel model, DBNResultSet resultSet) {
         super(model);
         this.resultSet = resultSet;
     }

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.thread;
 
 public interface Synchronized {
-    static void run(Object syncObject, Condition<Boolean> condition, Runnable runnable) {
+    static <E extends Throwable> void run(Object syncObject, Condition<Boolean> condition, BasicRunnable<E> runnable) throws E {
         if(condition.evaluate()) {
             synchronized (syncObject) {
                 if(condition.evaluate()) {
@@ -12,7 +12,7 @@ public interface Synchronized {
     }
 
     @FunctionalInterface
-    public interface Condition<T> {
+    interface Condition<T> {
         T evaluate();
     }
 }

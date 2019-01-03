@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.cache;
 
+import com.dci.intellij.dbn.common.thread.BasicCallable;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,22 +31,17 @@ public class Cache {
         return cacheValue != null && !cacheValue.isOlderThan(expiryTimeMillis);
     }
 
-    public <T, E extends Exception> T get(String key, Loader<T, E> loader) throws E {
+    public <T, E extends Throwable> T get(String key, BasicCallable<T, E> loader) throws E {
         T value = get(key);
         if (value == null) {
             synchronized (this) {
                 value = get(key);
                 if (value == null) {
-                    value = loader.load();
+                    value = loader.call();
                     set(key, value);
                 }
             }
         }
         return value;
-    }
-
-    @FunctionalInterface
-    public interface Loader<T, E extends Exception> {
-        T load() throws E;
     }
 }

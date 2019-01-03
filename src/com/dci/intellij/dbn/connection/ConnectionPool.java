@@ -226,7 +226,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
                     throw new SQLException("Could not allocate connection for '" + connectionHandler.getName() + "'. ");
                 }
             }
-            connection = createConnection();
+            connection = createPoolConnection();
         }
         ConnectionUtil.setReadonly(connection, readonly);
         ConnectionUtil.setAutoCommit(connection, readonly);
@@ -260,7 +260,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
     }
 
     @NotNull
-    private DBNConnection createConnection() throws SQLException {
+    private DBNConnection createPoolConnection() throws SQLException {
         checkDisposed();
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
@@ -299,7 +299,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         if (connection != null) {
             if (connection.isPoolConnection()) {
                 ConnectionUtil.rollback(connection);
-                ConnectionUtil.setAutocommit(connection, true);
+                ConnectionUtil.setAutoCommit(connection, true);
                 ConnectionUtil.setReadonly(connection, true);
                 connection.set(ResourceStatus.RESERVED, false);
             } else {
@@ -351,12 +351,6 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         if (!isDisposed()) {
             super.dispose();
             closeConnections();
-        }
-    }
-
-    public void setAutoCommit(boolean autoCommit) {
-        if (mainConnection != null && !mainConnection.isClosed()) {
-            mainConnection.setAutoCommit(autoCommit);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.element;
 
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
@@ -108,7 +108,7 @@ public class ElementTypeBundle {
             } else {
             }
 
-            SimpleBackgroundInvocator.invoke(() -> {
+            SimpleBackgroundTask.invoke(() -> {
                 for (ElementType allElementType : builder.allElementTypes) {
                     allElementType.getLookupCache().cleanup();
                 }

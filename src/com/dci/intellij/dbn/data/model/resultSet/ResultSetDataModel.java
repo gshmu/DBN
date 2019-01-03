@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.model.resultSet;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -121,7 +121,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     }
 
     private void disposeRows(final List<T> oldRows) {
-        SimpleBackgroundInvocator.invoke(() -> {
+        SimpleBackgroundTask.invoke(() -> {
             // dispose old content
             for (T row : oldRows) {
                 disposeRow(row);

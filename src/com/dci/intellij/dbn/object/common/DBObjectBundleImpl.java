@@ -20,7 +20,7 @@ import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -354,7 +354,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                 if (visibleTreeChildren == null) {
                     visibleTreeChildren = new ArrayList<>();
                     visibleTreeChildren.add(new LoadInProgressTreeNode(this));
-                    SimpleBackgroundInvocator.invoke(this::buildTreeChildren);
+                    SimpleBackgroundTask.invoke(this::buildTreeChildren);
                 }
             }
         }

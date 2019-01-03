@@ -86,7 +86,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
         return closed.get();
     }
 
-    public void close() {
+    public void close() throws SQLException {
         closed.change(true);
     }
 
@@ -94,7 +94,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
         return cancelled.get();
     }
 
-    public void cancel() {
+    public void cancel() throws SQLException {
         cancelled.change(true);
     }
 

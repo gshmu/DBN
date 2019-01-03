@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -226,7 +226,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
                 @Override
                 public void handleTimeout() {
-                    SimpleBackgroundInvocator.invoke(() -> {
+                    SimpleBackgroundTask.invoke(() -> {
                         MessageUtil.showErrorDialog(project,
                                 "Script execution timeout",
                                 "The script execution has timed out",
@@ -237,7 +237,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
                 @Override
                 public void handleException(final Throwable e) throws SQLException {
-                    SimpleBackgroundInvocator.invoke(() -> {
+                    SimpleBackgroundTask.invoke(() -> {
                         MessageUtil.showErrorDialog(project,
                                 "Script execution error",
                                 "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),

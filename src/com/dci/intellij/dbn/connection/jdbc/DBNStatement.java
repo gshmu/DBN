@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.util.CustomCallable;
+import com.dci.intellij.dbn.common.thread.BasicCallable;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.intellij.openapi.diagnostic.Logger;
 
@@ -56,7 +56,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
 
 
     @Override
-    public void close() {
+    public void close() throws SQLException {
         try {
             super.close();
         } finally {
@@ -110,7 +110,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
         protected abstract R execute() throws SQLException;
     }
 
-    protected <R> R managed(CustomCallable<R, SQLException> callable) throws SQLException {
+    protected <R> R managed(BasicCallable<R, SQLException> callable) throws SQLException {
         return new ManagedExecutor<R>() {
             @Override
             protected R execute() throws SQLException {
