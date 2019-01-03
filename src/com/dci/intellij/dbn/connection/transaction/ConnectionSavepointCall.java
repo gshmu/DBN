@@ -32,7 +32,7 @@ public abstract class ConnectionSavepointCall<T>{
                     threadSavepointCall.set(this);
                     return execute();
                 } catch (SQLException e) {
-                    ConnectionUtil.rollback(connection, savepoint);
+                    ConnectionUtil.rollbackSilently(connection, savepoint);
                     throw e;
                 } finally {
                     threadSavepointCall.set(null);

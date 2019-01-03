@@ -5,15 +5,19 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
-import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionStatusListener;
+import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingListener;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.ref.WeakReference;
 
 public class AutoCommitLabel extends JLabel implements Disposable {
     private interface Colors {
@@ -22,23 +26,28 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         Color AUTO_COMMIT_OFF = new JBColor(new Color(0x009600), new Color(0x629755));
     }
     private ConnectionHandlerRef connectionHandlerRef;
+    private SessionId sessionId;
     private boolean subscribed = false;
+    private WeakReference<VirtualFile> virtualFileRef;
 
     public AutoCommitLabel() {
         super("");
         setFont(GUIUtil.BOLD_FONT);
     }
 
-    public void setConnectionHandler(ConnectionHandler connectionHandler) {
-        if (connectionHandler == null || connectionHandler instanceof VirtualConnectionHandler) {
-            this.connectionHandlerRef = null;
-        } else {
-            this.connectionHandlerRef = connectionHandler.getRef();
-            if (!subscribed) {
-                subscribed = true;
-                Project project = connectionHandler.getProject();
-                EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, connectionStatusListener);
-            }
+    public void init(VirtualFile virtualFile, ConnectionHandler connectionHandler, DatabaseSession session) {
+        init(virtualFile, connectionHandler, session == null ? null : session.getId());
+    }
+
+    public void init(VirtualFile virtualFile, ConnectionHandler connectionHandler, SessionId sessionId) {
+        this.virtualFileRef = new WeakReference<>(virtualFile);
+        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        this.sessionId = sessionId;
+        if (!subscribed) {
+            subscribed = true;
+            Project project = connectionHandler.getProject();
+            EventUtil.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
+            EventUtil.subscribe(project, this, FileConnectionMappingListener.TOPIC, connectionMappingListener);
         }
         update();
     }
@@ -48,7 +57,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler != null) {
                 setVisible(true);
-                boolean disconnected = !connectionHandler.isConnected();
+                boolean disconnected = !connectionHandler.isConnected(sessionId);
                 boolean autoCommit = connectionHandler.isAutoCommit();
                 setText(disconnected ? "Not connected to database" : autoCommit ? "Auto-Commit ON" : "Auto-Commit OFF");
                 setForeground(disconnected ?
@@ -76,12 +85,30 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         }
     }
 
-    private ConnectionHandlerStatusListener connectionStatusListener = (connectionId, sessionId) -> {
+    private ConnectionStatusListener connectionStatusListener = (connectionId, sessionId) -> {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler != null && connectionHandler.getId() == connectionId) {
             update();
         }
     };
+
+    private FileConnectionMappingListener connectionMappingListener = new FileConnectionMappingListener() {
+        @Override
+        public void connectionChanged(VirtualFile virtualFile, ConnectionHandler connectionHandler) {
+            if (virtualFile.equals(virtualFileRef.get())) {
+                AutoCommitLabel.this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+            }
+        }
+
+        @Override
+        public void sessionChanged(VirtualFile virtualFile, DatabaseSession session) {
+            if (virtualFile.equals(virtualFileRef.get())) {
+                AutoCommitLabel.this.sessionId = session == null ? null : session.getId();
+                update();
+            }
+        }
+    };
+
     @Override
     public void dispose() {
         connectionHandlerRef = null;

@@ -60,7 +60,7 @@ public class ConnectionUtil {
         }
     }
 
-    public static <T extends AutoCloseable> T close(T resource) {
+    public static <T extends AutoCloseable> void close(T resource) {
         if (resource != null) {
             try {
                 resource.close();
@@ -68,7 +68,6 @@ public class ConnectionUtil {
                 LOGGER.warn("Failed to close resource", e);
             }
         }
-        return null;
     }
 
     public static DBNConnection connect(ConnectionHandler connectionHandler, SessionId sessionId) throws SQLException {
@@ -322,7 +321,15 @@ public class ConnectionUtil {
         return DatabaseType.resolve(productName);
     }
 
-    public static void commit(DBNConnection connection) {
+    public static void commitSilently(DBNConnection connection) {
+        try {
+            commit(connection);
+        } catch (SQLException e) {
+            LOGGER.warn("Commit failed", e);
+        }
+    }
+
+    public static void commit(DBNConnection connection) throws SQLException {
         try {
             if (connection != null) connection.commit();
         } catch (SQLException e) {
@@ -331,10 +338,19 @@ public class ConnectionUtil {
                     "Failed to commit",
                     connection,
                     e);
+            throw e;
         }
     }
 
-    public static void rollback(DBNConnection connection) {
+    public static void rollbackSilently(DBNConnection connection) {
+        try {
+            rollback(connection);
+        } catch (SQLException e) {
+            LOGGER.warn("Rollback failed", e);
+        }
+
+    }
+    public static void rollback(DBNConnection connection) throws SQLException {
         try {
             if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) connection.rollback();
         } catch (SQLException e) {
@@ -343,10 +359,19 @@ public class ConnectionUtil {
                     "Failed to rollback",
                     connection,
                     e);
+            throw e;
         }
     }
 
-    public static void rollback(DBNConnection connection, @Nullable Savepoint savepoint) {
+    public static void rollbackSilently(DBNConnection connection, @Nullable Savepoint savepoint) {
+        try {
+            rollback(connection, savepoint);
+        } catch (SQLException e) {
+            LOGGER.warn("Savepoint rollback failed", e);
+        }
+    }
+
+    public static void rollback(DBNConnection connection, @Nullable Savepoint savepoint) throws SQLException {
         try {
             if (connection != null && savepoint != null && !connection.isClosed() && !connection.getAutoCommit()) connection.rollback(savepoint);
         } catch (SQLException e) {
@@ -355,6 +380,7 @@ public class ConnectionUtil {
                     "Failed to rollback savepoint for",
                     connection,
                     e);
+            throw e;
         }
     }
 

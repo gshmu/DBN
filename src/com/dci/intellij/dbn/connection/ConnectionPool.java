@@ -38,11 +38,8 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
     private ConnectionHandlerRef connectionHandlerRef;
 
     private List<DBNConnection> poolConnections = ContainerUtil.createLockFreeCopyOnWriteList();
-    private Map<SessionId, DBNConnection> sessionConnections = ContainerUtil.newConcurrentMap();
-    private DBNConnection mainConnection;
-    private DBNConnection debugConnection; // TODO
-    private DBNConnection debuggerConnection; // TODO
-    private DBNConnection testConnection;
+    private Map<SessionId, DBNConnection> dedicatedConnections = ContainerUtil.newConcurrentMap();
+
     private IntervalLoader<Long> lastAccessTimestamp = new IntervalLoader<Long>(TimeUtil.TEN_SECONDS) {
         @Override
         protected Long load() {
@@ -68,48 +65,37 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
     }
 
     DBNConnection ensureTestConnection() throws SQLException {
-        testConnection = init(testConnection, SessionId.TEST);
-        return testConnection;
+        return ensureConnection(SessionId.TEST);
     }
 
     @NotNull
     DBNConnection ensureMainConnection() throws SQLException {
-        mainConnection = init(mainConnection, SessionId.MAIN);
-        return mainConnection;
+        return ensureConnection(SessionId.MAIN);
     }
 
     @NotNull
     DBNConnection ensureDebugConnection() throws SQLException {
-        debugConnection = init(debugConnection, SessionId.DEBUG);
-        return debugConnection;
+        return ensureConnection(SessionId.DEBUG);
     }
 
     @NotNull
     DBNConnection ensureDebuggerConnection() throws SQLException {
-        debuggerConnection = init(debuggerConnection, SessionId.DEBUGGER);
-        return debuggerConnection;
+        return ensureConnection(SessionId.DEBUGGER);
     }
 
     @Nullable
     public DBNConnection getMainConnection() {
-        return mainConnection;
+        return dedicatedConnections.get(SessionId.MAIN);
     }
 
     @Nullable
     public DBNConnection getTestConnection() {
-        return testConnection;
+        return dedicatedConnections.get(SessionId.TEST);
     }
 
     @Nullable
     public DBNConnection getSessionConnection(SessionId sessionId) {
-        if (sessionId == SessionId.MAIN) {
-            return verify(mainConnection);
-        } else if (sessionId == SessionId.DEBUG) {
-            return verify(debugConnection);
-        } else if (sessionId != SessionId.POOL) {
-            return sessionConnections.get(sessionId);
-        }
-        return null;
+        return dedicatedConnections.get(sessionId);
     }
 
     private static DBNConnection verify(DBNConnection connection) {
@@ -123,46 +109,27 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
 
     @NotNull
     DBNConnection ensureSessionConnection(SessionId sessionId) throws SQLException {
-        DBNConnection connection = sessionConnections.get(sessionId);
-        connection = init(connection, sessionId);
-        sessionConnections.put(sessionId, connection);
-        return connection;
+        return ensureConnection(sessionId);
     }
 
     @NotNull
     public List<DBNConnection> getConnections(ConnectionType... connectionTypes) {
         ArrayList<DBNConnection> connections = new ArrayList<>();
-        if (ConnectionType.MAIN.matches(connectionTypes) && mainConnection != null) {
-            connections.add(mainConnection);
-        }
-
-        if (ConnectionType.DEBUG.matches(connectionTypes) && debugConnection != null) {
-            connections.add(debugConnection);
-        }
-
-        if (ConnectionType.DEBUGGER.matches(connectionTypes) && debuggerConnection != null) {
-            connections.add(debuggerConnection);
-        }
-
-        if (ConnectionType.TEST.matches(connectionTypes) && testConnection != null) {
-            connections.add(testConnection);
-        }
-
         if (ConnectionType.POOL.matches(connectionTypes)) {
             connections.addAll(poolConnections);
         }
-        if (ConnectionType.SESSION.matches(connectionTypes)) {
-            for (DBNConnection connection : sessionConnections.values()) {
-                if (connection != null) {
-                    connections.add(connection);
-                }
+
+        for (DBNConnection connection : dedicatedConnections.values()) {
+            if (connection != null && connection.getType().matches(connectionTypes)) {
+                connections.add(connection);
             }
         }
         return connections;
     }
 
     @NotNull
-    private DBNConnection init(DBNConnection connection, SessionId sessionId) throws SQLException {
+    private DBNConnection ensureConnection(SessionId sessionId) throws SQLException {
+        DBNConnection connection = dedicatedConnections.get(sessionId);
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.setLastUsedConnection(connectionHandler);
 
@@ -173,12 +140,13 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
                         ConnectionUtil.close(connection);
 
                         connection = ConnectionUtil.connect(connectionHandler, sessionId);
+                        dedicatedConnections.put(sessionId, connection);
                         sendInfoNotification(
                                 Constants.DBN_TITLE_PREFIX + "Session",
                                 "Connected to database \"{0}\"",
                                 connectionHandler.getConnectionName(connection));
                     } finally {
-                        ConnectionHandlerStatusListener changeListener = EventUtil.notify(getProject(), ConnectionHandlerStatusListener.TOPIC);
+                        ConnectionStatusListener changeListener = EventUtil.notify(getProject(), ConnectionStatusListener.TOPIC);
                         changeListener.statusChanged(connectionHandler.getId(), sessionId);
                     }
                 }
@@ -298,10 +266,14 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
     void releaseConnection(DBNConnection connection) {
         if (connection != null) {
             if (connection.isPoolConnection()) {
-                ConnectionUtil.rollback(connection);
-                ConnectionUtil.setAutoCommit(connection, true);
-                ConnectionUtil.setReadonly(connection, true);
-                connection.set(ResourceStatus.RESERVED, false);
+                try {
+                    ConnectionUtil.rollback(connection);
+                    ConnectionUtil.setAutoCommit(connection, true);
+                    ConnectionUtil.setReadonly(connection, true);
+                    connection.set(ResourceStatus.RESERVED, false);
+                } catch (SQLException e) {
+                    dropConnection(connection);
+                }
             } else {
                 LOGGER.error("Trying to release non-POOL connection: " + connection.getType(), new IllegalArgumentException("No POOL connection"));
             }
@@ -317,18 +289,21 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
     }
 
     void closeConnections() {
-        for (DBNConnection connection : poolConnections) {
+        List<DBNConnection> connections = getConnections();
+        for (DBNConnection connection : connections) {
+            closeConnection(connection);
+        }
+    }
+
+    void closeConnection(DBNConnection connection) {
+        SessionId sessionId = connection.getSessionId();
+        if (sessionId == SessionId.POOL) {
+            poolConnections.remove(connection);
+            ConnectionUtil.close(connection);
+        } else {
+            dedicatedConnections.remove(sessionId);
             ConnectionUtil.close(connection);
         }
-        poolConnections.clear();
-
-        for (SessionId sessionId : sessionConnections.keySet()) {
-            DBNConnection connection = sessionConnections.remove(sessionId);
-            ConnectionUtil.close(connection);
-        }
-
-        mainConnection = ConnectionUtil.close(mainConnection);
-        testConnection = ConnectionUtil.close(testConnection);
     }
 
     public int getSize() {
@@ -339,8 +314,8 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         return poolConnections;
     }
 
-    public Map<SessionId, DBNConnection> getSessionConnections() {
-        return sessionConnections;
+    public Map<SessionId, DBNConnection> getDedicatedConnections() {
+        return dedicatedConnections;
     }
 
     public int getPeakPoolSize() {
@@ -360,11 +335,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
             return poolConnections.size() > 0;
         }
 
-        DBNConnection connection =
-                sessionId == SessionId.MAIN ?
-                        mainConnection :
-                        sessionConnections.get(sessionId);
-
+        DBNConnection connection = dedicatedConnections.get(sessionId);
         return connection != null && !connection.isClosed() && connection.isValid();
     }
 

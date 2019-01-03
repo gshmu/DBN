@@ -15,11 +15,7 @@ public enum TransactionAction implements Serializable {
             NotificationType.INFORMATION, "Connection \"{0}\" committed",
             NotificationType.ERROR, "Error committing connection \"{0}\". Details: {1}",
             false,
-            new Executor() {
-                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
-                    ConnectionUtil.commit(connection);
-                }
-            }),
+            (connectionHandler, connection) -> {ConnectionUtil.commit(connection);}),
 
     ROLLBACK(
             "Transaction",
@@ -27,11 +23,7 @@ public enum TransactionAction implements Serializable {
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
-            new Executor() {
-                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
-                    ConnectionUtil.rollback(connection);
-                }
-            }),
+            (connectionHandler, connection) -> {ConnectionUtil.rollback(connection);}),
 
     ROLLBACK_IDLE(
             "Transaction",
@@ -39,11 +31,7 @@ public enum TransactionAction implements Serializable {
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
-            new Executor() {
-                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
-                    ConnectionUtil.rollback(connection);
-                }
-            }),
+            (connectionHandler, connection) -> {ConnectionUtil.rollback(connection);}),
 
     DISCONNECT(
             "Session",
@@ -51,12 +39,7 @@ public enum TransactionAction implements Serializable {
             NotificationType.INFORMATION, "Disconnected from \"{0}\"",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
-            new Executor() {
-                @Override
-                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
-                    connectionHandler.disconnect();
-                }
-            }),
+            (connectionHandler, connection) -> {connectionHandler.closeConnection(connection);}),
 
     DISCONNECT_IDLE(
             "Session",
@@ -64,11 +47,7 @@ public enum TransactionAction implements Serializable {
             NotificationType.INFORMATION, "Disconnected from \"{0}\" because it has exceeded the configured idle timeout.",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
-            new Executor() {
-                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
-                    connectionHandler.disconnect();
-                }
-            }),
+            (connectionHandler, connection) -> {connectionHandler.closeConnection(connection);}),
 
     KEEP_ALIVE(
             "Ping",
@@ -76,12 +55,7 @@ public enum TransactionAction implements Serializable {
             null, "",
             NotificationType.ERROR, "Error checking connectivity for \"{0}\". Details: {1}",
             false,
-            new Executor() {
-                @Override
-                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
-                    connection.updateLastAccess();
-                }
-            }),
+            (connectionHandler, connection) -> {connection.updateLastAccess();}),
 
     TURN_AUTO_COMMIT_ON(
             "Transaction",
@@ -90,11 +64,7 @@ public enum TransactionAction implements Serializable {
             "Auto-Commit switched ON for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit ON for connection \"{0}\". Details: {1}",
             true,
-            new Executor() {
-                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
-                    connectionHandler.setAutoCommit(true);
-                }
-            }),
+            (connectionHandler, connection) -> {connectionHandler.setAutoCommit(true);}),
 
     TURN_AUTO_COMMIT_OFF(
             "Transaction",
@@ -102,11 +72,7 @@ public enum TransactionAction implements Serializable {
             NotificationType.INFORMATION, "Auto-Commit switched OFF for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit OFF for connection\"{0}\". Details: {1}",
             true,
-            new Executor() {
-                void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
-                    connectionHandler.setAutoCommit(false);
-                }
-            });
+            (connectionHandler, connection) -> {connectionHandler.setAutoCommit(false);});
 
 
     private String group;
@@ -157,8 +123,9 @@ public enum TransactionAction implements Serializable {
         return isStatusChange;
     }
 
-    private abstract static class Executor {
-        abstract void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException;
+    @FunctionalInterface
+    private interface Executor {
+        void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException;
     }
 
     public void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {

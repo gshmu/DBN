@@ -30,7 +30,6 @@ import com.dci.intellij.dbn.connection.session.SessionManagerListener;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
-import com.dci.intellij.dbn.language.editor.ui.DBLanguageFileEditorToolbarForm;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -50,8 +49,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -75,7 +72,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.*;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.CONNECTION_HANDLER;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SCHEMA;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SESSION;
 
 @State(
     name = FileConnectionMappingManager.COMPONENT_NAME,
@@ -359,14 +358,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             boolean changed = setConnectionHandler(virtualFile, connectionHandler);
             if (changed) {
                 DocumentUtil.touchDocument(editor, true);
-                Project project = getProject();
-                FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile);
-                if (fileEditor != null) {
-                    DBLanguageFileEditorToolbarForm toolbarForm = fileEditor.getUserData(DBLanguageFileEditorToolbarForm.USER_DATA_KEY);
-                    if (toolbarForm != null) {
-                        toolbarForm.getAutoCommitLabel().setConnectionHandler(connectionHandler);
-                    }
-                }
+
+                FileConnectionMappingListener mappingListener = EventUtil.notify(getProject(), FileConnectionMappingListener.TOPIC);
+                mappingListener.connectionChanged(virtualFile, connectionHandler);
             }
         }
     }
@@ -378,6 +372,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             boolean changed = setDatabaseSchema(virtualFile, schema);
             if (changed) {
                 DocumentUtil.touchDocument(editor, false);
+
+                FileConnectionMappingListener mappingListener = EventUtil.notify(getProject(), FileConnectionMappingListener.TOPIC);
+                mappingListener.schemaChanged(virtualFile, schema);
             }
         }
     }
@@ -387,6 +384,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
         if (virtualFile != null && (VirtualFileUtil.isLocalFileSystem(virtualFile) || virtualFile instanceof DBConsoleVirtualFile)) {
             setDatabaseSession(virtualFile, session);
+
+            FileConnectionMappingListener mappingListener = EventUtil.notify(getProject(), FileConnectionMappingListener.TOPIC);
+            mappingListener.sessionChanged(virtualFile, session);
         }
     }
 

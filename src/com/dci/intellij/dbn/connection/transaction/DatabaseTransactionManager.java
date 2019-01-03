@@ -29,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class DatabaseTransactionManager extends AbstractProjectComponent implements ProjectManagerListener{
 
@@ -41,35 +40,22 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         return FailsafeUtil.getComponent(project, DatabaseTransactionManager.class);
     }
 
-    public void execute(final ConnectionHandler connectionHandler, final DBNConnection connection, boolean background, final TransactionAction... actions) {
+    public void execute(ConnectionHandler connectionHandler, DBNConnection connection, boolean background, @NotNull TransactionAction... actions) {
         if (connection == null) {
             List<DBNConnection> activeConnections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
             for (DBNConnection activeConnection : activeConnections) {
                 execute(connectionHandler, activeConnection, background, actions);
             }
         } else {
-            final List<TransactionAction> actionList = new ArrayList<TransactionAction>();
-            for (TransactionAction action : actions) {
-                if (action != null) {
-                    actionList.add(action);
-                }
-            }
-
-            Set<TransactionAction> pendingActions = connectionHandler.getPendingActions();
-
-            actionList.removeAll(pendingActions);
-            if (actionList.size() > 0) {
-                pendingActions.addAll(actionList);
-                Project project = connectionHandler.getProject();
-                if (ApplicationManager.getApplication().isDisposeInProgress()) {
-                    executeActions(connectionHandler, connection, actionList);
-                } else {
-                    String connectionName = connectionHandler.getConnectionName(connection);
-                    String taskTitle = "Performing \"" + actionList.get(0).getName() + "\" on connection " + connectionName;
-                    BackgroundTask.invoke(project, taskTitle, background, false, (task, progress) -> {
-                        executeActions(connectionHandler, connection, actionList);
-                    });
-                }
+            Project project = connectionHandler.getProject();
+            if (ApplicationManager.getApplication().isDisposeInProgress()) {
+                executeActions(connectionHandler, connection, actions);
+            } else {
+                String connectionName = connectionHandler.getConnectionName(connection);
+                String taskTitle = "Performing \"" + actions[0].getName() + "\" on connection " + connectionName;
+                BackgroundTask.invoke(project, taskTitle, background, false, (task, progress) -> {
+                    executeActions(connectionHandler, connection, actions);
+                });
             }
         }
     }
@@ -78,7 +64,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         return ProjectSettingsManager.getInstance(getProject()).getOperationSettings().getTransactionManagerSettings();
     }
 
-    private void executeActions(ConnectionHandler connectionHandler, DBNConnection connection, List<TransactionAction> actions) {
+    private void executeActions(ConnectionHandler connectionHandler, DBNConnection connection, @NotNull TransactionAction ... actions) {
         Project project = getProject();
         TransactionListener transactionListener = EventUtil.notify(project, TransactionListener.TOPIC);
         for (TransactionAction action : actions) {
@@ -117,14 +103,13 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
                 if (action.isStatusChange()) {
                     ConnectionHandlerStatusListener statusListener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-                    statusListener.statusChanged(connectionHandler.getId(), null);
+                    statusListener.statusChanged(connectionHandler.getId());
                 }
-                connectionHandler.getPendingActions().remove(action);
             }
         }
     }
 
-    public void commit(final @NotNull ConnectionHandler connectionHandler, @Nullable DBNConnection targetConnection, boolean fromEditor, boolean background) {
+    public void commit(@NotNull ConnectionHandler connectionHandler, @Nullable DBNConnection targetConnection, boolean fromEditor, boolean background) {
         List<DBNConnection> connections;
         if (targetConnection == null) {
             connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);

@@ -14,8 +14,8 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
@@ -113,7 +113,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         Disposer.register(this, editorForm);
 
         EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
-        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, connectionStatusListener);
+        EventUtil.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
         EventUtil.subscribe(project, this, DataGridSettingsChangeListener.TOPIC, dataGridSettingsChangeListener);
     }
 
@@ -514,7 +514,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     /*******************************************************
      *                      Listeners                      *
      *******************************************************/
-    private ConnectionHandlerStatusListener connectionStatusListener = (connectionId, sessionId) -> {
+    private ConnectionStatusListener connectionStatusListener = (connectionId, sessionId) -> {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler.getId() == connectionId && sessionId == SessionId.MAIN) {
             boolean connected = connectionHandler.isConnected(SessionId.MAIN);

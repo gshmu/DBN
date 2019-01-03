@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
@@ -98,7 +99,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
         if (dataset.isEditable(DBContentType.DATA)) {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            autoCommitLabel.setConnectionHandler(connectionHandler);
+            autoCommitLabel.init(datasetEditor.getFile(), connectionHandler, SessionId.MAIN);
         }
     }
 

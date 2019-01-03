@@ -20,7 +20,7 @@ public class TabbedBrowserTreeModel extends BrowserTreeModel {
         return getRoot().getConnectionHandler();
     }
 
-    private final ConnectionHandlerStatusListener connectionHandlerStatusListener = (connectionId, sessionId) -> {
+    private final ConnectionHandlerStatusListener connectionHandlerStatusListener = (connectionId) -> {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler.getId() == connectionId) {
             notifyListeners(connectionHandler.getObjectBundle(), TreeEventType.NODES_CHANGED);
