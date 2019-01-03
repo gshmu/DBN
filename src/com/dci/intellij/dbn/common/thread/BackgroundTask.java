@@ -126,9 +126,4 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     public static <T> void invoke(@Nullable Project project, String title, boolean startInBackground, boolean cancellable, BackgroundRunnable<T> runnable) {
         create(project, title, startInBackground, cancellable, runnable).start();
     }
-
-    @FunctionalInterface
-    public interface BackgroundRunnable<T> {
-        void run(T data, ProgressIndicator progress) throws InterruptedException;
-    }
 }
