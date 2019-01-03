@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -26,8 +27,11 @@ public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
         actionToolbar.setTargetComponent(actionsPanel);
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
 
-        ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(file);
-        autoCommitLabel.setConnectionHandler(connectionHandler);
+        FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
+        ConnectionHandler connectionHandler = mappingManager.getConnectionHandler(file);
+        DatabaseSession databaseSession = mappingManager.getDatabaseSession(file);
+
+        autoCommitLabel.init(file, connectionHandler, databaseSession);
         Disposer.register(this, autoCommitLabel);
     }
 

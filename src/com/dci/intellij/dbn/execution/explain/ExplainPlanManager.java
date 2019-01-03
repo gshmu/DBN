@@ -83,7 +83,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                     } finally {
                         ConnectionUtil.close(resultSet);
                         ConnectionUtil.close(statement);
-                        ConnectionUtil.rollback(connection);
+                        ConnectionUtil.rollbackSilently(connection);
                         connectionHandler.freePoolConnection(connection);
                     }
 

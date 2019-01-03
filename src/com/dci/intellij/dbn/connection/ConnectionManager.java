@@ -130,7 +130,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 Project project = getProject();
                 String taskTitle = "Refreshing database objects";
                 BackgroundTask.invoke(project, taskTitle, true, true, (task, progress) -> {
-                    connectionHandler.getConnectionPool().closeConnections();
+                    DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
+                    List<DBNConnection> connections = connectionHandler.getConnections();
+                    for (DBNConnection connection : connections) {
+                        transactionManager.execute(connectionHandler, connection, false, TransactionAction.DISCONNECT);
+                    }
                     connectionHandler.getObjectBundle().getObjectListContainer().reload();
                 });
             }
@@ -170,9 +174,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     public static void testConfigConnection(final ConnectionSettings connectionSettings, final boolean showMessageDialog) {
-        final Project project = connectionSettings.getProject();
-        final ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-        final String connectionName = databaseSettings.getName();
+        Project project = connectionSettings.getProject();
+        ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
+        String connectionName = databaseSettings.getName();
         try {
             databaseSettings.checkConfiguration();
 
@@ -408,10 +412,10 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
         private void resolveIdleStatus(final ConnectionHandler connectionHandler) {
             FailsafeUtil.check(connectionHandler);
-            final DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
+            DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
             List<DBNConnection> activeConnections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
 
-            for (final DBNConnection connection : activeConnections) {
+            for (DBNConnection connection : activeConnections) {
                 if (connection.isIdle() && connection.isNot(ResourceStatus.RESOLVING_TRANSACTION)) {
 
                     int idleMinutes = connection.getIdleMinutes();

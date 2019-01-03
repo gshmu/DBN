@@ -41,7 +41,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
     @Override
     public void doDefaultAction() {
         DBNConnection connection = getConnection();
-        ConnectionUtil.rollback(connection);
+        ConnectionUtil.rollbackSilently(connection);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
         public void actionPerformed(ActionEvent e) {
             try {
                 DBNConnection connection = getConnection();
-                ConnectionUtil.commit(connection);
+                ConnectionUtil.commitSilently(connection);
             } finally {
                 executionProcessor.getExecutionContext().set(PROMPTED, false);
                 executionProcessor.postExecute();
@@ -88,7 +88,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
         public void actionPerformed(ActionEvent e) {
             try {
                 DBNConnection connection = getConnection();
-                ConnectionUtil.rollback(connection);
+                ConnectionUtil.rollbackSilently(connection);
             } finally {
                 executionProcessor.getExecutionContext().set(PROMPTED, false);
                 executionProcessor.postExecute();
@@ -100,7 +100,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
     @Override
     public void doCancelAction() {
         DBNConnection connection = getConnection();
-        ConnectionUtil.rollback(connection);
+        ConnectionUtil.rollbackSilently(connection);
         super.doCancelAction();
     }
 

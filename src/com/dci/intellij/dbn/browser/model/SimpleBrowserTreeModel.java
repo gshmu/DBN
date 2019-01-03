@@ -24,7 +24,7 @@ public class SimpleBrowserTreeModel extends BrowserTreeModel {
         return true;
     }
 
-    private final ConnectionHandlerStatusListener connectionHandlerStatusListener = (connectionId, sessionId) -> {
+    private final ConnectionHandlerStatusListener connectionHandlerStatusListener = (connectionId) -> {
         ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
         if (connectionHandler != null) {
             notifyListeners(connectionHandler.getObjectBundle(), TreeEventType.NODES_CHANGED);

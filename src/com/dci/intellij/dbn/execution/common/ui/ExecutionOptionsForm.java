@@ -97,7 +97,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
 
         connectionLabel.setText(connectionHandler.getPresentableText());
         connectionLabel.setIcon(connectionHandler.getIcon());
-        autoCommitLabel.setConnectionHandler(connectionHandler);
+        autoCommitLabel.init(null, connectionHandler, targetSessionId);
 
         ExecutionOptions options = executionInput.getOptions();
         commitCheckBox.setSelected(options.is(ExecutionOption.COMMIT_AFTER_EXECUTION));

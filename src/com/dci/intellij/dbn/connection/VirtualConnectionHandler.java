@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
-import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -32,7 +31,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
     private ConnectionId id;
@@ -183,8 +181,9 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @NotNull
     @Override public DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException {throw new UnsupportedOperationException();}
+
+    @Override public void closeConnection(DBNConnection connection) {}
     @Override public void freePoolConnection(DBNConnection connection) {}
-    @Override public void dropPoolConnection(DBNConnection connection) {}
 
     @Override public ConnectionSettings getSettings() {return null;}
     @Override public void setSettings(ConnectionSettings connectionSettings) {}
@@ -286,11 +285,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override
     public DatabaseInfo getDatabaseInfo() {
         return databaseType.getUrlPatterns()[0].getDefaultInfo();
-    }
-
-    @Override
-    public Set<TransactionAction> getPendingActions() {
-        return Collections.emptySet();
     }
 
     @Override

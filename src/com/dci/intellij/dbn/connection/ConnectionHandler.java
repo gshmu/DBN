@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
-import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -28,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
 
 public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable {
     @NotNull
@@ -56,8 +54,10 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     @NotNull
     DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException;
 
+    void closeConnection(DBNConnection connection);
+
     void freePoolConnection(DBNConnection connection);
-    void dropPoolConnection(DBNConnection connection);
+
     ConnectionSettings getSettings();
 
     void setSettings(ConnectionSettings connectionSettings);
@@ -143,7 +143,6 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
 
     DatabaseInfo getDatabaseInfo();
     AuthenticationInfo getAuthenticationInfo();
-    Set<TransactionAction> getPendingActions();
 
     @Deprecated
     boolean hasUncommittedChanges();

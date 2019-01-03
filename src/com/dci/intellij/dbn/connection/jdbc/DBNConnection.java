@@ -2,11 +2,13 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
@@ -241,6 +243,7 @@ public class DBNConnection extends DBNConnectionBase {
 
         super.commit();
         resetDataChanges();
+        notifyStatusChange();
     }
 
     @Override
@@ -249,6 +252,7 @@ public class DBNConnection extends DBNConnectionBase {
 
         super.rollback();
         resetDataChanges();
+        notifyStatusChange();
     }
 
     @Override
@@ -257,6 +261,12 @@ public class DBNConnection extends DBNConnectionBase {
 
         super.close();
         resetDataChanges();
+        notifyStatusChange();
+    }
+
+    protected void notifyStatusChange() {
+        ConnectionStatusListener statusListener = EventUtil.notify(getProject(), ConnectionStatusListener.TOPIC);
+        statusListener.statusChanged(id, sessionId);
     }
 
     public String getCurrentSchema() {
