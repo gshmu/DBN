@@ -57,12 +57,12 @@ public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>
             @NotNull Project project,
             String title,
             boolean cancellable,
-            ModalRunnable runnable) {
+            BackgroundRunnable runnable) {
         create(project, title, cancellable, runnable).start();
     }
 
     @NotNull
-    public static <T> ModalTask<T> create(@NotNull Project project, String title, boolean cancellable, ModalRunnable<T> runnable) {
+    public static <T> ModalTask<T> create(@NotNull Project project, String title, boolean cancellable, BackgroundRunnable<T> runnable) {
         return new ModalTask<T>(project, title, cancellable) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
@@ -71,8 +71,4 @@ public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>
         };
     }
 
-    @FunctionalInterface
-    public interface ModalRunnable<T> {
-        void run(T data, ProgressIndicator progress) throws InterruptedException;
-    }
 }
