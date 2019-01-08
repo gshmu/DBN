@@ -19,6 +19,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.lang.ref.WeakReference;
 
+import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
+
 public class AutoCommitLabel extends JLabel implements Disposable {
     private interface Colors {
         Color DISCONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
@@ -35,17 +37,16 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         setFont(GUIUtil.BOLD_FONT);
     }
 
-    public void init(VirtualFile virtualFile, ConnectionHandler connectionHandler, DatabaseSession session) {
-        init(virtualFile, connectionHandler, session == null ? null : session.getId());
+    public void init(Project project, VirtualFile virtualFile, ConnectionHandler connectionHandler, DatabaseSession session) {
+        init(project, virtualFile, connectionHandler, session == null ? null : session.getId());
     }
 
-    public void init(VirtualFile virtualFile, ConnectionHandler connectionHandler, SessionId sessionId) {
+    public void init(Project project, VirtualFile virtualFile, ConnectionHandler connectionHandler, SessionId sessionId) {
         this.virtualFileRef = new WeakReference<>(virtualFile);
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
-        this.sessionId = sessionId;
+        this.sessionId = nvl(sessionId, SessionId.MAIN);
         if (!subscribed) {
             subscribed = true;
-            Project project = connectionHandler.getProject();
             EventUtil.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
             EventUtil.subscribe(project, this, FileConnectionMappingListener.TOPIC, connectionMappingListener);
         }
@@ -97,13 +98,14 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         public void connectionChanged(VirtualFile virtualFile, ConnectionHandler connectionHandler) {
             if (virtualFile.equals(virtualFileRef.get())) {
                 AutoCommitLabel.this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+                update();
             }
         }
 
         @Override
         public void sessionChanged(VirtualFile virtualFile, DatabaseSession session) {
             if (virtualFile.equals(virtualFileRef.get())) {
-                AutoCommitLabel.this.sessionId = session == null ? null : session.getId();
+                AutoCommitLabel.this.sessionId = session == null ? SessionId.MAIN : session.getId();
                 update();
             }
         }

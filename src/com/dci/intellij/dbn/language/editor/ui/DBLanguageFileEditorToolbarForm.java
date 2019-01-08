@@ -31,7 +31,7 @@ public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
         ConnectionHandler connectionHandler = mappingManager.getConnectionHandler(file);
         DatabaseSession databaseSession = mappingManager.getDatabaseSession(file);
 
-        autoCommitLabel.init(file, connectionHandler, databaseSession);
+        autoCommitLabel.init(project, file, connectionHandler, databaseSession);
         Disposer.register(this, autoCommitLabel);
     }
 
