@@ -335,8 +335,11 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
             return poolConnections.size() > 0;
         }
 
-        DBNConnection connection = dedicatedConnections.get(sessionId);
-        return connection != null && !connection.isClosed() && connection.isValid();
+        if (sessionId != null) {
+            DBNConnection connection = dedicatedConnections.get(sessionId);
+            return connection != null && !connection.isClosed() && connection.isValid();
+        }
+        return false;
     }
 
     private static class ConnectionPoolCleanTask extends TimerTask {
