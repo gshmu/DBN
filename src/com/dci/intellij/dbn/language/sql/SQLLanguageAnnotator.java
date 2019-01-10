@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.sql;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
-import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -25,8 +24,6 @@ public class SQLLanguageAnnotator implements Annotator {
     public static final SQLLanguageAnnotator INSTANCE = new SQLLanguageAnnotator();
 
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-        boolean ensureDataLoaded = DatabaseLoadMonitor.isEnsureDataLoaded();
-        DatabaseLoadMonitor.setEnsureDataLoaded(false);
         try {
             if (psiElement instanceof ExecutablePsiElement)  {
                 annotateExecutable((ExecutablePsiElement) psiElement, holder);
@@ -53,8 +50,6 @@ public class SQLLanguageAnnotator implements Annotator {
                 }
             }
         } catch (ProcessCanceledException ignore){
-        } finally {
-            DatabaseLoadMonitor.setEnsureDataLoaded(ensureDataLoaded);
         }
     }
 

@@ -56,6 +56,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     }
 
     public final void run(@NotNull ProgressIndicator progressIndicator) {
+        BackgroundMonitor.startBackgroundProcess();
         Thread currentThread = Thread.currentThread();
         int priority = currentThread.getPriority();
         try {
@@ -71,6 +72,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         } finally {
             currentThread.setPriority(priority);
             progressIndicator.popState();
+            BackgroundMonitor.endBackgroundProcess();
             /*if (progressIndicator.isRunning()) {
                 progressIndicator.stop();
             }*/

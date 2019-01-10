@@ -10,12 +10,12 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
-import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -192,10 +192,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                     String connectionString = " (" + connectionHandler.getName() + ')';
                     BackgroundTask.invoke(getProject(), "Loading data dictionary" + connectionString, true, false, (task, progress) -> {
                         try {
-                            DatabaseLoadMonitor.startBackgroundLoad();
                             load(force);
                         } finally {
-                            DatabaseLoadMonitor.endBackgroundLoad();
                             set(LOADING_IN_BACKGROUND, false);
                         }
                     });
@@ -281,8 +279,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
     @NotNull
     public List<T> getElements() {
-        if (!isDisposed()) {
-            if (parent instanceof DBVirtualObject || isSubContent() || DatabaseLoadMonitor.isEnsureDataLoaded() || DatabaseLoadMonitor.isLoadingInBackground()) {
+        if (shouldLoad(false)) {
+            if (BackgroundMonitor.isBackgroundProcess()) {
                 load(false);
             } else{
                 loadInBackground(false);
