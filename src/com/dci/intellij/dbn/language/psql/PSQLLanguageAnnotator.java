@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.language.psql;
 
 import com.dci.intellij.dbn.code.psql.color.PSQLTextAttributesKeys;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
-import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -40,8 +39,6 @@ import org.jetbrains.annotations.NotNull;
 public class PSQLLanguageAnnotator implements Annotator {
 
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-        boolean ensureDataLoaded = DatabaseLoadMonitor.isEnsureDataLoaded();
-        DatabaseLoadMonitor.setEnsureDataLoaded(false);
         try {
             if (psiElement instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) psiElement;
@@ -79,10 +76,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                 Annotation annotation = holder.createInfoAnnotation(psiElement, null);
                 annotation.setTextAttributes(SQLTextAttributesKeys.CHAMELEON);
             }
-        } catch (ProcessCanceledException ignore){
-        } finally {
-            DatabaseLoadMonitor.setEnsureDataLoaded(ensureDataLoaded);
-        }
+        } catch (ProcessCanceledException ignore){}
     }
 
     private static void annotateToken(TokenPsiElement tokenPsiElement, AnnotationHolder holder) {

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
-import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.QuotePair;
@@ -522,11 +521,6 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             return ref.getReferencedElement();
         }
         if (ref.isDirty()) {
-            boolean ensureDataLoaded = DatabaseLoadMonitor.isEnsureDataLoaded();
-            if (Thread.currentThread().getName().contains("JobScheduler")) {
-                DatabaseLoadMonitor.setEnsureDataLoaded(false);
-            }
-
             try {
                 ref.preResolve(this);
                 if (getParent() instanceof QualifiedIdentifierPsiElement) {
@@ -537,7 +531,6 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 }
            } finally {
                 ref.postResolve();
-                DatabaseLoadMonitor.setEnsureDataLoaded(ensureDataLoaded);
             }
         }
         return ref.getReferencedElement();

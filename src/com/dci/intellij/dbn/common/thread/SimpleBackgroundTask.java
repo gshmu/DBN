@@ -14,7 +14,12 @@ public abstract class SimpleBackgroundTask extends SimpleTask{
         new SimpleBackgroundTask() {
             @Override
             protected void execute() {
-                runnable.run();
+                try {
+                    BackgroundMonitor.startBackgroundProcess();
+                    runnable.run();
+                } finally {
+                    BackgroundMonitor.endBackgroundProcess();
+                }
             }
         }.start();
     }

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectListVisitor;
@@ -19,8 +19,7 @@ public class DBObjectRecursiveLoaderVisitor extends DisposableBase implements DB
         if (!objectList.getDependencyAdapter().isSubContent()) {
             List<DBObject> objects = objectList.getObjects();
             for (DBObject object : objects) {
-                FailsafeUtil.check(this);
-
+                ProgressMonitor.checkCancelled();
                 DBObjectListContainer childObjects = object.getChildObjects();
                 if (childObjects != null) {
                     childObjects.visitLists(this, false);

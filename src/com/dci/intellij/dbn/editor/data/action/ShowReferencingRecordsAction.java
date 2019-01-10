@@ -12,7 +12,7 @@ import java.util.List;
 public class ShowReferencingRecordsAction extends ObjectListShowAction{
     private Object columnValue;
 
-    public ShowReferencingRecordsAction(DBColumn column, Object columnValue) {
+    ShowReferencingRecordsAction(DBColumn column, Object columnValue) {
         super("Show referencing records...", column);
         this.columnValue = columnValue;
     }
@@ -21,7 +21,7 @@ public class ShowReferencingRecordsAction extends ObjectListShowAction{
     @Override
     public List<DBObject> getObjectList() {
         DBColumn column = (DBColumn) getSourceObject();
-        return new ArrayList<DBObject>(column.getReferencingColumns());
+        return new ArrayList<>(column.getReferencingColumns());
     }
 
     @Override

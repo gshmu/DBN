@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.load;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 
@@ -31,6 +32,11 @@ public class ProgressMonitor {
         return progressIndicator != null && progressIndicator.isCanceled();
     }
 
+    public static void checkCancelled() {
+        if (isCancelled()) {
+            throw AlreadyDisposedException.INSTANCE;
+        }
+    }
 
 
 }

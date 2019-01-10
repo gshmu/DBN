@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.connection.action;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -23,13 +22,8 @@ public class LoadAllObjectsAction extends AbstractConnectionAction {
         ConnectionHandler connectionHandler = getConnectionHandler();
         String taskTitle = "Loading data dictionary (" + connectionHandler.getName() + ")";
         BackgroundTask.invoke(project, taskTitle, true, false, (task, progress) -> {
-            try {
-                DatabaseLoadMonitor.startBackgroundLoad();
-                DBObjectListContainer objectListContainer = connectionHandler.getObjectBundle().getObjectListContainer();
-                objectListContainer.visitLists(DBObjectRecursiveLoaderVisitor.INSTANCE, false);
-            } finally {
-                DatabaseLoadMonitor.endBackgroundLoad();
-            }
+            DBObjectListContainer objectListContainer = connectionHandler.getObjectBundle().getObjectListContainer();
+            objectListContainer.visitLists(DBObjectRecursiveLoaderVisitor.INSTANCE, false);
         });
     }
 

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.code.common.completion;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
-import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.util.NamingUtil;
@@ -63,18 +62,8 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     @Override
     protected void addCompletions(
             @NotNull CompletionParameters parameters,
-            ProcessingContext processingContext,
+            @NotNull ProcessingContext processingContext,
             @NotNull CompletionResultSet result) {
-        try {
-            DatabaseLoadMonitor.setEnsureDataLoaded(false);
-            doAddCompletions(parameters, result);
-        } finally {
-            DatabaseLoadMonitor.setEnsureDataLoaded(true);
-        }
-
-    }
-
-    private static void doAddCompletions(CompletionParameters parameters, CompletionResultSet result) {
         PsiFile originalFile = parameters.getOriginalFile();
         if (originalFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile file = (DBLanguagePsiFile) originalFile;
