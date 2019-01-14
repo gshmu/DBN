@@ -10,4 +10,12 @@ public class ExceptionUtil {
             return new SQLException(e.getMessage(), e);
         }
     }
+
+    public static RuntimeException toRuntimeException(Throwable e) {
+        if (e instanceof RuntimeException) {
+            return (RuntimeException) e;
+        } else {
+            return new RuntimeException(e.getMessage(), e);
+        }
+    }
 }

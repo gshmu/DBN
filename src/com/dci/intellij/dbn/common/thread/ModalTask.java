@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>
     @Override
     public final void run() {
         try {
-            ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+            ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
             run(progressIndicator);
         } catch (ProcessCanceledException e) {
             // do nothing

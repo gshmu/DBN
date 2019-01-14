@@ -24,11 +24,6 @@ public class DBTypeFunctionImpl extends DBFunctionImpl implements DBTypeFunction
         properties.set(NAVIGABLE, true);
     }
 
-    @Override
-    public DBContentType getContentType() {
-        return DBContentType.NONE;
-    }
-
     public DBType getType() {
         return (DBType) getParentObject();
     }

@@ -40,11 +40,6 @@ public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
         name = resultSet.getString("PROCEDURE_NAME");
     }
 
-    @Override
-    public DBContentType getContentType() {
-        return DBContentType.CODE;
-    }
-
     public DBObjectType getObjectType() {
         return DBObjectType.PROCEDURE;
     }

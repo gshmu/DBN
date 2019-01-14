@@ -91,11 +91,6 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
         properties.set(SCHEMA_OBJECT, true);
     }
 
-    @Override
-    public DBContentType getContentType() {
-        return DBContentType.CODE;
-    }
-
     public boolean isForEachRow() {
         return is(FOR_EACH_ROW);
     }

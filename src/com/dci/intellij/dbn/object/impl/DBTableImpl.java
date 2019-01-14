@@ -63,11 +63,6 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
         childObjectRelations.createSubcontentObjectRelationList(DBObjectRelationType.INDEX_COLUMN, this, "Index column relations", INDEX_COLUMN_RELATION_LOADER, schema);
     }
 
-    @Override
-    public DBContentType getContentType() {
-        return DBContentType.DATA;
-    }
-
     public DBObjectType getObjectType() {
         return DBObjectType.TABLE;
     }

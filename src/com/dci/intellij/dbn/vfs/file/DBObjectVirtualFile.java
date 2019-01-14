@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.intellij.ide.navigationToolbar.NavBarPresentation;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,9 +28,9 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
     protected DBObjectRef<T> objectRef;
 
-    public DBObjectVirtualFile(@NotNull T object) {
-        super(object.getProject());
-        this.objectRef = DBObjectRef.from(object);
+    public DBObjectVirtualFile(@NotNull Project project, @NotNull DBObjectRef<T> objectRef) {
+        super(project);
+        this.objectRef = objectRef;
         this.name = objectRef.getFileName();
     }
 

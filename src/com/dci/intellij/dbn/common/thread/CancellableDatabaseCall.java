@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
@@ -8,7 +9,6 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
@@ -43,7 +43,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
         this.connection = connection;
         this.timeout = timeout;
         this.timeUnit = timeUnit;
-        this.progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+        this.progressIndicator = ProgressMonitor.getProgressIndicator();
         createSavepoint = !DatabaseFeature.CONNECTION_ERROR_RECOVERY.isSupported(connectionHandler);
     }
 

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
@@ -7,7 +8,6 @@ import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 
 import java.awt.*;
@@ -103,8 +103,7 @@ public abstract class DataExportProcessor {
     }
 
     void checkCancelled() throws InterruptedException {
-        ProgressManager progressManager = ProgressManager.getInstance();
-        ProgressIndicator progressIndicator = progressManager.getProgressIndicator();
+        ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
         if (progressIndicator != null) {
             if (progressIndicator.isCanceled()) {
                 throw new InterruptedException();

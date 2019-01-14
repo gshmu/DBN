@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -49,6 +50,7 @@ public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeN
     @Nullable
     Icon getIcon();
     Icon getOriginalIcon();
+    DBContentType getContentType();
 
     @Nullable
     DBUser getOwner();
