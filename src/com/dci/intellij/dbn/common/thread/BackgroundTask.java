@@ -3,11 +3,11 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +51,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
 
     @Override
     public final void run() {
-        ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+        ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
         run(progressIndicator);
     }
 
@@ -100,7 +100,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     }
 
     public static boolean isProcessCancelled() {
-        ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+        ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
         return progressIndicator != null && progressIndicator.isCanceled();
     }
 

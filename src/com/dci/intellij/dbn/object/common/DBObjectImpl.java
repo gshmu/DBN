@@ -152,8 +152,8 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return properties.is(property);
     }
 
-    public DBContentType getContentType() {
-        return DBContentType.NONE;
+    public final DBContentType getContentType() {
+        return getObjectType().getContentType();
     }
 
     @Override
@@ -543,7 +543,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         if (virtualFile == null) {
             synchronized (this) {
                 if (virtualFile == null) {
-                    virtualFile = new DBObjectVirtualFile(this);
+                    virtualFile = new DBObjectVirtualFile(getProject(), getRef());
                     Disposer.register(this, virtualFile);
                 }
             }

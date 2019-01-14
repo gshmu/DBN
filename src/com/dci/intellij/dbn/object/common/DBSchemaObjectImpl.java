@@ -132,7 +132,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     @NotNull
     public DBObjectVirtualFile getVirtualFile() {
         if (getObjectType().isSchemaObject()) {
-            return DatabaseFileSystem.getInstance().findOrCreateDatabaseFile(this);
+            return DatabaseFileSystem.getInstance().findOrCreateDatabaseFile(getProject(), objectRef);
         }
         return super.getVirtualFile();
     }

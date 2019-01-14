@@ -47,11 +47,6 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
         }
     }
 
-    @Override
-    public DBContentType getContentType() {
-        return isSystemView() ? DBContentType.DATA : DBContentType.CODE_AND_DATA;
-    }
-
     public DBObjectType getObjectType() {
         return DBObjectType.VIEW;
     }

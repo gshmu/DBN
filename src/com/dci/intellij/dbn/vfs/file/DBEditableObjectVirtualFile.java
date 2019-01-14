@@ -21,9 +21,10 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBTable;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
@@ -49,9 +50,9 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     private transient EditorProviderId selectedEditorProviderId;
     private SessionId databaseSessionId;
 
-    public DBEditableObjectVirtualFile(DBSchemaObject object) {
-        super(object);
-        if (object instanceof DBTable) {
+    public DBEditableObjectVirtualFile(Project project, DBObjectRef objectRef) {
+        super(project, objectRef);
+        if (objectRef.getObjectType() == DBObjectType.TABLE) {
             databaseSessionId = SessionId.MAIN;
         }
     }

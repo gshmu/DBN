@@ -58,11 +58,6 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
         types = childObjects.createSubcontentObjectList(DBObjectType.PACKAGE_TYPE, this, TYPES_LOADER, schema, INDEXED);
     }
 
-    @Override
-    public DBContentType getContentType() {
-        return DBContentType.CODE_SPEC_AND_BODY;
-    }
-
     public List getTypes() {
         return types.getObjects();
     }

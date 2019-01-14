@@ -42,7 +42,7 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
             if (underlyingObject != null) {
                 if (underlyingObject instanceof DBMethod) {
                     DBMethod method = (DBMethod) underlyingObject;
-                    lastChecked = method.getRef();
+                    lastChecked = (DBObjectRef<DBMethod>) method.getRef();
                     return method;
                 }
 

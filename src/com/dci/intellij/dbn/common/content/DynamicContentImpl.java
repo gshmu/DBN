@@ -280,7 +280,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @NotNull
     public List<T> getElements() {
         if (shouldLoad(false)) {
-            if (BackgroundMonitor.isBackgroundProcess()) {
+            if (BackgroundMonitor.isBackgroundProcess() || BackgroundMonitor.isTimeoutProcess()) {
                 load(false);
             } else{
                 loadInBackground(false);

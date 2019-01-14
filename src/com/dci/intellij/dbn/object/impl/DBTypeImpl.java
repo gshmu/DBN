@@ -100,11 +100,6 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         }
     }
 
-    @Override
-    public DBContentType getContentType() {
-        return DBContentType.CODE_SPEC_AND_BODY;
-    }
-
     public DBObjectType getObjectType() {
         return DBObjectType.TYPE;
     }

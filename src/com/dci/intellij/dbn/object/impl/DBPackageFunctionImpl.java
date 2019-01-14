@@ -19,11 +19,6 @@ public class DBPackageFunctionImpl extends DBFunctionImpl implements DBPackageFu
     }
 
     @Override
-    public DBContentType getContentType() {
-        return DBContentType.NONE;
-    }
-
-    @Override
     public void initStatus(ResultSet resultSet) throws SQLException {}
 
     @Override

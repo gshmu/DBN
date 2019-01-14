@@ -24,11 +24,6 @@ public class DBPackageProcedureImpl extends DBProcedureImpl implements DBPackage
         properties.set(NAVIGABLE, true);
     }
 
-    @Override
-    public DBContentType getContentType() {
-        return DBContentType.NONE;
-    }
-
     public DBPackage getPackage() {
         return (DBPackage) getParentObject();
     }

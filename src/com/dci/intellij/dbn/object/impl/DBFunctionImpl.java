@@ -41,11 +41,6 @@ public class DBFunctionImpl extends DBMethodImpl implements DBFunction {
         name = resultSet.getString("FUNCTION_NAME");
     }
 
-    @Override
-    public DBContentType getContentType() {
-        return DBContentType.CODE;
-    }
-
     public DBArgument getReturnArgument() {
         for (DBArgument argument : getArguments()) {
             if (argument.getPosition() == 1) {

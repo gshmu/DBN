@@ -17,7 +17,6 @@ import java.util.List;
 public interface DBSchemaObject extends DBObject {
     List<DBObject> getReferencedObjects();
     List<DBObject> getReferencingObjects();
-    DBContentType getContentType();
     boolean isEditable(DBContentType contentType);
 
     @NotNull

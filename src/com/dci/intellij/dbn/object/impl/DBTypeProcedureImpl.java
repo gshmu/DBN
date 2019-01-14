@@ -23,11 +23,6 @@ public class DBTypeProcedureImpl extends DBProcedureImpl implements DBTypeProced
         properties.set(DBObjectProperty.NAVIGABLE, true);
     }
 
-    @Override
-    public DBContentType getContentType() {
-        return DBContentType.NONE;
-    }
-
     public DBType getType() {
         return (DBType) getParentObject();
     }

@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.Traceable;
+import com.intellij.openapi.progress.ProgressIndicator;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -38,11 +40,19 @@ public abstract class SimpleTimeoutCall<T> extends Traceable implements Callable
     @Override
     public abstract T call() throws Exception;
 
-    public static <T> T invoke(long timeoutSeconds, T defaultValue, boolean daemon, Callable<T> callable) {
+    public static <T> T invoke(long timeoutSeconds, T defaultValue, boolean daemon, BasicCallable<T, Exception> callable) {
+        ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
         return new SimpleTimeoutCall<T>(timeoutSeconds, defaultValue, daemon) {
             @Override
             public T call() throws Exception {
-                return callable.call();
+                trace(this);
+                try {
+                    BackgroundMonitor.startTimeoutProcess();
+                    return ProgressMonitor.invoke(progressIndicator, callable);
+                } finally {
+                    BackgroundMonitor.endTimeoutProcess();
+                }
+
             }
         }.start();
     }
