@@ -376,13 +376,9 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     private void clearReference() {
-        try {
-            if (reference != null) {
-                reference.clear();
-                reference = null;
-            }
-        } catch (Exception ignore) {
-
+        if (reference != null) {
+            reference.clear();
+            reference = null;
         }
     }
 

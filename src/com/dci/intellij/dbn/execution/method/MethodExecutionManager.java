@@ -222,7 +222,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void debugExecute(final MethodExecutionInput executionInput, final DBNConnection connection, DBDebuggerType debuggerType) throws SQLException {
+    public void debugExecute(final MethodExecutionInput executionInput, @NotNull DBNConnection connection, DBDebuggerType debuggerType) throws SQLException {
         final DBMethod method = executionInput.getMethod();
         if (method != null) {
             ConnectionHandler connectionHandler = method.getConnectionHandler();

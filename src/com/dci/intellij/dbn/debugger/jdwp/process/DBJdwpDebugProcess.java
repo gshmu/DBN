@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -144,8 +145,9 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         return getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
     }
 
+    @NotNull
     public DBNConnection getTargetConnection() {
-        return targetConnection;
+        return FailsafeUtil.get(targetConnection);
     }
 
     @NotNull
@@ -327,10 +329,11 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
             ConnectionHandler connectionHandler = getConnectionHandler();
             try {
+                DBNConnection targetConnection = getTargetConnection();
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 debuggerInterface.disconnectJdwpSession(targetConnection);
 
-            } catch (final SQLException e) {
+            } catch (SQLException e) {
                 console.error("Error stopping debugger: " + e.getMessage());
             } finally {
                 DBRunConfig<T> runProfile = getRunProfile();

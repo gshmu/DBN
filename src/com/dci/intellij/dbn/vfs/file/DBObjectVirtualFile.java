@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -41,6 +42,11 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     @NotNull
     public T getObject() {
         return DBObjectRef.getnn(objectRef);
+    }
+
+    @Override
+    public final ConnectionId getConnectionId() {
+        return objectRef.getConnectionId();
     }
 
     @NotNull

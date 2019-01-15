@@ -99,11 +99,6 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         });
     }
 
-    public static boolean isProcessCancelled() {
-        ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
-        return progressIndicator != null && progressIndicator.isCanceled();
-    }
-
     public static <T> BackgroundTask<T> create(@Nullable Project project, TaskInstructions instructions, BackgroundRunnable<T> runnable) {
         return new BackgroundTask<T>(project, instructions) {
             @Override

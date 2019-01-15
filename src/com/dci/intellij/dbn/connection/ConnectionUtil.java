@@ -32,6 +32,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
 import java.sql.Savepoint;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,7 @@ public class ConnectionUtil {
         if (statement != null) {
             try {
                 statement.cancel();
+            } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
                 LOGGER.warn("Error cancelling statement: " + e.getMessage());
             } finally {
@@ -64,6 +66,7 @@ public class ConnectionUtil {
         if (resource != null) {
             try {
                 resource.close();
+            } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
                 LOGGER.warn("Failed to close resource", e);
             }
@@ -324,6 +327,7 @@ public class ConnectionUtil {
     public static void commitSilently(DBNConnection connection) {
         try {
             commit(connection);
+        } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             LOGGER.warn("Commit failed", e);
         }
@@ -332,6 +336,7 @@ public class ConnectionUtil {
     public static void commit(DBNConnection connection) throws SQLException {
         try {
             if (connection != null) connection.commit();
+        } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
                     "Commit",
@@ -345,6 +350,7 @@ public class ConnectionUtil {
     public static void rollbackSilently(DBNConnection connection) {
         try {
             rollback(connection);
+        } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             LOGGER.warn("Rollback failed", e);
         }
@@ -353,6 +359,7 @@ public class ConnectionUtil {
     public static void rollback(DBNConnection connection) throws SQLException {
         try {
             if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) connection.rollback();
+        } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
                     "Rollback",
@@ -366,6 +373,7 @@ public class ConnectionUtil {
     public static void rollbackSilently(DBNConnection connection, @Nullable Savepoint savepoint) {
         try {
             rollback(connection, savepoint);
+        } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             LOGGER.warn("Savepoint rollback failed", e);
         }
@@ -374,6 +382,7 @@ public class ConnectionUtil {
     public static void rollback(DBNConnection connection, @Nullable Savepoint savepoint) throws SQLException {
         try {
             if (connection != null && savepoint != null && !connection.isClosed() && !connection.getAutoCommit()) connection.rollback(savepoint);
+        } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
                     "Savepoint",
@@ -389,6 +398,7 @@ public class ConnectionUtil {
             if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) {
                 return connection.setSavepoint();
             }
+        } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
                     "Savepoint",
@@ -404,6 +414,7 @@ public class ConnectionUtil {
             if (connection != null && savepoint != null && !connection.isClosed() && !connection.getAutoCommit()) {
                 connection.releaseSavepoint(savepoint);
             }
+        } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
                     "Savepoint",
@@ -432,6 +443,7 @@ public class ConnectionUtil {
             if (connection != null && !connection.isClosed()) {
                 connection.setAutoCommit(autoCommit);
             }
+        } catch (SQLRecoverableException ignore) {
         } catch (Exception e) {
             sentWarningNotification(
                     "Auto-Commit",

@@ -76,7 +76,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         execute(executionInput, connection, debuggerType);
     }
 
-    public void execute(final MethodExecutionInput executionInput, final DBNConnection connection, DBDebuggerType debuggerType) throws SQLException {
+    public void execute(final MethodExecutionInput executionInput, @NotNull DBNConnection connection, DBDebuggerType debuggerType) throws SQLException {
         executionInput.initExecution(debuggerType);
         ExecutionOptions options = executionInput.getOptions();
         final ConnectionHandler connectionHandler = getConnectionHandler();

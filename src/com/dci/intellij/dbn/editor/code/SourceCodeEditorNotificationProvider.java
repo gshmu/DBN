@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.ide.FrameStateManager;
 import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
@@ -78,7 +77,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
         }
     };
 
-    private FileEditorManagerListener fileEditorManagerListener  =new FileEditorManagerAdapter() {
+    private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
             VirtualFile virtualFile = event.getNewFile();

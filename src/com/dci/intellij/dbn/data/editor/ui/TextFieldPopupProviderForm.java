@@ -13,7 +13,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.keymap.KeymapUtil;
@@ -47,7 +46,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
-    private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerAdapter() {
+    private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
             hidePopup();
