@@ -1,20 +1,21 @@
 package com.dci.intellij.dbn.ddl;
 
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public class DDLFileNameProvider {
-    private DBObject object;
+    private DBObjectRef objectRef;
     private DDLFileType ddlFileType;
     private String extension;
 
-    public DDLFileNameProvider(DBObject object, DDLFileType ddlFileType, String extension) {
-        this.object = object;
+    public DDLFileNameProvider(DBObjectRef objectRef, DDLFileType ddlFileType, String extension) {
+        this.objectRef = objectRef;
         this.ddlFileType = ddlFileType;
         this.extension = extension;
     }
 
     public DBObject getObject() {
-        return object;
+        return objectRef.get();
     }
 
     public DDLFileType getDdlFileType() {
@@ -26,6 +27,6 @@ public class DDLFileNameProvider {
     }
 
     public String getFileName() {
-        return object.getRef().getFileName().toLowerCase() + '.' + extension;
+        return objectRef.getFileName().toLowerCase() + '.' + extension;
     }
 }

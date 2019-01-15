@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,11 +84,12 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     protected void doOKAction() {
         SelectDDLFileForm component = getComponent();
         DBSchemaObject object = getObject();
-        DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(object.getProject());
+        Project project = object.getProject();
+        DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
         Object[] selectedPsiFiles = component.getSelection();
         for (Object selectedPsiFile : selectedPsiFiles) {
             VirtualFile virtualFile = (VirtualFile) selectedPsiFile;
-            fileAttachmentManager.attachDDLFile(object, virtualFile);
+            fileAttachmentManager.attachDDLFile(object.getRef(), virtualFile);
         }
         if (showLookupOption && component.isDoNotPromptSelected()) {
             ConnectionHandler connectionHandler = object.getConnectionHandler();

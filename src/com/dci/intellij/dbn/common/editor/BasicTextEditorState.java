@@ -53,7 +53,12 @@ public class BasicTextEditorState implements FileEditorState {
         if (foldingElement != null) {
             ReadActionRunner.invoke(false, () -> {
                 Document document = DocumentUtil.getDocument(virtualFile);
-                return CodeFoldingManager.getInstance(project).readFoldingState(foldingElement, document);
+                CodeFoldingManager instance = CodeFoldingManager.getInstance(project);
+                if (document != null) {
+                    CodeFoldingState foldingState = instance.readFoldingState(foldingElement, document);
+                    setFoldingState(foldingState);
+                }
+                return null;
             });
         }
 

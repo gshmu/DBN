@@ -56,7 +56,7 @@ public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, Pers
             String filterElementType = element.getAttributeValue("type");
             if (filterElementType.equals("OBJECT")) {
                 String objectTypeName = element.getAttributeValue("id");
-                objectType = DBObjectType.getObjectType(objectTypeName);
+                objectType = DBObjectType.get(objectTypeName);
             } else {
                 String tokenTypeName = element.getAttributeValue("id");
                 tokenTypeCategory = TokenTypeCategory.getCategory(tokenTypeName);

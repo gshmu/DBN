@@ -13,9 +13,6 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.ddl.DDLFileManager;
-import com.dci.intellij.dbn.ddl.DDLFileType;
-import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBType;
@@ -327,21 +324,6 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
                    contentType == DBContentType.CODE_BODY ? "type_body" : null;
         }
         return null;
-    }
-
-    public DDLFileType getDDLFileType(DBContentType contentType) {
-        DDLFileManager ddlFileManager = DDLFileManager.getInstance(getProject());
-        return contentType == DBContentType.CODE_SPEC ? ddlFileManager.getDDLFileType(DDLFileTypeId.TYPE_SPEC) :
-               contentType == DBContentType.CODE_BODY ? ddlFileManager.getDDLFileType(DDLFileTypeId.TYPE_BODY) :
-               ddlFileManager.getDDLFileType(DDLFileTypeId.TYPE);
-    }
-
-    public DDLFileType[] getDDLFileTypes() {
-        DDLFileManager ddlFileManager = DDLFileManager.getInstance(getProject());
-        return new DDLFileType[]{
-                ddlFileManager.getDDLFileType(DDLFileTypeId.TYPE),
-                ddlFileManager.getDDLFileType(DDLFileTypeId.TYPE_SPEC),
-                ddlFileManager.getDDLFileType(DDLFileTypeId.TYPE_BODY)};
     }
 
     @Override

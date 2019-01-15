@@ -237,12 +237,13 @@ public class DatabaseBrowserTree extends DBNTree {
             Object lastPathEntity = path.getLastPathComponent();
             if (lastPathEntity instanceof DBObject) {
                 final DBObject object = (DBObject) lastPathEntity;
+                DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
                 if (object.is(DBObjectProperty.EDITABLE)) {
                     DBSchemaObject schemaObject = (DBSchemaObject) object;
-                    DatabaseFileSystem.getInstance().openEditor(schemaObject, deliberate);
+                    databaseFileSystem.openEditor(schemaObject, deliberate);
                     event.consume();
                 } else if (object.is(DBObjectProperty.NAVIGABLE)) {
-                    DatabaseFileSystem.getInstance().openEditor(object, deliberate);
+                    databaseFileSystem.openEditor(object, deliberate);
                     event.consume();
                 } else if (deliberate) {
                     BackgroundTask.invoke(getProject(), "Loading Object Reference", false, false, (task, progress) -> {

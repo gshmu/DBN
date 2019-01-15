@@ -4,11 +4,14 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.editor.DBContentType;
 import gnu.trove.THashSet;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
@@ -123,6 +126,7 @@ public enum DBObjectType implements DynamicContentType {
     private Set<DBObjectType> thisAsSet = new THashSet<DBObjectType>();
 
     private Map<DBContentType, Icon> icons;
+    private Map<DBContentType, DDLFileTypeId> ddlFileTypeIds;
 
     DBObjectType(DatabaseObjectTypeId typeId, String name, String listName, Icon icon, Icon disabledIcon, Icon listIcon, boolean generic) {
         this.typeId = typeId;
@@ -143,13 +147,6 @@ public enum DBObjectType implements DynamicContentType {
 
     public DBContentType getContentType() {
         return contentType;
-    }
-
-    private void addIcon(DBContentType contentType, Icon icon) {
-        if (icons == null) {
-            icons = new EnumMap<>(DBContentType.class);
-        }
-        icons.put(contentType, icon);
     }
 
     public DatabaseObjectTypeId getTypeId() {
@@ -231,21 +228,18 @@ public enum DBObjectType implements DynamicContentType {
         }
     }
 
+    @Nullable
+    public DDLFileTypeId getDdlFileTypeId(@Nullable DBContentType contentType) {
+        return ddlFileTypeIds == null ? null : ddlFileTypeIds.get(contentType);
+    }
+
+    @Nullable
+    public Collection<DDLFileTypeId> getDdlFileTypeIds() {
+        return ddlFileTypeIds == null ? null : ddlFileTypeIds.values();
+    }
+
     public boolean isInheriting(DBObjectType objectType) {
         return objectType.inheritingTypes.contains(this);
-    }
-
-    private void addParent(DBObjectType parent) {
-        parents.add(parent);
-        genericParents.add(parent.getGenericType());
-        parent.children.add(this);
-    }
-
-
-
-    private void setGenericType(DBObjectType genericType) {
-        this.genericType = genericType;
-        genericType.inheritingTypes.add(this);
     }
 
     public String toString() {
@@ -269,59 +263,6 @@ public enum DBObjectType implements DynamicContentType {
         return false;
     }
 
-
-    public static DBObjectType getObjectType(DatabaseObjectTypeId typeId) {
-        for (DBObjectType objectType: values()) {
-            if (objectType.typeId == typeId) {
-                return objectType;
-            }
-        }
-        System.out.println("ERROR - [UNKNOWN] undefined object type: " + typeId);
-        return UNKNOWN;
-    }
-
-    public static DBObjectType getObjectType(String typeName, DBObjectType defaultObjectType) {
-        DBObjectType objectType = getObjectType(typeName);
-        return objectType == UNKNOWN ? defaultObjectType : objectType;
-    }
-
-    public static DBObjectType getObjectType(String typeName) {
-        if (StringUtil.isEmpty(typeName)) {
-            return null;
-        }
-
-        try {
-            return valueOf(typeName);
-        } catch (IllegalArgumentException e) {
-            typeName = typeName.replace('_', ' ');
-            for (DBObjectType objectType: values()) {
-                if (objectType.name.equalsIgnoreCase(typeName)) {
-                    return objectType;
-                }
-            }
-            System.out.println("ERROR - [UNKNOWN] undefined object type: " + typeName);
-            return UNKNOWN;
-        }
-    }
-
-    public static String toCommaSeparated(List<DBObjectType> objectTypes) {
-        StringBuilder buffer = new StringBuilder();
-        for (DBObjectType objectType : objectTypes) {
-            if (buffer.length() != 0) buffer.append(", ");
-            buffer.append(objectType.name);
-        }
-        return buffer.toString();
-    }
-
-    public static List<DBObjectType> fromCommaSeparated(String objectTypes) {
-        List<DBObjectType> list = new ArrayList<DBObjectType>();
-        StringTokenizer tokenizer = new StringTokenizer(objectTypes, ",");
-        while (tokenizer.hasMoreTokens()) {
-            String objectTypeName = tokenizer.nextToken().trim();
-            list.add(DBObjectType.getObjectType(objectTypeName));
-        }
-        return list;
-    }
 
     public boolean matchesOneOf(DBObjectType ... objectTypes) {
         for (DBObjectType objectType : objectTypes) {
@@ -351,10 +292,20 @@ public enum DBObjectType implements DynamicContentType {
         }
 
         return false;
+    }
 
+    public boolean isOneOf(DBObjectType ... objectTypes) {
+        for (DBObjectType objectType : objectTypes) {
+            if (objectType.matches(this)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     static {
+        // Generic type
         TABLE.setGenericType(DATASET);
         VIEW.setGenericType(DATASET);
         CURSOR.setGenericType(DATASET);
@@ -378,6 +329,7 @@ public enum DBObjectType implements DynamicContentType {
         GRANTED_PRIVILEGE.setGenericType(PRIVILEGE);
         GRANTED_ROLE.setGenericType(ROLE);
 
+        // Parent relations
         ARGUMENT.addParent(FUNCTION);
         ARGUMENT.addParent(PROCEDURE);
         ARGUMENT.addParent(METHOD);
@@ -445,26 +397,92 @@ public enum DBObjectType implements DynamicContentType {
         INCOMING_DEPENDENCY.setGenericType(ANY);
         OUTGOING_DEPENDENCY.setGenericType(ANY);
 
-        // CONTENT TYPES
+        // Content types
         FUNCTION.contentType = DBContentType.CODE;
         PROCEDURE.contentType = DBContentType.CODE;
         TABLE.contentType = DBContentType.DATA;
         VIEW.contentType = DBContentType.CODE_AND_DATA;
+        MATERIALIZED_VIEW.contentType = DBContentType.CODE_AND_DATA;
         TYPE.contentType = DBContentType.CODE_SPEC_AND_BODY;
         PACKAGE.contentType = DBContentType.CODE_SPEC_AND_BODY;
         TRIGGER.contentType = DBContentType.CODE;
         DATASET_TRIGGER.contentType = DBContentType.CODE;
         DATABASE_TRIGGER.contentType = DBContentType.CODE;
+
+
+        // DDL file types
+        VIEW.addDdlFileType(DBContentType.CODE, DDLFileTypeId.VIEW);
+        MATERIALIZED_VIEW.addDdlFileType(DBContentType.CODE, DDLFileTypeId.VIEW);
+        TRIGGER.addDdlFileType(DBContentType.CODE, DDLFileTypeId.TRIGGER);
+        DATASET_TRIGGER.addDdlFileType(DBContentType.CODE, DDLFileTypeId.TRIGGER);
+        DATABASE_TRIGGER.addDdlFileType(DBContentType.CODE, DDLFileTypeId.TRIGGER);
+        FUNCTION.addDdlFileType(DBContentType.CODE, DDLFileTypeId.FUNCTION);
+        PROCEDURE.addDdlFileType(DBContentType.CODE, DDLFileTypeId.PROCEDURE);
+
+        TYPE.addDdlFileType(DBContentType.CODE_SPEC_AND_BODY, DDLFileTypeId.TYPE);
+        TYPE.addDdlFileType(DBContentType.CODE_SPEC, DDLFileTypeId.TYPE_SPEC);
+        TYPE.addDdlFileType(DBContentType.CODE_BODY, DDLFileTypeId.TYPE_BODY);
+
+        PACKAGE.addDdlFileType(DBContentType.CODE_SPEC_AND_BODY, DDLFileTypeId.PACKAGE);
+        PACKAGE.addDdlFileType(DBContentType.CODE_SPEC, DDLFileTypeId.PACKAGE_SPEC);
+        PACKAGE.addDdlFileType(DBContentType.CODE_BODY, DDLFileTypeId.PACKAGE_BODY);
+
     }
 
-    public boolean isOneOf(DBObjectType ... objectTypes) {
-        for (DBObjectType objectType : objectTypes) {
-            if (objectType.matches(this)) {
-                return true;
+    /*************************************************************************
+     *                   Static lookup utilities                             *
+     *************************************************************************/
+    public static DBObjectType get(DatabaseObjectTypeId typeId) {
+        for (DBObjectType objectType: values()) {
+            if (objectType.typeId == typeId) {
+                return objectType;
             }
         }
+        System.out.println("ERROR - [UNKNOWN] undefined object type: " + typeId);
+        return UNKNOWN;
+    }
 
-        return false;
+    public static DBObjectType get(String typeName, DBObjectType defaultObjectType) {
+        DBObjectType objectType = get(typeName);
+        return objectType == UNKNOWN ? defaultObjectType : objectType;
+    }
+
+    public static DBObjectType get(String typeName) {
+        if (StringUtil.isEmpty(typeName)) {
+            return null;
+        }
+
+        try {
+            return valueOf(typeName);
+        } catch (IllegalArgumentException e) {
+            typeName = typeName.replace('_', ' ');
+            for (DBObjectType objectType: values()) {
+                if (objectType.name.equalsIgnoreCase(typeName)) {
+                    return objectType;
+                }
+            }
+            System.out.println("ERROR - [UNKNOWN] undefined object type: " + typeName);
+            return UNKNOWN;
+        }
+    }
+
+    public static String toCsv(List<DBObjectType> objectTypes) {
+        StringBuilder buffer = new StringBuilder();
+        for (DBObjectType objectType : objectTypes) {
+            if (buffer.length() != 0) buffer.append(", ");
+            buffer.append(objectType.name);
+        }
+        return buffer.toString();
+    }
+
+    public static List<DBObjectType> fromCsv(String objectTypes) {
+        List<DBObjectType> list = new ArrayList<DBObjectType>();
+        StringTokenizer tokenizer = new StringTokenizer(objectTypes, ",");
+        while (tokenizer.hasMoreTokens()) {
+            String objectTypeName = tokenizer.nextToken().trim();
+            list.add(DBObjectType.get(objectTypeName));
+        }
+        return list;
     }
 
     public static DBObjectType forName(String name) {
@@ -488,5 +506,34 @@ public enum DBObjectType implements DynamicContentType {
 
         throw new IllegalArgumentException("No ObjectType found for list name '" + name + "'");
     }
+
+    /*************************************************************************
+     *                   Initialization utilities                             *
+     *************************************************************************/
+    private void addIcon(DBContentType contentType, Icon icon) {
+        if (icons == null) {
+            icons = new EnumMap<>(DBContentType.class);
+        }
+        icons.put(contentType, icon);
+    }
+
+    private void addDdlFileType(DBContentType contentType, DDLFileTypeId ddlFileType) {
+        if (ddlFileTypeIds == null) {
+            ddlFileTypeIds = new EnumMap<>(DBContentType.class);
+        }
+        ddlFileTypeIds.put(contentType, ddlFileType);
+    }
+
+    private void addParent(DBObjectType parent) {
+        parents.add(parent);
+        genericParents.add(parent.getGenericType());
+        parent.children.add(this);
+    }
+
+    private void setGenericType(DBObjectType genericType) {
+        this.genericType = genericType;
+        genericType.inheritingTypes.add(this);
+    }
+
 
 }

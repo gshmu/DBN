@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @State(
@@ -64,7 +66,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
         return FailsafeUtil.getComponent(project, DDLFileManager.class);
     }
 
-    public DDLFileExtensionSettings getExtensionSettings() {
+    private DDLFileExtensionSettings getExtensionSettings() {
         return DDLFileSettings.getInstance(getProject()).getExtensionSettings();
     }
 
@@ -72,11 +74,11 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
         return getExtensionSettings().getDDLFileType(ddlFileTypeId);
     }
 
-    public DDLFileType getDDLFileTypeForExtension(String extension) {
+    DDLFileType getDDLFileTypeForExtension(String extension) {
         return getExtensionSettings().getDDLFileTypeForExtension(extension);
     }
 
-    public String createDDLStatement(DBSourceCodeVirtualFile sourceCodeFile, DBContentType contentType) {
+    String createDDLStatement(DBSourceCodeVirtualFile sourceCodeFile, DBContentType contentType) {
         DBSchemaObject object = sourceCodeFile.getObject();
         String content = sourceCodeFile.getOriginalContent().toString().trim();
         if (content.length() > 0) {
@@ -95,6 +97,23 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                     alternativeStatementDelimiter);
         }
         return "";
+    }
+
+
+    @Nullable
+    public DDLFileType getDDLFileType(DBObjectType objectType, DBContentType contentType) {
+        DDLFileTypeId ddlFileTypeId = objectType.getDdlFileTypeId(contentType);
+        return ddlFileTypeId == null ? null : getDDLFileType(ddlFileTypeId);
+    }
+
+    List<DDLFileType> getDDLFileTypes(DBObjectType objectType) {
+        Collection<DDLFileTypeId> ddlFileTypeIds = objectType.getDdlFileTypeIds();
+        if (ddlFileTypeIds != null) {
+            List<DDLFileType> ddlFileTypes = new ArrayList<>();
+            ddlFileTypeIds.forEach(ddlFileTypeId -> ddlFileTypes.add(getDDLFileType(ddlFileTypeId)));
+            return ddlFileTypes;
+        }
+        return null;
     }
 
 
@@ -117,7 +136,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                 for (DDLFileType ddlFileType : ddlFileTypeList) {
                     DBLanguageFileType fileType = ddlFileType.getLanguageFileType();
                     List<FileNameMatcher> associations = fileTypeManager.getAssociations(fileType);
-                    List<String> registeredExtension = new ArrayList<String>();
+                    List<String> registeredExtension = new ArrayList<>();
                     for (FileNameMatcher association : associations) {
                         if (association instanceof ExtensionFileNameMatcher) {
                             ExtensionFileNameMatcher extensionMatcher = (ExtensionFileNameMatcher) association;

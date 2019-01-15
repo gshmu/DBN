@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -109,14 +108,6 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         return new DBObjectTimestampLoader(getTypeName().toUpperCase());
     }
 
-    public DDLFileType getDDLFileType(DBContentType contentType) {
-        return null;
-    }
-
-    public DDLFileType[] getDDLFileTypes() {
-        return null;
-    }
-
     public String loadCodeFromDatabase(DBContentType contentType) throws SQLException {
         return null;
     }
@@ -204,7 +195,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             String objectOwner = resultSet.getString("OBJECT_OWNER");
             String objectName = resultSet.getString("OBJECT_NAME");
             String objectTypeName = resultSet.getString("OBJECT_TYPE");
-            DBObjectType objectType = DBObjectType.getObjectType(objectTypeName);
+            DBObjectType objectType = DBObjectType.get(objectTypeName);
             if (objectType == DBObjectType.PACKAGE_BODY) objectType = DBObjectType.PACKAGE;
             if (objectType == DBObjectType.TYPE_BODY) objectType = DBObjectType.TYPE;
 
@@ -232,7 +223,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             String objectOwner = resultSet.getString("OBJECT_OWNER");
             String objectName = resultSet.getString("OBJECT_NAME");
             String objectTypeName = resultSet.getString("OBJECT_TYPE");
-            DBObjectType objectType = DBObjectType.getObjectType(objectTypeName);
+            DBObjectType objectType = DBObjectType.get(objectTypeName);
             if (objectType == DBObjectType.PACKAGE_BODY) objectType = DBObjectType.PACKAGE;
             if (objectType == DBObjectType.TYPE_BODY) objectType = DBObjectType.TYPE;
 

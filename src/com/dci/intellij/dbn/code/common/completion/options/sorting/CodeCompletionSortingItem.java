@@ -57,7 +57,7 @@ public class CodeCompletionSortingItem extends Configuration {
         String sortingItemType = element.getAttributeValue("type");
         if (sortingItemType.equals("OBJECT")) {
             String objectTypeName = element.getAttributeValue("id");
-            objectType = DBObjectType.getObjectType(objectTypeName);
+            objectType = DBObjectType.get(objectTypeName);
         } else {
             String tokenTypeName = element.getAttributeValue("id");
             tokenTypeCategory = TokenTypeCategory.getCategory(tokenTypeName);

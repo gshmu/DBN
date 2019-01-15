@@ -40,7 +40,7 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
 
     public DDLFileType getDDLFileType(DDLFileTypeId fileTypeId) {
         for (DDLFileType fileType : fileTypes) {
-            if (fileType.getId()== fileTypeId) {
+            if (fileType.getId() == fileTypeId) {
                 return fileType;
             }
         }

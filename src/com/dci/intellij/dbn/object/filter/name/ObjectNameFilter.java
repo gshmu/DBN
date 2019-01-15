@@ -53,7 +53,7 @@ public class ObjectNameFilter extends CompoundFilterCondition {
     @Override
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
-        objectType = DBObjectType.getObjectType(element.getAttributeValue("object-type"));
+        objectType = DBObjectType.get(element.getAttributeValue("object-type"));
         hashCode = toString().hashCode();
     }
 
