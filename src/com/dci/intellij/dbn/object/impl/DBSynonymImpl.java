@@ -37,7 +37,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
         name = resultSet.getString("SYNONYM_NAME");
         String schemaName = resultSet.getString("OBJECT_OWNER");
         String objectName = resultSet.getString("OBJECT_NAME");
-        DBObjectType objectType = DBObjectType.getObjectType(resultSet.getString("OBJECT_TYPE"), DBObjectType.ANY);
+        DBObjectType objectType = DBObjectType.get(resultSet.getString("OBJECT_TYPE"), DBObjectType.ANY);
 
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);

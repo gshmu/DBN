@@ -5,9 +5,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
-import com.dci.intellij.dbn.ddl.DDLFileManager;
-import com.dci.intellij.dbn.ddl.DDLFileType;
-import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -126,17 +123,5 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
 
     public DBLanguage getCodeLanguage(DBContentType contentType) {
         return SQLLanguage.INSTANCE;
-    }
-
-    /*********************************************************
-     *                    DBEditableObject                   *
-     ********************************************************/
-    public DDLFileType getDDLFileType(DBContentType contentType) {
-        return DDLFileManager.getInstance(getProject()).getDDLFileType(DDLFileTypeId.VIEW);
-    }
-
-    @Override
-    public DDLFileType[] getDDLFileTypes() {
-        return new DDLFileType[]{getDDLFileType(null)};
     }
 }

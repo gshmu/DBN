@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
+import com.dci.intellij.dbn.ddl.DDLFileManager;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
@@ -105,16 +106,17 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                 List<VirtualFile> attachedDDLFiles = getAttachedDDLFiles();
                 if (attachedDDLFiles == null || attachedDDLFiles.isEmpty()) {
                     DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-                    List<VirtualFile> virtualFiles = fileAttachmentManager.lookupDetachedDDLFiles(object);
+                    DBObjectRef<DBSchemaObject> objectRef = object.getRef();
+                    List<VirtualFile> virtualFiles = fileAttachmentManager.lookupDetachedDDLFiles(objectRef);
                     if (virtualFiles.size() > 0) {
-                        int exitCode = DDLFileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
+                        int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
                         return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
                     } else if (ddlFileSettings.isCreateDDLFilesEnabled()) {
                         MessageUtil.showQuestionDialog(
                                 project, "No DDL file found",
                                 "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
                                 "(You can disable this check in \"DDL File\" options)", MessageUtil.OPTIONS_YES_NO, 0,
-                                MessageCallback.create(0, option -> fileAttachmentManager.createDDLFile(object)));
+                                MessageCallback.create(0, option -> fileAttachmentManager.createDDLFile(objectRef)));
                     }
                 }
             }
@@ -129,7 +131,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     private List<DBContentVirtualFile> computeContentFiles() {
         List<DBContentVirtualFile> contentFiles = new ArrayList<>();
-        DBContentType objectContentType = getObject().getContentType();
+        DBContentType objectContentType = getObjectRef().getObjectType().getContentType();
         if (objectContentType.isBundle()) {
             DBContentType[] contentTypes = objectContentType.getSubContentTypes();
             for (DBContentType contentType : contentTypes) {
@@ -171,9 +173,10 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Nullable
     public List<VirtualFile> getAttachedDDLFiles() {
         DBSchemaObject object = getObject();
-        DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(object.getProject());
+        Project project = object.getProject();
+        DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
         if (object.is(DBObjectProperty.EDITABLE)) {
-            return fileAttachmentManager.getAttachedDDLFiles(object);
+            return fileAttachmentManager.getAttachedDDLFiles(object.getRef());
         }
         return null;
     }
@@ -202,7 +205,8 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @NotNull
     public FileType getFileType() {
         DBSchemaObject object = getObject();
-        DDLFileType type = object.getDDLFileType(null);
+        DDLFileManager ddlFileManager = DDLFileManager.getInstance(object.getProject());
+        DDLFileType type = ddlFileManager.getDDLFileType(object.getObjectType(), getMainContentType());
         return type == null ? SQLFileType.INSTANCE : type.getLanguageFileType();
     }
 
@@ -246,8 +250,9 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
     public DBContentType getMainContentType() {
-        DBSchemaObject object = getObject();
-        DBContentType contentType = object.getContentType();
+        DBObjectRef<DBSchemaObject> objectRef = getObjectRef();
+        DBObjectType objectType = objectRef.getObjectType();
+        DBContentType contentType = objectType.getContentType();
         return
             contentType == DBContentType.CODE ? DBContentType.CODE :
             contentType == DBContentType.CODE_SPEC_AND_BODY ? DBContentType.CODE_BODY : null;

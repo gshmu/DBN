@@ -153,12 +153,17 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     private FileEditorManagerListener.Before fileEditorManagerListenerBefore = new FileEditorManagerListener.Before() {
         @Override
         public void beforeFileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+            if (file instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
+                DBObjectRef<DBSchemaObject> objectRef = databaseFile.getObjectRef();
+                objectRef.getnn();
+            }
         }
 
         @Override
         public void beforeFileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
             if (file instanceof DBEditableObjectVirtualFile) {
-                final DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                 if (databaseFile.isModified()) {
                     DBSchemaObject object = databaseFile.getObject();
 
@@ -274,9 +279,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     public void loadState(@NotNull Element element) {
         Map<ConnectionId, List<DBObjectRef<DBSchemaObject>>> openObjectRefs = new HashMap<>();
         Element openFilesElement = element.getChild("open-files");
-        if (openFilesElement!= null) {
+        if (openFilesElement != null) {
             List<Element> fileElements = openFilesElement.getChildren();
-            for (Element fileElement : fileElements) {
+            fileElements.forEach((fileElement) -> {
                 DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.from(fileElement);
                 if (objectRef != null) {
                     ConnectionId connectionId = objectRef.getConnectionId();
@@ -284,32 +289,29 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                             openObjectRefs.computeIfAbsent(connectionId, k -> new ArrayList<>());
                     objectRefs.add(objectRef);
                 }
-            }
+            });
         }
 
         if (!openObjectRefs.isEmpty()) {
             Project project = getProject();
-            for (ConnectionId connectionId : openObjectRefs.keySet()) {
+            openObjectRefs.keySet().forEach(connectionId -> {
                 List<DBObjectRef<DBSchemaObject>> objectRefs = openObjectRefs.get(connectionId);
 
                 BackgroundTask.invoke(project, "Opening database editors", false, true, (data, progress) -> {
                     ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                     DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-
-                    for (DBObjectRef<DBSchemaObject> objectRef : objectRefs) {
+                    ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+                    objectRefs.forEach(objectRef -> {
                         if (progress.isCanceled()) return;
-                        ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(objectRef.getConnectionId());
                         if (connectionHandler != null && connectionHandler.canConnect()) {
                             DBSchemaObject object = objectRef.get(project);
                             if (object != null) {
                                 databaseFileSystem.openEditor(object,  null, false);
                             }
                         }
-
-                    }
+                    });
                 });
-
-            }
+            });
         }
     }
 }

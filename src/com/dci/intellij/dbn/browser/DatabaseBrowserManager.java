@@ -343,7 +343,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         if (objectTypes.size() > 0) {
                             Element schemaElement = new Element("schema");
                             schemaElement.setAttribute("name", schema.getName());
-                            schemaElement.setAttribute("object-types", DBObjectType.toCommaSeparated(objectTypes));
+                            schemaElement.setAttribute("object-types", DBObjectType.toCsv(objectTypes));
                             connectionElement.addContent(schemaElement);
                             addConnectionElement = true;
                         }
@@ -380,7 +380,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                             if (schema != null) {
                                 BackgroundTask.invoke(project, "Loading data dictionary" + connectionString, true, true, (task, progress) -> {
                                     String objectTypesAttr = schemaElement.getAttributeValue("object-types");
-                                    List<DBObjectType> objectTypes = DBObjectType.fromCommaSeparated(objectTypesAttr);
+                                    List<DBObjectType> objectTypes = DBObjectType.fromCsv(objectTypesAttr);
                                     for (DBObjectType objectType : objectTypes) {
                                         DBObjectListContainer childObjects = schema.getChildObjects();
                                         if (childObjects != null && !progress.isCanceled()) {

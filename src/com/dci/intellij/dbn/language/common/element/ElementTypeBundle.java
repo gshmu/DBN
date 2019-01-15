@@ -221,7 +221,7 @@ public class ElementTypeBundle {
 
 
     public static DBObjectType resolveObjectType(String name) throws ElementTypeDefinitionException {
-        DBObjectType objectType = DBObjectType.getObjectType(name);
+        DBObjectType objectType = DBObjectType.get(name);
         if (objectType == null)
             throw new ElementTypeDefinitionException("Invalid object type '" + name + '\'');
         return objectType;

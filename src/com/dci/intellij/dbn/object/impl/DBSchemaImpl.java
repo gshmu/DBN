@@ -1024,7 +1024,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
 
             String cacheKey = methodName + methodType + overload;
             DBMethod method = (DBMethod) loaderCache.getObject(cacheKey);
-            DBObjectType objectType = DBObjectType.getObjectType(methodType);
+            DBObjectType objectType = DBObjectType.get(methodType);
 
             if (method == null || method.getProgram() != program || method.getOverload() != overload) {
                 if (programName == null) {

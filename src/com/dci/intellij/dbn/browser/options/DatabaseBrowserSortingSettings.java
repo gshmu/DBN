@@ -82,7 +82,7 @@ public class DatabaseBrowserSortingSettings extends ProjectConfiguration<Databas
         for (Element child : children) {
             String objectTypeName = child.getAttributeValue("name");
             String sortingTypeName = child.getAttributeValue("sorting-type");
-            DBObjectType objectType = DBObjectType.getObjectType(objectTypeName);
+            DBObjectType objectType = DBObjectType.get(objectTypeName);
             SortingType sortingType = SortingType.valueOf(sortingTypeName);
             DBObjectComparator comparator = DBObjectComparator.get(objectType, sortingType);
             if (comparator != null) {

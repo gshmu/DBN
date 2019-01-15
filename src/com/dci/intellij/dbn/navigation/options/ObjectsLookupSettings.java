@@ -124,7 +124,7 @@ public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSet
         for (Object o : visibleObjectsElement.getChildren()) {
             Element child = (Element) o;
             String typeName = child.getAttributeValue("name");
-            DBObjectType objectType = DBObjectType.getObjectType(typeName);
+            DBObjectType objectType = DBObjectType.get(typeName);
             if (objectType != null) {
                 boolean enabled = Boolean.parseBoolean(child.getAttributeValue("enabled"));
                 ObjectTypeEntry objectTypeEntry = getObjectTypeEntry(objectType);

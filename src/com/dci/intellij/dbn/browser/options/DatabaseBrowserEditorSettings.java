@@ -79,7 +79,7 @@ public class DatabaseBrowserEditorSettings extends ProjectConfiguration<Database
         for (Element child : children) {
             String objectTypeName = child.getAttributeValue("name");
             String editorTypeName = child.getAttributeValue("editor-type");
-            DBObjectType objectType = DBObjectType.getObjectType(objectTypeName);
+            DBObjectType objectType = DBObjectType.get(objectTypeName);
             DefaultEditorType editorType = DefaultEditorType.valueOf(editorTypeName);
 
             DefaultEditorOption comparator = new DefaultEditorOption(objectType, editorType);

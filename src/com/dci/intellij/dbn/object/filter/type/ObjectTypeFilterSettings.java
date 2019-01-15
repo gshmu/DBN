@@ -175,7 +175,7 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
         for (Object o : element.getChildren()) {
             Element child = (Element) o;
             String typeName = child.getAttributeValue("name");
-            DBObjectType objectType = DBObjectType.getObjectType(typeName);
+            DBObjectType objectType = DBObjectType.get(typeName);
             if (objectType != null) {
                 boolean enabled = Boolean.parseBoolean(child.getAttributeValue("enabled"));
                 setVisible(objectType, enabled);

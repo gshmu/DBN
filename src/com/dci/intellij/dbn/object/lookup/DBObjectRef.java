@@ -150,7 +150,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         while (objectTypes.hasMoreTokens()) {
             String objectTypeName = objectTypes.nextToken();
             String objectName = objectNames.nextToken();
-            DBObjectType objectType = DBObjectType.getObjectType(objectTypeName);
+            DBObjectType objectType = DBObjectType.get(objectTypeName);
             if (objectTypes.hasMoreTokens()) {
                 objectRef = objectRef == null ?
                         new DBObjectRef(connectionId, objectType, objectName) :

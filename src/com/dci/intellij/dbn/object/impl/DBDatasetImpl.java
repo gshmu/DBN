@@ -10,8 +10,6 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.ddl.DDLFileType;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -283,15 +281,4 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
             return new DBIndexImpl(dataset, resultSet);
         }
     };
-
-    /*********************************************************
-     *                    DBEditableObject                   *
-     ********************************************************/
-    public DDLFileType getDDLFileType(DBContentType contentType) {
-        return null;
-    }
-
-    public DDLFileType[] getDDLFileTypes() {
-        return null;
-    }
 }

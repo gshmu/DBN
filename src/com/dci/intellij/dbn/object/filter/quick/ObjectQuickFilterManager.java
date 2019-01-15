@@ -131,7 +131,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
         public void readState(Element element) {
             connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
             schemaName = element.getAttributeValue("schema");
-            objectType = DBObjectType.getObjectType(element.getAttributeValue("object-type"));
+            objectType = DBObjectType.get(element.getAttributeValue("object-type"));
         }
 
         @Override

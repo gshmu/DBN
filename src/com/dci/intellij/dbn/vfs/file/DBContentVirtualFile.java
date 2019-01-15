@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.ddl.DDLFileManager;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -14,10 +15,12 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBView;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.dci.intellij.dbn.vfs.VirtualFileStatus;
 import com.dci.intellij.dbn.vfs.VirtualFileStatusHolder;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -38,10 +41,12 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
         this.mainDatabaseFile = mainDatabaseFile;
         this.contentType = contentType;
 
-        DBSchemaObject object = mainDatabaseFile.getObject();
-        this.name = object.getName();
+        DBObjectRef<DBSchemaObject> objectRef = mainDatabaseFile.getObjectRef();
+        this.name = objectRef.getObjectName();
 
-        DDLFileType ddlFileType = object.getDDLFileType(contentType);
+        Project project = getProject();
+        DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
+        DDLFileType ddlFileType = ddlFileManager.getDDLFileType(objectRef.getObjectType(), contentType);
         this.fileType = ddlFileType == null ? null : ddlFileType.getLanguageFileType();
     }
 

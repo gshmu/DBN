@@ -14,15 +14,12 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
-import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.EditorStateManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeMainEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
-import com.dci.intellij.dbn.language.common.DBLanguageFileType;
-import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -142,10 +139,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                     } else if (OBJECTS.is(relativePath)) {
                         String objectIdentifier = OBJECTS.collate(relativePath);
                         DBObjectRef<DBSchemaObject> objectRef = new DBObjectRef<>(connectionId, objectIdentifier);
-                        DBObject object = objectRef.get();
-                        if (object != null && object.is(DBObjectProperty.EDITABLE)) {
-                            return findOrCreateDatabaseFile(project, objectRef);
-                        }
+                        return findOrCreateDatabaseFile(project, objectRef);
                     } else if (OBJECT_CONTENTS.is(relativePath)) {
                         String contentIdentifier = OBJECT_CONTENTS.collate(relativePath);
                         int contentTypeEndIndex = contentIdentifier.indexOf(PS);
@@ -154,12 +148,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
                         String objectIdentifier = contentIdentifier.substring(contentTypeEndIndex + 1);
                         DBObjectRef<DBSchemaObject> objectRef = new DBObjectRef<>(connectionId, objectIdentifier);
-
-                        DBObject object = objectRef.get();
-                        if (object != null && object.is(DBObjectProperty.EDITABLE)) {
-                            DBEditableObjectVirtualFile virtualFile = findOrCreateDatabaseFile(project, objectRef);
-                            return virtualFile.getContentFile(contentType);
-                        }
+                        DBEditableObjectVirtualFile virtualFile = findOrCreateDatabaseFile(project, objectRef);
+                        return virtualFile.getContentFile(contentType);
                     }
                 }
             }
@@ -331,16 +321,6 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     @NotNull
     static String createUrl(DBVirtualFile virtualFile) {
         return PROTOCOL_PREFIX + createPath(virtualFile);
-    }
-
-    public static String getDefaultExtension(DBObject object) {
-        if (object instanceof DBSchemaObject) {
-            DBSchemaObject schemaObject = (DBSchemaObject) object;
-            DDLFileType ddlFileType = schemaObject.getDDLFileType(null);
-            DBLanguageFileType fileType = ddlFileType == null ? SQLFileType.INSTANCE : ddlFileType.getLanguageFileType();
-            return fileType.getDefaultExtension();
-        }
-        return "";
     }
 
     /*********************************************************

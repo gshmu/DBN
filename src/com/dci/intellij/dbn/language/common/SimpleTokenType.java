@@ -74,7 +74,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
 
         String objectType = element.getAttributeValue("objectType");
         if (StringUtil.isNotEmpty(objectType)) {
-            this.objectType = DBObjectType.getObjectType(objectType);
+            this.objectType = DBObjectType.get(objectType);
         }
 
         formatting = FormattingDefinitionFactory.loadDefinition(element);

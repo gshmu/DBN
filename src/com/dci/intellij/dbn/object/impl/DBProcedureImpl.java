@@ -3,9 +3,6 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.ddl.DDLFileManager;
-import com.dci.intellij.dbn.ddl.DDLFileType;
-import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBProcedure;
 import com.dci.intellij.dbn.object.DBProgram;
@@ -106,14 +103,6 @@ public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
 
     public String getCodeParseRootId(DBContentType contentType) {
         return getParentObject() instanceof DBSchema && contentType == DBContentType.CODE ? "procedure_declaration" : null;
-    }
-
-    public DDLFileType getDDLFileType(DBContentType contentType) {
-        return DDLFileManager.getInstance(getProject()).getDDLFileType(DDLFileTypeId.PROCEDURE);
-    }
-
-    public DDLFileType[] getDDLFileTypes() {
-        return new DDLFileType[]{getDDLFileType(null)};
     }
 
     public DBObjectTimestampLoader getTimestampLoader(DBContentType contentType) {
