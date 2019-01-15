@@ -80,7 +80,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
     public boolean preOpen() {
-        final DBSchemaObject object = getObject();
+        DBSchemaObject object = getObject();
         Project project = object.getProject();
         DBContentType contentType = object.getContentType();
         if (contentType == DBContentType.DATA) {
@@ -104,7 +104,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
             if (ddlFileBinding && ddlFileSettings.isLookupDDLFilesEnabled()) {
                 List<VirtualFile> attachedDDLFiles = getAttachedDDLFiles();
                 if (attachedDDLFiles == null || attachedDDLFiles.isEmpty()) {
-                    final DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
+                    DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
                     List<VirtualFile> virtualFiles = fileAttachmentManager.lookupDetachedDDLFiles(object);
                     if (virtualFiles.size() > 0) {
                         int exitCode = DDLFileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);

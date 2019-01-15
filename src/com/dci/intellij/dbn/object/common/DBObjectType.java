@@ -448,11 +448,13 @@ public enum DBObjectType implements DynamicContentType {
         // CONTENT TYPES
         FUNCTION.contentType = DBContentType.CODE;
         PROCEDURE.contentType = DBContentType.CODE;
-        TRIGGER.contentType = DBContentType.CODE;
         TABLE.contentType = DBContentType.DATA;
         VIEW.contentType = DBContentType.CODE_AND_DATA;
         TYPE.contentType = DBContentType.CODE_SPEC_AND_BODY;
         PACKAGE.contentType = DBContentType.CODE_SPEC_AND_BODY;
+        TRIGGER.contentType = DBContentType.CODE;
+        DATASET_TRIGGER.contentType = DBContentType.CODE;
+        DATABASE_TRIGGER.contentType = DBContentType.CODE;
     }
 
     public boolean isOneOf(DBObjectType ... objectTypes) {

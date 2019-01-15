@@ -135,9 +135,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
     public final void load(boolean force) {
-        Synchronized.run(this,
-                () -> shouldLoad(force),
-                () -> {
+        boolean shouldLoad = shouldLoad(force);
+        if (shouldLoad) {
+            synchronized (this) {
+                shouldLoad = shouldLoad(force);
+                if (shouldLoad) {
                     set(LOADING, true);
                     try {
                         performLoad();
@@ -149,13 +151,17 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                         set(LOADING, false);
                         updateChangeTimestamp();
                     }
-                });
+                }
+            }
+        }
     }
 
     public final void reload() {
-        Synchronized.run(this,
-                () -> shouldReload(),
-                () -> {
+        boolean shouldReload = shouldReload();
+        if (shouldReload) {
+            synchronized (this) {
+                shouldReload = shouldReload();
+                if (shouldReload) {
                     set(LOADING, true);
                     try {
                         performReload();
@@ -172,7 +178,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                         set(LOADING, false);
                         updateChangeTimestamp();
                     }
-                });
+                }
+            }
+        }
     }
 
     @Override
@@ -279,9 +287,13 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
     @NotNull
     public List<T> getElements() {
-        if (shouldLoad(false)) {
+        if (!isLoaded()) {
             if (BackgroundMonitor.isBackgroundProcess() || BackgroundMonitor.isTimeoutProcess()) {
-                load(false);
+                synchronized (this) {
+                    if (!isLoaded()) {
+                        load(false);
+                    }
+                }
             } else{
                 loadInBackground(false);
             }

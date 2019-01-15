@@ -48,7 +48,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -140,7 +139,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         }
     };
 
-    private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerAdapter() {
+    private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
         @Override
         public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
 
