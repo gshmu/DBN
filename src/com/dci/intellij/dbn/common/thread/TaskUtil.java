@@ -14,12 +14,7 @@ class TaskUtil {
         if (application.isDispatchThread()) {
             executeTask(task, project);
         } else {
-            Runnable runnable = new Runnable() {
-                public void run() {
-                    executeTask(task, project);
-                }
-            };
-            application.invokeLater(runnable, ModalityState.NON_MODAL);
+            application.invokeLater(() -> executeTask(task, project), ModalityState.NON_MODAL);
         }
     }
     private static void executeTask(Task task, Project project) {

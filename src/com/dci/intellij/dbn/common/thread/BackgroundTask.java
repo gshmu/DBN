@@ -82,8 +82,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     protected abstract void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException;
 
     public final void start() {
-        final BackgroundTask task = BackgroundTask.this;
-        TaskUtil.startTask(task, getProject());
+        TaskUtil.startTask(BackgroundTask.this, getProject());
     }
 
     protected static void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate) {

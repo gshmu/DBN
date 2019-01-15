@@ -31,7 +31,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatasetFilterManager";
 
     public static final DatasetFilter EMPTY_FILTER = new DatasetEmptyFilter();
-    private Map<ConnectionId, Map<String, DatasetFilterGroup>> filters =  new HashMap<ConnectionId, Map<String, DatasetFilterGroup>>();
+    private Map<ConnectionId, Map<String, DatasetFilterGroup>> filters = new HashMap<>();
 
     private DatasetFilterManager(Project project) {
         super(project);
@@ -132,11 +132,8 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     private void addFilterGroup(DatasetFilterGroup filterGroup) {
         ConnectionId connectionId = filterGroup.getConnectionId();
         String datasetName = filterGroup.getDatasetName();
-        Map<String, DatasetFilterGroup> connectionFilters = filters.get(connectionId);
-        if (connectionFilters == null) {
-            connectionFilters = new HashMap<String, DatasetFilterGroup>();
-            filters.put(connectionId, connectionFilters);
-        }
+        Map<String, DatasetFilterGroup> connectionFilters =
+                filters.computeIfAbsent(connectionId, k -> new HashMap<>());
 
         connectionFilters.put(datasetName, filterGroup);
     }
@@ -156,17 +153,8 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
 
     @NotNull
     public DatasetFilterGroup getFilterGroup(ConnectionId connectionId, String datasetName) {
-        Map<String, DatasetFilterGroup> filterGroups = filters.get(connectionId);
-        if (filterGroups == null) {
-            filterGroups = new HashMap<String, DatasetFilterGroup>();
-            filters.put(connectionId, filterGroups);
-        }
-        DatasetFilterGroup filterGroup = filterGroups.get(datasetName);
-        if (filterGroup == null) {
-            filterGroup = new DatasetFilterGroup(getProject(), connectionId, datasetName);
-            filterGroups.put(datasetName, filterGroup);
-        }
-        return filterGroup;
+        Map<String, DatasetFilterGroup> filterGroups = filters.computeIfAbsent(connectionId, k -> new HashMap<>());
+        return filterGroups.computeIfAbsent(datasetName, k -> new DatasetFilterGroup(getProject(), connectionId, k));
     }
 
     public static DatasetFilterManager getInstance(@NotNull Project project) {
@@ -209,7 +197,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
         for (Object object : element.getChildren()) {
             Element filterListElement = (Element) object;
             DatasetFilterGroup filterGroup = new DatasetFilterGroup(getProject());
