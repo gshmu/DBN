@@ -36,8 +36,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -270,33 +272,44 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
     @Override
     public void loadState(@NotNull Element element) {
-        List<DBObjectRef<DBSchemaObject>> openObjectRefs = new ArrayList<>();
+        Map<ConnectionId, List<DBObjectRef<DBSchemaObject>>> openObjectRefs = new HashMap<>();
         Element openFilesElement = element.getChild("open-files");
         if (openFilesElement!= null) {
             List<Element> fileElements = openFilesElement.getChildren();
             for (Element fileElement : fileElements) {
                 DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.from(fileElement);
-                openObjectRefs.add(objectRef);
+                if (objectRef != null) {
+                    ConnectionId connectionId = objectRef.getConnectionId();
+                    List<DBObjectRef<DBSchemaObject>> objectRefs =
+                            openObjectRefs.computeIfAbsent(connectionId, k -> new ArrayList<>());
+                    objectRefs.add(objectRef);
+                }
             }
         }
 
         if (!openObjectRefs.isEmpty()) {
             Project project = getProject();
-            BackgroundTask.invoke(project, "Opening database editors", false, true, (data, progress) -> {
-                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-                for (DBObjectRef<DBSchemaObject> objectRef : openObjectRefs) {
-                    if (progress.isCanceled()) return;
-                    ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(objectRef.getConnectionId());
-                    if (connectionHandler != null && connectionHandler.canConnect()) {
-                        DBSchemaObject object = objectRef.get(project);
-                        if (object != null) {
-                            databaseFileSystem.openEditor(object,  null, false);
-                        }
-                    }
+            for (ConnectionId connectionId : openObjectRefs.keySet()) {
+                List<DBObjectRef<DBSchemaObject>> objectRefs = openObjectRefs.get(connectionId);
 
-                }
-            });
+                BackgroundTask.invoke(project, "Opening database editors", false, true, (data, progress) -> {
+                    ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                    DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+
+                    for (DBObjectRef<DBSchemaObject> objectRef : objectRefs) {
+                        if (progress.isCanceled()) return;
+                        ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(objectRef.getConnectionId());
+                        if (connectionHandler != null && connectionHandler.canConnect()) {
+                            DBSchemaObject object = objectRef.get(project);
+                            if (object != null) {
+                                databaseFileSystem.openEditor(object,  null, false);
+                            }
+                        }
+
+                    }
+                });
+
+            }
         }
     }
 }

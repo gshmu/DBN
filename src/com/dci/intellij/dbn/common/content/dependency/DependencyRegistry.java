@@ -11,11 +11,8 @@ public class DependencyRegistry {
     private Map<String, Set<DynamicContent>> registry = new THashMap<String, Set<DynamicContent>>();
 
     public void registerDependency(String dependencyKey, DynamicContent dynamicContent){
-        Set<DynamicContent> dynamicContents = registry.get(dependencyKey);
-        if (dynamicContents == null) {
-            dynamicContents = new HashSet<DynamicContent>();
-            registry.put(dependencyKey, dynamicContents);
-        }
+        Set<DynamicContent> dynamicContents =
+                registry.computeIfAbsent(dependencyKey, k -> new HashSet<>());
         dynamicContents.add(dynamicContent);
     }
 
