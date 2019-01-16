@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 public class CollectionUtil {
@@ -19,7 +21,7 @@ public class CollectionUtil {
         }
     }
 
-    public static void clearCollection(Collection collection) {
+    public static void clear(Collection collection) {
         if (collection != null && collection.size() > 0) {
             collection.clear();
         }
@@ -64,5 +66,11 @@ public class CollectionUtil {
                 action.accept(element);
             }
         }
+    }
+
+    @NotNull
+    @Contract(value = " -> new", pure = true)
+    public static <T> List<T> createConcurrentList() {
+        return new CopyOnWriteArrayList<>();
     }
 }

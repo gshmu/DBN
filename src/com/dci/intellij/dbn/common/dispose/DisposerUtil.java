@@ -30,7 +30,7 @@ public class DisposerUtil {
         }
     }
 
-    public static void disposeInBackground(final Collection<? extends Disposable> collection) {
+    public static void disposeInBackground(Collection<? extends Disposable> collection) {
         SimpleBackgroundTask.invoke(() -> dispose(collection));
     }
     
@@ -43,7 +43,6 @@ public class DisposerUtil {
             for(Disposable disposable : collection) {
                 dispose(disposable);
             }
-            collection.clear();
         }
     }
 

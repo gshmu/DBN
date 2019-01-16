@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -41,10 +42,10 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
     private JPanel argumentsContainerPanel;
 
 
-    private List<MethodExecutionInputArgumentForm> argumentForms = new ArrayList<MethodExecutionInputArgumentForm>();
+    private List<MethodExecutionInputArgumentForm> argumentForms = new ArrayList<>();
     private ExecutionOptionsForm executionOptionsForm;
     private MethodExecutionInput executionInput;
-    private Set<ChangeListener> changeListeners = new HashSet<ChangeListener>();
+    private Set<ChangeListener> changeListeners = new HashSet<>();
 
     public MethodExecutionInputForm(DisposableProjectComponent parentComponent, final MethodExecutionInput executionInput, boolean showHeader, @NotNull DBDebuggerType debuggerType) {
         super(parentComponent);
@@ -79,7 +80,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
 
         //topSeparator.setVisible(false);
         DBMethod method = executionInput.getMethod();
-        List<DBArgument> arguments = method == null ? Collections.<DBArgument>emptyList() : new ArrayList<DBArgument>(method.getArguments());
+        List<DBArgument> arguments = method == null ? Collections.emptyList() : new ArrayList<>(method.getArguments());
         noArgumentsLabel.setVisible(arguments.size() == 0);
         for (DBArgument argument: arguments) {
             if (argument.isInput()) {
@@ -149,7 +150,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
     }
 
     private DocumentListener documentListener = new DocumentAdapter() {
-        protected void textChanged(DocumentEvent e) {
+        protected void textChanged(@NotNull DocumentEvent e) {
             notifyChangeListeners();
         }
     };
@@ -171,9 +172,8 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
     public void dispose() {
         super.dispose();
         DisposerUtil.dispose(argumentForms);
-        changeListeners.clear();
-        argumentForms = null;
+        CollectionUtil.clear(argumentForms);
+        CollectionUtil.clear(changeListeners);
         executionInput = null;
-        changeListeners = null;
     }
 }

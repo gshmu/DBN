@@ -812,8 +812,8 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
             psiFacade = null;
             DisposerUtil.dispose(childObjects);
             DisposerUtil.dispose(childObjectRelations);
-            CollectionUtil.clearCollection(visibleTreeChildren);
-            CollectionUtil.clearCollection(allPossibleTreeChildren);
+            CollectionUtil.clear(visibleTreeChildren);
+            CollectionUtil.clear(allPossibleTreeChildren);
         }
     }
 

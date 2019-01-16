@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBFunction;
@@ -20,11 +21,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class MethodExecutionHistory implements PersistentStateElement<Element>, Disposable{
-    private List<MethodExecutionInput> executionInputs = new ArrayList<MethodExecutionInput>();
+    private List<MethodExecutionInput> executionInputs = CollectionUtil.createConcurrentList();
     private boolean groupEntries = true;
     private DBObjectRef<DBMethod> selection;
     private ProjectRef projectRef;
@@ -63,13 +63,7 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
     }
 
     public void cleanupHistory(List<ConnectionId> connectionIds) {
-        Iterator<MethodExecutionInput> iterator = executionInputs.iterator();
-        while (iterator.hasNext()) {
-            MethodExecutionInput executionInput = iterator.next();
-            if (connectionIds.contains(executionInput.getConnectionId())) {
-                iterator.remove();
-            }
-        }
+        executionInputs.removeIf(executionInput -> connectionIds.contains(executionInput.getConnectionId()));
     }
 
     @Nullable
@@ -142,11 +136,6 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
     }
 
 
-    @Override
-    public void dispose() {
-        DisposerUtil.dispose(executionInputs);
-    }
-
     public MethodExecutionInput getLastSelection() {
         if (selection != null) {
             for (MethodExecutionInput executionInput : executionInputs) {
@@ -206,6 +195,13 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
             historyElement.addContent(selectionElement);
             selection.writeState(selectionElement);
         }
-
     }
+
+    @Override
+    public void dispose() {
+        DisposerUtil.dispose(executionInputs);
+        CollectionUtil.clear(executionInputs);
+    }
+
+
 }

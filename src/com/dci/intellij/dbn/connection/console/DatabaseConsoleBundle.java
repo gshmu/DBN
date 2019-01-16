@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.console;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.Synchronized;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
@@ -14,12 +15,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DatabaseConsoleBundle extends DisposableBase {
     private ConnectionHandlerRef connectionHandlerRef;
 
-    private List<DBConsoleVirtualFile> consoles = new CopyOnWriteArrayList<DBConsoleVirtualFile>();
+    private List<DBConsoleVirtualFile> consoles = CollectionUtil.createConcurrentList();
 
     public DatabaseConsoleBundle(ConnectionHandler connectionHandler) {
         super(connectionHandler);
@@ -90,8 +90,11 @@ public class DatabaseConsoleBundle extends DisposableBase {
 
     @Override
     public void dispose() {
-        super.dispose();
-        DisposerUtil.dispose(consoles);
+        if (!isDisposed()) {
+            super.dispose();
+            DisposerUtil.dispose(consoles);
+            CollectionUtil.clear(consoles);
+        }
     }
 
     public void renameConsole(String oldName, String newName) {

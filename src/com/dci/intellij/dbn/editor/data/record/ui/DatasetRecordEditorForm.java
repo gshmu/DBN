@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.data.record.ColumnSortingType;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
@@ -266,7 +267,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
     public void dispose() {
         super.dispose();
         DisposerUtil.dispose(columnForms);
-        columnForms = null;
+        CollectionUtil.clear(columnForms);
         row = null;
     }
 }

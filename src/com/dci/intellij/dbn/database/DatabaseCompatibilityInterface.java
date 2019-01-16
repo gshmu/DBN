@@ -23,7 +23,7 @@ public abstract class DatabaseCompatibilityInterface {
         return getInstance(connectionHandler);
     }
 
-    public static DatabaseCompatibilityInterface getInstance(ConnectionHandler connectionHandler) {
+    public static DatabaseCompatibilityInterface getInstance(@NotNull ConnectionHandler connectionHandler) {
         return connectionHandler.getInterfaceProvider().getCompatibilityInterface();
     }
 

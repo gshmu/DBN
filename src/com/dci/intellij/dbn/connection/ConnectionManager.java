@@ -440,7 +440,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    void disposeConnections(@NotNull final List<ConnectionHandler> connectionHandlers) {
+    void disposeConnections(@NotNull List<ConnectionHandler> connectionHandlers) {
         if (connectionHandlers.size() > 0) {
             final Project project = getProject();
             ConditionalLaterInvocator.invoke(() -> {

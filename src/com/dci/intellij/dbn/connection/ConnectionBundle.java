@@ -96,7 +96,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     public void applySettings(ConnectionBundleSettings settings) {
         AbstractFiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableListImpl<>(ACTIVE_CONNECTIONS_FILTER);
-        final List<ConnectionHandler> oldConnectionHandlers = new ArrayList<>(this.connectionHandlers.getFullList());
+        List<ConnectionHandler> oldConnectionHandlers = new ArrayList<>(this.connectionHandlers.getFullList());
         List<ConnectionSettings> connectionSettings = settings.getConnections();
         boolean listChanged = false;
         for (ConnectionSettings connectionSetting : connectionSettings) {
@@ -296,11 +296,6 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     }
 
     public String getPresentableTextConditionalDetails() {
-        return null;
-    }
-
-    @Nullable
-    public ConnectionHandler getConnectionHandler() {
         return null;
     }
 

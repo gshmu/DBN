@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -70,7 +71,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
@@ -175,12 +175,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     @NotNull
     private List<StatementExecutionProcessor> getExecutionProcessors(FileEditor textEditor) {
-        List<StatementExecutionProcessor> executionProcessors = fileExecutionProcessors.get(textEditor);
-        if (executionProcessors == null) {
-            executionProcessors = new CopyOnWriteArrayList<>();
-            fileExecutionProcessors.put(textEditor, executionProcessors);
-        }
-        return executionProcessors;
+        return fileExecutionProcessors.computeIfAbsent(textEditor, k -> CollectionUtil.createConcurrentList());
     }
 
     private void bindExecutionProcessors(FileEditor fileEditor, MatchType matchType) {

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.explain.result;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -87,7 +88,7 @@ public class ExplainPlanEntry implements Disposable {
 
     public void addChild(ExplainPlanEntry child) {
         if (children == null) {
-            children = new ArrayList<ExplainPlanEntry>();
+            children = new ArrayList<>();
         }
         children.add(child);
     }
@@ -163,6 +164,7 @@ public class ExplainPlanEntry implements Disposable {
     @Override
     public void dispose() {
         DisposerUtil.dispose(children);
+        CollectionUtil.clear(children);
         parent = null;
     }
 }
