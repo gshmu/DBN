@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
@@ -27,7 +28,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class DynamicContentResultSetLoader<T extends DynamicContentElement> implements DynamicContentLoader<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -101,7 +101,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
                     if (element != null) {
                         if (list == null) {
                             list = dynamicContent.is(DynamicContentStatus.CONCURRENT) ?
-                                    new CopyOnWriteArrayList<T>() :
+                                    CollectionUtil.createConcurrentList() :
                                     new ArrayList<T>();
                         }
                         list.add(element);

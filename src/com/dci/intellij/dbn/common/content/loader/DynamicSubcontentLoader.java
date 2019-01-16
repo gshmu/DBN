@@ -4,10 +4,10 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This loader is to be used from building the elements of a dynamic content, based on a source content.
@@ -43,7 +43,7 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> i
                     matchedOnce = true;
                     if (list == null) {
                         list = dynamicContent.is(DynamicContentStatus.CONCURRENT) ?
-                                new CopyOnWriteArrayList<T>() :
+                                CollectionUtil.createConcurrentList() :
                                 new ArrayList<T>();
                     }
                     list.add(element);

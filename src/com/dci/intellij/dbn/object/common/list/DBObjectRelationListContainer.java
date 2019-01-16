@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.util.Compactable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.intellij.openapi.Disposable;
@@ -37,9 +38,10 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
     private boolean isSupported(DBObjectRelationType objectRelationType) {
         ConnectionHandler connectionHandler = owner.getConnectionHandler();
         DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
-        return connectionHandler == null ||
-                (compatibilityInterface.supportsObjectType(objectRelationType.getSourceType().getTypeId()) &&
-                 compatibilityInterface.supportsObjectType(objectRelationType.getTargetType().getTypeId()));
+        DatabaseObjectTypeId sourceTypeId = objectRelationType.getSourceType().getTypeId();
+        DatabaseObjectTypeId targetTypeId = objectRelationType.getTargetType().getTypeId();
+        return compatibilityInterface.supportsObjectType(sourceTypeId) &&
+                compatibilityInterface.supportsObjectType(targetTypeId);
     }
 
     @Nullable
@@ -99,6 +101,7 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
 
     public void dispose() {
         DisposerUtil.dispose(objectRelationLists);
+        CollectionUtil.clear(objectRelationLists);
         owner = null;
     }
 

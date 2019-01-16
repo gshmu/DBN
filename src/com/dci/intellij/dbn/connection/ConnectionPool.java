@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -26,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class ConnectionPool extends DisposableBase implements NotificationSupport, Disposable {
@@ -343,7 +343,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
     }
 
     private static class ConnectionPoolCleanTask extends TimerTask {
-        List<WeakReference<ConnectionPool>> connectionPools = new CopyOnWriteArrayList<>();
+        List<WeakReference<ConnectionPool>> connectionPools = CollectionUtil.createConcurrentList();
 
         public void run() {
             for (WeakReference<ConnectionPool> connectionPoolRef : connectionPools) {

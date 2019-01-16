@@ -15,4 +15,10 @@ public interface GenericDatabaseElement extends ConnectionProvider, Disposable {
 
     @Nullable
     DynamicContent getDynamicContent(DynamicContentType dynamicContentType);
+
+    @NotNull
+    @Override
+    default ConnectionHandler getConnectionHandler() {
+        throw new UnsupportedOperationException();
+    }
 }
