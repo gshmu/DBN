@@ -9,7 +9,9 @@ public class TaskInstructions extends PropertyHolderImpl<TaskInstruction> {
         this.title = title;
         if (instructions != null && instructions.length > 0) {
             for (TaskInstruction instruction : instructions) {
-                set(instruction, true);
+                if (instruction != null) {
+                    set(instruction, true);
+                }
             }
         }
     }
