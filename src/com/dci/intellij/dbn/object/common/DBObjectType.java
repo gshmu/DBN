@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.editor.DBContentType;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
