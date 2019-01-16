@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
@@ -146,12 +148,14 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         if (isPreparingPopup) return;
 
         isPreparingPopup = true;
-        BackgroundTask.invoke(getProject(), "Loading " + getDescription(), false, true, (task, progress) -> {
-            preparePopup();
-            if (progress.isCanceled()) {
-                isPreparingPopup = false;
-                return;
-            }
+        BackgroundTask.invoke(getProject(),
+                TaskInstructions.create("Loading " + getDescription(), TaskInstruction.CANCELLABLE),
+                (data, progress) -> {
+                    preparePopup();
+                    if (progress.isCanceled()) {
+                        isPreparingPopup = false;
+                        return;
+                    }
 
             SimpleLaterInvocator.invoke(() -> {
                 try {

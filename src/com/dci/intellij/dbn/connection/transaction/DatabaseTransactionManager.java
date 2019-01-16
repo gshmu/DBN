@@ -6,6 +6,8 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -52,10 +54,10 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 executeActions(connectionHandler, connection, actions);
             } else {
                 String connectionName = connectionHandler.getConnectionName(connection);
-                String taskTitle = "Performing \"" + actions[0].getName() + "\" on connection " + connectionName;
-                BackgroundTask.invoke(project, taskTitle, background, false, (task, progress) -> {
-                    executeActions(connectionHandler, connection, actions);
-                });
+                String actionName = actions[0].getName();
+                BackgroundTask.invoke(project,
+                        TaskInstructions.create("Performing \"" + actionName + "\" on connection " + connectionName, background ? TaskInstruction.BACKGROUNDED : null),
+                        (data, progress) -> executeActions(connectionHandler, connection, actions));
             }
         }
     }

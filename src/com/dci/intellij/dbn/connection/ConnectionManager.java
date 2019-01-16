@@ -16,6 +16,8 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -128,15 +130,16 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
             if (connectionHandler != null) {
                 Project project = getProject();
-                String taskTitle = "Refreshing database objects";
-                BackgroundTask.invoke(project, taskTitle, true, true, (task, progress) -> {
-                    DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-                    List<DBNConnection> connections = connectionHandler.getConnections();
-                    for (DBNConnection connection : connections) {
-                        transactionManager.execute(connectionHandler, connection, false, TransactionAction.DISCONNECT);
-                    }
-                    connectionHandler.getObjectBundle().getObjectListContainer().reload();
-                });
+                BackgroundTask.invoke(project,
+                        TaskInstructions.create("Refreshing database objects", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                        (data, progress) -> {
+                            DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
+                            List<DBNConnection> connections = connectionHandler.getConnections();
+                            for (DBNConnection connection : connections) {
+                                transactionManager.execute(connectionHandler, connection, false, TransactionAction.DISCONNECT);
+                            }
+                            connectionHandler.getObjectBundle().getObjectListContainer().reload();
+                        });
             }
         }
     };
@@ -455,8 +458,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
                 methodExecutionManager.cleanupExecutionHistory(connectionIds);
 
-                String taskTitle = "Cleaning up connections";
-                BackgroundTask.invoke(project, taskTitle, true, false, (task, progress) -> DisposerUtil.dispose(connectionHandlers));
+                BackgroundTask.invoke(project,
+                        TaskInstructions.create("Cleaning up connections", TaskInstruction.CANCELLABLE),
+                        (data, progress) -> DisposerUtil.dispose(connectionHandlers));
             });
         }
     }

@@ -124,25 +124,26 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
      **********************************************************/
     private TreeSelectionListener treeSelectionListener = new TreeSelectionListener(){
         public void valueChanged(TreeSelectionEvent e) {
-            final MethodExecutionInput executionInput = getSelectedExecutionInput();
+            MethodExecutionInput executionInput = getSelectedExecutionInput();
             if (executionInput != null) {
-                TaskInstructions taskInstructions = new TaskInstructions("Loading Method details");
-                ConnectionAction.invoke("loading the execution history", executionInput, taskInstructions, action -> {
-                    DBMethod method = executionInput.getMethod();
-                    if (method != null) {
-                        method.getArguments();
-                    }
+                ConnectionAction.invoke("loading the execution history", executionInput,
+                        TaskInstructions.create("Loading Method details"),
+                        action -> {
+                            DBMethod method = executionInput.getMethod();
+                            if (method != null) {
+                                method.getArguments();
+                            }
 
-                    SimpleLaterInvocator.invoke(() -> {
-                        FailsafeUtil.check(dialog);
-                        dialog.showMethodExecutionPanel(executionInput);
-                        dialog.setSelectedExecutionInput(executionInput);
-                        dialog.updateMainButtons(executionInput);
-                        if (method != null) {
-                            executionHistory.setSelection(executionInput.getMethodRef());
-                        }
-                    });
-                });
+                            SimpleLaterInvocator.invoke(() -> {
+                                FailsafeUtil.check(dialog);
+                                dialog.showMethodExecutionPanel(executionInput);
+                                dialog.setSelectedExecutionInput(executionInput);
+                                dialog.updateMainButtons(executionInput);
+                                if (method != null) {
+                                    executionHistory.setSelection(executionInput.getMethodRef());
+                                }
+                            });
+                        });
             }
         }
     };

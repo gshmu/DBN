@@ -161,7 +161,10 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         if (taskInstructions == null) {
             execute();
         } else {
-            BackgroundTask.invoke(getProject(), taskInstructions, (task, progress) -> ConnectionAction.this.execute());
+            BackgroundTask.invoke(
+                    getProject(),
+                    taskInstructions,
+                    (task, progress) -> ConnectionAction.this.execute());
         }
     }
 

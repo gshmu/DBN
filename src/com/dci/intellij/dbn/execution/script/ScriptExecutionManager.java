@@ -9,6 +9,8 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -120,13 +122,15 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 }
                 clearOutputOption = executionInput.isClearOutput();
 
-                BackgroundTask.invoke(project, "Executing database script", true, true, (task, progress) -> {
-                    try {
-                        doExecuteScript(executionInput);
-                    } catch (Exception e) {
-                        MessageUtil.showErrorDialog(getProject(), "Error", "Error executing SQL Script \"" + virtualFile.getPath() + "\". " + e.getMessage());
-                    }
-                });
+                BackgroundTask.invoke(project,
+                        TaskInstructions.create("Executing database script", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                        (data, progress) -> {
+                            try {
+                                doExecuteScript(executionInput);
+                            } catch (Exception e) {
+                                MessageUtil.showErrorDialog(getProject(), "Error", "Error executing SQL Script \"" + virtualFile.getPath() + "\". " + e.getMessage());
+                            }
+                        });
             }
         }
     }

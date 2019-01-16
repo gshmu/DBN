@@ -45,6 +45,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     private int idx;
 
     private String id;
+    private int hashCode;
     private String description;
     private Icon icon;
     private Branch branch;
@@ -62,6 +63,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         super(id, bundle.getLanguageDialect(), false);
         idx = TokenType.INDEXER.incrementAndGet();
         this.id = id;
+        this.hashCode = id.hashCode();
         this.description = description;
         this.bundle = bundle;
         this.parent = parent;
@@ -71,6 +73,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         super(id, bundle.getLanguageDialect(), false);
         idx = TokenType.INDEXER.incrementAndGet();
         this.id = def.getAttributeValue("id");
+        this.hashCode = id.hashCode();
         if (!id.equals(this.id)) {
             this.id = id;
             def.setAttribute("id", this.id);
@@ -256,8 +259,13 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
     public int hashCode() {
-        return id.hashCode();
+        return hashCode;
     }
 
     @Override

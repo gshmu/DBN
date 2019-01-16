@@ -17,15 +17,18 @@ public class ReloadObjectsAction extends DumbAwareAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        TaskInstructions taskInstructions = new TaskInstructions("Reloading " + objectList.getObjectType().getListName());
         String listName = objectList.getName();
         boolean loaded = objectList.isLoaded();
 
         String actionDescription = loaded ? "reloading the " + listName : "loading the " + listName;
-        ConnectionAction.invoke(actionDescription, objectList, taskInstructions, action -> {
-            if (loaded)
-                objectList.reload(); else
-                objectList.load(true);
-        });
+        ConnectionAction.invoke(
+                actionDescription,
+                objectList,
+                TaskInstructions.create("Reloading " + objectList.getObjectType().getListName()),
+                action -> {
+                    if (loaded)
+                        objectList.reload(); else
+                        objectList.load(true);
+                });
     }
 }

@@ -28,16 +28,17 @@ public abstract class GenerateStatementAction extends DumbAwareAction implements
     }
 
     public final void actionPerformed(@NotNull AnActionEvent e) {
-        TaskInstructions taskInstructions = new TaskInstructions("Extracting select statement", TaskInstruction.CANCELLABLE);
-        ConnectionAction.invoke("generating the statement", this, taskInstructions, action -> {
-            Project project = action.getProject();
-            StatementGeneratorResult result = generateStatement(project);
-            if (result.getMessages().hasErrors()) {
-                MessageUtil.showErrorDialog(project, "Error generating statement", result.getMessages());
-            } else {
-                pasteStatement(result, project);
-            }
-        });
+        ConnectionAction.invoke("generating the statement", this,
+                TaskInstructions.create("Extracting select statement", TaskInstruction.CANCELLABLE),
+                action -> {
+                    Project project = action.getProject();
+                    StatementGeneratorResult result = generateStatement(project);
+                    if (result.getMessages().hasErrors()) {
+                        MessageUtil.showErrorDialog(project, "Error generating statement", result.getMessages());
+                    } else {
+                        pasteStatement(result, project);
+                    }
+                });
     }
 
     private void pasteStatement(final StatementGeneratorResult result, final Project project) {

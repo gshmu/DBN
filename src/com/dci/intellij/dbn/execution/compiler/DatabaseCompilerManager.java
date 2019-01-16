@@ -4,6 +4,8 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -108,43 +110,46 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     }
 
     private void updateFilesContentState(final DBSchemaObject object, final DBContentType contentType) {
-        BackgroundTask.invoke(getProject(), "Refreshing local content state", true, false, (task, progress) -> {
-            DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
-            if (databaseFile != null && databaseFile.isContentLoaded()) {
-                if (contentType.isBundle()) {
-                    for (DBContentType subContentType : contentType.getSubContentTypes()) {
-                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
-                        if (sourceCodeFile != null) {
-                            sourceCodeFile.refreshContentState();
+        Project project = getProject();
+        BackgroundTask.invoke(project,
+                TaskInstructions.create("Refreshing local content state", TaskInstruction.BACKGROUNDED),
+                (data, progress) -> {
+                    DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
+                    if (databaseFile != null && databaseFile.isContentLoaded()) {
+                        if (contentType.isBundle()) {
+                            for (DBContentType subContentType : contentType.getSubContentTypes()) {
+                                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
+                                if (sourceCodeFile != null) {
+                                    sourceCodeFile.refreshContentState();
+                                }
+                            }
+                        } else {
+                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                            if (sourceCodeFile != null) {
+                                sourceCodeFile.refreshContentState();
+                            }
                         }
                     }
-                } else {
-                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                    if (sourceCodeFile != null) {
-                        sourceCodeFile.refreshContentState();
-                    }
-                }
-            }
-        });
+                });
     }
 
-    public void compileInBackground(final DBSchemaObject object, final CompileType compileType, final CompilerAction compilerAction) {
+    public void compileInBackground(DBSchemaObject object, CompileType compileType, final CompilerAction compilerAction) {
         Project project = getProject();
-        ConnectionAction.invoke(
-                "compiling the object",
-                object,
+        ConnectionAction.invoke("compiling the object", object,
                 null,
                 action -> {
                     String taskTitle = "Compiling " + object.getObjectType().getName();
                     promptCompileTypeSelection(compileType, object,
-                            BackgroundTask.create(project, taskTitle, true, false, (selectedCompileType, progress) -> {
-                                doCompileObject(object, selectedCompileType, compilerAction);
-                                ConnectionHandler connectionHandler = object.getConnectionHandler();
-                                EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
+                            BackgroundTask.create(project,
+                                    TaskInstructions.create(taskTitle, TaskInstruction.BACKGROUNDED),
+                                    (data, progress) -> {
+                                        doCompileObject(object, data, compilerAction);
+                                        ConnectionHandler connectionHandler = object.getConnectionHandler();
+                                        EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
 
-                                DBContentType contentType = compilerAction.getContentType();
-                                updateFilesContentState(object, contentType);
-                            }));
+                                        DBContentType contentType = compilerAction.getContentType();
+                                        updateFilesContentState(object, contentType);
+                                    }));
                 },
                 null,
                 action -> {
@@ -214,35 +219,36 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     }
 
     public void compileInvalidObjects(final DBSchema schema, final CompileType compileType) {
-        ConnectionAction.invoke(
-                "compiling the invalid objects",
-                schema, null, action -> {
+        ConnectionAction.invoke("compiling the invalid objects", schema, null,
+                action -> {
                     Project project = getProject();
                     ConnectionHandler connectionHandler = action.getConnectionHandler();
                     String taskTitle = "Compiling invalid objects";
 
                     promptCompileTypeSelection(compileType, null,
-                            BackgroundTask.create(project, taskTitle, false, true, (selectedCompileType, progress) -> {
-                                doCompileInvalidObjects(schema.getPackages(), "packages", progress, selectedCompileType);
-                                doCompileInvalidObjects(schema.getFunctions(), "functions", progress, selectedCompileType);
-                                doCompileInvalidObjects(schema.getProcedures(), "procedures", progress, selectedCompileType);
-                                doCompileInvalidObjects(schema.getDatasetTriggers(), "dataset triggers", progress, selectedCompileType);
-                                doCompileInvalidObjects(schema.getDatabaseTriggers(), "database triggers", progress, selectedCompileType);
-                                EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, null);
+                            BackgroundTask.create(project,
+                                    TaskInstructions.create(taskTitle, TaskInstruction.CANCELLABLE),
+                                    (data, progress) -> {
+                                        doCompileInvalidObjects(schema.getPackages(), "packages", progress, data);
+                                        doCompileInvalidObjects(schema.getFunctions(), "functions", progress, data);
+                                        doCompileInvalidObjects(schema.getProcedures(), "procedures", progress, data);
+                                        doCompileInvalidObjects(schema.getDatasetTriggers(), "dataset triggers", progress, data);
+                                        doCompileInvalidObjects(schema.getDatabaseTriggers(), "database triggers", progress, data);
+                                        EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, null);
 
-                                if (!progress.isCanceled()) {
-                                    List<CompilerResult> compilerErrors = new ArrayList<>();
-                                    buildCompilationErrors(schema.getPackages(), compilerErrors);
-                                    buildCompilationErrors(schema.getFunctions(), compilerErrors);
-                                    buildCompilationErrors(schema.getProcedures(), compilerErrors);
-                                    buildCompilationErrors(schema.getDatasetTriggers(), compilerErrors);
-                                    buildCompilationErrors(schema.getDatabaseTriggers(), compilerErrors);
-                                    if (compilerErrors.size() > 0) {
-                                        ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
-                                        executionManager.addExecutionResults(compilerErrors);
-                                    }
-                                }
-                            }));
+                                        if (!progress.isCanceled()) {
+                                            List<CompilerResult> compilerErrors = new ArrayList<>();
+                                            buildCompilationErrors(schema.getPackages(), compilerErrors);
+                                            buildCompilationErrors(schema.getFunctions(), compilerErrors);
+                                            buildCompilationErrors(schema.getProcedures(), compilerErrors);
+                                            buildCompilationErrors(schema.getDatasetTriggers(), compilerErrors);
+                                            buildCompilationErrors(schema.getDatabaseTriggers(), compilerErrors);
+                                            if (compilerErrors.size() > 0) {
+                                                ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
+                                                executionManager.addExecutionResults(compilerErrors);
+                                            }
+                                        }
+                                    }));
                 },
                 null,
                 action -> {

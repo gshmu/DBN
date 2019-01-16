@@ -29,26 +29,29 @@ public abstract class BackgroundQueue<T extends Queueable> {
     private void execute() {
         if (!executing) {
             executing = true;
-            BackgroundTask.invoke(project, title, true, true, (task, progress) -> {
-                try {
-                    T element = elements.poll();
-                    while (element != null) {
+            BackgroundTask.invoke(project,
+                    TaskInstructions.create(title, TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                    (data, progress) -> {
                         try {
-                            BackgroundQueue.this.process(element);
-                        } catch (ProcessCanceledException ignore) {}
+                            T element = elements.poll();
+                            while (element != null) {
+                                try {
+                                    BackgroundQueue.this.process(element);
+                                } catch (ProcessCanceledException ignore) {
+                                }
 
-                        if (progress.isCanceled()) {
-                            cancel();
+                                if (progress.isCanceled()) {
+                                    cancel();
+                                }
+                                element = elements.poll();
+                            }
+                        } finally {
+                            executing = false;
+                            if (progress.isCanceled()) {
+                                cancel();
+                            }
                         }
-                        element = elements.poll();
-                    }
-                } finally {
-                    executing = false;
-                    if (progress.isCanceled()) {
-                        cancel();
-                    }
-                }
-            });
+                    });
         }
     }
 

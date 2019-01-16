@@ -403,26 +403,29 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     }
 
     public void openEditor(DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
-        TaskInstructions instructions = new TaskInstructions("Opening editor", TaskInstruction.CANCELLABLE);
-        ConnectionAction.invoke("opening the object editor", object, instructions, action -> {
-            EditorProviderId providerId = editorProviderId;
-            if (editorProviderId == null) {
-                EditorStateManager editorStateManager = EditorStateManager.getInstance(object.getProject());
-                providerId = editorStateManager.getEditorProvider(object.getObjectType());
-            }
+        ConnectionAction.invoke(
+                "opening the object editor",
+                object,
+                TaskInstructions.create("Opening editor", TaskInstruction.CANCELLABLE, TaskInstruction.CONDITIONAL),
+                action -> {
+                    EditorProviderId providerId = editorProviderId;
+                    if (editorProviderId == null) {
+                        EditorStateManager editorStateManager = EditorStateManager.getInstance(object.getProject());
+                        providerId = editorStateManager.getEditorProvider(object.getObjectType());
+                    }
 
-            if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
-                DBObjectListContainer childObjects = object.getChildObjects();
-                if (childObjects != null) childObjects.load();
+                    if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
+                        DBObjectListContainer childObjects = object.getChildObjects();
+                        if (childObjects != null) childObjects.load();
 
-                openSchemaObject((DBSchemaObject) object, providerId, scrollBrowser, focusEditor);
+                        openSchemaObject((DBSchemaObject) object, providerId, scrollBrowser, focusEditor);
 
-            } else if (object.getParentObject().is(DBObjectProperty.SCHEMA_OBJECT)) {
-                DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
-                if (childObjects != null) childObjects.load();
-                openChildObject(object, providerId, scrollBrowser, focusEditor);
-            }
-        });
+                    } else if (object.getParentObject().is(DBObjectProperty.SCHEMA_OBJECT)) {
+                        DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
+                        if (childObjects != null) childObjects.load();
+                        openChildObject(object, providerId, scrollBrowser, focusEditor);
+                    }
+                });
     }
 
     private void openSchemaObject(@NotNull DBSchemaObject object, EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {

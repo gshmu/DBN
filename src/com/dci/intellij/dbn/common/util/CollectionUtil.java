@@ -2,11 +2,14 @@ package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class CollectionUtil {
     public static <T extends Cloneable<T>> void cloneCollectionElements(Collection<T> source, Collection<T> target) {
@@ -51,6 +54,14 @@ public class CollectionUtil {
             } else if (elements instanceof THashSet) {
                 THashSet hashSet = (THashSet) elements;
                 hashSet.trimToSize();
+            }
+        }
+    }
+
+    public static <T> void forEach(@Nullable Iterable<T> iterable, @NotNull Consumer<? super T> action) {
+        if (iterable != null) {
+            for (T element : iterable) {
+                action.accept(element);
             }
         }
     }
