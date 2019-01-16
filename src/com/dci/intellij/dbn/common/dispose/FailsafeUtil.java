@@ -38,8 +38,8 @@ public class FailsafeUtil {
         return project;
     }
 
-    public static <T> T getComponent(@Nullable Project project, @NotNull Class<T> interfaceClass) {
-        project = check(get(project));
+    public static <T> T getComponent(@NotNull Project project, @NotNull Class<T> interfaceClass) {
+        project = check(project);
         T component = project.getComponent(interfaceClass);
         return get(component);
     }
@@ -50,6 +50,7 @@ public class FailsafeUtil {
         return virtualFile == null ? DUMMY_VIRTUAL_FILE : virtualFile;
     }
 
+    @NotNull
     public static <T> T check(T object) {
         if (!softCheck(object)) {
             throw AlreadyDisposedException.INSTANCE;
