@@ -9,8 +9,10 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
@@ -107,6 +109,15 @@ public class VirtualFileUtil {
             return StandardFileSystems.FILE_PROTOCOL_PREFIX + fileUrlOrPath;
         }
         return fileUrlOrPath;
+    }
+
+    @Nullable
+    public static VirtualFile getOriginalFile(VirtualFile virtualFile) {
+        if (virtualFile instanceof LightVirtualFile) {
+            LightVirtualFile lightVirtualFile = (LightVirtualFile) virtualFile;
+            return lightVirtualFile.getOriginalFile();
+        }
+        return null;
     }
 
 }

@@ -140,7 +140,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
         virtualFile = new DBSessionStatementVirtualFile(sessionBrowser, "");
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), virtualFile, true);
         DBLanguagePsiFile psiFile = (DBLanguagePsiFile) virtualFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
-        psiFileRef = new PsiFileRef<>(psiFile);
+        psiFileRef = PsiFileRef.from(psiFile);
         document = DocumentUtil.getDocument(psiFile);
 
 

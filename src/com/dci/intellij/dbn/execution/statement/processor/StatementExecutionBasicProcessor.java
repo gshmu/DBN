@@ -104,7 +104,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     public StatementExecutionBasicProcessor(FileEditor fileEditor, ExecutablePsiElement psiElement, int index) {
         this.fileEditorRef = new WeakReference<>(fileEditor);
-        this.psiFileRef = new PsiFileRef<>(psiElement.getFile());
+        this.psiFileRef = PsiFileRef.from(psiElement.getFile());
 
         this.cachedExecutableRef = new PsiElementRef<>(psiElement);
         this.index = index;
@@ -114,7 +114,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     StatementExecutionBasicProcessor(FileEditor fileEditor, DBLanguagePsiFile psiFile, String sqlStatement, int index) {
         this.fileEditorRef = new WeakReference<>(fileEditor);
-        this.psiFileRef = new PsiFileRef<>(psiFile);
+        this.psiFileRef = PsiFileRef.from(psiFile);
         this.index = index;
         sqlStatement = sqlStatement.trim();
         executionInput = new StatementExecutionInput(sqlStatement, sqlStatement, this);
