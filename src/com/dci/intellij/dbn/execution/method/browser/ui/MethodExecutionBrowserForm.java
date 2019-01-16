@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.method.browser.ui;
 
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -105,16 +106,18 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
     }
 
     private void updateTree() {
-        BackgroundTask.invoke(getProject(), "Loading executable components", false, false, (task, progress) -> {
-            MethodBrowserSettings settings = getSettings();
-            final ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
-            SimpleLaterInvocator.invoke(() -> {
-                methodsTree.setModel(model);
+        BackgroundTask.invoke(getProject(),
+                TaskInstructions.create("Loading executable components"),
+                (data, progress) -> {
+                    MethodBrowserSettings settings = getSettings();
+                    final ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
+                    SimpleLaterInvocator.invoke(() -> {
+                        methodsTree.setModel(model);
 
-                methodsTree.revalidate();
-                methodsTree.repaint();
-            });
-        });
+                        methodsTree.revalidate();
+                        methodsTree.repaint();
+                    });
+                });
     }
 
     public JPanel getComponent() {

@@ -7,6 +7,8 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
@@ -14,6 +16,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
 import javax.swing.*;
@@ -69,25 +72,28 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
         if (!object.equals(this.object)) {
             this.object = object;
 
-            BackgroundTask.invoke(object.getProject(), "Rendering object properties", true, false, (task, progress) -> {
-                final ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
-                Disposer.register(ObjectPropertiesForm.this, tableModel);
+            Project project = object.getProject();
+            BackgroundTask.invoke(project,
+                    TaskInstructions.create("Rendering object properties", TaskInstruction.BACKGROUNDED),
+                    (task, progress) -> {
+                        ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
+                        Disposer.register(ObjectPropertiesForm.this, tableModel);
 
-                SimpleLaterInvocator.invoke(() -> {
-                    objectLabel.setText(object.getName());
-                    objectLabel.setIcon(object.getIcon());
-                    objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");
+                        SimpleLaterInvocator.invoke(() -> {
+                            objectLabel.setText(object.getName());
+                            objectLabel.setIcon(object.getIcon());
+                            objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");
 
 
-                    ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
-                    objectPropertiesTable.setModel(tableModel);
-                    ((DBNTable) objectPropertiesTable).accommodateColumnsSize();
+                            ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
+                            objectPropertiesTable.setModel(tableModel);
+                            ((DBNTable) objectPropertiesTable).accommodateColumnsSize();
 
-                    mainPanel.revalidate();
-                    mainPanel.repaint();
-                    Disposer.dispose(oldTableModel);
-                });
-            });
+                            mainPanel.revalidate();
+                            mainPanel.repaint();
+                            Disposer.dispose(oldTableModel);
+                        });
+                    });
         }
     }
 

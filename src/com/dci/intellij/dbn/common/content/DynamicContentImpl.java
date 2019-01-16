@@ -13,6 +13,8 @@ import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Synchronized;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -198,12 +200,14 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                     set(LOADING_IN_BACKGROUND, true);
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     String connectionString = " (" + connectionHandler.getName() + ')';
-                    BackgroundTask.invoke(getProject(), "Loading data dictionary" + connectionString, true, false, (task, progress) -> {
-                        try {
-                            load(force);
-                        } finally {
-                            set(LOADING_IN_BACKGROUND, false);
-                        }
+                    BackgroundTask.invoke(getProject(),
+                            TaskInstructions.create("Loading data dictionary" + connectionString, TaskInstruction.BACKGROUNDED),
+                            (data, progress) -> {
+                                try {
+                                    load(force);
+                                } finally {
+                                    set(LOADING_IN_BACKGROUND, false);
+                                }
                     });
                 });
     }

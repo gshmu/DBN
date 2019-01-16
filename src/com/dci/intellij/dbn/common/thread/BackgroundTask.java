@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BackgroundTask<T> extends Task.Backgroundable implements RunnableTask<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
+    private TaskInstructions instructions;
     private T data;
 
     private static PerformInBackgroundOption START_IN_BACKGROUND = new PerformInBackgroundOption() {
@@ -28,15 +29,14 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     };
 
     private BackgroundTask(@Nullable Project project, TaskInstructions instructions) {
-        this(project, instructions.getTitle(), instructions.isStartInBackground(), instructions.isCanBeCancelled());
-    }
-
-    private BackgroundTask(@Nullable Project project, @NotNull String title, boolean startInBackground, boolean canBeCancelled) {
         super(
             FailsafeUtil.get(project),
-            Constants.DBN_TITLE_PREFIX + title,
-            canBeCancelled,
-            startInBackground ? START_IN_BACKGROUND : DO_NOT_START_IN_BACKGROUND);
+            Constants.DBN_TITLE_PREFIX + instructions.getTitle(),
+            instructions.is(TaskInstruction.CANCELLABLE),
+            instructions.is(TaskInstruction.BACKGROUNDED) ?
+                    START_IN_BACKGROUND :
+                    DO_NOT_START_IN_BACKGROUND);
+        this.instructions = instructions;
     }
 
     @Override
@@ -82,14 +82,20 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     protected abstract void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException;
 
     public final void start() {
-        TaskUtil.startTask(BackgroundTask.this, getProject());
+        boolean conditional = instructions != null && instructions.is(TaskInstruction.CONDITIONAL);
+        if (conditional && BackgroundMonitor.isBackgroundProcess()) {
+            ProgressMonitor.checkCancelled();
+            run(ProgressMonitor.getProgressIndicator());
+        } else {
+            TaskUtil.startTask(BackgroundTask.this, getProject());
+        }
     }
 
-    protected static void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate) {
+    protected static void initProgressIndicator(ProgressIndicator progressIndicator, boolean indeterminate) {
         initProgressIndicator(progressIndicator, indeterminate, null);
     }
 
-    public static void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate, @Nullable final String text) {
+    public static void initProgressIndicator(ProgressIndicator progressIndicator, boolean indeterminate, @Nullable String text) {
         SimpleLaterInvocator.invoke(() -> {
             if (progressIndicator.isRunning()) {
                 progressIndicator.setIndeterminate(indeterminate);
@@ -106,20 +112,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
             }
         };
     }
-    public static <T> BackgroundTask<T> create(@Nullable Project project, @NotNull String title, boolean startInBackground, boolean cancellable, BackgroundRunnable<T> runnable) {
-        return new BackgroundTask<T>(project, title, startInBackground, cancellable) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                runnable.run(getData(), progressIndicator);
-            }
-        };
-    }
-
     public static <T> void invoke(@Nullable Project project, TaskInstructions instructions, BackgroundRunnable<T> runnable) {
         create(project, instructions, runnable).start();
-    }
-
-    public static <T> void invoke(@Nullable Project project, String title, boolean startInBackground, boolean cancellable, BackgroundRunnable<T> runnable) {
-        create(project, title, startInBackground, cancellable, runnable).start();
     }
 }

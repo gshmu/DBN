@@ -4,6 +4,8 @@ import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Synchronized;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -49,30 +51,33 @@ public final class StatementExecutionQueue extends DisposableBase{
                 () -> {
                     executing = true;
                     Project project = getProject();
-                    BackgroundTask.invoke(project, "Executing statements", true, true, (task, progress) -> {
-                        try {
-                            StatementExecutionProcessor processor = processors.poll();
-                            while (processor != null) {
-                                ExecutionContext context = processor.getExecutionContext();
+                    BackgroundTask.invoke(project,
+                            TaskInstructions.create("Executing statements", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                            (data, progress) -> {
                                 try {
-                                    context.set(QUEUED, false);
-                                    context.set(EXECUTING, true);
-                                    StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
-                                    statementExecutionManager.process(processor);
-                                } catch (ProcessCanceledException ignore) {}
+                                    StatementExecutionProcessor processor = processors.poll();
+                                    while (processor != null) {
+                                        ExecutionContext context = processor.getExecutionContext();
+                                        try {
+                                            context.set(QUEUED, false);
+                                            context.set(EXECUTING, true);
+                                            StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
+                                            statementExecutionManager.process(processor);
+                                        } catch (ProcessCanceledException ignore) {
+                                        }
 
-                                if (progress.isCanceled()) {
-                                    cancelExecution();
+                                        if (progress.isCanceled()) {
+                                            cancelExecution();
+                                        }
+                                        processor = processors.poll();
+                                    }
+                                } finally {
+                                    executing = false;
+                                    if (progress.isCanceled()) {
+                                        cancelExecution();
+                                    }
                                 }
-                                processor = processors.poll();
-                            }
-                        } finally {
-                            executing = false;
-                            if (progress.isCanceled()) {
-                                cancelExecution();
-                            }
-                        }
-                    });
+                            });
                 });
     }
 

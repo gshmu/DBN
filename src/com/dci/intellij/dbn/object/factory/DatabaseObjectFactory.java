@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.factory;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -110,10 +111,12 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                 MessageUtil.OPTIONS_YES_NO, 0,
                 ConnectionAction.create("dropping the object", object, 0, action -> {
                     Project project = getProject();
-                    DatabaseFileManager.getInstance(project).closeFile(object);
+                    DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
+                    databaseFileManager.closeFile(object);
 
-                    String taskTitle = "Dropping " + object.getQualifiedNameWithType();
-                    BackgroundTask.invoke(project, taskTitle, false, false, (task, progress) -> doDropObject(object));
+                    BackgroundTask.invoke(project,
+                            TaskInstructions.create("Dropping " + object.getQualifiedNameWithType()),
+                            (task, progress) -> doDropObject(object));
                 }));
 
     }

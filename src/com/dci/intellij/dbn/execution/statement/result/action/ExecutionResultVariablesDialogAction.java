@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.execution.statement.result.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
@@ -30,13 +32,15 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
             statementExecutionManager.promptExecutionDialog(
                     executionProcessor,
                     DBDebuggerType.NONE,
-                    BackgroundTask.create(project, taskTitle, false, true, (task, progress) -> {
-                        try {
-                            executionProcessor.execute();
-                        } catch (SQLException ex) {
-                            NotificationUtil.sendErrorNotification(project, "Error executing statement", ex.getMessage());
-                        }
-                    }));
+                    BackgroundTask.create(project,
+                            TaskInstructions.create(taskTitle, TaskInstruction.CANCELLABLE),
+                            (data, progress) -> {
+                                try {
+                                    executionProcessor.execute();
+                                } catch (SQLException ex) {
+                                    NotificationUtil.sendErrorNotification(project, "Error executing statement", ex.getMessage());
+                                }
+                            }));
         }
     }
 

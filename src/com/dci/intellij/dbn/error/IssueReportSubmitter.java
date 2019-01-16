@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -154,35 +155,37 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         }
 
 
-        BackgroundTask.invoke(project, "Submitting issue report", false, false, (task, progress) -> {
-            TicketResponse result;
-            try {
-                result = submit(events, localPluginVersion, summary, description.toString());
-            } catch (Exception e) {
+        BackgroundTask.invoke(project,
+                TaskInstructions.create("Submitting issue report"),
+                (data, progress) -> {
+                    TicketResponse result;
+                    try {
+                        result = submit(events, localPluginVersion, summary, description.toString());
+                    } catch (Exception e) {
 
-                NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
-                        "<html>Failed to send error report: "+ e.getMessage() + "</html>");
+                        NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
+                                "<html>Failed to send error report: " + e.getMessage() + "</html>");
 
-                consumer.consume(new SubmittedReportInfo(null, null, FAILED));
-                return;
-            }
+                        consumer.consume(new SubmittedReportInfo(null, null, FAILED));
+                        return;
+                    }
 
-            String errorMessage = result.getErrorMessage();
-            if (StringUtil.isEmpty(errorMessage)) {
-                LOGGER.info("Error report submitted, response: " + result);
+                    String errorMessage = result.getErrorMessage();
+                    if (StringUtil.isEmpty(errorMessage)) {
+                        LOGGER.info("Error report submitted, response: " + result);
 
-                String ticketId = result.getTicketId();
-                String ticketUrl = getTicketUrl(ticketId);
-                NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
-                        "<html>Error report successfully sent. Ticket <a href='" + ticketUrl + "'>" + ticketId + "</a> created.</html>");
+                        String ticketId = result.getTicketId();
+                        String ticketUrl = getTicketUrl(ticketId);
+                        NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
+                                "<html>Error report successfully sent. Ticket <a href='" + ticketUrl + "'>" + ticketId + "</a> created.</html>");
 
-                consumer.consume(new SubmittedReportInfo(ticketUrl, ticketId, NEW_ISSUE));
-            } else {
-                NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
-                        "<html>Failed to send error report: "+ errorMessage + "</html>");
-                consumer.consume(new SubmittedReportInfo(null, null, FAILED));
-            }
-        });
+                        consumer.consume(new SubmittedReportInfo(ticketUrl, ticketId, NEW_ISSUE));
+                    } else {
+                        NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
+                                "<html>Failed to send error report: " + errorMessage + "</html>");
+                        consumer.consume(new SubmittedReportInfo(null, null, FAILED));
+                    }
+                });
 
         return true;
     }

@@ -5,6 +5,8 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -297,20 +299,22 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             openObjectRefs.keySet().forEach(connectionId -> {
                 List<DBObjectRef<DBSchemaObject>> objectRefs = openObjectRefs.get(connectionId);
 
-                BackgroundTask.invoke(project, "Opening database editors", false, true, (data, progress) -> {
-                    ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                    DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-                    ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
-                    objectRefs.forEach(objectRef -> {
-                        if (progress.isCanceled()) return;
-                        if (connectionHandler != null && connectionHandler.canConnect()) {
-                            DBSchemaObject object = objectRef.get(project);
-                            if (object != null) {
-                                databaseFileSystem.openEditor(object,  null, false);
-                            }
-                        }
-                    });
-                });
+                BackgroundTask.invoke(project,
+                        TaskInstructions.create("Opening database editors", TaskInstruction.CANCELLABLE),
+                        (data, progress) -> {
+                            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+                            ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+                            objectRefs.forEach(objectRef -> {
+                                if (progress.isCanceled()) return;
+                                if (connectionHandler != null && connectionHandler.canConnect()) {
+                                    DBSchemaObject object = objectRef.get(project);
+                                    if (object != null) {
+                                        databaseFileSystem.openEditor(object, null, false);
+                                    }
+                                }
+                            });
+                        });
             });
         }
     }

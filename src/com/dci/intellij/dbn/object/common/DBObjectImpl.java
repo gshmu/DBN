@@ -66,7 +66,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -426,15 +425,18 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
             return list;
         } else {
             if (objectType == DBObjectType.ANY) {
-                Collection<DBObjectList<DBObject>> objectLists = childObjects.getObjectLists();
-                if (objectLists != null) {
+                if (childObjects != null) {
                     List<DBObject> objects = new ArrayList<DBObject>();
-                    for (DBObjectList objectList : objectLists) {
-                        if (FailsafeUtil.softCheck(objectList) && !objectList.isInternal())
-                        objects.addAll(objectList.getObjects());
-                    }
+                    CollectionUtil.forEach(
+                            childObjects.getObjectLists(),
+                            objectList -> {
+                                if (!objectList.isInternal() && FailsafeUtil.softCheck(objectList)) {
+                                    objects.addAll(objectList.getObjects());
+                                }
+                            });
                     return objects;
                 }
+
                 return EMPTY_OBJECT_LIST;
             } else {
                 DBObjectList objectList = null;

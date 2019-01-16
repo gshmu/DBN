@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 public class TaskInstructions extends PropertyHolderImpl<TaskInstruction> {
     private String title;
 
-    public TaskInstructions(String title, TaskInstruction ... instructions) {
+    private TaskInstructions(String title, TaskInstruction ... instructions) {
         this.title = title;
         if (instructions != null && instructions.length > 0) {
             for (TaskInstruction instruction : instructions) {
@@ -23,11 +23,7 @@ public class TaskInstructions extends PropertyHolderImpl<TaskInstruction> {
         return title;
     }
 
-    public boolean isStartInBackground() {
-        return is(TaskInstruction.START_IN_BACKGROUND);
-    }
-
-    public boolean isCanBeCancelled() {
-        return is(TaskInstruction.CANCELLABLE);
+    public static TaskInstructions create(String title, TaskInstruction ... instructions) {
+        return new TaskInstructions(title, instructions);
     }
 }
