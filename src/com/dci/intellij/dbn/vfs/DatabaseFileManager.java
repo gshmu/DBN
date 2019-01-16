@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
@@ -281,6 +282,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     public void loadState(@NotNull Element element) {
         Map<ConnectionId, List<DBObjectRef<DBSchemaObject>>> openObjectRefs = new HashMap<>();
         Element openFilesElement = element.getChild("open-files");
+        Project project = getProject();
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+
         if (openFilesElement != null) {
             List<Element> fileElements = openFilesElement.getChildren();
             fileElements.forEach((fileElement) -> {
@@ -295,26 +299,29 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         }
 
         if (!openObjectRefs.isEmpty()) {
-            Project project = getProject();
             openObjectRefs.keySet().forEach(connectionId -> {
                 List<DBObjectRef<DBSchemaObject>> objectRefs = openObjectRefs.get(connectionId);
+                ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+                if (connectionHandler != null) {
+                    ConnectionDetailSettings connectionDetailSettings = connectionHandler.getSettings().getDetailSettings();
+                    if (connectionDetailSettings.isRestoreWorkspace()) {
+                        BackgroundTask.invoke(project,
+                                TaskInstructions.create("Opening database editors", TaskInstruction.CANCELLABLE),
+                                (data, progress) -> {
+                                    DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
 
-                BackgroundTask.invoke(project,
-                        TaskInstructions.create("Opening database editors", TaskInstruction.CANCELLABLE),
-                        (data, progress) -> {
-                            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-                            ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
-                            objectRefs.forEach(objectRef -> {
-                                if (progress.isCanceled()) return;
-                                if (connectionHandler != null && connectionHandler.canConnect()) {
-                                    DBSchemaObject object = objectRef.get(project);
-                                    if (object != null) {
-                                        databaseFileSystem.openEditor(object, null, false);
-                                    }
-                                }
-                            });
-                        });
+                                    objectRefs.forEach(objectRef -> {
+                                        if (progress.isCanceled()) return;
+                                        if (connectionHandler.canConnect()) {
+                                            DBSchemaObject object = objectRef.get(project);
+                                            if (object != null) {
+                                                databaseFileSystem.openEditor(object, null, false);
+                                            }
+                                        }
+                                    });
+                                });
+                    }
+                }
             });
         }
     }
