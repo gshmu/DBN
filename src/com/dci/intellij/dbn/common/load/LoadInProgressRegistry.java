@@ -3,15 +3,15 @@ package com.dci.intellij.dbn.common.load;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
 
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class LoadInProgressRegistry<T extends Disposable> extends DisposableBase implements Disposable{
-    private final List<T> nodes = new CopyOnWriteArrayList<>();
+    private final List<T> nodes = CollectionUtil.createConcurrentList();
 
     private LoadInProgressRegistry(Disposable parentDisposable) {
         DisposerUtil.register(parentDisposable, this);

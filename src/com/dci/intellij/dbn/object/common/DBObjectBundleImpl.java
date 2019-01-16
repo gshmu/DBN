@@ -28,6 +28,7 @@ import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionPool;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -82,12 +83,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
-    private ConnectionHandler connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
     private BrowserTreeNode treeParent;
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
@@ -101,18 +101,18 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private DBObjectList<DBCharset> charsets;
 
     private Latent<List<DBNativeDataType>> nativeDataTypes = Latent.create(() -> computeNativeDataTypes());
-    private List<DBDataType> cachedDataTypes = new CopyOnWriteArrayList<>();
+    private List<DBDataType> cachedDataTypes = CollectionUtil.createConcurrentList();
 
     private DBObjectListContainer objectLists;
     private DBObjectRelationListContainer objectRelationLists;
     private int connectionConfigHash;
 
     public DBObjectBundleImpl(ConnectionHandler connectionHandler, BrowserTreeNode treeParent) {
-        this.connectionHandler = connectionHandler;
+        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
         this.treeParent = treeParent;
         connectionConfigHash = connectionHandler.getSettings().getDatabaseSettings().hashCode();
 
-        this.objectLists = new DBObjectListContainer(this);
+        objectLists = new DBObjectListContainer(this);
         users = objectLists.createObjectList(DBObjectType.USER, this, USERS_LOADER, INDEXED);
         schemas = objectLists.createObjectList(DBObjectType.SCHEMA, this, SCHEMAS_LOADER, new DBObjectList[]{users}, INDEXED);
         roles = objectLists.createObjectList(DBObjectType.ROLE, this, ROLES_LOADER, INDEXED);
@@ -216,7 +216,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(connectionHandler);
+        return connectionHandlerRef.getnn();
     }
 
     public List<DBSchema> getSchemas() {
@@ -357,7 +357,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                 if (visibleTreeChildren == null) {
                     visibleTreeChildren = new ArrayList<>();
                     visibleTreeChildren.add(new LoadInProgressTreeNode(this));
-                    SimpleBackgroundTask.invoke(this::buildTreeChildren);
+                    SimpleBackgroundTask.invoke(() -> buildTreeChildren());
                 }
             }
         }
@@ -691,11 +691,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             super.dispose();
             DisposerUtil.disposeInBackground(objectLists);
             DisposerUtil.disposeInBackground(objectRelationLists);
-            CollectionUtil.clearCollection(visibleTreeChildren);
-            CollectionUtil.clearCollection(allPossibleTreeChildren);
-            CollectionUtil.clearCollection(cachedDataTypes);
+            CollectionUtil.clear(visibleTreeChildren);
+            CollectionUtil.clear(allPossibleTreeChildren);
+            CollectionUtil.clear(cachedDataTypes);
             treeParent = null;
-            connectionHandler = null;
         }
     }
 

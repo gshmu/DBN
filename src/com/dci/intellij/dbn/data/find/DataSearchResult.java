@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.find;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.list.ReversedList;
 import com.dci.intellij.dbn.common.ui.ListUtil;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.intellij.openapi.Disposable;
 
@@ -11,11 +12,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DataSearchResult implements Disposable {
     private Set<DataSearchResultListener> listeners = new HashSet<DataSearchResultListener>();
-    private List<DataSearchResultMatch> matches = new CopyOnWriteArrayList<>();
+    private List<DataSearchResultMatch> matches = CollectionUtil.createConcurrentList();
     private DataSearchResultMatch selectedMatch;
     private int matchesLimit;
     private long updateTimestamp = 0;
@@ -222,7 +222,8 @@ public class DataSearchResult implements Disposable {
     public void dispose() {
         DisposerUtil.dispose(matches);
         DisposerUtil.dispose(selectedMatch);
-        listeners.clear();
+        CollectionUtil.clear(matches);
+        CollectionUtil.clear(listeners);
         selectedMatch = null;
     }
 

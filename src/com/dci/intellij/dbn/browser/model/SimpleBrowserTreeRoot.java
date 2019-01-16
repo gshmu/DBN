@@ -118,7 +118,7 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
     /**************************************************
      *              GenericDatabaseElement            *
      **************************************************/
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return null;
     }

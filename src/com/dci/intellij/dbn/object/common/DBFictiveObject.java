@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -30,11 +29,6 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
 
     public String getQualifiedNameWithType() {
         return getName();
-    }
-
-    @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return null;
     }
 
     public DBObjectType getObjectType() {

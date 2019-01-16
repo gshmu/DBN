@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.session;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -16,7 +17,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     private ConnectionHandlerRef connectionHandlerRef;
@@ -25,7 +25,7 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     private DatabaseSession debuggerSession;
     private DatabaseSession poolSession;
 
-    private List<DatabaseSession> sessions = new CopyOnWriteArrayList<DatabaseSession>();
+    private List<DatabaseSession> sessions = CollectionUtil.createConcurrentList();
 
     public DatabaseSessionBundle(ConnectionHandler connectionHandler) {
         super(connectionHandler);
@@ -127,6 +127,7 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     @Override
     public void dispose() {
         DisposerUtil.dispose(sessions);
+        CollectionUtil.clear(sessions);
     }
 
     void renameSession(String oldName, String newName) {

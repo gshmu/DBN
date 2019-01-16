@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.jdwp.ManagedThreadCommand;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
@@ -15,11 +16,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DBJdwpDebugExecutionStack extends XExecutionStack {
     private DBJdwpDebugSuspendContext suspendContext;
-    private List<DBJdwpDebugStackFrame> stackFrames = new CopyOnWriteArrayList<>();
+    private List<DBJdwpDebugStackFrame> stackFrames = CollectionUtil.createConcurrentList();
 
     private Latent<DBJdwpDebugStackFrame> topStackFrame = Latent.create(() -> {
         XExecutionStack underlyingStack = getUnderlyingStack();
