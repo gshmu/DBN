@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.method.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
@@ -24,21 +25,23 @@ public class CursorResultFetchNextRecordsAction extends MethodExecutionCursorRes
         ResultSetTable resultSetTable = getResultSetTable(e);
         if (resultSetTable != null) {
             Project project = ActionUtil.ensureProject(e);
-            BackgroundTask.invoke(project, "Loading cursor result records", false, false, (task, progress) -> {
-                try {
-                    ResultSetDataModel model = resultSetTable.getModel();
-                    if (!model.isResultSetExhausted()) {
-                        ExecutionEngineSettings settings = ExecutionEngineSettings.getInstance(project);
-                        int fetchBlockSize = settings.getStatementExecutionSettings().getResultSetFetchBlockSize();
+            BackgroundTask.invoke(project,
+                    TaskInstructions.create("Loading cursor result records"),
+                    (data, progress) -> {
+                        try {
+                            ResultSetDataModel model = resultSetTable.getModel();
+                            if (!model.isResultSetExhausted()) {
+                                ExecutionEngineSettings settings = ExecutionEngineSettings.getInstance(project);
+                                int fetchBlockSize = settings.getStatementExecutionSettings().getResultSetFetchBlockSize();
 
-                        model.fetchNextRecords(fetchBlockSize, false);
-                    }
+                                model.fetchNextRecords(fetchBlockSize, false);
+                            }
 
-                } catch (SQLException ex) {
-                    MessageUtil.showErrorDialog(project, "Could not perform operation.", ex);
-                }
+                        } catch (SQLException ex) {
+                            MessageUtil.showErrorDialog(project, "Could not perform operation.", ex);
+                        }
 
-            });
+                    });
         }
     }
 

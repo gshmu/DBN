@@ -56,7 +56,7 @@ public class ConnectionCache implements ApplicationComponent{
     /*********************************************************
      *              ProjectLifecycleListener                 *
      *********************************************************/
-    private ProjectLifecycleListener projectLifecycleListener = new ProjectLifecycleListener.Adapter() {
+    private ProjectLifecycleListener projectLifecycleListener = new ProjectLifecycleListener() {
 
         @Override
         public void projectComponentsInitialized(@NotNull Project project) {

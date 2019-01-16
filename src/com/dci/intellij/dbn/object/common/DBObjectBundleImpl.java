@@ -21,6 +21,8 @@ import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -178,14 +180,13 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             if (schemaObject.getConnectionHandler() == getConnectionHandler()) {
                 DBObjectListContainer childObjects = schemaObject.getChildObjects();
                 if (childObjects != null) {
-                    List<DBObjectList<DBObject>> objectLists = childObjects.getObjectLists();
-                    if (objectLists != null && !objectLists.isEmpty()) {
-                        for (DBObjectList objectList : objectLists) {
-                            if (objectList.isLoaded()) {
-                                objectList.refresh();
-                            }
-                        }
-                    }
+                    CollectionUtil.forEach(
+                            childObjects.getObjectLists(),
+                            objectList -> {
+                                if (objectList.isLoaded()) {
+                                    objectList.refresh();
+                                }
+                            });
                 }
             }
         }
@@ -194,10 +195,12 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeSaved(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
-            BackgroundTask.invoke(getProject(), "Reloading database object", true, false, (task, progress) -> {
-                DBObject object = sourceCodeFile.getObject();
-                object.refresh();
-            });
+            BackgroundTask.invoke(getProject(),
+                    TaskInstructions.create("Reloading database object", TaskInstruction.BACKGROUNDED),
+                    (task, progress) -> {
+                        DBObject object = sourceCodeFile.getObject();
+                        object.refresh();
+                    });
         }
     };
 
@@ -612,27 +615,31 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     public void refreshObjectsStatus(final @Nullable DBSchemaObject requester) {
-        if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(getConnectionHandler())) {
-            BackgroundTask.invoke(getProject(), "Updating objects status", true, true, (task, progress) -> {
-                try {
-                    List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
+            Project project = getProject();
+            BackgroundTask.invoke(project,
+                    TaskInstructions.create("Updating objects status", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                    (task, progress) -> {
+                        try {
+                            List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();
 
-                    int size = schemas.size();
-                    for (int i=0; i<size; i++) {
-                        if (!progress.isCanceled()) {
-                            DBSchema schema = schemas.get(i);
-                            if (size > 3) {
-                                progress.setIndeterminate(false);
-                                progress.setFraction(CommonUtil.getProgressPercentage(i, size));
+                            int size = schemas.size();
+                            for (int i = 0; i < size; i++) {
+                                if (!progress.isCanceled()) {
+                                    DBSchema schema = schemas.get(i);
+                                    if (size > 3) {
+                                        progress.setIndeterminate(false);
+                                        progress.setFraction(CommonUtil.getProgressPercentage(i, size));
+                                    }
+                                    progress.setText("Updating object status in schema " + schema.getName() + "... ");
+                                    schema.refreshObjectsStatus();
+                                }
                             }
-                            progress.setText("Updating object status in schema " + schema.getName() + "... ");
-                            schema.refreshObjectsStatus();
+                        } catch (SQLException e) {
+                            sendErrorNotification("Object Status Refresh", "Could not refresh object status. Cause: " + e.getMessage());
                         }
-                    }
-                } catch (SQLException e) {
-                    sendErrorNotification("Object Status Refresh", "Could not refresh object status. Cause: " + e.getMessage());
-                }
-            });
+                    });
         }
     }
 

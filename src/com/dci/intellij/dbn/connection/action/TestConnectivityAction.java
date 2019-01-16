@@ -16,11 +16,10 @@ public class TestConnectivityAction extends AbstractConnectionAction {
     public void actionPerformed(AnActionEvent anActionEvent) {
         final ConnectionHandler connectionHandler = getConnectionHandler();
         connectionHandler.getInstructions().setAllowAutoConnect(true);
-        TaskInstructions taskInstructions = new TaskInstructions("Trying to connect to " + connectionHandler.getName(), TaskInstruction.MANAGED);
         ConnectionAction.invoke(
                 "testing the connectivity",
                 connectionHandler,
-                taskInstructions,
+                TaskInstructions.create("Trying to connect to " + connectionHandler.getName(), TaskInstruction.MANAGED),
                 action -> ConnectionManager.testConnection(connectionHandler, true, true));
     }
 }

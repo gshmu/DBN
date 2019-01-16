@@ -4,6 +4,8 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -94,25 +96,27 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
             if (isPreparingPopup) return;
 
             isPreparingPopup = true;
-            BackgroundTask.invoke(editorComponent.getProject(), "Loading " + getDescription(), false, true, (task, progress) -> {
-                // load the values
-                getValues();
-                getSecondaryValues();
-                if (progress.isCanceled()) {
-                    isPreparingPopup = false;
-                    return;
-                }
-
-                SimpleLaterInvocator.invoke(() -> {
-                    try {
-                        if (!isShowingPopup()) {
-                            doShowPopup();
+            BackgroundTask.invoke(editorComponent.getProject(),
+                    TaskInstructions.create("Loading " + getDescription(), TaskInstruction.CANCELLABLE),
+                    (data, progress) -> {
+                        // load the values
+                        getValues();
+                        getSecondaryValues();
+                        if (progress.isCanceled()) {
+                            isPreparingPopup = false;
+                            return;
                         }
-                    } finally {
-                        isPreparingPopup = false;
-                    }
-                });
-            });
+
+                        SimpleLaterInvocator.invoke(() -> {
+                            try {
+                                if (!isShowingPopup()) {
+                                    doShowPopup();
+                                }
+                            } finally {
+                                isPreparingPopup = false;
+                            }
+                        });
+                    });
         } else {
             doShowPopup();
         }

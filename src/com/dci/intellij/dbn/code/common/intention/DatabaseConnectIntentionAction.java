@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -48,8 +49,8 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
             if (activeConnection != null && !activeConnection.isDisposed() && !activeConnection.isVirtual()) {
                 activeConnection.getInstructions().setAllowAutoConnect(true);
                 BackgroundTask.invoke(project,
-                        "Trying to connect to " + activeConnection.getName(), false, false,
-                        (task, progress) -> ConnectionManager.testConnection(activeConnection, false, true));
+                        TaskInstructions.create("Trying to connect to " + activeConnection.getName()),
+                        (data, progress) -> ConnectionManager.testConnection(activeConnection, false, true));
             }
         }
     }

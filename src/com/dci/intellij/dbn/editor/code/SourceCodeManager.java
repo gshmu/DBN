@@ -74,7 +74,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstruction.START_IN_BACKGROUND;
+import static com.dci.intellij.dbn.common.thread.TaskInstruction.BACKGROUNDED;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
 @State(
@@ -158,12 +158,14 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     private void reloadAndUpdateEditors(final DBEditableObjectVirtualFile databaseFile, boolean startInBackground) {
         Project project = getProject();
         if (databaseFile.isContentLoaded()) {
-            BackgroundTask.invoke(project, "Reloading object source code", startInBackground, false, (task, progress) -> {
-                List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
-                for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                    loadSourceCode(sourceCodeFile, true);
-                }
-            });
+            BackgroundTask.invoke(project,
+                    TaskInstructions.create("Reloading object source code", startInBackground ? BACKGROUNDED : null),
+                    (task, progress) -> {
+                        List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
+                        for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                            loadSourceCode(sourceCodeFile, true);
+                        }
+                    });
         }
     }
 
@@ -233,20 +235,22 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                         "\nYou must merge the changes before saving.";
 
                         MessageUtil.showWarningDialog(project, "Version conflict", message, new String[]{"Merge Changes", "Cancel"}, 0,
-                                BackgroundTask.create(project, "Loading database source code", false, false, (option, progress) -> {
-                                    if (option == 0) {
-                                        try {
-                                            SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
-                                            String databaseContent = sourceCodeContent.getText().toString();
-                                            SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
-                                            diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, MergeAction.SAVE);
-                                        } catch (SQLException e) {
-                                            MessageUtil.showErrorDialog(project, "Could not load database sources.", e);
-                                        }
-                                    } else {
-                                        sourceCodeFile.set(SAVING, false);
-                                    }
-                                }));
+                                BackgroundTask.create(project,
+                                        TaskInstructions.create("Loading database source code"),
+                                        (data, progress) -> {
+                                            if (data == 0) {
+                                                try {
+                                                    SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
+                                                    String databaseContent = sourceCodeContent.getText().toString();
+                                                    SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+                                                    diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, MergeAction.SAVE);
+                                                } catch (SQLException e) {
+                                                    MessageUtil.showErrorDialog(project, "Could not load database sources.", e);
+                                                }
+                                            } else {
+                                                sourceCodeFile.set(SAVING, false);
+                                            }
+                                        }));
 
                     } else {
                         storeSourceToDatabase(sourceCodeFile, fileEditor, successCallback);
@@ -369,17 +373,19 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     public void storeSourceToDatabase(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable final SourceCodeEditor fileEditor, @Nullable final Runnable successCallback) {
         Project project = getProject();
-        BackgroundTask.invoke(project, "Saving sources to database", false, false, (task, progress) -> {
-            try {
-                sourceCodeFile.saveSourceToDatabase();
-                EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeSaved(sourceCodeFile, fileEditor);
-            } catch (SQLException e) {
-                MessageUtil.showErrorDialog(project, "Could not save changes to database.", e);
-            } finally {
-                sourceCodeFile.set(SAVING, false);
-            }
-            if (successCallback != null) successCallback.run();
-        });
+        BackgroundTask.invoke(project,
+                TaskInstructions.create("Saving sources to database"),
+                (task, progress) -> {
+                    try {
+                        sourceCodeFile.saveSourceToDatabase();
+                        EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeSaved(sourceCodeFile, fileEditor);
+                    } catch (SQLException e) {
+                        MessageUtil.showErrorDialog(project, "Could not save changes to database.", e);
+                    } finally {
+                        sourceCodeFile.set(SAVING, false);
+                    }
+                    if (successCallback != null) successCallback.run();
+                });
     }
 
     public BasePsiElement getObjectNavigationElement(DBSchemaObject parentObject, DBContentType contentType, DBObjectType objectType, CharSequence objectName) {
@@ -474,29 +480,26 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public void loadSourceCode(final DBSourceCodeVirtualFile sourceCodeFile, final boolean force) {
-        TaskInstructions taskInstructions = new TaskInstructions("Loading source code for " + sourceCodeFile.getObject().getQualifiedNameWithType(), START_IN_BACKGROUND);
         ConnectionAction.invoke(
                 "loading the source code",
                 sourceCodeFile,
-                taskInstructions,
+                TaskInstructions.create("Loading source code for " + sourceCodeFile.getObject().getQualifiedNameWithType(), BACKGROUNDED),
                 action -> loadSourceFromDatabase(sourceCodeFile, force));
     }
 
     public void saveSourceCode(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable final SourceCodeEditor fileEditor, final Runnable successCallback) {
-        TaskInstructions taskInstructions = new TaskInstructions("Saving source code for " + sourceCodeFile.getObject().getQualifiedNameWithType());
         ConnectionAction.invoke(
                 "saving the source code",
                 sourceCodeFile,
-                taskInstructions,
+                TaskInstructions.create("Saving source code for " + sourceCodeFile.getObject().getQualifiedNameWithType()),
                 action -> saveSourceToDatabase(sourceCodeFile, fileEditor, successCallback));
     }
 
     public void revertSourceCodeChanges(final DBEditableObjectVirtualFile databaseFile, final Runnable successCallback) {
-        TaskInstructions taskInstructions = new TaskInstructions("Loading source code for " + databaseFile.getObject().getQualifiedNameWithType(), START_IN_BACKGROUND);
         ConnectionAction.invoke(
                 "loading the source code",
                 databaseFile,
-                taskInstructions,
+                TaskInstructions.create("Loading source code for " + databaseFile.getObject().getQualifiedNameWithType(), BACKGROUNDED),
                 action -> {
                     try {
                         List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
@@ -512,11 +515,10 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public void saveSourceCodeChanges(final DBEditableObjectVirtualFile databaseFile, final Runnable successCallback) {
-        TaskInstructions taskInstructions = new TaskInstructions("Saving source code for " + databaseFile.getObject().getQualifiedNameWithType());
         ConnectionAction.invoke(
                 "saving the source code",
                 databaseFile,
-                taskInstructions,
+                TaskInstructions.create("Saving source code for " + databaseFile.getObject().getQualifiedNameWithType()),
                 action -> {
                     List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                     for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {

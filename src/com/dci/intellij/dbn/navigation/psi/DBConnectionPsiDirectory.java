@@ -2,10 +2,9 @@ package com.dci.intellij.dbn.navigation.psi;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.vfs.file.DBConnectionVirtualFile;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
@@ -35,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
@@ -109,17 +107,15 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     @NotNull
     public PsiElement[] getChildren() {
         List<PsiElement> children = new ArrayList<PsiElement>();
-        Collection<DBObjectList<DBObject>> objectLists = virtualFile.getConnectionHandler().getObjectBundle().getObjectListContainer().getObjectLists();
-        if (objectLists != null) {
-            for (DBObjectList objectList : objectLists) {
-                if (FailsafeUtil.softCheck(objectList) && !objectList.isInternal()) {
-                    children.add(objectList.getPsiDirectory());
-                }
-            }
-            return children.toArray(new PsiElement[0]);
-        }
-
-        return new PsiElement[0];        
+        CollectionUtil.forEach(
+                virtualFile.getConnectionHandler().getObjectBundle().getObjectListContainer().getObjectLists(),
+                objectList -> {
+                    if (!objectList.isInternal() && FailsafeUtil.softCheck(objectList)) {
+                        PsiDirectory psiDirectory = objectList.getPsiDirectory();
+                        children.add(psiDirectory);
+                    }
+                });
+        return children.toArray(new PsiElement[0]);
     }
 
     public PsiDirectory getParent() {

@@ -16,14 +16,11 @@ public class ConnectAction extends AbstractConnectionAction {
     public void actionPerformed(AnActionEvent anActionEvent) {
         final ConnectionHandler connectionHandler = getConnectionHandler();
         connectionHandler.getInstructions().setAllowAutoConnect(true);
-        TaskInstructions taskInstructions = new TaskInstructions(
-                "Trying to connect to " + connectionHandler.getName(),
-                TaskInstruction.MANAGED);
 
         ConnectionAction.invoke(
                 "connecting to database",
                 connectionHandler,
-                taskInstructions,
+                TaskInstructions.create("Trying to connect to " + connectionHandler.getName(), TaskInstruction.MANAGED),
                 action -> ConnectionManager.testConnection(connectionHandler, false, true));
     }
 }
