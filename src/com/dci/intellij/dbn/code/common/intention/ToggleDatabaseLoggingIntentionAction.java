@@ -63,7 +63,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
             return false;
         }
 
-        lastChecked = new PsiFileRef(psiFile);
+        lastChecked = PsiFileRef.from(psiFile);
         ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
         return supportsLogging(connectionHandler);
     }

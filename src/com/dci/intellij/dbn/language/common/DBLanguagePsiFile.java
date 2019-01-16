@@ -50,7 +50,6 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.SingleRootFileViewProvider;
@@ -168,7 +167,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
 
     public void accept(@NotNull PsiElementVisitor visitor) {
         // TODO: check if any other visitor relevant
-        if (visitor.getClass().getName().contains("SpellCheckingInspection")) {
+        String name = visitor.getClass().getName();
+        if (name.contains("SpellCheckingInspection") || name.contains("InjectedLanguageManager")) {
             visitor.visitFile(this);
         }
     }
@@ -206,11 +206,13 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     }
 
     public VirtualFile getVirtualFile() {
+/*
         PsiFile originalFile = getOriginalFile();
         return originalFile == this ?
                 super.getVirtualFile() :
                 originalFile.getVirtualFile();
-
+*/
+        return super.getVirtualFile();
     }
 
     public boolean isInjectedContext() {
@@ -225,15 +227,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     public ConnectionHandler getConnectionHandler() {
         VirtualFile file = getVirtualFile();
         if (file != null && !getProject().isDisposed()) {
-            if (VirtualFileUtil.isVirtualFileSystem(file)) {
-                PsiFile originalFile = getOriginalFile();
-                if (originalFile instanceof DBLanguagePsiFile) {
-                    DBLanguagePsiFile databaseFile = (DBLanguagePsiFile) originalFile;
-                    return originalFile == this ? ConnectionHandlerRef.get(connectionHandlerRef) : databaseFile.getConnectionHandler();
-                }
-            } else {
-                return getConnectionMappingManager().getConnectionHandler(file);
-            }
+            FileConnectionMappingManager connectionMappingManager = getConnectionMappingManager();
+            return connectionMappingManager.getConnectionHandler(file);
         }
         return null;
     }
@@ -241,11 +236,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
         VirtualFile file = getVirtualFile();
         if (file != null) {
-            if (VirtualFileUtil.isVirtualFileSystem(file)) {
-                this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
-            } else {
-                getConnectionMappingManager().setConnectionHandler(file, connectionHandler);
-            }
+            FileConnectionMappingManager connectionMappingManager = getConnectionMappingManager();
+            connectionMappingManager.setConnectionHandler(file, connectionHandler);
         }
     }
 
@@ -253,15 +245,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     public DBSchema getDatabaseSchema() {
         VirtualFile file = getVirtualFile();
         if (file != null) {
-            if (VirtualFileUtil.isVirtualFileSystem(file)) {
-                PsiFile originalFile = getOriginalFile();
-                if (originalFile instanceof DBLanguagePsiFile) {
-                    DBLanguagePsiFile databaseFile = (DBLanguagePsiFile) originalFile;
-                    return originalFile == this ? DBObjectRef.get(databaseSchemaRef) : databaseFile.getDatabaseSchema();
-                }
-            } else {
-                return getConnectionMappingManager().getDatabaseSchema(file);
-            }
+            FileConnectionMappingManager connectionMappingManager = getConnectionMappingManager();
+            return connectionMappingManager.getDatabaseSchema(file);
         }
         return null;
     }
@@ -269,11 +254,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     public void setDatabaseSchema(DBSchema schema) {
         VirtualFile file = getVirtualFile();
         if (file != null) {
-            if (VirtualFileUtil.isVirtualFileSystem(file)) {
-                this.databaseSchemaRef = DBObjectRef.from(schema);
-            } else {
-                getConnectionMappingManager().setDatabaseSchema(file, schema);
-            }
+            FileConnectionMappingManager connectionMappingManager = getConnectionMappingManager();
+            connectionMappingManager.setDatabaseSchema(file, schema);
         }
     }
 
@@ -281,15 +263,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     public DatabaseSession getDatabaseSession() {
         VirtualFile file = getVirtualFile();
         if (file != null && !getProject().isDisposed()) {
-            if (VirtualFileUtil.isVirtualFileSystem(file)) {
-                PsiFile originalFile = getOriginalFile();
-                if (originalFile instanceof DBLanguagePsiFile) {
-                    DBLanguagePsiFile databaseFile = (DBLanguagePsiFile) originalFile;
-                    return originalFile == this ? databaseSession : databaseFile.getDatabaseSession();
-                }
-            } else {
-                return getConnectionMappingManager().getDatabaseSession(file);
-            }
+            FileConnectionMappingManager connectionMappingManager = getConnectionMappingManager();
+            return connectionMappingManager.getDatabaseSession(file);
         }
         return null;
     }

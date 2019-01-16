@@ -14,7 +14,7 @@ import java.lang.ref.WeakReference;
 public class PsiFileRef<T extends PsiFile>{
     private WeakReference<T> psiFileRef;
 
-    public PsiFileRef(T psiFile) {
+    private PsiFileRef(T psiFile) {
         this.psiFileRef = new WeakReference<>(psiFile);
     }
 
@@ -33,6 +33,10 @@ public class PsiFileRef<T extends PsiFile>{
             }
         }
         return psiFile;
+    }
+
+    public static <T extends PsiFile> PsiFileRef<T> from(T psiFile) {
+        return new PsiFileRef<>(psiFile);
     }
 
     @NotNull
