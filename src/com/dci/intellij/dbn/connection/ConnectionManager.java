@@ -414,7 +414,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
 
         private void resolveIdleStatus(final ConnectionHandler connectionHandler) {
-            FailsafeUtil.check(connectionHandler);
+            FailsafeUtil.ensure(connectionHandler);
             DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
             List<DBNConnection> activeConnections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
 

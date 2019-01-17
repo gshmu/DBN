@@ -26,7 +26,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
         EventUtil.subscribe(project, this,
                 ConnectionLoadListener.TOPIC,
                 connectionHandler -> SimpleLaterInvocator.invoke(() -> {
-                    FailsafeUtil.check(project);
+                    FailsafeUtil.ensure(project);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
                     VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
@@ -37,7 +37,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
                             for (FileEditor fileEditor : fileEditors) {
                                 Editor editor = EditorUtil.getEditor(fileEditor);
                                 if (editor != null) {
-                                    FailsafeUtil.check(project);
+                                    FailsafeUtil.ensure(project);
                                     DocumentUtil.refreshEditorAnnotations(editor);
                                 }
 

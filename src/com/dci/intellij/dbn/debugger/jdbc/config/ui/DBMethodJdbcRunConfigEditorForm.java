@@ -105,7 +105,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
                         ObjectTreeModel objectTreeModel = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), settings.getMethod());
 
                         SimpleLaterInvocator.invoke(() -> {
-                            FailsafeUtil.check(project);
+                            FailsafeUtil.ensure(project);
                             MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
                             browserDialog.show();
                             if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {

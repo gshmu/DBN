@@ -110,7 +110,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
         CollectionUtil.forEach(
                 virtualFile.getConnectionHandler().getObjectBundle().getObjectListContainer().getObjectLists(),
                 objectList -> {
-                    if (!objectList.isInternal() && FailsafeUtil.softCheck(objectList)) {
+                    if (!objectList.isInternal() && FailsafeUtil.check(objectList)) {
                         PsiDirectory psiDirectory = objectList.getPsiDirectory();
                         children.add(psiDirectory);
                     }

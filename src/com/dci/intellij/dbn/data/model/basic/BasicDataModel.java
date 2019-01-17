@@ -152,7 +152,7 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
     @NotNull
     @Override
     public List<T> getRows() {
-        FailsafeUtil.check(this);
+        FailsafeUtil.ensure(this);
         return FailsafeUtil.get(rows);
     }
 
