@@ -9,8 +9,7 @@ public class DisposableLatent<T extends Disposable, P extends Disposable> extend
 
     private DisposableLatent(P parent, Loader<T> loader) {
         super(loader);
-        FailsafeUtil.check(parent);
-        this.parent = parent;
+        this.parent = FailsafeUtil.ensure(parent);
     }
 
     public static <T extends Disposable, P extends Disposable> DisposableLatent<T, P> create(P parent, Loader<T> loader) {
@@ -19,7 +18,7 @@ public class DisposableLatent<T extends Disposable, P extends Disposable> extend
 
     @Override
     protected boolean shouldLoad() {
-        FailsafeUtil.check(parent);
+        FailsafeUtil.ensure(parent);
         return super.shouldLoad();
     }
 

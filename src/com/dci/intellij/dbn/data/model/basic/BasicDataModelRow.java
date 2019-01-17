@@ -37,7 +37,7 @@ public class BasicDataModelRow<T extends DataModelCell> extends PropertyHolderIm
     }
 
     public List<T> getCells() {
-        FailsafeUtil.check(this);
+        FailsafeUtil.ensure(this);
         return FailsafeUtil.get(cells);
     }
 

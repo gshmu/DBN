@@ -39,7 +39,7 @@ public class FailsafeUtil {
     }
 
     public static <T> T getComponent(@NotNull Project project, @NotNull Class<T> interfaceClass) {
-        project = check(project);
+        project = ensure(project);
         T component = project.getComponent(interfaceClass);
         return get(component);
     }
@@ -51,14 +51,14 @@ public class FailsafeUtil {
     }
 
     @NotNull
-    public static <T> T check(T object) {
-        if (!softCheck(object)) {
+    public static <T> T ensure(T object) {
+        if (!check(object)) {
             throw AlreadyDisposedException.INSTANCE;
         }
         return object;
     }
 
-    public static boolean softCheck(Object object) {
+    public static boolean check(Object object) {
         if (object == null) {
             return false;
         } else if (object instanceof Disposable) {

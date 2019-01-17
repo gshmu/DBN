@@ -365,7 +365,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     private void buildTreeChildren() {
-        FailsafeUtil.check(this);
+        FailsafeUtil.ensure(this);
         List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
         Filter<BrowserTreeNode> filter = getConnectionHandler().getObjectTypeFilter();
         if (!filter.acceptsAll(allPossibleTreeChildren)) {
@@ -381,7 +381,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         for (BrowserTreeNode treeNode : newTreeChildren) {
             DBObjectList objectList = (DBObjectList) treeNode;
             objectList.initTreeElement();
-            FailsafeUtil.check(this);
+            FailsafeUtil.ensure(this);
         }
 
         if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {

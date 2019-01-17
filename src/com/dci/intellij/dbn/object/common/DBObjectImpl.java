@@ -166,7 +166,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         if (psiFacade == null) {
             synchronized (this) {
                 if (psiFacade == null) {
-                    FailsafeUtil.check(this);
+                    FailsafeUtil.ensure(this);
                     psiFacade = new DBObjectPsiFacade(objectRef);
                 }
             }
@@ -430,7 +430,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
                     CollectionUtil.forEach(
                             childObjects.getObjectLists(),
                             objectList -> {
-                                if (!objectList.isInternal() && FailsafeUtil.softCheck(objectList)) {
+                                if (!objectList.isInternal() && FailsafeUtil.check(objectList)) {
                                     objects.addAll(objectList.getObjects());
                                 }
                             });
@@ -664,7 +664,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }
 
     private void buildTreeChildren() {
-        FailsafeUtil.check(this);
+        FailsafeUtil.ensure(this);
         ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
 
         Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
@@ -685,7 +685,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
             for (BrowserTreeNode treeNode : newTreeChildren) {
                 DBObjectList objectList = (DBObjectList) treeNode;
                 objectList.initTreeElement();
-                FailsafeUtil.check(this);
+                FailsafeUtil.ensure(this);
             }
 
             if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {

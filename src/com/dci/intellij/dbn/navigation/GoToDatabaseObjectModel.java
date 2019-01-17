@@ -98,7 +98,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                 // touch the schema for next load
                 selectedSchema.get().getChildren();
             }
-            FailsafeUtil.check(this);
+            FailsafeUtil.ensure(this);
 
             ObjectNamesCollector collector = new ObjectNamesCollector(forceLoad);
             Disposer.register(this, collector);
@@ -122,7 +122,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
     public Object[] getElementsByName(String name, boolean checkBoxState, String pattern) {
         try {
             boolean forceLoad = checkBoxState && objectsLookupSettings.getForceDatabaseLoad().value();
-            FailsafeUtil.check(this);
+            FailsafeUtil.ensure(this);
             ObjectCollector collector = new ObjectCollector(name, forceLoad);
             Disposer.register(FailsafeUtil.get(this), collector);
             scanObjectLists(collector);
@@ -137,7 +137,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
             for (ConnectionHandler connectionHandler : connectionHandlers) {
-                FailsafeUtil.check(this);
+                FailsafeUtil.ensure(this);
                 DBObjectListContainer objectListContainer = connectionHandler.getObjectBundle().getObjectListContainer();
                 objectListContainer.visitLists(visitor, false);
             }
@@ -169,7 +169,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                     boolean isLookupEnabled = objectsLookupSettings.isEnabled(objectType);
                     DBObject originalParentObject = parentObject;
                     for (DBObject object : objectList.getElements()) {
-                        FailsafeUtil.check(this);
+                        FailsafeUtil.ensure(this);
                         if (isLookupEnabled) {
                             if (bucket == null) bucket = new THashSet<String>();
                             bucket.add(object.getName());
@@ -231,7 +231,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                     boolean isLookupEnabled = objectsLookupSettings.isEnabled(objectType);
                     DBObject originalParentObject = parentObject;
                     for (DBObject object : objectList.getObjects()) {
-                        FailsafeUtil.check(this);
+                        FailsafeUtil.ensure(this);
                         if (isLookupEnabled && object.getName().equals(objectName)) {
                             if (bucket == null) bucket = new ArrayList<DBObject>();
                             bucket.add(object);

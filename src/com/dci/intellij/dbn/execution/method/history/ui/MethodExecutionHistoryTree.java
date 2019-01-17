@@ -135,7 +135,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
                             }
 
                             SimpleLaterInvocator.invoke(() -> {
-                                FailsafeUtil.check(dialog);
+                                FailsafeUtil.ensure(dialog);
                                 dialog.showMethodExecutionPanel(executionInput);
                                 dialog.setSelectedExecutionInput(executionInput);
                                 dialog.updateMainButtons(executionInput);
