@@ -40,7 +40,7 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
     }
 
     public void notifyListeners(final BrowserTreeNode treeNode, final TreeEventType eventType) {
-        if (FailsafeUtil.softCheck(this) && FailsafeUtil.softCheck(treeNode)) {
+        if (FailsafeUtil.check(this) && FailsafeUtil.check(treeNode)) {
             TreePath treePath = DatabaseBrowserUtils.createTreePath(treeNode);
             TreeUtil.notifyTreeModelListeners(this, treeModelListeners, treePath, eventType);
         }

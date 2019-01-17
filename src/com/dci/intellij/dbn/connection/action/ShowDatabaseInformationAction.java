@@ -21,7 +21,7 @@ public class ShowDatabaseInformationAction extends AbstractConnectionAction {
         ConnectionAction.invoke("showing database information", connectionHandler,
                 TaskInstructions.create("Loading database information for " + connectionHandler.getName(), TaskInstruction.MANAGED),
                 action -> {
-                    FailsafeUtil.check(connectionHandler);
+                    FailsafeUtil.ensure(connectionHandler);
                     ConnectionManager.showConnectionInfoDialog(connectionHandler);
                 });
     }

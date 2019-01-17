@@ -206,7 +206,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         if (psiDirectory == null) {
             synchronized (this) {
                 if (psiDirectory == null) {
-                    FailsafeUtil.check(this);
+                    FailsafeUtil.ensure(this);
                     psiDirectory = new DBObjectListPsiDirectory(this);
                 }
             }
@@ -223,7 +223,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         try {
             Project project = getProject();
             BrowserTreeNode treeParent = getParent();
-            if (isNot(INTERNAL) && isTouched() && FailsafeUtil.softCheck(project) && treeParent != null && treeParent.isTreeStructureLoaded()) {
+            if (isNot(INTERNAL) && isTouched() && FailsafeUtil.check(project) && treeParent != null && treeParent.isTreeStructureLoaded()) {
                 BrowserTreeEventListener treeEventListener = EventUtil.notify(project, BrowserTreeEventListener.TOPIC);
                 treeEventListener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
             }
