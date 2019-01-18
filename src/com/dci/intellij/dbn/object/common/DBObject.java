@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilderProvider;
 import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
+import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -109,4 +110,9 @@ public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeN
     BrowserTreeNode getParent();
 
     DBObjectPsiFacade getPsiFacade();
+
+    @Override
+    default DynamicContentType getDynamicContentType() {
+        return getObjectType();
+    }
 }

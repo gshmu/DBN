@@ -33,6 +33,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
 public class DBPackageImpl extends DBProgramImpl implements DBPackage {
     protected DBObjectList<DBPackageType> types;
@@ -50,9 +51,9 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
         super.initLists();
         DBSchema schema = getSchema();
         DBObjectListContainer childObjects = initChildObjects();
-        functions = childObjects.createSubcontentObjectList(DBObjectType.PACKAGE_FUNCTION, this, FUNCTIONS_LOADER, schema);
-        procedures = childObjects.createSubcontentObjectList(DBObjectType.PACKAGE_PROCEDURE, this, PROCEDURES_LOADER, schema);
-        types = childObjects.createSubcontentObjectList(DBObjectType.PACKAGE_TYPE, this, TYPES_LOADER, schema, INDEXED);
+        functions = childObjects.createSubcontentObjectList(PACKAGE_FUNCTION, this, schema);
+        procedures = childObjects.createSubcontentObjectList(PACKAGE_PROCEDURE, this, schema);
+        types = childObjects.createSubcontentObjectList(PACKAGE_TYPE, this, schema, INDEXED);
     }
 
     public List getTypes() {
@@ -64,7 +65,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
     }
 
     public DBObjectType getObjectType() {
-        return DBObjectType.PACKAGE;
+        return PACKAGE;
     }
 
     @Nullable
@@ -101,78 +102,82 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
+    static {
+        new DynamicSubcontentLoader<DBPackageFunction>(PACKAGE, PACKAGE_FUNCTION, true) {
 
-    private static final DynamicContentLoader<DBPackageFunction> FUNCTIONS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBPackageFunction>() {
-        public ResultSet createResultSet(DynamicContent<DBPackageFunction> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
-            return metadataInterface.loadPackageFunctions(packagee.getSchema().getName(), packagee.getName(), connection);
-        }
+            public DynamicContentLoader<DBPackageFunction> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBPackageFunction>(PACKAGE, PACKAGE_FUNCTION, false) {
 
-        public DBPackageFunction createElement(DynamicContent<DBPackageFunction> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBPackageImpl packagee = (DBPackageImpl) dynamicContent.getParentElement();
-            return new DBPackageFunctionImpl(packagee, resultSet);
-        }
-    };
+                    public ResultSet createResultSet(DynamicContent<DBPackageFunction> dynamicContent, DBNConnection connection) throws SQLException {
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
+                        return metadataInterface.loadPackageFunctions(packagee.getSchema().getName(), packagee.getName(), connection);
+                    }
 
-    private static final DynamicSubcontentLoader FUNCTIONS_LOADER = new DynamicSubcontentLoader<DBPackageFunction>(true) {
-        public DynamicContentLoader<DBPackageFunction> getAlternativeLoader() {
-            return FUNCTIONS_ALTERNATIVE_LOADER;
-        }
+                    public DBPackageFunction createElement(DynamicContent<DBPackageFunction> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                        DBPackageImpl packagee = (DBPackageImpl) dynamicContent.getParentElement();
+                        return new DBPackageFunctionImpl(packagee, resultSet);
+                    }
+                };
+            }
 
-        public boolean match(DBPackageFunction function, DynamicContent dynamicContent) {
-            DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
-            return function.getPackage() == packagee;
-        }
-    };
+            public boolean match(DBPackageFunction function, DynamicContent dynamicContent) {
+                DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
+                return function.getPackage() == packagee;
+            }
+        };
 
-    private static final DynamicContentLoader<DBPackageProcedure> PROCEDURES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBPackageProcedure>() {
-        public ResultSet createResultSet(DynamicContent<DBPackageProcedure> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
-            return metadataInterface.loadPackageProcedures(packagee.getSchema().getName(), packagee.getName(), connection);
-        }
+        new DynamicSubcontentLoader<DBPackageProcedure>(PACKAGE, PACKAGE_PROCEDURE, true) {
 
-        public DBPackageProcedure createElement(DynamicContent<DBPackageProcedure> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBPackageImpl packagee = (DBPackageImpl) dynamicContent.getParentElement();
-            return new DBPackageProcedureImpl(packagee, resultSet);
-        }
-    };
+            public boolean match(DBPackageProcedure procedure, DynamicContent dynamicContent) {
+                DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
+                return procedure.getPackage() == packagee;
+            }
 
-    private static final DynamicSubcontentLoader PROCEDURES_LOADER = new DynamicSubcontentLoader<DBPackageProcedure>(true) {
-        public DynamicContentLoader<DBPackageProcedure> getAlternativeLoader() {
-            return PROCEDURES_ALTERNATIVE_LOADER;
-        }
+            public DynamicContentLoader<DBPackageProcedure> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBPackageProcedure>(PACKAGE, PACKAGE_PROCEDURE, false) {
 
-        public boolean match(DBPackageProcedure procedure, DynamicContent dynamicContent) {
-            DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
-            return procedure.getPackage() == packagee;
-        }
-    };
+                    public ResultSet createResultSet(DynamicContent<DBPackageProcedure> dynamicContent, DBNConnection connection) throws SQLException {
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
+                        return metadataInterface.loadPackageProcedures(packagee.getSchema().getName(), packagee.getName(), connection);
+                    }
 
-    private static final DynamicContentLoader<DBPackageType> TYPES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBPackageType>() {
-        public ResultSet createResultSet(DynamicContent<DBPackageType> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
-            return metadataInterface.loadPackageTypes(packagee.getSchema().getName(), packagee.getName(), connection);
-        }
+                    public DBPackageProcedure createElement(DynamicContent<DBPackageProcedure> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                        DBPackageImpl packagee = (DBPackageImpl) dynamicContent.getParentElement();
+                        return new DBPackageProcedureImpl(packagee, resultSet);
+                    }
+                };
+            }
+        };
 
-        public DBPackageType createElement(DynamicContent<DBPackageType> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBPackageImpl packagee = (DBPackageImpl) dynamicContent.getParentElement();
-            return new DBPackageTypeImpl(packagee, resultSet);
-        }
-    };
+        new DynamicSubcontentLoader<DBPackageType>(PACKAGE, PACKAGE_TYPE, true) {
 
-    private static final DynamicSubcontentLoader TYPES_LOADER = new DynamicSubcontentLoader<DBPackageType>(true) {
-        public DynamicContentLoader<DBPackageType> getAlternativeLoader() {
-            return TYPES_ALTERNATIVE_LOADER;
-        }
+            public boolean match(DBPackageType type, DynamicContent dynamicContent) {
+                DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
+                return type.getPackage() == packagee;
+            }
 
-        public boolean match(DBPackageType type, DynamicContent dynamicContent) {
-            DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
-            return type.getPackage() == packagee;
-        }
-    };
+            public DynamicContentLoader<DBPackageType> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBPackageType>(PACKAGE, PACKAGE_TYPE, false) {
+
+                    public ResultSet createResultSet(DynamicContent<DBPackageType> dynamicContent, DBNConnection connection) throws SQLException {
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
+                        return metadataInterface.loadPackageTypes(packagee.getSchema().getName(), packagee.getName(), connection);
+                    }
+
+                    public DBPackageType createElement(DynamicContent<DBPackageType> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                        DBPackageImpl packagee = (DBPackageImpl) dynamicContent.getParentElement();
+                        return new DBPackageTypeImpl(packagee, resultSet);
+                    }
+                };
+            }
+        };
+    }
+
+
+
 
     private class SpecSourceCodeLoader extends DBSourceCodeLoader {
         SpecSourceCodeLoader(DBObject object) {

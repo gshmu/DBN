@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-public enum DBObjectType implements DynamicContentType {
+public enum DBObjectType implements DynamicContentType<DBObjectType> {
     
     ATTRIBUTE(DatabaseObjectTypeId.ATTRIBUTE, "attribute", "attribute", Icons.DBO_ATTRIBUTE, null, Icons.DBO_ATTRIBUTES, false),
     ARGUMENT(DatabaseObjectTypeId.ARGUMENT, "argument", "arguments", Icons.DBO_ARGUMENT, null, Icons.DBO_ARGUMENTS, false),
@@ -219,13 +219,7 @@ public enum DBObjectType implements DynamicContentType {
     }
 
     public DBObjectType getGenericType() {
-        if (genericType == null) return this;
-
-        DBObjectType objectType = genericType;
-        while (true) {
-            if (objectType.genericType == null) return objectType;
-            objectType = objectType.genericType;
-        }
+        return genericType == null ? this : genericType.getGenericType();
     }
 
     @Nullable
@@ -240,10 +234,6 @@ public enum DBObjectType implements DynamicContentType {
 
     public boolean isInheriting(DBObjectType objectType) {
         return objectType.inheritingTypes.contains(this);
-    }
-
-    public String toString() {
-        return name;
     }
 
     public boolean isParentOf(DBObjectType objectType) {

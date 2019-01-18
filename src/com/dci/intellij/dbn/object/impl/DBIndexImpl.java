@@ -20,6 +20,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
+import static com.dci.intellij.dbn.object.common.DBObjectType.INDEX;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
@@ -51,12 +53,12 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
         super.initLists();
         DBDataset dataset = getDataset();
         if (dataset != null) {
-            columns = initChildObjects().createSubcontentObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, dataset, DBObjectRelationType.INDEX_COLUMN);
+            columns = initChildObjects().createSubcontentObjectList(COLUMN, this, dataset, DBObjectRelationType.INDEX_COLUMN);
         }
     }
 
     public DBObjectType getObjectType() {
-        return DBObjectType.INDEX;
+        return INDEX;
     }
 
     public DBDataset getDataset() {
@@ -106,5 +108,5 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
      * Loaders                       *
      * *******************************************************
      */
-    private static final DynamicContentLoader COLUMNS_LOADER = new DBObjectListFromRelationListLoader();
+    private static final DynamicContentLoader COLUMNS_LOADER = DBObjectListFromRelationListLoader.create(INDEX, COLUMN);
 }

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.property.BasicProperty;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -199,7 +198,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         }
 
         if (objectList == null) {
-            objectList = childObjects.createObjectList(objectType, this, DynamicContentLoader.VOID_CONTENT_LOADER, DynamicContentStatus.CONCURRENT);
+            objectList = childObjects.createObjectList(objectType, this, DynamicContentStatus.CONCURRENT);
         }
 
         if (objectList != null && objectList.size() == 0) {

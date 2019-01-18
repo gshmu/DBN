@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
+import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -22,6 +23,8 @@ import com.dci.intellij.dbn.database.common.util.SkipEntrySQLException;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,8 +32,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class DynamicContentResultSetLoader<T extends DynamicContentElement> implements DynamicContentLoader<T> {
+public abstract class DynamicContentResultSetLoader<T extends DynamicContentElement> extends DynamicContentLoaderImpl<T> implements DynamicContentLoader<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
+
+    public DynamicContentResultSetLoader(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType) {
+        this(parentContentType, contentType, true);
+    }
+    public DynamicContentResultSetLoader(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType, boolean register) {
+        super(parentContentType, contentType, register);
+    }
 
     public abstract ResultSet createResultSet(DynamicContent<T> dynamicContent, DBNConnection connection) throws SQLException;
     public abstract T createElement(DynamicContent<T> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException;

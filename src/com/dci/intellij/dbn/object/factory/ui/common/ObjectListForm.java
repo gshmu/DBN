@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +24,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
     private JLabel newLabel;
     private ConnectionHandler connectionHandler;
 
-    private List<ObjectFactoryInputForm<T>> inputForms = new ArrayList<ObjectFactoryInputForm<T>>();
+    private List<ObjectFactoryInputForm<T>> inputForms = new ArrayList<>();
 
     public ObjectListForm(DisposableProjectComponent parentComponent, ConnectionHandler connectionHandler) {
         super(parentComponent);
@@ -35,7 +36,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
                 new CreateObjectAction());
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
 
-        newLabel.setText("Add " + getObjectType());
+        newLabel.setText("Add " + getObjectType().getName());
     }
 
     public JPanel getComponent() {
@@ -73,7 +74,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
     }
 
     public List<T> createFactoryInputs(ObjectFactoryInput parent) {
-        List<T> objectFactoryInputs = new ArrayList<T>();
+        List<T> objectFactoryInputs = new ArrayList<>();
         for (ObjectFactoryInputForm<T> inputForm : this.inputForms) {
             T objectFactoryInput = inputForm.createFactoryInput(parent);
             objectFactoryInputs.add(objectFactoryInput);
@@ -82,11 +83,11 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
     }
 
     public class CreateObjectAction extends AnAction {
-        public CreateObjectAction() {
-            super("Add " + getObjectType(), null, Icons.DATASET_FILTER_CONDITION_NEW);
+        CreateObjectAction() {
+            super("Add " + getObjectType().getName(), null, Icons.DATASET_FILTER_CONDITION_NEW);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             createObjectPanel();
         }
     }

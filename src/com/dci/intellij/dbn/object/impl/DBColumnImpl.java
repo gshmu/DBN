@@ -38,6 +38,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public class DBColumnImpl extends DBObjectImpl implements DBColumn {
@@ -65,21 +66,21 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
 
     protected void initLists() {
         DBObjectListContainer childObjects = initChildObjects();
-        constraints = childObjects.createSubcontentObjectList(DBObjectType.CONSTRAINT, this, CONSTRAINTS_LOADER, getDataset(), DBObjectRelationType.CONSTRAINT_COLUMN);
-        indexes = childObjects.createSubcontentObjectList(DBObjectType.INDEX, this, INDEXES_LOADER, getDataset(), DBObjectRelationType.INDEX_COLUMN);
+        constraints = childObjects.createSubcontentObjectList(CONSTRAINT, this, getDataset(), DBObjectRelationType.CONSTRAINT_COLUMN);
+        indexes = childObjects.createSubcontentObjectList(INDEX, this, getDataset(), DBObjectRelationType.INDEX_COLUMN);
 
         DBType declaredType = dataType.getDeclaredType();
         if (declaredType != null) {
             DBObjectListContainer typeChildObjects = declaredType.getChildObjects();
             if (typeChildObjects != null) {
-                DBObjectList typeAttributes = typeChildObjects.getObjectList(DBObjectType.TYPE_ATTRIBUTE);
+                DBObjectList typeAttributes = typeChildObjects.getObjectList(TYPE_ATTRIBUTE);
                 childObjects.addObjectList(typeAttributes);
             }
         }
     }
 
     public DBObjectType getObjectType() {
-        return DBObjectType.COLUMN;
+        return COLUMN;
     }
 
     public DBDataType getDataType() {
@@ -219,7 +220,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     public List<DBColumn> getReferencingColumns() {
         assert isPrimaryKey();
 
-        List<DBColumn> list = new ArrayList<DBColumn>();
+        List<DBColumn> list = new ArrayList<>();
         boolean isSystemSchema = getDataset().getSchema().isSystemSchema();
         for (DBSchema schema : getConnectionHandler().getObjectBundle().getSchemas()) {
             if (ProgressMonitor.isCancelled()) {
@@ -228,7 +229,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
             if (schema.isSystemSchema() == isSystemSchema) {
                 DBObjectListContainer childObjects = schema.getChildObjects();
                 if (childObjects != null) {
-                    List<DBColumn> columns = (List<DBColumn>) childObjects.getInternalObjectList(DBObjectType.COLUMN).getObjects();
+                    List<DBColumn> columns = (List<DBColumn>) childObjects.getInternalObjectList(COLUMN).getObjects();
                     for (DBColumn column : columns){
                         if (this.equals(column.getForeignKeyColumn())) {
                             list.add(column);
@@ -241,34 +242,30 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     }
 
     protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> navigationLists = new ArrayList<DBObjectNavigationList>();
+        List<DBObjectNavigationList> navigationLists = new ArrayList<>();
 
         if (dataType.isDeclared()) {
-            navigationLists.add(new DBObjectNavigationListImpl<DBType>("Type", dataType.getDeclaredType()));
+            navigationLists.add(new DBObjectNavigationListImpl<>("Type", dataType.getDeclaredType()));
         }
 
         if (constraints.size() > 0) {
-            navigationLists.add(new DBObjectNavigationListImpl<DBConstraint>("Constraints", constraints.getObjects()));
+            navigationLists.add(new DBObjectNavigationListImpl<>("Constraints", constraints.getObjects()));
         }
 
         if (getParentObject() instanceof DBTable) {
             if (indexes != null && indexes.size() > 0) {
-                navigationLists.add(new DBObjectNavigationListImpl<DBIndex>("Indexes", indexes.getObjects()));
+                navigationLists.add(new DBObjectNavigationListImpl<>("Indexes", indexes.getObjects()));
             }
 
             if (isForeignKey()) {
                 DBColumn foreignKeyColumn = getForeignKeyColumn();
-                navigationLists.add(new DBObjectNavigationListImpl<DBColumn>("Referenced column", foreignKeyColumn));
+                navigationLists.add(new DBObjectNavigationListImpl<>("Referenced column", foreignKeyColumn));
             }
         }
 
         if (isPrimaryKey()) {
-            ObjectListProvider<DBColumn> objectListProvider = new ObjectListProvider<DBColumn>() {
-                public List<DBColumn> getObjects() {
-                    return getReferencingColumns();
-                }
-            };
-            navigationLists.add(new DBObjectNavigationListImpl<DBColumn>("Foreign-key columns", objectListProvider));
+            ObjectListProvider<DBColumn> objectListProvider = () -> getReferencingColumns();
+            navigationLists.add(new DBObjectNavigationListImpl<>("Foreign-key columns", objectListProvider));
         }
         return navigationLists;
     }
@@ -305,8 +302,8 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-    private static final DynamicContentLoader CONSTRAINTS_LOADER = new DBObjectListFromRelationListLoader<DBConstraint>();
-    private static final DynamicContentLoader INDEXES_LOADER = new DBObjectListFromRelationListLoader<DBIndex>();
+    private static final DynamicContentLoader CONSTRAINTS_LOADER = DBObjectListFromRelationListLoader.create(COLUMN, CONSTRAINT);
+    private static final DynamicContentLoader INDEXES_LOADER = DBObjectListFromRelationListLoader.create(COLUMN, INDEX);
 
     /*********************************************************
      *                     TreeElement                       *

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 
-public enum DBObjectRelationType implements DynamicContentType {
+public enum DBObjectRelationType implements DynamicContentType<DBObjectRelationType> {
     CONSTRAINT_COLUMN(DBObjectType.CONSTRAINT, DBObjectType.COLUMN),
     INDEX_COLUMN(DBObjectType.INDEX, DBObjectType.COLUMN),
     USER_ROLE(DBObjectType.USER, DBObjectType.GRANTED_ROLE),
@@ -24,5 +24,13 @@ public enum DBObjectRelationType implements DynamicContentType {
 
     public DBObjectType getTargetType() {
         return targetType;
+    }
+
+
+    @Override
+    public boolean matches(DBObjectRelationType contentType) {
+        return
+            sourceType.matches(contentType.sourceType) &&
+            targetType.matches(contentType.targetType);
     }
 }

@@ -3,8 +3,6 @@ package com.dci.intellij.dbn.browser.model;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -125,11 +123,6 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
 
     public GenericDatabaseElement getUndisposedElement() {
         return this;
-    }
-
-    @Nullable
-    public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
-        return null;
     }
 
    /*********************************************************

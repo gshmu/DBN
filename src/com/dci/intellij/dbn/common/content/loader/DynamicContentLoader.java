@@ -8,7 +8,7 @@ public interface DynamicContentLoader<T extends DynamicContentElement> {
     void reloadContent(DynamicContent<T> dynamicContent) throws DynamicContentLoadException, InterruptedException;
 
     DynamicContentLoader VOID_CONTENT_LOADER = new DynamicContentLoader() {
-        public void loadContent(DynamicContent dynamicContent, boolean forceReload) throws DynamicContentLoadException {}
-        public void reloadContent(DynamicContent dynamicContent) throws DynamicContentLoadException {}
+        public void loadContent(DynamicContent dynamicContent, boolean forceReload) {}
+        public void reloadContent(DynamicContent dynamicContent) {}
     };
 }
