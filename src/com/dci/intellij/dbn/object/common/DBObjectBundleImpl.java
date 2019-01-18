@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -85,6 +84,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.*;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -113,36 +114,28 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         connectionConfigHash = connectionHandler.getSettings().getDatabaseSettings().hashCode();
 
         objectLists = new DBObjectListContainer(this);
-        users = objectLists.createObjectList(DBObjectType.USER, this, USERS_LOADER, INDEXED);
-        schemas = objectLists.createObjectList(DBObjectType.SCHEMA, this, SCHEMAS_LOADER, new DBObjectList[]{users}, INDEXED);
-        roles = objectLists.createObjectList(DBObjectType.ROLE, this, ROLES_LOADER, INDEXED);
-        systemPrivileges = objectLists.createObjectList(DBObjectType.SYSTEM_PRIVILEGE, this, SYSTEM_PRIVILEGES_LOADER, INDEXED);
-        charsets = objectLists.createObjectList(DBObjectType.CHARSET, this, CHARSETS_LOADER, INDEXED);
+        users = objectLists.createObjectList(USER, this, INDEXED);
+        schemas = objectLists.createObjectList(SCHEMA, this, new DBObjectList[]{users}, INDEXED);
+        roles = objectLists.createObjectList(ROLE, this, INDEXED);
+        systemPrivileges = objectLists.createObjectList(SYSTEM_PRIVILEGE, this, INDEXED);
+        charsets = objectLists.createObjectList(CHARSET, this, INDEXED);
         allPossibleTreeChildren = DatabaseBrowserUtils.createList(schemas, users, roles, systemPrivileges, charsets);
 
         objectRelationLists = new DBObjectRelationListContainer(this);
         objectRelationLists.createObjectRelationList(
-                DBObjectRelationType.USER_ROLE, this,
-                "User role relations",
-                USER_ROLE_RELATION_LOADER,
+                USER_ROLE, this,
                 users, roles);
 
         objectRelationLists.createObjectRelationList(
-                DBObjectRelationType.USER_PRIVILEGE, this,
-                "User privilege relations",
-                USER_PRIVILEGE_RELATION_LOADER,
+                USER_PRIVILEGE, this,
                 users, systemPrivileges);
 
         objectRelationLists.createObjectRelationList(
-                DBObjectRelationType.ROLE_ROLE, this,
-                "Role role relations",
-                ROLE_ROLE_RELATION_LOADER,
+                ROLE_ROLE, this,
                 roles);
 
         objectRelationLists.createObjectRelationList(
-                DBObjectRelationType.ROLE_PRIVILEGE, this,
-                "Role privilege relations",
-                ROLE_PRIVILEGE_RELATION_LOADER,
+                ROLE_PRIVILEGE, this,
                 roles, systemPrivileges);
 
         objectLists.compact();
@@ -536,11 +529,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Nullable
     public DBObject getObject(DBObjectType objectType, String name, int overload) {
-        if (objectType == DBObjectType.SCHEMA) return getSchema(name);
-        if (objectType == DBObjectType.USER) return getUser(name);
-        if (objectType == DBObjectType.ROLE) return getRole(name);
-        if (objectType == DBObjectType.CHARSET) return getCharset(name);
-        if (objectType == DBObjectType.SYSTEM_PRIVILEGE) return getSystemPrivilege(name);
+        if (objectType == SCHEMA) return getSchema(name);
+        if (objectType == USER) return getUser(name);
+        if (objectType == ROLE) return getRole(name);
+        if (objectType == CHARSET) return getCharset(name);
+        if (objectType == SYSTEM_PRIVILEGE) return getSystemPrivilege(name);
         for (DBSchema schema : getSchemas()) {
             if (schema.isPublicSchema() && objectType.isSchemaObject()) {
                 DBObject childObject = schema.getChildObject(objectType, name, overload, true);
@@ -558,11 +551,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     public void lookupObjectsOfType(LookupConsumer consumer, DBObjectType objectType) throws ConsumerStoppedException {
         if (getConnectionObjectTypeFilter().accepts(objectType)) {
-            if (objectType == DBObjectType.SCHEMA) consumer.consume(getSchemas()); else
-            if (objectType == DBObjectType.USER) consumer.consume(getUsers()); else
-            if (objectType == DBObjectType.ROLE) consumer.consume(getRoles()); else
-            if (objectType == DBObjectType.CHARSET) consumer.consume(getCharsets());
-            if (objectType == DBObjectType.SYSTEM_PRIVILEGE) consumer.consume(getSystemPrivileges());
+            if (objectType == SCHEMA) consumer.consume(getSchemas()); else
+            if (objectType == USER) consumer.consume(getUsers()); else
+            if (objectType == ROLE) consumer.consume(getRoles()); else
+            if (objectType == CHARSET) consumer.consume(getCharsets());
+            if (objectType == SYSTEM_PRIVILEGE) consumer.consume(getSystemPrivileges());
         }
     }
 
@@ -585,8 +578,8 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                         }
                     }
 
-                    boolean synonymsSupported = DatabaseCompatibilityInterface.getInstance(parentObject).supportsObjectType(DBObjectType.SYNONYM.getTypeId());
-                    if (synonymsSupported && filter.acceptsObject(schema, currentSchema, DBObjectType.SYNONYM)) {
+                    boolean synonymsSupported = DatabaseCompatibilityInterface.getInstance(parentObject).supportsObjectType(SYNONYM.getTypeId());
+                    if (synonymsSupported && filter.acceptsObject(schema, currentSchema, SYNONYM)) {
                         for (DBSynonym synonym : schema.getSynonyms()) {
                             consumer.check();
                             DBObject underlyingObject = synonym.getUnderlyingObject();
@@ -701,149 +694,147 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-    private static final DynamicContentLoader<DBSchema> SCHEMAS_LOADER = new DynamicContentResultSetLoader<DBSchema>() {
-        public ResultSet createResultSet(DynamicContent<DBSchema> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadSchemas(connection);
-        }
-
-        public DBSchema createElement(DynamicContent<DBSchema> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            return new DBSchemaImpl(dynamicContent.getConnectionHandler(), resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader<DBUser> USERS_LOADER = new DynamicContentResultSetLoader<DBUser>() {
-        public ResultSet createResultSet(DynamicContent<DBUser> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadUsers(connection);
-        }
-
-        public DBUser createElement(DynamicContent<DBUser> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            return new DBUserImpl(dynamicContent.getConnectionHandler(), resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader<DBRole> ROLES_LOADER = new DynamicContentResultSetLoader<DBRole>() {
-        public ResultSet createResultSet(DynamicContent<DBRole> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadRoles(connection);
-        }
-
-        public DBRole createElement(DynamicContent<DBRole> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            return new DBRoleImpl(dynamicContent.getConnectionHandler(), resultSet);
-        }
-    };
-
-
-    private static final DynamicContentLoader<DBSystemPrivilege> SYSTEM_PRIVILEGES_LOADER = new DynamicContentResultSetLoader<DBSystemPrivilege>() {
-        public ResultSet createResultSet(DynamicContent<DBSystemPrivilege> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadSystemPrivileges(connection);
-        }
-
-        public DBSystemPrivilege createElement(DynamicContent<DBSystemPrivilege> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            return new DBSystemPrivilegeImpl(dynamicContent.getConnectionHandler(), resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader<DBObjectPrivilege> OBJECT_PRIVILEGES_LOADER = new DynamicContentResultSetLoader<DBObjectPrivilege>() {
-        public ResultSet createResultSet(DynamicContent<DBObjectPrivilege> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadObjectPrivileges(connection);
-        }
-
-        public DBObjectPrivilege createElement(DynamicContent<DBObjectPrivilege> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            return new DBObjectPrivilegeImpl(dynamicContent.getConnectionHandler(), resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader<DBCharset> CHARSETS_LOADER = new DynamicContentResultSetLoader<DBCharset>() {
-        public ResultSet createResultSet(DynamicContent<DBCharset> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadCharsets(connection);
-        }
-
-        public DBCharset createElement(DynamicContent<DBCharset> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            return new DBCharsetImpl(dynamicContent.getConnectionHandler(), resultSet);
-        }
-    };
-
-    /*********************************************************
-     *                    Relation loaders                   *
-     *********************************************************/
-    private static final DynamicContentLoader USER_ROLE_RELATION_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadAllUserRoles(connection);
-        }
-
-        public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String userName = resultSet.getString("USER_NAME");
-
-            DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParentElement();
-            DBUser user = objectBundle.getUser(userName);
-            if (user != null) {
-                DBGrantedRole role = new DBGrantedRoleImpl(user, resultSet);
-                return new DBUserRoleRelation(user, role);
+    static {
+        new DynamicContentResultSetLoader<DBSchema>(null, SCHEMA) {
+            public ResultSet createResultSet(DynamicContent<DBSchema> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadSchemas(connection);
             }
-            return null;
-        }
-    };
 
-    private static final DynamicContentLoader USER_PRIVILEGE_RELATION_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadAllUserPrivileges(connection);
-        }
-
-        public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String userName = resultSet.getString("USER_NAME");
-
-            DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParentElement();
-            DBUser user = objectBundle.getUser(userName);
-            if (user != null) {
-                DBGrantedPrivilege privilege = new DBGrantedPrivilegeImpl(user, resultSet);
-                return new DBUserPrivilegeRelation(user, privilege);
+            public DBSchema createElement(DynamicContent<DBSchema> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                return new DBSchemaImpl(dynamicContent.getConnectionHandler(), resultSet);
             }
-            return null;
-        }
-    };
+        };
 
-    private static final DynamicContentLoader ROLE_ROLE_RELATION_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadAllRoleRoles(connection);
-        }
-
-        public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String roleName = resultSet.getString("ROLE_NAME");
-
-            DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParentElement();
-            DBRole role = objectBundle.getRole(roleName);
-            if (role != null) {
-                DBGrantedRole grantedRole = new DBGrantedRoleImpl(role, resultSet);
-                return new DBRoleRoleRelation(role, grantedRole);
+        new DynamicContentResultSetLoader<DBUser>(null, USER) {
+            public ResultSet createResultSet(DynamicContent<DBUser> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadUsers(connection);
             }
-            return null;
-        }
-    };
 
-    private static final DynamicContentLoader ROLE_PRIVILEGE_RELATION_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadAllRolePrivileges(connection);
-        }
-
-        public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String userName = resultSet.getString("ROLE_NAME");
-
-            DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParentElement();
-            DBRole role = objectBundle.getRole(userName);
-            if (role != null) {
-                DBGrantedPrivilege privilege = new DBGrantedPrivilegeImpl(role, resultSet);
-                return new DBRolePrivilegeRelation(role, privilege);
+            public DBUser createElement(DynamicContent<DBUser> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                return new DBUserImpl(dynamicContent.getConnectionHandler(), resultSet);
             }
-            return null;
-        }
-    };
+        };
+
+        new DynamicContentResultSetLoader<DBRole>(null, ROLE) {
+            public ResultSet createResultSet(DynamicContent<DBRole> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadRoles(connection);
+            }
+
+            public DBRole createElement(DynamicContent<DBRole> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                return new DBRoleImpl(dynamicContent.getConnectionHandler(), resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBSystemPrivilege>(null, SYSTEM_PRIVILEGE) {
+            public ResultSet createResultSet(DynamicContent<DBSystemPrivilege> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadSystemPrivileges(connection);
+            }
+
+            public DBSystemPrivilege createElement(DynamicContent<DBSystemPrivilege> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                return new DBSystemPrivilegeImpl(dynamicContent.getConnectionHandler(), resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBObjectPrivilege>(null, OBJECT_PRIVILEGE) {
+            public ResultSet createResultSet(DynamicContent<DBObjectPrivilege> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadObjectPrivileges(connection);
+            }
+
+            public DBObjectPrivilege createElement(DynamicContent<DBObjectPrivilege> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                return new DBObjectPrivilegeImpl(dynamicContent.getConnectionHandler(), resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBCharset>(null, CHARSET) {
+            public ResultSet createResultSet(DynamicContent<DBCharset> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadCharsets(connection);
+            }
+
+            public DBCharset createElement(DynamicContent<DBCharset> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                return new DBCharsetImpl(dynamicContent.getConnectionHandler(), resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader(null, USER_ROLE) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadAllUserRoles(connection);
+            }
+
+            public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String userName = resultSet.getString("USER_NAME");
+
+                DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParentElement();
+                DBUser user = objectBundle.getUser(userName);
+                if (user != null) {
+                    DBGrantedRole role = new DBGrantedRoleImpl(user, resultSet);
+                    return new DBUserRoleRelation(user, role);
+                }
+                return null;
+            }
+        };
+
+        new DynamicContentResultSetLoader(null, USER_PRIVILEGE) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadAllUserPrivileges(connection);
+            }
+
+            public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String userName = resultSet.getString("USER_NAME");
+
+                DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParentElement();
+                DBUser user = objectBundle.getUser(userName);
+                if (user != null) {
+                    DBGrantedPrivilege privilege = new DBGrantedPrivilegeImpl(user, resultSet);
+                    return new DBUserPrivilegeRelation(user, privilege);
+                }
+                return null;
+            }
+        };
+
+        new DynamicContentResultSetLoader(null, ROLE_ROLE) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadAllRoleRoles(connection);
+            }
+
+            public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String roleName = resultSet.getString("ROLE_NAME");
+
+                DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParentElement();
+                DBRole role = objectBundle.getRole(roleName);
+                if (role != null) {
+                    DBGrantedRole grantedRole = new DBGrantedRoleImpl(role, resultSet);
+                    return new DBRoleRoleRelation(role, grantedRole);
+                }
+                return null;
+            }
+        };
+
+        new DynamicContentResultSetLoader(null, ROLE_PRIVILEGE) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadAllRolePrivileges(connection);
+            }
+
+            public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String userName = resultSet.getString("ROLE_NAME");
+
+                DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParentElement();
+                DBRole role = objectBundle.getRole(userName);
+                if (role != null) {
+                    DBGrantedPrivilege privilege = new DBGrantedPrivilegeImpl(role, resultSet);
+                    return new DBRolePrivilegeRelation(role, privilege);
+                }
+                return null;
+            }
+        };
+    }
 }

@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.browser.model;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.load.LoadInProgressIcon;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -103,11 +101,6 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
 
     public GenericDatabaseElement getUndisposedElement() {
         return this;
-    }
-
-    @Nullable
-    public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
-        return null;
     }
 
     /*********************************************************

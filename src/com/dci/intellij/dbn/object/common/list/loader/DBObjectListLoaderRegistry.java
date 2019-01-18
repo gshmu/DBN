@@ -3,14 +3,17 @@ package com.dci.intellij.dbn.object.common.list.loader;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
+import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class DBObjectListLoaderRegistry {
     private static final Map<DynamicContentType, DynamicContentLoader> ROOT_LOADERS = new HashMap<>();
     private static final Map<DynamicContentType, Map<DynamicContentType, DynamicContentLoader>> CHILD_LOADERS = new HashMap<>();
@@ -38,6 +41,25 @@ public class DBObjectListLoaderRegistry {
 
     @NotNull
     public static <T extends DynamicContentElement> DynamicContentLoader<T> get(@NotNull GenericDatabaseElement parent, @NotNull DynamicContentType contentType) {
+        if (parent instanceof DBVirtualObject) {
+            return DynamicContentLoader.VOID_CONTENT_LOADER;
+        }
+        else {
+            DynamicContentLoader<T> loader = find(parent, contentType);
+            DynamicContentType parentContentType = null;
+            if (parent instanceof DBObject) {
+                parentContentType = ((DBObject) parent).getDynamicContentType();
+            }
+
+            DynamicContentLoader<DynamicContentElement> registeredLoader = DynamicContentLoaderImpl.resolve(parentContentType, contentType);
+            if (loader != registeredLoader) {
+                System.out.println();
+            }
+            return loader;
+        }
+    }
+
+    public static <T extends DynamicContentElement> DynamicContentLoader<T> find(@NotNull GenericDatabaseElement parent, @NotNull DynamicContentType contentType) {
         if (parent instanceof DBObject) {
             DBObject parentObject = (DBObject) parent;
             DBObjectType parentObjectType = parentObject.getObjectType();

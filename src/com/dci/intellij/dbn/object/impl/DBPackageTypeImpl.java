@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -21,6 +20,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE_TYPE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE_ATTRIBUTE;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NAVIGABLE;
 
 public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
@@ -44,7 +45,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
 
     @Override
     protected void initLists() {
-        attributes = initChildObjects().createObjectList(DBObjectType.TYPE_ATTRIBUTE, this, ATTRIBUTES_LOADER, DynamicContentStatus.INDEXED);
+        attributes = initChildObjects().createObjectList(TYPE_ATTRIBUTE, this, DynamicContentStatus.INDEXED);
     }
 
     public DBPackage getPackage() {
@@ -53,7 +54,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
 
     @Override
     public DBObjectType getObjectType() {
-        return DBObjectType.PACKAGE_TYPE;
+        return PACKAGE_TYPE;
     }
 
     @Nullable
@@ -71,20 +72,23 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
         return true;
     }
 
-    private static final DynamicContentLoader ATTRIBUTES_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBPackageTypeImpl type = (DBPackageTypeImpl) dynamicContent.getParentElement();
-            return metadataInterface.loadProgramTypeAttributes(
-                    type.getSchema().getName(),
-                    type.getPackage().getName(),
-                    type.getName(), connection);
-        }
+    static {
+        new DynamicContentResultSetLoader(PACKAGE_TYPE, TYPE_ATTRIBUTE) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBPackageTypeImpl type = (DBPackageTypeImpl) dynamicContent.getParentElement();
+                return metadataInterface.loadProgramTypeAttributes(
+                        type.getSchema().getName(),
+                        type.getPackage().getName(),
+                        type.getName(), connection);
+            }
 
-        public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBTypeImpl type = (DBTypeImpl) dynamicContent.getParentElement();
-            return new DBTypeAttributeImpl(type, resultSet);
-        }
-    };
+            public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBTypeImpl type = (DBTypeImpl) dynamicContent.getParentElement();
+                return new DBTypeAttributeImpl(type, resultSet);
+            }
+        };
+    }
+
 
 }

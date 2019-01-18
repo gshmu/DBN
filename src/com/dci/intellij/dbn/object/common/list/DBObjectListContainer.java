@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.content.dependency.BasicDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -204,12 +203,11 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     @Nullable
     public <T extends DBObject> DBObjectList<T>  createObjectList(
-             @NotNull DBObjectType objectType,
-             @NotNull BrowserTreeNode treeParent,
-             DynamicContentLoader loader,
-             DynamicContentStatus ... statuses) {
+            @NotNull DBObjectType objectType,
+            @NotNull BrowserTreeNode treeParent,
+            DynamicContentStatus... statuses) {
         if (isSupported(objectType)) {
-            return createObjectList(objectType, treeParent, loader, BasicDependencyAdapter.INSTANCE, statuses);
+            return createObjectList(objectType, treeParent, BasicDependencyAdapter.INSTANCE, statuses);
         }
         return null;
     }
@@ -218,12 +216,11 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     public <T extends DBObject> DBObjectList<T>  createObjectList(
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
-            DynamicContentLoader loader,
             DBObjectList[] sourceContents,
-            DynamicContentStatus ... statuses) {
+            DynamicContentStatus... statuses) {
         if (isSupported(objectType)) {
             ContentDependencyAdapter dependencyAdapter = new MultipleContentDependencyAdapter(sourceContents);
-            return createObjectList(objectType, treeParent, loader, dependencyAdapter, statuses);
+            return createObjectList(objectType, treeParent, dependencyAdapter, statuses);
         }
         return null;
     }
@@ -232,10 +229,9 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     public <T extends DBObject> DBObjectList<T> createSubcontentObjectList(
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
-            DynamicContentLoader loader,
             GenericDatabaseElement sourceContentHolder,
             DynamicContentType sourceContentType,
-            DynamicContentStatus ... statuses) {
+            DynamicContentStatus... statuses) {
         if (isSupported(objectType)) {
             if (sourceContentHolder != null && sourceContentHolder.getDynamicContent(sourceContentType) != null) {
                 ContentDependencyAdapter dependencyAdapter =
@@ -243,7 +239,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
                                 sourceContentHolder,
                                 sourceContentType
                         );
-                return createObjectList(objectType, treeParent, loader, dependencyAdapter, statuses);
+                return createObjectList(objectType, treeParent, dependencyAdapter, statuses);
             }
         }
         return null;
@@ -253,9 +249,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     public <T extends DBObject> DBObjectList<T> createSubcontentObjectList(
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
-            DynamicContentLoader loader,
             DBObject sourceContentHolder,
-            DynamicContentStatus ... statuses) {
+            DynamicContentStatus... statuses) {
         if (isSupported(objectType)) {
             if (sourceContentHolder.getDynamicContent(objectType) != null) {
                 ContentDependencyAdapter dependencyAdapter =
@@ -263,7 +258,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
                                 sourceContentHolder,
                                 objectType
                         );
-                return createObjectList(objectType, treeParent, loader, dependencyAdapter, statuses);
+                return createObjectList(objectType, treeParent, dependencyAdapter, statuses);
             }
         }
         return null;
@@ -272,10 +267,9 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     private <T extends DBObject> DBObjectList<T> createObjectList(
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
-            DynamicContentLoader<T> loader,
             ContentDependencyAdapter dependencyAdapter,
-            DynamicContentStatus ... statuses) {
-        DBObjectList<T> objectList = new DBObjectListImpl<T>(objectType, treeParent, loader, dependencyAdapter, statuses);
+            DynamicContentStatus... statuses) {
+        DBObjectList<T> objectList = new DBObjectListImpl<T>(objectType, treeParent, dependencyAdapter, statuses);
         addObjectList(objectList);
 
         return objectList;

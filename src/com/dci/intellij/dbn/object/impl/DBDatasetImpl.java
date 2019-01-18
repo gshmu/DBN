@@ -16,8 +16,6 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBDatasetTrigger;
 import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObjectRelationType;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -29,6 +27,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.CONSTRAINT_COLUMN;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
 public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBDataset {
     protected DBObjectList<DBColumn> columns;
@@ -43,15 +44,11 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
         super.initLists();
         DBSchema schema = getSchema();
         DBObjectListContainer childObjects = initChildObjects();
-        columns = childObjects.createSubcontentObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, schema, INDEXED);
-        constraints = childObjects.createSubcontentObjectList(DBObjectType.CONSTRAINT, this, CONSTRAINTS_LOADER, schema, INDEXED);
-        triggers = childObjects.createSubcontentObjectList(DBObjectType.DATASET_TRIGGER, this, TRIGGERS_LOADER, schema, INDEXED);
+        columns = childObjects.createSubcontentObjectList(COLUMN, this, schema, INDEXED);
+        constraints = childObjects.createSubcontentObjectList(CONSTRAINT, this, schema, INDEXED);
+        triggers = childObjects.createSubcontentObjectList(DATASET_TRIGGER, this, schema, INDEXED);
 
-        initChildObjectRelations().createSubcontentObjectRelationList(
-                DBObjectRelationType.CONSTRAINT_COLUMN, this,
-                "Constraint column relations", 
-                CONSTRAINT_COLUMN_RELATION_LOADER,
-                schema);
+        initChildObjectRelations().createSubcontentObjectRelationList(CONSTRAINT_COLUMN, this, schema);
     }
 
     @NotNull
@@ -116,169 +113,175 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-    private static final DynamicSubcontentLoader CONSTRAINT_COLUMN_RELATION_LOADER = new DynamicSubcontentLoader(true) {
-        public DynamicContentLoader getAlternativeLoader() {
-            return CONSTRAINT_COLUMN_RELATION_ALTERNATIVE_LOADER;
-        }
 
-        public boolean match(DynamicContentElement sourceElement, DynamicContent dynamicContent) {
-            DBConstraintColumnRelation constraintColumnRelation = (DBConstraintColumnRelation) sourceElement;
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            return constraintColumnRelation.getColumn().getDataset() == dataset;
-        }
-    };
+    static {
+        new DynamicSubcontentLoader<DBColumn>(DATASET, COLUMN, true) {
 
-    private static final DynamicContentLoader CONSTRAINT_COLUMN_RELATION_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            return metadataInterface.loadConstraintRelations(dataset.getSchema().getName(), dataset.getName(), connection);
-        }
-
-        public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String columnName = resultSet.getString("COLUMN_NAME");
-            String constraintName = resultSet.getString("CONSTRAINT_NAME");
-            int position = resultSet.getInt("POSITION");
-
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            DBColumn column = dataset.getColumn(columnName);
-            DBConstraint constraint = dataset.getConstraint(constraintName);
-
-            if (column != null && constraint != null) {
-                return new DBConstraintColumnRelation(constraint, column, position);
+            public boolean match(DBColumn column, DynamicContent dynamicContent) {
+                DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                return CommonUtil.safeEqual(column.getDataset(), dataset);
             }
-            return null;
-        }
-    };
 
+            public DynamicContentLoader<DBColumn> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBColumn>(DATASET, COLUMN, false) {
 
-    private static final DynamicContentLoader INDEX_COLUMN_RELATION_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            return metadataInterface.loadIndexRelations(dataset.getSchema().getName(), dataset.getName(), connection);
-        }
+                    public ResultSet createResultSet(DynamicContent<DBColumn> dynamicContent, DBNConnection connection) throws SQLException {
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                        return metadataInterface.loadColumns(dataset.getSchema().getName(), dataset.getName(), connection);
+                    }
 
-        public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String columnName = resultSet.getString("COLUMN_NAME");
-            String indexName = resultSet.getString("INDEX_NAME");
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            DBIndex index = dataset.getIndex(indexName);
-            DBColumn column = dataset.getColumn(columnName);
-
-            if (column != null && index != null) {
-                return new DBIndexColumnRelation(index, column);
+                    public DBColumn createElement(DynamicContent<DBColumn> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                        DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParentElement();
+                        return new DBColumnImpl(dataset, resultSet);
+                    }
+                };
             }
-            return null;
-        }
-    };
+        };
 
-    protected static final DynamicSubcontentLoader INDEX_COLUMN_RELATION_LOADER = new DynamicSubcontentLoader(true) {
-        public DynamicContentLoader getAlternativeLoader() {
-            return INDEX_COLUMN_RELATION_ALTERNATIVE_LOADER;
-        }
+        new DynamicSubcontentLoader<DBConstraint>(DATASET, CONSTRAINT, true) {
 
-        public boolean match(DynamicContentElement sourceElement, DynamicContent dynamicContent) {
-            DBIndexColumnRelation indexColumnRelation = (DBIndexColumnRelation) sourceElement;
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            return indexColumnRelation.getColumn().getDataset().equals(dataset);
-        }
-    };
+            public boolean match(DBConstraint constraint, DynamicContent dynamicContent) {
+                DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                DBDataset constraintDataset = constraint.getDataset();
+                return constraintDataset != null && constraintDataset.equals(dataset);
+            }
 
-    private static final DynamicSubcontentLoader COLUMNS_LOADER = new DynamicSubcontentLoader<DBColumn>(true) {
-        public boolean match(DBColumn column, DynamicContent dynamicContent) {
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            return CommonUtil.safeEqual(column.getDataset(), dataset);
-        }
+            public DynamicContentLoader<DBConstraint> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBConstraint>(DATASET, CONSTRAINT, false) {
 
-        public DynamicContentLoader<DBColumn> getAlternativeLoader() {
-            return COLUMNS_ALTERNATIVE_LOADER;
-        }
-    };
-    private static final DynamicContentLoader<DBColumn> COLUMNS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBColumn>() {
-        public ResultSet createResultSet(DynamicContent<DBColumn> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            return metadataInterface.loadColumns(dataset.getSchema().getName(), dataset.getName(), connection);
-        }
+                    public ResultSet createResultSet(DynamicContent<DBConstraint> dynamicContent, DBNConnection connection) throws SQLException {
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                        return metadataInterface.loadConstraints(dataset.getSchema().getName(), dataset.getName(), connection);
+                    }
 
-        public DBColumn createElement(DynamicContent<DBColumn> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParentElement();
-            return new DBColumnImpl(dataset, resultSet);
-        }
-    };
+                    public DBConstraint createElement(DynamicContent<DBConstraint> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                        DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParentElement();
+                        return new DBConstraintImpl(dataset, resultSet);
+                    }
+                };
 
-    private static final DynamicSubcontentLoader<DBConstraint> CONSTRAINTS_LOADER = new DynamicSubcontentLoader<DBConstraint>(true) {
-        public boolean match(DBConstraint constraint, DynamicContent dynamicContent) {
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            DBDataset constraintDataset = constraint.getDataset();
-            return constraintDataset != null && constraintDataset.equals(dataset);
-        }
+            }
+        };
 
-        public DynamicContentLoader<DBConstraint> getAlternativeLoader() {
-            return CONSTRAINTS_ALTERNATIVE_LOADER;
-        }
-    };
+        new DynamicSubcontentLoader<DBDatasetTrigger>(DATASET, DATASET_TRIGGER, true) {
 
-    private static final DynamicContentLoader<DBConstraint> CONSTRAINTS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBConstraint>() {
-        public ResultSet createResultSet(DynamicContent<DBConstraint> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            return metadataInterface.loadConstraints(dataset.getSchema().getName(), dataset.getName(), connection);
-        }
+            public boolean match(DBDatasetTrigger trigger, DynamicContent dynamicContent) {
+                DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                return trigger.getDataset().equals(dataset);
+            }
 
-        public DBConstraint createElement(DynamicContent<DBConstraint> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParentElement();
-            return new DBConstraintImpl(dataset, resultSet);
-        }
-    };
+            public DynamicContentLoader<DBDatasetTrigger> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBDatasetTrigger>(DATASET, DATASET_TRIGGER, false) {
 
-    private static final DynamicSubcontentLoader TRIGGERS_LOADER = new DynamicSubcontentLoader<DBDatasetTrigger>(true) {
-        public boolean match(DBDatasetTrigger trigger, DynamicContent dynamicContent) {
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            return trigger.getDataset().equals(dataset);
-        }
+                    public ResultSet createResultSet(DynamicContent<DBDatasetTrigger> dynamicContent, DBNConnection connection) throws SQLException {
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                        return metadataInterface.loadDatasetTriggers(dataset.getSchema().getName(), dataset.getName(), connection);
+                    }
 
-        public DynamicContentLoader<DBDatasetTrigger> getAlternativeLoader() {
-            return TRIGGERS_ALTERNATIVE_LOADER;
-        }
-    };
+                    public DBDatasetTrigger createElement(DynamicContent<DBDatasetTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                        return new DBDatasetTriggerImpl(dataset, resultSet);
+                    }
+                };
+            }
+        };
 
-    private static final DynamicContentLoader<DBDatasetTrigger> TRIGGERS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBDatasetTrigger>() {
-        public ResultSet createResultSet(DynamicContent<DBDatasetTrigger> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            return metadataInterface.loadDatasetTriggers(dataset.getSchema().getName(), dataset.getName(), connection);
-        }
+        new DynamicSubcontentLoader<DBIndex>(DATASET, INDEX, true) {
 
-        public DBDatasetTrigger createElement(DynamicContent<DBDatasetTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            return new DBDatasetTriggerImpl(dataset, resultSet);
-        }
-    };
+            public boolean match(DBIndex index, DynamicContent dynamicContent) {
+                DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                DBDataset indexDataset = index.getDataset();
+                return indexDataset != null && indexDataset.equals(dataset);
+            }
 
-    protected static final DynamicSubcontentLoader INDEXES_LOADER = new DynamicSubcontentLoader<DBIndex>(true) {
-        public boolean match(DBIndex index, DynamicContent dynamicContent) {
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            DBDataset indexDataset = index.getDataset();
-            return indexDataset != null && indexDataset.equals(dataset);
-        }
+            public DynamicContentLoader<DBIndex> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBIndex>(DATASET, INDEX, false) {
 
-        public DynamicContentLoader<DBIndex> getAlternativeLoader() {
-            return INDEXES_ALTERNATIVE_LOADER;
-        }
-    };
+                    public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                        return metadataInterface.loadIndexes(dataset.getSchema().getName(), dataset.getName(), connection);
+                    }
 
-    private static final DynamicContentLoader<DBIndex> INDEXES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBIndex>() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            return metadataInterface.loadIndexes(dataset.getSchema().getName(), dataset.getName(), connection);
-        }
+                    public DBIndex createElement(DynamicContent<DBIndex> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                        return new DBIndexImpl(dataset, resultSet);
+                    }
+                };
+            }
+        };
 
-        public DBIndex createElement(DynamicContent<DBIndex> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-            return new DBIndexImpl(dataset, resultSet);
-        }
-    };
+        new DynamicSubcontentLoader(DATASET, INDEX_COLUMN, true) {
+            public boolean match(DynamicContentElement sourceElement, DynamicContent dynamicContent) {
+                DBIndexColumnRelation indexColumnRelation = (DBIndexColumnRelation) sourceElement;
+                DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                return indexColumnRelation.getColumn().getDataset().equals(dataset);
+            }
+
+            public DynamicContentLoader createAlternativeLoader() {
+                return new DynamicContentResultSetLoader(DATASET, INDEX_COLUMN, false) {
+
+                    public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                        return metadataInterface.loadIndexRelations(dataset.getSchema().getName(), dataset.getName(), connection);
+                    }
+
+                    public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                        String columnName = resultSet.getString("COLUMN_NAME");
+                        String indexName = resultSet.getString("INDEX_NAME");
+                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                        DBIndex index = dataset.getIndex(indexName);
+                        DBColumn column = dataset.getColumn(columnName);
+
+                        if (column != null && index != null) {
+                            return new DBIndexColumnRelation(index, column);
+                        }
+                        return null;
+                    }
+
+                };
+
+            }
+        };
+
+        new DynamicSubcontentLoader(DATASET, CONSTRAINT_COLUMN, true) {
+
+            public boolean match(DynamicContentElement sourceElement, DynamicContent dynamicContent) {
+                DBConstraintColumnRelation constraintColumnRelation = (DBConstraintColumnRelation) sourceElement;
+                DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                return constraintColumnRelation.getColumn().getDataset() == dataset;
+            }
+
+            public DynamicContentLoader createAlternativeLoader() {
+                return new DynamicContentResultSetLoader(DATASET, CONSTRAINT_COLUMN, false) {
+
+                    public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                        return metadataInterface.loadConstraintRelations(dataset.getSchema().getName(), dataset.getName(), connection);
+                    }
+
+                    public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                        String columnName = resultSet.getString("COLUMN_NAME");
+                        String constraintName = resultSet.getString("CONSTRAINT_NAME");
+                        int position = resultSet.getInt("POSITION");
+
+                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                        DBColumn column = dataset.getColumn(columnName);
+                        DBConstraint constraint = dataset.getConstraint(constraintName);
+
+                        if (column != null && constraint != null) {
+                            return new DBConstraintColumnRelation(constraint, column, position);
+                        }
+                        return null;
+                    }
+                };
+            }
+
+        };
+    }
 }

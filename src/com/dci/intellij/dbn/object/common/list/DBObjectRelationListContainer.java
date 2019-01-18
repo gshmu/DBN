@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.object.common.list;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.Compactable;
@@ -60,12 +59,10 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
     public DBObjectRelationList createObjectRelationList(
             DBObjectRelationType type,
             GenericDatabaseElement parent,
-            String name,
-            DynamicContentLoader loader,
-            DBObjectList ... sourceContents) {
+            DBObjectList... sourceContents) {
         if (isSupported(type)) {
             ContentDependencyAdapter dependencyAdapter = new MultipleContentDependencyAdapter(sourceContents);
-            return createObjectRelationList(type, parent, name, loader, dependencyAdapter);
+            return createObjectRelationList(type, parent, dependencyAdapter);
         }
         return null;
     }
@@ -73,12 +70,10 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
     public DBObjectRelationList createSubcontentObjectRelationList(
             DBObjectRelationType relationType,
             GenericDatabaseElement parent,
-            String name,
-            DynamicContentLoader loader,
             DBObject sourceContentObject) {
         if (isSupported(relationType)) {
             ContentDependencyAdapter dependencyAdapter = new SubcontentDependencyAdapterImpl(sourceContentObject, relationType);
-            return createObjectRelationList(relationType, parent, name, loader, dependencyAdapter);
+            return createObjectRelationList(relationType, parent, dependencyAdapter);
         }
         return null;
     }
@@ -87,12 +82,10 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
     private DBObjectRelationList createObjectRelationList(
             DBObjectRelationType type,
             GenericDatabaseElement parent,
-            String name,
-            DynamicContentLoader loader,
             ContentDependencyAdapter dependencyAdapter) {
         if (isSupported(type)) {
-            DBObjectRelationList objectRelationList = new DBObjectRelationListImpl(type, parent, name, loader, dependencyAdapter);
-            if (objectRelationLists == null) objectRelationLists = new ArrayList<DBObjectRelationList>();
+            DBObjectRelationList objectRelationList = new DBObjectRelationListImpl(type, parent, dependencyAdapter);
+            if (objectRelationLists == null) objectRelationLists = new ArrayList<>();
             objectRelationLists.add(objectRelationList);
             return objectRelationList;
         }

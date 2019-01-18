@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -21,7 +20,6 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
-import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -46,6 +44,9 @@ import java.util.Set;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.CONSTRAINT_COLUMN;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
@@ -81,46 +82,42 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         DBObjectListContainer ol = initChildObjects();
         DBObjectRelationListContainer orl = initChildObjectRelations();
 
-        tables = ol.createObjectList(DBObjectType.TABLE, this, TABLES_LOADER, INDEXED);
-        views = ol.createObjectList(DBObjectType.VIEW, this, VIEWS_LOADER, INDEXED);
-        materializedViews = ol.createObjectList(DBObjectType.MATERIALIZED_VIEW, this, MATERIALIZED_VIEWS_LOADER, INDEXED);
-        synonyms = ol.createObjectList(DBObjectType.SYNONYM, this, SYNONYMS_LOADER, INDEXED);
-        sequences = ol.createObjectList(DBObjectType.SEQUENCE, this, SEQUENCES_LOADER, INDEXED);
-        procedures = ol.createObjectList(DBObjectType.PROCEDURE, this, PROCEDURES_LOADER, INDEXED);
-        functions = ol.createObjectList(DBObjectType.FUNCTION, this, FUNCTIONS_LOADER, INDEXED);
-        packages = ol.createObjectList(DBObjectType.PACKAGE, this, PACKAGES_LOADER, INDEXED);
-        types = ol.createObjectList(DBObjectType.TYPE, this, TYPES_LOADER, INDEXED);
-        databaseTriggers = ol.createObjectList(DBObjectType.DATABASE_TRIGGER, this, DATABASE_TRIGGERS_LOADER, INDEXED);
-        dimensions = ol.createObjectList(DBObjectType.DIMENSION, this, DIMENSIONS_LOADER, INDEXED);
-        clusters = ol.createObjectList(DBObjectType.CLUSTER, this, CLUSTERS_LOADER, INDEXED);
-        databaseLinks = ol.createObjectList(DBObjectType.DBLINK, this, DATABASE_LINKS_LOADER, INDEXED);
+        tables = ol.createObjectList(TABLE, this, INDEXED);
+        views = ol.createObjectList(VIEW, this, INDEXED);
+        materializedViews = ol.createObjectList(MATERIALIZED_VIEW, this, INDEXED);
+        synonyms = ol.createObjectList(SYNONYM, this, INDEXED);
+        sequences = ol.createObjectList(SEQUENCE, this, INDEXED);
+        procedures = ol.createObjectList(PROCEDURE, this, INDEXED);
+        functions = ol.createObjectList(FUNCTION, this, INDEXED);
+        packages = ol.createObjectList(PACKAGE, this, INDEXED);
+        types = ol.createObjectList(TYPE, this, INDEXED);
+        databaseTriggers = ol.createObjectList(DATABASE_TRIGGER, this, INDEXED);
+        dimensions = ol.createObjectList(DIMENSION, this, INDEXED);
+        clusters = ol.createObjectList(CLUSTER, this, INDEXED);
+        databaseLinks = ol.createObjectList(DBLINK, this, INDEXED);
 
-        DBObjectList constraints = ol.createObjectList(DBObjectType.CONSTRAINT, this, CONSTRAINTS_LOADER, INDEXED, INTERNAL);
-        DBObjectList indexes = ol.createObjectList(DBObjectType.INDEX, this, INDEXES_LOADER, INDEXED, INTERNAL);
-        DBObjectList columns = ol.createObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, INTERNAL);
-        ol.createObjectList(DBObjectType.DATASET_TRIGGER, this, DATASET_TRIGGERS_LOADER, INDEXED, INTERNAL);
-        ol.createObjectList(DBObjectType.NESTED_TABLE, this, ALL_NESTED_TABLES_LOADER, INDEXED, INTERNAL);
-        ol.createObjectList(DBObjectType.PACKAGE_FUNCTION, this, ALL_PACKAGE_FUNCTIONS_LOADER, INTERNAL);
-        ol.createObjectList(DBObjectType.PACKAGE_PROCEDURE, this, ALL_PACKAGE_PROCEDURES_LOADER, INTERNAL);
-        ol.createObjectList(DBObjectType.PACKAGE_TYPE, this, ALL_PACKAGE_TYPES_LOADER, INTERNAL);
-        ol.createObjectList(DBObjectType.TYPE_ATTRIBUTE, this, ALL_TYPE_ATTRIBUTES_LOADER, INTERNAL);
-        ol.createObjectList(DBObjectType.TYPE_FUNCTION, this, ALL_TYPE_FUNCTIONS_LOADER, INTERNAL);
-        ol.createObjectList(DBObjectType.TYPE_PROCEDURE, this, ALL_TYPE_PROCEDURES_LOADER, INTERNAL);
-        ol.createObjectList(DBObjectType.ARGUMENT, this, ALL_ARGUMENTS_LOADER, INTERNAL);
+        DBObjectList constraints = ol.createObjectList(CONSTRAINT, this, INDEXED, INTERNAL);
+        DBObjectList indexes = ol.createObjectList(INDEX, this, INDEXED, INTERNAL);
+        DBObjectList columns = ol.createObjectList(COLUMN, this, INTERNAL);
+        ol.createObjectList(DATASET_TRIGGER, this, INDEXED, INTERNAL);
+        ol.createObjectList(NESTED_TABLE, this, INDEXED, INTERNAL);
+        ol.createObjectList(PACKAGE_FUNCTION, this, INTERNAL);
+        ol.createObjectList(PACKAGE_PROCEDURE, this, INTERNAL);
+        ol.createObjectList(PACKAGE_TYPE, this, INTERNAL);
+        ol.createObjectList(TYPE_ATTRIBUTE, this, INTERNAL);
+        ol.createObjectList(TYPE_FUNCTION, this, INTERNAL);
+        ol.createObjectList(TYPE_PROCEDURE, this, INTERNAL);
+        ol.createObjectList(ARGUMENT, this, INTERNAL);
 
         //ol.createHiddenObjectList(DBObjectType.TYPE_METHOD, this, TYPE_METHODS_LOADER);
 
         orl.createObjectRelationList(
-                DBObjectRelationType.CONSTRAINT_COLUMN, this,
-                "Constraint relations",
-                CONSTRAINT_COLUMN_RELATION_LOADER,
+                CONSTRAINT_COLUMN, this,
                 constraints,
                 columns);
 
         orl.createObjectRelationList(
-                DBObjectRelationType.INDEX_COLUMN, this,
-                "Index relations",
-                INDEX_COLUMN_RELATION_LOADER,
+                INDEX_COLUMN, this,
                 indexes,
                 columns);
     }
@@ -135,7 +132,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     public DBObjectType getObjectType() {
-        return DBObjectType.SCHEMA;
+        return SCHEMA;
     }
 
     public boolean isPublicSchema() {
@@ -164,8 +161,8 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     public DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden) {
         if (objectType.isSchemaObject()) {
             DBObject object = super.getChildObject(objectType, name, overload, lookupHidden);
-            if (object == null && objectType != DBObjectType.SYNONYM) {
-                DBSynonym synonym = (DBSynonym) super.getChildObject(DBObjectType.SYNONYM, name, overload, lookupHidden);
+            if (object == null && objectType != SYNONYM) {
+                DBSynonym synonym = (DBSynonym) super.getChildObject(SYNONYM, name, overload, lookupHidden);
                 if (synonym != null) {
                     DBObject underlyingObject = synonym.getUnderlyingObject();
                     if (underlyingObject != null && underlyingObject.isOfType(objectType)) {
@@ -183,7 +180,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     protected List<DBObjectNavigationList> createNavigationLists() {
         DBUser user = getOwner();
         if (user != null) {
-            List<DBObjectNavigationList> objectNavigationLists = new ArrayList<DBObjectNavigationList>();
+            List<DBObjectNavigationList> objectNavigationLists = new ArrayList<>();
             objectNavigationLists.add(new DBObjectNavigationListImpl("User", user));
             return objectNavigationLists;
         }
@@ -216,7 +213,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     public List<DBIndex> getIndexes() {
-        return (List<DBIndex>) initChildObjects().getObjects(DBObjectType.INDEX, true);
+        return (List<DBIndex>) initChildObjects().getObjects(INDEX, true);
     }
 
     public List<DBSynonym> getSynonyms() {
@@ -240,11 +237,11 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     public List<DBDatasetTrigger> getDatasetTriggers() {
-        return (List<DBDatasetTrigger>) initChildObjects().getObjects(DBObjectType.DATASET_TRIGGER, true);
+        return (List<DBDatasetTrigger>) initChildObjects().getObjects(DATASET_TRIGGER, true);
     }
 
     public List<DBDatabaseTrigger> getDatabaseTriggers() {
-        return (List<DBDatabaseTrigger>) initChildObjects().getObjects(DBObjectType.DATABASE_TRIGGER, false);
+        return (List<DBDatabaseTrigger>) initChildObjects().getObjects(DATABASE_TRIGGER, false);
     }
 
     public List<DBType> getTypes() {
@@ -277,7 +274,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     public DBIndex getIndex(String name) {
-        return (DBIndex) initChildObjects().getObjectList(DBObjectType.INDEX).getObject(name);
+        return (DBIndex) initChildObjects().getObjectList(INDEX).getObject(name);
     }
 
     public DBCluster getCluster(String name) {
@@ -301,7 +298,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         DBDataset dataset = getTable(name);
         if (dataset == null) {
             dataset = getView(name);
-            if (dataset == null && DatabaseCompatibilityInterface.getInstance(this).supportsObjectType(DBObjectType.MATERIALIZED_VIEW.getTypeId())) {
+            if (dataset == null && DatabaseCompatibilityInterface.getInstance(this).supportsObjectType(MATERIALIZED_VIEW.getTypeId())) {
                 dataset = getMaterializedView(name);
             }
         }
@@ -314,7 +311,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     @Nullable
     private <T extends DBSchemaObject> T getObjectFallbackOnSynonym(DBObjectList<T> objects, String name) {
         T object = objects.getObject(name);
-        if (object == null && DatabaseCompatibilityInterface.getInstance(this).supportsObjectType(DBObjectType.SYNONYM.getTypeId())) {
+        if (object == null && DatabaseCompatibilityInterface.getInstance(this).supportsObjectType(SYNONYM.getTypeId())) {
             DBSynonym synonym = synonyms.getObject(name);
             if (synonym != null) {
                 DBObject underlyingObject = synonym.getUnderlyingObject();
@@ -361,9 +358,9 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
             DBMethod method = getProcedure(name, overload);
             if (method == null) method = getFunction(name, overload);
             return method;
-        } else if (methodType == DBObjectType.PROCEDURE) {
+        } else if (methodType == PROCEDURE) {
             return getProcedure(name, overload);
-        } else if (methodType == DBObjectType.FUNCTION) {
+        } else if (methodType == FUNCTION) {
             return getFunction(name, overload);
         }
         return null;
@@ -523,20 +520,436 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     /*********************************************************
-     *                      Relation builders                *
+     *                         Loaders                       *
      *********************************************************/
-    private static final DynamicContentLoader CONSTRAINT_COLUMN_RELATION_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllConstraintRelations(schema.getName(), connection);
-        }
+    static {
+        new DynamicContentResultSetLoader<DBTable>(SCHEMA, TABLE) {
+            public ResultSet createResultSet(DynamicContent<DBTable> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadTables(schema.getName(), connection);
+            }
 
-        public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String datasetName = resultSet.getString("DATASET_NAME");
-            String columnName = resultSet.getString("COLUMN_NAME");
-            String constraintName = resultSet.getString("CONSTRAINT_NAME");
-            int position = resultSet.getInt("POSITION");
+            public DBTable createElement(DynamicContent<DBTable> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBTableImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBView>(SCHEMA, VIEW){
+            public ResultSet createResultSet(DynamicContent<DBView> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadViews(schema.getName(), connection);
+            }
+
+            public DBView createElement(DynamicContent<DBView> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBViewImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBMaterializedView>(SCHEMA, MATERIALIZED_VIEW){
+            public ResultSet createResultSet(DynamicContent<DBMaterializedView> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadMaterializedViews(schema.getName(), connection);
+            }
+
+            public DBMaterializedView createElement(DynamicContent<DBMaterializedView> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBMaterializedViewImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBSynonym>(SCHEMA, SYNONYM) {
+            public ResultSet createResultSet(DynamicContent<DBSynonym> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadSynonyms(schema.getName(), connection);
+            }
+
+            public DBSynonym createElement(DynamicContent<DBSynonym> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBSynonymImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBSequence>(SCHEMA, SEQUENCE) {
+            public ResultSet createResultSet(DynamicContent<DBSequence> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadSequences(schema.getName(), connection);
+            }
+
+            public DBSequence createElement(DynamicContent<DBSequence> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBSequenceImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBProcedure>(SCHEMA, PROCEDURE) {
+            public ResultSet createResultSet(DynamicContent<DBProcedure> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadProcedures(schema.getName(), connection);
+            }
+
+            public DBProcedure createElement(DynamicContent<DBProcedure> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBProcedureImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBFunction>(SCHEMA, FUNCTION) {
+            public ResultSet createResultSet(DynamicContent<DBFunction> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadFunctions(schema.getName(), connection);
+            }
+            public DBFunction createElement(DynamicContent<DBFunction> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBFunctionImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBPackage>(SCHEMA, PACKAGE) {
+            public ResultSet createResultSet(DynamicContent<DBPackage> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadPackages(schema.getName(), connection);
+            }
+
+            public DBPackage createElement(DynamicContent<DBPackage> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBPackageImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBType>(SCHEMA, TYPE) {
+            public ResultSet createResultSet(DynamicContent<DBType> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadTypes(schema.getName(), connection);
+            }
+
+            public DBType createElement(DynamicContent<DBType> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBTypeImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBDatabaseTrigger>(SCHEMA, DATABASE_TRIGGER) {
+            public ResultSet createResultSet(DynamicContent<DBDatabaseTrigger> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadDatabaseTriggers(schema.getName(), connection);
+            }
+
+            public DBDatabaseTrigger createElement(DynamicContent<DBDatabaseTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBDatabaseTriggerImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBDimension>(SCHEMA, DIMENSION) {
+            public ResultSet createResultSet(DynamicContent<DBDimension> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadDimensions(schema.getName(), connection);
+            }
+
+            public DBDimension createElement(DynamicContent<DBDimension> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBDimensionImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBCluster>(SCHEMA, CLUSTER) {
+            public ResultSet createResultSet(DynamicContent<DBCluster> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadClusters(schema.getName(), connection);
+            }
+
+            public DBCluster createElement(DynamicContent<DBCluster> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBClusterImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBDatabaseLink>(SCHEMA, DBLINK) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadDatabaseLinks(schema.getName(), connection);
+            }
+
+            public DBDatabaseLink createElement(DynamicContent<DBDatabaseLink> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return new DBDatabaseLinkImpl(schema, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBColumn>(SCHEMA, COLUMN) {
+            public ResultSet createResultSet(DynamicContent<DBColumn> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllColumns(schema.getName(), connection);
+            }
+
+            public DBColumn createElement(DynamicContent<DBColumn> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String datasetName = resultSet.getString("DATASET_NAME");
+
+                DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
+                if (dataset == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    dataset = schema.getDataset(datasetName);
+                    loaderCache.setObject(datasetName, dataset);
+                }
+
+                // dataset may be null if cluster column!!
+                return dataset == null ? null : new DBColumnImpl(dataset, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBConstraint>(SCHEMA, CONSTRAINT) {
+            public ResultSet createResultSet(DynamicContent<DBConstraint> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllConstraints(schema.getName(), connection);
+            }
+
+            public DBConstraint createElement(DynamicContent<DBConstraint> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String datasetName = resultSet.getString("DATASET_NAME");
+
+                DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
+                if (dataset == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    dataset = schema.getDataset(datasetName);
+                    loaderCache.setObject(datasetName, dataset);
+                }
+
+                return dataset == null ? null : new DBConstraintImpl(dataset, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBIndex>(SCHEMA, INDEX) {
+            public ResultSet createResultSet(DynamicContent<DBIndex> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllIndexes(schema.getName(), connection);
+            }
+
+            public DBIndex createElement(DynamicContent<DBIndex> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String datasetName = resultSet.getString("TABLE_NAME");
+
+                DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
+                if (dataset == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    dataset = schema.getDataset(datasetName);
+                    loaderCache.setObject(datasetName, dataset);
+                }
+
+                return dataset == null ? null : new DBIndexImpl(dataset, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBDatasetTrigger>(SCHEMA, DATASET_TRIGGER) {
+            public ResultSet createResultSet(DynamicContent<DBDatasetTrigger> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllDatasetTriggers(schema.getName(), connection);
+            }
+
+            public DBDatasetTrigger createElement(DynamicContent<DBDatasetTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String datasetName = resultSet.getString("DATASET_NAME");
+                DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
+                if (dataset == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    dataset = schema.getDataset(datasetName);
+                    loaderCache.setObject(datasetName, dataset);
+                }
+                return dataset == null ? null : new DBDatasetTriggerImpl(dataset, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBNestedTable>(SCHEMA, NESTED_TABLE) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllNestedTables(schema.getName(), connection);
+            }
+
+            public DBNestedTable createElement(DynamicContent<DBNestedTable> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String tableName = resultSet.getString("TABLE_NAME");
+                DBTable table = (DBTable) loaderCache.getObject(tableName);
+                if (table == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    table = schema.getTable(tableName);
+                    loaderCache.setObject(tableName, table);
+                }
+                return table == null ? null : new DBNestedTableImpl(table, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBPackageFunction>(SCHEMA, PACKAGE_FUNCTION) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllPackageFunctions(schema.getName(), connection);
+            }
+
+            public DBPackageFunction createElement(DynamicContent<DBPackageFunction> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String packageName = resultSet.getString("PACKAGE_NAME");
+                DBPackage packagee = (DBPackage) loaderCache.getObject(packageName);
+                if (packagee == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    packagee = schema.getPackage(packageName);
+                    loaderCache.setObject(packageName, packagee);
+                }
+                return packagee == null ? null : new DBPackageFunctionImpl(packagee, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBPackageProcedure>(SCHEMA, PACKAGE_PROCEDURE) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllPackageProcedures(schema.getName(), connection);
+            }
+
+            public DBPackageProcedure createElement(DynamicContent<DBPackageProcedure> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String packageName = resultSet.getString("PACKAGE_NAME");
+                DBPackage packagee = (DBPackage) loaderCache.getObject(packageName);
+                if (packagee == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    packagee = schema.getPackage(packageName);
+                    loaderCache.setObject(packageName, packagee);
+                }
+                return packagee == null ? null : new DBPackageProcedureImpl(packagee, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBPackageType>(SCHEMA, PACKAGE_TYPE) {
+            public ResultSet createResultSet(DynamicContent<DBPackageType> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllPackageTypes(schema.getName(), connection);
+            }
+
+            public DBPackageType createElement(DynamicContent<DBPackageType> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String packageName = resultSet.getString("PACKAGE_NAME");
+                DBPackage packagee = (DBPackage) loaderCache.getObject(packageName);
+                if (packagee == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    packagee = schema.getPackage(packageName);
+                    loaderCache.setObject(packageName, packagee);
+                }
+                return packagee == null ? null : new DBPackageTypeImpl(packagee, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBTypeAttribute>(SCHEMA, TYPE_ATTRIBUTE) {
+            public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllTypeAttributes(schema.getName(), connection);
+            }
+
+            public DBTypeAttribute createElement(DynamicContent<DBTypeAttribute> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String typeName = resultSet.getString("TYPE_NAME");
+                DBType type = (DBType) loaderCache.getObject(typeName);
+                if (type == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    type = schema.getType(typeName);
+                    loaderCache.setObject(typeName, type);
+                }
+                return type == null ? null : new DBTypeAttributeImpl(type, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBTypeFunction>(SCHEMA, TYPE_FUNCTION) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllTypeFunctions(schema.getName(), connection);
+            }
+
+            public DBTypeFunction createElement(DynamicContent<DBTypeFunction> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String typeName = resultSet.getString("TYPE_NAME");
+                DBType type = (DBType) loaderCache.getObject(typeName);
+                if (type == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    type = schema.getType(typeName);
+                    loaderCache.setObject(typeName, type);
+                }
+                return type == null ?  null : new DBTypeFunctionImpl(type, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBTypeProcedure>(SCHEMA, TYPE_PROCEDURE) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllTypeProcedures(schema.getName(), connection);
+            }
+
+            public DBTypeProcedure createElement(DynamicContent<DBTypeProcedure> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String typeName = resultSet.getString("TYPE_NAME");
+                DBType type = (DBType) loaderCache.getObject(typeName);
+                if (type == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    type = schema.getType(typeName);
+                    loaderCache.setObject(typeName, type);
+                }
+                return type == null ? null : new DBTypeProcedureImpl(type, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader<DBArgument>(SCHEMA, ARGUMENT) {
+            public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllMethodArguments(schema.getName(), connection);
+            }
+
+            public DBArgument createElement(DynamicContent<DBArgument> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String programName = resultSet.getString("PROGRAM_NAME");
+                String methodName = resultSet.getString("METHOD_NAME");
+                String methodType = resultSet.getString("METHOD_TYPE");
+                int overload = resultSet.getInt("OVERLOAD");
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                DBProgram program = programName == null ? null : schema.getProgram(programName);
+
+                String cacheKey = methodName + methodType + overload;
+                DBMethod method = (DBMethod) loaderCache.getObject(cacheKey);
+                DBObjectType objectType = get(methodType);
+
+                if (method == null || method.getProgram() != program || method.getOverload() != overload) {
+                    if (programName == null) {
+                        method = schema.getMethod(methodName, objectType, overload);
+                    } else {
+                        method = program == null ? null : program.getMethod(methodName, overload);
+                    }
+                    loaderCache.setObject(cacheKey, method);
+                }
+                return method == null ? null : new DBArgumentImpl(method, resultSet);
+            }
+        };
+
+        new DynamicContentResultSetLoader(SCHEMA, CONSTRAINT_COLUMN) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllConstraintRelations(schema.getName(), connection);
+            }
+
+            public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String datasetName = resultSet.getString("DATASET_NAME");
+                String columnName = resultSet.getString("COLUMN_NAME");
+                String constraintName = resultSet.getString("CONSTRAINT_NAME");
+                int position = resultSet.getInt("POSITION");
 
 /*
             DBSchema schema = (DBSchema) dynamicContent.getParent();
@@ -552,36 +965,36 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 }
             }
 */
-            DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
-            if (dataset == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                dataset = schema.getDataset(datasetName);
-                loaderCache.setObject(datasetName, dataset);
-            }
-
-            if (dataset != null) {
-                DBConstraint constraint = dataset.getConstraint(constraintName);
-                DBColumn column = dataset.getColumn(columnName);
-                if (column != null && constraint != null) {
-                    return new DBConstraintColumnRelation(constraint, column, position);
+                DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
+                if (dataset == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    dataset = schema.getDataset(datasetName);
+                    loaderCache.setObject(datasetName, dataset);
                 }
+
+                if (dataset != null) {
+                    DBConstraint constraint = dataset.getConstraint(constraintName);
+                    DBColumn column = dataset.getColumn(columnName);
+                    if (column != null && constraint != null) {
+                        return new DBConstraintColumnRelation(constraint, column, position);
+                    }
+                }
+
+                return null;
+            }
+        };
+
+        new DynamicContentResultSetLoader(SCHEMA, INDEX_COLUMN) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                return metadataInterface.loadAllIndexRelations(schema.getName(), connection);
             }
 
-            return null;
-        }
-    };
-
-    private static final DynamicContentLoader INDEX_COLUMN_RELATION_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllIndexRelations(schema.getName(), connection);
-        }
-
-        public DBObjectRelation createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String datasetName = resultSet.getString("TABLE_NAME");
-            String columnName = resultSet.getString("COLUMN_NAME");
-            String indexName = resultSet.getString("INDEX_NAME");
+            public DBObjectRelation createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String datasetName = resultSet.getString("TABLE_NAME");
+                String columnName = resultSet.getString("COLUMN_NAME");
+                String indexName = resultSet.getString("INDEX_NAME");
 
             /*DBSchema schema = (DBSchema) dynamicContent.getParent();
             DBObjectList<DBIndex> indexes = schema.getObjectLists().getObjectList(DBObjectType.INDEX);
@@ -596,445 +1009,23 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 }
             }*/
 
-            DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
-            if (dataset == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                dataset = schema.getDataset(datasetName);
-                loaderCache.setObject(datasetName, dataset);
-            }
-
-            if (dataset != null) {
-                DBIndex index = dataset.getIndex(indexName);
-                DBColumn column = dataset.getColumn(columnName);
-
-                if (column != null && index != null) {
-                    return new DBIndexColumnRelation(index, column);
+                DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
+                if (dataset == null) {
+                    DBSchema schema = (DBSchema) dynamicContent.getParentElement();
+                    dataset = schema.getDataset(datasetName);
+                    loaderCache.setObject(datasetName, dataset);
                 }
+
+                if (dataset != null) {
+                    DBIndex index = dataset.getIndex(indexName);
+                    DBColumn column = dataset.getColumn(columnName);
+
+                    if (column != null && index != null) {
+                        return new DBIndexColumnRelation(index, column);
+                    }
+                }
+                return null;
             }
-            return null;
-        }
-    };
-
-    /*********************************************************
-     *                         Loaders                       *
-     *********************************************************/
-
-    private static final DynamicContentLoader TABLES_LOADER = new DynamicContentResultSetLoader<DBTable>() {
-        public ResultSet createResultSet(DynamicContent<DBTable> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadTables(schema.getName(), connection);
-        }
-
-        public DBTable createElement(DynamicContent<DBTable> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBTableImpl(schema, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader VIEWS_LOADER = new DynamicContentResultSetLoader<DBView>(){
-        public ResultSet createResultSet(DynamicContent<DBView> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadViews(schema.getName(), connection);
-        }
-
-        public DBView createElement(DynamicContent<DBView> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBViewImpl(schema, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader MATERIALIZED_VIEWS_LOADER = new DynamicContentResultSetLoader<DBMaterializedView>(){
-        public ResultSet createResultSet(DynamicContent<DBMaterializedView> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadMaterializedViews(schema.getName(), connection);
-        }
-
-        public DBMaterializedView createElement(DynamicContent<DBMaterializedView> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBMaterializedViewImpl(schema, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader SYNONYMS_LOADER = new DynamicContentResultSetLoader<DBSynonym>() {
-        public ResultSet createResultSet(DynamicContent<DBSynonym> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadSynonyms(schema.getName(), connection);
-        }
-
-        public DBSynonym createElement(DynamicContent<DBSynonym> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBSynonymImpl(schema, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader SEQUENCES_LOADER = new DynamicContentResultSetLoader<DBSequence>() {
-        public ResultSet createResultSet(DynamicContent<DBSequence> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadSequences(schema.getName(), connection);
-        }
-
-        public DBSequence createElement(DynamicContent<DBSequence> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBSequenceImpl(schema, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader PROCEDURES_LOADER = new DynamicContentResultSetLoader<DBProcedure>() {
-        public ResultSet createResultSet(DynamicContent<DBProcedure> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadProcedures(schema.getName(), connection);
-        }
-
-        public DBProcedure createElement(DynamicContent<DBProcedure> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBProcedureImpl(schema, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader FUNCTIONS_LOADER = new  DynamicContentResultSetLoader<DBFunction>() {
-        public ResultSet createResultSet(DynamicContent<DBFunction> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadFunctions(schema.getName(), connection);
-        }
-        public DBFunction createElement(DynamicContent<DBFunction> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBFunctionImpl(schema, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader PACKAGES_LOADER = new  DynamicContentResultSetLoader<DBPackage>() {
-        public ResultSet createResultSet(DynamicContent<DBPackage> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadPackages(schema.getName(), connection);
-        }
-
-        public DBPackage createElement(DynamicContent<DBPackage> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBPackageImpl(schema, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader TYPES_LOADER = new  DynamicContentResultSetLoader<DBType>() {
-        public ResultSet createResultSet(DynamicContent<DBType> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadTypes(schema.getName(), connection);
-        }
-
-        public DBType createElement(DynamicContent<DBType> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBTypeImpl(schema, resultSet);
-        }
-    };
-
-
-    private static final DynamicContentLoader DATABASE_TRIGGERS_LOADER = new  DynamicContentResultSetLoader<DBDatabaseTrigger>() {
-        public ResultSet createResultSet(DynamicContent<DBDatabaseTrigger> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadDatabaseTriggers(schema.getName(), connection);
-        }
-
-        public DBDatabaseTrigger createElement(DynamicContent<DBDatabaseTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBDatabaseTriggerImpl(schema, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader DIMENSIONS_LOADER = new  DynamicContentResultSetLoader<DBDimension>() {
-        public ResultSet createResultSet(DynamicContent<DBDimension> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadDimensions(schema.getName(), connection);
-        }
-
-        public DBDimension createElement(DynamicContent<DBDimension> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBDimensionImpl(schema, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader CLUSTERS_LOADER = new  DynamicContentResultSetLoader<DBCluster>() {
-        public ResultSet createResultSet(DynamicContent<DBCluster> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadClusters(schema.getName(), connection);
-        }
-
-        public DBCluster createElement(DynamicContent<DBCluster> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBClusterImpl(schema, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader DATABASE_LINKS_LOADER = new  DynamicContentResultSetLoader<DBDatabaseLink>() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadDatabaseLinks(schema.getName(), connection);
-        }
-
-        public DBDatabaseLink createElement(DynamicContent<DBDatabaseLink> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return new DBDatabaseLinkImpl(schema, resultSet);
-        }
-    };
-
-
-    private static final DynamicContentLoader COLUMNS_LOADER = new  DynamicContentResultSetLoader<DBColumn>() {
-        public ResultSet createResultSet(DynamicContent<DBColumn> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllColumns(schema.getName(), connection);
-        }
-
-        public DBColumn createElement(DynamicContent<DBColumn> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String datasetName = resultSet.getString("DATASET_NAME");
-
-            DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
-            if (dataset == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                dataset = schema.getDataset(datasetName);
-                loaderCache.setObject(datasetName, dataset);
-            }
-
-            // dataset may be null if cluster column!!
-            return dataset == null ? null : new DBColumnImpl(dataset, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader CONSTRAINTS_LOADER = new  DynamicContentResultSetLoader<DBConstraint>() {
-        public ResultSet createResultSet(DynamicContent<DBConstraint> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllConstraints(schema.getName(), connection);
-        }
-
-        public DBConstraint createElement(DynamicContent<DBConstraint> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String datasetName = resultSet.getString("DATASET_NAME");
-
-            DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
-            if (dataset == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                dataset = schema.getDataset(datasetName);
-                loaderCache.setObject(datasetName, dataset);
-            }
-
-            return dataset == null ? null : new DBConstraintImpl(dataset, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader INDEXES_LOADER = new DynamicContentResultSetLoader<DBIndex>() {
-        public ResultSet createResultSet(DynamicContent<DBIndex> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllIndexes(schema.getName(), connection);
-        }
-
-        public DBIndex createElement(DynamicContent<DBIndex> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String datasetName = resultSet.getString("TABLE_NAME");
-
-            DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
-            if (dataset == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                dataset = schema.getDataset(datasetName);
-                loaderCache.setObject(datasetName, dataset);
-            }
-
-            return dataset == null ? null : new DBIndexImpl(dataset, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader DATASET_TRIGGERS_LOADER = new  DynamicContentResultSetLoader<DBDatasetTrigger>() {
-        public ResultSet createResultSet(DynamicContent<DBDatasetTrigger> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllDatasetTriggers(schema.getName(), connection);
-        }
-
-        public DBDatasetTrigger createElement(DynamicContent<DBDatasetTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String datasetName = resultSet.getString("DATASET_NAME");
-            DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
-            if (dataset == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                dataset = schema.getDataset(datasetName);
-                loaderCache.setObject(datasetName, dataset);
-            }
-            return dataset == null ? null : new DBDatasetTriggerImpl(dataset, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader ALL_NESTED_TABLES_LOADER = new  DynamicContentResultSetLoader<DBNestedTable>() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllNestedTables(schema.getName(), connection);
-        }
-
-        public DBNestedTable createElement(DynamicContent<DBNestedTable> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String tableName = resultSet.getString("TABLE_NAME");
-            DBTable table = (DBTable) loaderCache.getObject(tableName);
-            if (table == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                table = schema.getTable(tableName);
-                loaderCache.setObject(tableName, table);
-            }
-            return table == null ? null : new DBNestedTableImpl(table, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader ALL_PACKAGE_FUNCTIONS_LOADER = new DynamicContentResultSetLoader<DBPackageFunction>() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllPackageFunctions(schema.getName(), connection);
-        }
-
-        public DBPackageFunction createElement(DynamicContent<DBPackageFunction> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String packageName = resultSet.getString("PACKAGE_NAME");
-            DBPackage packagee = (DBPackage) loaderCache.getObject(packageName);
-            if (packagee == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                packagee = schema.getPackage(packageName);
-                loaderCache.setObject(packageName, packagee);
-            }
-            return packagee == null ? null : new DBPackageFunctionImpl(packagee, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader ALL_PACKAGE_PROCEDURES_LOADER = new DynamicContentResultSetLoader<DBPackageProcedure>() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllPackageProcedures(schema.getName(), connection);
-        }
-
-        public DBPackageProcedure createElement(DynamicContent<DBPackageProcedure> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String packageName = resultSet.getString("PACKAGE_NAME");
-            DBPackage packagee = (DBPackage) loaderCache.getObject(packageName);
-            if (packagee == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                packagee = schema.getPackage(packageName);
-                loaderCache.setObject(packageName, packagee);
-            }
-            return packagee == null ? null : new DBPackageProcedureImpl(packagee, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader ALL_PACKAGE_TYPES_LOADER = new DynamicContentResultSetLoader<DBPackageType>() {
-        public ResultSet createResultSet(DynamicContent<DBPackageType> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllPackageTypes(schema.getName(), connection);
-        }
-
-        public DBPackageType createElement(DynamicContent<DBPackageType> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String packageName = resultSet.getString("PACKAGE_NAME");
-            DBPackage packagee = (DBPackage) loaderCache.getObject(packageName);
-            if (packagee == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                packagee = schema.getPackage(packageName);
-                loaderCache.setObject(packageName, packagee);
-            }
-            return packagee == null ? null : new DBPackageTypeImpl(packagee, resultSet);
-        }
-    };
-
-
-
-    private static final DynamicContentLoader ALL_TYPE_ATTRIBUTES_LOADER = new DynamicContentResultSetLoader<DBTypeAttribute>() {
-        public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllTypeAttributes(schema.getName(), connection);
+        };
     }
-
-        public DBTypeAttribute createElement(DynamicContent<DBTypeAttribute> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String typeName = resultSet.getString("TYPE_NAME");
-            DBType type = (DBType) loaderCache.getObject(typeName);
-            if (type == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                type = schema.getType(typeName);
-                loaderCache.setObject(typeName, type);
-            }
-            return type == null ? null : new DBTypeAttributeImpl(type, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader ALL_TYPE_FUNCTIONS_LOADER = new DynamicContentResultSetLoader<DBTypeFunction>() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllTypeFunctions(schema.getName(), connection);
-        }
-
-        public DBTypeFunction createElement(DynamicContent<DBTypeFunction> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String typeName = resultSet.getString("TYPE_NAME");
-            DBType type = (DBType) loaderCache.getObject(typeName);
-            if (type == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                type = schema.getType(typeName);
-                loaderCache.setObject(typeName, type);
-            }
-            return type == null ?  null : new DBTypeFunctionImpl(type, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader ALL_TYPE_PROCEDURES_LOADER = new DynamicContentResultSetLoader<DBTypeProcedure>() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllTypeProcedures(schema.getName(), connection);
-        }
-
-        public DBTypeProcedure createElement(DynamicContent<DBTypeProcedure> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String typeName = resultSet.getString("TYPE_NAME");
-            DBType type = (DBType) loaderCache.getObject(typeName);
-            if (type == null) {
-                DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                type = schema.getType(typeName);
-                loaderCache.setObject(typeName, type);
-            }
-            return type == null ? null : new DBTypeProcedureImpl(type, resultSet);
-        }
-    };
-
-    private static final DynamicContentLoader ALL_ARGUMENTS_LOADER = new DynamicContentResultSetLoader<DBArgument>() {
-        public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            return metadataInterface.loadAllMethodArguments(schema.getName(), connection);
-        }
-
-        public DBArgument createElement(DynamicContent<DBArgument> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String programName = resultSet.getString("PROGRAM_NAME");
-            String methodName = resultSet.getString("METHOD_NAME");
-            String methodType = resultSet.getString("METHOD_TYPE");
-            int overload = resultSet.getInt("OVERLOAD");
-            DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-            DBProgram program = programName == null ? null : schema.getProgram(programName);
-
-            String cacheKey = methodName + methodType + overload;
-            DBMethod method = (DBMethod) loaderCache.getObject(cacheKey);
-            DBObjectType objectType = DBObjectType.get(methodType);
-
-            if (method == null || method.getProgram() != program || method.getOverload() != overload) {
-                if (programName == null) {
-                    method = schema.getMethod(methodName, objectType, overload);
-                } else {
-                    method = program == null ? null : program.getMethod(methodName, overload);
-                }
-                loaderCache.setObject(cacheKey, method);
-            }
-            return method == null ? null : new DBArgumentImpl(method, resultSet);
-        }
-    };
 }

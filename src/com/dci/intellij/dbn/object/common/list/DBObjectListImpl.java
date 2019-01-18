@@ -6,12 +6,12 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentImpl;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
+import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
@@ -22,7 +22,7 @@ import com.dci.intellij.dbn.navigation.psi.DBObjectListPsiDirectory;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.list.loader.DBObjectListLoaderRegistry;
+import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
@@ -53,21 +53,26 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     DBObjectListImpl(
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
-            @NotNull DynamicContentLoader<T> loader,
             ContentDependencyAdapter dependencyAdapter,
-            DynamicContentStatus ... statuses) {
+            DynamicContentStatus... statuses) {
         super(treeParent, dependencyAdapter, statuses);
         this.objectType = objectType;
         if (treeParent instanceof DBSchema && !isInternal()) {
             ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
             quickFilterManager.applyCachedFilter(this);
         }
-        DBObjectListLoaderRegistry.register(treeParent, objectType, loader);
+        //DBObjectListLoaderRegistry.register(treeParent, objectType, loader);
     }
 
     @Override
     public DynamicContentLoader<T> getLoader() {
-        return DBObjectListLoaderRegistry.get(getParent(), getObjectType());
+        BrowserTreeNode parent = getParent();
+        if (parent instanceof DBVirtualObject) {
+            return DynamicContentLoader.VOID_CONTENT_LOADER;
+        } else {
+            DynamicContentType parentContentType = parent.getDynamicContentType();
+            return DynamicContentLoaderImpl.resolve(parentContentType, objectType);
+        }
     }
 
     public boolean isInternal() {
@@ -224,11 +229,6 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             }
         }
         return psiDirectory;
-    }
-
-    @Nullable
-    public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
-        return null;
     }
 
     public void notifyChangeListeners() {

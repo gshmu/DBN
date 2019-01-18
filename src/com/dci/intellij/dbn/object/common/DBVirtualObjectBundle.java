@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -286,12 +284,6 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
 
     @Override
     public GenericDatabaseElement getUndisposedElement() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         return null;
     }
 

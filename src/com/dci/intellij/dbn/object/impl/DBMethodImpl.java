@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -28,6 +27,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
+import static com.dci.intellij.dbn.object.common.DBObjectType.ARGUMENT;
+import static com.dci.intellij.dbn.object.common.DBObjectType.METHOD;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMethod {
@@ -72,7 +73,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     protected void initLists() {
         super.initLists();
         DBObjectListContainer container = initChildObjects();
-        arguments = container.createSubcontentObjectList(DBObjectType.ARGUMENT, this, ARGUMENTS_LOADER, getSchema(), INDEXED);
+        arguments = container.createSubcontentObjectList(ARGUMENT, this, getSchema(), INDEXED);
     }
 
     @NotNull
@@ -160,46 +161,45 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-
-    private static final DynamicContentLoader<DBArgument> ARGUMENTS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBArgument>() {
-        public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBMethod method = (DBMethod) dynamicContent.getParentElement();
-            String ownerName = method.getSchema().getName();
-            int overload = method.getOverload();
-            DBProgram program = method.getProgram();
-            if (program == null) {
-                return metadataInterface.loadMethodArguments(
-                        ownerName,
-                        method.getName(),
-                        method.getMethodType(),
-                        overload,
-                        connection);
-            } else {
-                return metadataInterface.loadProgramMethodArguments(
-                        ownerName,
-                        program.getName(),
-                        method.getName(),
-                        overload,
-                        connection);
+    static {
+        new DynamicSubcontentLoader<DBArgument>(METHOD, ARGUMENT, true) {
+            public boolean match(DBArgument argument, DynamicContent dynamicContent) {
+                DBMethod method = (DBMethod) dynamicContent.getParentElement();
+                DBMethod argumentMethod = argument.getMethod();
+                return argumentMethod != null && argumentMethod.equals(method) && argument.getOverload() == method.getOverload();
             }
-        }
 
-        public DBArgument createElement(DynamicContent<DBArgument> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBMethod method = (DBMethod) dynamicContent.getParentElement();
-            return new DBArgumentImpl(method, resultSet);
-        }
-    };
+            public DynamicContentLoader<DBArgument> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBArgument>(METHOD, ARGUMENT, false) {
+                    public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DBMethod method = (DBMethod) dynamicContent.getParentElement();
+                        String ownerName = method.getSchema().getName();
+                        int overload = method.getOverload();
+                        DBProgram program = method.getProgram();
+                        if (program == null) {
+                            return metadataInterface.loadMethodArguments(
+                                    ownerName,
+                                    method.getName(),
+                                    method.getMethodType(),
+                                    overload,
+                                    connection);
+                        } else {
+                            return metadataInterface.loadProgramMethodArguments(
+                                    ownerName,
+                                    program.getName(),
+                                    method.getName(),
+                                    overload,
+                                    connection);
+                        }
+                    }
 
-    private static final DynamicSubcontentLoader<DBArgument> ARGUMENTS_LOADER = new DynamicSubcontentLoader<DBArgument>(true) {
-        public DynamicContentLoader<DBArgument> getAlternativeLoader() {
-            return ARGUMENTS_ALTERNATIVE_LOADER;
-        }
-
-        public boolean match(DBArgument argument, DynamicContent dynamicContent) {
-            DBMethod method = (DBMethod) dynamicContent.getParentElement();
-            DBMethod argumentMethod = argument.getMethod();
-            return argumentMethod != null && argumentMethod.equals(method) && argument.getOverload() == method.getOverload();
-        }
-    };
+                    public DBArgument createElement(DynamicContent<DBArgument> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                        DBMethod method = (DBMethod) dynamicContent.getParentElement();
+                        return new DBArgumentImpl(method, resultSet);
+                    }
+                };
+            }
+        };
+    }
 }

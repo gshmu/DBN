@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SESSION_USER;
 
 public class DBUserImpl extends DBObjectImpl implements DBUser {
@@ -62,13 +63,13 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     protected void initLists() {
         DBObjectListContainer childObjects = initChildObjects();
         DBObjectBundle sourceContentHolder = getConnectionHandler().getObjectBundle();
-        roles = childObjects.createSubcontentObjectList(DBObjectType.GRANTED_ROLE, this, ROLES_LOADER, sourceContentHolder, DBObjectRelationType.USER_ROLE, INDEXED);
-        privileges = childObjects.createSubcontentObjectList(DBObjectType.GRANTED_PRIVILEGE, this, PRIVILEGES_LOADER, sourceContentHolder, DBObjectRelationType.USER_PRIVILEGE, INDEXED);
+        roles = childObjects.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.USER_ROLE, INDEXED);
+        privileges = childObjects.createSubcontentObjectList(GRANTED_PRIVILEGE, this, sourceContentHolder, DBObjectRelationType.USER_PRIVILEGE, INDEXED);
     }
 
 
     public DBObjectType getObjectType() {
-        return DBObjectType.USER;
+        return USER;
     }
 
     public DBSchema getSchema() {
@@ -118,7 +119,7 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
             }
         }
         DatabaseCompatibilityInterface compatibilityInterface = getConnectionHandler().getInterfaceProvider().getCompatibilityInterface();
-        if (compatibilityInterface.supportsObjectType(DBObjectType.GRANTED_ROLE.getTypeId())) {
+        if (compatibilityInterface.supportsObjectType(GRANTED_ROLE.getTypeId())) {
             for (DBGrantedRole grantedRole : getRoles()) {
                 if (grantedRole.getRole().hasPrivilege(systemPrivilege)) {
                     return true;
@@ -175,6 +176,6 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-    private static final DynamicContentLoader ROLES_LOADER = new DBObjectListFromRelationListLoader();
-    private static final DynamicContentLoader PRIVILEGES_LOADER = new DBObjectListFromRelationListLoader();
+    private static final DynamicContentLoader ROLES_LOADER = DBObjectListFromRelationListLoader.create(USER, GRANTED_ROLE);
+    private static final DynamicContentLoader PRIVILEGES_LOADER = DBObjectListFromRelationListLoader.create(USER, GRANTED_PRIVILEGE);
 }

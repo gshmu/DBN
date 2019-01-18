@@ -3,9 +3,12 @@ package com.dci.intellij.dbn.common.content.loader;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
+import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
 import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +17,12 @@ import java.util.List;
  * This loader is to be used from building the elements of a dynamic content, based on a source content.
  * e.g. Constraints of a table are loaded from the complete list of constraints of a Schema.
  */
-public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> implements DynamicContentLoader<T> {
+public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> extends DynamicContentLoaderImpl<T> implements DynamicContentLoader<T> {
+    private DynamicContentLoader<T> alternativeLoader = createAlternativeLoader();
     private boolean optimized;
 
-    protected DynamicSubcontentLoader(boolean optimized) {
+    protected DynamicSubcontentLoader(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType, boolean optimized) {
+        super(parentContentType, contentType, true);
         this.optimized = optimized;
     }
 
@@ -64,7 +69,14 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> i
         }
     }
 
-    public abstract DynamicContentLoader<T> getAlternativeLoader();
+    public final DynamicContentLoader<T> getAlternativeLoader() {
+        return alternativeLoader;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    protected DynamicContentLoader<T> createAlternativeLoader() {
+        return null;
+    }
 
     public void reloadContent(DynamicContent<T> dynamicContent) throws DynamicContentLoadException, InterruptedException {
         loadContent(dynamicContent, true);
