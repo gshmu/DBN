@@ -9,9 +9,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SimpleDynamicContent<T extends DynamicContentElement> extends DynamicContentImpl<T> {
+    private DynamicContentLoader<T> loader;
 
     public SimpleDynamicContent(@NotNull GenericDatabaseElement parent, DynamicContentLoader<T> loader, DynamicContentStatus ... status) {
-        super(parent, loader, BasicDependencyAdapter.INSTANCE, status);
+        super(parent, BasicDependencyAdapter.INSTANCE, status);
+        this.loader = loader;
+    }
+
+    @Override
+    public DynamicContentLoader<T> getLoader() {
+        return loader;
     }
 
     @Nullable

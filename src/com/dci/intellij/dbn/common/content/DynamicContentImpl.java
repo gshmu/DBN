@@ -37,7 +37,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
     private long changeTimestamp = 0;
 
-    protected DynamicContentLoader<T> loader;
     private GenericDatabaseElement parent;
     private ContentDependencyAdapter dependencyAdapter;
     private Map<String, T> index;
@@ -46,12 +45,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
     protected DynamicContentImpl(
             @NotNull GenericDatabaseElement parent,
-            @NotNull DynamicContentLoader<T> loader,
             ContentDependencyAdapter dependencyAdapter,
             DynamicContentStatus ... statuses) {
 
         this.parent = parent;
-        this.loader = loader;
         this.dependencyAdapter = dependencyAdapter;
         if (statuses != null && statuses.length > 0) {
             for (DynamicContentStatus status : statuses) {
@@ -82,9 +79,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         return FailsafeUtil.get(getParentElement().getConnectionHandler());
     }
 
-    public DynamicContentLoader<T> getLoader() {
-        return loader;
-    }
+    public abstract DynamicContentLoader<T> getLoader();
 
     public ContentDependencyAdapter getDependencyAdapter() {
         return dependencyAdapter;
@@ -224,7 +219,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             // mark first the dirty status since dirty dependencies may
             // become valid due to parallel background load
             set(DIRTY, false);
-            loader.loadContent(this, false);
+            getLoader().loadContent(this, false);
         } catch (DynamicContentLoadException e) {
             set(DIRTY, !e.isModelException());
         }
@@ -238,7 +233,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         checkDisposed();
         try {
             set(DIRTY, false);
-            loader.reloadContent(this);
+            getLoader().reloadContent(this);
         } catch (DynamicContentLoadException e) {
             set(DIRTY, !e.isModelException());
         }
@@ -292,7 +287,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @NotNull
     public List<T> getElements() {
         if (!isLoaded() || shouldLoad(false)) {
-            if (BackgroundMonitor.isBackgroundProcess() || BackgroundMonitor.isTimeoutProcess()) {
+            if (BackgroundMonitor.isBackgroundProcess() || BackgroundMonitor.isTimeoutProcess() || getDependencyAdapter().canLoadFast()) {
                 synchronized (this) {
                     if (!isLoaded()) {
                         load(false);
@@ -421,7 +416,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             CollectionUtil.clearMap(index);
             Disposer.dispose(dependencyAdapter);
             dependencyAdapter = VoidContentDependencyAdapter.INSTANCE;
-            loader = DynamicContentLoader.VOID_CONTENT_LOADER;
             parent = null;
         }
     }

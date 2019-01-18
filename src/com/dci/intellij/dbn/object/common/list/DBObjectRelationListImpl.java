@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
+import com.dci.intellij.dbn.object.common.list.loader.DBObjectListLoaderRegistry;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,10 +20,21 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
     private DBObjectRelationType objectRelationType;
     private String name;
 
-    public DBObjectRelationListImpl(DBObjectRelationType type, @NotNull GenericDatabaseElement parent, String name, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, DynamicContentStatus ... statuses) {
-        super(parent, loader, dependencyAdapter, statuses);
+    public DBObjectRelationListImpl(
+            @NotNull DBObjectRelationType type,
+            @NotNull GenericDatabaseElement parent, String name,
+            @NotNull DynamicContentLoader<T> loader,
+            ContentDependencyAdapter dependencyAdapter,
+            DynamicContentStatus ... statuses) {
+        super(parent, dependencyAdapter, statuses);
         this.objectRelationType = type;
         this.name = name;
+        DBObjectListLoaderRegistry.register(parent, type, loader);
+    }
+
+    @Override
+    public DynamicContentLoader<T> getLoader() {
+        return DBObjectListLoaderRegistry.get(getParentElement(), getObjectRelationType());
     }
 
     @NotNull
