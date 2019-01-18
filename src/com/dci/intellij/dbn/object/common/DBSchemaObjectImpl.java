@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.object.common;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -24,7 +22,6 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
-import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,12 +32,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 
 public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchemaObject {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
-
     private DBObjectList<DBObject> referencedObjects;
     private DBObjectList<DBObject> referencingObjects;
     private DBObjectStatusHolder objectStatus;
@@ -63,8 +59,8 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     protected void initLists() {
         if (is(REFERENCEABLE)) {
             DBObjectListContainer childObjects = initChildObjects();
-            referencedObjects = childObjects.createObjectList(DBObjectType.INCOMING_DEPENDENCY, this, REFERENCED_OBJECTS_LOADER, DynamicContentStatus.INTERNAL);
-            referencingObjects = childObjects.createObjectList(DBObjectType.OUTGOING_DEPENDENCY, this, REFERENCING_OBJECTS_LOADER, DynamicContentStatus.INTERNAL);
+            referencedObjects = childObjects.createObjectList(INCOMING_DEPENDENCY, this, DynamicContentStatus.INTERNAL);
+            referencingObjects = childObjects.createObjectList(OUTGOING_DEPENDENCY, this, DynamicContentStatus.INTERNAL);
         }
     }
 
@@ -84,15 +80,15 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     }
 
     public List<DBObject> getReferencedObjects() {
-        return referencedObjects == null ? Collections.<DBObject>emptyList() : referencedObjects.getObjects();
+        return referencedObjects == null ? Collections.emptyList() : referencedObjects.getObjects();
     }
 
     public List<DBObject> getReferencingObjects() {
-        return referencingObjects == null ? Collections.<DBObject>emptyList() : referencingObjects.getObjects();
+        return referencingObjects == null ? Collections.emptyList() : referencingObjects.getObjects();
     }
 
     protected List<DBObjectNavigationList> createNavigationLists() {
-        return new ArrayList<DBObjectNavigationList>();
+        return new ArrayList<>();
     }
 
     @NotNull
@@ -145,7 +141,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
 
     @Override
     public List<DBSchema> getReferencingSchemas() throws SQLException {
-        List<DBSchema> schemas = new ArrayList<DBSchema>();
+        List<DBSchema> schemas = new ArrayList<>();
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBNConnection connection = connectionHandler.getPoolConnection(getSchema(), true);
         ResultSet resultSet = null;
@@ -184,57 +180,60 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-    private static final DynamicContentLoader REFERENCED_OBJECTS_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
-            return metadataInterface.loadReferencedObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
-        }
-
-        public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String objectOwner = resultSet.getString("OBJECT_OWNER");
-            String objectName = resultSet.getString("OBJECT_NAME");
-            String objectTypeName = resultSet.getString("OBJECT_TYPE");
-            DBObjectType objectType = DBObjectType.get(objectTypeName);
-            if (objectType == DBObjectType.PACKAGE_BODY) objectType = DBObjectType.PACKAGE;
-            if (objectType == DBObjectType.TYPE_BODY) objectType = DBObjectType.TYPE;
-
-            DBSchema schema = (DBSchema) loaderCache.getObject(objectOwner);
-
-            if (schema == null) {
+    static {
+        new DynamicContentResultSetLoader(null, INCOMING_DEPENDENCY) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
-                ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
-                schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
-                loaderCache.setObject(objectOwner,  schema);
+                return metadataInterface.loadReferencedObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
             }
 
-            return schema == null ? null : schema.getChildObject(objectType, objectName, 0, true);
-        }
-    };
+            public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String objectOwner = resultSet.getString("OBJECT_OWNER");
+                String objectName = resultSet.getString("OBJECT_NAME");
+                String objectTypeName = resultSet.getString("OBJECT_TYPE");
+                DBObjectType objectType = get(objectTypeName);
+                if (objectType == PACKAGE_BODY) objectType = PACKAGE;
+                if (objectType == TYPE_BODY) objectType = TYPE;
 
-    private static final DynamicContentLoader REFERENCING_OBJECTS_LOADER = new DynamicContentResultSetLoader() {
-        public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
-            return metadataInterface.loadReferencingObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
-        }
+                DBSchema schema = (DBSchema) loaderCache.getObject(objectOwner);
 
-        public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String objectOwner = resultSet.getString("OBJECT_OWNER");
-            String objectName = resultSet.getString("OBJECT_NAME");
-            String objectTypeName = resultSet.getString("OBJECT_TYPE");
-            DBObjectType objectType = DBObjectType.get(objectTypeName);
-            if (objectType == DBObjectType.PACKAGE_BODY) objectType = DBObjectType.PACKAGE;
-            if (objectType == DBObjectType.TYPE_BODY) objectType = DBObjectType.TYPE;
+                if (schema == null) {
+                    DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
+                    ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
+                    schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
+                    loaderCache.setObject(objectOwner,  schema);
+                }
 
-            DBSchema schema = (DBSchema) loaderCache.getObject(objectOwner);
-            if (schema == null) {
-                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
-                ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
-                schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
-                loaderCache.setObject(objectOwner,  schema);
+                return schema == null ? null : schema.getChildObject(objectType, objectName, 0, true);
             }
-            return schema == null ? null : schema.getChildObject(objectType, objectName, 0, true);
-        }
-    };
+        };
+
+        new DynamicContentResultSetLoader(null, OUTGOING_DEPENDENCY) {
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
+                return metadataInterface.loadReferencingObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
+            }
+
+            public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                String objectOwner = resultSet.getString("OBJECT_OWNER");
+                String objectName = resultSet.getString("OBJECT_NAME");
+                String objectTypeName = resultSet.getString("OBJECT_TYPE");
+                DBObjectType objectType = get(objectTypeName);
+                if (objectType == PACKAGE_BODY) objectType = PACKAGE;
+                if (objectType == TYPE_BODY) objectType = TYPE;
+
+                DBSchema schema = (DBSchema) loaderCache.getObject(objectOwner);
+                if (schema == null) {
+                    DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
+                    ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
+                    schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
+                    loaderCache.setObject(objectOwner,  schema);
+                }
+                return schema == null ? null : schema.getChildObject(objectType, objectName, 0, true);
+            }
+        };
+    }
+
 }

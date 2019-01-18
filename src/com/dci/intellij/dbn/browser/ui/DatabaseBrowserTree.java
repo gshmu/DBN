@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
@@ -169,7 +170,7 @@ public class DatabaseBrowserTree extends DBNTree {
                     Object object = path.getLastPathComponent();
                     if (object instanceof ToolTipProvider) {
                         ToolTipProvider toolTipProvider = (ToolTipProvider) object;
-                        return toolTipProvider.getToolTip();
+                        return SimpleTimeoutCall.invoke(1, null, true, () -> toolTipProvider.getToolTip());
                     }
                 }
             }

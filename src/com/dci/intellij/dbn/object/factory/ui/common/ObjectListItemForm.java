@@ -44,8 +44,8 @@ public class ObjectListItemForm extends DBNFormImpl {
 
 
     public class RemoveObjectAction extends AnAction {
-        public RemoveObjectAction() {
-            super("Remove " + parent.getObjectType(), null, Icons.ACTION_CLOSE);
+        RemoveObjectAction() {
+            super("Remove " + parent.getObjectType().getName(), null, Icons.ACTION_CLOSE);
         }
 
         public void actionPerformed(AnActionEvent e) {

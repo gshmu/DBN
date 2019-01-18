@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.DBMaterializedView;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -20,6 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
 
 public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterializedView {
     private DBObjectList<DBIndex> indexes;
@@ -33,10 +34,10 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
         super.initLists();
         DBSchema schema = getSchema();
         DBObjectListContainer childObjects = initChildObjects();
-        indexes = childObjects.createSubcontentObjectList(DBObjectType.INDEX, this, INDEXES_LOADER, schema);
+        indexes = childObjects.createSubcontentObjectList(DBObjectType.INDEX, this, schema);
 
         DBObjectRelationListContainer childObjectRelations = initChildObjectRelations();
-        childObjectRelations.createSubcontentObjectRelationList(DBObjectRelationType.INDEX_COLUMN, this, "Index column relations", INDEX_COLUMN_RELATION_LOADER, schema);
+        childObjectRelations.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
     }
 
     public DBObjectType getObjectType() {

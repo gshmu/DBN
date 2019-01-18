@@ -6,8 +6,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
@@ -156,11 +154,6 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     public GenericDatabaseElement getUndisposedElement() {
         return this;
-    }
-
-    @Nullable
-    public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
-        return null;
     }
 
     public void addConnection(ConnectionHandler connectionHandler) {

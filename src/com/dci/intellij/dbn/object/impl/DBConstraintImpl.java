@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
+import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
+import static com.dci.intellij.dbn.object.common.DBObjectType.CONSTRAINT;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 
@@ -78,7 +80,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
             DBSchema schema = connectionHandler.getObjectBundle().getSchema(fkOwner);
             if (schema != null) {
                 DBObjectRef<DBSchema> schemaRef = schema.getRef();
-                foreignKeyConstraint = new DBObjectRef<DBConstraint>(schemaRef, DBObjectType.CONSTRAINT, fkName);
+                foreignKeyConstraint = new DBObjectRef<>(schemaRef, CONSTRAINT, fkName);
             }
         }
     }
@@ -88,8 +90,8 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         super.initLists();
         DBObjectListContainer childObjects = initChildObjects();
         columns = childObjects.createSubcontentObjectList(
-                DBObjectType.COLUMN, this,
-                COLUMNS_LOADER, getDataset(),
+                COLUMN, this,
+                getDataset(),
                 DBObjectRelationType.CONSTRAINT_COLUMN,
                 INDEXED);
     }
@@ -114,7 +116,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
     }
 
     public DBObjectType getObjectType() {
-        return DBObjectType.CONSTRAINT;
+        return CONSTRAINT;
     }
 
     public int getConstraintType() {
@@ -219,15 +221,15 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
     }
 
     protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> objectNavigationLists = new ArrayList<DBObjectNavigationList>();
+        List<DBObjectNavigationList> objectNavigationLists = new ArrayList<>();
 
         if (columns != null) {
-            objectNavigationLists.add(new DBObjectNavigationListImpl<DBColumn>("Columns", columns.getObjects()));
+            objectNavigationLists.add(new DBObjectNavigationListImpl<>("Columns", columns.getObjects()));
         }
 
         DBConstraint foreignKeyConstraint = getForeignKeyConstraint();
         if (foreignKeyConstraint != null) {
-            objectNavigationLists.add(new DBObjectNavigationListImpl<DBConstraint>("Foreign key constraint", foreignKeyConstraint));
+            objectNavigationLists.add(new DBObjectNavigationListImpl<>("Foreign key constraint", foreignKeyConstraint));
         }
 
         return objectNavigationLists;
@@ -260,32 +262,30 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-    private static final DynamicContentLoader COLUMNS_LOADER = new DBObjectListFromRelationListLoader();
+    private static final DynamicContentLoader COLUMNS_LOADER = DBObjectListFromRelationListLoader.create(CONSTRAINT, COLUMN);
 
     @Override
     public DBOperationExecutor getOperationExecutor() {
-        return new DBOperationExecutor() {
-            public void executeOperation(DBOperationType operationType) throws SQLException, DBOperationNotSupportedException {
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                DBNConnection connection = connectionHandler.getMainConnection(getSchema());
-                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                if (operationType == DBOperationType.ENABLE) {
-                    metadataInterface.enableConstraint(
-                            getSchema().getName(),
-                            getDataset().getName(),
-                            getName(),
-                            connection);
-                    getStatus().set(DBObjectStatus.ENABLED, true);
-                } else if (operationType == DBOperationType.DISABLE) {
-                    metadataInterface.disableConstraint(
-                            getSchema().getName(),
-                            getDataset().getName(),
-                            getName(),
-                            connection);
-                    getStatus().set(DBObjectStatus.ENABLED, false);
-                } else {
-                    throw new DBOperationNotSupportedException(operationType, getObjectType());
-                }
+        return operationType -> {
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            DBNConnection connection = connectionHandler.getMainConnection(getSchema());
+            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+            if (operationType == DBOperationType.ENABLE) {
+                metadataInterface.enableConstraint(
+                        getSchema().getName(),
+                        getDataset().getName(),
+                        getName(),
+                        connection);
+                getStatus().set(DBObjectStatus.ENABLED, true);
+            } else if (operationType == DBOperationType.DISABLE) {
+                metadataInterface.disableConstraint(
+                        getSchema().getName(),
+                        getDataset().getName(),
+                        getName(),
+                        connection);
+                getStatus().set(DBObjectStatus.ENABLED, false);
+            } else {
+                throw new DBOperationNotSupportedException(operationType, getObjectType());
             }
         };
     }

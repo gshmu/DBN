@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
 public class DBRoleImpl extends DBObjectImpl implements DBRole {
     DBObjectList<DBGrantedPrivilege> privileges;
@@ -44,12 +45,12 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
     protected void initLists() {
         DBObjectListContainer ol = initChildObjects();
         DBObjectBundle sourceContentHolder = getConnectionHandler().getObjectBundle();
-        privileges = ol.createSubcontentObjectList(DBObjectType.GRANTED_PRIVILEGE, this, PRIVILEGES_LOADER, sourceContentHolder, DBObjectRelationType.ROLE_PRIVILEGE, INDEXED);
-        grantedRoles = ol.createSubcontentObjectList(DBObjectType.GRANTED_ROLE, this, ROLES_LOADER, sourceContentHolder, DBObjectRelationType.ROLE_ROLE, INDEXED);
+        privileges = ol.createSubcontentObjectList(GRANTED_PRIVILEGE, this, sourceContentHolder, DBObjectRelationType.ROLE_PRIVILEGE, INDEXED);
+        grantedRoles = ol.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.ROLE_ROLE, INDEXED);
     }
 
     public DBObjectType getObjectType() {
-        return DBObjectType.ROLE;
+        return ROLE;
     }
 
     public List<DBGrantedPrivilege> getPrivileges() {
@@ -112,7 +113,7 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
     protected List<DBObjectNavigationList> createNavigationLists() {
         List<DBObjectNavigationList> navigationLists = new ArrayList<DBObjectNavigationList>();
         navigationLists.add(new DBObjectNavigationListImpl<DBUser>("User grantees", getUserGrantees()));
-        if (getConnectionHandler().getInterfaceProvider().getCompatibilityInterface().supportsObjectType(DBObjectType.ROLE.getTypeId())) {
+        if (getConnectionHandler().getInterfaceProvider().getCompatibilityInterface().supportsObjectType(ROLE.getTypeId())) {
             navigationLists.add(new DBObjectNavigationListImpl<DBRole>("Role grantees", getRoleGrantees()));
         }
         return navigationLists;
@@ -129,6 +130,6 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-    private static final DynamicContentLoader PRIVILEGES_LOADER = new DBObjectListFromRelationListLoader();
-    private static final DynamicContentLoader ROLES_LOADER = new DBObjectListFromRelationListLoader();
+    private static final DynamicContentLoader PRIVILEGES_LOADER = DBObjectListFromRelationListLoader.create(ROLE, GRANTED_PRIVILEGE);
+    private static final DynamicContentLoader ROLES_LOADER = DBObjectListFromRelationListLoader.create(ROLE, GRANTED_ROLE);
 }

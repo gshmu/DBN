@@ -9,4 +9,5 @@ public interface DynamicContentElement extends Disposable, Comparable {
     String getDescription();
     void reload();
     void refresh();
+    DynamicContentType getDynamicContentType();
 }

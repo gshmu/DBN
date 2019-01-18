@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.type;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
+import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
@@ -225,6 +226,11 @@ public class DBNativeDataType implements DynamicContentElement{
 
     public void dispose() {
 
+    }
+
+    @Override
+    public DynamicContentType getDynamicContentType() {
+        return null;
     }
 
     public int compareTo(@NotNull Object o) {

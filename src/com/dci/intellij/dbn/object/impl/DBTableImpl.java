@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.DBNestedTable;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBTable;
-import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -33,6 +32,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.TEMPORARY;
 
 public class DBTableImpl extends DBDatasetImpl implements DBTable {
@@ -56,15 +57,15 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
         super.initLists();
         DBSchema schema = getSchema();
         DBObjectListContainer childObjects = initChildObjects();
-        indexes = childObjects.createSubcontentObjectList(DBObjectType.INDEX, this, INDEXES_LOADER, schema);
-        nestedTables = childObjects.createSubcontentObjectList(DBObjectType.NESTED_TABLE, this, NESTED_TABLES_LOADER, schema);
+        indexes = childObjects.createSubcontentObjectList(INDEX, this, schema);
+        nestedTables = childObjects.createSubcontentObjectList(NESTED_TABLE, this, schema);
 
         DBObjectRelationListContainer childObjectRelations = initChildObjectRelations();
-        childObjectRelations.createSubcontentObjectRelationList(DBObjectRelationType.INDEX_COLUMN, this, "Index column relations", INDEX_COLUMN_RELATION_LOADER, schema);
+        childObjectRelations.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
     }
 
     public DBObjectType getObjectType() {
-        return DBObjectType.TABLE;
+        return TABLE;
     }
 
     @Nullable
@@ -175,28 +176,29 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
+    static {
+        new DynamicSubcontentLoader<DBNestedTable>(TABLE, NESTED_TABLE, true) {
 
-    private static final DynamicSubcontentLoader NESTED_TABLES_LOADER = new DynamicSubcontentLoader<DBNestedTable>(true) {
-        public boolean match(DBNestedTable nestedTable, DynamicContent dynamicContent) {
-            DBTable table = (DBTable) dynamicContent.getParentElement();
-            return nestedTable.getTable().equals(table);
-        }
+            public boolean match(DBNestedTable nestedTable, DynamicContent dynamicContent) {
+                DBTable table = (DBTable) dynamicContent.getParentElement();
+                return nestedTable.getTable().equals(table);
+            }
 
-        public DynamicContentLoader<DBNestedTable> getAlternativeLoader() {
-            return NESTED_TABLES_ALTERNATIVE_LOADER;
-        }
-    };
+            public DynamicContentLoader<DBNestedTable> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBNestedTable>(TABLE, NESTED_TABLE, false) {
 
-    private static final DynamicContentLoader<DBNestedTable> NESTED_TABLES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBNestedTable>() {
-        public ResultSet createResultSet(DynamicContent<DBNestedTable> dynamicContent, DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBTable table = (DBTable) dynamicContent.getParentElement();
-            return metadataInterface.loadNestedTables(table.getSchema().getName(), table.getName(), connection);
-      }
+                    public ResultSet createResultSet(DynamicContent<DBNestedTable> dynamicContent, DBNConnection connection) throws SQLException {
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DBTable table = (DBTable) dynamicContent.getParentElement();
+                        return metadataInterface.loadNestedTables(table.getSchema().getName(), table.getName(), connection);
+                    }
 
-        public DBNestedTable createElement(DynamicContent<DBNestedTable> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBTable table = (DBTable) dynamicContent.getParentElement();
-            return new DBNestedTableImpl(table, resultSet);
-        }
-    };
+                    public DBNestedTable createElement(DynamicContent<DBNestedTable> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+                        DBTable table = (DBTable) dynamicContent.getParentElement();
+                        return new DBNestedTableImpl(table, resultSet);
+                    }
+                };
+            }
+        };
+    }
 }

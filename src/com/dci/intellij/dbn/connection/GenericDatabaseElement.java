@@ -14,7 +14,13 @@ public interface GenericDatabaseElement extends ConnectionProvider, Disposable {
     GenericDatabaseElement getUndisposedElement();
 
     @Nullable
-    DynamicContent getDynamicContent(DynamicContentType dynamicContentType);
+    default DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
+        return null;
+    }
+
+    default DynamicContentType getDynamicContentType() {
+        return null;
+    }
 
     @NotNull
     @Override
