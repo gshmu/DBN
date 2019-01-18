@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
+import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> i
 
         DynamicContent sourceContent = dependencyAdapter.getSourceContent();
         DynamicContentLoader<T> alternativeLoader = getAlternativeLoader();
-        if (alternativeLoader == null || (sourceContent.isLoaded() && !sourceContent.isLoading() && !sourceContent.isDirty() && !force)) {
+        if (alternativeLoader == null || dependencyAdapter.isSourceContentReady() || force || BackgroundMonitor.getBackgroundProcessCount() > 10) {
             //load from sub-content
             boolean matchedOnce = false;
             List<T> list = null;
@@ -58,8 +59,8 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> i
             }
             dynamicContent.setElements(list);
         } else {
-            sourceContent.loadInBackground(force);
-            alternativeLoader.loadContent(dynamicContent, force);
+            sourceContent.loadInBackground(false);
+            alternativeLoader.loadContent(dynamicContent, false);
         }
     }
 

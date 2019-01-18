@@ -30,91 +30,91 @@
         <ul>
             <li><b>3.1.0512</b>
             <ul>
-                <li>Optimized database connectivity and background operations<br>
-                <li>Bug fixes and performance improvements<br>
+                <li>Optimized database connectivity and background operations
+                <li>Bug fixes and performance improvements
             </ul>
             <li><b>3.1.0231</b>
             <ul>
-                <li>Support for latest IDE versions<br>
-                <li>Discontinued support for IntelliJ 13.x and related products<br>
-                <li>Small bug fixes and performance improvements<br>
-                <li><span style='color:red; font-weight: bold'>JRE 8.x or higher required</span><br>
+                <li>Support for latest IDE versions
+                <li>Discontinued support for IntelliJ 13.x and related products
+                <li>Small bug fixes and performance improvements
+                <li><span style='color:red; font-weight: bold'>JRE 8.x or higher required</span>
             </ul>
             <li><b>3.0.8222</b>
             <ul>
-                <li>Resolved JDWP debugger initialization issues<br>
-                <li>Memory footprint optimization<br>
-                <li>Resource manager dialog (alpha)<br>
-                <li>Bug fixes<br>
+                <li>Resolved JDWP debugger initialization issues
+                <li>Memory footprint optimization
+                <li>Resource manager dialog (alpha)
+                <li>Bug fixes
             </ul>
             <li><b>3.0.8142 (beta)</b>
             <ul>
-                <li>Connectivity status indicator<br>
-                <li>Session management (dedicated connectivity)<br>
-                <li>Redesigned resource management<br>
-                <li>Resource monitor dialog (work in progress - not released)<br>
-                <li>Spellchecker enhancements (configurable levels)<br>
-                <li>Important stability and performance improvements<br>
+                <li>Connectivity status indicator
+                <li>Session management (dedicated connectivity)
+                <li>Redesigned resource management
+                <li>Resource monitor dialog (work in progress - not released)
+                <li>Spellchecker enhancements (configurable levels)
+                <li>Important stability and performance improvements
             </ul>
             <li><b>3.0.7621</b>
             <ul>
-                <li>Parallel / asynchronous statement execution (using pool connections)<br>
-                <li>Data grid column info tooltips<br>
-                <li>Stability and cosmetic improvements<br>
+                <li>Parallel / asynchronous statement execution (using pool connections)
+                <li>Data grid column info tooltips
+                <li>Stability and cosmetic improvements
             </ul>
             <li><b>3.0.7248</b>
             <ul>
-                <li>Support for latest IDE EAP versions<br>
-                <li>Source editor breadcrumbs<br>
-                <li>Data editor - qualified CLOB / TEXT editor<br>
-                <li>Bug fixes and performance improvements<br>
+                <li>Support for latest IDE EAP versions
+                <li>Source editor breadcrumbs
+                <li>Data editor - qualified CLOB / TEXT editor
+                <li>Bug fixes and performance improvements
             </ul>
             <li><b>3.0.6893</b>
             <ul>
-                <li>Support for latest IDE releases<br>
-                <li>Workspace restore option<br>
-                <li>Spellchecking support for database file editors<br>
-                <li>Bug fixes and cosmetics<br>
+                <li>Support for latest IDE releases
+                <li>Workspace restore option
+                <li>Spellchecking support for database file editors
+                <li>Bug fixes and cosmetics
             </ul>
             <li><b>3.0.6112</b>
             <ul>
-                <li>More accurate transaction status handling<br>
-                <li>Readonly pool connections for metadata load<br>
-                <li>Fixed SQLite meta-data issues<br>
-                <li>Support for latest IDE releases<br>
-                <li>Optimizations: more responsive code editors<br>
-                <li>Bug fixes<br>
+                <li>More accurate transaction status handling
+                <li>Readonly pool connections for metadata load
+                <li>Fixed SQLite meta-data issues
+                <li>Support for latest IDE releases
+                <li>Optimizations: more responsive code editors
+                <li>Bug fixes
             </ul>
             <li><b>3.0.5866</b>
             <ul>
-                <li>Fixed SQLite connection issues with Mac OSX<br>
-                <li>Amazon Redshift connectivity support<br>
-                <li>Support for latest IDE releases<br>
-                <li>Memory optimizations<br>
-                <li>Bug fixes<br>
+                <li>Fixed SQLite connection issues with Mac OSX
+                <li>Amazon Redshift connectivity support
+                <li>Support for latest IDE releases
+                <li>Memory optimizations
+                <li>Bug fixes
             </ul>
             <li><b>3.0.5723</b>
             <ul>
-                <li>SQLite support<br>
-                <li>Multiple attached databases (sqlite)<br>
-                <li>General bug fixes<br>
+                <li>SQLite support
+                <li>Multiple attached databases (sqlite)
+                <li>General bug fixes
             </ul>
             <li><b>3.0.5111</b>
             <ul>
-                <li>Support for latest IDE EAP versions<br>
-                <li>Request tracker move to JIRA<br>
-                <li>Bug fixes and performance improvements<br>
+                <li>Support for latest IDE EAP versions
+                <li>Request tracker move to JIRA
+                <li>Bug fixes and performance improvements
             </ul>
             <li><b>3.0.5023</b>
             <ul>
-                <li>Environment types - editing control for code and data<br>
-                <li>"Cancel" action for unresponsive loads in data editors<br>
-                <li>Outdated sources notification<br>
-                <li>Configurable default editors<br>
-                <li>Recover connections after statement execution errors (MySQL, PostgreSQL)<br>
-                <li>Recover dataset editor after edit errors (MySQL, PostgreSQL)<br>
-                <li>JDWP debugger stability improvements<br>
-                <li>Bug fixes<br>
+                <li>Environment types - editing control for code and data
+                <li>"Cancel" action for unresponsive loads in data editors
+                <li>Outdated sources notification
+                <li>Configurable default editors
+                <li>Recover connections after statement execution errors (MySQL, PostgreSQL)
+                <li>Recover dataset editor after edit errors (MySQL, PostgreSQL)
+                <li>JDWP debugger stability improvements
+                <li>Bug fixes
             </ul>
         </ul>
         <a href="http://confluence.jetbrains.net/display/CONTEST/DBN+-+Change+Notes">See full release notes</a>

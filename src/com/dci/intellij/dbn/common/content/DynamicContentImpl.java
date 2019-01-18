@@ -291,7 +291,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
     @NotNull
     public List<T> getElements() {
-        if (!isLoaded()) {
+        if (!isLoaded() || shouldLoad(false)) {
             if (BackgroundMonitor.isBackgroundProcess() || BackgroundMonitor.isTimeoutProcess()) {
                 synchronized (this) {
                     if (!isLoaded()) {
