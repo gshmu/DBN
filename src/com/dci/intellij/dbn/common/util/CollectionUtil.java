@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +57,19 @@ public class CollectionUtil {
             } else if (elements instanceof THashSet) {
                 THashSet hashSet = (THashSet) elements;
                 hashSet.trimToSize();
+            }  else if (elements instanceof THashMap) {
+                THashMap hashMap = (THashMap) elements;
+                hashMap.trimToSize();
+            }
+
+        }
+    }
+
+    public static void compact(Map elements) {
+        if (elements != null) {
+            if (elements instanceof THashMap) {
+                THashMap hashMap = (THashMap) elements;
+                hashMap.trimToSize();
             }
         }
     }

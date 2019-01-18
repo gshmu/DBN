@@ -3,12 +3,11 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
+import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -21,6 +20,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     private ConnectionProvider connectionProvider;
     private TaskInstructions taskInstructions;
     private Integer executeOption;
+    protected ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
 
     private ConnectionAction(String description, ConnectionProvider connectionProvider, Integer executeOption) {
         this.description = description;
@@ -56,22 +56,23 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         if (super.isCancelled()) {
             return true;
         } else {
-            ProgressIndicator progressIndicator = getProgressIndicator();
+            ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
             return progressIndicator != null && progressIndicator.isCanceled();
         }
     }
 
-    protected ProgressIndicator getProgressIndicator() {
-        return ProgressMonitor.getProgressIndicator();
-    }
-
     public final void start() {
+        super.start();
+/*
         Application application = ApplicationManager.getApplication();
         if (application.isDispatchThread()) {
             run();
         } else {
-            application.invokeLater(this/*, ModalityState.NON_MODAL*/);
+            application.invokeLater(this*/
+/*, ModalityState.NON_MODAL*//*
+);
         }
+*/
     }
 
     public final void run() {
@@ -83,7 +84,9 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
                     if (isManaged() || connectionHandler.isValid()) {
                         executeAction();
                     } else {
-                        ConnectionManager.showErrorConnectionMessage(getProject(), connectionHandler.getName(), connectionHandler.getConnectionStatus().getConnectionException());
+                        String connectionName = connectionHandler.getName();
+                        Throwable connectionException = connectionHandler.getConnectionStatus().getConnectionException();
+                        ConnectionManager.showErrorConnectionMessage(getProject(), connectionName, connectionException);
                     }
                 } else {
                     if (connectionHandler.isDatabaseInitialized()) {
@@ -106,7 +109,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     }
 
     private void promptDatabaseInitDialog() {
-        final ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.promptDatabaseInitDialog(
                 connectionHandler,
                 MessageCallback.create(null, option -> {
@@ -158,8 +161,10 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     }
 
     private void executeAction() {
-        if (taskInstructions == null) {
-            execute();
+        if (taskInstructions == null || BackgroundMonitor.isBackgroundProcess()) {
+            if (!ProgressMonitor.isCancelled()) {
+                execute();
+            }
         } else {
             BackgroundTask.invoke(
                     getProject(),
@@ -235,7 +240,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         return new ConnectionAction(description, connectionProvider, taskInstructions) {
             @Override
             protected void execute() {
-                action.run(this);
+                ProgressMonitor.invoke(progressIndicator, () -> action.run(this));
             }
 
             @Override

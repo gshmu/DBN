@@ -50,6 +50,7 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import com.intellij.xdebugger.frame.XSuspendContext;
 import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
 import org.jetbrains.annotations.NotNull;
@@ -350,7 +351,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     @Override
-    public void startStepOver() {
+    public void startStepOver(@Nullable XSuspendContext suspendContext) {
         DBDebugOperationTask.invoke(getProject(), "step over", () -> {
             DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
             runtimeInfo = debuggerInterface.stepOver(debugConnection);
@@ -359,7 +360,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     @Override
-    public void startStepInto() {
+    public void startStepInto(@Nullable XSuspendContext suspendContext) {
         DBDebugOperationTask.invoke(getProject(), "step into", () -> {
             DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
             runtimeInfo = debuggerInterface.stepInto(debugConnection);
@@ -367,8 +368,9 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         });
     }
 
+
     @Override
-    public void startStepOut() {
+    public void startStepOut(@Nullable XSuspendContext suspendContext) {
         DBDebugOperationTask.invoke(getProject(), "step out", () -> {
             DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
             runtimeInfo = debuggerInterface.stepOut(debugConnection);
@@ -377,7 +379,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     @Override
-    public void resume() {
+    public void resume(@Nullable XSuspendContext suspendContext) {
         DBDebugOperationTask.invoke(getProject(), "resume execution", () -> {
             DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
             runtimeInfo = debuggerInterface.resumeExecution(debugConnection);
@@ -386,7 +388,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     @Override
-    public void runToPosition(@NotNull final XSourcePosition position) {
+    public void runToPosition(@NotNull XSourcePosition position, @Nullable XSuspendContext suspendContext) {
         DBDebugOperationTask.invoke(getProject(), "run to position", () -> {
             DBSchemaObject object = DBDebugUtil.getObject(position);
             if (object != null) {
@@ -579,6 +581,12 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             }
         });
     }*/
+
+    @Override public void startStepOver() {startStepOver(null);}
+    @Override public void startStepInto() {startStepInto(null);}
+    @Override public void startStepOut() {startStepOut(null);}
+    @Override public void resume() {resume(null);}
+    @Override public void runToPosition(@NotNull XSourcePosition position) {runToPosition(position, null);}
 
     public DatabaseDebuggerInterface getDebuggerInterface() {
         return getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
