@@ -42,18 +42,18 @@ public class StatementGutterAction extends AnAction {
 
 
     @Nullable
-    private DBLanguagePsiFile getPsiFileRef() {
+    private DBLanguagePsiFile getPsiFile() {
         return psiFileRef.get();
     }
 
     private VirtualFile getVirtualFile() {
-        DBLanguagePsiFile psiFile = getPsiFileRef();
+        DBLanguagePsiFile psiFile = getPsiFile();
         return psiFile == null ? null : psiFile.getVirtualFile();
     }
 
     @Nullable
     private ExecutablePsiElement getExecutablePsiElement() {
-        DBLanguagePsiFile psiFile = getPsiFileRef();
+        DBLanguagePsiFile psiFile = getPsiFile();
         if (psiFile != null) {
             PsiElement elementAtOffset = psiFile.findElementAt(elementOffset);
             if (elementAtOffset != null && !(elementAtOffset instanceof BasePsiElement)) {
@@ -133,7 +133,7 @@ public class StatementGutterAction extends AnAction {
 
     @Nullable
     private StatementExecutionProcessor getExecutionProcessor(boolean create) {
-        DBLanguagePsiFile psiFile = getPsiFileRef();
+        DBLanguagePsiFile psiFile = getPsiFile();
         ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
         if (psiFile != null && executablePsiElement != null) {
             Project project = psiFile.getProject();
