@@ -163,7 +163,12 @@ public class DocumentUtil {
 
     @Nullable
     public static VirtualFile getVirtualFile(Editor editor) {
-        return FileDocumentManager.getInstance().getFile(editor.getDocument());
+        if (editor instanceof EditorEx) {
+            EditorEx editorEx = (EditorEx) editor;
+            return editorEx.getVirtualFile();
+        }
+        FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+        return fileDocumentManager.getFile(editor.getDocument());
     }
 
     @Nullable

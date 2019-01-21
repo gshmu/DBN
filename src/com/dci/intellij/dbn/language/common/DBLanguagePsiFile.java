@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
@@ -272,11 +271,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     public void setDatabaseSession(DatabaseSession session) {
         VirtualFile file = getVirtualFile();
         if (file != null) {
-            if (VirtualFileUtil.isVirtualFileSystem(file)) {
-                this.databaseSession = session;
-            } else {
-                getConnectionMappingManager().setDatabaseSession(file, session);
-            }
+            FileConnectionMappingManager connectionMappingManager = getConnectionMappingManager();
+            connectionMappingManager.setDatabaseSession(file, session);
         }
     }
 
