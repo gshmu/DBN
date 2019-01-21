@@ -31,10 +31,8 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction impl
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
-            if (virtualFile != null && virtualFile.isInLocalFileSystem()) {
-                //DBLanguageFile file = (DBLanguageFile) psiFile;
-                return true;
-            }
+            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
+            return connectionMappingManager.isConnectionSelectable(virtualFile);
         }
         return false;
     }

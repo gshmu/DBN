@@ -7,13 +7,14 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
 public class DBLanguageFileEditorListener implements FileEditorManagerListener{
     public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        if (file.isInLocalFileSystem() && file.getFileType() instanceof DBLanguageFileType) {
+        if ((file.isInLocalFileSystem() || file instanceof LightVirtualFile) && file.getFileType() instanceof DBLanguageFileType) {
             FileEditor fileEditor = source.getSelectedEditor(file);
             if (fileEditor != null) {
                 DBLanguageFileEditorToolbarForm toolbarForm = new DBLanguageFileEditorToolbarForm(source.getProject(), file);
@@ -24,7 +25,7 @@ public class DBLanguageFileEditorListener implements FileEditorManagerListener{
     }
 
     public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        if (file.isInLocalFileSystem() && file.getFileType() instanceof DBLanguageFileType) {
+        if ((file.isInLocalFileSystem() || file instanceof LightVirtualFile) && file.getFileType() instanceof DBLanguageFileType) {
             FileEditor editor = source.getSelectedEditor(file);
             if (editor != null) {
                 DBLanguageFileEditorToolbarForm toolbarForm = editor.getUserData(DBLanguageFileEditorToolbarForm.USER_DATA_KEY);

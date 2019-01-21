@@ -28,6 +28,7 @@ import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
 import com.dci.intellij.dbn.connection.session.SessionManagerListener;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
+import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -412,7 +413,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     public void setConnectionHandler(@NotNull Editor editor, @Nullable ConnectionHandler connectionHandler) {
         Document document = editor.getDocument();
         VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-        if (virtualFile != null && VirtualFileUtil.isLocalFileSystem(virtualFile) ) {
+        if (isConnectionSelectable(virtualFile)) {
             boolean changed = setConnectionHandler(virtualFile, connectionHandler);
             if (changed) {
                 DocumentUtil.touchDocument(editor, true);
@@ -426,7 +427,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     public void setDatabaseSchema(@NotNull Editor editor, DBSchema schema) {
         Document document = editor.getDocument();
         VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-        if (virtualFile != null && (VirtualFileUtil.isLocalFileSystem(virtualFile) || virtualFile instanceof DBConsoleVirtualFile)) {
+        if (isSchemaSelectable(virtualFile)) {
             boolean changed = setDatabaseSchema(virtualFile, schema);
             if (changed) {
                 DocumentUtil.touchDocument(editor, false);
@@ -440,12 +441,35 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     public void setDatabaseSession(@NotNull Editor editor, DatabaseSession session) {
         Document document = editor.getDocument();
         VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-        if (virtualFile != null && (VirtualFileUtil.isLocalFileSystem(virtualFile) || virtualFile instanceof DBConsoleVirtualFile)) {
+        if (isSessionSelectable(virtualFile)) {
             setDatabaseSession(virtualFile, session);
 
             FileConnectionMappingListener mappingListener = EventUtil.notify(getProject(), FileConnectionMappingListener.TOPIC);
             mappingListener.sessionChanged(virtualFile, session);
         }
+    }
+
+    public boolean isConnectionSelectable(VirtualFile virtualFile) {
+        return virtualFile != null &&
+                virtualFile.getFileType() instanceof DBLanguageFileType &&
+                (VirtualFileUtil.isLocalFileSystem(virtualFile) ||
+                        virtualFile instanceof LightVirtualFile);
+    }
+
+    public boolean isSchemaSelectable(VirtualFile virtualFile) {
+        return virtualFile != null &&
+                virtualFile.getFileType() instanceof DBLanguageFileType &&
+                (VirtualFileUtil.isLocalFileSystem(virtualFile) ||
+                        virtualFile instanceof LightVirtualFile ||
+                        virtualFile instanceof DBConsoleVirtualFile);
+    }
+
+    public boolean isSessionSelectable(VirtualFile virtualFile) {
+        return virtualFile != null &&
+                virtualFile.getFileType() instanceof DBLanguageFileType &&
+                (VirtualFileUtil.isLocalFileSystem(virtualFile) ||
+                        virtualFile instanceof LightVirtualFile ||
+                        virtualFile instanceof DBConsoleVirtualFile);
     }
 
 
