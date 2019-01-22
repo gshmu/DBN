@@ -37,8 +37,8 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("ROLE_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        return resultSet.getString("ROLE_NAME");
     }
 
     @Override

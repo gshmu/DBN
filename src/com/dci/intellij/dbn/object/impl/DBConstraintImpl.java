@@ -56,8 +56,8 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("CONSTRAINT_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("CONSTRAINT_NAME");
         checkCondition = resultSet.getString("CHECK_CONDITION");
 
         String typeString = resultSet.getString("CONSTRAINT_TYPE");
@@ -83,6 +83,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
                 foreignKeyConstraint = new DBObjectRef<>(schemaRef, CONSTRAINT, fkName);
             }
         }
+        return name;
     }
 
     @Override

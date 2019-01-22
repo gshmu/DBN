@@ -25,10 +25,11 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl implements DBGrantedPri
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        this.name = resultSet.getString("GRANTED_PRIVILEGE_NAME");
-        this.privilegeRef = DBObjectRef.from(getConnectionHandler().getObjectBundle().getPrivilege(name));
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("GRANTED_PRIVILEGE_NAME");
+        privilegeRef = DBObjectRef.from(getConnectionHandler().getObjectBundle().getPrivilege(name));
         set(ADMIN_OPTION, resultSet.getString("IS_ADMIN_OPTION").equals("Y"));
+        return name;
     }
 
     public DBObjectType getObjectType() {

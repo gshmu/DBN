@@ -32,8 +32,8 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("VIEW_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("VIEW_NAME");
         set(DBObjectProperty.SYSTEM_OBJECT, resultSet.getString("IS_SYSTEM_VIEW").equals("Y"));
         String typeOwner = resultSet.getString("VIEW_TYPE_OWNER");
         String typeName = resultSet.getString("VIEW_TYPE");
@@ -42,6 +42,7 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
             DBSchema typeSchema = objectBundle.getSchema(typeOwner);
             type = typeSchema.getType(typeName);
         }
+        return name;
     }
 
     public DBObjectType getObjectType() {

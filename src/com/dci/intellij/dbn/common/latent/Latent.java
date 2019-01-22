@@ -1,17 +1,19 @@
 package com.dci.intellij.dbn.common.latent;
 
-public class Latent<T> {
+public abstract class Latent<T> {
     private T value;
-    private Loader<T> loader;
     private boolean loaded;
     protected boolean loading;
 
-    Latent(Loader<T> loader) {
-        this.loader = loader;
-    }
+    Latent() {}
 
     public static <T> Latent<T> create(Loader<T> loader) {
-        return new Latent<T>(loader);
+        return new Latent<T>() {
+            @Override
+            public Loader<T> getLoader() {
+                return loader;
+            }
+        };
     }
 
     public final T get() {
@@ -21,8 +23,11 @@ public class Latent<T> {
                     try {
                         loading = true;
                         loading();
-                        value = loader.load();
-                        loaded(value);
+                        T newValue = getLoader().load();
+                        if (value != newValue) {
+                            value = newValue;
+                        }
+                        loaded(newValue);
                     } finally {
                         loading = false;
                     }
@@ -31,6 +36,8 @@ public class Latent<T> {
         }
         return value;
     }
+
+    public abstract Loader<T> getLoader();
 
     protected void loading(){};
 

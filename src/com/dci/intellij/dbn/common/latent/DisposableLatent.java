@@ -4,16 +4,21 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.intellij.openapi.Disposable;
 
-public class DisposableLatent<T extends Disposable, P extends Disposable> extends Latent<T> {
+public abstract class DisposableLatent<T extends Disposable, P extends Disposable> extends Latent<T> {
     private P parent;
 
-    private DisposableLatent(P parent, Loader<T> loader) {
-        super(loader);
+    private DisposableLatent(P parent) {
+        super();
         this.parent = FailsafeUtil.ensure(parent);
     }
 
     public static <T extends Disposable, P extends Disposable> DisposableLatent<T, P> create(P parent, Loader<T> loader) {
-        return new DisposableLatent<>(parent, loader);
+        return new DisposableLatent<T, P>(parent) {
+            @Override
+            public Loader<T> getLoader() {
+                return loader;
+            }
+        };
     }
 
     @Override

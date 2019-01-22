@@ -30,7 +30,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
 
     PsiResolveResult(IdentifierPsiElement element) {
         this.connectionHandlerRef = ConnectionHandlerRef.from(element.getConnectionHandler());
-        this.element = new PsiElementRef<>(element);
+        this.element = PsiElementRef.from(element);
         set(PsiResolveStatus.NEW, true);
     }
 
@@ -40,7 +40,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     }
 
     public void accept(IdentifierPsiElement element) {
-        this.element = new PsiElementRef<>(element);
+        this.element = PsiElementRef.from(element);
     }
 
     public void preResolve(IdentifierPsiElement psiElement) {
@@ -210,11 +210,11 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     }
 
     public void setParent(@Nullable BasePsiElement parent) {
-        this.parent = new PsiElementRef<>(parent);
+        this.parent = PsiElementRef.from(parent);
     }
 
     public void setReferencedElement(PsiElement referencedElement) {
-        this.referencedElement = referencedElement == null ? null : new PsiElementRef(referencedElement);
+        this.referencedElement = PsiElementRef.from(referencedElement);
     }
 
     public int getOverallResolveTrials() {

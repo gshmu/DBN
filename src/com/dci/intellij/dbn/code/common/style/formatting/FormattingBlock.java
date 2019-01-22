@@ -53,7 +53,7 @@ public class FormattingBlock implements Block {
             PsiElement psiElement,
             FormattingBlock parentBlock,
             int index) {
-        this.psiElementRef = new PsiElementRef(psiElement);
+        this.psiElementRef = PsiElementRef.from(psiElement);
         this.parentBlock = parentBlock;
         this.index = index;
         this.codeStyleSettings = codeStyleSettings;

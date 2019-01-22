@@ -18,8 +18,8 @@ public class DBClusterImpl extends DBSchemaObjectImpl implements DBCluster {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("CLUSTER_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        return resultSet.getString("CLUSTER_NAME");
     }
 
     public DBObjectType getObjectType() {

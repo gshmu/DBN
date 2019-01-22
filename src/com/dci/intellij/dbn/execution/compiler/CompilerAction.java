@@ -3,18 +3,17 @@ package com.dci.intellij.dbn.execution.compiler;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
-
 public class CompilerAction {
     private CompilerActionSource source;
     private DBContentType contentType;
-    private WeakReference<VirtualFile> virtualFileRef;
-    private WeakReference<FileEditor> fileEditorRef;
+    private WeakRef<VirtualFile> virtualFileRef;
+    private WeakRef<FileEditor> fileEditorRef;
     private EditorProviderId editorProviderId;
     private int sourceStartOffset;
 
@@ -26,8 +25,8 @@ public class CompilerAction {
     public CompilerAction(CompilerActionSource source, DBContentType contentType, VirtualFile virtualFile, @Nullable FileEditor fileEditor) {
         this.source = source;
         this.contentType = contentType;
-        this.virtualFileRef = new WeakReference<VirtualFile>(virtualFile);
-        this.fileEditorRef = fileEditor == null ? null : new WeakReference<FileEditor>(fileEditor);
+        this.virtualFileRef = WeakRef.from(virtualFile);
+        this.fileEditorRef = fileEditor == null ? null : WeakRef.from(fileEditor);
         this.editorProviderId = contentType.getEditorProviderId();
     }
 

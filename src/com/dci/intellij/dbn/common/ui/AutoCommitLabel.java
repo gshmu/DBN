@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingListener;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -17,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.ref.WeakReference;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
@@ -30,7 +30,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     private ConnectionHandlerRef connectionHandlerRef;
     private SessionId sessionId;
     private boolean subscribed = false;
-    private WeakReference<VirtualFile> virtualFileRef;
+    private WeakRef<VirtualFile> virtualFileRef;
 
     public AutoCommitLabel() {
         super("");
@@ -42,7 +42,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     }
 
     public void init(Project project, VirtualFile virtualFile, ConnectionHandler connectionHandler, SessionId sessionId) {
-        this.virtualFileRef = new WeakReference<>(virtualFile);
+        this.virtualFileRef = WeakRef.from(virtualFile);
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
         this.sessionId = nvl(sessionId, SessionId.MAIN);
         if (!subscribed) {
@@ -96,7 +96,8 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     private FileConnectionMappingListener connectionMappingListener = new FileConnectionMappingListener() {
         @Override
         public void connectionChanged(VirtualFile virtualFile, ConnectionHandler connectionHandler) {
-            if (virtualFile.equals(virtualFileRef.get())) {
+            VirtualFile localVirtualFile = getVirtualFile();
+            if (virtualFile.equals(localVirtualFile)) {
                 AutoCommitLabel.this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
                 update();
             }
@@ -104,12 +105,18 @@ public class AutoCommitLabel extends JLabel implements Disposable {
 
         @Override
         public void sessionChanged(VirtualFile virtualFile, DatabaseSession session) {
-            if (virtualFile.equals(virtualFileRef.get())) {
+            VirtualFile localVirtualFile = getVirtualFile();
+            if (virtualFile.equals(localVirtualFile)) {
                 AutoCommitLabel.this.sessionId = session == null ? SessionId.MAIN : session.getId();
                 update();
             }
         }
     };
+
+    @Nullable
+    public VirtualFile getVirtualFile() {
+        return WeakRef.get(virtualFileRef);
+    }
 
     @Override
     public void dispose() {

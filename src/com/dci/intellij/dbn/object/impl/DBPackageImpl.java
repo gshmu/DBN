@@ -42,8 +42,8 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("PACKAGE_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        return resultSet.getString("PACKAGE_NAME");
     }
 
     @Override

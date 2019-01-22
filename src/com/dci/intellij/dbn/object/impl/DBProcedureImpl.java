@@ -32,9 +32,9 @@ public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
+    protected String initObject(ResultSet resultSet) throws SQLException {
         super.initObject(resultSet);
-        name = resultSet.getString("PROCEDURE_NAME");
+        return resultSet.getString("PROCEDURE_NAME");
     }
 
     public DBObjectType getObjectType() {

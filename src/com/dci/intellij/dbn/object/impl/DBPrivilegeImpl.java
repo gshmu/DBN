@@ -22,8 +22,8 @@ public abstract class DBPrivilegeImpl extends DBObjectImpl implements DBPrivileg
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("PRIVILEGE_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        return resultSet.getString("PRIVILEGE_NAME");
     }
 
     public List<DBUser> getUserGrantees() {
