@@ -46,11 +46,12 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
+    protected String initObject(ResultSet resultSet) throws SQLException {
         set(DETERMINISTIC, resultSet.getString("IS_DETERMINISTIC").equals("Y"));
         overload = resultSet.getInt("OVERLOAD");
         position = resultSet.getInt("POSITION");
         language = DBLanguage.getLanguage(resultSet.getString("LANGUAGE"));
+        return null;
     }
 
     @Override

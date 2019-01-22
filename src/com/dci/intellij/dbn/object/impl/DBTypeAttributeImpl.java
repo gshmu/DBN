@@ -27,10 +27,13 @@ public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("ATTRIBUTE_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("ATTRIBUTE_NAME");
         position = resultSet.getInt("POSITION");
-        dataType = DBDataType.get(this.getConnectionHandler(), resultSet);    }
+        dataType = DBDataType.get(this.getConnectionHandler(), resultSet);
+        return name;
+    }
+
 
     public int getPosition() {
         return position;

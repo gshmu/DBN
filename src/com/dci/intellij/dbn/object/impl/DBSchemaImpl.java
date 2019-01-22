@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -69,12 +68,13 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("SCHEMA_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("SCHEMA_NAME");
         set(PUBLIC_SCHEMA, resultSet.getString("IS_PUBLIC").equals("Y"));
         set(SYSTEM_SCHEMA, resultSet.getString("IS_SYSTEM").equals("Y"));
         set(EMPTY_SCHEMA, resultSet.getString("IS_EMPTY").equals("Y"));
-        set(USER_SCHEMA, getName().equalsIgnoreCase(getConnectionHandler().getUserName()));
+        set(USER_SCHEMA, name.equalsIgnoreCase(getConnectionHandler().getUserName()));
+        return name;
     }
 
     @Override
@@ -128,7 +128,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     @Nullable
     @Override
     public DBUser getOwner() {
-        return FailsafeUtil.get(getObjectBundle()).getUser(name);
+        return getObjectBundle().getUser(getName());
     }
 
     public DBObjectType getObjectType() {

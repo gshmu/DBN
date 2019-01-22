@@ -72,8 +72,8 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("TYPE_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("TYPE_NAME");
         superTypeOwner = resultSet.getString("SUPERTYPE_OWNER");
         superTypeName = resultSet.getString("SUPERTYPE_NAME");
 
@@ -84,6 +84,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         if (isCollection()) {
             collectionElementTypeRef = new DBDataType.Ref(resultSet,  "COLLECTION_");
         }
+        return name;
     }
 
     protected void initLists() {

@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.IntervalLoader;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -20,7 +21,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -343,10 +343,10 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
     }
 
     private static class ConnectionPoolCleanTask extends TimerTask {
-        List<WeakReference<ConnectionPool>> connectionPools = CollectionUtil.createConcurrentList();
+        List<WeakRef<ConnectionPool>> connectionPools = CollectionUtil.createConcurrentList();
 
         public void run() {
-            for (WeakReference<ConnectionPool> connectionPoolRef : connectionPools) {
+            for (WeakRef<ConnectionPool> connectionPoolRef : connectionPools) {
                 ConnectionPool connectionPool = connectionPoolRef.get();
                 if (connectionPool != null && !connectionPool.poolConnections.isEmpty()) {
                     try {
@@ -382,7 +382,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         }
 
         void registerConnectionPool(ConnectionPool connectionPool) {
-            connectionPools.add(new WeakReference<>(connectionPool));
+            connectionPools.add(WeakRef.from(connectionPool));
         }
     }
 

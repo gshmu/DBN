@@ -33,9 +33,9 @@ public class DBFunctionImpl extends DBMethodImpl implements DBFunction {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
+    protected String initObject(ResultSet resultSet) throws SQLException {
         super.initObject(resultSet);
-        name = resultSet.getString("FUNCTION_NAME");
+        return resultSet.getString("FUNCTION_NAME");
     }
 
     public DBArgument getReturnArgument() {

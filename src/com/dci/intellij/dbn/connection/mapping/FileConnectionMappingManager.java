@@ -31,6 +31,7 @@ import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -69,7 +70,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -732,13 +732,13 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
     private class SessionSelectAction extends AnAction {
         private PsiFileRef<DBLanguagePsiFile> fileRef;
-        private WeakReference<DatabaseSession> sessionRef;
+        private WeakRef<DatabaseSession> sessionRef;
         private RunnableTask callback;
 
         private SessionSelectAction(DBLanguagePsiFile file, DatabaseSession session, RunnableTask callback) {
             super(session.getName(), null, session.getIcon());
             this.fileRef = PsiFileRef.from(file);
-            this.sessionRef = new WeakReference<>(session);
+            this.sessionRef = WeakRef.from(session);
             this.callback = callback;
         }
 

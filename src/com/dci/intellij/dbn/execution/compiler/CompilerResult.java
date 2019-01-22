@@ -21,12 +21,12 @@ import java.util.List;
 
 public class CompilerResult implements Disposable {
     private DBObjectRef<DBSchemaObject> objectRef;
-    private List<CompilerMessage> compilerMessages = new ArrayList<CompilerMessage>();
+    private List<CompilerMessage> compilerMessages = new ArrayList<>();
     private boolean isError = false;
     private CompilerAction compilerAction;
 
     public CompilerResult(CompilerAction compilerAction, ConnectionHandler connectionHandler, DBSchema schema, DBObjectType objectType, String objectName) {
-        objectRef = new DBObjectRef<DBSchemaObject>(schema.getRef(), objectType, objectName);
+        objectRef = new DBObjectRef<>(schema.getRef(), objectType, objectName);
         init(connectionHandler, schema, objectName, compilerAction);
     }
 

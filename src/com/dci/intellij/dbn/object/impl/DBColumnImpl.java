@@ -52,8 +52,8 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         super(dataset, resultSet);
     }
 
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("COLUMN_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("COLUMN_NAME");
         set(PRIMARY_KEY, "Y".equals(resultSet.getString("IS_PRIMARY_KEY")));
         set(FOREIGN_KEY, "Y".equals(resultSet.getString("IS_FOREIGN_KEY")));
         set(UNIQUE_KEY, "Y".equals(resultSet.getString("IS_UNIQUE_KEY")));
@@ -62,6 +62,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         position = resultSet.getInt("POSITION");
 
         dataType = DBDataType.get(this.getConnectionHandler(), resultSet);
+        return name;
     }
 
     protected void initLists() {

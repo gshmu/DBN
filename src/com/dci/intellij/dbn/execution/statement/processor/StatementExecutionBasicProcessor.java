@@ -47,6 +47,7 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiElementRef;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
@@ -68,7 +69,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +80,7 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPI
 public class StatementExecutionBasicProcessor extends DisposableBase implements StatementExecutionProcessor {
     private PsiFileRef<DBLanguagePsiFile> psiFileRef;
     private PsiElementRef<ExecutablePsiElement> cachedExecutableRef;
-    private WeakReference<FileEditor> fileEditorRef;
+    private WeakRef<FileEditor> fileEditorRef;
     private EditorProviderId editorProviderId;
     private transient CancellableDatabaseCall<StatementExecutionResult> databaseCall;
 
@@ -103,17 +103,17 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
 
     public StatementExecutionBasicProcessor(FileEditor fileEditor, ExecutablePsiElement psiElement, int index) {
-        this.fileEditorRef = new WeakReference<>(fileEditor);
+        this.fileEditorRef = WeakRef.from(fileEditor);
         this.psiFileRef = PsiFileRef.from(psiElement.getFile());
 
-        this.cachedExecutableRef = new PsiElementRef<>(psiElement);
+        this.cachedExecutableRef = PsiElementRef.from(psiElement);
         this.index = index;
         executionInput = new StatementExecutionInput(psiElement.getText(), psiElement.prepareStatementText(), this);
         initEditorProviderId(fileEditor);
     }
 
     StatementExecutionBasicProcessor(FileEditor fileEditor, DBLanguagePsiFile psiFile, String sqlStatement, int index) {
-        this.fileEditorRef = new WeakReference<>(fileEditor);
+        this.fileEditorRef = WeakRef.from(fileEditor);
         this.psiFileRef = PsiFileRef.from(psiFile);
         this.index = index;
         sqlStatement = sqlStatement.trim();
@@ -147,7 +147,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     public void bind(ExecutablePsiElement executablePsiElement) {
-        cachedExecutableRef = new PsiElementRef<>(executablePsiElement);
+        cachedExecutableRef = PsiElementRef.from(executablePsiElement);
         executablePsiElement.setExecutionProcessor(this);
     }
 

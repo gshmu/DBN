@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.common.dispose;
 
+import com.dci.intellij.dbn.language.common.WeakRef;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.ref.WeakReference;
-
-public class FailsafeWeakRef<T> extends WeakReference<T>{
+public class FailsafeWeakRef<T> extends WeakRef<T> {
     public FailsafeWeakRef(T referent) {
         super(referent);
     }

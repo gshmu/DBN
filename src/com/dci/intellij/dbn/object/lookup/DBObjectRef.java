@@ -10,15 +10,16 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -32,22 +33,22 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     protected ConnectionId connectionId;
     protected int overload;
 
-    private WeakReference<T> reference;
+    private WeakRef<T> reference;
     private int hashCode = -1;
 
     public DBObjectRef(ConnectionId connectionId, String identifier) {
         deserialize(connectionId, identifier);
     }
 
-    public DBObjectRef(T object) {
-        reference = new WeakReference<T>(object);
+    public DBObjectRef(T object, String name) {
+        reference = WeakRef.from(object);
+        objectName = name;
         objectType = object.getObjectType();
-        objectName = object.getName();
         overload = object.getOverload();
         DBObject parentObj = object.getParentObject();
         if (parentObj != null) {
             parent = parentObj.getRef();
-        } else {
+        } else if (!(object instanceof DBVirtualObject)){
             ConnectionHandler connectionHandler = object.getConnectionHandler();
             connectionId = connectionHandler.getId();
         }
@@ -350,7 +351,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                     if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isEnabled()) {
                         object = lookup(connectionHandler);
                         if (object != null) {
-                            reference = new WeakReference<T>(object);
+                            reference = WeakRef.from(object);
                         }
                     }
                 }
@@ -475,7 +476,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         if (hashCode == -1) {
             synchronized (this) {
                 if (hashCode == -1) {
-                    hashCode = (getConnectionId().id() + PS + serialize()).hashCode();
+                    hashCode = (getConnectionId() + PS + serialize()).hashCode();
                 }
             }
         }

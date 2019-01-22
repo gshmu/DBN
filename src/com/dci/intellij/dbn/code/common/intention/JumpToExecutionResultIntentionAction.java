@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.codeInsight.intention.HighPriorityAction;
@@ -16,10 +17,9 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.lang.ref.WeakReference;
 
 public class JumpToExecutionResultIntentionAction extends GenericIntentionAction implements HighPriorityAction {
-    private WeakReference<StatementExecutionProcessor> cachedExecutionProcessor;
+    private WeakRef<StatementExecutionProcessor> cachedExecutionProcessor;
 
     @NotNull
     public String getText() {
@@ -64,7 +64,7 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
                 StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
                 StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, false);
                 if (executionProcessor != null && executionProcessor.getExecutionResult() != null) {
-                    cachedExecutionProcessor = new WeakReference<StatementExecutionProcessor>(executionProcessor);
+                    cachedExecutionProcessor = WeakRef.from(executionProcessor);
                     return true;
                 }
             }

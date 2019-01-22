@@ -5,8 +5,6 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
-import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.MutableLatent;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -21,6 +19,7 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
@@ -69,9 +68,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     private DBVirtualObject underlyingObject;
     private FormattingAttributes formattingAttributes;
 
-    private Latent<BasePsiElement> enclosingScopePsiElement = MutableLatent.create(
-            () -> getTextLength(),
-            () -> findEnclosingScopePsiElement());
+    private WeakRef<BasePsiElement> enclosingScopePsiElement;
 
     public enum MatchType {
         STRONG,
@@ -567,7 +564,11 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     @Nullable
     public BasePsiElement getEnclosingScopePsiElement() {
-        return enclosingScopePsiElement.get();
+        if (this.enclosingScopePsiElement == null) {
+            BasePsiElement enclosingScopePsiElement = findEnclosingScopePsiElement();
+            this.enclosingScopePsiElement = WeakRef.from(enclosingScopePsiElement);
+        }
+        return enclosingScopePsiElement == null ? null : enclosingScopePsiElement.get();
     }
 
     @Nullable

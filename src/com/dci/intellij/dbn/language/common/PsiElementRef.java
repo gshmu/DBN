@@ -4,18 +4,21 @@ package com.dci.intellij.dbn.language.common;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
-
-public class PsiElementRef<T extends PsiElement>{
-    private WeakReference<T> psiElementRef;
-
-    public PsiElementRef(T psiElement) {
-        this.psiElementRef = new WeakReference<>(psiElement);
+public class PsiElementRef<T extends PsiElement> extends WeakRef<T>{
+    private PsiElementRef(T psiElement) {
+        super(psiElement);
     }
 
+    public static <T extends PsiElement> PsiElementRef<T> from(T psiElement) {
+        return psiElement == null ? null : new PsiElementRef<T>(psiElement);
+    }
+
+    @Nullable
+    @Override
     public T get() {
-        return psiElementRef.get();
+        return super.get();
     }
 
     @NotNull

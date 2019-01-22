@@ -36,15 +36,15 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implements MethodExecutionProcessor<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
-    private DBObjectRef<T> method;
+    private DBObjectRef<T> methodRef;
 
     protected MethodExecutionProcessorImpl(T method) {
-        this.method = new DBObjectRef<T>(method);
+        this.methodRef = DBObjectRef.from(method);
     }
 
     @NotNull
     public T getMethod() {
-        return DBObjectRef.getnn(method);
+        return DBObjectRef.getnn(methodRef);
     }
 
     public List<DBArgument> getArguments() {

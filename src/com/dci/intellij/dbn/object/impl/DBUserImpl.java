@@ -52,11 +52,12 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("USER_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("USER_NAME");
         set(DBObjectProperty.EXPIRED, resultSet.getString("IS_EXPIRED").equals("Y"));
         set(DBObjectProperty.LOCKED, resultSet.getString("IS_LOCKED").equals("Y"));
-        set(SESSION_USER, getName().equalsIgnoreCase(getConnectionHandler().getUserName()));
+        set(SESSION_USER, name.equalsIgnoreCase(getConnectionHandler().getUserName()));
+        return name;
     }
 
     @Override
@@ -73,7 +74,7 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     }
 
     public DBSchema getSchema() {
-        return getObjectBundle().getSchema(name);
+        return getObjectBundle().getSchema(getName());
     }
 
     public boolean isExpired() {

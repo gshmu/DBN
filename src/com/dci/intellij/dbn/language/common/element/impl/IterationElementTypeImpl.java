@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RecursiveLatent;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -27,7 +26,7 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
     private TokenElementType[] separatorTokens;
     private int[] elementsCountVariants;
     private int minIterations;
-    private Latent<Boolean> followedBySeparator = RecursiveLatent.create(() -> {
+    private Latent<Boolean> followedBySeparator = Latent.create(() -> {
         TokenElementType[] separatorTokens = getSeparatorTokens();
         if (separatorTokens != null) {
             Set<TokenType> nextPossibleTokens = getLookupCache().getNextPossibleTokens();

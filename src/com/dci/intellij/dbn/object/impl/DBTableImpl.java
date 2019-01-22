@@ -47,9 +47,10 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("TABLE_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("TABLE_NAME");
         set(TEMPORARY, resultSet.getString("IS_TEMPORARY").equals("Y"));
+        return name;
     }
 
     @Override

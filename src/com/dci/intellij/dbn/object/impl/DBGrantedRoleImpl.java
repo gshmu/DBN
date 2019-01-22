@@ -26,11 +26,12 @@ public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        this.name = resultSet.getString("GRANTED_ROLE_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("GRANTED_ROLE_NAME");
         this.roleRef = DBObjectRef.from(getConnectionHandler().getObjectBundle().getRole(name));
         set(ADMIN_OPTION, resultSet.getString("IS_ADMIN_OPTION").equals("Y"));
         set(DEFAULT_ROLE, resultSet.getString("IS_DEFAULT_ROLE").equals("Y"));
+        return name;
     }
 
     public DBObjectType getObjectType() {

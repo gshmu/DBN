@@ -9,13 +9,11 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
-
 public class PsiFileRef<T extends PsiFile>{
-    private WeakReference<T> psiFileRef;
+    private WeakRef<T> psiFileRef;
 
     private PsiFileRef(T psiFile) {
-        this.psiFileRef = new WeakReference<>(psiFile);
+        this.psiFileRef = WeakRef.from(psiFile);
     }
 
     @Nullable
@@ -27,7 +25,7 @@ public class PsiFileRef<T extends PsiFile>{
 
             psiFile = (T) PsiUtil.getPsiFile(project, virtualFile);
             if (psiFile != null && psiFile.isValid()) {
-                psiFileRef = new WeakReference<T>(psiFile);
+                psiFileRef = WeakRef.from(psiFile);
             } else {
                 psiFile = null;
             }
@@ -35,7 +33,7 @@ public class PsiFileRef<T extends PsiFile>{
         return psiFile;
     }
 
-    public static <T extends PsiFile> PsiFileRef<T> from(T psiFile) {
+    public static <T extends PsiFile> PsiFileRef<T> from(@NotNull T psiFile) {
         return new PsiFileRef<>(psiFile);
     }
 
