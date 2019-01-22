@@ -22,10 +22,11 @@ public class DBDatabaseLinkImpl extends DBSchemaObjectImpl implements DBDatabase
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("DBLINK_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("DBLINK_NAME");
         userName = resultSet.getString("USER_NAME");
         host = resultSet.getString("HOST");
+        return name;
     }
 
     @Override

@@ -33,8 +33,8 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("SYNONYM_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("SYNONYM_NAME");
         String schemaName = resultSet.getString("OBJECT_OWNER");
         String objectName = resultSet.getString("OBJECT_NAME");
         DBObjectType objectType = DBObjectType.get(resultSet.getString("OBJECT_TYPE"), DBObjectType.ANY);
@@ -46,7 +46,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
             underlyingObject = new DBObjectRef<DBObject>(schemaRef, objectType, objectName);
         }
 
-
+        return name;
     }
 
     public void initStatus(ResultSet resultSet) throws SQLException {

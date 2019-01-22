@@ -50,7 +50,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     public MethodExecutionInput(Project project, DBMethod method) {
         super(project, ExecutionTarget.METHOD);
-        this.methodRef = new DBObjectRef<DBMethod>(method);
+        this.methodRef = DBObjectRef.from(method);
         this.targetSchemaRef = method.getSchema().getRef();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {

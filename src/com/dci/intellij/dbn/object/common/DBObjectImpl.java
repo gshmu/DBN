@@ -76,10 +76,8 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
 
-    protected String name;
     protected DBObjectRef objectRef;
     protected DBObjectRef parentObjectRef;
-
     protected DBObjectPsiFacade psiFacade;
 
     protected DBObjectProperties properties = new DBObjectProperties();
@@ -110,21 +108,22 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
 
     protected DBObjectImpl(@Nullable ConnectionHandler connectionHandler, String name) {
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
-        this.name = name;
+        objectRef = new DBObjectRef(this, name);
     }
 
     private void init(ResultSet resultSet) throws SQLException {
-        initObject(resultSet);
+        String name = initObject(resultSet);
+        objectRef = new DBObjectRef(this, name);
+
         initStatus(resultSet);
         initProperties();
         initLists();
 
         CollectionUtil.compact(childObjects);
         CollectionUtil.compact(childObjectRelations);
-        objectRef = new DBObjectRef(this);
     }
 
-    protected abstract void initObject(ResultSet resultSet) throws SQLException;
+    protected abstract String initObject(ResultSet resultSet) throws SQLException;
 
     public void initStatus(ResultSet resultSet) throws SQLException {}
 
@@ -159,6 +158,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     public DBObjectRef getRef() {
         return objectRef;
     }
+
 
 
     @Override
@@ -220,7 +220,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
 
     @NotNull
     public String getName() {
-        return name;
+        return objectRef.getObjectName();
     }
 
     @Override
@@ -230,6 +230,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
 
     @Override
     public String getQuotedName(boolean quoteAlways) {
+        String name = getName();
         if (quoteAlways || needsNameQuoting()) {
             DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(this);
             QuotePair quotes = compatibilityInterface.getDefaultIdentifierQuotes();
@@ -240,6 +241,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }
 
     public boolean needsNameQuoting() {
+        String name = getName();
         return name.indexOf('-') > 0 ||
                 name.indexOf('.') > 0 ||
                 name.indexOf('#') > 0 ||
@@ -493,7 +495,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
             statement = connection.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
             statement.registerOutParameter(1, Types.CLOB);
             statement.setString(2, getTypeName().toUpperCase());
-            statement.setString(3, name);
+            statement.setString(3, getName());
             statement.setString(4, getSchema().getName());
 
             statement.execute();
@@ -594,7 +596,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }
 
     public String getPresentableText() {
-        return name;
+        return getName();
     }
 
     public String getPresentableTextDetails() {
@@ -784,7 +786,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }
 
     public String toString() {
-        return name;
+        return getName();
     }
 
     public List<PresentableProperty> getPresentableProperties() {

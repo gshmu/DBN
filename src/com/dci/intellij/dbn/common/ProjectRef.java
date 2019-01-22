@@ -2,13 +2,12 @@ package com.dci.intellij.dbn.common;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
-
-public class ProjectRef extends WeakReference<Project>{
+public class ProjectRef extends WeakRef<Project> {
     private ProjectRef(Project project) {
         super(project);
     }

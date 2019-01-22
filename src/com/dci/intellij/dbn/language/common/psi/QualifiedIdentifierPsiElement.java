@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class QualifiedIdentifierPsiElement extends SequencePsiElement {
-    private Latent<ParseVariants> parseVariants = MutableLatent.create(
+    private Latent<List<QualifiedIdentifierVariant>> parseVariants = MutableLatent.create(
             () -> this.getElementsCount(),
             () -> this.buildParseVariants());
 
@@ -30,7 +30,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
     }
 
     public List<QualifiedIdentifierVariant> getParseVariants() {
-        return parseVariants.get().getElements();
+        return parseVariants.get();
     }
 
     public int getIndexOf(LeafPsiElement leafPsiElement) {
@@ -83,7 +83,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         return null;
     }
 
-    private ParseVariants buildParseVariants() {
+    private List<QualifiedIdentifierVariant> buildParseVariants() {
         List<QualifiedIdentifierVariant> parseVariants = new ArrayList<>();
         for (LeafElementType[] elementTypes : getElementType().getVariants()) {
 
@@ -123,7 +123,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
             }
         }
         Collections.sort(parseVariants);
-        return new ParseVariants(parseVariants);
+        return parseVariants;
     }
 
     private LeafPsiElement lookupParentElementFor(LeafPsiElement element) {
@@ -170,17 +170,5 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
             child = child.getNextSibling();
         }
         return count;
-    }
-
-    private static class ParseVariants {
-        private List<QualifiedIdentifierVariant> elements;
-
-        ParseVariants(List<QualifiedIdentifierVariant> elements) {
-            this.elements = elements;
-        }
-
-        public List<QualifiedIdentifierVariant> getElements() {
-            return elements;
-        }
     }
 }

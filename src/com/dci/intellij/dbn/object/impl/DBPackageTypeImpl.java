@@ -31,8 +31,8 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("TYPE_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        return resultSet.getString("TYPE_NAME");
     }
 
     @Override

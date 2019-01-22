@@ -1,12 +1,21 @@
 package com.dci.intellij.dbn.common.latent;
 
-public class RecursiveLatent<T> extends Latent<T>{
-    RecursiveLatent(Loader<T> loader) {
-        super(loader);
+public abstract class RecursiveLatent<T> extends Latent<T>{
+    private RecursiveLatent() {
+        super();
     }
 
     @Override
     protected boolean shouldLoad() {
         return !loading && super.shouldLoad() ;
+    }
+
+    public static <T> RecursiveLatent<T> create(Loader<T> loader) {
+        return new RecursiveLatent<T>() {
+            @Override
+            public Loader<T> getLoader() {
+                return loader;
+            }
+        };
     }
 }

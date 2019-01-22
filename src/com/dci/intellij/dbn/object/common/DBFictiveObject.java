@@ -24,7 +24,8 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        throw new UnsupportedOperationException();
     }
 
     public String getQualifiedNameWithType() {

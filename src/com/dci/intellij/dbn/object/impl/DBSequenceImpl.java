@@ -21,8 +21,8 @@ public class DBSequenceImpl extends DBSchemaObjectImpl implements DBSequence {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("SEQUENCE_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        return resultSet.getString("SEQUENCE_NAME");
     }
 
     @Override

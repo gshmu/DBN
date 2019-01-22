@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BasicCallable;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.diagnostic.Logger;
 
-import java.lang.ref.WeakReference;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
@@ -19,13 +19,13 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
 
     protected SQLException exception;
 
-    private WeakReference<DBNConnection> connection;
-    private WeakReference<DBNResultSet> resultSet;
+    private WeakRef<DBNConnection> connection;
+    private WeakRef<DBNResultSet> resultSet;
 
 
     DBNStatement(T inner, DBNConnection connection) {
         super(inner, ResourceType.STATEMENT);
-        this.connection = new WeakReference<>(connection);
+        this.connection = WeakRef.from(connection);
     }
 
     @Override
@@ -72,11 +72,11 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
             resultSet = null;
         } else {
             if (resultSet == null) {
-                resultSet = new WeakReference<>(new DBNResultSet(original, this));
+                resultSet = WeakRef.from(new DBNResultSet(original, this));
             } else {
                 DBNResultSet wrapped = resultSet.get();
                 if (wrapped == null || wrapped.inner != original) {
-                    resultSet = new WeakReference<>(new DBNResultSet(original, this));
+                    resultSet = WeakRef.from(new DBNResultSet(original, this));
                 }
             }
         }

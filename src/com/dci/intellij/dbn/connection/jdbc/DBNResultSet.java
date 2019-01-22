@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.language.common.WeakRef;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Array;
@@ -25,18 +25,18 @@ import java.util.Calendar;
 import java.util.Map;
 
 public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, Closeable {
-    private WeakReference<DBNStatement> statement;
-    private WeakReference<DBNConnection> connection;
+    private WeakRef<DBNStatement> statement;
+    private WeakRef<DBNConnection> connection;
 
 
     public DBNResultSet(ResultSet inner, DBNConnection connection) {
         super(inner, ResourceType.RESULT_SET);
-        this.connection = new WeakReference<DBNConnection>(connection);
+        this.connection = WeakRef.from(connection);
     }
 
     public DBNResultSet(ResultSet inner, DBNStatement statement) {
         super(inner, ResourceType.RESULT_SET);
-        this.statement = new WeakReference<DBNStatement>(statement);
+        this.statement = WeakRef.from(statement);
     }
 
     @Override

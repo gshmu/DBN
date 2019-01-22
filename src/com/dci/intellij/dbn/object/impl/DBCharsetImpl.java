@@ -18,9 +18,9 @@ public class DBCharsetImpl extends DBObjectImpl implements DBCharset {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("CHARSET_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
         maxLength = resultSet.getInt("MAX_LENGTH");
+        return resultSet.getString("CHARSET_NAME");
     }
 
     public DBObjectType getObjectType() {

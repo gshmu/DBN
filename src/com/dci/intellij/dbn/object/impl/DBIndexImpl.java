@@ -32,9 +32,10 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("INDEX_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("INDEX_NAME");
         set(UNIQUE, resultSet.getString("IS_UNIQUE").equals("Y"));
+        return name;
     }
 
     public void initStatus(ResultSet resultSet) throws SQLException {

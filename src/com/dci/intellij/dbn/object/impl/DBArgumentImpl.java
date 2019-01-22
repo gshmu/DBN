@@ -36,7 +36,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
+    protected String initObject(ResultSet resultSet) throws SQLException {
         overload = resultSet.getInt("OVERLOAD");
         position = resultSet.getInt("POSITION");
         sequence = resultSet.getInt("SEQUENCE");
@@ -46,13 +46,14 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
             set(DBObjectProperty.OUTPUT, inOut.contains("OUT"));
 
         }
-        name = resultSet.getString("ARGUMENT_NAME");
+        String name = resultSet.getString("ARGUMENT_NAME");
         if (name == null) name = position == 0 ? "return" : "[unnamed]";
 
         dataType = DBDataType.get(this.getConnectionHandler(), resultSet);
         if (getParentObject() instanceof DBFunction) {
             position++;
         }
+        return name;
     }
 
     public DBDataType getDataType() {

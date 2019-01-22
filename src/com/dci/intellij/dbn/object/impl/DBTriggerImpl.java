@@ -39,8 +39,8 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
-        name = resultSet.getString("TRIGGER_NAME");
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("TRIGGER_NAME");
         set(FOR_EACH_ROW, resultSet.getString("IS_FOR_EACH_ROW").equals("Y"));
 
         String triggerTypeString = resultSet.getString("TRIGGER_TYPE");
@@ -65,7 +65,9 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
         if (triggeringEventString.contains("DDL")) triggeringEventList.add(TRIGGERING_EVENT_DDL);
         if (triggeringEventList.size() == 0) triggeringEventList.add(TRIGGERING_EVENT_UNKNOWN);
 
-        triggeringEvents = triggeringEventList.toArray(new TriggeringEvent[0]);    }
+        triggeringEvents = triggeringEventList.toArray(new TriggeringEvent[0]);
+        return name;
+    }
 
     public void initStatus(ResultSet resultSet) throws SQLException {
         boolean isEnabled = resultSet.getString("IS_ENABLED").equals("Y");

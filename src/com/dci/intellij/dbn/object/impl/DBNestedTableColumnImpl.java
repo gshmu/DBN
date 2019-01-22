@@ -19,7 +19,8 @@ public class DBNestedTableColumnImpl extends DBObjectImpl implements DBNestedTab
     }
 
     @Override
-    protected void initObject(ResultSet resultSet) throws SQLException {
+    protected String initObject(ResultSet resultSet) throws SQLException {
+        return null; //TODO
     }
 
     public DBObjectType getObjectType() {
