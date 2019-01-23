@@ -211,7 +211,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
                 super.getVirtualFile() :
                 originalFile.getVirtualFile();
 */
-        return super.getVirtualFile();
+        return CommonUtil.nvl(super.getVirtualFile(), getViewProvider().getVirtualFile());
     }
 
     public boolean isInjectedContext() {
