@@ -33,26 +33,27 @@ import java.util.jar.JarFile;
 public class DatabaseDriverManager implements ApplicationComponent {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private static Map<DatabaseType, Map<String, String>> INTERNAL_LIB_MAP = new HashMap<DatabaseType, Map<String, String>>();
+    private static Map<DatabaseType, Map<String, String>> INTERNAL_LIB_MAP = new HashMap<>();
     static {
-        HashMap<String, String> mysql = new HashMap<String, String>();
+        HashMap<String, String> mysql = new HashMap<>();
         //mysql.put("1.", "mysql-connector-java-5.1.35-bin.jar");
         mysql.put("1.", "mysql-connector-java-5.1.46.jar");
         INTERNAL_LIB_MAP.put(DatabaseType.MYSQL, mysql);
 
-        HashMap<String, String> sqlite = new HashMap<String, String>();
+        HashMap<String, String> sqlite = new HashMap<>();
         sqlite.put("1.", "sqlite-jdbc-3.23.1.jar");
         INTERNAL_LIB_MAP.put(DatabaseType.SQLITE, sqlite);
 
-        HashMap<String, String> postgres = new HashMap<String, String>();
+        HashMap<String, String> postgres = new HashMap<>();
         postgres.put("1.6", "postgresql-9.4-1201.jdbc4.jar");
         postgres.put("1.7", "postgresql-9.4-1201.jdbc41.jar");
         postgres.put("1.8", "postgresql-9.4-1201.jdbc41.jar");
+        postgres.put("1.9", "postgresql-9.4-1201.jdbc41.jar");
         INTERNAL_LIB_MAP.put(DatabaseType.POSTGRES, postgres);
     }
 
 
-    private Map<String, List<Driver>> driversCache = new HashMap<String, List<Driver>>();
+    private Map<String, List<Driver>> driversCache = new HashMap<>();
 
     public static DatabaseDriverManager getInstance() {
         return ApplicationManager.getApplication().getComponent(DatabaseDriverManager.class);

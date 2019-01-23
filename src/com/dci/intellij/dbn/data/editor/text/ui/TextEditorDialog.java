@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
+import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.Project;
@@ -56,16 +57,18 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
 
     @Override
     protected void doOKAction() {
-        try {
-            getComponent().writeUserValue();
-        } finally {
-            super.doOKAction();
-        }
+        String text = getComponent().getText();
+        BackgroundTask.invoke(getProject(), TaskInstructions.create("Updating value"), (data, progress) -> {
+            UserValueHolder userValueHolder = textEditorAdapter.getUserValueHolder();
+            userValueHolder.updateUserValue(text, false);
+            textEditorAdapter.afterUpdate();
+        });
+        super.doOKAction();
     }
 
-    private DocumentListener documentListener = new DocumentAdapter() {
+    private DocumentListener documentListener = new DocumentListener() {
         @Override
-        public void documentChanged(DocumentEvent event) {
+        public void documentChanged(@NotNull DocumentEvent event) {
             getCancelAction().putValue(Action.NAME, "Cancel");
             getOKAction().setEnabled(true);
         }

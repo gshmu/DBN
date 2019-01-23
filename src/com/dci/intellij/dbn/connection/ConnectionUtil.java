@@ -230,12 +230,6 @@ public class ConnectionUtil {
                     throw new SQLException("Driver failed to create connection for this configuration. No failure information provided.");
                 }
 
-                try {
-                    connection.setAutoCommit(autoCommit);
-                } catch (SQLException e) {
-                    // need to try twice (don't remember why)
-                    connection.setAutoCommit(autoCommit);
-                }
                 if (connectionStatus != null) {
                     connectionStatus.setConnectionException(null);
                     connectionStatus.setConnected(true);
@@ -256,6 +250,13 @@ public class ConnectionUtil {
                                     "Unable to attach database file " + path + ". Cause: " + e.getMessage());
                         }
                     }
+                }
+
+                try {
+                    connection.setAutoCommit(autoCommit);
+                } catch (SQLException e) {
+                    // need to try twice (don't remember why)
+                    connection.setAutoCommit(autoCommit);
                 }
 
                 DatabaseType databaseType = getDatabaseType(connection);

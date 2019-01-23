@@ -66,13 +66,8 @@ import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.CONNECTED;
-import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.LOADED;
-import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.LOADING;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.DELIBERATE_ACTION;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.PRESERVE_CHANGES;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.REBUILD;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.USE_CURRENT_FILTER;
+import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.*;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
@@ -537,7 +532,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     };
 
     private TransactionListener transactionListener = new TransactionListener() {
-        public void beforeAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action) {
+        public void beforeAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action) {
             if (connectionHandler == getConnectionHandler()) {
                 DatasetEditorModel model = getTableModel();
                 DatasetEditorTable editorTable = getEditorTable();
@@ -568,7 +563,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             }
         }
 
-        public void afterAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
+        public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             if (connectionHandler == getConnectionHandler()) {
                 DatasetEditorModel model = getTableModel();
                 DatasetEditorTable editorTable = getEditorTable();

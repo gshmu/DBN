@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction;
 
+import com.dci.intellij.dbn.common.constant.Constant;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -8,7 +9,7 @@ import com.intellij.notification.NotificationType;
 import java.io.Serializable;
 import java.sql.SQLException;
 
-public enum TransactionAction implements Serializable {
+public enum TransactionAction implements Serializable, Constant<TransactionAction> {
     COMMIT(
             "Transaction",
             "Commit",
@@ -64,7 +65,7 @@ public enum TransactionAction implements Serializable {
             "Auto-Commit switched ON for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit ON for connection \"{0}\". Details: {1}",
             true,
-            (connectionHandler, connection) -> {connectionHandler.setAutoCommit(true);}),
+            (connectionHandler, connection) -> {connection.setAutoCommit(true);}),
 
     TURN_AUTO_COMMIT_OFF(
             "Transaction",
@@ -72,7 +73,7 @@ public enum TransactionAction implements Serializable {
             NotificationType.INFORMATION, "Auto-Commit switched OFF for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit OFF for connection\"{0}\". Details: {1}",
             true,
-            (connectionHandler, connection) -> {connectionHandler.setAutoCommit(false);});
+            (connectionHandler, connection) -> {connection.setAutoCommit(false);});
 
 
     private String group;

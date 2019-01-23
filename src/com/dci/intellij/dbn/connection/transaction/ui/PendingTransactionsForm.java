@@ -16,6 +16,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -129,11 +130,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
      ********************************************************/
     private TransactionListener transactionListener = new TransactionListener() {
         @Override
-        public void beforeAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action) {
-        }
-
-        @Override
-        public void afterAction(ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
+        public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             refreshForm();
         }
     };
