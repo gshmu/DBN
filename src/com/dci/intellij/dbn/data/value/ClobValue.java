@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import javax.sql.rowset.serial.SerialClob;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.CallableStatement;
@@ -15,6 +16,7 @@ import java.sql.NClob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Types;
 
 public class ClobValue extends LargeObjectValue {
@@ -26,44 +28,81 @@ public class ClobValue extends LargeObjectValue {
     public ClobValue() {
     }
 
+    private Clob createSerialClob(String charset) throws SQLException {
+        if (StringUtil.isNotEmpty(charset)) {
+            return new SerialClob(charset.toCharArray());
+        }
+        return null;
+    }
+
     public ClobValue(CallableStatement callableStatement, int parameterIndex) throws SQLException {
-        clob = callableStatement.getClob(parameterIndex);
+        try {
+            clob = callableStatement.getClob(parameterIndex);
+        } catch (SQLFeatureNotSupportedException e) {
+            String charset = callableStatement.getString(parameterIndex);
+            clob = createSerialClob(charset);
+        }
+
     }
 
     public ClobValue(ResultSet resultSet, int columnIndex) throws SQLException {
-        this.clob = resultSet.getClob(columnIndex);
+        try {
+            clob = resultSet.getClob(columnIndex);
+        } catch (SQLFeatureNotSupportedException e) {
+            String charset = resultSet.getString(columnIndex);
+            clob = createSerialClob(charset);
+        }
     }
 
     @Override
     public void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable String value) throws SQLException {
-        if (value == null) {
-            preparedStatement.setClob(parameterIndex, (Clob) null);
-        } else {
-            Clob clob = connection.createClob();
-            clob.setString(1, value);
-            preparedStatement.setClob(parameterIndex, clob);
+        try {
+            if (value == null) {
+                preparedStatement.setClob(parameterIndex, (Clob) null);
+            } else {
+                clob = connection.createClob();
+                clob.setString(1, value);
+                preparedStatement.setClob(parameterIndex, clob);
+            }
+        } catch (SQLFeatureNotSupportedException e) {
+            if (value == null) {
+                preparedStatement.setString(parameterIndex, null);
+            } else {
+                clob = createSerialClob(value);
+                preparedStatement.setString(parameterIndex, value);
+            }
         }
     }
 
     public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
-        int columnType = resultSet.getMetaData().getColumnType(columnIndex);
-        if (StringUtil.isEmpty(value)) {
-            clob = null;
-        } else {
-            clob = columnType == Types.NCLOB ?
-                    connection.createNClob() :
-                    connection.createClob();
-            clob.setString(1, value);
-        }
+        try {
+            int columnType = resultSet.getMetaData().getColumnType(columnIndex);
+            if (StringUtil.isEmpty(value)) {
+                clob = null;
+            } else {
+                clob = columnType == Types.NCLOB ?
+                        connection.createNClob() :
+                        connection.createClob();
+                clob.setString(1, value);
+            }
 
-        if (columnType == Types.NCLOB)
-            resultSet.updateNClob(columnIndex, (NClob) clob); else
-            resultSet.updateClob(columnIndex, clob);
+            if (columnType == Types.NCLOB)
+                resultSet.updateNClob(columnIndex, (NClob) clob); else
+                resultSet.updateClob(columnIndex, clob);
+        } catch (SQLFeatureNotSupportedException e) {
+            if (StringUtil.isEmpty(value)) {
+                clob = null;
+            } else {
+                clob = createSerialClob(value);
+            }
+            resultSet.updateString(columnIndex, value);
+
+        }
   }
 
     @Override
     public GenericDataType getGenericDataType() {
-        return GenericDataType.ARRAY;
+        return GenericDataType.CLOB;
     }
 
     @Nullable

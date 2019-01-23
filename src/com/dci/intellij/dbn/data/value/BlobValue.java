@@ -6,6 +6,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.Nullable;
 
+import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
@@ -14,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 
 public class BlobValue extends LargeObjectValue {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -23,33 +25,72 @@ public class BlobValue extends LargeObjectValue {
 
     public BlobValue() {}
 
+    private Blob createSerialBlob(String charset) throws SQLException {
+        if (StringUtil.isNotEmpty(charset)) {
+            return new SerialBlob(charset.getBytes());
+        }
+        return null;
+    }
+
     public BlobValue(CallableStatement callableStatement, int parameterIndex) throws SQLException {
-        blob = callableStatement.getBlob(parameterIndex);
+        try {
+            blob = callableStatement.getBlob(parameterIndex);
+        } catch (SQLFeatureNotSupportedException e) {
+            String charset = callableStatement.getString(parameterIndex);
+            blob = createSerialBlob(charset);
+        }
+
+
     }
 
     public BlobValue(ResultSet resultSet, int columnIndex) throws SQLException {
-        this.blob = resultSet.getBlob(columnIndex);
+        try {
+            blob = resultSet.getBlob(columnIndex);
+        } catch (SQLFeatureNotSupportedException e) {
+            String charset = resultSet.getString(columnIndex);
+            blob = createSerialBlob(charset);
+        }
     }
 
     @Override
-    public void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable String value) throws SQLException {
-        if (value == null) {
-            preparedStatement.setBlob(parameterIndex, (Blob) null);
-        } else {
-            Blob blob = connection.createBlob();
-            blob.setBytes(1, value.getBytes());
-            preparedStatement.setBlob(parameterIndex, blob);
+    public void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable String value)
+            throws SQLException {
+        try {
+            if (value == null) {
+                preparedStatement.setBlob(parameterIndex, (Blob) null);
+            } else {
+                blob = connection.createBlob();
+                blob.setBytes(1, value.getBytes());
+                preparedStatement.setBlob(parameterIndex, blob);
+            }
+        } catch (SQLFeatureNotSupportedException e) {
+            if (value == null) {
+                preparedStatement.setString(parameterIndex, null);
+            } else {
+                blob = createSerialBlob(value);
+                preparedStatement.setString(parameterIndex, value);
+            }
         }
     }
 
     public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
-        if (StringUtil.isEmpty(value)) {
-            blob = null;
-        } else {
-            blob = connection.createBlob();
-            blob.setBytes(1, value.getBytes());
+        try {
+            if (StringUtil.isEmpty(value)) {
+                blob = null;
+            } else {
+                blob = connection.createBlob();
+                blob.setBytes(1, value.getBytes());
+            }
+            resultSet.updateBlob(columnIndex, blob);
+        } catch (SQLFeatureNotSupportedException e) {
+            if (StringUtil.isEmpty(value)) {
+                blob = null;
+            } else {
+                blob = createSerialBlob(value);
+            }
+            resultSet.updateString(columnIndex, value);
+
         }
-        resultSet.updateBlob(columnIndex, blob);
     }
 
     @Override

@@ -50,7 +50,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     public synchronized void updateRow() throws SQLException {
         if (!isInsertMode())  {
             if (isUseSavePoints()) {
-                ConnectionSavepointCall.invoke(connection, this::executeUpdate);
+                ConnectionSavepointCall.invoke(connection, () -> this.executeUpdate());
             } else {
                 executeUpdate();
             }
@@ -107,7 +107,8 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
 
     @Override
     public synchronized void setValue(final int columnIndex, @NotNull final ValueAdapter valueAdapter, @Nullable final Object value) throws SQLException {
-        throw new SQLException("Operation not supported");
+        DatasetEditorColumnInfo columnInfo = getColumnInfo(columnIndex);
+        currentRow.addChangedCell(columnInfo, value);
     }
 
     @Override
