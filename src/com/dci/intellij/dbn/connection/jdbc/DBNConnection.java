@@ -59,7 +59,7 @@ public class DBNConnection extends DBNConnectionBase {
                     ResourceStatus.INVALID,
                     ResourceStatus.INVALID_SETTING,
                     ResourceStatus.INVALID_CHECKING,
-                    0,
+                    TimeUtil.FIVE_SECONDS,
                     true) { // true is terminal status
                 @Override
                 protected void changeInner(boolean value) throws SQLException {
@@ -76,7 +76,7 @@ public class DBNConnection extends DBNConnectionBase {
                     ResourceStatus.AUTO_COMMIT,
                     ResourceStatus.AUTO_COMMIT_SETTING,
                     ResourceStatus.AUTO_COMMIT_CHECKING,
-                    0,
+                    TimeUtil.FIVE_SECONDS,
                     false) { // no terminal status
                 @Override
                 protected void changeInner(boolean value) throws SQLException {
