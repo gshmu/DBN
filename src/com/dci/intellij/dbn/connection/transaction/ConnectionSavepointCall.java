@@ -11,7 +11,6 @@ import java.sql.Savepoint;
 
 public abstract class ConnectionSavepointCall<T>{
     private final DBNConnection connection;
-    private ThreadLocal<ConnectionSavepointCall> threadSavepointCall = new ThreadLocal<ConnectionSavepointCall>();
 
 
     private ConnectionSavepointCall(DBNResultSet resultSet) throws SQLException {
@@ -29,13 +28,11 @@ public abstract class ConnectionSavepointCall<T>{
             synchronized (connection) {
                 Savepoint savepoint = ConnectionUtil.createSavepoint(connection);
                 try {
-                    threadSavepointCall.set(this);
                     return execute();
                 } catch (SQLException e) {
                     ConnectionUtil.rollbackSilently(connection, savepoint);
                     throw e;
                 } finally {
-                    threadSavepointCall.set(null);
                     ConnectionUtil.releaseSavepoint(connection, savepoint);
                 }
             }

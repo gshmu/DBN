@@ -1,10 +1,13 @@
 package com.dci.intellij.dbn.database.sqlite;
 
 import com.dci.intellij.dbn.common.latent.ThreadLocalLatent;
+import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
 
 import java.math.BigInteger;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -57,8 +60,8 @@ class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
         createLiteralDefinition("NVARCHAR", String.class, Types.NVARCHAR);
         createLiteralDefinition("TEXT", String.class, Types.VARCHAR);
         createLiteralDefinition("NULL", String.class, Types.VARCHAR);
-        createLiteralDefinition("BLOB", String.class, Types.BLOB);
-        createLiteralDefinition("CLOB", String.class, Types.CLOB);
+        createLargeValueDefinition("BLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
+        createLargeValueDefinition("CLOB", Clob.class, Types.CLOB, GenericDataType.CLOB);
 
         createDateTimeDefinition("DATE", Date.class, Types.DATE, new DataTypeParseAdapter<Date>() {
 
