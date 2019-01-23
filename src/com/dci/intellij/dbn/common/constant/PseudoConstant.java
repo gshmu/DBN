@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Use this "constant" if the possible values are variable (i.e. cannot be implemented with enum).
  */
-public abstract class PseudoConstant<T extends PseudoConstant> implements Constant<T>, Serializable {
+public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Constant<T>, Serializable {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private static final Map<Class<? extends PseudoConstant>, Map<String, PseudoConstant>> REGISTRY = new HashMap<Class<? extends PseudoConstant>, Map<String, PseudoConstant>>();
@@ -44,11 +44,6 @@ public abstract class PseudoConstant<T extends PseudoConstant> implements Consta
 
     public final String id() {
         return id;
-    }
-
-    @Override
-    public final boolean isOneOf(T... constants) {
-        return ConstantUtil.isOneOf(this, constants);
     }
 
     @Override

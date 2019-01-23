@@ -7,13 +7,17 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingListener;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
+import com.dci.intellij.dbn.connection.transaction.TransactionAction;
+import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -49,6 +53,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
             subscribed = true;
             EventUtil.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
             EventUtil.subscribe(project, this, FileConnectionMappingListener.TOPIC, connectionMappingListener);
+            EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
         }
         update();
     }
@@ -112,6 +117,19 @@ public class AutoCommitLabel extends JLabel implements Disposable {
             }
         }
     };
+
+    /********************************************************
+     *                Transaction Listener                  *
+     ********************************************************/
+    private TransactionListener transactionListener = new TransactionListener() {
+        @Override
+        public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
+            if (action.isOneOf(TransactionAction.TURN_AUTO_COMMIT_ON, TransactionAction.TURN_AUTO_COMMIT_OFF) && ConnectionHandlerRef.get(connectionHandlerRef) == connectionHandler) {
+                update();
+            }
+        }
+    };
+
 
     @Nullable
     public VirtualFile getVirtualFile() {

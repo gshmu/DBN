@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.editor.session.SessionStatus;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -39,6 +40,7 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
 
     public boolean supportsFeature(DatabaseFeature feature) {
         switch (feature) {
+            case CONNECTION_ERROR_RECOVERY: return true;
             default: return false;
         }
     }
@@ -77,8 +79,7 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
     @Override
     public DatabaseAttachmentHandler getDatabaseAttachmentHandler() {
         return (connection, filePath, schemaName) -> {
-            boolean autoCommit = connection.getAutoCommit();
-            connection.setAutoCommit(false);
+            setAutoCommit(connection, false);
             try {
                 connection.rollback();
                 Statement statement = connection.createStatement();
@@ -87,8 +88,19 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
                 } catch (SQLException ignore) {}
                 statement.executeUpdate("attach database '" + filePath + "' as \"" + schemaName + "\"");
             } finally {
-                connection.setAutoCommit(autoCommit);
+                setAutoCommit(connection, true);
             }
         };
+    }
+
+    private void setAutoCommit(Connection connection, boolean autoCommit) throws SQLException {
+        try {
+            connection.setAutoCommit(autoCommit);
+        } catch (SQLException e) {
+            if (connection.getAutoCommit() != autoCommit) {
+                throw e;
+            }
+
+        }
     }
 }
