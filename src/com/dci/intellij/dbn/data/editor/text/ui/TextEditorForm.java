@@ -26,6 +26,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.testFramework.LightVirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -141,10 +142,9 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
         return null;
     }
 
-    public void writeUserValue() {
-        String text = editor.getDocument().getText();
-        userValueHolder.updateUserValue(text, false);
-        textEditorAdapter.afterUpdate();
+    @NotNull
+    public String getText() {
+        return editor.getDocument().getText();
     }
 
     public TextContentType getContentType() {

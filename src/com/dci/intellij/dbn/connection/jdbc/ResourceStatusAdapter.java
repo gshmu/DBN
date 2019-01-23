@@ -90,7 +90,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
     protected void fail() {
-        if (isTerminal()) {
+        if (terminal) {
             set(value, true); // TODO really
         } else {
             if (checkInterval > 0) {
@@ -111,16 +111,23 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
     }
 
     private boolean canCheck() {
-        return !isTerminal() && !isChecking() && !isChanging();
+        if (isChecking() || isChanging()) {
+            return false;
+        } else if (terminal && value()) {
+            return false;
+        } else {
+            return true;
+        }
     }
-
-    private boolean isTerminal() {
-        return terminal && value();
-    }
-
 
     private boolean canChange(boolean value) {
-        return !value() && !isChanging() && get() != value;
+        if (isChanging()) {
+            return false;
+        } else if (terminal && value()) {
+            return false;
+        } else {
+            return get() != value;
+        }
     }
 
     private boolean checkControlled() {

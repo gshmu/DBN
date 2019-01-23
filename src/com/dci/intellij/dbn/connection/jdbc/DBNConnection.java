@@ -229,7 +229,11 @@ public class DBNConnection extends DBNConnectionBase {
      ********************************************************************/
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-        this.autoCommit.change(autoCommit);
+        try {
+            this.autoCommit.change(autoCommit);
+        } catch (SQLException e) {
+            throw e;
+        }
     }
 
     @Override
@@ -241,7 +245,11 @@ public class DBNConnection extends DBNConnectionBase {
     public void commit() throws SQLException {
         updateLastAccess();
 
-        super.commit();
+        try {
+            super.commit();
+        } catch (SQLException e) {
+            throw e;
+        }
         resetDataChanges();
         notifyStatusChange();
     }
@@ -250,7 +258,11 @@ public class DBNConnection extends DBNConnectionBase {
     public void rollback() throws SQLException {
         updateLastAccess();
 
-        super.rollback();
+        try {
+            super.rollback();
+        } catch (SQLException e) {
+            throw e;
+        }
         resetDataChanges();
         notifyStatusChange();
     }
@@ -259,7 +271,11 @@ public class DBNConnection extends DBNConnectionBase {
     public void close() throws SQLException {
         updateLastAccess();
 
-        super.close();
+        try {
+            super.close();
+        } catch (SQLException e) {
+            throw e;
+        }
         resetDataChanges();
         notifyStatusChange();
     }

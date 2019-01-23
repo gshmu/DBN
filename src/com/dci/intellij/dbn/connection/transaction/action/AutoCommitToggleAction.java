@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionToggleAction;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class AutoCommitToggleAction extends AbstractConnectionToggleAction {
 
@@ -12,12 +13,12 @@ public class AutoCommitToggleAction extends AbstractConnectionToggleAction {
 
     }
     @Override
-    public boolean isSelected(AnActionEvent e) {
+    public boolean isSelected(@NotNull AnActionEvent e) {
         return getConnectionHandler().isAutoCommit();
     }
 
     @Override
-    public void setSelected(AnActionEvent e, boolean state) {
+    public void setSelected(@NotNull AnActionEvent e, boolean state) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(connectionHandler.getProject());
         transactionManager.toggleAutoCommit(connectionHandler);
