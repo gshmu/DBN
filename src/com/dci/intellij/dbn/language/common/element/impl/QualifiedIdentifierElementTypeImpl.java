@@ -56,6 +56,7 @@ public class QualifiedIdentifierElementTypeImpl extends AbstractElementType impl
         return new QualifiedIdentifierElementTypeParser(this);
     }
 
+    @Override
     public List<LeafElementType[]> getVariants() {
         return variants;
     }
@@ -105,6 +106,7 @@ public class QualifiedIdentifierElementTypeImpl extends AbstractElementType impl
         return variants;
     }
 
+    @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         /*SortedSet<QualifiedIdentifierVariant> parseVariants = getParseVariants();
         if (parseVariants != null) {
@@ -113,6 +115,7 @@ public class QualifiedIdentifierElementTypeImpl extends AbstractElementType impl
         return new QualifiedIdentifierPsiElement(astNode, this);
     }
 
+    @Override
     public String getDebugName() {
         return "identifier sequence (" + getId() + ")";
     }
@@ -125,10 +128,12 @@ public class QualifiedIdentifierElementTypeImpl extends AbstractElementType impl
         this.parseVariants = parseVariants;
     }*/
 
+    @Override
     public boolean isLeaf() {
         return false;
     }
 
+    @Override
     public TokenElementType getSeparatorToken() {
         return separatorToken;
     }

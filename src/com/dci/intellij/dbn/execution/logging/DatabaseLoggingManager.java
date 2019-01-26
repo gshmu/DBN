@@ -100,6 +100,7 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
     /*********************************************************
      *                    ProjectComponent                   *
      *********************************************************/
+    @Override
     @NotNull
     @NonNls
     public String getComponentName() {

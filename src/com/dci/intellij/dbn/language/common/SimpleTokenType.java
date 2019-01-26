@@ -91,27 +91,33 @@ public class SimpleTokenType extends IElementType implements TokenType {
         return tokenPairTemplate;
     }
 
+    @Override
     public void setDefaultFormatting(FormattingDefinition defaultFormatting) {
         formatting = FormattingDefinitionFactory.mergeDefinitions(formatting, defaultFormatting);
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
 
+    @Override
     public int getLookupIndex() {
         return lookupIndex;
     }
 
+    @Override
     public String getValue() {
         return value == null ? "" : value;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public String getTypeName() {
         return category.getName();
     }
@@ -121,34 +127,42 @@ public class SimpleTokenType extends IElementType implements TokenType {
         return getValue().compareTo(tokenType.getValue());
     }
 
+    @Override
     public boolean isSuppressibleReservedWord() {
         return isReservedWord() && isSuppressibleReservedWord;
     }
 
+    @Override
     public boolean isIdentifier() {
         return category == TokenTypeCategory.IDENTIFIER;
     }
 
+    @Override
     public boolean isVariable() {
         return getSharedTokenTypes().isVariable(this);
     }
 
+    @Override
     public boolean isQuotedIdentifier() {
         return this == getSharedTokenTypes().getQuotedIdentifier();
     }
 
+    @Override
     public boolean isKeyword() {
         return category == TokenTypeCategory.KEYWORD;
     }
 
+    @Override
     public boolean isFunction() {
         return category == TokenTypeCategory.FUNCTION;
     }
 
+    @Override
     public boolean isParameter() {
         return category == TokenTypeCategory.PARAMETER;
     }
 
+    @Override
     public boolean isDataType() {
         return category == TokenTypeCategory.DATATYPE;
     }
@@ -190,6 +204,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
         //return isCharacter() || isOperator() || !isSuppressibleReservedWord();
     }
 
+    @Override
     @NotNull
     public TokenTypeCategory getCategory() {
         return category;

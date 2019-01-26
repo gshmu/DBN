@@ -22,6 +22,7 @@ public class DBJdwpDebuggerEditorsProvider extends XDebuggerEditorsProvider {
         return PSQLFileType.INSTANCE;
     }
 
+    @Override
     @NotNull
     public Document createDocument(@NotNull Project project, @NotNull String text, @Nullable XSourcePosition sourcePosition, @NotNull EvaluationMode evaluationMode) {
         return new DocumentImpl(text);

@@ -64,6 +64,7 @@ public class ProjectSettings
         connectionSettings = new ConnectionBundleSettings(project);
     }
 
+    @Override
     public String getHelpTopic() {
         ProjectSettingsEditorForm settingsEditor = getSettingsEditor();
         if (settingsEditor == null) {
@@ -142,16 +143,19 @@ public class ProjectSettings
         return ddlFileSettings;
     }
 
+    @Override
     @Nls
     public String getDisplayName() {
         return "Database Navigator";
     }
 
+    @Override
     @Nullable
     public Icon getIcon() {
         return Icons.DATABASE_NAVIGATOR;
     }
 
+    @Override
     public Configurable[] getConfigurables() {
         return getConfigurations();
     }
@@ -171,11 +175,13 @@ public class ProjectSettings
     /*********************************************************
      *                    Configuration                      *
      *********************************************************/
+    @Override
     @NotNull
     public ProjectSettingsEditorForm createConfigurationEditor() {
         return new ProjectSettingsEditorForm(this);
     }
 
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 connectionSettings,
@@ -195,19 +201,23 @@ public class ProjectSettings
     /*********************************************************
     *              SearchableConfigurable.Parent             *
     *********************************************************/
+    @Override
     public boolean hasOwnContent() {
         return false;
     }
 
+    @Override
     public boolean isVisible() {
         return true;
     }
 
+    @Override
     @NotNull
     public String getId() {
         return "DBNavigator.Project.Settings";
     }
 
+    @Override
     public Runnable enableSearch(String option) {
         return null;
     }

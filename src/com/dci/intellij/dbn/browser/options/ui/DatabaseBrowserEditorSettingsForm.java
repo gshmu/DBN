@@ -54,6 +54,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
         editorTypeTable.setModel(new EditorTypeTableModel(getConfiguration().getOptions()));
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
@@ -92,6 +93,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
             setDefaultEditor(DefaultEditorType.class, editor);
 
             getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+                @Override
                 public void valueChanged(ListSelectionEvent e) {
                     if (!e.getValueIsAdjusting()) {
                         //editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);

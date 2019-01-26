@@ -20,6 +20,7 @@ public class RunMethodAction extends AbstractSourceCodeEditorAction {
         super("Run Method", "", Icons.METHOD_EXECUTION_RUN);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         FileEditor fileEditor = getFileEditor(e);
@@ -33,6 +34,7 @@ public class RunMethodAction extends AbstractSourceCodeEditorAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();

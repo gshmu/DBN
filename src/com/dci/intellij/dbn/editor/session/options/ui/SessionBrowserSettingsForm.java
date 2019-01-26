@@ -34,10 +34,12 @@ public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionB
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         SessionBrowserSettings settings = getConfiguration();
         settings.getDisconnectSession().set(getSelection(disconnectSessionComboBox));
@@ -45,6 +47,7 @@ public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionB
         settings.setReloadOnFilterChange(reloadOnFilterChangeCheckBox.isSelected());
     }
 
+    @Override
     public void resetFormChanges() {
         SessionBrowserSettings settings = getConfiguration();
         setSelection(disconnectSessionComboBox, settings.getDisconnectSession().get());

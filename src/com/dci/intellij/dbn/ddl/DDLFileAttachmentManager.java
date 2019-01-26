@@ -108,7 +108,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     }
 
     @Nullable
-    public DBSchemaObject getEditableObject(VirtualFile ddlFile) {
+    public DBSchemaObject getEditableObject(@NotNull VirtualFile ddlFile) {
         DBObjectRef<DBSchemaObject> objectRef = mappings.get(ddlFile.getUrl());
         return DBObjectRef.get(objectRef);
     }
@@ -397,11 +397,13 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         return FailsafeUtil.getComponent(project, DDLFileAttachmentManager.class);
     }
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {
         return COMPONENT_NAME;
     }
+    @Override
     public void dispose() {
         super.dispose();
         mappings.clear();

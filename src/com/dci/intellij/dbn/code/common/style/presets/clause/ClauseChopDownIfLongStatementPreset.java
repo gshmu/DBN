@@ -15,6 +15,7 @@ public class ClauseChopDownIfLongStatementPreset extends ClauseAbstractPreset {
         super("chop_down_if_statement_long", "Chop down if statement long");
     }
 
+    @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         NamedPsiElement namedPsiElement = getEnclosingStatementElement(psiElement);
@@ -23,6 +24,7 @@ public class ClauseChopDownIfLongStatementPreset extends ClauseAbstractPreset {
 
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         NamedPsiElement namedPsiElement = getEnclosingStatementElement(psiElement);

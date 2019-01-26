@@ -31,6 +31,7 @@ public class DataDependencyPath {
         return pathElements.size();
     }
 
+    @Override
     protected Object clone() {
         DataDependencyPath clone = new DataDependencyPath();
         clone.pathElements.addAll(pathElements);

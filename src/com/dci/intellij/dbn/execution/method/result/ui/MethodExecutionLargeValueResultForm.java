@@ -95,6 +95,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
         return argumentRef.get();
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -107,6 +108,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
             presentation.setIcon(contentType.getIcon());
         }
 
+        @Override
         @NotNull
         protected DefaultActionGroup createPopupActionGroup(JComponent button) {
             Project project = ActionUtil.getProject(button);
@@ -152,6 +154,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
         }
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         EditorFactory.getInstance().releaseEditor(editor);

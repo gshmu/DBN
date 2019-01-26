@@ -42,6 +42,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         this.methodRef = DBObjectRef.from(method);
     }
 
+    @Override
     @NotNull
     public T getMethod() {
         return DBObjectRef.getnn(methodRef);
@@ -62,6 +63,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
     }
 
 
+    @Override
     public void execute(MethodExecutionInput executionInput, DBDebuggerType debuggerType) throws SQLException {
         executionInput.initExecution(debuggerType);
         ConnectionHandler connectionHandler = getConnectionHandler();
@@ -76,6 +78,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         execute(executionInput, connection, debuggerType);
     }
 
+    @Override
     public void execute(final MethodExecutionInput executionInput, @NotNull DBNConnection connection, DBDebuggerType debuggerType) throws SQLException {
         executionInput.initExecution(debuggerType);
         ExecutionOptions options = executionInput.getOptions();

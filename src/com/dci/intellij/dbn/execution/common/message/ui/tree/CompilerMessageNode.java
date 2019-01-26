@@ -26,10 +26,12 @@ public class CompilerMessageNode extends DisposableBase implements MessageTreeNo
         return FailsafeUtil.get(compilerMessage);
     }
 
+    @Override
     public DBContentVirtualFile getVirtualFile() {
         return getCompilerMessage().getContentFile();
     }
 
+    @Override
     public MessagesTreeModel getTreeModel() {
         return getParent().getTreeModel();
     }
@@ -37,30 +39,37 @@ public class CompilerMessageNode extends DisposableBase implements MessageTreeNo
     /*********************************************************
      *                        TreeNode                       *
      *********************************************************/
+    @Override
     public TreeNode getChildAt(int childIndex) {
         return null;
     }
 
+    @Override
     public int getChildCount() {
         return 0;
     }
 
+    @Override
     public CompilerMessagesObjectNode getParent() {
         return FailsafeUtil.get(parent);
     }
 
+    @Override
     public int getIndex(TreeNode node) {
         return -1;
     }
 
+    @Override
     public boolean getAllowsChildren() {
         return false;
     }
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     public Enumeration children() {
         return null;
     }
@@ -77,6 +86,7 @@ public class CompilerMessageNode extends DisposableBase implements MessageTreeNo
         return getCompilerMessage();
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         compilerMessage = null;

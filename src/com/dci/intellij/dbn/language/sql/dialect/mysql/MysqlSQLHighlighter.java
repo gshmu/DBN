@@ -13,6 +13,7 @@ public class MysqlSQLHighlighter extends SQLSyntaxHighlighter {
         super(languageDialect, "mysql_sql_highlighter_tokens.xml");
     }
 
+    @Override
     @NotNull
     protected Lexer createLexer() {
         FlexLexer flexLexer = new MysqlSQLHighlighterFlexLexer(getTokenTypes());

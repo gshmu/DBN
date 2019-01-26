@@ -49,6 +49,7 @@ public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>
 
     protected abstract void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException;
 
+    @Override
     public void start() {
         TaskUtil.startTask(this, getProject());
     }

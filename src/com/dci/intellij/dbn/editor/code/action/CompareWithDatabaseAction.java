@@ -14,6 +14,7 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
         super("Compare with database", null, Icons.CODE_EDITOR_DIFF_DB);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
@@ -24,6 +25,7 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Editor editor = getEditor(e);
         e.getPresentation().setText("Compare with Database");

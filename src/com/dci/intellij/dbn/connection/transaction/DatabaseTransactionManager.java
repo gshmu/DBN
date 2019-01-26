@@ -70,11 +70,13 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         Project project = getProject();
         TransactionListener transactionListener = EventUtil.notify(project, TransactionListener.TOPIC);
         for (TransactionAction action : actions) {
-            executeAction(connectionHandler, connection, project, transactionListener, action);
+            if (action != null) {
+                executeAction(connectionHandler, connection, project, transactionListener, action);
+            }
         }
     }
 
-    private void executeAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, Project project, TransactionListener transactionListener, TransactionAction action) {
+    private void executeAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, Project project, @NotNull TransactionListener transactionListener, @NotNull TransactionAction action) {
         String connectionName = connectionHandler.getConnectionName(connection);
         boolean success = true;
         try {
@@ -99,7 +101,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                     ex.getMessage());
             success = false;
         } finally {
-            if (action != null && !project.isDisposed()) {
+            if (!project.isDisposed()) {
                 // notify post-action
                 transactionListener.afterAction(connectionHandler, connection, action, success);
 
@@ -242,6 +244,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
    /**********************************************
     *                ProjectComponent             *
     ***********************************************/
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

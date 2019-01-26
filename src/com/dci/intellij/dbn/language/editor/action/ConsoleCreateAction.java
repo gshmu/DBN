@@ -20,6 +20,7 @@ public class ConsoleCreateAction extends DumbAwareAction {
         this.consoleType = consoleType;
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ensureProject(e);
         VirtualFile virtualFile = getVirtualFile(e);

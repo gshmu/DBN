@@ -13,6 +13,7 @@ public interface FiltrableList<T> extends List<T> {
     Filter<T> getFilter();
 
     // update methods should not be affected by filtering
+    @Override
     void sort(Comparator<? super T> comparator);
 
     void trimToSize();

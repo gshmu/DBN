@@ -21,6 +21,7 @@ public class SelectSchemaAction extends AnObjectAction<DBSchema> {
         return FailsafeUtil.get(getObject());
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         browserComponent.setSchema(getSchema());
     }

@@ -64,6 +64,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         Disposer.register(this, executionResult);
     }
 
+    @Override
     public void setExecutionResult(MethodExecutionResult executionResult) {
         if (this.executionResult != executionResult) {
             MethodExecutionResult oldExecutionResult = this.executionResult;
@@ -75,6 +76,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         }
     }
 
+    @Override
     public MethodExecutionResult getExecutionResult() {
         return executionResult;
     }
@@ -207,10 +209,12 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         actionsPanel.add(actionToolbar.getComponent());
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         executionResult = null;

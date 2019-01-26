@@ -19,6 +19,7 @@ public class DBMethodJdwpRunProfileState extends DBRunProfileState {
         super(environment);
     }
 
+    @Override
     public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
         Project project = getEnvironment().getProject();
         RemoteDebugProcessHandler processHandler = new RemoteDebugProcessHandler(project);

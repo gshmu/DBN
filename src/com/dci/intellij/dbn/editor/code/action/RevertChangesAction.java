@@ -24,6 +24,7 @@ public class RevertChangesAction extends AbstractSourceCodeEditorAction {
         super("Revert changes", null, Icons.CODE_EDITOR_RESET);
     }
 
+    @Override
     public void actionPerformed(@NotNull final AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         SourceCodeEditor fileEditor = getFileEditor(e);
@@ -40,6 +41,7 @@ public class RevertChangesAction extends AbstractSourceCodeEditorAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();

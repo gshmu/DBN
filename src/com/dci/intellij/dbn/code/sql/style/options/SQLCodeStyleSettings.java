@@ -19,20 +19,24 @@ public class SQLCodeStyleSettings extends CodeStyleCustomSettings<SQLCodeStyleSe
         return ProjectCodeStyleSettings.getInstance(project).getSQLCodeStyleSettings();
     }
 
+    @Override
     @Nls
     public String getDisplayName() {
         return "SQL";
     }
 
+    @Override
     @Nullable
     public Icon getIcon() {
         return Icons.FILE_SQL;
     }
 
+    @Override
     protected CodeStyleCaseSettings createCaseSettings() {
         return new SQLCodeStyleCaseSettings();
     }
 
+    @Override
     protected CodeStyleFormattingSettings createAttributeSettings() {
         return new SQLCodeStyleFormattingSettings();
     }
@@ -45,6 +49,7 @@ public class SQLCodeStyleSettings extends CodeStyleCustomSettings<SQLCodeStyleSe
     /*********************************************************
     *                     Configuration                     *
     *********************************************************/
+    @Override
     @NotNull
     public SQLCodeStyleSettingsEditorForm createConfigurationEditor() {
         return new SQLCodeStyleSettingsEditorForm(this);

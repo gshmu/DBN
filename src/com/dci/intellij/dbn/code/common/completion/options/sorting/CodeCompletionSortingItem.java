@@ -35,6 +35,7 @@ public class CodeCompletionSortingItem extends Configuration {
         return objectType == null ? tokenTypeCategory.getName() : objectType.getName();
     }
 
+    @Override
     @Nls
     public String getDisplayName() {
         return null;
@@ -43,6 +44,7 @@ public class CodeCompletionSortingItem extends Configuration {
     /*********************************************************
      *                      Configuration                    *
      *********************************************************/
+    @Override
     @NotNull
     protected ConfigurationEditorForm createConfigurationEditor() {
         return null;
@@ -53,6 +55,7 @@ public class CodeCompletionSortingItem extends Configuration {
         return "sorting-element";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         String sortingItemType = element.getAttributeValue("type");
         if (sortingItemType.equals("OBJECT")) {
@@ -64,6 +67,7 @@ public class CodeCompletionSortingItem extends Configuration {
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         if (objectType != null) {
             element.setAttribute("type", "OBJECT");

@@ -23,6 +23,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
         super("oracle_ddl_interface.xml", provider);
     }
 
+    @Override
     public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code, String alternativeDelimiter) {
         DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);
         boolean useQualified = ddlFileSettings.getGeneralSettings().isUseQualifiedObjectNames();
@@ -79,6 +80,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
+    @Override
     public void updateView(String viewName, String code, DBNConnection connection) throws SQLException {
         executeUpdate(connection, "change-view", viewName, code);
     }
@@ -88,6 +90,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
         updateObject(triggerName, "trigger", oldCode, newCode, connection);
     }
 
+    @Override
     public void updateObject(String objectName, String objectType, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         // code contains object type and name
         executeUpdate(connection, "change-object", newCode);
@@ -96,6 +99,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CREATE statements                   *
      *********************************************************/
+    @Override
     public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
         CodeStyleCaseSettings styleCaseSettings = PSQLCodeStyleSettings.getInstance(method.getSchema().getProject()).getCaseSettings();
         CodeStyleCaseOption kco = styleCaseSettings.getKeywordCaseOption();

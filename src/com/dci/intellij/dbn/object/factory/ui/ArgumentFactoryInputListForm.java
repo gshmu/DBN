@@ -14,10 +14,12 @@ public class ArgumentFactoryInputListForm extends ObjectListForm<ArgumentFactory
         this.enforceInArguments = enforceInArguments;
     }
 
+    @Override
     public ObjectFactoryInputForm createObjectDetailsPanel(int index) {
         return new ArgumentFactoryInputForm(getProject(), getConnectionHandler(), enforceInArguments, index);
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.ARGUMENT;
     }

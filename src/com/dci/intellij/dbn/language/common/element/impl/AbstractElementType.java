@@ -105,6 +105,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return idx;
     }
 
+    @Override
     public WrappingDefinition getWrapping() {
         return wrapping;
     }
@@ -133,6 +134,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
 
     protected abstract ElementTypeParser createParser();
 
+    @Override
     public void setDefaultFormatting(FormattingDefinition defaultFormatting) {
         formatting = FormattingDefinitionFactory.mergeDefinitions(formatting, defaultFormatting);
     }
@@ -194,10 +196,12 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         }
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -206,27 +210,33 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         this.description = description;
     }
 
+    @Override
     public Icon getIcon() {
         return icon;
     }
 
+    @Override
     public ElementType getParent() {
         return parent;
     }
 
+    @Override
     public Branch getBranch() {
         return branch;
     }
 
+    @Override
     public ElementTypeLookupCache getLookupCache() {
         return lookupCache.get();
     }
 
+    @Override
     public @NotNull ElementTypeParser getParser() {
         return parser.get();
     }
 
 
+    @Override
     public boolean is(ElementTypeAttribute attribute) {
         return attributes != null && attributes.is(attribute);
     }
@@ -236,10 +246,12 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         throw new AbstractMethodError("Operation not allowed");
     }
 
+    @Override
     public FormattingDefinition getFormatting() {
         return formatting;
     }
 
+    @Override
     @NotNull
     public DBLanguage getLanguage() {
         return getLanguageDialect().getBaseLanguage();
@@ -250,6 +262,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return (DBLanguageDialect) super.getLanguage();
     }
 
+    @Override
     public ElementTypeBundle getElementBundle() {
         return bundle;
     }
@@ -281,10 +294,12 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     /*********************************************************
      *                  Virtual Object                       *
      *********************************************************/
+    @Override
     public boolean isVirtualObject() {
         return virtualObjectType != null;
     }
 
+    @Override
     public DBObjectType getVirtualObjectType() {
         return virtualObjectType;
     }

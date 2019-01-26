@@ -19,6 +19,7 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
     private DBObjectRef<DBMethod> lastChecked;
     public static final ObjectLookupAdapter METHOD_LOOKUP_ADAPTER = new ObjectLookupAdapter(null, IdentifierCategory.DEFINITION, DBObjectType.METHOD);
 
+    @Override
     @NotNull
     public final String getText() {
         DBMethod method = getMethod();
@@ -73,6 +74,7 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
         return lastChecked == null ? null : lastChecked.get();
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
         return IntentionActionGroups.METHOD_EXECUTION;

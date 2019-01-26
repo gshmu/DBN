@@ -48,6 +48,7 @@ public class XmlTypeValue extends LargeObjectValue{
         return GenericDataType.XMLTYPE;
     }
 
+    @Override
     @Nullable
     public String read() throws SQLException {
         return read(0);
@@ -59,6 +60,7 @@ public class XmlTypeValue extends LargeObjectValue{
         return xmlType == null ? null : xmlType.getStringVal();
     }
 
+    @Override
     public void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable String value) throws SQLException {
         connection = DBNConnection.getInner(connection);
         xmlType = XMLType.createXML(connection, value);

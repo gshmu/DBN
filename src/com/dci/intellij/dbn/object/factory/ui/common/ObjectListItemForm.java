@@ -28,6 +28,7 @@ public class ObjectListItemForm extends DBNFormImpl {
 
     }
 
+    @Override
     public JPanel getComponent(){
         return mainPanel;
     }
@@ -36,6 +37,7 @@ public class ObjectListItemForm extends DBNFormImpl {
         objectDetailsComponent = inputForm.getComponent();
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         parent = null;
@@ -48,6 +50,7 @@ public class ObjectListItemForm extends DBNFormImpl {
             super("Remove " + parent.getObjectType().getName(), null, Icons.ACTION_CLOSE);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             parent.removeObjectPanel(ObjectListItemForm.this);
         }

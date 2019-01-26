@@ -19,6 +19,7 @@ public abstract class DBLColorSettingsPage implements ColorSettingsPage {
     private String demoText;
     protected final List<AttributesDescriptor> attributeDescriptors = new ArrayList<AttributesDescriptor>();
 
+    @Override
     @NonNls
     @NotNull
     public final String getDemoText() {
@@ -35,16 +36,19 @@ public abstract class DBLColorSettingsPage implements ColorSettingsPage {
 
     public abstract String getDemoTextFileName();
 
+    @Override
     @NotNull
     public AttributesDescriptor[] getAttributeDescriptors() {
         return attributeDescriptors.toArray(new AttributesDescriptor[0]);
     }
 
+    @Override
     @NotNull
     public ColorDescriptor[] getColorDescriptors() {
         return new ColorDescriptor[0];
     }
 
+    @Override
     @Nullable
     public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
         return null;

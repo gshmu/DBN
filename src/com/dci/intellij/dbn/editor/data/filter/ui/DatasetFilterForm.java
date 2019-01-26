@@ -82,14 +82,17 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
         return (DatasetFilter) filtersList.getSelectedValue();
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         getFilterList().getFilterGroup().apply();
     }
 
+    @Override
     public void resetFormChanges() {
         getFilterList().getFilterGroup().reset();
     }
@@ -98,6 +101,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
         filtersList = new DatasetFilterList();
     }
 
+    @Override
     public void dispose() {
         for (ConfigurationEditorForm configurationEditorForm : filterDetailPanels.values()) {
             configurationEditorForm.dispose();
@@ -106,6 +110,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
         super.dispose();
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent e) {
         DatasetFilterGroup configuration = getConfiguration();
         if (e == null || !e.getValueIsAdjusting()) {

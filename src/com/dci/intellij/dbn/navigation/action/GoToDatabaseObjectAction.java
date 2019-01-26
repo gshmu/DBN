@@ -49,6 +49,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
     private String latestPredefinedText;
     private String latestClipboardText;
     private ChooseByNamePopup popup;
+    @Override
     public void gotoActionPerformed(AnActionEvent event) {
 
         //FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.popup.file");
@@ -87,6 +88,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                             null,
                             actionGroup.getChildrenCount(),
                             new Condition<AnAction>() {
+                                @Override
                                 public boolean value(AnAction action) {
                                     if (action instanceof SelectConnectionAction) {
                                         SelectConnectionAction selectConnectionAction = (SelectConnectionAction) action;
@@ -283,6 +285,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         }
     }
 
+    @Override
     public void update(AnActionEvent event) {
         super.update(event);
         event.getPresentation().setText("Database Object...");

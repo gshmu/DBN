@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface DBObjectRelationList<T extends DBObjectRelation> extends DynamicContent<T> {
     DBObjectRelationType getObjectRelationType();
+    @Override
     ConnectionHandler getConnectionHandler();
     @NotNull List<T> getObjectRelations();
     List<DBObjectRelation> getRelationBySourceName(String sourceName);

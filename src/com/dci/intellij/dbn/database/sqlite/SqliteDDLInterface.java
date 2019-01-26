@@ -22,6 +22,7 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
     }
 
 
+    @Override
     public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code, String alternativeDelimiter) {
         if (StringUtil.isEmpty(alternativeDelimiter)) {
             alternativeDelimiter = getProvider().getCompatibilityInterface().getDefaultAlternativeStatementDelimiter();
@@ -59,6 +60,7 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
+    @Override
     public void updateView(String viewName, String code, DBNConnection connection) throws SQLException {
         // try create
         String objectType = "VIEW";
@@ -84,6 +86,7 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
         createObject(newCode, connection);
     }
 
+    @Override
     public void updateObject(String objectName, String objectType, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         dropObjectIfExists(objectType, objectName, connection);
         try {
@@ -104,6 +107,7 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CREATE statements                   *
      *********************************************************/
+    @Override
     public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
         throw new SQLException("Operation not supported: [create method]");
     }

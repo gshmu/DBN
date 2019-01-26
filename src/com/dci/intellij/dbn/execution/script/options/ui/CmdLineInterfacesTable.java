@@ -88,6 +88,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         }
     };
 
+    @Override
     public void columnSelectionChanged(ListSelectionEvent e) {
         super.columnSelectionChanged(e);
         JTableHeader tableHeader = getTableHeader();
@@ -122,6 +123,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         model.notifyListeners(0, model.getRowCount(), 0);
     }
 
+    @Override
     public Component prepareEditor(TableCellEditor editor, int rowIndex, int columnIndex) {
         final JTextField textField = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
         textField.setBorder(JBUI.Borders.emptyLeft(3));

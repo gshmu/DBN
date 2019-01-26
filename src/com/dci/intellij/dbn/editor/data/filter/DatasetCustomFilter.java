@@ -21,8 +21,10 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
         super(parent, name, DatasetFilterType.CUSTOM);
     }
 
+    @Override
     public void generateName() {}
 
+    @Override
     public String getVolatileName() {
         ConfigurationEditorForm configurationEditorForm = getSettingsEditor();
         if (configurationEditorForm != null) {
@@ -32,16 +34,19 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
         return super.getDisplayName();
     }
 
+    @Override
     public boolean isIgnored() {
         return false;
     }
 
+    @Override
     public Icon getIcon() {
         return getError() == null ?
                 Icons.DATASET_FILTER_CUSTOM :
                 Icons.DATASET_FILTER_CUSTOM_ERR;
     }
 
+    @Override
     public String createSelectStatement(DBDataset dataset, SortingState sortingState) {
         setError(null);
         StringBuilder buffer = new StringBuilder();
@@ -63,12 +68,14 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
     /*****************************************************
      *                   Configuration                   *
      *****************************************************/
+    @Override
     @NotNull
     public ConfigurationEditorForm createConfigurationEditor() {
         DBDataset dataset = FailsafeUtil.get(lookupDataset());
         return new DatasetCustomFilterForm(dataset, this);
     }
 
+    @Override
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
         Element conditionElement = element.getChild("condition");
@@ -77,6 +84,7 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
         condition = StringUtil.replace(condition, "<sp>", "  ");
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         element.setAttribute("type", "custom");

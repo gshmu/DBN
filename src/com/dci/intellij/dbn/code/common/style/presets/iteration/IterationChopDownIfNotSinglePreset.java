@@ -14,6 +14,7 @@ public class IterationChopDownIfNotSinglePreset extends IterationAbstractPreset 
         super("chop_down_if_not_single", "Chop down unless single element");
     }
 
+    @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
@@ -28,6 +29,7 @@ public class IterationChopDownIfNotSinglePreset extends IterationAbstractPreset 
         return null;
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);

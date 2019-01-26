@@ -24,6 +24,7 @@ public class DatasetRecordEditorDialog extends DBNDialog<DatasetRecordEditorForm
         return new DatasetRecordEditorForm(this, row);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

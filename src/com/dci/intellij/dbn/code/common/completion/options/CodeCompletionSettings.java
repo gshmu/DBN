@@ -39,10 +39,12 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
     }
 
 
+    @Override
     public String getDisplayName() {
         return "Code Completion";
     }
 
+    @Override
     public String getHelpTopic() {
         return "codeEditor";
     }
@@ -81,6 +83,7 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
     *                     Configuration                      *
     *********************************************************/
 
+    @Override
     @NotNull
     protected CodeCompletionSettingsForm createConfigurationEditor() {
         return new CodeCompletionSettingsForm(this);
@@ -97,6 +100,7 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
         return "code-completion-settings";
     }
 
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 filterSettings,

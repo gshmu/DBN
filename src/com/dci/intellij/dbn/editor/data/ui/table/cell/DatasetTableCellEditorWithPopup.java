@@ -22,6 +22,7 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
         super(table, new CustomTextFieldWithPopup(table));
     }
 
+    @Override
     @NotNull
     public TextFieldWithPopup getEditorComponent() {
         return (TextFieldWithPopup) super.getEditorComponent();
@@ -85,6 +86,7 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
     /********************************************************
      *                      KeyListener                     *
      ********************************************************/
+    @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (!keyEvent.isConsumed()) {
             TextFieldPopupProvider popupProviderForm = getEditorComponent().getActivePopupProvider();
@@ -103,6 +105,7 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
         }
     }
 
+    @Override
     public void keyReleased(KeyEvent keyEvent) {
         TextFieldPopupProvider popupProviderForm = getEditorComponent().getActivePopupProvider();
         if (popupProviderForm != null) {

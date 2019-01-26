@@ -24,6 +24,7 @@ public class DBPackageProcedureImpl extends DBProcedureImpl implements DBPackage
         properties.set(NAVIGABLE, true);
     }
 
+    @Override
     public DBPackage getPackage() {
         return (DBPackage) getParentObject();
     }
@@ -34,6 +35,7 @@ public class DBPackageProcedureImpl extends DBProcedureImpl implements DBPackage
     }
 
 
+    @Override
     public boolean isProgramMethod() {
         return true;
     }
@@ -43,5 +45,6 @@ public class DBPackageProcedureImpl extends DBProcedureImpl implements DBPackage
         return DBObjectType.PACKAGE_PROCEDURE;
     }
 
+    @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {}
 }

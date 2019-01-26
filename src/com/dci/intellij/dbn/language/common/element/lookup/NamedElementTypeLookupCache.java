@@ -13,6 +13,7 @@ public class NamedElementTypeLookupCache extends SequenceElementTypeLookupCache<
         super(elementType);
     }
 
+    @Override
     protected void registerLeafInParent(LeafElementType leaf) {
         // walk the tree up for all potential parents
         NamedElementType elementType = getElementType();

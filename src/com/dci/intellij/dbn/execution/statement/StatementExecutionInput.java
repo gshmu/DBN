@@ -157,6 +157,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         return executionProcessor;
     }
 
+    @Override
     @Nullable
     public ConnectionHandler getConnectionHandler() {
         return ConnectionHandlerRef.get(targetConnectionRef);
@@ -196,6 +197,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         this.bulkExecution = isBulkExecution;
     }
 
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();

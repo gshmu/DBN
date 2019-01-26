@@ -24,6 +24,7 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
         sharedTokenTypes = new SharedTokenTypeBundle(this);
     }
 
+    @Override
     public final IFileElementType getFileElementType() {
         return fileElementType.get();
     }

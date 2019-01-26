@@ -13,6 +13,7 @@ public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyl
     private List<CodeStyleFormattingOption> options = new ArrayList<CodeStyleFormattingOption>();
     private boolean enabled = false;
 
+    @Override
     public String getDisplayName() {
         return "Formatting Options";
     }
@@ -43,6 +44,7 @@ public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyl
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @Override
     @NotNull
     public CodeStyleFormattingSettingsForm createConfigurationEditor() {
         return new CodeStyleFormattingSettingsForm(this);
@@ -53,6 +55,7 @@ public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyl
         return "formatting-settings";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         enabled = SettingsUtil.getBooleanAttribute(element, "enabled", enabled);
         for (Object object : element.getChildren()) {
@@ -65,6 +68,7 @@ public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyl
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setBooleanAttribute(element, "enabled", enabled);
         for (CodeStyleFormattingOption option : options) {

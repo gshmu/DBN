@@ -46,6 +46,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
         objectsLookupSettings = ProjectSettingsManager.getSettings(project).getNavigationSettings().getObjectsLookupSettings();
     }
 
+    @Override
     public String getPromptText() {
         String connectionIdentifier = selectedConnection == null || selectedConnection instanceof VirtualConnectionHandler ?
                 "All Connections" :
@@ -53,41 +54,51 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
         return "Enter database object name (" + connectionIdentifier + (selectedSchema == null ? "" : " / " + selectedSchema.getObjectName()) + ")";
     }
 
+    @Override
     public String getNotInMessage() {
         return null;
     }
 
+    @Override
     public String getNotFoundMessage() {
         return "Database object not found";
     }
 
+    @Override
     public String getCheckBoxName() {
         return objectsLookupSettings.getForceDatabaseLoad().value() ? "Load database objects" : null;
     }
 
+    @Override
     public char getCheckBoxMnemonic() {
         return 0;
     }
 
+    @Override
     public boolean loadInitialCheckBoxState() {
         return false;
     }
 
+    @Override
     public void saveInitialCheckBoxState(boolean state) {
     }
 
+    @Override
     public ListCellRenderer getListCellRenderer() {
         return new DatabaseObjectListCellRenderer();
     }
 
+    @Override
     public boolean willOpenEditor() {
         return false;
     }
 
+    @Override
     public boolean useMiddleMatching() {
         return true;
     }
 
+    @Override
     @NotNull
     public String[] getNames(boolean checkBoxState) {
         try {
@@ -118,6 +129,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
         return project.getnn();
     }
 
+    @Override
     @NotNull
     public Object[] getElementsByName(String name, boolean checkBoxState, String pattern) {
         try {
@@ -162,6 +174,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
             this.forceLoad = forceLoad;
         }
 
+        @Override
         public void visitObjectList(DBObjectList<DBObject> objectList) {
             if (isListScannable(objectList) && isParentRelationValid(objectList)) {
                 DBObjectType objectType = objectList.getObjectType();
@@ -224,6 +237,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
             this.forceLoad = forceLoad;
         }
 
+        @Override
         public void visitObjectList(DBObjectList<DBObject> objectList) {
             if (isListScannable(objectList) && isParentRelationValid(objectList)) {
                 DBObjectType objectType = objectList.getObjectType();
@@ -260,6 +274,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
     }
 
 
+    @Override
     public String getElementName(Object element) {
         if (element instanceof DBObject) {
             DBObject object = (DBObject) element;
@@ -269,15 +284,18 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
         return element == null ? null : element.toString();
     }
 
+    @Override
     @NotNull
     public String[] getSeparators() {
         return new String[]{"."};
     }
 
+    @Override
     public String getFullName(Object element) {
         return getElementName(element);
     }
 
+    @Override
     public String getHelpId() {
         return null;
     }

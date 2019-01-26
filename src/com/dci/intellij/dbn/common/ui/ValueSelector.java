@@ -101,10 +101,12 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         return icon == null ? null : IconUtil.cropIcon(icon, 16, 16);
     }
 
+    @Override
     public boolean isEnabled() {
         return isEnabled;
     }
 
+    @Override
     public void setEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
         label.setCursor(isEnabled ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR): Cursor.getDefaultCursor());
@@ -115,6 +117,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         label.setForeground(isEnabled ? UIUtil.getTextFieldForeground() : UIUtil.getLabelDisabledForeground());
     }
 
+   @Override
    public void paintComponent(Graphics g) {
         super.paintComponent(g);
     }
@@ -220,6 +223,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             this.value = value;
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             selectValue(value);
             innerPanel.requestFocus();
@@ -237,6 +241,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             super(valueFactory.getActionName(), null, Icons.ACTION_ADD);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             valueFactory.create(inputValue -> {
                 if (inputValue != null) {

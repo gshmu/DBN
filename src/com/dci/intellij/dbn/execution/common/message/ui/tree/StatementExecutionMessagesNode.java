@@ -48,6 +48,7 @@ public class StatementExecutionMessagesNode extends BundleTreeNode {
     }
 
 
+    @Override
     public VirtualFile getVirtualFile() {
         return null;
     }

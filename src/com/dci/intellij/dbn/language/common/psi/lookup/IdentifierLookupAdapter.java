@@ -34,6 +34,7 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
     }
 
 
+    @Override
     public boolean matches(BasePsiElement basePsiElement) {
         if (basePsiElement instanceof IdentifierPsiElement && basePsiElement != lookupIssuer) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;

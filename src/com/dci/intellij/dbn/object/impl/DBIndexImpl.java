@@ -38,6 +38,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
         return name;
     }
 
+    @Override
     public void initStatus(ResultSet resultSet) throws SQLException {
         boolean valid = resultSet.getString("IS_VALID").equals("Y");
         getStatus().set(DBObjectStatus.VALID, valid);
@@ -58,22 +59,27 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
         }
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return INDEX;
     }
 
+    @Override
     public DBDataset getDataset() {
         return (DBDataset) getParentObject();
     }
 
+    @Override
     public List<DBColumn> getColumns() {
         return columns.getObjects();
     }
 
+    @Override
     public boolean isUnique() {
         return is(UNIQUE);
     }
 
+    @Override
     protected List<DBObjectNavigationList> createNavigationLists() {
         List<DBObjectNavigationList> objectNavigationLists = super.createNavigationLists();
 
@@ -85,6 +91,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
         return objectNavigationLists;
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
         ttb.createEmptyRow();
@@ -95,10 +102,12 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
      *                   TreeeElement                       *
      * ******************************************************/
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;

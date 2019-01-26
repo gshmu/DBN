@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class DBNComboBoxAction extends ComboBoxAction implements DumbAware {
+    @Override
     public JComponent createCustomComponent(Presentation presentation) {
     JPanel panel=new JPanel(new GridBagLayout());
     ComboBoxButton button = new ComboBoxButton(presentation);

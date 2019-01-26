@@ -31,6 +31,7 @@ public class DatabaseObjectIdentifierImpl implements DatabaseObjectIdentifier {
         }
     }
 
+    @Override
     public int getObjectTypeIndex(DBObjectType objectType) {
         for (int i=0; i< objectTypes.length; i++) {
             if (objectTypes[i] == objectType) {
@@ -40,6 +41,7 @@ public class DatabaseObjectIdentifierImpl implements DatabaseObjectIdentifier {
         return -1;
     }
 
+    @Override
     public int getObjectTypeIndex(DBObjectType[] objectTypes) {
         for (DBObjectType objectType : objectTypes) {
             int index = getObjectTypeIndex(objectType);
@@ -50,11 +52,13 @@ public class DatabaseObjectIdentifierImpl implements DatabaseObjectIdentifier {
         return -1;
     }
 
+    @Override
     public String getObjectName(DBObjectType objectType) {
         int index = getObjectTypeIndex(objectType);
         return index > -1 ? objectNames[index] : null;
     }
 
+    @Override
     public String getObjectName(DBObjectType[] objectTypes) {
         int index = getObjectTypeIndex(objectTypes);
         return index > -1 ? objectNames[index] : null;
@@ -66,22 +70,27 @@ public class DatabaseObjectIdentifierImpl implements DatabaseObjectIdentifier {
         this.objectTypes = objectTypes;
     }
 
+    @Override
     public String[] getObjectNames() {
         return objectNames;
     }
 
+    @Override
     public void setObjectNames(String[] objectNames) {
         this.objectNames = objectNames;
     }
 
+    @Override
     public DBObjectType[] getObjectTypes() {
         return objectTypes;
     }
 
+    @Override
     public void setObjectTypes(DBObjectType[] objectTypes) {
         this.objectTypes = objectTypes;
     }
 
+    @Override
     public String getQualifiedType() {
         StringBuilder buffer = new StringBuilder();
         for (DBObjectType objectType : objectTypes) {
@@ -95,6 +104,7 @@ public class DatabaseObjectIdentifierImpl implements DatabaseObjectIdentifier {
         return buffer.toString();
     }
 
+    @Override
     public String getQualifiedName() {
         StringBuilder buffer = new StringBuilder();
         for (String objectName : objectNames) {
@@ -107,6 +117,7 @@ public class DatabaseObjectIdentifierImpl implements DatabaseObjectIdentifier {
         return buffer.toString();
     }
 
+    @Override
     public boolean matches(DBObject object) {
         int index = objectTypes.length - 1;
         while (object != null && index > -1) {

@@ -17,14 +17,17 @@ public class ConnectionPresentableProperty extends PresentableProperty{
         return connectionHandlerRef.getnn();
     }
 
+    @Override
     public String getName() {
         return "Connection";
     }
 
+    @Override
     public String getValue() {
         return getConnectionHandler().getName();
     }
 
+    @Override
     public Icon getIcon() {
         return getConnectionHandler().getIcon();
     }

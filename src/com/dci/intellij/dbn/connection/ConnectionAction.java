@@ -39,6 +39,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         this.executeOption = executeOption;
     }
 
+    @Override
     protected boolean canExecute() {
         return executeOption == null || executeOption.equals(getData());
     }
@@ -52,6 +53,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         return getConnectionHandler().getProject();
     }
 
+    @Override
     public boolean isCancelled() {
         if (super.isCancelled()) {
             return true;
@@ -61,6 +63,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         }
     }
 
+    @Override
     public final void start() {
         super.start();
 /*
@@ -75,6 +78,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
 */
     }
 
+    @Override
     public final void run() {
         trace(this);
         try {
@@ -179,6 +183,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         return FailsafeUtil.get(connectionHandler);
     }
 
+    @Override
     protected abstract void execute();
 
     public static void invoke(

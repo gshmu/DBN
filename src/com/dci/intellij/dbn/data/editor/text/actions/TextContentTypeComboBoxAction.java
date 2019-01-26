@@ -25,6 +25,7 @@ public class TextContentTypeComboBoxAction extends DBNComboBoxAction {
         presentation.setIcon(contentType.getIcon());
     }
 
+    @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent button) {
         Project project = ActionUtil.getProject(button);

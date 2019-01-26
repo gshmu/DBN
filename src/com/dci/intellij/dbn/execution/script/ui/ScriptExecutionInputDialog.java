@@ -30,6 +30,7 @@ public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputFo
         return null;
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

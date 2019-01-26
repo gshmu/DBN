@@ -7,10 +7,12 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import org.jetbrains.annotations.NotNull;
 
 public class ScopeProcessor implements PsiScopeProcessor {
+    @Override
     public boolean execute(@NotNull PsiElement psiElement, ResolveState resolveState) {
         return false;
     }
 
+    @Override
     public <T> T getHint(@NotNull Key<T> tKey) {
         return null;
     }
@@ -19,6 +21,7 @@ public class ScopeProcessor implements PsiScopeProcessor {
         return null;
     }
 
+    @Override
     public void handleEvent(Event event, Object associated) {
 
     }

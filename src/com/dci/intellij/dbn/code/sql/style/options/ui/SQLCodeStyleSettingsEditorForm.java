@@ -22,6 +22,7 @@ public class SQLCodeStyleSettingsEditorForm extends CompositeConfigurationEditor
         updateBorderTitleForeground(previewPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }

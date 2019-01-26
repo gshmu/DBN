@@ -23,11 +23,13 @@ public class SQLFileType extends DBLanguageFileType {
     }
 
 
+    @Override
     @NotNull
     public String getName() {
         return "DBN-SQL";
     }
 
+    @Override
     public Icon getIcon() {
         return Icons.FILE_SQL;
     }

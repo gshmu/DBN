@@ -148,6 +148,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
 
     private MouseListener mouseListener = new MouseAdapter() {
+        @Override
         public void mouseClicked(MouseEvent e) {
             if (e.isShiftDown() && (16 & e.getModifiers()) > 0 || ((8 & e.getModifiers()) > 0)) {
                 if (e.getSource() instanceof TabLabel) {
@@ -200,6 +201,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
     }
 
+    @Override
     public JComponent getComponent() {
         return getResultTabs();
     }

@@ -22,6 +22,7 @@ import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.s
  * This way the breakpoints get updated as soon as the file is opened.
  */
 public class DBBreakpointUpdaterFileEditorListener implements FileEditorManagerListener{
+    @Override
     public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
         if (file instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
@@ -44,9 +45,11 @@ public class DBBreakpointUpdaterFileEditorListener implements FileEditorManagerL
         }
     }
 
+    @Override
     public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
     }
 
+    @Override
     public void selectionChanged(@NotNull FileEditorManagerEvent event) {
     }
 }

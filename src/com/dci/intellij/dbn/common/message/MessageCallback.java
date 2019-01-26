@@ -9,6 +9,7 @@ public abstract class MessageCallback extends SimpleTask<Integer> {
         this.executeOption = executeOption;
     }
 
+    @Override
     protected boolean canExecute() {
         return executeOption == null || executeOption.equals(getData());
     }

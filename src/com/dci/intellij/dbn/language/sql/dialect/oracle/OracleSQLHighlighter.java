@@ -13,6 +13,7 @@ public class OracleSQLHighlighter extends SQLSyntaxHighlighter {
         super(languageDialect, "oracle_sql_highlighter_tokens.xml");
     }
 
+    @Override
     @NotNull
     protected Lexer createLexer() {
         FlexLexer flexLexer = new OracleSQLHighlighterFlexLexer(getTokenTypes());

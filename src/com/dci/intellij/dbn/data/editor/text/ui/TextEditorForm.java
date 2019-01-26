@@ -47,6 +47,7 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
     private DocumentListener documentListener;
 
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
@@ -151,6 +152,7 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
         return userValueHolder.getContentType();
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         EditorFactory.getInstance().releaseEditor(editor);

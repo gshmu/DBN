@@ -32,10 +32,12 @@ public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> impleme
         return RecordStatus.values();
     }
 
+    @Override
     public Project getProject() {
         return getRow().getProject();
     }
 
+    @Override
     public TextContentType getContentType() {
         DataModelState state = getModel().getState();
         String contentTypeName = state.getTextContentTypeName(getColumnInfo().getName());
@@ -49,6 +51,7 @@ public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> impleme
         return TextContentType.get(getProject(), contentTypeName);
     }
 
+    @Override
     public void setContentType(TextContentType contentType) {
         DataModelState state = getModel().getState();
         state.setTextContentType(getColumnInfo().getName(), contentType.getName());
@@ -56,20 +59,24 @@ public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> impleme
 
 
 
+    @Override
     @NotNull
     public BasicDataModelRow getRow() {
         return FailsafeUtil.get(row);
     }
 
+    @Override
     public void setUserValue(Object userValue) {
         this.userValue = userValue;
         this.formattedUserValue = null;
     }
 
+    @Override
     public void updateUserValue(Object userValue, boolean bulk) {
         setUserValue(userValue);
     }
 
+    @Override
     public Object getUserValue() {
         return userValue;
     }
@@ -96,6 +103,7 @@ public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> impleme
         return getRow().getModel();
     }
 
+    @Override
     public String getName() {
         return getColumnInfo().getName();
     }
@@ -110,10 +118,12 @@ public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> impleme
         return DBObjectType.COLUMN;
     }
 
+    @Override
     public ColumnInfo getColumnInfo() {
         return getModel().getColumnInfo(index);
     }
 
+    @Override
     public int getIndex() {
         return index;
     }
@@ -152,6 +162,7 @@ public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> impleme
         return index + row.getIndex() + this.row.getModel().hashCode();
     }
 
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             set(RecordStatus.DISPOSED, true);
@@ -162,6 +173,7 @@ public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> impleme
     }
 
 
+    @Override
     public boolean isDisposed() {
         return is(RecordStatus.DISPOSED);
     }

@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationManager;
 public abstract class ConditionalLaterInvocator<T> extends SimpleTask<T>{
     protected ConditionalLaterInvocator() {}
 
+    @Override
     public final void start() {
         Application application = ApplicationManager.getApplication();
         if (application.isDispatchThread()) {

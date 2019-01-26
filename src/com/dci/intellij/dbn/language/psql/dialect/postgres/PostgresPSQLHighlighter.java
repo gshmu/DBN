@@ -13,6 +13,7 @@ public class PostgresPSQLHighlighter extends PSQLSyntaxHighlighter {
         super(languageDialect, "postgres_psql_highlighter_tokens.xml");
     }
 
+    @Override
     @NotNull
     protected Lexer createLexer() {
         FlexLexer flexLexer = new PostgresPSQLHighlighterFlexLexer(getTokenTypes());

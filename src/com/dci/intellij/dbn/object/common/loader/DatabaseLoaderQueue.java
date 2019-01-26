@@ -22,6 +22,7 @@ public class DatabaseLoaderQueue extends Task.Modal implements Disposable {
         queue.add(task);
     }
 
+    @Override
     public void run(@NotNull ProgressIndicator indicator) {
         while (queue.size() > 0) {
             Runnable task = queue.remove(0);
@@ -34,6 +35,7 @@ public class DatabaseLoaderQueue extends Task.Modal implements Disposable {
         return isActive;
     }
 
+    @Override
     public void dispose() {
         queue.clear();
     }

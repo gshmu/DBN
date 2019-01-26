@@ -17,6 +17,7 @@ import java.util.Date;
 
 
 public class SQLDataExportProcessor extends DataExportProcessor{
+    @Override
     public DataExportFormat getFormat() {
         return DataExportFormat.SQL;
     }
@@ -34,14 +35,17 @@ public class SQLDataExportProcessor extends DataExportProcessor{
         return fileName;
     }
 
+    @Override
     public boolean canCreateHeader() {
         return false;
     }
 
+    @Override
     public boolean canExportToClipboard() {
         return true;
     }
 
+    @Override
     public boolean canQuoteValues() {
         return false;
     }
@@ -52,6 +56,7 @@ public class SQLDataExportProcessor extends DataExportProcessor{
     }
 
 
+    @Override
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         Project project = connectionHandler.getProject();
         CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(SQLLanguage.INSTANCE);

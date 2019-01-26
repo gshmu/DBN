@@ -12,6 +12,7 @@ public class OpenColumnSetupDialogAction extends AbstractDataEditorAction {
         super("Column Setup...", Icons.DATA_COLUMNS);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
 
@@ -21,6 +22,7 @@ public class OpenColumnSetupDialogAction extends AbstractDataEditorAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
 

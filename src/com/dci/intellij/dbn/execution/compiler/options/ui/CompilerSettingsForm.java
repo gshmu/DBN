@@ -46,10 +46,12 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         CompilerSettings settings = getConfiguration();
         settings.setCompileType(getSelection(compileTypeComboBox));
@@ -58,6 +60,7 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
         settings.setAlwaysShowCompilerControls(showControlOption != null && showControlOption.getValue());
     }
 
+    @Override
     public void resetFormChanges() {
         CompilerSettings settings = getConfiguration();
         setSelection(compileTypeComboBox, settings.getCompileType());

@@ -29,6 +29,7 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
     }
 
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ensureProject(e);
         Editor editor = getEditor(e);
@@ -39,6 +40,7 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         super.update(e);
         boolean enabled = false;

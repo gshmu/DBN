@@ -21,6 +21,7 @@ public class ObjectNavigationListShowAllAction extends DumbAwareAction {
         this.navigationList = navigationList;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         ObjectNavigationListActionGroup navigationListActionGroup =
                 new ObjectNavigationListActionGroup(parentObject, navigationList, true);

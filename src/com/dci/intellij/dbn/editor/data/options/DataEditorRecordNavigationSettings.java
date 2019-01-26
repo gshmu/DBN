@@ -29,6 +29,7 @@ public class DataEditorRecordNavigationSettings extends Configuration<DataEditor
         this.navigationTarget = navigationTarget;
     }
 
+    @Override
     public void readConfiguration(Element element) {
         navigationTarget = SettingsUtil.getEnum(element, "navigation-target", RecordNavigationTarget.VIEWER);
         if (navigationTarget == RecordNavigationTarget.PROMPT) {
@@ -36,6 +37,7 @@ public class DataEditorRecordNavigationSettings extends Configuration<DataEditor
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setEnum(element, "navigation-target", navigationTarget);
     }

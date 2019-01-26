@@ -77,6 +77,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         return id;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return CommonUtil.nvl(name, "");
@@ -93,6 +94,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -144,6 +146,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         this.readonlyData = readonlyData;
     }
 
+    @Override
     public EnvironmentType clone() {
         return new EnvironmentType(id, name, description, regularColor, darkColor, readonlyCode, readonlyData);
     }

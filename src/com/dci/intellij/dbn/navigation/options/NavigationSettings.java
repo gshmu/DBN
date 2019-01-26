@@ -27,10 +27,12 @@ public class NavigationSettings extends CompositeProjectConfiguration<Navigation
         return "DBNavigator.Project.NavigationSettings";
     }
 
+    @Override
     public String getDisplayName() {
         return "Navigation";
     }
 
+    @Override
     public String getHelpTopic() {
         return "navigationSettings";
     }

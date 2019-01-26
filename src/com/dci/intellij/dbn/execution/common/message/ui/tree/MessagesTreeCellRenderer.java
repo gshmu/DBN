@@ -28,6 +28,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
     public static final SimpleTextAttributes HIGHLIGHT_GRAY_ATTRIBUTES = SimpleTextAttributes.GRAY_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, HIGHLIGHT_BACKGROUND, null);
     public static final SimpleTextAttributes HIGHLIGHT_ERROR_ATTRIBUTES = SimpleTextAttributes.ERROR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, HIGHLIGHT_BACKGROUND, null);
 
+    @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         try {
             if (value instanceof Disposable) {

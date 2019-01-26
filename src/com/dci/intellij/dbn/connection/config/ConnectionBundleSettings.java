@@ -48,10 +48,12 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
         return "DBNavigator.Project.ConnectionSettings";
     }
 
+    @Override
     public String getDisplayName() {
         return "Connections";
     }
 
+    @Override
     public String getHelpTopic() {
         return "connectionBundle";
     }
@@ -66,6 +68,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
         return "connections";
     }
 
+    @Override
     public boolean isModified() {
         if (super.isModified()) {
             return true;
@@ -93,6 +96,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
     /*********************************************************
     *                   UnnamedConfigurable                 *
     *********************************************************/
+    @Override
     @NotNull
     public ConnectionBundleSettingsForm createConfigurationEditor() {
         return new ConnectionBundleSettingsForm(this);
@@ -101,6 +105,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
     /*********************************************************
      *                      Configurable                     *
      *********************************************************/
+    @Override
     public void readConfiguration(Element element) {
         Project project = getProject();
         connections.clear();
@@ -118,6 +123,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         for (ConnectionSettings connectionSetting : connections) {
             Element connectionElement = new Element("connection");

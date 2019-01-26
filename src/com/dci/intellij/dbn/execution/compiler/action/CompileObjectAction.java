@@ -33,6 +33,7 @@ public class CompileObjectAction extends DumbAwareAction {
         return DBObjectRef.getnn(objectRef);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBSchemaObject object = getObject();
         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(object.getProject());
@@ -40,6 +41,7 @@ public class CompileObjectAction extends DumbAwareAction {
         compilerManager.compileInBackground(object, compileType, compilerAction);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         DBSchemaObject object = getObject();
         Presentation presentation = e.getPresentation();

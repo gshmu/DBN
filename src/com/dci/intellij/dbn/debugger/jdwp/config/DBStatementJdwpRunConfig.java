@@ -32,6 +32,7 @@ public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DB
         return new DBStatementJdwpRunConfigEditor(this);
     }
 
+    @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
         return new DBStatementJdwpRunProfileState(env);
     }

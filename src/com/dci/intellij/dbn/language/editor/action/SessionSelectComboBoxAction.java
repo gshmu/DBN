@@ -25,6 +25,7 @@ import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 public class SessionSelectComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "Session";
 
+    @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
         Project project = getProject(component);
@@ -67,6 +68,7 @@ public class SessionSelectComboBoxAction extends DBNComboBoxAction implements Du
         return isDebugConsole;
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Project project = getProject(e);
         VirtualFile virtualFile = getVirtualFile(e);

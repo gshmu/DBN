@@ -15,6 +15,7 @@ public class DBStatementJdwpRunConfigEditor extends DBRunConfigEditor<DBStatemen
     }
 
 
+    @Override
     public void setExecutionInput(StatementExecutionInput executionInput) {
     }
 }

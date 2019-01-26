@@ -19,6 +19,7 @@ public enum CodeEditorChangesOption implements InteractiveOption {
         this.name = name;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return name;

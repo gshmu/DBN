@@ -47,6 +47,7 @@ public abstract class ElementTypeLookupCacheBase<T extends ElementType> implemen
      * is done only until first named element is hit.
      * (named elements do not have parents)
      */
+    @Override
     public Set<TokenType> getNextPossibleTokens() {
         return nextPossibleTokens.get();
     }

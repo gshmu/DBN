@@ -52,12 +52,14 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
         return FailsafeUtil.getComponent(project, DatabaseLoaderManager.class);
     }
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {
         return "DBNavigator.Project.DatabaseLoaderManager";
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         if (loaderQueue != null) {

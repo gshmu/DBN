@@ -35,10 +35,12 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         registerComponent(mainPanel);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         DatabaseBrowserGeneralSettings configuration = getConfiguration();
         ConfigurationEditorUtil.validateIntegerInputValue(navigationHistorySizeTextField, "Navigation history size", true, 0, 1000, "");
@@ -66,6 +68,7 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         });
     }
 
+    @Override
     public void resetFormChanges() {
         DatabaseBrowserGeneralSettings configuration = getConfiguration();
         setSelection(browserTypeComboBox, configuration.getDisplayMode());

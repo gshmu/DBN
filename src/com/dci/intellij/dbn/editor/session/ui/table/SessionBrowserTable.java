@@ -60,12 +60,14 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         return new SelectionRestorer();
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return sessionBrowser.getProject();
     }
 
 
+    @Override
     public String getName() {
         return sessionBrowser == null ? "Disposed" : sessionBrowser.getConnectionHandler().getName();
     }
@@ -80,6 +82,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         return getCellRenderer();
     }
 
+    @Override
     public void clearSelection() {
         ConditionalLaterInvocator.invoke(() -> SessionBrowserTable.super.clearSelection());
     }
@@ -137,6 +140,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         private Object sessionId;
         private int columnIndex;
 
+        @Override
         public void snapshot() {
             if (!isRestoring()) {
                 int selectedRowCount = getSelectedRowCount();
@@ -151,6 +155,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
             }
         }
 
+        @Override
         public void restore() {
             try {
                 setRestoring(true);

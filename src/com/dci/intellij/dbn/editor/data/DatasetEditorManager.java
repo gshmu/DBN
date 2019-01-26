@@ -152,6 +152,7 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
     /****************************************
     *             ProjectComponent          *
     *****************************************/
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

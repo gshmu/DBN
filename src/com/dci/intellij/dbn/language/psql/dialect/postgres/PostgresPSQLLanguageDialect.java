@@ -9,10 +9,12 @@ public class PostgresPSQLLanguageDialect extends PSQLLanguageDialect {
         super(DBLanguageDialectIdentifier.POSTGRES_PSQL);
     }
 
+    @Override
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
         return new PostgresPSQLHighlighter(this);
 }
 
+    @Override
     protected PostgresPSQLParserDefinition createParserDefinition() {
         PostgresPSQLParser parser = new PostgresPSQLParser(this);
         return new PostgresPSQLParserDefinition(parser);

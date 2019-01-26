@@ -18,6 +18,7 @@ import javax.swing.*;
 
 public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     private PsiFileRef lastChecked;
+    @Override
     @NotNull
     public String getText() {
         ConnectionHandler connectionHandler = getLastCheckedConnection();
@@ -42,6 +43,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
         return Icons.EXEC_LOG_OUTPUT_CONSOLE;
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
         return IntentionActionGroups.STATEMENT_EXECUTION;
@@ -57,6 +59,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
         return null;
     }
 
+    @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         VirtualFile virtualFile = psiFile.getVirtualFile();
         if (DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
@@ -75,6 +78,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
                 DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler);
     }
 
+    @Override
     public void invoke(@NotNull final Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
@@ -83,6 +87,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     }
 
 
+    @Override
     public boolean startInWriteAction() {
         return false;
     }

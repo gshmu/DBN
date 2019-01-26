@@ -47,6 +47,7 @@ public class DatasetEditorTableGutterRenderer extends JPanel implements ListCell
         if (textLabel != null) textLabel.setFont(font);
     }
 
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         BasicTableGutter tableGutter = (BasicTableGutter) list;
         ListModel model = list.getModel();

@@ -117,6 +117,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
         }
     }
 
+    @Override
     public void registerDefaultBreakpoint(DBMethod method) {
         DBEditableObjectVirtualFile mainDatabaseFile = DBDebugUtil.getMainDatabaseFile(method);
         if (mainDatabaseFile != null) {

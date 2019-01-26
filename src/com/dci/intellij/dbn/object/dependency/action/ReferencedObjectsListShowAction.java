@@ -13,19 +13,23 @@ public class ReferencedObjectsListShowAction extends ObjectListShowAction {
         super("Referenced objects", object);
     }
 
+    @Override
     public List<? extends DBObject> getObjectList() {
         return ((DBSchemaObject) getSourceObject()).getReferencedObjects();
     }
 
+    @Override
     public String getTitle() {
         return "Objects referenced by " + getSourceObject().getQualifiedNameWithType();
     }
 
+    @Override
     public String getEmptyListMessage() {
         return "No referenced objects found for " + getSourceObject().getQualifiedNameWithType();
     }
 
 
+    @Override
     public String getListName() {
        return "referenced objects";
    }

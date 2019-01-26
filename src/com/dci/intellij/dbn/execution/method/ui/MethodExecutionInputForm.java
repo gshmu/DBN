@@ -126,6 +126,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         return executionInput;
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -150,6 +151,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
     }
 
     private DocumentListener documentListener = new DocumentAdapter() {
+        @Override
         protected void textChanged(@NotNull DocumentEvent e) {
             notifyChangeListeners();
         }
@@ -169,6 +171,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
     }
 
 
+    @Override
     public void dispose() {
         super.dispose();
         DisposerUtil.dispose(argumentForms);

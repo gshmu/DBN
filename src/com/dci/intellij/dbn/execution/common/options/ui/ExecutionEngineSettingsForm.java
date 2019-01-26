@@ -19,6 +19,7 @@ public class ExecutionEngineSettingsForm extends CompositeConfigurationEditorFor
         scriptExecutionPanel.add(settings.getScriptExecutionSettings().createComponent(), BorderLayout.CENTER);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }

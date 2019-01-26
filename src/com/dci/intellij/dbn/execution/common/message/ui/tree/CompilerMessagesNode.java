@@ -48,6 +48,7 @@ public class CompilerMessagesNode extends BundleTreeNode {
         return null;
     }
 
+    @Override
     public VirtualFile getVirtualFile() {
         return null;
     }

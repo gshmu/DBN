@@ -63,6 +63,7 @@ public class MethodExecutionHistoryTreeNode extends DefaultMutableTreeNode {
         return children;
     }
 
+    @Override
     public boolean getAllowsChildren() {
         return
             type != Type.PROCEDURE &&

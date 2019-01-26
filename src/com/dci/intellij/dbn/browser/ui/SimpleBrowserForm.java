@@ -47,14 +47,17 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         throw new IncorrectOperationException("Multiple connection tabs can not return one connection.");
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
 
+    @Override
     public DatabaseBrowserTree getBrowserTree() {
         return browserTree;
     }
 
+    @Override
     public void selectElement(BrowserTreeNode treeNode, boolean focus, boolean scroll) {
         browserTree.selectElement(treeNode, focus);
     }
@@ -64,6 +67,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         browserTree.getModel().getRoot().rebuildTreeChildren();
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         browserTree = null;

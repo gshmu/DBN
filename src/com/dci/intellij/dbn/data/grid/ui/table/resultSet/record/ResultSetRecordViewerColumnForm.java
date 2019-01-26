@@ -50,6 +50,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
         setCell(cell);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -120,6 +121,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
     };
 
 
+    @Override
     public void dispose() {
         super.dispose();
         parentForm = null;

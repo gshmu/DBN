@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DatabaseFileViewProviderFactory implements FileViewProviderFactory{
 
+    @Override
     @NotNull
     public FileViewProvider createFileViewProvider(@NotNull VirtualFile file, Language language, @NotNull PsiManager manager, boolean eventSystemEnabled) {
 

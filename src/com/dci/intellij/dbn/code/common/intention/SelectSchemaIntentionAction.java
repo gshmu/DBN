@@ -15,20 +15,24 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class SelectSchemaIntentionAction extends GenericIntentionAction implements LowPriorityAction {
+    @Override
     @NotNull
     public String getText() {
         return "Set current schema...";
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
         return IntentionActionGroups.CONNECTION;
     }
 
+    @Override
     public Icon getIcon(int flags) {
         return Icons.FILE_SCHEMA_MAPPING;
     }
 
+    @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
@@ -42,6 +46,7 @@ public class SelectSchemaIntentionAction extends GenericIntentionAction implemen
         return false;
     }
 
+    @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
@@ -50,6 +55,7 @@ public class SelectSchemaIntentionAction extends GenericIntentionAction implemen
         }
     }
 
+    @Override
     public boolean startInWriteAction() {
         return false;
     }

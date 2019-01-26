@@ -37,6 +37,7 @@ public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFi
         return extended;
     }
 
+    @Override
     public String getDisplayName() {
         return extended ? "Extended code completion" : "Basic code completion";
     }
@@ -64,6 +65,7 @@ public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFi
         return false;
     }
 
+    @Override
     public boolean acceptsRootObject(DBObjectType objectType) {
         Set<DBObjectType> objectTypes = objectType.isGeneric() ? objectType.getInheritingTypes() : null;
         for(CodeCompletionFilterOption option : rootFilterOptions.getOptions()) {
@@ -81,18 +83,22 @@ public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFi
         return true;   // return true for object types which are not configured
     }
 
+    @Override
     public boolean acceptsCurrentSchemaObject(DBObjectType objectType) {
         return showSchemaObject(SCHEMA_TYPE_USER, objectType);
     }
 
+    @Override
     public boolean acceptsPublicSchemaObject(DBObjectType objectType) {
         return showSchemaObject(SCHEMA_TYPE_PUBLIC, objectType);
     }
 
+    @Override
     public boolean acceptsAnySchemaObject(DBObjectType objcetType) {
         return showSchemaObject(SCHEMA_TYPE_ANY, objcetType);
     }
 
+    @Override
     public boolean acceptsObject(DBSchema schema, DBSchema currentSchema, DBObjectType objectType) {
         boolean isPublic = schema.isPublicSchema();
         boolean isCurrent = schema.equals(currentSchema);
@@ -130,6 +136,7 @@ public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFi
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @Override
     @NotNull
     protected CodeCompletionFilterSettingsForm createConfigurationEditor() {
         return new CodeCompletionFilterSettingsForm(this);
@@ -140,6 +147,7 @@ public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFi
         return extended ? "extended-filter" : "basic-filter";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         rootFilterOptions.readConfiguration(element);
 
@@ -153,6 +161,7 @@ public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFi
         anySchemaOptions.readConfiguration(anySchemaElement);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         rootFilterOptions.writeConfiguration(element);
 
@@ -172,6 +181,7 @@ public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFi
     /*********************************************************
      *              CheckedTreeNodeProvider                  *
      *********************************************************/
+    @Override
     public CheckedTreeNode createCheckedTreeNode() {
         CodeCompletionFilterTreeNode rootNode = new CodeCompletionFilterTreeNode(this, false);
         for (CodeCompletionFilterOption option: rootFilterOptions.getOptions()) {

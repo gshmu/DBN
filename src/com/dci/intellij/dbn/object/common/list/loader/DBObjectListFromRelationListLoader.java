@@ -21,6 +21,7 @@ public class DBObjectListFromRelationListLoader<T extends DynamicContentElement>
         return new DBObjectListFromRelationListLoader<>(parentContentType, contentType);
     }
 
+    @Override
     public T resolveElement(DynamicContent<T> dynamicContent, DynamicContentElement sourceElement) {
         DBObjectList objectList = (DBObjectList) dynamicContent;
         DBObjectRelation objectRelation = (DBObjectRelation) sourceElement;

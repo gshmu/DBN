@@ -32,6 +32,7 @@ public class DBMethodJdwpRunConfig extends DBMethodRunConfig implements DBJdwpRu
         return new DBMethodJdwpRunConfigEditor(this);
     }
 
+    @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
         return new DBMethodJdwpRunProfileState(env);
     }

@@ -70,18 +70,22 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         return text;
     }
 
+    @Override
     public TokenElementTypeLookupCache createLookupCache() {
         return new TokenElementTypeLookupCache(this);
     }
 
+    @Override
     public TokenElementTypeParser createParser() {
         return new TokenElementTypeParser(this);
     }
 
+    @Override
     public String getDebugName() {
         return "token (" + getId() + " - " + getTokenType().getId() + ")";
     }
 
+    @Override
     public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, @NotNull ElementLookupContext context) {
         ElementType parent = getParent();
         if (isIterationSeparator()) {
@@ -104,6 +108,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         return super.getNextPossibleLeafs(pathNode, context);
     }
 
+    @Override
     public Set<LeafElementType> getNextRequiredLeafs(PathNode pathNode, ParserContext context) {
         if (isIterationSeparator()) {
             if (getParent() instanceof IterationElementType) {
@@ -120,14 +125,17 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         return getId().equals(SEPARATOR);
     }
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     public boolean isIdentifier() {
         return false;
     }
 
+    @Override
     public boolean isSameAs(LeafElementType elementType) {
         if (elementType instanceof TokenElementType) {
             TokenElementType token = (TokenElementType) elementType;
@@ -137,6 +145,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
     }
 
 
+    @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new TokenPsiElement(astNode, this);
     }
@@ -145,10 +154,12 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         return getTokenType().getId() + " (" + getId() + ")";
     }
 
+    @Override
     public boolean isCharacter() {
         return getTokenType().isCharacter();
     }
 
+    @Override
     public TokenLookupItemBuilder getLookupItemBuilder(DBLanguage language) {
         return lookupItemBuilder;
     }

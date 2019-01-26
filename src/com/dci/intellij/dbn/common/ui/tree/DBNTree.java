@@ -36,6 +36,7 @@ public class DBNTree extends Tree implements Disposable {
      ********************************************************/
     private boolean disposed;
 
+    @Override
     public void dispose() {
         if (!disposed) {
             disposed = true;

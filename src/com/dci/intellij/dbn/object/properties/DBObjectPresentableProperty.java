@@ -28,14 +28,17 @@ public class DBObjectPresentableProperty extends PresentableProperty{
         this.objectRef = object.getRef();
     }
 
+    @Override
     public String getName() {
         return name == null ? NamingUtil.capitalize(objectRef.getObjectType().getName()) : name;
     }
 
+    @Override
     public String getValue() {
         return qualified ? objectRef.getPath() : objectRef.getObjectName();
     }
 
+    @Override
     public Icon getIcon() {
         DBObject object = objectRef.get();
         return object == null ? null : object.getIcon();

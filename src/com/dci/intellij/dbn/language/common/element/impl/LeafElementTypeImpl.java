@@ -41,30 +41,38 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
         super(bundle, parent, id, description);
     }
 
+    @Override
     public void setTokenType(TokenType tokenType) {
         this.tokenType = tokenType;
     }
 
+    @Override
     public TokenType getTokenType() {
         return tokenType;
     }
 
+    @Override
     public void registerLeaf() {
         getLookupCache().init();
         getParent().getLookupCache().registerLeaf(this, this);
     }
 
+    @Override
     public abstract boolean isSameAs(LeafElementType elementType);
+    @Override
     public abstract boolean isIdentifier();
 
+    @Override
     public void setOptional(boolean optional) {
         this.optional = optional;
     }
 
+    @Override
     public boolean isOptional() {
         return optional;
     }
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
@@ -85,6 +93,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
         return null;
     }
 
+    @Override
     public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, @NotNull ElementLookupContext context) {
         Set<LeafElementType> possibleLeafs = new THashSet<LeafElementType>();
         int position = 1;
@@ -148,6 +157,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
         return isNextToken(tokenType, pathNode, context, false);
     }
 
+    @Override
     public boolean isNextRequiredToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context) {
         return isNextToken(tokenType, pathNode, context, true);
     }

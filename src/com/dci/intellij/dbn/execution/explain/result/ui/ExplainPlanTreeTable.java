@@ -135,6 +135,7 @@ public class ExplainPlanTreeTable extends TreeTable implements Disposable{
         }
     };
 
+    @Override
     public TreeTableCellRenderer createTableRenderer(TreeTableModel treeTableModel) {
         return new ExplainPlanTreeTableCellRenderer(this, getTree());
     }

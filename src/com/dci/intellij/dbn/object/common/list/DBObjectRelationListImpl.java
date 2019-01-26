@@ -30,25 +30,30 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
         //DBObjectListLoaderRegistry.register(parent, type, loader);
     }
 
+    @Override
     public DynamicContentLoader<T> getLoader() {
         DynamicContentType parentContentType = getParentElement().getDynamicContentType();
         return DynamicContentLoaderImpl.resolve(parentContentType, objectRelationType);
     }
 
+    @Override
     @NotNull
     public List<T> getObjectRelations() {
         return getAllElements();
     }
 
+    @Override
     @Nullable
     public Filter getFilter() {
         return null;
     }
 
+    @Override
     public DBObjectRelationType getObjectRelationType() {
         return objectRelationType;
     }
 
+    @Override
     public String getName() {
         return
                 objectRelationType.getSourceType().getName() + " " +
@@ -59,6 +64,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
         return objectRelationType + " - " + super.toString();
     }
 
+    @Override
     public List<DBObjectRelation> getRelationBySourceName(String sourceName) {
         List<DBObjectRelation> objectRelations = new ArrayList<DBObjectRelation>();
         for (DBObjectRelation objectRelation : getAllElements()) {
@@ -69,6 +75,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
         return objectRelations;
     }
 
+    @Override
     public List<DBObjectRelation> getRelationByTargetName(String targetName) {
         List<DBObjectRelation> objectRelations = new ArrayList<DBObjectRelation>();
         for (DBObjectRelation objectRelation : getAllElements()) {
@@ -84,10 +91,12 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
      *                   DynamicContent                      *
      *********************************************************/
 
+    @Override
     public Project getProject() {
         return getParentElement().getProject();
     }
 
+   @Override
    public String getContentDescription() {
         if (getParentElement() instanceof DBObject) {
             DBObject object = (DBObject) getParentElement();
@@ -96,5 +105,6 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
        return getName() + " from " + getConnectionHandler().getName() ;
     }
 
+    @Override
     public void notifyChangeListeners() {}
 }

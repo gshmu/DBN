@@ -29,6 +29,7 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
         super(fileName, provider);
     }
 
+    @Override
     public boolean includesTypeAndNameInSourceContent(DatabaseObjectTypeId objectTypeId) {
         return
                 objectTypeId == DatabaseObjectTypeId.FUNCTION ||
@@ -62,10 +63,12 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
     /*********************************************************
      *                   CREATE statements                   *
      *********************************************************/
+    @Override
     public void createView(String viewName, String code, DBNConnection connection) throws SQLException {
         executeUpdate(connection, "create-view", viewName, code);
     }
 
+    @Override
     public void createObject(String code, DBNConnection connection) throws SQLException {
         executeUpdate(connection, "create-object", code);
     }
@@ -74,10 +77,12 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
    /*********************************************************
     *                   DROP statements                     *
     *********************************************************/
+   @Override
    public void dropObject(String objectType, String objectName, DBNConnection connection) throws SQLException {
        executeUpdate(connection, "drop-object", objectType, objectName);
    }
 
+   @Override
    public void dropObjectBody(String objectType, String objectName, DBNConnection connection) throws SQLException {
        executeUpdate(connection, "drop-object-body", objectType, objectName);
    }

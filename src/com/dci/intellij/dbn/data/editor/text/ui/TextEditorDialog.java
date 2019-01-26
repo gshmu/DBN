@@ -46,6 +46,7 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
         dialog.show();
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

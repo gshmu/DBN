@@ -34,6 +34,7 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
         fileTypes.add(new DDLFileType(DDLFileTypeId.TYPE_BODY, "DDL File - Type Body", "tpb", PSQLFileType.INSTANCE, DBContentType.CODE_BODY));
     }
 
+    @Override
     public String getDisplayName() {
         return "DDL file extension settings";
     }
@@ -67,6 +68,7 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
     /*********************************************************
      *                      Configuration                    *
      *********************************************************/
+    @Override
     @NotNull
     public DDLFileExtensionSettingsForm createConfigurationEditor() {
         return new DDLFileExtensionSettingsForm(this);
@@ -77,6 +79,7 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
         return "extensions";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         for (Object o : element.getChildren()) {
             Element fileTypeElement = (Element) o;
@@ -88,6 +91,7 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         for (DDLFileType fileType : fileTypes) {
             Element fileTypeElement = new Element("mapping");

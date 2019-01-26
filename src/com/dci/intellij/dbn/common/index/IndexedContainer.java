@@ -17,6 +17,7 @@ public class IndexedContainer<T extends Indexable> implements Compactable {
         return INDEX.contains(indexable.getIdx());
     }
 
+    @Override
     public void compact() {
         INDEX.trimToSize();
     }

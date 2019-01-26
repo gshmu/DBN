@@ -34,10 +34,12 @@ public class DBDatabaseLinkImpl extends DBSchemaObjectImpl implements DBDatabase
         properties.set(SCHEMA_OBJECT, true);
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.DBLINK;
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
         ttb.append(true, host, false);
@@ -45,10 +47,12 @@ public class DBDatabaseLinkImpl extends DBSchemaObjectImpl implements DBDatabase
         super.buildToolTip(ttb);
     }
 
+    @Override
     public String getUserName() {
         return userName;
     }
 
+    @Override
     public String getHost() {
         return host;
     }
@@ -57,10 +61,12 @@ public class DBDatabaseLinkImpl extends DBSchemaObjectImpl implements DBDatabase
      *                     TreeElement                       *
      *********************************************************/
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;

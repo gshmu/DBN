@@ -11,11 +11,13 @@ public class StatementIgnoreSpacingPreset extends StatementAbstractPreset {
         super("ignore_spacing", "Ignore");
     }
 
+    @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         return null;
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         return null;

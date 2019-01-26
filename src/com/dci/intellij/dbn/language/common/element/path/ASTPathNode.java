@@ -15,6 +15,7 @@ public class ASTPathNode implements PathNode{
         this.astNode = astNode;
     }
 
+    @Override
     public PathNode getParent() {
         ASTNode treeParent = astNode.getTreeParent();
         if (treeParent != null && !(treeParent instanceof FileElement)) {
@@ -23,6 +24,7 @@ public class ASTPathNode implements PathNode{
         return null;
     }
 
+    @Override
     public int getIndexInParent() {
         ASTNode parentAstNode = astNode.getTreeParent();
         if (parentAstNode.getElementType() instanceof SequenceElementType) {
@@ -48,6 +50,7 @@ public class ASTPathNode implements PathNode{
         return 0;
     }
 
+    @Override
     @Nullable
     public ElementType getElementType() {
         IElementType elementType = astNode.getElementType();
@@ -55,14 +58,17 @@ public class ASTPathNode implements PathNode{
         return elementType instanceof ElementType ? (ElementType) elementType : null;
     }
 
+    @Override
     public PathNode getRootPathNode() {
         return null;
     }
 
+    @Override
     public boolean isRecursive() {
         return false; 
     }
 
+    @Override
     public boolean isRecursive(ElementType elementType) {
         return false;
     }

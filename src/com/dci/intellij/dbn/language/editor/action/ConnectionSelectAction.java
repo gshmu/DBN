@@ -26,6 +26,7 @@ public class ConnectionSelectAction extends DumbAwareAction {
         this.connectionHandler = connectionHandler;
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ensureProject(e);
         Editor editor = getEditor(e);
@@ -35,6 +36,7 @@ public class ConnectionSelectAction extends DumbAwareAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         boolean enabled = true;

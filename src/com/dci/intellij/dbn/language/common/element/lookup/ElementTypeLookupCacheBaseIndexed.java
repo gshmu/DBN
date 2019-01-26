@@ -63,6 +63,7 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
     }
 
 
+    @Override
     public boolean containsToken(TokenType tokenType) {
         return allPossibleTokens != null && allPossibleTokens.contains(tokenType);
     }
@@ -77,10 +78,12 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
         return firstRequiredTokens;
     }
 
+    @Override
     public Set<TokenType> getFirstPossibleTokens() {
         return firstPossibleTokens;
     }
 
+    @Override
     public Set<LeafElementType> getFirstRequiredLeafs() {
         return firstRequiredLeafs;
     }
@@ -91,18 +94,22 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
 
 
 
+    @Override
     public boolean couldStartWithLeaf(LeafElementType leafElementType) {
         return firstPossibleLeafs.contains(leafElementType);
     }
 
+    @Override
     public boolean couldStartWithToken(TokenType tokenType) {
         return firstPossibleTokens.contains(tokenType);
     }
 
+    @Override
     public boolean shouldStartWithLeaf(LeafElementType leafElementType) {
         return firstRequiredLeafs.contains(leafElementType);
     }
 
+    @Override
     public void registerLeaf(LeafElementType leaf, ElementType source) {
         boolean initAllElements = initAllElements(leaf);
         boolean initAsFirstPossibleLeaf = initAsFirstPossibleLeaf(leaf, source);
@@ -151,6 +158,7 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
         super.registerLeaf(leaf, null);
     }
 
+    @Override
     public boolean startsWithIdentifier() {
         if (startsWithIdentifier == null) {
             synchronized (this) {

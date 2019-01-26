@@ -28,6 +28,7 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
      *                  FileEditorProvider                   *
      *********************************************************/
 
+    @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
@@ -37,6 +38,7 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
         return false;
     }
 
+    @Override
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
@@ -46,11 +48,13 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
         return new DatasetEditor(databaseFile, dataset);
     }
 
+    @Override
     public void disposeEditor(@NotNull final FileEditor editor) {
         // expensive task. start in background
         DisposerUtil.disposeInBackground(editor);
     }
 
+    @Override
     @NotNull
     public FileEditorState readState(@NotNull Element sourceElement, @NotNull Project project, @NotNull VirtualFile virtualFile) {
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
@@ -67,6 +71,7 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
         return new DatasetEditorState();
     }
 
+    @Override
     public void writeState(@NotNull FileEditorState state, @NotNull Project project, @NotNull Element targetElement) {
         if (state instanceof DatasetEditorState) {
             DatasetEditorState editorState = (DatasetEditorState) state;
@@ -74,12 +79,14 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
         }
     }
 
+    @Override
     @NotNull
     @NonNls
     public String getEditorTypeId() {
         return EditorProviderId.DATA.getId();
     }
 
+    @Override
     @NotNull
     public FileEditorPolicy getPolicy() {
         return FileEditorPolicy.HIDE_DEFAULT_EDITOR;
@@ -88,16 +95,19 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
     /*********************************************************
      *                ApplicationComponent                   *
      *********************************************************/
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {
         return "DBNavigator.DatasetEditorProvider";
     }
 
+    @Override
     public void initComponent() {
 
     }
 
+    @Override
     public void disposeComponent() {
 
     }

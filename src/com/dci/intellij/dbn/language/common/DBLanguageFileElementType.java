@@ -15,6 +15,7 @@ public class DBLanguageFileElementType extends IFileElementType {
         super("FILE_ELEMENT_TYPE", language, false);
     }
 
+    @Override
     public ASTNode parseContents(ASTNode chameleon) {
         DBLanguagePsiFile file = (DBLanguagePsiFile) chameleon.getPsi();
         Project project = file.getProject();

@@ -10,6 +10,7 @@ public class CopyConnectionsAction extends ConnectionSettingsAction {
         super("Copy to Clipboard", Icons.CONNECTION_COPY);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
         if (settingsForm != null) {
@@ -17,6 +18,7 @@ public class CopyConnectionsAction extends ConnectionSettingsAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
         e.getPresentation().setEnabled(settingsForm != null && settingsForm.getSelectionSize() > 0);

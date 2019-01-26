@@ -34,22 +34,27 @@ public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
         return name;
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.GRANTED_ROLE;
     }
 
+    @Override
     public DBRoleGrantee getGrantee() {
         return (DBRoleGrantee) getParentObject();
     }
 
+    @Override
     public DBRole getRole() {
         return DBObjectRef.get(roleRef);
     }
 
+    @Override
     public boolean isAdminOption() {
         return is(ADMIN_OPTION);
     }
 
+    @Override
     public boolean isDefaultRole() {
         return is(DEFAULT_ROLE);
     }
@@ -63,11 +68,13 @@ public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
     /*********************************************************
      *                     TreeElement                       *
      *********************************************************/
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;

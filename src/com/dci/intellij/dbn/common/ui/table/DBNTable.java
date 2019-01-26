@@ -65,6 +65,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
             tableHeader.setPreferredSize(new Dimension(-1, 0));
         } else {
             tableHeader.addMouseMotionListener(new MouseMotionAdapter() {
+                @Override
                 public void mouseDragged(MouseEvent e) {
                     scrollPane = UIUtil.getParentOfType(JBScrollPane.class, DBNTable.this);
                     if (scrollPane != null) {
@@ -251,6 +252,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     }
 
     private class ScrollTask extends TimerTask {
+        @Override
         public void run() {
             if (scrollPane != null && scrollDistance != 0) {
                 SimpleLaterInvocator.invoke(() -> {

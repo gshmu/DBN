@@ -23,10 +23,12 @@ public class DBNestedTableColumnImpl extends DBObjectImpl implements DBNestedTab
         return null; //TODO
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.NESTED_TABLE_COLUMN;
     }
 
+    @Override
     public DBNestedTable getNestedTable() {
         return (DBNestedTable) getParentObject();
     }
@@ -35,10 +37,12 @@ public class DBNestedTableColumnImpl extends DBObjectImpl implements DBNestedTab
      *                     TreeElement                       *
      *********************************************************/
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;

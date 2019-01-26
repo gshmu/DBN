@@ -20,22 +20,27 @@ public class ExecVariableElementTypeImpl extends LeafElementTypeImpl implements 
         setTokenType(bundle.getTokenTypeBundle().getVariable());
     }
 
+    @Override
     public ExecVariableElementTypeLookupCache createLookupCache() {
         return new ExecVariableElementTypeLookupCache(this);
     }
 
+    @Override
     public ExecVariableElementTypeParser createParser() {
         return new ExecVariableElementTypeParser(this);
     }
 
+    @Override
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
     }
 
+    @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new ExecVariablePsiElement(astNode, this);
     }
 
+    @Override
     public String getDebugName() {
         return "variable (" + getId() + ")";
     }
@@ -44,10 +49,12 @@ public class ExecVariableElementTypeImpl extends LeafElementTypeImpl implements 
         return "variable (" + getId() + ")";
     }
 
+    @Override
     public boolean isSameAs(LeafElementType elementType) {
         return elementType instanceof ExecVariableElementType;
     }
 
+    @Override
     public boolean isIdentifier() {
         return true;
     }

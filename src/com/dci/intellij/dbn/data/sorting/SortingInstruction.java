@@ -45,6 +45,7 @@ public class SortingInstruction {
         }
     }
 
+    @Override
     public SortingInstruction clone() {
         return new SortingInstruction(columnName, direction);
     }

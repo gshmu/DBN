@@ -15,6 +15,7 @@ public class CreateBasicFilterConditionAction extends DumbAwareAction {
         this.filterForm = filterForm;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         filterForm.addConditionPanel((DBColumn) null);
     }

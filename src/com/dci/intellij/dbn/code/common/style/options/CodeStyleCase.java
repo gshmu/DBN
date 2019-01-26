@@ -23,6 +23,7 @@ public enum CodeStyleCase implements Presentable{
         return name;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return name;

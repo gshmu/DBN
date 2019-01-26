@@ -48,10 +48,12 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
         return connectionSettings.getConnectionId();
     }
 
+    @Override
     public String getDisplayName() {
         return "Connection Filter Settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "connectionFilterSettings";
     }
@@ -82,6 +84,7 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
         return "object-filters";
     }
 
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {objectTypeFilterSettings, objectNameFilterSettings};
     }

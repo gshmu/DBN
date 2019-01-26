@@ -23,11 +23,13 @@ public class DatasetEditorStructureViewModel extends DBObjectStructureViewModel 
         return sorters;
     }
 
+    @Override
     @Nullable
     public Object getCurrentEditorElement() {
         return null;
     }
 
+    @Override
     @NotNull
     public StructureViewTreeElement getRoot() {
         if (root == null) {

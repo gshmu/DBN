@@ -19,6 +19,7 @@ public abstract class PSQLLanguageDialect extends DBLanguageDialect {
     @Override
     protected Set<ChameleonTokenType> createChameleonTokenTypes() {return null;}
 
+    @Override
     public IFileElementType createFileElementType() {
         return new PSQLFileElementType(this);
     }

@@ -27,10 +27,12 @@ public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorF
         registerComponent(mainPanel);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         DataEditorRecordNavigationSettings configuration = getConfiguration();
 
@@ -38,6 +40,7 @@ public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorF
         configuration.setNavigationTarget(navigationTarget);
     }
 
+    @Override
     public void resetFormChanges() {
         DataEditorRecordNavigationSettings configuration = getConfiguration();
         RecordNavigationTarget navigationTarget = configuration.getNavigationTarget();

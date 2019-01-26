@@ -19,10 +19,12 @@ public class OracleMetadataInterface extends DatabaseMetadataInterfaceImpl {
         return loadObjectSourceCode(ownerName, triggerName, "TRIGGER", connection);
     }
 
+    @Override
     public ResultSet loadDatasetTriggerSourceCode(String tableOwner, String tableName, String ownerName, String triggerName, DBNConnection connection) throws SQLException {
         return loadObjectSourceCode(ownerName, triggerName, "TRIGGER", connection);
     }
 
+    @Override
     public String createDateString(Date date) {
         String dateString = META_DATE_FORMAT.get().format(date);
         return "to_date('" + dateString + "', 'yyyy-mm-dd HH24:MI:SS')";

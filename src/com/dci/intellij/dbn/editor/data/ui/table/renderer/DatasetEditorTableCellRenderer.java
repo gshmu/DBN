@@ -18,6 +18,7 @@ import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
 public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
 
+    @Override
     protected void customizeCellRenderer(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
         acquireState(table, isSelected, false, rowIndex, columnIndex);
         DatasetEditorModelCell cell = (DatasetEditorModelCell) value;

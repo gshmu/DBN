@@ -127,6 +127,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         selectionRestorer.restore();
     }
 
+    @Override
     protected BasicTableGutter createTableGutter() {
         return new BasicTableGutter(this);
     }
@@ -179,6 +180,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         }
     }
 
+    @Override
     public TableCellRenderer getCellRenderer(int i, int i1) {
         return cellRenderer;
     }
@@ -187,6 +189,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         return cellRenderer;
     }
 
+    @Override
     public void tableChanged(TableModelEvent e) {
         super.tableChanged(e);
         if (e.getFirstRow() != e.getLastRow()) {
@@ -241,6 +244,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     /*********************************************************
      *                ListSelectionListener                  *
      *********************************************************/
+    @Override
     public void valueChanged(ListSelectionEvent e) {
         super.valueChanged(e);
         if (!e.getValueIsAdjusting()) {
@@ -249,6 +253,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         }
     }
 
+    @Override
     public void columnSelectionChanged(ListSelectionEvent e) {
         JTableHeader tableHeader = getTableHeader();
         if (tableHeader != null && tableHeader.getDraggedColumn() == null) {
@@ -321,6 +326,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         return true;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         regionalSettings = null;

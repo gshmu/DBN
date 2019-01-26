@@ -19,6 +19,7 @@ public class SessionBrowserTableMouseListener extends MouseAdapter implements Di
     public void mouseMoved(MouseEvent e) {
     }
 
+    @Override
     public void mouseReleased(final MouseEvent event) {
         if (event.getButton() == MouseEvent.BUTTON3) {
             Point mousePoint = event.getPoint();

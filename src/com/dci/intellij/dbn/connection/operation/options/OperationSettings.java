@@ -34,10 +34,12 @@ public class OperationSettings extends CompositeProjectConfiguration<OperationsS
         return "DBNavigator.Project.OperationSettings";
     }
 
+    @Override
     public String getDisplayName() {
         return "Operations";
     }
 
+    @Override
     public String getHelpTopic() {
         return "operations";
     }
@@ -76,6 +78,7 @@ public class OperationSettings extends CompositeProjectConfiguration<OperationsS
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @Override
     @NotNull
     public OperationsSettingsForm createConfigurationEditor() {
         return new OperationsSettingsForm(this);
@@ -86,6 +89,7 @@ public class OperationSettings extends CompositeProjectConfiguration<OperationsS
         return "operation-settings";
     }
 
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 transactionManagerSettings,

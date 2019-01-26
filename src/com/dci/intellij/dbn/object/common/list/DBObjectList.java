@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, DynamicContent<T>, Comparable<DBObjectList>, ConnectionProvider {
+    @Override
     @NotNull String getName();
 
     PsiDirectory getPsiDirectory();

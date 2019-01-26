@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 
 public class CustomDataExportProcessor extends DataExportProcessor{
+    @Override
     public DataExportFormat getFormat() {
         return DataExportFormat.CUSTOM;
     }
@@ -21,18 +22,22 @@ public class CustomDataExportProcessor extends DataExportProcessor{
         return "csv";
     }
 
+    @Override
     public boolean canCreateHeader() {
         return true;
     }
 
+    @Override
     public boolean canExportToClipboard() {
         return true;
     }
 
+    @Override
     public boolean canQuoteValues() {
         return true;
     }
 
+    @Override
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         StringBuilder buffer = new StringBuilder();
         if (instructions.createHeader()) {

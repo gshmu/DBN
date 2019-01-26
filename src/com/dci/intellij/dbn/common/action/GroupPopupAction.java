@@ -22,6 +22,7 @@ public abstract class GroupPopupAction extends DumbAwareAction {
         this.groupTitle = groupTitle;
     }
 
+    @Override
     public final void actionPerformed(@NotNull AnActionEvent e) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
 

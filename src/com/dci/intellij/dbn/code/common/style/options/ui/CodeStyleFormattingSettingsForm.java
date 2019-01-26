@@ -77,10 +77,12 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
         }
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         for (CodeStyleFormattingOption option : mappings.keySet()) {
             JComboBox<CodeStylePreset> comboBox = mappings.get(option);
@@ -90,6 +92,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
     }
 
 
+    @Override
     public void resetFormChanges() {
         for (CodeStyleFormattingOption option : mappings.keySet()) {
             JComboBox<CodeStylePreset> comboBox = mappings.get(option);

@@ -88,10 +88,12 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
         joinTypeComboBox.setVisible(conditionsCount > 1 && condition.index() < conditionsCount - 1);
     }
 
+    @Override
     public JComponent getPreferredFocusedComponent() {
         return patternTextField;
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
@@ -113,6 +115,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
         getCondition().setActive(active);
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         condition = null;

@@ -14,6 +14,7 @@ public class AddSortingColumnAction extends DumbAwareAction {
         this.sortingForm = sortingForm;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         sortingForm.addSortingColumn(null);
     }

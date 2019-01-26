@@ -12,12 +12,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class OpenSettingsAction extends DumbAwareAction {
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
         settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);

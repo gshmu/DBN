@@ -22,6 +22,7 @@ class JiraTicketResponse implements TicketResponse{
         this.errorMessage = errorMessage;
     }
 
+    @Override
     @Nullable
     public String getTicketId() {
         if (response == null) {

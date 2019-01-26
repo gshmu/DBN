@@ -11,6 +11,7 @@ public abstract class ProjectConfiguration<T extends ConfigurationEditorForm> ex
         this.project = project;
     }
 
+    @Override
     public Project getProject() {
         return project;
     }

@@ -44,6 +44,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         return (DatasetEditorColumnInfo) super.getColumnInfo();
     }
 
+    @Override
     public void updateUserValue(Object newUserValue, boolean bulk) {
         getConnection().updateLastAccess();
 
@@ -222,6 +223,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         }
     }
 
+    @Override
     @NotNull
     public DatasetEditorModelRow getRow() {
         return (DatasetEditorModelRow) super.getRow();
@@ -275,6 +277,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     /*********************************************************
      *                    ChangeListener                     *
      *********************************************************/
+    @Override
     public void stateChanged(ChangeEvent e) {
         notifyCellUpdated();
     }

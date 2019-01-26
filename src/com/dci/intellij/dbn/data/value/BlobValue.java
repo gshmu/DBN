@@ -73,6 +73,7 @@ public class BlobValue extends LargeObjectValue {
         }
     }
 
+    @Override
     public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
         try {
             if (StringUtil.isEmpty(value)) {
@@ -98,6 +99,7 @@ public class BlobValue extends LargeObjectValue {
         return GenericDataType.BLOB;
     }
 
+    @Override
     @Nullable
     public String read() throws SQLException {
         return read(0);
@@ -125,6 +127,7 @@ public class BlobValue extends LargeObjectValue {
         }
     }
 
+    @Override
     public void release() {
         if (inputStream != null) {
             try {
@@ -142,6 +145,7 @@ public class BlobValue extends LargeObjectValue {
         return blob == null ? 0 : blob.length();
     }
 
+    @Override
     public String getDisplayValue() {
         /*try {
             return "[BLOB] " + size() + "";

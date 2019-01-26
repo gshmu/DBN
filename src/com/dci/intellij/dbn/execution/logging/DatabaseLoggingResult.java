@@ -31,6 +31,7 @@ public class DatabaseLoggingResult extends DisposableBase implements ExecutionRe
     public DatabaseLoggingResult(@NotNull LogOutputContext context) {
         this.context = context;
     }
+    @Override
     public DatabaseLoggingResultForm getForm(boolean create) {
         if (logOutputForm == null && create) {
             logOutputForm = new DatabaseLoggingResultForm(getProject(), this);
@@ -126,6 +127,7 @@ public class DatabaseLoggingResult extends DisposableBase implements ExecutionRe
         }
     };
 
+    @Override
     @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;
@@ -134,6 +136,7 @@ public class DatabaseLoggingResult extends DisposableBase implements ExecutionRe
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Override
     public void dispose() {
         super.dispose();
         logOutputForm = null;

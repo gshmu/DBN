@@ -16,11 +16,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class DatabaseConnectIntentionAction extends GenericIntentionAction implements LowPriorityAction{
+    @Override
     @NotNull
     public String getText() {
         return "Connect to database";
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
         return IntentionActionGroups.CONNECTION;
@@ -31,6 +33,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
         return Icons.CONNECTION_CONNECTED;
     }
 
+    @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
@@ -42,6 +45,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
         return false;
     }
 
+    @Override
     public void invoke(@NotNull final Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
@@ -55,6 +59,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
         }
     }
 
+    @Override
     public boolean startInWriteAction() {
         return false;
     }

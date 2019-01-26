@@ -72,6 +72,7 @@ public class StatementGutterAction extends AnAction {
         return null;
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
         if (executionProcessor != null) {

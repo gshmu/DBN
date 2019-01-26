@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class GenericIntentionAction implements IntentionAction, Iconable {
 
+    @Override
     @NotNull
     public String getFamilyName() {
         return "DB-Navigator intentions";

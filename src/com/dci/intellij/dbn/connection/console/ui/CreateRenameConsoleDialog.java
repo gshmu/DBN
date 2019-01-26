@@ -40,6 +40,7 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
                 new CreateRenameConsoleForm(this, connectionHandler, console, console.getType());
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -64,6 +65,7 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
         super.doOKAction();
     }
 
+    @Override
     @NotNull
     public Action getOKAction() {
         return super.getOKAction();

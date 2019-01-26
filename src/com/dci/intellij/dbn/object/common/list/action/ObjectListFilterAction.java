@@ -16,6 +16,7 @@ public class ObjectListFilterAction extends AnAction {
         this.objectList = objectList;
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = e.getProject();
         if (project != null) {

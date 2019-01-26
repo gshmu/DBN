@@ -13,6 +13,7 @@ public class IdentifierLookupItemBuilder extends LookupItemBuilder {
         this.identifierPsiElement = identifierPsiElement;
     }
 
+    @Override
     public String getTextHint() {
         IdentifierType identifierType = identifierPsiElement.getElementType().getIdentifierType();
         DBObjectType objectType = identifierPsiElement.getElementType().getObjectType();
@@ -24,6 +25,7 @@ public class IdentifierLookupItemBuilder extends LookupItemBuilder {
         return objectTypeName + identifierTypeName + (identifierPsiElement.isDefinition() ? " def" : " ref");
     }
 
+    @Override
     public boolean isBold() {
         return false;
     }
@@ -33,6 +35,7 @@ public class IdentifierLookupItemBuilder extends LookupItemBuilder {
         return identifierPsiElement.getChars();
     }
 
+    @Override
     public Icon getIcon() {
         return identifierPsiElement.getObjectType().getIcon();
     }

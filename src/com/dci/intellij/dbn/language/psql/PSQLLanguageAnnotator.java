@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PSQLLanguageAnnotator implements Annotator {
 
+    @Override
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
         try {
             if (psiElement instanceof BasePsiElement) {

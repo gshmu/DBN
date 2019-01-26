@@ -58,6 +58,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         }
     }
 
+    @Override
     @Nullable
     public DBSchema getDatabaseSchema() {
         return getObject().getSchema();
@@ -202,6 +203,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     /*********************************************************
      *                     VirtualFile                       *
      *********************************************************/
+    @Override
     @NotNull
     public FileType getFileType() {
         DBSchemaObject object = getObject();
@@ -210,6 +212,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         return type == null ? SQLFileType.INSTANCE : type.getLanguageFileType();
     }
 
+    @Override
     public boolean isWritable() {
         return true;
     }
@@ -219,6 +222,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         return false;
     }
 
+    @Override
     @NotNull
     public byte[] contentsToByteArray() throws IOException {
         DBContentType mainContentType = getMainContentType();

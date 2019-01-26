@@ -89,6 +89,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         return new ConnectionSettingsForm(this);
     }
 
+    @Override
     public ConnectionId getConnectionId() {
         return connectionId;
     }
@@ -127,6 +128,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         super.writeConfiguration(element);
     }
 
+    @Override
     public ConnectionSettings clone() {
         Element connectionElement = new Element("Connection");
         writeConfiguration(connectionElement);

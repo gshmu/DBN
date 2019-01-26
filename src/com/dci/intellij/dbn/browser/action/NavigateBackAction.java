@@ -15,6 +15,7 @@ public class NavigateBackAction extends DumbAwareAction {
         super("Back", null, Icons.BROWSER_BACK);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
@@ -24,6 +25,7 @@ public class NavigateBackAction extends DumbAwareAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Back");

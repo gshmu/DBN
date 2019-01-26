@@ -62,14 +62,17 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
         return Collections.emptyList();
     }
 
+    @Override
     public StatementExecutionInput getExecutionInput() {
         return executionInput;
     }
 
+    @Override
     public void setExecutionInput(StatementExecutionInput executionInput) {
         this.executionInput = executionInput;
     }
 
+    @Override
     @Nullable
     public String suggestedName() {
         if (getCategory() == DBRunConfigCategory.GENERIC) {

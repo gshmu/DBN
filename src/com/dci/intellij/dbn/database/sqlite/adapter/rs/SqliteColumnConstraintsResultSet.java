@@ -27,6 +27,7 @@ public abstract class SqliteColumnConstraintsResultSet extends SqliteConstraintI
         super(ownerName, datasetName, connection);
     }
 
+    @Override
     protected void init(String ownerName, String datasetName) throws SQLException {
         Map<String, List<ConstraintColumnInfo>> constraints = loadConstraintInfo(ownerName, datasetName);
 
@@ -67,6 +68,7 @@ public abstract class SqliteColumnConstraintsResultSet extends SqliteConstraintI
         }
     }
 
+    @Override
     public String getString(String columnLabel) throws SQLException {
         ConstraintColumn element = getCurrentElement();
         return columnLabel.equals("CONSTRAINT_NAME") ? element.getConstraintName() :

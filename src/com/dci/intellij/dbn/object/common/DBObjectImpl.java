@@ -150,6 +150,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return properties.is(property);
     }
 
+    @Override
     public final DBContentType getContentType() {
         return getObjectType().getContentType();
     }
@@ -179,6 +180,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return this.equals(object.getParentObject());
     }
 
+    @Override
     public DBOperationExecutor getOperationExecutor() {
         return NULL_OPERATION_EXECUTOR;
     }
@@ -195,15 +197,18 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return null;
     }
 
+    @Override
     public DBObject getParentObject() {
         return DBObjectRef.get(parentObjectRef);
     }
 
+    @Override
     @Nullable
     public DBObject getDefaultNavigationObject() {
         return null;
     }
 
+    @Override
     public boolean isOfType(DBObjectType objectType) {
         return getObjectType().matches(objectType);
     }
@@ -214,10 +219,12 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return getParentObject();
     }
 
+    @Override
     public String getTypeName() {
         return getObjectType().getName();
     }
 
+    @Override
     @NotNull
     public String getName() {
         return objectRef.getObjectName();
@@ -240,6 +247,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         }
     }
 
+    @Override
     public boolean needsNameQuoting() {
         String name = getName();
         return name.indexOf('-') > 0 ||
@@ -249,11 +257,13 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
                 StringUtil.isMixedCase(name);
     }
 
+    @Override
     @Nullable
     public Icon getIcon() {
         return getObjectType().getIcon();
     }
 
+    @Override
     public String getQualifiedName() {
         return objectRef.getPath();
     }
@@ -263,16 +273,19 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return objectRef.getQualifiedNameWithType();
     }
 
+    @Override
     @Nullable
     public DBUser getOwner() {
         DBObject parentObject = getParentObject();
         return parentObject == null ? null : parentObject.getOwner();
     }
 
+    @Override
     public Icon getOriginalIcon() {
         return getIcon();
     }
 
+    @Override
     public String getNavigationTooltipText() {
         DBObject parentObject = getParentObject();
         if (parentObject == null) {
@@ -285,11 +298,13 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }
 
 
+    @Override
     public String getToolTip() {
         if (isDisposed()) {
             return null;
         }
         return new HtmlToolTipBuilder() {
+            @Override
             public void buildToolTip() {
                 DBObjectImpl.this.buildToolTip(this);
             }
@@ -303,7 +318,9 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         ttb.append(false, connectionHandler.getPresentableText(), false);
     }
 
+    @Override
     public DBObjectAttribute[] getObjectAttributes(){return null;}
+    @Override
     public DBObjectAttribute getNameAttribute(){return null;}
 
     @NotNull
@@ -313,6 +330,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return connectionHandler.getObjectBundle();
     }
 
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return ConnectionHandlerRef.getnn(connectionHandlerRef);
@@ -325,15 +343,18 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return connectionHandler.getEnvironmentType();
     }
 
+    @Override
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         return connectionHandler.getLanguageDialect(language);
     }
 
+    @Override
     public DBObjectListContainer getChildObjects() {
         return childObjects;
     }
 
+    @Override
     public DBObjectRelationListContainer getChildObjectRelations() {
         return childObjectRelations;
     }
@@ -374,10 +395,12 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return null;
     }
 
+    @Override
     public DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden) {
         return getChildObject(objectType, name, 0, lookupHidden);
     }
 
+    @Override
     public DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden) {
         if (childObjects == null) {
             return null;
@@ -390,11 +413,13 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         }
     }
 
+    @Override
     @Nullable
     public DBObject getChildObject(String name, boolean lookupHidden) {
         return getChildObject(name, 0, lookupHidden);
     }
 
+    @Override
     @Nullable
     public DBObject getChildObject(String name, int overload, boolean lookupHidden) {
         return childObjects == null ? null :
@@ -409,6 +434,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return childObjects == null ? null : childObjects.getObjectNoLoad(name, overload);
     }
 
+    @Override
     @NotNull
     public List<DBObject> getChildObjects(DBObjectType objectType) {
         if (objectType.getFamilyTypes().size() > 1) {
@@ -459,6 +485,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return childObjects == null ? null : childObjects.getObjectList(objectType);
     }
 
+    @Override
     public List<DBObjectNavigationList> getNavigationLists() {
         // todo consider caching;
         return createNavigationLists();
@@ -468,6 +495,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return null;
     }
 
+    @Override
     public LookupItemBuilder getLookupItemBuilder(DBLanguage language) {
         if (language == SQLLanguage.INSTANCE) {
             if (sqlLookupItemBuilder == null) {
@@ -484,6 +512,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return null;
     }
 
+    @Override
     public String extractDDL() throws SQLException {
         String ddl;
         DBNCallableStatement statement = null;
@@ -508,11 +537,13 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return ddl;
     }
 
+    @Override
     @Nullable
     public DBObject getUndisposedElement() {
         return objectRef.get();
     }
 
+    @Override
     @Nullable
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         if(dynamicContentType instanceof DBObjectType && childObjects != null) {
@@ -530,18 +561,21 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return null;
     }
 
+    @Override
     public final void reload() {
         if (childObjects != null) {
             childObjects.reload();
         }
     }
 
+    @Override
     public final void refresh() {
         if (childObjects != null) {
             childObjects.refresh();
         }
     }
 
+    @Override
     @NotNull
     public DBObjectVirtualFile getVirtualFile() {
         if (virtualFile == null) {
@@ -562,6 +596,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return FileStatus.UNKNOWN;
     }
 
+    @Override
     public ItemPresentation getPresentation() {
         return this;
     }
@@ -570,10 +605,12 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return SQLTextAttributesKeys.IDENTIFIER;
     }
 
+    @Override
     public String getLocationString() {
         return null;
     }
 
+    @Override
     public Icon getIcon(boolean open) {
         return getIcon();
     }
@@ -581,32 +618,40 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     /*********************************************************
      *                  BrowserTreeNode                   *
      *********************************************************/
+    @Override
     public void initTreeElement() {}
 
+    @Override
     public boolean isTreeStructureLoaded() {
         return properties.is(DBObjectProperty.TREE_LOADED);
     }
 
+    @Override
     public boolean canExpand() {
         return !isLeaf() && isTreeStructureLoaded() && getChildAt(0).isTreeStructureLoaded();
     }
 
+    @Override
     public Icon getIcon(int flags) {
         return getIcon();
     }
 
+    @Override
     public String getPresentableText() {
         return getName();
     }
 
+    @Override
     public String getPresentableTextDetails() {
         return null;
     }
 
+    @Override
     public String getPresentableTextConditionalDetails() {
         return null;
     }
 
+    @Override
     @NotNull
     public BrowserTreeNode getParent() {
         DBObjectType objectType = getObjectType();
@@ -630,6 +675,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
 
 
 
+    @Override
     public int getTreeDepth() {
         BrowserTreeNode treeParent = getParent();
         return treeParent.getTreeDepth() + 1;
@@ -651,6 +697,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
 
 
 
+    @Override
     public List<? extends BrowserTreeNode> getChildren() {
         if (visibleTreeChildren == null) {
             synchronized (this) {
@@ -713,6 +760,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         }
     }
 
+    @Override
     public void rebuildTreeChildren() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
@@ -729,6 +777,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     @NotNull
     public abstract List<BrowserTreeNode> buildAllPossibleTreeChildren();
 
+    @Override
     public boolean isLeaf() {
         if (visibleTreeChildren == null) {
             ConnectionHandler connectionHandler = getConnectionHandler();
@@ -744,14 +793,17 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         }
     }
 
+    @Override
     public BrowserTreeNode getChildAt(int index) {
         return getChildren().get(index);
     }
 
+    @Override
     public int getChildCount() {
         return getChildren().size();
     }
 
+    @Override
     public int getIndex(BrowserTreeNode child) {
         return getChildren().indexOf(child);
     }
@@ -771,12 +823,14 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return objectRef.hashCode();
     }
 
+    @Override
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
         ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
         return connectionHandler.getProject();
     }
 
+    @Override
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBObject) {
             DBObject object = (DBObject) o;
@@ -789,6 +843,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return getName();
     }
 
+    @Override
     public List<PresentableProperty> getPresentableProperties() {
         List<PresentableProperty> properties = new ArrayList<>();
         DBObject parent = getParentObject();
@@ -801,6 +856,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         return properties;
     }
 
+    @Override
     public boolean isValid() {
         return !isDisposed();
     }
@@ -808,6 +864,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     /*********************************************************
     *               DynamicContentElement                    *
     *********************************************************/
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
@@ -819,6 +876,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         }
     }
 
+    @Override
     public String getDescription() {
         return getQualifiedName();
     }
@@ -826,11 +884,13 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     /*********************************************************
     *                      Navigatable                      *
     *********************************************************/
+    @Override
     public void navigate(boolean requestFocus) {
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
         browserManager.navigateToElement(this, requestFocus, true);
     }
 
+    @Override
     public boolean canNavigate() {
         return true;
     }

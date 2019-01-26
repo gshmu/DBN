@@ -16,6 +16,7 @@ public class KillSessionsAction extends AbstractSessionBrowserAction {
         super("Kill Sessions", Icons.ACTION_KILL_SESSION);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         if (sessionBrowser != null) {
@@ -23,6 +24,7 @@ public class KillSessionsAction extends AbstractSessionBrowserAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         boolean visible = false;

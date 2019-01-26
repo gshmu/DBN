@@ -5,10 +5,18 @@ import com.intellij.formatting.Indent;
 import org.jdom.Element;
 
 public enum IndentDefinition implements FormattingAttribute<Indent> {
-    NORMAL       (new Loader(){Indent load() {return Indent.getNormalIndent(true);}}),
-    CONTINUE     (new Loader(){Indent load() {return Indent.getContinuationIndent();}}),
-    NONE         (new Loader(){Indent load() {return Indent.getNoneIndent();}}),
-    ABSOLUTE_NONE(new Loader(){Indent load() {return Indent.getAbsoluteNoneIndent();}});
+    NORMAL       (new Loader(){
+        @Override
+        Indent load() {return Indent.getNormalIndent(true);}}),
+    CONTINUE     (new Loader(){
+        @Override
+        Indent load() {return Indent.getContinuationIndent();}}),
+    NONE         (new Loader(){
+        @Override
+        Indent load() {return Indent.getNoneIndent();}}),
+    ABSOLUTE_NONE(new Loader(){
+        @Override
+        Indent load() {return Indent.getAbsoluteNoneIndent();}});
 
     private Indent value;
     private Loader<Indent> loader;
@@ -17,6 +25,7 @@ public enum IndentDefinition implements FormattingAttribute<Indent> {
         this.loader = loader;
     }
 
+    @Override
     public Indent getValue() {
         if (value == null && loader != null) {
             value = loader.load();

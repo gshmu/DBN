@@ -19,6 +19,7 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
         this.objectType = objectType;
     }
 
+    @Override
     public boolean isValid() {
         return true;
     }
@@ -28,19 +29,23 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public String getQualifiedNameWithType() {
         return getName();
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return objectType;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;
     }
 
+    @Override
     public void navigate(boolean requestFocus) {
 
     }
@@ -48,40 +53,49 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
     /*********************************************************
      *                       PsiReference                    *
      *********************************************************/
+    @Override
     public PsiElement getElement() {
         return null;
     }
 
+    @Override
     public TextRange getRangeInElement() {
         return new TextRange(0, name.length());
     }
 
+    @Override
     public PsiElement resolve() {
         return null;
     }
 
+    @Override
     @NotNull
     public String getCanonicalText() {
         return name;
     }
 
+    @Override
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
         return null;
     }
 
+    @Override
     public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
         return null;
     }
 
+    @Override
     public boolean isReferenceTo(PsiElement element) {
         return false;
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
         return new Object[0];
     }
 
+    @Override
     public boolean isSoft() {
         return false;
     }

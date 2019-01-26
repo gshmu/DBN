@@ -98,6 +98,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         return new DatasetEditorTableCellRenderer();
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return datasetEditor.getProject();
@@ -160,6 +161,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         super.moveColumn(column, targetColumn);
     }
 
+    @Override
     public void editingStopped(ChangeEvent e) {
         DatasetTableCellEditor cellEditor = getCellEditor();
         if (cellEditor != null && cellEditor.isEditable()) {
@@ -217,6 +219,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         return cellEditor instanceof DatasetTableCellEditor ? (DatasetTableCellEditor) cellEditor : null;
     }
 
+    @Override
     public void clearSelection() {
         SimpleLaterInvocator.invoke(() -> DatasetEditorTable.super.clearSelection());
     }
@@ -234,6 +237,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         });
     }
 
+    @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
         int modelRowIndex = rowIndex;//convertRowIndexToModel(rowIndex);
         int modelColumnIndex = convertColumnIndexToModel(columnIndex);
@@ -447,6 +451,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     /**********************************************************
      *                  ListSelectionListener                 *
      **********************************************************/
+    @Override
     public void valueChanged(ListSelectionEvent e) {
         super.valueChanged(e);
         DatasetEditorModel model = getModel();
@@ -467,6 +472,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     }
 
+    @Override
     public void columnSelectionChanged(ListSelectionEvent e) {
         JTableHeader tableHeader = getTableHeader();
         if (tableHeader != null && tableHeader.getDraggedColumn() == null) {

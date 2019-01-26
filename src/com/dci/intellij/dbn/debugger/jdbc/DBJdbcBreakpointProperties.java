@@ -24,10 +24,12 @@ public class DBJdbcBreakpointProperties extends XBreakpointProperties<DBJdbcBrea
         }
     }
 
+    @Override
     public ConnectionId getConnectionId() {
         return connectionId;
     }
 
+    @Override
     @Nullable
     public ConnectionHandler getConnectionHandler() {
         if (connectionHandlerRef == null && connectionId != null) {

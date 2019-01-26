@@ -31,6 +31,7 @@ public class BasicDataTypeDefinition implements DataTypeDefinition {
         this.contentTypeName = contentTypeName;
     }
 
+    @Override
     @Nullable
     public DataTypeParseAdapter getParseAdapter() {
         return parseAdapter;
@@ -40,14 +41,17 @@ public class BasicDataTypeDefinition implements DataTypeDefinition {
         this.parseAdapter = parseAdapter;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public Class getTypeClass() {
         return typeClass;
     }
 
+    @Override
     public int getSqlType() {
         return sqlType;
     }
@@ -57,6 +61,7 @@ public class BasicDataTypeDefinition implements DataTypeDefinition {
         return pseudoNative;
     }
 
+    @Override
     public GenericDataType getGenericDataType() {
         return genericDataType;
     }
@@ -66,6 +71,7 @@ public class BasicDataTypeDefinition implements DataTypeDefinition {
         return "[NAME = " + name + ", GENERIC_TYPE = " + genericDataType + ", TYPE_CLASS = " + typeClass.getName() + " SQL_TYPE = " + sqlType + ']';
     }
 
+    @Override
     public Object convert(@Nullable Object object) {
         return object;
     }

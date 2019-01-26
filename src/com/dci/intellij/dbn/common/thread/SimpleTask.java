@@ -6,6 +6,7 @@ public abstract class SimpleTask<T> extends AbstractTask<T>{
     protected SimpleTask() {
     }
 
+    @Override
     public void start() {
         run();
     }
@@ -14,6 +15,7 @@ public abstract class SimpleTask<T> extends AbstractTask<T>{
         return true;
     }
 
+    @Override
     public void run() {
         trace(this);
         try {

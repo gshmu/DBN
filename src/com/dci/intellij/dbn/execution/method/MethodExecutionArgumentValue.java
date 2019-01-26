@@ -40,10 +40,12 @@ public class MethodExecutionArgumentValue implements PersistentStateElement<Elem
         return valueHistory.values();
     }
 
+    @Override
     public String getValue() {
         return valueHistory.get();
     }
 
+    @Override
     public void setValue(String value) {
         valueHistory.stack(value);
     }

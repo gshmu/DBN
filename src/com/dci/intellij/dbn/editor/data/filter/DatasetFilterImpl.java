@@ -32,27 +32,33 @@ public abstract class DatasetFilterImpl extends Configuration implements Dataset
         this(filterGroup, name, UUID.randomUUID().toString(), filterType);
     }
 
+    @Override
     @NotNull
     public String getId() {
         return id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getDisplayName() {
         return name;
     }
 
+    @Override
     public String getError() {
         return error;
     }
 
+    @Override
     public void setError(String error) {
         this.error = error;
     }
 
+    @Override
     public boolean isNew() {
         return isNew;
     }
@@ -65,14 +71,17 @@ public abstract class DatasetFilterImpl extends Configuration implements Dataset
         this.name = StringUtil.first(name, 40, true);
     }
 
+    @Override
     public ConnectionId getConnectionId() {
         return filterGroup.getConnectionId();
     }
 
+    @Override
     public String getDatasetName() {
         return filterGroup.getDatasetName();
     }
 
+    @Override
     public DatasetFilterGroup getFilterGroup() {
         return filterGroup;
     }
@@ -87,6 +96,7 @@ public abstract class DatasetFilterImpl extends Configuration implements Dataset
 
     public abstract void generateName();
 
+    @Override
     public boolean isTemporary() {
         return isTemporary;
     }
@@ -95,6 +105,7 @@ public abstract class DatasetFilterImpl extends Configuration implements Dataset
         isTemporary = temporary;
     }
 
+    @Override
     public DatasetFilterType getFilterType() {
         return filterType;
     }
@@ -114,6 +125,7 @@ public abstract class DatasetFilterImpl extends Configuration implements Dataset
         return filterGroup.lookupDataset();
     }
 
+    @Override
     public void apply() throws ConfigurationException {
         super.apply();
         isTemporary = false;
@@ -123,6 +135,7 @@ public abstract class DatasetFilterImpl extends Configuration implements Dataset
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     public void readConfiguration(Element element) {
         id = element.getAttributeValue("id");
         name = element.getAttributeValue("name");
@@ -131,6 +144,7 @@ public abstract class DatasetFilterImpl extends Configuration implements Dataset
         isNew = false;
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         element.setAttribute("id", id);
         element.setAttribute("name", name);

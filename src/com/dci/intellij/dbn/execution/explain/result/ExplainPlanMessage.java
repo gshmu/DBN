@@ -23,6 +23,7 @@ public class ExplainPlanMessage extends ConsoleMessage {
         return explainPlanResult.getVirtualFile();
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         explainPlanResult = null;

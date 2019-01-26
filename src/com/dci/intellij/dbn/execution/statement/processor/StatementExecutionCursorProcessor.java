@@ -24,6 +24,7 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
         super(fileEditor, file, sqlStatement,  index);
     }
 
+    @Override
     @NotNull
     protected StatementExecutionResult createExecutionResult(DBNStatement statement, StatementExecutionInput executionInput) throws SQLException {
         DBNResultSet resultSet = statement.getResultSet();
@@ -60,6 +61,7 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
         this.index = index;
     }
 
+    @Override
     public boolean canExecute() {
         if (super.canExecute()) {
             StatementExecutionResult executionResult = getExecutionResult();
@@ -70,6 +72,7 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
         return false;
     }
 
+    @Override
     public void navigateToResult() {
         StatementExecutionResult executionResult = getExecutionResult();
         if (executionResult instanceof StatementExecutionCursorResult) {

@@ -108,6 +108,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         actionsPanelBottom.add(actionToolbarBottom.getComponent(), BorderLayout.EAST);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
@@ -130,6 +131,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         }
     }
 
+    @Override
     public JBPopup createPopup() {
         Date date = getDateForPopup();
         CalendarTableModel tableModel = new CalendarTableModel(date);
@@ -154,17 +156,22 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         return popupBuilder.createPopup();
     }
 
+    @Override
     public void handleKeyPressedEvent(KeyEvent e) {}
 
+    @Override
     public void handleKeyReleasedEvent(KeyEvent e) {}
 
+    @Override
     public void handleFocusLostEvent(FocusEvent e) {}
 
 
+    @Override
     public String getKeyShortcutName() {
         return IdeActions.ACTION_SHOW_INTENTION_ACTIONS;
     }
 
+    @Override
     public String getDescription() {
         return "Calendar";
     }
@@ -191,6 +198,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     /******************************************************
      *                   KeyListener                      *
      ******************************************************/
+    @Override
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
         if (!e.isConsumed()) {
@@ -207,6 +215,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     /******************************************************
      *                TableModelListener                  *
      ******************************************************/
+    @Override
     public void tableChanged(TableModelEvent e) {
         CalendarTableModel model = (CalendarTableModel) daysTable.getModel();
         monthYearLabel.setText(model.getCurrentMonthName() + " " + model.getCurrentYear());
@@ -216,26 +225,32 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
      *                  TableModels                       *
      ******************************************************/
     private class CalendarHeaderTableModel implements TableModel {
+        @Override
         public int getRowCount() {
             return 1;
         }
 
+        @Override
         public int getColumnCount() {
             return 7;
         }
 
+        @Override
         public String getColumnName(int columnIndex) {
             return null;
         }
 
+        @Override
         public Class<?> getColumnClass(int columnIndex) {
             return String.class;
         }
 
+        @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return false;
         }
 
+        @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             switch (columnIndex) {
                 case 0: return "S";
@@ -249,8 +264,11 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             return null;
         }
 
+        @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
+        @Override
         public void addTableModelListener(TableModelListener l) {}
+        @Override
         public void removeTableModelListener(TableModelListener l) {}
     }
 
@@ -275,14 +293,17 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             this(null);
         }
 
+        @Override
         public int getRowCount() {
             return 6;
         }
 
+        @Override
         public int getColumnCount() {
             return 7;
         }
 
+        @Override
         public String getColumnName(int columnIndex) {
             return null;
         }
@@ -344,14 +365,17 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             return (activeMonth.get(Calendar.DAY_OF_WEEK) + inputDate.get(Calendar.DAY_OF_MONTH) - 2) / 7;
         }
 
+        @Override
         public Class<?> getColumnClass(int columnIndex) {
             return String.class;
         }
 
+        @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return false;
         }
 
+        @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             int value = rowIndex * 7 + columnIndex + 2 - activeMonth.get(Calendar.DAY_OF_WEEK);
             if (value < 1) {
@@ -362,8 +386,11 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             return value;
         }
 
+        @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
+        @Override
         public void addTableModelListener(TableModelListener l) {listeners.add(l);}
+        @Override
         public void removeTableModelListener(TableModelListener l) {listeners.remove(l);}
 
         private void rollMonth(int amount) {
@@ -424,6 +451,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK));
             registerAction(this);
         }
+        @Override
         public void actionPerformed(AnActionEvent e) {
             CalendarTableModel tableModel = (CalendarTableModel) daysTable.getModel();
             tableModel.rollMonth(1);
@@ -436,6 +464,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_UP, InputEvent.CTRL_MASK));
             registerAction(this);
         }
+        @Override
         public void actionPerformed(AnActionEvent e) {
             CalendarTableModel tableModel = (CalendarTableModel) daysTable.getModel();
             tableModel.rollYear(1);
@@ -449,6 +478,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             registerAction(this);
 
         }
+        @Override
         public void actionPerformed(AnActionEvent e) {
             CalendarTableModel tableModel = (CalendarTableModel) daysTable.getModel();
             tableModel.rollMonth(-1);
@@ -461,6 +491,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK));
             registerAction(this);
         }
+        @Override
         public void actionPerformed(AnActionEvent e) {
             CalendarTableModel tableModel = (CalendarTableModel) daysTable.getModel();
             tableModel.rollYear(-1);
@@ -472,6 +503,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             super("Reset Time", null, Icons.CALENDAR_CELL_EDIT_CLEAR_TIME);
             registerAction(this);
         }
+        @Override
         public void actionPerformed(AnActionEvent e) {
             Calendar calendar = new GregorianCalendar(2000,1,0,0,0,0);
             String timeString = getFormatter().formatTime(calendar.getTime());
@@ -487,6 +519,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         static final Border EMPTY_BORDER = JBUI.Borders.empty(1, 1, 1, 9);
         static final Color INACTIVE_DAY_COLOR = new JBColor(new Color(0xC0C0C0), new Color(0x5B5B5B));
 
+        @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             CalendarTableModel model = (CalendarTableModel) table.getModel();
@@ -511,6 +544,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         static final Border EMPTY_BORDER = JBUI.Borders.empty(1, 1, 1, 9);
         static final Color FOREGROUND_COLOR = new JBColor(new Color(67, 123, 203), new Color(67, 123, 203));
 
+        @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             setHorizontalAlignment(RIGHT);

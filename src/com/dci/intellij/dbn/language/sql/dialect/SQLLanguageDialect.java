@@ -26,6 +26,7 @@ public abstract class SQLLanguageDialect extends DBLanguageDialect {
         super(identifier, SQLLanguage.INSTANCE);
     }
 
+    @Override
     public IFileElementType createFileElementType() {
         return new SQLFileElementType(this);
     }

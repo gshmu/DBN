@@ -66,10 +66,12 @@ public class PropertiesEditorForm extends DBNFormImpl<DBNForm> {
         table.setProperties(properties);
     } 
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

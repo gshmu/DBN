@@ -14,10 +14,12 @@ public class VariableLookupItemBuilder extends LookupItemBuilder {
         this.isDefinition = isDefinition;
     }
 
+    @Override
     public String getTextHint() {
         return isDefinition ? "variable def" : "variable ref";
     }
 
+    @Override
     public boolean isBold() {
         return false;
     }
@@ -27,6 +29,7 @@ public class VariableLookupItemBuilder extends LookupItemBuilder {
         return text;
     }
 
+    @Override
     public Icon getIcon() {
         return null;
     }

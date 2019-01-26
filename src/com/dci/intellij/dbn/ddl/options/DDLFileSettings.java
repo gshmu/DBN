@@ -37,10 +37,12 @@ public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSetting
         return "DBNavigator.Project.DDLFileSettings";
     }
 
+    @Override
     public String getDisplayName() {
         return "DDL Files";
     }
 
+    @Override
     public String getHelpTopic() {
         return "ddlFileSettings";
     }
@@ -59,6 +61,7 @@ public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSetting
     /********************************************************
     *                     Configuration                     *
     *********************************************************/
+    @Override
     @NotNull
     public DDFileSettingsForm createConfigurationEditor() {
         return new DDFileSettingsForm(this);
@@ -69,6 +72,7 @@ public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSetting
         return "ddl-file-settings";
     }
 
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 extensionSettings,

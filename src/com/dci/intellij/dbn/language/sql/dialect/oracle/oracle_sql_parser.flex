@@ -24,46 +24,46 @@ import com.dci.intellij.dbn.language.sql.dialect.oracle.OraclePLSQLBlockMonitor.
 
 %{
     private TokenTypeBundle tt;
-    public OracleSQLParserFlexLexer(TokenTypeBundle tt) {
-        this.tt = tt;
-    }
+            public OracleSQLParserFlexLexer(TokenTypeBundle tt) {
+                this.tt = tt;
+            }
 
-    private int blockNesting = 0;
-    private int blockStartPos = 0;
+            private int blockNesting = 0;
+            private int blockStartPos = 0;
 
-    /*
-    public void startPsqlBlock(boolean isDeclareBloc) {
-        blockNesting = 0;
-        yybegin(PSQL_BLOCK);
-        blockStartPos = zzStartRead;
-        if (incNesting) blockNesting++;
-    }
+            /*
+            public void startPsqlBlock(boolean isDeclareBloc) {
+                blockNesting = 0;
+                yybegin(PSQL_BLOCK);
+                blockStartPos = zzStartRead;
+                if (incNesting) blockNesting++;
+            }
 
-    public IElementType endPsqlBlock() {
-        blockNesting = 0;
-        yybegin(YYINITIAL);
-        zzStartRead = blockStartPos;
-        return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
-    }
-    */
+            public IElementType endPsqlBlock() {
+                blockNesting = 0;
+                yybegin(YYINITIAL);
+                zzStartRead = blockStartPos;
+                return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
+            }
+            */
 
-    public IElementType getChameleon() {
-        return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
-    }
+            public IElementType getChameleon() {
+                return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
+            }
 
-    OraclePLSQLBlockMonitor plsqlBlockMonitor = new OraclePLSQLBlockMonitor() {
-        protected void lexerStart() {
-            //yypushback(yylength());
-            yybegin(PSQL_BLOCK);
-            blockStartPos = zzStartRead;
-        }
-        protected void lexerEnd() {
-            yybegin(YYINITIAL);
-            zzStartRead = blockStartPos;
-        }
-    };
+            OraclePLSQLBlockMonitor plsqlBlockMonitor = new OraclePLSQLBlockMonitor() {
+                @Override protected void lexerStart() {
+                    //yypushback(yylength());
+                    yybegin(PSQL_BLOCK);
+                    blockStartPos = zzStartRead;
+                }
+                @Override protected void lexerEnd() {
+                    yybegin(YYINITIAL);
+                    zzStartRead = blockStartPos;
+                }
+            };
 
-%}
+        %}
 
 
 //PLSQL_BLOCK_START = "create"({ws}"or"{ws}"replace")? {ws} ("function"|"procedure"|"type"|"trigger"|"package") | "declare" | "begin"

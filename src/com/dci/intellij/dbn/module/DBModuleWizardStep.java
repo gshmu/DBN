@@ -25,6 +25,7 @@ public abstract class DBModuleWizardStep extends ModuleWizardStep {
         return (DBModuleBuilder) moduleBuilder;
     }
 
+    @Override
     public Icon getIcon() {
         return ICON;
     }

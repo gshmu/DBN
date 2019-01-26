@@ -13,6 +13,7 @@ public class ConnectAction extends AbstractConnectionAction {
         getTemplatePresentation().setEnabled(!connectionHandler.getConnectionStatus().isConnected());
     }
 
+    @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
         final ConnectionHandler connectionHandler = getConnectionHandler();
         connectionHandler.getInstructions().setAllowAutoConnect(true);

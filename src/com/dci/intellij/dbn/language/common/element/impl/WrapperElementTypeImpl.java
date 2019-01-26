@@ -80,18 +80,22 @@ public class WrapperElementTypeImpl extends AbstractElementType implements Wrapp
         return new WrapperElementTypeParser(this);
     }
 
+    @Override
     public boolean isLeaf() {
         return false;
     }
 
+    @Override
     public TokenElementType getBeginTokenElement() {
         return wrappingDefinition.getBeginElementType();
     }
 
+    @Override
     public TokenElementType getEndTokenElement() {
         return wrappingDefinition.getEndElementType();
     }
 
+    @Override
     public ElementType getWrappedElement() {
         return wrappedElement;
     }
@@ -120,9 +124,11 @@ public class WrapperElementTypeImpl extends AbstractElementType implements Wrapp
         return false;
     }
 
+    @Override
     public String getDebugName() {
         return "wrapper (" + getId() + ")";
     }
+    @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new SequencePsiElement(astNode, this);
     }

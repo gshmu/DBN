@@ -19,6 +19,7 @@ public class CompilerMessagesObjectNode extends BundleTreeNode {
         this.objectRef = objectRef;
     }
 
+    @Override
     @Nullable
     public DBEditableObjectVirtualFile getVirtualFile() {
         DBSchemaObject schemaObject = getObject();

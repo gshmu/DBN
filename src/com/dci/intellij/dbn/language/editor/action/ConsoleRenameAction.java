@@ -18,6 +18,7 @@ public class ConsoleRenameAction extends DumbAwareAction {
         super("Rename console", "", Icons.ACTION_EDIT);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ensureProject(e);
         VirtualFile virtualFile = getVirtualFile(e);

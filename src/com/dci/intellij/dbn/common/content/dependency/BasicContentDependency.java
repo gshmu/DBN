@@ -19,6 +19,7 @@ public class BasicContentDependency extends ContentDependency {
         return FailsafeUtil.get(sourceContent);
     }
 
+    @Override
     public void dispose() {
         sourceContent = VoidDynamicContent.INSTANCE;
     }

@@ -47,10 +47,12 @@ public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettin
         return 0;
     }
 
+    @Override
     public int getExecutionTimeout() {
         return executionTimeout;
     }
 
+    @Override
     public boolean setExecutionTimeout(int executionTimeout) {
         if (this.executionTimeout != executionTimeout) {
             this.executionTimeout = executionTimeout;

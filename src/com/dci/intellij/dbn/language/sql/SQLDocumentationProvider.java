@@ -40,25 +40,30 @@ public class SQLDocumentationProvider implements DocumentationProvider {
         return null;
     }
 
+    @Override
     public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
         return getQuickNavigateInfo(element);
     }
 
+    @Override
     @Nullable
     public List<String> getUrlFor(PsiElement psiElement, PsiElement psiElement1) {
         return null;
     }
 
+    @Override
     @Nullable
     public String generateDoc(PsiElement psiElement, PsiElement psiElement1) {
         return null;
     }
 
+    @Override
     @Nullable
     public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object o, PsiElement psiElement) {
         return null;
     }
 
+    @Override
     @Nullable
     public PsiElement getDocumentationElementForLink(PsiManager psiManager, String s, PsiElement psiElement) {
         return null;

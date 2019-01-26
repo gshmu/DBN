@@ -146,13 +146,16 @@
     /********************************************************
      *                      KeyListener                     *
      ********************************************************/
+    @Override
     public void keyReleased(KeyEvent e) {
     }
 
+    @Override
     public void keyTyped(KeyEvent e) {}
 
 
 
+    @Override
     public void keyPressed(KeyEvent e) {
         if (!e.isConsumed()) {
             JTextField textField = getTextField();
@@ -208,6 +211,7 @@
     };
 
     private MouseListener mouseListener = new MouseAdapter() {
+        @Override
         public void mouseReleased(MouseEvent event) {
             if (event.getButton() == MouseEvent.BUTTON3 ) {
                 DatasetEditorModelCell cell = getCell();
@@ -217,6 +221,7 @@
             }
         }
 
+        @Override
         public void mouseClicked(MouseEvent event) {
             if (MouseUtil.isNavigationEvent(event)) {
                 DatasetEditorModelCell cell = getCell();

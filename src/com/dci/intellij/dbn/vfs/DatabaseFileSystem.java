@@ -101,6 +101,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         return ApplicationManager.getApplication().getComponent(DatabaseFileSystem.class);
     }
                                                                             
+    @Override
     @NotNull
     public String getProtocol() {
         return PROTOCOL;
@@ -114,6 +115,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
      * [connection_id]/object_contents/[content_Type]/[object_ref_serialized]
      */
 
+    @Override
     @Nullable
     public VirtualFile findFileByPath(@NotNull @NonNls String path) {
         if (path.startsWith(PROTOCOL_PREFIX)) {
@@ -327,19 +329,23 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
      *                  VirtualFileSystem                    *
      *********************************************************/
 
+    @Override
     public void refresh(boolean b) {
 
     }
 
+    @Override
     @Nullable
     public VirtualFile refreshAndFindFileByPath(@NotNull String s) {
         return null;
     }
 
+    @Override
     public void addVirtualFileListener(@NotNull VirtualFileListener listener) {
 
     }
 
+    @Override
     public void removeVirtualFileListener(@NotNull VirtualFileListener listener) {
 
     }
@@ -348,31 +354,38 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
     }
 
+    @Override
     protected void deleteFile(Object o, @NotNull VirtualFile virtualFile) throws IOException {}
 
+    @Override
     protected void moveFile(Object o, @NotNull VirtualFile virtualFile, @NotNull VirtualFile virtualFile1) throws IOException {
         throw READONLY_FILE_SYSTEM;
     }
 
+    @Override
     protected void renameFile(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {
         throw READONLY_FILE_SYSTEM;
     }
 
+    @Override
     @NotNull
     protected VirtualFile createChildFile(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {
         throw READONLY_FILE_SYSTEM;
     }
 
+    @Override
     @NotNull
     protected VirtualFile createChildDirectory(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {
         throw READONLY_FILE_SYSTEM;
     }
 
+    @Override
     @NotNull
     protected VirtualFile copyFile(Object o, @NotNull VirtualFile virtualFile, @NotNull VirtualFile virtualFile1, @NotNull String s) throws IOException {
         throw READONLY_FILE_SYSTEM;
     }
 
+    @Override
     public boolean isReadOnly() {
         return true;
     }
@@ -381,14 +394,17 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
      *                ApplicationComponent                   *
      *********************************************************/
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {
         return "DBNavigator.DatabaseFileSystem";
     }
 
+    @Override
     public void initComponent() {}
 
+    @Override
     public void disposeComponent() {}
 
     /*********************************************************

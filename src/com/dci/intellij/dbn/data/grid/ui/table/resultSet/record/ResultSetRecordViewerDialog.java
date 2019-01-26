@@ -25,6 +25,7 @@ public class ResultSetRecordViewerDialog extends DBNDialog<ResultSetRecordViewer
         return new ResultSetRecordViewerForm(this, table, showDataTypes);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

@@ -15,10 +15,12 @@ public class DebuggerVersionInfo implements CallableStatementOutput {
         return version;
     }
 
+    @Override
     public void registerParameters(CallableStatement statement) throws SQLException {
         statement.registerOutParameter(1, Types.VARCHAR);
     }
 
+    @Override
     public void read(CallableStatement statement) throws SQLException {
         version = statement.getString(1);
     }

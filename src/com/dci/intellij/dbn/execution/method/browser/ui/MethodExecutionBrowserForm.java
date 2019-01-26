@@ -120,10 +120,12 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
                 });
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

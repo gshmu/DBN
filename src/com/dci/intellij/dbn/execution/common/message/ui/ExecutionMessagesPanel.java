@@ -68,6 +68,7 @@ public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
         getMessagesTree().reset();
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }

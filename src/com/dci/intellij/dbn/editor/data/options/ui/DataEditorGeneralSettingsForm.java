@@ -26,10 +26,12 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         ConfigurationEditorUtil.validateIntegerInputValue(fetchBlockSizeTextField, "Fetch block size", true, 1, 10000, null);
         ConfigurationEditorUtil.validateIntegerInputValue(fetchTimeoutTextField, "Fetch timeout", true, 0, 300, "\nUse value 0 for no timeout");
@@ -43,6 +45,7 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
         settings.getLargeValuePreviewActive().to(largeValuePreviewActiveCheckBox);
     }
 
+    @Override
     public void resetFormChanges() {
         DataEditorGeneralSettings settings = getConfiguration();
         settings.getFetchBlockSize().from(fetchBlockSizeTextField);

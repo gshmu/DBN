@@ -38,6 +38,7 @@ public class DBFunctionImpl extends DBMethodImpl implements DBFunction {
         return resultSet.getString("FUNCTION_NAME");
     }
 
+    @Override
     public DBArgument getReturnArgument() {
         for (DBArgument argument : getArguments()) {
             if (argument.getPosition() == 1) {
@@ -47,10 +48,12 @@ public class DBFunctionImpl extends DBMethodImpl implements DBFunction {
         return null;
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.FUNCTION;
     }
 
+    @Override
     @Nullable
     public Icon getIcon() {
         if (getContentType() == DBContentType.CODE) {
@@ -67,18 +70,22 @@ public class DBFunctionImpl extends DBMethodImpl implements DBFunction {
         return Icons.DBO_FUNCTION;
     }
 
+    @Override
     public Icon getOriginalIcon() {
         return Icons.DBO_FUNCTION;
     }
 
+    @Override
     public DBProgram getProgram() {
         return null;
     }
 
+    @Override
     public String getMethodType() {
         return "FUNCTION";
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
         ttb.createEmptyRow();
@@ -94,6 +101,7 @@ public class DBFunctionImpl extends DBMethodImpl implements DBFunction {
             super(object, false);
         }
 
+        @Override
         public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             return getConnectionHandler().getInterfaceProvider().getMetadataInterface().loadObjectSourceCode(
                    getSchema().getName(),
@@ -110,14 +118,17 @@ public class DBFunctionImpl extends DBMethodImpl implements DBFunction {
      *              DBEditableCodeSchemaObject               *
      *********************************************************/
 
+    @Override
     public String loadCodeFromDatabase(DBContentType contentType) throws SQLException {
         return new SourceCodeLoader(this).load();
     }
 
+    @Override
     public String getCodeParseRootId(DBContentType contentType) {
         return getParentObject() instanceof DBSchema && contentType == DBContentType.CODE ? "function_declaration" : null;
     }
 
+    @Override
     public DBObjectTimestampLoader getTimestampLoader(DBContentType contentType) {
         return TIMESTAMP_LOADER;
     }

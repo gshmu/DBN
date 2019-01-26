@@ -149,6 +149,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExe
         return DBObjectRef.get(typeAttributeRef);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -188,6 +189,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExe
         inputTextField.getDocument().addDocumentListener(documentListener);
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

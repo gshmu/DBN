@@ -32,10 +32,12 @@ public class ClipboardUtil {
             }
         }
 
+        @Override
         public DataFlavor[] getTransferDataFlavors() {
             return dataFlavors;
         }
 
+        @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
             return
                     "text/xml".equals(flavor.getMimeType()) ||
@@ -43,6 +45,7 @@ public class ClipboardUtil {
                             "text/plain".equals(flavor.getMimeType());
         }
 
+        @Override
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
             return content;
         }

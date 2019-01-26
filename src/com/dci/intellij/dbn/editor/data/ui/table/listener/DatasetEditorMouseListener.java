@@ -23,6 +23,7 @@ public class DatasetEditorMouseListener extends MouseAdapter implements Disposab
     public void mouseMoved(MouseEvent e) {
     }
 
+    @Override
     public void mouseReleased(final MouseEvent event) {
         if (event.getButton() == MouseEvent.BUTTON3) {
             Point mousePoint = event.getPoint();
@@ -42,6 +43,7 @@ public class DatasetEditorMouseListener extends MouseAdapter implements Disposab
         }
     }
 
+    @Override
     public void mouseClicked(MouseEvent event) {
         if (MouseUtil.isNavigationEvent(event)) {
             DatasetEditorModelCell cell = (DatasetEditorModelCell) table.getCellAtLocation(event.getPoint());

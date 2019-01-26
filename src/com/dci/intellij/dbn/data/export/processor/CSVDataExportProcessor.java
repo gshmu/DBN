@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 
 public class CSVDataExportProcessor extends CustomDataExportProcessor{
+    @Override
     public DataExportFormat getFormat() {
         return DataExportFormat.CSV;
     }
@@ -16,6 +17,7 @@ public class CSVDataExportProcessor extends CustomDataExportProcessor{
         return "csv";
     }
 
+    @Override
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         instructions.setValueSeparator(",");
         super.performExport(model, instructions, connectionHandler);

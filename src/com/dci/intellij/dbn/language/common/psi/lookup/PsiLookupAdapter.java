@@ -24,6 +24,7 @@ public abstract class PsiLookupAdapter {
     public final BasePsiElement findInParentScopeOf(final BasePsiElement source) {
         //System.out.println(this);
         LookupScopeVisitor finder = new LookupScopeVisitor() {
+            @Override
             protected BasePsiElement performLookup(BasePsiElement scope) {
                 BasePsiElement result = scope.findPsiElement(PsiLookupAdapter.this, 10);
                 return result == null || result == source ? null : result;
@@ -48,6 +49,7 @@ public abstract class PsiLookupAdapter {
 
     public final Set<BasePsiElement> collectInParentScopeOf(@NotNull BasePsiElement source, Set<BasePsiElement> bucket) {
         CollectScopeVisitor collector = new CollectScopeVisitor() {
+            @Override
             protected Set<BasePsiElement> performCollect(BasePsiElement scope) {
                 return scope.collectPsiElements(PsiLookupAdapter.this, getResult(), 1);
             }

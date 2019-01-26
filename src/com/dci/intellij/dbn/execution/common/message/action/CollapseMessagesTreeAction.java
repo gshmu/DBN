@@ -12,6 +12,7 @@ public class CollapseMessagesTreeAction extends ExecutionMessagesAction {
         super(messagesTree, "Collapse All", Icons.ACTION_COLLAPSE_ALL);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         TreeUtil.collapseAll(getMessagesTree());
     }

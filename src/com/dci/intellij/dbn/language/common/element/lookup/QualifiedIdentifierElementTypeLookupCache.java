@@ -29,6 +29,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
         return false;
     }
 
+    @Override
     public boolean checkStartsWithIdentifier() {
         for (LeafElementType[] elementTypes : getElementType().getVariants()) {
             if (elementTypes[0].getLookupCache().startsWithIdentifier()) return true;

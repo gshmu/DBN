@@ -20,17 +20,21 @@ public abstract class AbstractProjectComponent extends ApplicationAdapter implem
         ApplicationManager.getApplication().addApplicationListener(this);
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return projectRef.getnn();
     }
 
+    @Override
     public void projectOpened() {
     }
 
+    @Override
     public void projectClosed() {
     }
 
+    @Override
     public void initComponent() {
     }
 
@@ -63,6 +67,7 @@ public abstract class AbstractProjectComponent extends ApplicationAdapter implem
      ***********************************************/
     private boolean disposed = false;
 
+    @Override
     public boolean isDisposed() {
         return disposed;
     }
@@ -72,6 +77,7 @@ public abstract class AbstractProjectComponent extends ApplicationAdapter implem
         disposed = true;
     }
 
+    @Override
     public void disposeComponent() {
         dispose();
     }

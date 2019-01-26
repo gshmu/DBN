@@ -13,11 +13,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class SetupCodeCompletionIntentionAction extends GenericIntentionAction implements LowPriorityAction {
+    @Override
     @NotNull
     public String getText() {
         return "Setup code completion";
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
         return IntentionActionGroups.SETUP;
@@ -28,15 +30,18 @@ public class SetupCodeCompletionIntentionAction extends GenericIntentionAction i
         return null;
     }
 
+    @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         return psiFile instanceof DBLanguagePsiFile && psiFile.getVirtualFile().getParent() != null;
     }
 
+    @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
         settingsManager.openProjectSettings(ConfigId.CODE_COMPLETION);
     }
 
+    @Override
     public boolean startInWriteAction() {
         return false;
     }

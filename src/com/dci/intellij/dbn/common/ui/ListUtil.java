@@ -28,6 +28,7 @@ public class ListUtil {
     }
 
     public static final SelectFromListDialog.ToStringAspect BASIC_TO_STRING_ASPECT = new SelectFromListDialog.ToStringAspect() {
+        @Override
         public String getToStirng(Object obj) {
             return obj.toString();
         }

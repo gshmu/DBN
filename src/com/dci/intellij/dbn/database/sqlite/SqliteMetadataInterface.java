@@ -26,6 +26,7 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
         super("sqlite_metadata_interface.xml", provider);
     }
 
+    @Override
     public ResultSet loadCompileObjectErrors(String ownerName, String objectName, DBNConnection connection) throws SQLException {
         return null;
     }
@@ -85,11 +86,13 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
         };
     }
 
+    @Override
     public ResultSet loadDatasetTriggers(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         ResultSet resultSet = executeQuery(connection, "dataset-triggers", ownerName, datasetName);
         return new SqliteTriggersResultSet(resultSet);
     }
 
+    @Override
     public ResultSet loadAllDatasetTriggers(String ownerName, DBNConnection connection) throws SQLException {
         ResultSet resultSet = executeQuery(connection, "all-dataset-triggers", ownerName);
         return new SqliteTriggersResultSet(resultSet);
@@ -239,11 +242,13 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
         return new SqliteViewSourceResultSet(resultSet);
     }
 
+    @Override
     public ResultSet loadDatasetTriggerSourceCode(String tableOwner, String tableName, String ownerName, String triggerName, DBNConnection connection) throws SQLException {
         ResultSet resultSet = executeQuery(connection, "dataset-trigger-source-code", ownerName, tableName, triggerName);
         return new SqliteTriggerSourceResultSet(resultSet);
     }
 
+    @Override
     public String createDateString(Date date) {
         String dateString = META_DATE_FORMAT.get().format(date);
         return "str_to_date('" + dateString + "', '%Y-%m-%d %T')";

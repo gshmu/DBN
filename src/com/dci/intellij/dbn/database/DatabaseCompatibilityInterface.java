@@ -59,6 +59,7 @@ public abstract class DatabaseCompatibilityInterface {
 
     public abstract String getExplainPlanStatementPrefix();
 
+    @Nullable
     public DatabaseAttachmentHandler getDatabaseAttachmentHandler() {
         return null;
     };

@@ -20,10 +20,12 @@ public class DebuggerSettings extends Configuration<DebuggerSettingsForm>{
                     DebuggerTypeOption.JDBC,
                     DebuggerTypeOption.CANCEL);
 
+    @Override
     public String getDisplayName() {
         return "Data editor general settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "debugger";
     }
@@ -49,6 +51,7 @@ public class DebuggerSettings extends Configuration<DebuggerSettingsForm>{
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public DebuggerSettingsForm createConfigurationEditor() {
         return new DebuggerSettingsForm(this);
@@ -59,11 +62,13 @@ public class DebuggerSettings extends Configuration<DebuggerSettingsForm>{
         return "debugger";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         debuggerType.readConfiguration(element);
         useGenericRunners = SettingsUtil.getBoolean(element, "use-generic-runners", useGenericRunners);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         debuggerType.writeConfiguration(element);
         SettingsUtil.setBoolean(element, "use-generic-runners", useGenericRunners);

@@ -39,8 +39,10 @@ public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeN
     DBObjectAttribute[] getObjectAttributes();
     DBObjectAttribute getNameAttribute();
 
+    @Override
     @NotNull
     String getName();
+    @Override
     int getOverload();
     String getQuotedName(boolean quoteAlways);
     boolean needsNameQuoting();
@@ -48,6 +50,7 @@ public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeN
     String getQualifiedNameWithType();
     String getNavigationTooltipText();
     String getTypeName();
+    @Override
     @Nullable
     Icon getIcon();
     Icon getOriginalIcon();
@@ -91,6 +94,7 @@ public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeN
     DBObjectRelationListContainer getChildObjectRelations();
     String extractDDL() throws SQLException;
 
+    @Override
     @Nullable
     DBObject getUndisposedElement();
 
@@ -99,6 +103,7 @@ public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeN
     @NotNull
     DBObjectVirtualFile getVirtualFile();
     List<PresentableProperty> getPresentableProperties();
+    @Override
     DBObjectRef getRef();
 
     boolean isValid();

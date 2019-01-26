@@ -16,6 +16,7 @@ public class ShowDatabaseInformationAction extends AbstractConnectionAction {
         //getTemplatePresentation().setEnabled(connectionHandler.getConnectionStatus().isConnected());
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionAction.invoke("showing database information", connectionHandler,

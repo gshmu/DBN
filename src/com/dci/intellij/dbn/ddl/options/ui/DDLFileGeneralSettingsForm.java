@@ -56,10 +56,12 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         };
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         final DDLFileGeneralSettings settings = getConfiguration();
         settings.getLookupDDLFilesEnabled().to(lookupDDLFilesCheckBox);
@@ -77,6 +79,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         });
     }
 
+    @Override
     public void resetFormChanges() {
         DDLFileGeneralSettings settings = getConfiguration();
         settings.getLookupDDLFilesEnabled().from(lookupDDLFilesCheckBox);

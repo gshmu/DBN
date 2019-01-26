@@ -28,6 +28,7 @@ public class NewConnectionAction extends ConnectionSettingsAction {
         return databaseType == null ? "Custom..." : databaseType.getDisplayName();
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);

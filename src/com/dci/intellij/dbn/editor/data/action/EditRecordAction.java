@@ -11,6 +11,7 @@ public class EditRecordAction extends AbstractDataEditorAction {
         super("Edit Record", Icons.DATA_EDITOR_EDIT_RECORD);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor != null) {
@@ -18,6 +19,7 @@ public class EditRecordAction extends AbstractDataEditorAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Edit Record");

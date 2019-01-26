@@ -72,6 +72,7 @@ public class CodeCompletionSortingSettings extends Configuration<CodeCompletionS
         return sortingItems;
     }
 
+    @Override
     public String getDisplayName() {
         return "Code completion sorting";
     }
@@ -79,6 +80,7 @@ public class CodeCompletionSortingSettings extends Configuration<CodeCompletionS
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @Override
     @NotNull
     public CodeCompletionSortingSettingsForm createConfigurationEditor() {
         return new CodeCompletionSortingSettingsForm(this);
@@ -89,6 +91,7 @@ public class CodeCompletionSortingSettings extends Configuration<CodeCompletionS
         return "sorting";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         enabled = SettingsUtil.getBooleanAttribute(element, "enabled", enabled);
         for (Object child : element.getChildren()) {
@@ -102,6 +105,7 @@ public class CodeCompletionSortingSettings extends Configuration<CodeCompletionS
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setBooleanAttribute(element, "enabled", enabled);
         for (CodeCompletionSortingItem sortingItem : sortingItems) {

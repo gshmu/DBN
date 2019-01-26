@@ -54,6 +54,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         return new MethodExecutionHistoryForm(this, executionHistory, debug);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         if (editable) {
@@ -101,6 +102,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
             super("Select");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             saveChanges();
             close(OK_EXIT_CODE);
@@ -112,6 +114,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
             super("Execute", Icons.METHOD_EXECUTION_RUN);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             saveChanges();
             MethodExecutionInput executionInput = getComponent().getTree().getSelectedExecutionInput();
@@ -128,6 +131,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
             super("Debug", Icons.METHOD_EXECUTION_DEBUG);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             saveChanges();
             MethodExecutionInput executionInput = getComponent().getTree().getSelectedExecutionInput();
@@ -144,6 +148,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
             super("Save");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             saveChanges();
             saveAction.setEnabled(false);
@@ -156,6 +161,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
             super("Close");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             doCancelAction();
         }
@@ -185,6 +191,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     }
 
 
+    @Override
     public void dispose() {
         super.dispose();
         //selectedExecutionInput = null;

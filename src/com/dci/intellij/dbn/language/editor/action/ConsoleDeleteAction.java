@@ -18,6 +18,7 @@ public class ConsoleDeleteAction extends DumbAwareAction {
         super("Delete console", "", Icons.ACTION_CLOSE);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ensureProject(e);
         VirtualFile virtualFile = getVirtualFile(e);

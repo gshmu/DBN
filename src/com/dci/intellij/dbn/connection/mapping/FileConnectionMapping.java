@@ -72,6 +72,7 @@ public class FileConnectionMapping implements PersistentStateElement<Element> {
     /*********************************************
      *            PersistentStateElement         *
      *********************************************/
+    @Override
     public void readState(Element element) {
         fileUrl = element.getAttributeValue("file-url");
 
@@ -87,6 +88,7 @@ public class FileConnectionMapping implements PersistentStateElement<Element> {
         schemaName = element.getAttributeValue("current-schema");
     }
 
+    @Override
     public void writeState(Element element) {
         element.setAttribute("file-url", fileUrl);
         element.setAttribute("connection-id", connectionId == null ? "" : connectionId.id());

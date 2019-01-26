@@ -14,11 +14,13 @@ public class IterationNoWrappingPreset extends IterationAbstractPreset {
         super("no_wrapping", "No wrapping");
     }
 
+    @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         return WRAP_NONE;
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);

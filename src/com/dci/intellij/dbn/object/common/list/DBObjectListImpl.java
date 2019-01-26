@@ -75,6 +75,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
+    @Override
     public boolean isInternal() {
         return is(INTERNAL);
     }
@@ -149,6 +150,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return connectionHandler.isVirtual() ? null : (Filter<T>) connectionHandler.getSettings().getFilterSettings().getNameFilter(objectType);
     }
 
+    @Override
     @NotNull
     public List<T> getObjects() {
         return getAllElements();
@@ -159,6 +161,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return getElements(name);
     }
 
+    @Override
     public void addObject(T object) {
         if (elements == EMPTY_CONTENT || elements == EMPTY_UNTOUCHED_CONTENT) {
             elements = new ArrayList<T>();
@@ -166,14 +169,17 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         elements.add(object);
     }
 
+    @Override
     public T getObject(String name) {
         return getElement(name, 0);
     }
 
+    @Override
     public T getObject(String name, int overload) {
         return getElement(name, overload);
     }
 
+    @Override
     public T getObject(String name, String parentName) {
         for (T element : elements) {
             String elementName = element.getName();
@@ -199,21 +205,25 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
+    @Override
     @NotNull
     public String getName() {
         return objectType.getListName();
     }
 
+    @Override
     public void initTreeElement() {
         getObjects();
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         GenericDatabaseElement parent = getParentElement();
         return FailsafeUtil.get(parent.getProject());
     }
 
+    @Override
     public GenericDatabaseElement getUndisposedElement() {
         return this;
     }
@@ -231,6 +241,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return psiDirectory;
     }
 
+    @Override
     public void notifyChangeListeners() {
         try {
             Project project = getProject();
@@ -248,6 +259,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     /*********************************************************
      *                   LoadableContent                     *
      *********************************************************/
+    @Override
     public String getContentDescription() {
         if (isDisposed()) {
             return "disposed";
@@ -265,6 +277,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
      *                     TreeElement                       *
      *********************************************************/
 
+    @Override
     public boolean isTreeStructureLoaded() {
         return isTouched();
     }
@@ -273,19 +286,23 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return elements != EMPTY_UNTOUCHED_CONTENT;
     }
 
+    @Override
     public boolean canExpand() {
         return isTouched() && getChildCount() > 0;
     }
 
+    @Override
     public int getTreeDepth() {
         BrowserTreeNode treeParent = getParent();
         return treeParent == null ? 0 : treeParent.getTreeDepth() + 1;
     }
 
+    @Override
     public BrowserTreeNode getChildAt(int index) {
         return getChildren().get(index);
     }
 
+    @Override
     @NotNull
     public BrowserTreeNode getParent() {
         return (BrowserTreeNode) getParentElement();
@@ -306,6 +323,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return Collections.enumeration(getChildren());
     }
 
+    @Override
     public List<? extends BrowserTreeNode> getChildren() {
         if (isLoading() || isDisposed()) {
             return elements;
@@ -331,6 +349,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
+    @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
         if (isLoaded()) {
             if (objectType.isOneOf(objectTypes)) {
@@ -343,6 +362,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
+    @Override
     public void rebuildTreeChildren() {
         if (isLoaded()) {
             for (DBObject object : getObjects()) {
@@ -351,37 +371,45 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
+    @Override
     public int getChildCount() {
         return getChildren().size();
     }
 
+    @Override
     public boolean isLeaf() {
         return getChildren().size() == 0;
     }
 
+    @Override
     public int getIndex(BrowserTreeNode child) {
         return getChildren().indexOf(child);
     }
 
 
+    @Override
     public DBObjectType getObjectType() {
         return objectType;
     }
 
+    @Override
     public Icon getIcon(int flags) {
         return objectType.getListIcon();
     }
 
+    @Override
     public String getPresentableText() {
         return objectType.getPresentableListName();
     }
 
+    @Override
     public String getPresentableTextDetails() {
         int elementCount = getChildCount();
         int unfilteredElementCount = getAllElementsNoLoad().size();
         return unfilteredElementCount > 0 ? "(" + elementCount + (elementCount != unfilteredElementCount ? "/"+ unfilteredElementCount : "") + ")" : null;
     }
 
+    @Override
     public String getPresentableTextConditionalDetails() {
         return null;
     }
@@ -389,6 +417,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     /*********************************************************
     *                    ToolTipProvider                    *
     *********************************************************/
+    @Override
     public String getToolTip() {
         return null;
     }
@@ -396,19 +425,23 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     /*********************************************************
      *                  NavigationItem                       *
      *********************************************************/
+    @Override
     public void navigate(boolean requestFocus) {
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
         browserManager.navigateToElement(this, requestFocus, true);
     }
 
+    @Override
     public boolean canNavigate() {
         return false;
     }
 
+    @Override
     public boolean canNavigateToSource() {
         return false;
     }
 
+    @Override
     public ItemPresentation getPresentation() {
         return this;
     }
@@ -416,10 +449,12 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     /*********************************************************
      *                 ItemPresentation                      *
      *********************************************************/
+    @Override
     public String getLocationString() {
         return null;
     }
 
+    @Override
     public Icon getIcon(boolean open) {
         return getIcon(0);
     }

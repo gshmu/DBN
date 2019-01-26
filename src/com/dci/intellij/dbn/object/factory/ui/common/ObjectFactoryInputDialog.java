@@ -24,6 +24,7 @@ public class ObjectFactoryInputDialog extends DBNDialog<ObjectFactoryInputForm> 
         return inputForm;
     }
 
+    @Override
     public void doOKAction() {
         Project project = getComponent().getConnectionHandler().getProject();
         DatabaseObjectFactory factory = DatabaseObjectFactory.getInstance(project);
@@ -33,6 +34,7 @@ public class ObjectFactoryInputDialog extends DBNDialog<ObjectFactoryInputForm> 
         }
     }
 
+    @Override
     public void doCancelAction() {
         super.doCancelAction();
     }

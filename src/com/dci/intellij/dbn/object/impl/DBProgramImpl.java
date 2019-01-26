@@ -40,6 +40,7 @@ public abstract class DBProgramImpl<P extends DBProcedure, F extends DBFunction>
         properties.set(DEBUGABLE, true);
     }
 
+    @Override
     public void initStatus(ResultSet resultSet) throws SQLException {
         String specValidString = resultSet.getString("IS_SPEC_VALID");
         String bodyValidString = resultSet.getString("IS_BODY_VALID");
@@ -67,14 +68,17 @@ public abstract class DBProgramImpl<P extends DBProcedure, F extends DBFunction>
 
     }
 
+    @Override
     public List<F> getFunctions() {
         return functions.getObjects();
     }
 
+    @Override
     public List<P> getProcedures() {
         return procedures.getObjects();
     }
 
+    @Override
     public F getFunction(String name, int overload) {
         for (F function : functions.getObjects()){
             if (function.getName().equals(name) && function.getOverload() == overload) {
@@ -84,6 +88,7 @@ public abstract class DBProgramImpl<P extends DBProcedure, F extends DBFunction>
         return null;
     }
 
+    @Override
     public P getProcedure(String name, int overload) {
         for (P procedure : procedures.getObjects()){
             if (procedure.getName().equals(name) && procedure.getOverload() == overload) {
@@ -93,12 +98,14 @@ public abstract class DBProgramImpl<P extends DBProcedure, F extends DBFunction>
         return null;
     }
 
+    @Override
     public DBMethod getMethod(String name, int overload) {
         DBMethod method = getProcedure(name, overload);
         if (method == null) method = getFunction(name, overload);
         return method;
     }
 
+    @Override
     public boolean isEmbedded() {
         return false;
     }

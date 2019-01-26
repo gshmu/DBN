@@ -137,6 +137,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         return Collections.emptyList();
     }
 
+    @Override
     public void focus() {
         JTextField valueTextField = editorComponent.getTextField();
         valueTextField.selectAll();
@@ -144,6 +145,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     }
 
     private class DocumentListener extends DocumentAdapter{
+        @Override
         protected void textChanged(DocumentEvent e) {
             basicFilterForm.updateNameAndPreview();
         }
@@ -199,6 +201,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     }
 
     private ListCellRenderer cellRenderer = new ColoredListCellRenderer() {
+        @Override
         protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
             DBObjectRef<DBColumn> columnRef = (DBObjectRef<DBColumn>) value;
             DBColumn column = DBObjectRef.get(columnRef);
@@ -209,10 +212,12 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         }
     };
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         DatasetBasicFilterCondition condition = getConfiguration();
         DBColumn column = getSelectedColumn();
@@ -232,6 +237,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         if (selectedOperator == null || selectedOperator.isFinal()) valueTextField.setText(null);
     }
 
+    @Override
     public void resetFormChanges() {
 
     }

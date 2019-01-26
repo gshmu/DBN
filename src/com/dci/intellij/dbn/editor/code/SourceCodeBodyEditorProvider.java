@@ -13,6 +13,7 @@ import javax.swing.*;
 
 public class SourceCodeBodyEditorProvider extends BasicSourceCodeEditorProvider{
 
+    @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         DBEditableObjectVirtualFile databaseFile = null;
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
@@ -34,6 +35,7 @@ public class SourceCodeBodyEditorProvider extends BasicSourceCodeEditorProvider{
         return DBContentType.CODE_BODY;
     }
 
+    @Override
     @NotNull
     public FileEditorPolicy getPolicy() {
         return FileEditorPolicy.HIDE_DEFAULT_EDITOR;
@@ -46,6 +48,7 @@ public class SourceCodeBodyEditorProvider extends BasicSourceCodeEditorProvider{
         return EditorProviderId.CODE_BODY;
     }
 
+    @Override
     public String getName() {
         return "Body";
     }
@@ -59,6 +62,7 @@ public class SourceCodeBodyEditorProvider extends BasicSourceCodeEditorProvider{
      *                ApplicationComponent                   *
      *********************************************************/
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

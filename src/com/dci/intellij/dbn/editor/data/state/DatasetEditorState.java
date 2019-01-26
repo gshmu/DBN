@@ -14,6 +14,7 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
     public static final DatasetEditorState VOID = new DatasetEditorState();
     private DatasetColumnSetup columnSetup = new DatasetColumnSetup();
 
+    @Override
     public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
         return fileEditorState instanceof DatasetEditorState && fileEditorStateLevel == FileEditorStateLevel.FULL;
     }
@@ -22,6 +23,7 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
         return columnSetup;
     }
 
+    @Override
     public void readState(@NotNull Element element) {
         setRowCount(SettingsUtil.getIntegerAttribute(element, "row-count", 100));
         setReadonly(SettingsUtil.getBooleanAttribute(element, "readonly", false));
@@ -44,6 +46,7 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
         }
     }
 
+    @Override
     public void writeState(Element targetElement) {
         targetElement.setAttribute("row-count", Integer.toString(getRowCount()));
         targetElement.setAttribute("readonly", Boolean.toString(isReadonly()));
@@ -69,6 +72,7 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
         }
     }
 
+    @Override
     public DatasetEditorState clone() {
         DatasetEditorState clone = new DatasetEditorState();
         clone.setReadonly(isReadonly());

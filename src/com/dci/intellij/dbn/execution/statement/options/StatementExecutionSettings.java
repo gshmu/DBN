@@ -26,10 +26,12 @@ public class StatementExecutionSettings extends Configuration implements Executi
         this.parent = parent;
     }
 
+    @Override
     public String getDisplayName() {
         return "Statement execution settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "executionEngine";
     }
@@ -46,14 +48,17 @@ public class StatementExecutionSettings extends Configuration implements Executi
         this.resultSetFetchBlockSize = resultSetFetchBlockSize;
     }
 
+    @Override
     public int getExecutionTimeout() {
         return executionTimeout;
     }
 
+    @Override
     public int getDebugExecutionTimeout() {
         return debugExecutionTimeout;
     }
 
+    @Override
     public boolean setExecutionTimeout(int executionTimeout) {
         if (this.executionTimeout != executionTimeout) {
             this.executionTimeout = executionTimeout;
@@ -62,6 +67,7 @@ public class StatementExecutionSettings extends Configuration implements Executi
         return false;
     }
 
+    @Override
     public boolean setDebugExecutionTimeout(int debugExecutionTimeout) {
         if (this.debugExecutionTimeout != debugExecutionTimeout) {
             this.debugExecutionTimeout = debugExecutionTimeout;
@@ -93,6 +99,7 @@ public class StatementExecutionSettings extends Configuration implements Executi
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public ConfigurationEditorForm createConfigurationEditor() {
         return new StatementExecutionSettingsForm(this);
@@ -103,6 +110,7 @@ public class StatementExecutionSettings extends Configuration implements Executi
         return "statement-execution";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         resultSetFetchBlockSize = SettingsUtil.getInteger(element, "fetch-block-size", resultSetFetchBlockSize);
         executionTimeout = SettingsUtil.getInteger(element, "execution-timeout", executionTimeout);
@@ -111,6 +119,7 @@ public class StatementExecutionSettings extends Configuration implements Executi
         promptExecution = SettingsUtil.getBoolean(element, "prompt-execution", promptExecution);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setInteger(element, "fetch-block-size", resultSetFetchBlockSize);
         SettingsUtil.setInteger(element, "execution-timeout", executionTimeout);

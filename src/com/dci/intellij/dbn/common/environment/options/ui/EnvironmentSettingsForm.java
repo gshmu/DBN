@@ -69,10 +69,12 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         registerComponents(mainPanel);
     }
     
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
     
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         EnvironmentSettings settings = getConfiguration();
         EnvironmentTypesTableModel model = environmentTypesTable.getModel();
@@ -96,6 +98,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         });
     }
 
+    @Override
     public void resetFormChanges() {
         EnvironmentSettings settings = getConfiguration();
         environmentTypesTable.getModel().setEnvironmentTypes(settings.getEnvironmentTypes());

@@ -159,6 +159,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
     }
 
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

@@ -16,6 +16,7 @@ public class OpenConnectionFilterSettingsAction extends DumbAwareAction {
         super("Object Filter Settings...", null, Icons.DATASET_FILTER);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
@@ -26,6 +27,7 @@ public class OpenConnectionFilterSettingsAction extends DumbAwareAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Object Filter Settings...");

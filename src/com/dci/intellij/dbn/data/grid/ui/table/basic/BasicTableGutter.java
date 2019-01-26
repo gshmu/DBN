@@ -37,10 +37,12 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
         });
     }
 
+    @Override
     protected ListCellRenderer createCellRenderer() {
         return new BasicTableGutterCellRenderer();
     }
 
+    @Override
     public void scrollRectToVisible(Rectangle rect) {
         super.scrollRectToVisible(rect);
 

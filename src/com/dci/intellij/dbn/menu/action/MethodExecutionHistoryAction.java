@@ -10,12 +10,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class MethodExecutionHistoryAction extends DumbAwareAction {
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
         executionManager.showExecutionHistoryDialog(null, true, false, null);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);

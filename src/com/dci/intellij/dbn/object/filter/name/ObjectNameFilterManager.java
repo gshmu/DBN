@@ -209,6 +209,7 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
         return FailsafeUtil.getComponent(project, ObjectNameFilterManager.class);
     }
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

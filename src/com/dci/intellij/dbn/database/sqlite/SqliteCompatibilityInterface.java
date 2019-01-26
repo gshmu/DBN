@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.editor.session.SessionStatus;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -26,6 +27,7 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
         super(parent);
     }
 
+    @Override
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
         return
             objectTypeId == DatabaseObjectTypeId.SCHEMA ||
@@ -38,6 +40,7 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
             objectTypeId == DatabaseObjectTypeId.DATASET_TRIGGER;
     }
 
+    @Override
     public boolean supportsFeature(DatabaseFeature feature) {
         switch (feature) {
             case CONNECTION_ERROR_RECOVERY: return true;
@@ -45,6 +48,7 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
         }
     }
 
+    @Override
     public QuoteDefinition getIdentifierQuotes() {
         return IDENTIFIER_QUOTE_DEFINITION;
     }
@@ -76,19 +80,22 @@ public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface
         else return SessionStatus.ACTIVE;
     }
 
+    @Nullable
     @Override
     public DatabaseAttachmentHandler getDatabaseAttachmentHandler() {
         return (connection, filePath, schemaName) -> {
-            setAutoCommit(connection, false);
+            //setAutoCommit(connection, false);
             try {
-                connection.rollback();
+                //connection.rollback();
                 Statement statement = connection.createStatement();
+/*
                 try {
                     statement.execute("end transaction");
                 } catch (SQLException ignore) {}
+*/
                 statement.executeUpdate("attach database '" + filePath + "' as \"" + schemaName + "\"");
             } finally {
-                setAutoCommit(connection, true);
+                //setAutoCommit(connection, true);
             }
         };
     }

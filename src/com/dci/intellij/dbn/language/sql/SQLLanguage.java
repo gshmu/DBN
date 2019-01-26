@@ -17,6 +17,7 @@ import com.intellij.psi.tree.IFileElementType;
 public class SQLLanguage extends DBLanguage<SQLLanguageDialect> {
     public static final SQLLanguage INSTANCE = new SQLLanguage();
 
+    @Override
     protected SQLLanguageDialect[] createLanguageDialects() {
         SQLLanguageDialect oracleSQLLanguageDialect = new OracleSQLLanguageDialect();
         SQLLanguageDialect mysqlSQLLanguageDialect = new MysqlSQLLanguageDialect();
@@ -31,6 +32,7 @@ public class SQLLanguage extends DBLanguage<SQLLanguageDialect> {
                 iso92SQLLanguageDialect};
     }
 
+    @Override
     public SQLLanguageDialect getMainLanguageDialect() {
         return getAvailableLanguageDialects()[0];
     }
@@ -45,6 +47,7 @@ public class SQLLanguage extends DBLanguage<SQLLanguageDialect> {
     }
 
 
+    @Override
     public SQLCodeStyleSettings getCodeStyleSettings(Project project) {
         CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getSettings(project);
         SQLCustomCodeStyleSettings customCodeStyleSettings = codeStyleSettings.getCustomSettings(SQLCustomCodeStyleSettings.class);

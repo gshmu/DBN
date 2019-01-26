@@ -24,10 +24,12 @@ public class DBStatementJdbcRunConfig extends DBStatementRunConfig {
         return new DBStatementJdbcRunConfigEditor(this);
     }
 
+    @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
         return new DBStatementJdbcRunProfileState(env);
     }
 
+    @Override
     public void checkConfiguration() throws RuntimeConfigurationException {
 /*        if (executionInput == null) {
             throw new RuntimeConfigurationError("No or invalid method selected. The database connection is down, obsolete or method has been dropped.");

@@ -28,10 +28,12 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         StatementExecutionSettings settings = getConfiguration();
         settings.setResultSetFetchBlockSize(ConfigurationEditorUtil.validateIntegerInputValue(fetchBlockSizeTextField, "Fetch block size", true, 1, 10000, null));
@@ -48,6 +50,7 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
         }
     }
 
+    @Override
     public void resetFormChanges() {
         StatementExecutionSettings settings = getConfiguration();
         fetchBlockSizeTextField.setText(Integer.toString(settings.getResultSetFetchBlockSize()));

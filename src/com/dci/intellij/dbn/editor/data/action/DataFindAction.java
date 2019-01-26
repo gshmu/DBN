@@ -29,6 +29,7 @@ public class DataFindAction extends AbstractDataEditorAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
 

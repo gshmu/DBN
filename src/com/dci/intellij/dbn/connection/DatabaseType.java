@@ -35,6 +35,7 @@ public enum DatabaseType implements Presentable {
         this.authenticationSupported = authenticationSupported;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return name;
@@ -52,6 +53,7 @@ public enum DatabaseType implements Presentable {
 
 
 
+    @Override
     public Icon getIcon() {
         return icon;
     }

@@ -13,6 +13,7 @@ public class SelectAllColumnsAction extends AnAction {
         this.list = list;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         list.selectAll();
     }

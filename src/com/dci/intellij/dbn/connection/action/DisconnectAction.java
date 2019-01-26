@@ -11,6 +11,7 @@ public class DisconnectAction extends AbstractConnectionAction {
         getTemplatePresentation().setEnabled(connectionHandler.getConnectionStatus().isConnected());
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(connectionHandler.getProject());

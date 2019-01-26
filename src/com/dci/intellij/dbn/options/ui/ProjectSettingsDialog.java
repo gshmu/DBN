@@ -46,10 +46,12 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
         return projectSettings;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -60,6 +62,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
         };
     }
 
+    @Override
     protected JButton createJButtonForAction(Action action) {
         if (action instanceof ApplyAction) {
             bApply = new JButton();
@@ -70,12 +73,14 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
         return super.createJButtonForAction(action);
     }
 
+    @Override
     public void doCancelAction() {
         //projectSettings.reset();
         projectSettings.disposeUIResources();
         super.doCancelAction();
     }
 
+    @Override
     public void doOKAction() {
         try {
             projectSettings.apply();
@@ -97,6 +102,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
         }
     }
 
+    @Override
     protected void doHelpAction() {
         HelpManager.getInstance().invokeHelp(projectSettings.getHelpTopic());
     }
@@ -104,6 +110,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
     private class ApplyAction extends AbstractAction {
         private Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
         private Runnable reloader = new Runnable() {
+            @Override
             public void run() {
                 if (isShowing()) {
                     boolean isModified = projectSettings.isModified();
@@ -124,6 +131,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
             addReloadRequest();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             doApplyAction();
         }

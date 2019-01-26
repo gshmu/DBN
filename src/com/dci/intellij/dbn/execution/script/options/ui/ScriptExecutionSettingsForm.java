@@ -82,6 +82,7 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
             this.databaseType = databaseType;
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             Project project = e.getProject();
             if (project != null) {
@@ -94,10 +95,12 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
         }
     }
     
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
     
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         ScriptExecutionSettings settings = getConfiguration();
         int executionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
@@ -112,6 +115,7 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
         }
     }
 
+    @Override
     public void resetFormChanges() {
         ScriptExecutionSettings settings = getConfiguration();
         executionTimeoutTextField.setText(Integer.toString(settings.getExecutionTimeout()));

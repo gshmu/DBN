@@ -27,29 +27,35 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
         notifyListeners(0, bundle.size(), -1);
     }
 
+    @Override
     public int getRowCount() {
         return bundle.size();
     }
 
+    @Override
     public int getColumnCount() {
         return 3;
     }
 
+    @Override
     public String getColumnName(int columnIndex) {
         return columnIndex == 0 ? "Database Type" :
                columnIndex == 1 ? "Name" :
                columnIndex == 2 ? "Executable Path" : null;
     }
 
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
         return String.class;
 
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         CmdLineInterface environmentType = getInterface(rowIndex);
         return
@@ -58,6 +64,7 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
            columnIndex == 2 ? environmentType.getExecutablePath() : null;
     }
 
+    @Override
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         Object actualValue = getValueAt(rowIndex, columnIndex);
         if (!CommonUtil.safeEqual(actualValue, o)) {
@@ -93,11 +100,13 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
         notifyListeners(rowIndex, rowIndex, -1);
     }
 
+    @Override
     public void insertRow(int rowIndex) {
         bundle.add(rowIndex, new CmdLineInterface());
         notifyListeners(rowIndex, bundle.size()-1, -1);
     }
 
+    @Override
     public void removeRow(int rowIndex) {
         if (bundle.size() > rowIndex) {
             bundle.remove(rowIndex);
@@ -128,6 +137,7 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Override
     public void dispose() {
         super.dispose();
     }

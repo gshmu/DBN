@@ -74,6 +74,7 @@ public class EnvironmentTypeBundle implements Iterable<EnvironmentType>, Cloneab
         return environmentTypes;
     }
 
+    @Override
     public EnvironmentTypeBundle clone() {
         return new EnvironmentTypeBundle(this);
     }

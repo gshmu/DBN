@@ -63,6 +63,7 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
         return new TreePath(path.toArray());
     }
 
+    @Override
     public List<MethodExecutionInput> getExecutionInputs() {
         List<MethodExecutionInput> executionInputs = new ArrayList<MethodExecutionInput>();
         for (TreeNode connectionTreeNode : getRoot().getChildren()) {

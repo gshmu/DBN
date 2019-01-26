@@ -91,6 +91,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
         return isDisposed() || columnForms.size() == 0 ? null : columnForms.get(0).getEditorComponent();
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -136,6 +137,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
     }
 
     private static Comparator<DatasetRecordEditorColumnForm> alphabeticComparator = new Comparator<DatasetRecordEditorColumnForm>() {
+        @Override
         public int compare(DatasetRecordEditorColumnForm columnPanel1, DatasetRecordEditorColumnForm columnPanel2) {
             String name1 = columnPanel1.getCell().getColumnInfo().getName();
             String name2 = columnPanel2.getCell().getColumnInfo().getName();
@@ -144,6 +146,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
     };
 
     private static Comparator<DatasetRecordEditorColumnForm> indexedComparator = new Comparator<DatasetRecordEditorColumnForm>() {
+        @Override
         public int compare(DatasetRecordEditorColumnForm columnPanel1, DatasetRecordEditorColumnForm columnPanel2) {
             int index1 = columnPanel1.getCell().getColumnInfo().getColumnIndex();
             int index2 = columnPanel2.getCell().getColumnInfo().getColumnIndex();
@@ -175,12 +178,14 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
             super("Sort columns alphabetically", null, Icons.ACTION_SORT_ALPHA);
         }
 
+        @Override
         public boolean isSelected(AnActionEvent anActionEvent) {
             Project project = row.getModel().getDataset().getProject();
             ColumnSortingType columnSortingType = DatasetEditorManager.getInstance(project).getRecordViewColumnSortingType();
             return columnSortingType == ColumnSortingType.ALPHABETICAL;
         }
 
+        @Override
         public void setSelected(AnActionEvent anActionEvent, boolean selected) {
             ColumnSortingType columnSortingType = selected ? ColumnSortingType.ALPHABETICAL : ColumnSortingType.BY_INDEX;
             Project project = row.getModel().getDataset().getProject();
@@ -194,6 +199,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
             super("First Record", null, Icons.DATA_EDITOR_FIRST_RECORD);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             DatasetEditorModelRow firstRow = row.getModel().getRowAtIndex(0);
             setRow(firstRow);
@@ -211,6 +217,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
             super("Previous Record", null, Icons.DATA_EDITOR_PREVIOUS_RECORD);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             if (row.getIndex() > 0) {
                 int index = row.getIndex() - 1;
@@ -231,6 +238,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
             super("Next Record", null, Icons.DATA_EDITOR_NEXT_RECORD);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             if (row.getIndex() < row.getModel().getRowCount() -1) {
                 int index = row.getIndex() + 1;
@@ -251,6 +259,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
             super("Last record", null, Icons.DATA_EDITOR_LAST_RECORD);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             int index = row.getModel().getRowCount() - 1 ;
             DatasetEditorModelRow lastRow = row.getModel().getRowAtIndex(index);
@@ -264,6 +273,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
         }
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         DisposerUtil.dispose(columnForms);

@@ -53,6 +53,7 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
         return new IterationElementTypeParser(this);
     }
 
+    @Override
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
         ElementTypeBundle bundle = getElementBundle();
@@ -110,26 +111,32 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
         }
     }
 
+    @Override
     public boolean isLeaf() {
         return false;
     }
 
+    @Override
     public String getDebugName() {
         return "iteration (" + getId() + ")";
     }
 
+    @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new SequencePsiElement(astNode, this);
     }
 
+    @Override
     public ElementType getIteratedElementType() {
         return iteratedElementType;
     }
 
+    @Override
     public TokenElementType[] getSeparatorTokens() {
         return separatorTokens;
     }
 
+    @Override
     public int[] getElementsCountVariants() {
         return elementsCountVariants;
     }
@@ -139,6 +146,7 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
         return minIterations;
     }
 
+    @Override
     public boolean isSeparator(TokenElementType tokenElementType) {
         if (separatorTokens != null) {
             for (TokenElementType separatorToken: separatorTokens) {
@@ -148,6 +156,7 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
         return false;
     }
 
+    @Override
     public boolean isSeparator(TokenType tokenType) {
         if (separatorTokens != null) {
             for (TokenElementType separatorToken: separatorTokens) {

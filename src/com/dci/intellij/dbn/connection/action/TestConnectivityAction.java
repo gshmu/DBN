@@ -13,6 +13,7 @@ public class TestConnectivityAction extends AbstractConnectionAction {
         super("Test connectivity", "Test connectivity of " + connectionHandler.getName(), null, connectionHandler);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
         final ConnectionHandler connectionHandler = getConnectionHandler();
         connectionHandler.getInstructions().setAllowAutoConnect(true);

@@ -26,16 +26,19 @@ public class PSQLStructureViewModel extends DBLanguageStructureViewModel {
         super(editor, psiFile);
     }
 
+    @Override
     @NotNull
     public StructureViewTreeElement getRoot() {
         return new PSQLStructureViewElement(getPsiFile());
     }
 
+    @Override
     @NotNull
     public Grouper[] getGroupers() {
         return groupers;
     }
 
+    @Override
     @NotNull
     public Sorter[] getSorters() {
         return sorters;

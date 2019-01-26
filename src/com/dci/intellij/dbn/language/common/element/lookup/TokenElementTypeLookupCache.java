@@ -11,6 +11,7 @@ public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<Toke
         super(elementType);
     }
 
+    @Override
     public void init() {}
 
     @Override

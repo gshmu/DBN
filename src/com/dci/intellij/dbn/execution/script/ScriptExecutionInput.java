@@ -63,6 +63,7 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
         this.sourceFile = sourceFile;
     }
 
+    @Override
     public ConnectionHandler getConnectionHandler() {
         return getTargetConnection();
     }

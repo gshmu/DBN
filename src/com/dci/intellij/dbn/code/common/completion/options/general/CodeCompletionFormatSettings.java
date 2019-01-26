@@ -20,6 +20,7 @@ public class CodeCompletionFormatSettings extends Configuration<CodeCompletionFo
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+   @Override
    @NotNull
    public CodeCompletionFormatSettingsForm createConfigurationEditor() {
        return new CodeCompletionFormatSettingsForm(this);
@@ -30,10 +31,12 @@ public class CodeCompletionFormatSettings extends Configuration<CodeCompletionFo
         return "format";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         enforceCodeStyleCase = SettingsUtil.getBoolean(element, "enforce-code-style-case", enforceCodeStyleCase);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setBoolean(element, "enforce-code-style-case", enforceCodeStyleCase);
     }

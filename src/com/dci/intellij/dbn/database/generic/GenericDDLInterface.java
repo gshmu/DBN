@@ -15,6 +15,7 @@ public class GenericDDLInterface extends DatabaseDDLInterfaceImpl {
         super("generic_ddl_interface.xml", provider);
     }
 
+    @Override
     public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code, String alternativeDelimiter) {
         return objectTypeId == DatabaseObjectTypeId.VIEW ? "create view " + objectName + " as\n" + code :
                 objectTypeId == DatabaseObjectTypeId.FUNCTION ? "create function " + objectName + " as\n" + code :
@@ -32,6 +33,7 @@ public class GenericDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
+    @Override
     public void updateView(String viewName, String code, DBNConnection connection) throws SQLException {
         throw new UnsupportedOperationException("Not implemented");
     }
@@ -41,6 +43,7 @@ public class GenericDDLInterface extends DatabaseDDLInterfaceImpl {
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    @Override
     public void updateObject(String objectName, String objectType, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         throw new UnsupportedOperationException("Not implemented");
     }
@@ -55,6 +58,7 @@ public class GenericDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CREATE statements                   *
      *********************************************************/
+    @Override
     public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
         throw new UnsupportedOperationException("Not implemented");
     }

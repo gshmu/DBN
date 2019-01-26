@@ -24,6 +24,7 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
         getComponent().getModel().addTreeModelListener(treeModelListener);
     }
 
+    @Override
     protected int getSelectedIndex() {
         Object[] elements = getAllElements();
         BrowserTreeNode treeNode = getSelectedTreeElement();
@@ -45,6 +46,7 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
         return null;
     }
 
+    @Override
     protected Object[] getAllElements() {
         if (elements == null) {
             List<BrowserTreeNode> nodes = new ArrayList<BrowserTreeNode>();
@@ -80,11 +82,13 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
         return (DatabaseBrowserTree) super.getComponent();
     }
 
+    @Override
     protected String getElementText(Object o) {
         BrowserTreeNode treeNode = (BrowserTreeNode) o;
         return treeNode.getPresentableText();
     }
 
+    @Override
     protected void selectElement(Object o, String s) {
         BrowserTreeNode treeNode = (BrowserTreeNode) o;
         getComponent().selectElement(treeNode, false);
@@ -98,18 +102,22 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
 
     TreeModelListener treeModelListener = new TreeModelListener() {
 
+        @Override
         public void treeNodesChanged(TreeModelEvent e) {
             elements = null;
         }
 
+        @Override
         public void treeNodesInserted(TreeModelEvent e) {
             elements = null;
         }
 
+        @Override
         public void treeNodesRemoved(TreeModelEvent e) {
             elements = null;
         }
 
+        @Override
         public void treeStructureChanged(TreeModelEvent e) {
             elements = null;
         }

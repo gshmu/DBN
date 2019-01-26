@@ -17,6 +17,7 @@ public interface DBVirtualFile extends /*VirtualFileWithId, */EnvironmentTypePro
 
     Icon getIcon();
 
+    @Override
     @NotNull
     ConnectionHandler getConnectionHandler();
 

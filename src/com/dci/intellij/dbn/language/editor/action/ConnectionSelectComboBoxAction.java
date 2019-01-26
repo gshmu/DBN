@@ -23,12 +23,14 @@ import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 public class ConnectionSelectComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "DB Connections";
 
+    @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
         Project project = getProject(component);
         return new ConnectionSelectActionGroup(project);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         String text = NAME;

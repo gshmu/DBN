@@ -11,6 +11,7 @@ public class CreateBasicFilterAction extends AbstractFilterListAction {
         super(filterList,  "Basic filter", Icons.DATASET_FILTER_BASIC);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         DatasetFilter filter = getFilterGroup().createBasicFilter(true);
         getFilterList().setSelectedValue(filter, true);

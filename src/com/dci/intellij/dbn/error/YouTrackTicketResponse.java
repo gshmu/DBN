@@ -11,6 +11,7 @@ public class YouTrackTicketResponse implements TicketResponse{
         this.errorMessage = errorMessage;
     }
 
+    @Override
     @Nullable
     public String getTicketId() {
         return ticketId;

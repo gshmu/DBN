@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.Editor;
 public class BasicInsertHandler implements InsertHandler<CodeCompletionLookupItem> {
     public static final BasicInsertHandler INSTANCE = new BasicInsertHandler();
 
+    @Override
     public void handleInsert(InsertionContext insertionContext, CodeCompletionLookupItem lookupElement) {
         char completionChar = insertionContext.getCompletionChar();
 

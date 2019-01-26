@@ -15,6 +15,7 @@ public class ClearFiltersAction extends AbstractSessionBrowserAction {
         super("Clear Filter", Icons.DATASET_FILTER_CLEAR);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         if (sessionBrowser != null) {
@@ -28,6 +29,7 @@ public class ClearFiltersAction extends AbstractSessionBrowserAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Clear Filter");

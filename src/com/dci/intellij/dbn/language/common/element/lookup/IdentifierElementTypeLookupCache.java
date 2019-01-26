@@ -12,6 +12,7 @@ public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache
         super(elementType);
     }
 
+    @Override
     public void init() {}
 
     @Override

@@ -16,6 +16,7 @@ public class DisconnectSessionsAction extends AbstractSessionBrowserAction {
         super("Disconnect Sessions", Icons.ACTION_DISCONNECT_SESSION);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         if (sessionBrowser != null) {
@@ -23,6 +24,7 @@ public class DisconnectSessionsAction extends AbstractSessionBrowserAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         boolean visible = false;

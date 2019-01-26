@@ -25,6 +25,7 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction implements Dumb
     public TimedReloadComboBoxAction() {
     }
 
+    @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
@@ -38,6 +39,7 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction implements Dumb
         return actionGroup;
     }
 
+    @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Icon icon = Icons.ACTION_TIMED_REFRESH_OFF;

@@ -11,10 +11,12 @@ public class DataEditorFilterSettings extends Configuration<DataEditorFilterSett
     private boolean promptFilterDialog = true;
     private DatasetFilterType defaultFilterType = DatasetFilterType.BASIC;
 
+    @Override
     public String getDisplayName() {
         return "Data editor filters settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "dataEditor";
     }
@@ -42,6 +44,7 @@ public class DataEditorFilterSettings extends Configuration<DataEditorFilterSett
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public DataEditorFilterSettingsForm createConfigurationEditor() {
         return new DataEditorFilterSettingsForm(this);
@@ -52,11 +55,13 @@ public class DataEditorFilterSettings extends Configuration<DataEditorFilterSett
         return "filters";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         promptFilterDialog = SettingsUtil.getBoolean(element, "prompt-filter-dialog", promptFilterDialog);
         defaultFilterType = DatasetFilterType.get(SettingsUtil.getString(element, "default-filter-type", defaultFilterType.name()));
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setBoolean(element, "prompt-filter-dialog", promptFilterDialog);
         SettingsUtil.setString(element, "default-filter-type", defaultFilterType.name());

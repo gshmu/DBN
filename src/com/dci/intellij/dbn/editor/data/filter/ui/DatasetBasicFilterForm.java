@@ -109,18 +109,21 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
         }
     }
 
+    @Override
     public void focus() {
         if (conditionForms.size() > 0) {
             conditionForms.get(0).focus();
         }
     }
 
+    @Override
     protected ActionListener createActionListener() {
         return e -> updateNameAndPreview();
     }
 
     private KeyListener createKeyListener() {
         return new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent e) {
                 isCustomNamed = true;
                 nameTextField.setForeground(UIUtil.getTextFieldForeground());
@@ -257,10 +260,12 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     /*************************************************
      *                  SettingsEditor               *
      *************************************************/
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         updateGeneratedName();
         DatasetBasicFilter filter = getConfiguration();
@@ -274,6 +279,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
         filter.setName(nameTextField.getText());
     }
 
+    @Override
     public void resetFormChanges() {
 
     }

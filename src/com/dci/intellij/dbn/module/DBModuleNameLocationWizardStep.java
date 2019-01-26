@@ -12,10 +12,12 @@ public class DBModuleNameLocationWizardStep extends DBModuleWizardStep {
         super(wizardContext,  moduleBuilder, modulesProvider);
     }
 
+    @Override
     public JComponent getComponent() {
         return new JPanel();
     }
 
+    @Override
     public void updateDataModel() {
 
     }

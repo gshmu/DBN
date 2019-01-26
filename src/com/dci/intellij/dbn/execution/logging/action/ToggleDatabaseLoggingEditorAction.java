@@ -25,6 +25,7 @@ public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements D
         super("Enable / Disable Database Logging", null, Icons.EXEC_LOG_OUTPUT_CONSOLE);
     }
 
+    @Override
     public boolean isSelected(@NotNull AnActionEvent e) {
         ConnectionHandler activeConnection = getConnectionHandler(e);
         return activeConnection != null && activeConnection.isLoggingEnabled();
@@ -45,11 +46,13 @@ public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements D
         return null;
     }
 
+    @Override
     public void setSelected(@NotNull AnActionEvent e, boolean selected) {
         ConnectionHandler activeConnection = getConnectionHandler(e);
         if (activeConnection != null) activeConnection.setLoggingEnabled(selected);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
         ConnectionHandler activeConnection = getConnectionHandler(e);

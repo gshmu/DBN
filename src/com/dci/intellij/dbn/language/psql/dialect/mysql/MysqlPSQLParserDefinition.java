@@ -12,6 +12,7 @@ public class MysqlPSQLParserDefinition extends PSQLParserDefinition {
         super(parser);
     }
 
+    @Override
     @NotNull
     public Lexer createLexer(Project project) {
         return new FlexAdapter(new MysqlPSQLParserFlexLexer(getTokenTypes()));

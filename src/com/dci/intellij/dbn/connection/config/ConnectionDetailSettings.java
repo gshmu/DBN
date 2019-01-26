@@ -34,10 +34,12 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         this.parent = parent;
     }
 
+    @Override
     public String getDisplayName() {
         return "Connection Detail Settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "connectionPropertySettings";
     }

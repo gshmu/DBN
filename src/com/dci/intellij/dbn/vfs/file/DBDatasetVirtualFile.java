@@ -14,6 +14,7 @@ public class DBDatasetVirtualFile extends DBContentVirtualFile {
         super(databaseFile, contentType);
     }
 
+    @Override
     @NotNull
     public DBDataset getObject() {
         return (DBDataset) super.getObject();
@@ -22,16 +23,19 @@ public class DBDatasetVirtualFile extends DBContentVirtualFile {
     /*********************************************************
      *                     VirtualFile                       *
      *********************************************************/
+    @Override
     @NotNull
     public OutputStream getOutputStream(Object requestor, long newModificationStamp, long newTimeStamp) throws IOException {
         return DevNullStreams.OUTPUT_STREAM;
     }
 
+    @Override
     @NotNull
     public byte[] contentsToByteArray() throws IOException {
         return new byte[0];
     }
 
+    @Override
     public long getLength() {
         return 0;
     }

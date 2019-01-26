@@ -26,6 +26,7 @@ public class GUIUtil{
 
     public static void updateSplitterProportion(final JComponent root, final float proportion) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 if (root instanceof Splitter) {
                     Splitter splitter = (Splitter) root;

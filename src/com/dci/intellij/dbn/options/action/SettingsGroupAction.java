@@ -48,6 +48,7 @@ public class SettingsGroupAction extends ActionGroup {
             this.configId = configId;
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             Project project = ActionUtil.ensureProject(e);
             ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
@@ -63,6 +64,7 @@ public class SettingsGroupAction extends ActionGroup {
             }
         }
 
+        @Override
         public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
 /*

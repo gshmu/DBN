@@ -26,6 +26,7 @@ public class SessionBrowserModelCell extends ResultSetDataModelCell implements C
         return getRow().getModel().getConnectionHandler();
     }
 
+    @Override
     @NotNull
     public SessionBrowserModelRow getRow() {
         return (SessionBrowserModelRow) super.getRow();
@@ -34,6 +35,7 @@ public class SessionBrowserModelCell extends ResultSetDataModelCell implements C
     /*********************************************************
      *                    ChangeListener                     *
      *********************************************************/
+    @Override
     public void stateChanged(ChangeEvent e) {
     }
 

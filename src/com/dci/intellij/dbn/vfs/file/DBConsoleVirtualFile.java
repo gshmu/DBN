@@ -88,6 +88,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         }
     }
 
+    @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
@@ -100,6 +101,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         url = null;
     }
 
+    @Override
     public Icon getIcon() {
         switch (type) {
             case STANDARD: return Icons.FILE_SQL_CONSOLE;
@@ -108,6 +110,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         return null;
     }
 
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.getnn();
@@ -133,6 +136,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         databaseSession = getConnectionHandler().getSessionBundle().getSession(sessionId);
     }
 
+    @Override
     public DatabaseSession getDatabaseSession() {
         return databaseSession;
     }
@@ -146,6 +150,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         return super.isValid() && connectionHandlerRef.isValid();
     }
 
+    @Override
     @Nullable
     public DBSchema getDatabaseSchema() {
         return DBObjectRef.get(databaseSchemaRef);
@@ -189,9 +194,11 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         return SQLFileType.INSTANCE;
     }
 
+    @Override
     @NotNull
     public OutputStream getOutputStream(Object requestor, final long modificationTimestamp, long newTimeStamp) throws IOException {
         return new ByteArrayOutputStream() {
+            @Override
             public void close() {
                 DBConsoleVirtualFile.this.modificationTimestamp = modificationTimestamp;
                 content.setText(toString());
@@ -199,6 +206,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         };
     }
 
+    @Override
     @NotNull
     public byte[] contentsToByteArray() throws IOException {
         Charset charset = getCharset();
@@ -210,6 +218,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         return 0;
     }
 
+  @Override
   public long getModificationStamp() {
     return modificationTimestamp;
   }

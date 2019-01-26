@@ -107,6 +107,7 @@ public class CompilerResult implements Disposable {
         return objectRef;
     }
 
+    @Override
     public void dispose() {
         compilerMessages.clear();
     }

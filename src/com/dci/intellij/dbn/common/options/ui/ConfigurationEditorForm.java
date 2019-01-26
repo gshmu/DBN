@@ -49,6 +49,7 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
 
     protected DocumentListener createDocumentListener() {
         return new DocumentAdapter() {
+            @Override
             protected void textChanged(@NotNull DocumentEvent e) {
                 getConfiguration().setModified(true);
             }
@@ -110,6 +111,7 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
 
     public void focus() {}
 
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();

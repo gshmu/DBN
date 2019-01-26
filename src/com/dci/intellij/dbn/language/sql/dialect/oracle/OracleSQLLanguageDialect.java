@@ -40,10 +40,12 @@ public class OracleSQLLanguageDialect extends SQLLanguageDialect {
         return tokenPairRangeMonitors;
     }
 
+    @Override
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
         return new OracleSQLHighlighter(this);
 }
 
+    @Override
     protected OracleSQLParserDefinition createParserDefinition() {
         OracleSQLParser parser = new OracleSQLParser(this);
         return new OracleSQLParserDefinition(parser);

@@ -155,6 +155,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         return new SortableDataModelState();
     }
 
+    @Override
     public boolean isReadonly() {
         return true;
     }

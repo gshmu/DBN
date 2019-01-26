@@ -53,10 +53,12 @@ public class SelectDDLFileForm extends DBNFormImpl {
         return doNotPromptCheckBox.isSelected();
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

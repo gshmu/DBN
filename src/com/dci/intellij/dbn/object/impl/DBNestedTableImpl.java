@@ -38,10 +38,12 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
         return name;
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.NESTED_TABLE;
     }
 
+    @Override
     public List<DBNestedTableColumn> getColumns() {
         if (columns == null) {
             columns = new ArrayList<DBNestedTableColumn>();
@@ -50,10 +52,12 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
         return columns;
     }
 
+    @Override
     public DBNestedTableColumn getColumn(String name) {
         return (DBNestedTableColumn) getObjectByName(getColumns(), name);
     }
 
+    @Override
     public DBTable getTable() {
         return (DBTable) getParentObject();
     }
@@ -62,6 +66,7 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
         return DBObjectRef.get(typeRef);
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
         ttb.createEmptyRow();
@@ -72,10 +77,12 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
      *                     TreeElement                       *
      *********************************************************/
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;

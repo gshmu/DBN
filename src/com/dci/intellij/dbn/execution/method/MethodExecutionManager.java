@@ -257,12 +257,14 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     /*********************************************************
      *                    ProjectComponent                   *
      *********************************************************/
+    @Override
     @NotNull
     @NonNls
     public String getComponentName() {
         return COMPONENT_NAME;
     }
 
+    @Override
     public void projectOpened() {
     }
 

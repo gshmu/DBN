@@ -23,10 +23,12 @@ public class DBDimensionImpl extends DBSchemaObjectImpl implements DBDimension {
         return resultSet.getString("DIMENSION_NAME");
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.TYPE;
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
         ttb.createEmptyRow();
@@ -37,10 +39,12 @@ public class DBDimensionImpl extends DBSchemaObjectImpl implements DBDimension {
      *                     TreeElement                       *
      *********************************************************/
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;

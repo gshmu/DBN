@@ -17,12 +17,14 @@ public class DetachDDLFileAction extends AnAction {
         this.objectRef = DBObjectRef.from(object);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
         fileAttachmentManager.detachDDLFiles(objectRef);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {

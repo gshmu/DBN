@@ -36,6 +36,7 @@ public class CodeCompletionFiltersSettingsForm extends CompositeConfigurationEdi
         updateBorderTitleForeground(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }

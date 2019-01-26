@@ -20,6 +20,7 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
         this.parent = parent;
     }
 
+    @Override
     public String getDisplayName() {
         return "DDL file general settings";
     }
@@ -66,6 +67,7 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @Override
     @NotNull
     public DDLFileGeneralSettingsForm createConfigurationEditor() {
         return new DDLFileGeneralSettingsForm(this);
@@ -76,6 +78,7 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
         return "general";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         lookupDDLFilesEnabled.readConfiguration(element);
         createDDLFilesEnabled.readConfiguration(element);
@@ -84,6 +87,7 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
         makeScriptsRerunnable.readConfiguration(element);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         lookupDDLFilesEnabled.writeConfiguration(element);
         createDDLFilesEnabled.writeConfiguration(element);

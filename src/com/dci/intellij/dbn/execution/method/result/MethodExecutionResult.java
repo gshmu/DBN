@@ -99,6 +99,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
         return null;
     }
 
+    @Override
     @Nullable
     public MethodExecutionResultForm getForm(boolean create) {
         if (resultPanel == null && create) {
@@ -107,11 +108,13 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
         return resultPanel == null || resultPanel.isDisposed() ? null : resultPanel;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return getMethod().getName();
     }
 
+    @Override
     public Icon getIcon() {
         return getMethod().getOriginalIcon();
     }
@@ -131,6 +134,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
     }
 
 
+    @Override
     @NotNull
     public Project getProject() {
         return getMethod().getProject();
@@ -141,6 +145,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
         return executionInput.getConnectionId();
     }
 
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return getMethod().getConnectionHandler();
@@ -193,6 +198,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Override
     public void dispose() {
         super.dispose();
         resultPanel = null;
@@ -214,6 +220,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
         }
     };
 
+    @Override
     @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;

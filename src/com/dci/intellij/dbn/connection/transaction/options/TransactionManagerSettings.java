@@ -73,10 +73,12 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
                     TransactionOption.REVIEW_CHANGES,
                     TransactionOption.CANCEL);
 
+    @Override
     public String getDisplayName() {
         return "Transaction manager settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "transactionManager";
     }
@@ -109,6 +111,7 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public TransactionManagerSettingsForm createConfigurationEditor() {
         return new TransactionManagerSettingsForm(this);
@@ -119,6 +122,7 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
         return "transactions";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         Element uncommittedChangesElement = element.getChild("uncommitted-changes");
         if (uncommittedChangesElement != null) {
@@ -133,6 +137,7 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         Element uncommittedChangesElement = new Element("uncommitted-changes");
         element.addContent(uncommittedChangesElement);

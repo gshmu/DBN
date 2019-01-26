@@ -10,10 +10,12 @@ public class ProcedureFactoryInputForm extends MethodFactoryInputForm {
         super(project, schema, objectType, index);
     }
 
+    @Override
     public boolean hasReturnArgument() {
         return false;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

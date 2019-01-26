@@ -12,11 +12,13 @@ public class DeleteBasicFilterConditionAction extends DumbAwareAction {
         this.conditionForm = conditionForm;
     }
 
+    @Override
     public void update(AnActionEvent e) {
         e.getPresentation().setIcon(Icons.DATASET_FILTER_CONDITION_REMOVE);
         e.getPresentation().setText("Remove Condition");
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         conditionForm.remove();
     }

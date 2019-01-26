@@ -10,12 +10,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class ImportDefaultSettingsAction extends DumbAwareAction {
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         ProjectSettingsManager projectSettingsManager = ProjectSettingsManager.getInstance(project);
         projectSettingsManager.importDefaultSettings(false);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);

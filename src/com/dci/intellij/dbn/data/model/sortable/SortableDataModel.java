@@ -79,6 +79,7 @@ public class SortableDataModel<T extends SortableDataModelRow> extends BasicData
     }
 
     private static final Comparator<DataModelRow> INDEX_COMPARATOR = new Comparator<DataModelRow>() {
+        @Override
         public int compare(DataModelRow row1, DataModelRow row2) {
             return row1.getIndex() - row2.getIndex();
         }

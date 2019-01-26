@@ -48,6 +48,7 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
         operation == ObjectNameFilterConditionForm.Operation.JOIN ? "Join filter condition" : null;
     }
 
+    @Override
     public void doOKAction() {
         ObjectNameFilterConditionForm component = getComponent();
         condition = component.getCondition();
@@ -55,6 +56,7 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
         super.doOKAction();
     }
 
+    @Override
     public void doCancelAction() {
         super.doCancelAction();
     }

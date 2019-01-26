@@ -15,6 +15,7 @@ public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
         super("mysql_metadata_interface.xml", provider);
     }
 
+    @Override
     public ResultSet loadCompileObjectErrors(String ownerName, String objectName, DBNConnection connection) throws SQLException {
         return null;
     }
@@ -39,6 +40,7 @@ public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
         }
     }
 
+    @Override
     public String createDateString(Date date) {
         String dateString = META_DATE_FORMAT.get().format(date);
         return "str_to_date('" + dateString + "', '%Y-%m-%d %T')";

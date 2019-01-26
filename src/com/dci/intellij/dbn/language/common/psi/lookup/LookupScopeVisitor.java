@@ -5,11 +5,13 @@ import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 public abstract class LookupScopeVisitor extends PsiScopeVisitor<BasePsiElement> {
     private BasePsiElement result;
 
+    @Override
     protected final boolean visitScope(BasePsiElement scope) {
         result = performLookup(scope);
         return result != null;
     }
 
+    @Override
     public BasePsiElement getResult() {
         return result;
     }

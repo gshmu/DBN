@@ -32,6 +32,7 @@ public class IndexTableGutterCellRenderer extends JPanel implements ListCellRend
         add(textLabel, BorderLayout.EAST);
     }
 
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         DBNTableGutter tableGutter = (DBNTableGutter) list;
         textLabel.setText(Integer.toString(index));

@@ -31,6 +31,7 @@ public class DBModuleBuilder extends ModuleBuilder /*implements SourcePathsBuild
     public DBModuleBuilder() {
     }
 
+    @Override
     public void setupRootModel(ModifiableRootModel rootModel) throws ConfigurationException {
         String moduleRootPath = getContentEntryPath();
         if (moduleRootPath != null) {
@@ -52,6 +53,7 @@ public class DBModuleBuilder extends ModuleBuilder /*implements SourcePathsBuild
     }
 
 
+    @Override
     public void setContentEntryPath(String contentEntryPath) {
         this.contentEntryPath = contentEntryPath;
     }
@@ -67,6 +69,7 @@ public class DBModuleBuilder extends ModuleBuilder /*implements SourcePathsBuild
         }
     }
 
+    @Override
     @Nullable
     public final String getContentEntryPath() {
         if (contentEntryPath == null) {
@@ -87,10 +90,12 @@ public class DBModuleBuilder extends ModuleBuilder /*implements SourcePathsBuild
         return sourcePaths;
     }
 
+    @Override
     public ModuleType getModuleType() {
         return DBModuleType.MODULE_TYPE;
     }
 
+    @Override
     @NotNull
     public Module createModule(@NotNull ModifiableModuleModel moduleModel) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
         Module module = super.createModule(moduleModel);
